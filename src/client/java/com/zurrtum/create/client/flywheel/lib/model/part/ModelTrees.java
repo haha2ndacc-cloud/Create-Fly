@@ -9,6 +9,7 @@ import com.zurrtum.create.client.flywheel.lib.util.RendererReloadCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.SpriteId;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
@@ -40,7 +41,7 @@ public final class ModelTrees {
         return CACHE.get(new ModelTreeKey(layer, Collections.emptySet(), null, material));
     }
 
-    public static ModelTree of(ModelLayerLocation layer, net.minecraft.client.resources.model.Material texture, Material material) {
+    public static ModelTree of(ModelLayerLocation layer, SpriteId texture, Material material) {
         return CACHE.get(new ModelTreeKey(layer, Collections.emptySet(), texture, material));
     }
 
@@ -51,7 +52,7 @@ public final class ModelTrees {
     public static ModelTree of(
         ModelLayerLocation layer,
         Set<String> pathsToPrune,
-        net.minecraft.client.resources.model.Material texture,
+        SpriteId texture,
         Material material
     ) {
         return CACHE.get(new ModelTreeKey(layer, Set.copyOf(pathsToPrune), texture, material));
@@ -96,7 +97,7 @@ public final class ModelTrees {
     }
 
     private record ModelTreeKey(
-        ModelLayerLocation layer, Set<String> pathsToPrune, net.minecraft.client.resources.model.@Nullable Material texture, Material material
+        ModelLayerLocation layer, Set<String> pathsToPrune, @Nullable SpriteId texture, Material material
     ) {
     }
 }

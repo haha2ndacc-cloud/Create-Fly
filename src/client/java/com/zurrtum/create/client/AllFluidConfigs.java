@@ -11,9 +11,9 @@ import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.fog.FogRenderer;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.SpriteId;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
@@ -59,12 +59,14 @@ public class AllFluidConfigs {
         config(fluid, fogColor, fogDistance, component -> -1);
     }
 
-    @SuppressWarnings("deprecation")
     private static void config(FlowableFluid fluid, int fogColor, Supplier<Float> fogDistance, Function<DataComponentPatch, Integer> tint) {
-        Identifier id = BuiltInRegistries.FLUID.getKey(fluid).withPrefix("fluid/");
+        Identifier id = BuiltInRegistries.FLUID.getKey(fluid);
+        SpriteId still = Sheets.BLOCKS_MAPPER.apply(id.withSuffix("_still"));
+        SpriteId flow = Sheets.BLOCKS_MAPPER.apply(id.withSuffix("_flow"));
+        Minecraft mc = Minecraft.getInstance();
         FluidConfig config = new FluidConfig(
-            () -> Minecraft.getInstance().getAtlasManager().get(new Material(TextureAtlas.LOCATION_BLOCKS, id.withSuffix("_still"))),
-            () -> Minecraft.getInstance().getAtlasManager().get(new Material(TextureAtlas.LOCATION_BLOCKS, id.withSuffix("_flow"))),
+            () -> mc.getAtlasManager().get(still),
+            () -> mc.getAtlasManager().get(flow),
             tint,
             fogDistance,
             fogColor

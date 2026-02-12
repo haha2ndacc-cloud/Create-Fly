@@ -2,30 +2,6 @@
   "sources": [
     {
       "type": "single",
-      "resource": "create:block/factory_panel"
-    },
-    {
-      "type": "single",
-      "resource": "create:block/factory_panel_connections"
-    },
-    {
-      "type": "single",
-      "resource": "create:block/factory_panel_connections_animated"
-    },
-    {
-      "type": "single",
-      "resource": "create:block/blueprint_large"
-    },
-    {
-      "type": "single",
-      "resource": "create:block/blueprint_medium"
-    },
-    {
-      "type": "single",
-      "resource": "create:block/blueprint_small"
-    },
-    {
-      "type": "single",
       "resource": "create:entity/coupling"
     },
     {
@@ -35,46 +11,6 @@
     {
       "type": "single",
       "resource": "create:entity/logistics_hat"
-    },
-    {
-      "type": "single",
-      "resource": "create:fluid/chocolate_flow"
-    },
-    {
-      "type": "single",
-      "resource": "create:fluid/chocolate_still"
-    },
-    {
-      "type": "single",
-      "resource": "create:fluid/honey_flow"
-    },
-    {
-      "type": "single",
-      "resource": "create:fluid/honey_still"
-    },
-    {
-      "type": "single",
-      "resource": "create:fluid/potion_flow"
-    },
-    {
-      "type": "single",
-      "resource": "create:fluid/potion_still"
-    },
-    {
-      "type": "single",
-      "resource": "create:fluid/tea_flow"
-    },
-    {
-      "type": "single",
-      "resource": "create:fluid/tea_still"
-    },
-    {
-      "type": "single",
-      "resource": "create:fluid/milk_flow"
-    },
-    {
-      "type": "single",
-      "resource": "create:fluid/milk_still"
     }
   ]
 }

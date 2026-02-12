@@ -17,6 +17,7 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.ChestRenderer;
+import net.minecraft.client.resources.model.SpriteId;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.util.LightCoordsUtil;
@@ -76,7 +77,7 @@ public class ChestVisual<T extends BlockEntity & LidBlockEntity> extends Abstrac
         if (block instanceof AbstractChestBlock<?> chestBlock) {
             ChestType chestType = blockState.hasProperty(ChestBlock.TYPE) ? blockState.getValue(ChestBlock.TYPE) : ChestType.SINGLE;
             ChestRenderer<?> renderer = (ChestRenderer) Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
-            net.minecraft.client.resources.model.Material texture = Sheets.chooseMaterial(
+            SpriteId texture = Sheets.chooseSprite(
                 renderer.getChestMaterial(blockEntity, isChristmas()),
                 chestType
             );

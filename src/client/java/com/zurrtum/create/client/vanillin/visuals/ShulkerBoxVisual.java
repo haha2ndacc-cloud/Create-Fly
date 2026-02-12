@@ -9,18 +9,18 @@ import com.zurrtum.create.client.flywheel.lib.model.part.InstanceTree;
 import com.zurrtum.create.client.flywheel.lib.model.part.ModelTrees;
 import com.zurrtum.create.client.flywheel.lib.visual.AbstractBlockEntityVisual;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
-import org.joml.Matrix4f;
-
-import java.util.Set;
-import java.util.function.Consumer;
-
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.resources.model.SpriteId;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
+import org.joml.Matrix4f;
+
+import java.util.Set;
+import java.util.function.Consumer;
 
 public class ShulkerBoxVisual extends AbstractBlockEntityVisual<ShulkerBoxBlockEntity> implements SimpleDynamicVisual {
     private static final Material MATERIAL = SimpleMaterial.builder().cutout(CutoutShaders.ONE_TENTH).texture(Sheets.SHULKER_SHEET).mipmap(false)
@@ -38,7 +38,7 @@ public class ShulkerBoxVisual extends AbstractBlockEntityVisual<ShulkerBoxBlockE
         super(ctx, blockEntity, partialTick);
 
         DyeColor color = blockEntity.getColor();
-        net.minecraft.client.resources.model.Material texture;
+        SpriteId texture;
         if (color == null) {
             texture = Sheets.DEFAULT_SHULKER_TEXTURE_LOCATION;
         } else {

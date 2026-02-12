@@ -1,5 +1,5 @@
 {
   "textures": {
-    "particle": "create:fluid/chocolate_still"
+    "particle": "create:block/chocolate_still"
   }
 }
