@@ -5,6 +5,7 @@ import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollection;
 import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -35,27 +36,49 @@ public class ItemOutline extends Outline {
         ms.translate(pos.x - camera.x, pos.y - camera.y, pos.z - camera.z);
         ms.scale(params.alpha, params.alpha, params.alpha);
 
-        mc.getItemModelResolver().updateForTopItem(this.itemRenderState, stack, ItemDisplayContext.FIXED, null, null, 0);
+        mc.getItemModelResolver().updateForTopItem(
+            this.itemRenderState,
+            stack,
+            ItemDisplayContext.FIXED,
+            null,
+            null,
+            0
+        );
         itemRenderState.submit(ms, queue, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 0);
+        render(buffer, false);
+        render(buffer, true);
+        ms.popPose();
+    }
+
+    private void render(SuperRenderTypeBuffer buffer, boolean translucent) {
         for (SubmitNodeCollection batchingRenderCommandQueue : queue.getSubmitsPerOrder().values()) {
             for (SubmitNodeStorage.ItemSubmit itemCommand : batchingRenderCommandQueue.getItemSubmits()) {
-                matrices.pushPose();
-                matrices.last().set(itemCommand.pose());
-                ItemRenderer.renderItem(
-                    itemCommand.displayContext(),
-                    matrices,
-                    buffer,
-                    itemCommand.lightCoords(),
-                    itemCommand.overlayCoords(),
-                    itemCommand.tintLayers(),
-                    itemCommand.quads(),
-                    itemCommand.renderType(),
-                    itemCommand.foilType()
-                );
-                matrices.popPose();
+                if (hasTranslucency(itemCommand) == translucent) {
+                    matrices.pushPose();
+                    matrices.last().set(itemCommand.pose());
+                    ItemRenderer.renderItem(
+                        itemCommand.displayContext(),
+                        matrices,
+                        buffer,
+                        itemCommand.lightCoords(),
+                        itemCommand.overlayCoords(),
+                        itemCommand.tintLayers(),
+                        itemCommand.quads(),
+                        itemCommand.foilType()
+                    );
+                    matrices.popPose();
+                }
+            }
+        }
+    }
+
+    private static boolean hasTranslucency(final SubmitNodeStorage.ItemSubmit submit) {
+        for (BakedQuad quad : submit.quads()) {
+            if (quad.spriteInfo().itemRenderType().hasBlending()) {
+                return true;
             }
         }
 
-        ms.popPose();
+        return false;
     }
 }
