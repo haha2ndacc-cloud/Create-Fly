@@ -174,13 +174,13 @@ public class TableClothBlockEntity extends SmartBlockEntity implements Transform
         }
 
         if (!itemInHand.isEmpty() && !addOntoList) {
-            player.displayClientMessage(Component.translatable("create.stock_keeper.shopping_list_empty_hand"), true);
+            player.sendOverlayMessage(Component.translatable("create.stock_keeper.shopping_list_empty_hand"));
             AllSoundEvents.DENY.playOnServer(level, worldPosition, 0.5f, 1);
             return InteractionResult.SUCCESS;
         }
 
         if (getPaymentItem().isEmpty()) {
-            player.displayClientMessage(Component.translatable("create.stock_keeper.no_price_set"), true);
+            player.sendOverlayMessage(Component.translatable("create.stock_keeper.no_price_set"));
             AllSoundEvents.DENY.playOnServer(level, worldPosition, 0.5f, 1);
             return InteractionResult.SUCCESS;
         }
@@ -193,13 +193,13 @@ public class TableClothBlockEntity extends SmartBlockEntity implements Transform
         int stockLevel = getStockLevelForTrade(ShoppingListItem.getList(prevListItem));
 
         if (tickerID == null) {
-            player.displayClientMessage(Component.translatable("create.stock_keeper.keeper_missing").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("create.stock_keeper.keeper_missing").withStyle(ChatFormatting.RED));
             AllSoundEvents.DENY.playOnServer(level, worldPosition, 0.5f, 1);
             return InteractionResult.SUCCESS;
         }
 
         if (stockLevel == 0) {
-            player.displayClientMessage(Component.translatable("create.stock_keeper.out_of_stock").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("create.stock_keeper.out_of_stock").withStyle(ChatFormatting.RED));
             AllSoundEvents.DENY.playOnServer(level, worldPosition, 0.5f, 1);
             if (!prevListItem.isEmpty()) {
                 if (player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty())
@@ -226,7 +226,7 @@ public class TableClothBlockEntity extends SmartBlockEntity implements Transform
                 if (worldPosition.equals(entry.getValue()))
                     entry.setFirst(Math.min(stockLevel, entry.getFirst()));
 
-            player.displayClientMessage(Component.translatable("create.stock_keeper.limited_stock").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("create.stock_keeper.limited_stock").withStyle(ChatFormatting.RED));
         } else {
             AllSoundEvents.CONFIRM_2.playOnServer(level, worldPosition, 0.5f, 1.0f);
 
@@ -235,7 +235,7 @@ public class TableClothBlockEntity extends SmartBlockEntity implements Transform
             list = mutable.toImmutable();
 
             if (!addOntoList)
-                player.displayClientMessage(Component.translatable("create.stock_keeper.use_list_to_add_purchases").withColor(0xeeeeee), true);
+                player.sendOverlayMessage(Component.translatable("create.stock_keeper.use_list_to_add_purchases").withColor(0xeeeeee));
             if (!addOntoList)
                 level.playSound(null, worldPosition, SoundEvents.BOOK_PAGE_TURN, SoundSource.BLOCKS, 1, 1.5f);
         }

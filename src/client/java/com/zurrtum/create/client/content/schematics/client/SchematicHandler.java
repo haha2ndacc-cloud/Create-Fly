@@ -157,7 +157,7 @@ public class SchematicHandler {
             }
             fixControllerBlockEntities(w);
         } catch (Exception e) {
-            mc.player.displayClientMessage(CreateLang.translate("schematic.error").component(), false);
+            mc.player.sendSystemMessage(CreateLang.translate("schematic.error").component());
             Create.LOGGER.error("Failed to load Schematic for Previewing", e);
             return;
         }

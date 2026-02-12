@@ -48,7 +48,7 @@ public abstract class ClickToLinkBlockItem extends BlockItem {
         if (player.isShiftKeyDown() && stack.has(AllDataComponents.CLICK_TO_LINK_DATA)) {
             if (level.isClientSide())
                 return InteractionResult.SUCCESS;
-            player.displayClientMessage(Component.translatable("create." + msgKey + ".clear"), true);
+            player.sendOverlayMessage(Component.translatable("create." + msgKey + ".clear"));
             stack.remove(AllDataComponents.CLICK_TO_LINK_DATA);
             stack.remove(DataComponents.BLOCK_ENTITY_DATA);
             return InteractionResult.SUCCESS;
@@ -73,14 +73,14 @@ public abstract class ClickToLinkBlockItem extends BlockItem {
 
                 if (level.isClientSide())
                     AllSoundEvents.DENY.playFrom(player);
-                player.displayClientMessage(Component.translatable("create." + msgKey + ".invalid"), true);
+                player.sendOverlayMessage(Component.translatable("create." + msgKey + ".invalid"));
                 return InteractionResult.FAIL;
             }
 
             if (level.isClientSide())
                 return InteractionResult.SUCCESS;
 
-            player.displayClientMessage(Component.translatable("create." + msgKey + ".set"), true);
+            player.sendOverlayMessage(Component.translatable("create." + msgKey + ".set"));
             stack.set(AllDataComponents.CLICK_TO_LINK_DATA, new ClickToLinkData(pos, placedDim));
             return InteractionResult.SUCCESS;
         }
@@ -92,7 +92,7 @@ public abstract class ClickToLinkBlockItem extends BlockItem {
         BlockPos placedPos = pos.relative(pContext.getClickedFace(), state.canBeReplaced() ? 0 : 1);
 
         if (maxDistance != -1 && (!selectedPos.closerThan(placedPos, maxDistance) || !selectedDim.equals(placedDim))) {
-            player.displayClientMessage(Component.translatable("create." + msgKey + ".too_far").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("create." + msgKey + ".too_far").withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
 
@@ -110,7 +110,7 @@ public abstract class ClickToLinkBlockItem extends BlockItem {
             stack.remove(AllDataComponents.CLICK_TO_LINK_DATA);
             stack.remove(DataComponents.BLOCK_ENTITY_DATA);
         }
-        player.displayClientMessage(Component.translatable("create." + msgKey + ".success").withStyle(ChatFormatting.GREEN), true);
+        player.sendOverlayMessage(Component.translatable("create." + msgKey + ".success").withStyle(ChatFormatting.GREEN));
         return useOn;
     }
 

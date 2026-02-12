@@ -78,7 +78,7 @@ public class LogisticallyLinkedBlockItem extends BlockItem {
             if (world.isClientSide()) {
                 world.playSound(player, player.blockPosition(), SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.75f, 1.0f);
             } else {
-                player.displayClientMessage(Component.translatable("create.logistically_linked.cleared"), true);
+                player.sendOverlayMessage(Component.translatable("create.logistically_linked.cleared"));
                 stack.remove(DataComponents.BLOCK_ENTITY_DATA);
             }
             return InteractionResult.SUCCESS;
@@ -116,9 +116,9 @@ public class LogisticallyLinkedBlockItem extends BlockItem {
         if (level.isClientSide() || useOn == InteractionResult.FAIL)
             return useOn;
 
-        player.displayClientMessage(
+        player.sendOverlayMessage(
             tuned ? Component.translatable("create.logistically_linked.connected") : Component.translatable(
-                "create.logistically_linked.new_network_started"), true
+                "create.logistically_linked.new_network_started")
         );
         return useOn;
     }
@@ -128,7 +128,7 @@ public class LogisticallyLinkedBlockItem extends BlockItem {
         CompoundTag tag = data == null ? new CompoundTag() : data.copyTagWithoutId();
         tag.store("Freq", UUIDUtil.CODEC, frequency);
 
-        player.displayClientMessage(Component.translatable("create.logistically_linked.tuned"), true);
+        player.sendOverlayMessage(Component.translatable("create.logistically_linked.tuned"));
 
         stack.set(
             DataComponents.BLOCK_ENTITY_DATA,

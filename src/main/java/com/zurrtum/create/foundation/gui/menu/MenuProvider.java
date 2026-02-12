@@ -32,7 +32,7 @@ public interface MenuProvider {
         MenuBase<?> menu = provider.createMenu(player.containerCounter, player.getInventory(), player, buf);
         if (menu == null) {
             if (player.isSpectator()) {
-                player.displayClientMessage(Component.translatable("container.spectatorCantOpen").withStyle(ChatFormatting.RED), true);
+                player.sendOverlayMessage(Component.translatable("container.spectatorCantOpen").withStyle(ChatFormatting.RED));
             }
 
             buf.release();

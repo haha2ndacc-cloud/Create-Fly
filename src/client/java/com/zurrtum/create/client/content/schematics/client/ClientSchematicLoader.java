@@ -6,6 +6,9 @@ import com.zurrtum.create.foundation.utility.CreatePaths;
 import com.zurrtum.create.foundation.utility.FilesHelper;
 import com.zurrtum.create.infrastructure.config.AllConfigs;
 import com.zurrtum.create.infrastructure.packet.c2s.SchematicUploadPacket;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,10 +20,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.stream.Stream;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
 
 public class ClientSchematicLoader {
 
@@ -68,7 +67,7 @@ public class ClientSchematicLoader {
             LocalPlayer player = mc.player;
             if (!isGZIPEncoded(path.toFile())) {
                 if (player != null)
-                    player.displayClientMessage(CreateLang.translateDirect("schematics.wrongFormat"), false);
+                    player.sendSystemMessage(CreateLang.translateDirect("schematics.wrongFormat"));
                 return;
             }
 
@@ -88,8 +87,8 @@ public class ClientSchematicLoader {
         if (size > maxSize * 1000) {
             LocalPlayer player = mc.player;
             if (player != null) {
-                player.displayClientMessage(CreateLang.translateDirect("schematics.uploadTooLarge").append(" (" + size / 1000 + " KB)."), false);
-                player.displayClientMessage(CreateLang.translateDirect("schematics.maxAllowedSize").append(" " + maxSize + " KB"), false);
+                player.sendSystemMessage(CreateLang.translateDirect("schematics.uploadTooLarge").append(" (" + size / 1000 + " KB)."));
+                player.sendSystemMessage(CreateLang.translateDirect("schematics.maxAllowedSize").append(" " + maxSize + " KB"));
             }
             return false;
         }

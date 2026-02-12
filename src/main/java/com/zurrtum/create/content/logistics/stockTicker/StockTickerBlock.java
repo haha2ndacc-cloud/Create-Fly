@@ -116,7 +116,7 @@ public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<
                     if (stbe.isKeeperPresent())
                         MenuProvider.openHandledScreen(sp, stbe::createCategoryMenu);
                     else
-                        player.displayClientMessage(Component.translatable("create.stock_ticker.keeper_missing"), true);
+                        player.sendOverlayMessage(Component.translatable("create.stock_ticker.keeper_missing"));
                 }
 
                 return InteractionResult.SUCCESS;

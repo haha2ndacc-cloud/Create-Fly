@@ -44,7 +44,7 @@ public class CartAssemblerBlockItem extends BlockItem {
         if (player == null)
             return false;
         if (!(block instanceof BaseRailBlock abstractRailBlock)) {
-            player.displayClientMessage(Component.translatable("create.block.cart_assembler.invalid"), true);
+            player.sendOverlayMessage(Component.translatable("create.block.cart_assembler.invalid"));
             return false;
         }
 

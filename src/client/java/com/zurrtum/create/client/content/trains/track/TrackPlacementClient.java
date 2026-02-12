@@ -100,11 +100,11 @@ public class TrackPlacementClient {
             BlueprintOverlayRenderer.displayTrackRequirements(info, player.getOffhandItem());
 
         if (info.valid)
-            player.displayClientMessage(CreateLang.translateDirect("track.valid_connection").withStyle(ChatFormatting.GREEN), true);
+            player.sendOverlayMessage(CreateLang.translateDirect("track.valid_connection").withStyle(ChatFormatting.GREEN));
         else if (info.message != null)
-            player.displayClientMessage(
+            player.sendOverlayMessage(
                 CreateLang.translateDirect(info.message)
-                    .withStyle(info.message.equals("track.second_point") ? ChatFormatting.WHITE : ChatFormatting.RED), true
+                    .withStyle(info.message.equals("track.second_point") ? ChatFormatting.WHITE : ChatFormatting.RED)
             );
 
         if (bhr.getDirection() == Direction.UP) {

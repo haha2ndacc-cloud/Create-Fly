@@ -65,7 +65,7 @@ public class ArmInteractionPointHandler {
             Mode mode = selected.getMode();
             Component text = Component.translatable(mode.getTranslationKey(), CreateLang.blockName(state).style(ChatFormatting.WHITE).component())
                 .withColor(mode.getColor());
-            player.displayClientMessage(text, true);
+            player.sendOverlayMessage(text);
         }
 
         return InteractionResult.SUCCESS;

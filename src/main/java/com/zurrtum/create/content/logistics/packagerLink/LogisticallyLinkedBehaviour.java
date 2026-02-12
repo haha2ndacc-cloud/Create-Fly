@@ -215,7 +215,7 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour<SmartBlock
     public boolean mayInteractMessage(Player player) {
         boolean mayInteract = Create.LOGISTICS.mayInteract(freqId, player);
         if (!mayInteract)
-            player.displayClientMessage(Component.translatable("create.logistically_linked.protected").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("create.logistically_linked.protected").withStyle(ChatFormatting.RED));
         return mayInteract;
     }
 

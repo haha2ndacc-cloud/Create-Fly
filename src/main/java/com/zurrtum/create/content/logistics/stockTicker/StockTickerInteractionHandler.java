@@ -59,7 +59,7 @@ public class StockTickerInteractionHandler {
             return false;
 
         if (!stbe.behaviour.mayInteract(player)) {
-            player.displayClientMessage(Component.translatable("create.stock_keeper.locked").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("create.stock_keeper.locked").withStyle(ChatFormatting.RED));
             return true;
         }
 
@@ -83,7 +83,7 @@ public class StockTickerInteractionHandler {
 
         if (!tickerBE.behaviour.freqId.equals(list.shopNetwork())) {
             AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
-            player.displayClientMessage(Component.translatable("create.stock_keeper.wrong_network").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("create.stock_keeper.wrong_network").withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -102,7 +102,7 @@ public class StockTickerInteractionHandler {
                 continue;
 
             AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
-            player.displayClientMessage(Component.translatable("create.stock_keeper.stock_level_too_low").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("create.stock_keeper.stock_level_too_low").withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -117,7 +117,7 @@ public class StockTickerInteractionHandler {
 
         if (occupiedSlots > 0) {
             AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
-            player.displayClientMessage(Component.translatable("create.stock_keeper.cash_register_full").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("create.stock_keeper.cash_register_full").withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -147,7 +147,7 @@ public class StockTickerInteractionHandler {
 
             if (simulate && tally.getTotalCount() != 0) {
                 AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
-                player.displayClientMessage(Component.translatable("create.stock_keeper.too_broke").withStyle(ChatFormatting.RED), true);
+                player.sendOverlayMessage(Component.translatable("create.stock_keeper.too_broke").withStyle(ChatFormatting.RED));
                 return;
             }
 

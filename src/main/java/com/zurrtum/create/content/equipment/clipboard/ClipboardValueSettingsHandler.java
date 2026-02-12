@@ -98,11 +98,11 @@ public class ClipboardValueSettingsHandler {
                 itemStack.set(AllDataComponents.CLIPBOARD_CONTENT, clipboardContent);
             }
 
-            player.displayClientMessage(
+            player.sendOverlayMessage(
                 Component.translatable(
                     "create.clipboard.copied_from_clipboard",
                     world.getBlockState(pos).getBlock().getName().withStyle(ChatFormatting.WHITE)
-                ).withStyle(ChatFormatting.GREEN), true
+                ).withStyle(ChatFormatting.GREEN)
             );
             return InteractionResult.SUCCESS;
         }
@@ -155,11 +155,11 @@ public class ClipboardValueSettingsHandler {
         if (world.isClientSide() || !anySuccess)
             return InteractionResult.SUCCESS;
 
-        player.displayClientMessage(
+        player.sendOverlayMessage(
             Component.translatable(
                 paste ? "create.clipboard.pasted_to" : "create.clipboard.copied_from",
                 world.getBlockState(pos).getBlock().getName().withStyle(ChatFormatting.WHITE)
-            ).withStyle(ChatFormatting.GREEN), true
+            ).withStyle(ChatFormatting.GREEN)
         );
 
         if (!paste) {

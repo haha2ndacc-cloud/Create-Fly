@@ -62,13 +62,13 @@ public class TrackBlockItem extends BlockItem {
         if (!isFoil(stack)) {
             if (state.getBlock() instanceof TrackBlock track && track.getTrackAxes(level, pos, state).size() > 1) {
                 if (!level.isClientSide())
-                    player.displayClientMessage(Component.translatable("create.track.junction_start").withStyle(ChatFormatting.RED), true);
+                    player.sendOverlayMessage(Component.translatable("create.track.junction_start").withStyle(ChatFormatting.RED));
                 return InteractionResult.SUCCESS;
             }
 
             if (level.getBlockEntity(pos) instanceof TrackBlockEntity tbe && tbe.isTilted()) {
                 if (!level.isClientSide())
-                    player.displayClientMessage(Component.translatable("create.track.turn_start").withStyle(ChatFormatting.RED), true);
+                    player.sendOverlayMessage(Component.translatable("create.track.turn_start").withStyle(ChatFormatting.RED));
                 return InteractionResult.SUCCESS;
             }
 
@@ -99,7 +99,7 @@ public class TrackBlockItem extends BlockItem {
         PlacementInfo info = TrackPlacement.tryConnect(level, player, pos, state, stack, hasGirder, extend);
 
         if (info.message != null && !level.isClientSide())
-            player.displayClientMessage(Component.translatable("create." + info.message), true);
+            player.sendOverlayMessage(Component.translatable("create." + info.message));
         if (!info.valid) {
             AllSoundEvents.DENY.playFrom(player, 1, 1);
             return InteractionResult.FAIL;
@@ -133,7 +133,7 @@ public class TrackBlockItem extends BlockItem {
         if (level.isClientSide()) {
             level.playSound(player, player.blockPosition(), SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.75f, 1.0f);
         } else {
-            player.displayClientMessage(Component.translatable("create.track.selection_cleared"), true);
+            player.sendOverlayMessage(Component.translatable("create.track.selection_cleared"));
             stack.remove(AllDataComponents.TRACK_CONNECTING_FROM);
         }
         return InteractionResult.SUCCESS.heldItemTransformedTo(stack);

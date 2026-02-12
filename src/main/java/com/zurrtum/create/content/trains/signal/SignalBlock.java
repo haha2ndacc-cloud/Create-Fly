@@ -116,10 +116,10 @@ public class SignalBlock extends Block implements IBE<SignalBlockEntity>, IWrenc
                 if (signal != null) {
                     signal.cycleSignalType(pos);
                     if (player != null)
-                        player.displayClientMessage(
-                            Component.translatable("create.track_signal.mode_change." + signal.getTypeFor(pos).getSerializedName()), true);
+                        player.sendOverlayMessage(
+                            Component.translatable("create.track_signal.mode_change." + signal.getTypeFor(pos).getSerializedName()));
                 } else if (player != null)
-                    player.displayClientMessage(Component.translatable("create.track_signal.cannot_change_mode"), true);
+                    player.sendOverlayMessage(Component.translatable("create.track_signal.cannot_change_mode"));
             }
         );
         return InteractionResult.SUCCESS;

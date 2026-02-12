@@ -248,7 +248,7 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
         }
 
         // Tell player
-        player.displayClientMessage(Component.translatable("create.factory_panel.relocated").withStyle(ChatFormatting.GREEN), true);
+        player.sendOverlayMessage(Component.translatable("create.factory_panel.relocated").withStyle(ChatFormatting.GREEN));
         player.level().playSound(null, newPos.pos(), SoundEvents.COPPER_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
     }
 
@@ -574,7 +574,7 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
     public void onShortInteract(Player player, InteractionHand hand, Direction side, BlockHitResult hitResult) {
         // Network is protected
         if (!Create.LOGISTICS.mayInteract(network, player)) {
-            player.displayClientMessage(Component.translatable("create.logistically_linked.protected").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("create.logistically_linked.protected").withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -613,7 +613,7 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
 
             char[] boxes = "□□□□".toCharArray();
             boxes[sharedMode] = '■';
-            player.displayClientMessage(Component.translatable("create.factory_panel.cycled_arrow_path", new String(boxes)), true);
+            player.sendOverlayMessage(Component.translatable("create.factory_panel.cycled_arrow_path", new String(boxes)));
             if (notifySelf)
                 blockEntity.notifyUpdate();
 

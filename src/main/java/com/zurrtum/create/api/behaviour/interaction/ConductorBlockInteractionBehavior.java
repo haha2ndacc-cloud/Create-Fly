@@ -12,9 +12,6 @@ import com.zurrtum.create.content.trains.entity.CarriageContraptionEntity;
 import com.zurrtum.create.content.trains.entity.Train;
 import com.zurrtum.create.content.trains.schedule.Schedule;
 import com.zurrtum.create.content.trains.schedule.ScheduleItem;
-
-import java.util.function.Consumer;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,6 +24,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
+
+import java.util.function.Consumer;
 
 /**
  * Partial interaction behavior implementation that allows blocks to act as conductors on trains, like Blaze Burners.
@@ -81,13 +80,13 @@ public abstract class ConductorBlockInteractionBehavior extends MovingInteractio
                 if (train.runtime.paused && !train.runtime.completed) {
                     train.runtime.paused = false;
                     AllSoundEvents.CONFIRM.playOnServer(player.level(), player.blockPosition(), 1, 1);
-                    player.displayClientMessage(Component.translatable("create.schedule.continued"), true);
+                    player.sendOverlayMessage(Component.translatable("create.schedule.continued"));
                     return true;
                 }
 
                 if (!itemInHand.isEmpty()) {
                     AllSoundEvents.DENY.playOnServer(player.level(), player.blockPosition(), 1, 1);
-                    player.displayClientMessage(Component.translatable("create.schedule.remove_with_empty_hand"), true);
+                    player.sendOverlayMessage(Component.translatable("create.schedule.remove_with_empty_hand"));
                     return true;
                 }
 
@@ -99,9 +98,8 @@ public abstract class ConductorBlockInteractionBehavior extends MovingInteractio
                     .2f,
                     1f + player.level().getRandom().nextFloat()
                 );
-                player.displayClientMessage(
-                    Component.translatable(train.runtime.isAutoSchedule ? "create.schedule.auto_removed_from_train" : "create.schedule.removed_from_train"),
-                    true
+                player.sendOverlayMessage(
+                    Component.translatable(train.runtime.isAutoSchedule ? "create.schedule.auto_removed_from_train" : "create.schedule.removed_from_train")
                 );
                 player.setItemInHand(activeHand, train.runtime.returnSchedule(player.registryAccess()));
                 this.onScheduleUpdate(false, info.state(), newBlockState -> setBlockState(localPos, contraptionEntity, newBlockState));
@@ -117,20 +115,20 @@ public abstract class ConductorBlockInteractionBehavior extends MovingInteractio
 
             if (schedule.entries.isEmpty()) {
                 AllSoundEvents.DENY.playOnServer(player.level(), player.blockPosition(), 1, 1);
-                player.displayClientMessage(Component.translatable("create.schedule.no_stops"), true);
+                player.sendOverlayMessage(Component.translatable("create.schedule.no_stops"));
                 return true;
             }
             this.onScheduleUpdate(true, info.state(), newBlockState -> setBlockState(localPos, contraptionEntity, newBlockState));
             train.runtime.setSchedule(schedule, false);
             AllAdvancements.CONDUCTOR.trigger((ServerPlayer) player);
             AllSoundEvents.CONFIRM.playOnServer(player.level(), player.blockPosition(), 1, 1);
-            player.displayClientMessage(Component.translatable("create.schedule.applied_to_train").withStyle(ChatFormatting.GREEN), true);
+            player.sendOverlayMessage(Component.translatable("create.schedule.applied_to_train").withStyle(ChatFormatting.GREEN));
             itemInHand.shrink(1);
             player.setItemInHand(activeHand, itemInHand.isEmpty() ? ItemStack.EMPTY : itemInHand);
             return true;
         }
 
-        player.displayClientMessage(Component.translatable("create.schedule.non_controlling_seat"), true);
+        player.sendOverlayMessage(Component.translatable("create.schedule.non_controlling_seat"));
         AllSoundEvents.DENY.playOnServer(player.level(), player.blockPosition(), 1, 1);
         return true;
     }

@@ -282,7 +282,7 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
                     CompoundTag oldData = oldBE.getBogeyData();
                     BlockState newBlock = bogey.getNextSize(oldBE);
                     if (newBlock.getBlock() == bogey)
-                        player.displayClientMessage(Component.translatable("create.bogey.style.no_other_sizes").withStyle(ChatFormatting.RED), true);
+                        player.sendOverlayMessage(Component.translatable("create.bogey.style.no_other_sizes").withStyle(ChatFormatting.RED));
                     level.setBlock(bogeyPos, newBlock, Block.UPDATE_ALL);
                     BlockEntity newEntity = level.getBlockEntity(bogeyPos);
                     if (!(newEntity instanceof AbstractBogeyBlockEntity newBE))
@@ -298,7 +298,7 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
 
         ItemStack handItem = player.getItemInHand(hand);
         if (!player.isCreative() && !handItem.is(AllItems.RAILWAY_CASING)) {
-            player.displayClientMessage(Component.translatable("create.train_assembly.requires_casing"), true);
+            player.sendOverlayMessage(Component.translatable("create.train_assembly.requires_casing"));
             return false;
         }
 
@@ -321,7 +321,7 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
         }
         bogeyAnchor = ProperWaterloggedBlock.withWater(level, bogeyAnchor, pos);
         level.setBlock(targetPos, bogeyAnchor, Block.UPDATE_ALL);
-        player.displayClientMessage(Component.translatable("create.train_assembly.bogey_created"), true);
+        player.sendOverlayMessage(Component.translatable("create.train_assembly.bogey_created"));
         SoundType soundtype = bogeyAnchor.getSoundType();
         level.playSound(null, pos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 

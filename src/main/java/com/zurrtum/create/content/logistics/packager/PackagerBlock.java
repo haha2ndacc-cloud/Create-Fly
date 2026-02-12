@@ -89,7 +89,7 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
         if (player != null && !(FakePlayerHandler.has(player))) {
             if (context.getLevel().getBlockState(context.getClickedPos().relative(preferredFacing.getOpposite()))
                 .is(AllBlocks.PORTABLE_STORAGE_INTERFACE)) {
-                player.displayClientMessage(Component.translatable("create.packager.no_portable_storage"), true);
+                player.sendOverlayMessage(Component.translatable("create.packager.no_portable_storage"));
                 return null;
             }
         }

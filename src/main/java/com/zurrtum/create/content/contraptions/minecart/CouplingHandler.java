@@ -171,7 +171,7 @@ public class CouplingHandler {
     public static void status(@Nullable Player player, String key) {
         if (player == null)
             return;
-        player.displayClientMessage(Component.translatable("create.minecart_coupling." + key), true);
+        player.sendOverlayMessage(Component.translatable("create.minecart_coupling." + key));
     }
 
 }

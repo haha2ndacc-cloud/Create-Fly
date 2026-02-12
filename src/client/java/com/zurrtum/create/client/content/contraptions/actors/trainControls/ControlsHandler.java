@@ -38,7 +38,7 @@ public class ControlsHandler {
         entityRef = new WeakReference<>(entity);
         controlsPos = controllerLocalPos;
 
-        player.displayClientMessage(CreateLang.translateDirect("contraption.controls.start_controlling", entity.getContraptionName()), true);
+        player.sendOverlayMessage(CreateLang.translateDirect("contraption.controls.start_controlling", entity.getContraptionName()));
     }
 
     public static void stopControlling(LocalPlayer player) {
@@ -53,7 +53,7 @@ public class ControlsHandler {
         controlsPos = null;
         currentlyPressed.clear();
 
-        player.displayClientMessage(CreateLang.translateDirect("contraption.controls.stop_controlling"), true);
+        player.sendOverlayMessage(CreateLang.translateDirect("contraption.controls.stop_controlling"));
     }
 
     public static void tick(Minecraft mc) {

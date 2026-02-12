@@ -16,7 +16,8 @@ import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 public record AutoRequestData(
-    PackageOrderWithCrafts encodedRequest, String encodedTargetAddress, BlockPos targetOffset, String targetDim, boolean isValid
+    PackageOrderWithCrafts encodedRequest, String encodedTargetAddress, BlockPos targetOffset, String targetDim,
+    boolean isValid
 ) {
 
     public static final Codec<AutoRequestData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -67,7 +68,7 @@ public record AutoRequestData(
             MutableComponent message = mutable.isValid ? Component.translatable("create.redstone_requester.keeper_connected")
                 .withStyle(ChatFormatting.WHITE) : Component.translatable("create.redstone_requester.keeper_too_far_away")
                 .withStyle(ChatFormatting.RED);
-            player.displayClientMessage(message, true);
+            player.sendOverlayMessage(message);
         }
 
         return mutable.toImmutable();

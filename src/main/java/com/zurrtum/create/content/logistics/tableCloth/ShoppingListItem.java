@@ -91,7 +91,7 @@ public class ShoppingListItem extends Item {
         if (pUsedHand == InteractionHand.OFF_HAND || pPlayer == null || !pPlayer.isShiftKeyDown())
             return InteractionResult.PASS;
 
-        pPlayer.displayClientMessage(Component.translatable("create.table_cloth.shopping_list_discarded"), true);
+        pPlayer.sendOverlayMessage(Component.translatable("create.table_cloth.shopping_list_discarded"));
         pPlayer.makeSound(SoundEvents.BOOK_PAGE_TURN);
         return InteractionResult.SUCCESS.heldItemTransformedTo(ItemStack.EMPTY);
     }
@@ -104,7 +104,7 @@ public class ShoppingListItem extends Item {
             return InteractionResult.PASS;
         pPlayer.setItemInHand(pUsedHand, ItemStack.EMPTY);
 
-        pPlayer.displayClientMessage(Component.translatable("create.table_cloth.shopping_list_discarded"), true);
+        pPlayer.sendOverlayMessage(Component.translatable("create.table_cloth.shopping_list_discarded"));
         pPlayer.makeSound(SoundEvents.BOOK_PAGE_TURN);
         return InteractionResult.SUCCESS;
     }

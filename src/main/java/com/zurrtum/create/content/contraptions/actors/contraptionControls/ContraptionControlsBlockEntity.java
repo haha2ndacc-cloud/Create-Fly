@@ -2,10 +2,10 @@ package com.zurrtum.create.content.contraptions.actors.contraptionControls;
 
 import com.zurrtum.create.AllBlockEntityTypes;
 import com.zurrtum.create.AllItemTags;
+import com.zurrtum.create.api.behaviour.BlockEntityBehaviour;
 import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.catnip.animation.LerpedFloat.Chaser;
 import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
-import com.zurrtum.create.api.behaviour.BlockEntityBehaviour;
 import com.zurrtum.create.foundation.blockEntity.behaviour.filtering.ServerFilteringBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -101,16 +101,16 @@ public class ContraptionControlsBlockEntity extends SmartBlockEntity implements 
             .withColor(enabled ? 0xA3DF55 : 0xEE9246);
 
         if (filter.isEmpty()) {
-            player.displayClientMessage(Component.translatable("create.contraption.controls.all_actor_toggle", state), true);
+            player.sendOverlayMessage(Component.translatable("create.contraption.controls.all_actor_toggle", state));
             return;
         }
 
-        player.displayClientMessage(
+        player.sendOverlayMessage(
             Component.translatable(
                 "create.contraption.controls.specific_actor_toggle",
                 filter.getHoverName().getString(),
                 state
-            ), true
+            )
         );
     }
 }

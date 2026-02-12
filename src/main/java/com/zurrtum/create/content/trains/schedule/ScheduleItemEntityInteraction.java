@@ -69,7 +69,7 @@ public class ScheduleItemEntityInteraction {
             if (onServer) {
                 train.runtime.paused = false;
                 AllSoundEvents.CONFIRM.playOnServer(world, player.blockPosition(), 1, 1);
-                player.displayClientMessage(Component.translatable("create.schedule.continued"), true);
+                player.sendOverlayMessage(Component.translatable("create.schedule.continued"));
             }
 
             player.getCooldowns().addCooldown(schedule, 5);
@@ -79,16 +79,15 @@ public class ScheduleItemEntityInteraction {
         if (!itemStack.isEmpty()) {
             if (onServer) {
                 AllSoundEvents.DENY.playOnServer(world, player.blockPosition(), 1, 1);
-                player.displayClientMessage(Component.translatable("create.schedule.remove_with_empty_hand"), true);
+                player.sendOverlayMessage(Component.translatable("create.schedule.remove_with_empty_hand"));
             }
             return InteractionResult.SUCCESS;
         }
 
         if (onServer) {
             world.playSound(null, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, .2f, 1f + world.getRandom().nextFloat());
-            player.displayClientMessage(
-                Component.translatable(train.runtime.isAutoSchedule ? "create.schedule.auto_removed_from_train" : "create.schedule.removed_from_train"),
-                true
+            player.sendOverlayMessage(
+                Component.translatable(train.runtime.isAutoSchedule ? "create.schedule.auto_removed_from_train" : "create.schedule.removed_from_train")
             );
 
             player.getInventory().placeItemBackInInventory(train.runtime.returnSchedule(player.registryAccess()));

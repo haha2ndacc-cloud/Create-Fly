@@ -396,7 +396,7 @@ public class AllHandle {
                     if (!(stack.getItem() instanceof TrackTargetingBlockItem))
                         return true;
                     if (player.isShiftKeyDown() && stack.has(AllDataComponents.TRACK_TARGETING_ITEM_SELECTED_POS)) {
-                        player.displayClientMessage(Component.translatable("create.track_target.clear"), true);
+                        player.sendOverlayMessage(Component.translatable("create.track_target.clear"));
                         stack.remove(AllDataComponents.TRACK_TARGETING_ITEM_SELECTED_POS);
                         stack.remove(AllDataComponents.TRACK_TARGETING_ITEM_SELECTED_DIRECTION);
                         stack.remove(AllDataComponents.TRACK_TARGETING_ITEM_BEZIER);
@@ -417,7 +417,7 @@ public class AllHandle {
                     );
 
                     if (result.get().feedback != null) {
-                        player.displayClientMessage(Component.translatable("create." + result.get().feedback).withStyle(ChatFormatting.RED), true);
+                        player.sendOverlayMessage(Component.translatable("create." + result.get().feedback).withStyle(ChatFormatting.RED));
                         AllSoundEvents.DENY.play(world, null, pos, .5f, 1);
                         return true;
                     }
@@ -426,7 +426,7 @@ public class AllHandle {
                     stack.set(AllDataComponents.TRACK_TARGETING_ITEM_SELECTED_DIRECTION, packet.front());
                     stack.set(AllDataComponents.TRACK_TARGETING_ITEM_BEZIER, bezierTrackPointLocation);
 
-                    player.displayClientMessage(Component.translatable("create.track_target.set"), true);
+                    player.sendOverlayMessage(Component.translatable("create.track_target.set"));
                     AllSoundEvents.CONTROLLER_CLICK.play(world, null, pos, 1, 1);
                     return true;
                 }
@@ -1378,7 +1378,7 @@ public class AllHandle {
         }
 
         if (TrainRelocator.relocate(train, sender.level(), packet.pos(), packet.hoveredBezier(), packet.direction(), packet.lookAngle(), null)) {
-            sender.displayClientMessage(Component.translatable("create.train.relocate.success").withStyle(ChatFormatting.GREEN), true);
+            sender.sendOverlayMessage(Component.translatable("create.train.relocate.success").withStyle(ChatFormatting.GREEN));
             train.carriages.forEach(c -> c.forEachPresentEntity(e -> {
                 e.nonDamageTicks = 10;
                 listener.player.level().getChunkSource().sendToTrackingPlayers(e, new ContraptionRelocationPacket(e.getId()));

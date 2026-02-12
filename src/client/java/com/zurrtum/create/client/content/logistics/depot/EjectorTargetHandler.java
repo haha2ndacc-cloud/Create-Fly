@@ -48,7 +48,7 @@ public class EjectorTargetHandler {
             return null;
 
         String key = "weighted_ejector.target_set";
-        player.displayClientMessage(CreateLang.translateDirect(key).withStyle(ChatFormatting.GOLD), true);
+        player.sendOverlayMessage(CreateLang.translateDirect(key).withStyle(ChatFormatting.GOLD));
         currentSelection = pos;
         launcher = null;
         return InteractionResult.SUCCESS;
@@ -77,7 +77,7 @@ public class EjectorTargetHandler {
 
         Direction validTargetDirection = getValidTargetDirection(pos);
         if (validTargetDirection == null) {
-            player.displayClientMessage(CreateLang.translateDirect(key).withStyle(colour), true);
+            player.sendOverlayMessage(CreateLang.translateDirect(key).withStyle(colour));
             currentItem = null;
             currentSelection = null;
             return;
@@ -86,9 +86,9 @@ public class EjectorTargetHandler {
         key = "weighted_ejector.targeting";
         colour = ChatFormatting.GREEN;
 
-        player.displayClientMessage(
+        player.sendOverlayMessage(
             CreateLang.translateDirect(key, currentSelection.getX(), currentSelection.getY(), currentSelection.getZ())
-                .withStyle(colour), true
+                .withStyle(colour)
         );
 
         BlockPos diff = pos.subtract(currentSelection);

@@ -251,15 +251,15 @@ public class TrackBlock extends Block implements IBE<TrackBlockEntity>, IWrencha
         Player player = level.getNearestPlayer(pos.getX(), pos.getY(), pos.getZ(), 10, Predicates.alwaysTrue());
         if (player == null)
             return;
-        player.displayClientMessage(
-            Component.literal("<!> ").append(Component.translatable("create.portal_track.failed")).withStyle(ChatFormatting.GOLD), false);
+        player.sendSystemMessage(
+            Component.literal("<!> ").append(Component.translatable("create.portal_track.failed")).withStyle(ChatFormatting.GOLD));
         MutableComponent component = failPos != null ? Component.translatable(
             "create.portal_track." + fail,
             failPos.getX(),
             failPos.getY(),
             failPos.getZ()
         ) : Component.translatable("create.portal_track." + fail);
-        player.displayClientMessage(Component.literal(" - ").withStyle(ChatFormatting.GRAY).append(component.withColor(0xFFD3B4)), false);
+        player.sendSystemMessage(Component.literal(" - ").withStyle(ChatFormatting.GRAY).append(component.withColor(0xFFD3B4)));
     }
 
     @Override

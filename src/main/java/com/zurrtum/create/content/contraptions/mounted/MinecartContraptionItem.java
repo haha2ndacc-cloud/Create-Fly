@@ -234,8 +234,8 @@ public class MinecartContraptionItem extends Item {
         Contraption contraption = oce.getContraption();
 
         if (ContraptionMovementSetting.isNoPickup(contraption.getBlocks().values())) {
-            player.displayClientMessage(
-                Component.translatable("create.contraption.minecart_contraption_illegal_pickup").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(
+                Component.translatable("create.contraption.minecart_contraption_illegal_pickup").withStyle(ChatFormatting.RED));
             return null;
         }
 
@@ -257,9 +257,8 @@ public class MinecartContraptionItem extends Item {
             Optional<Tag> result = ItemStack.CODEC.encodeStart(world.registryAccess().createSerializationContext(NbtOps.INSTANCE), generatedStack)
                 .result();
             if (result.isPresent() && ContraptionPickupLimiting.isTooLargeForPickup(result.get())) {
-                player.displayClientMessage(
-                    Component.translatable("create.contraption.minecart_contraption_too_big").withStyle(ChatFormatting.RED),
-                    true
+                player.sendOverlayMessage(
+                    Component.translatable("create.contraption.minecart_contraption_too_big").withStyle(ChatFormatting.RED)
                 );
                 return null;
             }

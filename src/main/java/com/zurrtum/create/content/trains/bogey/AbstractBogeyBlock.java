@@ -215,15 +215,15 @@ public abstract class AbstractBogeyBlock<T extends AbstractBogeyBlockEntity> ext
                         return InteractionResult.FAIL;
                     bogeyBlockEntity.setBogeyData(oldData);
                 }
-                player.displayClientMessage(Component.translatable("create.bogey.style.updated_style").append(": ").append(style.displayName), true);
+                player.sendOverlayMessage(Component.translatable("create.bogey.style.updated_style").append(": ").append(style.displayName));
             } else {
                 CompoundTag oldData = sbbe.getBogeyData();
                 level.setBlockAndUpdate(pos, getStateOfSize(sbbe, size));
                 if (!(level.getBlockEntity(pos) instanceof AbstractBogeyBlockEntity bogeyBlockEntity))
                     return InteractionResult.FAIL;
                 bogeyBlockEntity.setBogeyData(oldData);
-                player.displayClientMessage(
-                    Component.translatable("create.bogey.style.updated_style_and_size").append(": ").append(style.displayName), true);
+                player.sendOverlayMessage(
+                    Component.translatable("create.bogey.style.updated_style_and_size").append(": ").append(style.displayName));
             }
 
             return InteractionResult.CONSUME;

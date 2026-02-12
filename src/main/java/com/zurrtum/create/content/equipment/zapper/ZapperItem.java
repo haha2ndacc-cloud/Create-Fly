@@ -103,7 +103,7 @@ public abstract class ZapperItem extends Item implements SwingControlItem {
         Component msg = validateUsage(item);
         if (msg != null) {
             AllSoundEvents.DENY.play(world, player, player.blockPosition());
-            player.displayClientMessage(msg.plainCopy().withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(msg.plainCopy().withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
 

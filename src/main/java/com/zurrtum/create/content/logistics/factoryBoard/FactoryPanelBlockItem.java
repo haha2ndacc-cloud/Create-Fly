@@ -38,7 +38,7 @@ public class FactoryPanelBlockItem extends LogisticallyLinkedBlockItem {
 
         if (!isTuned(stack)) {
             AllSoundEvents.DENY.playOnServer(pContext.getLevel(), pContext.getClickedPos());
-            pContext.getPlayer().displayClientMessage(Component.translatable("create.factory_panel.tune_before_placing"), true);
+            pContext.getPlayer().sendOverlayMessage(Component.translatable("create.factory_panel.tune_before_placing"));
             return InteractionResult.FAIL;
         }
 

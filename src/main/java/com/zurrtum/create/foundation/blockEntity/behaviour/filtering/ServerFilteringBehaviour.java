@@ -269,11 +269,11 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
                 return true;
             }
 
-            player.displayClientMessage(
+            player.sendOverlayMessage(
                 Component.translatable(
                     "create.logistics.filter.requires_item_in_inventory",
                     copied.getHoverName().copy().withStyle(ChatFormatting.WHITE)
-                ).withStyle(ChatFormatting.RED), true
+                ).withStyle(ChatFormatting.RED)
             );
             AllSoundEvents.DENY.playOnServer(player.level(), player.blockPosition(), 1, 1);
             return false;
@@ -308,7 +308,7 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
             toApply.setCount(1);
 
         if (!setFilter(side, toApply)) {
-            player.displayClientMessage(Component.translatable("create.logistics.filter.invalid_item"), true);
+            player.sendOverlayMessage(Component.translatable("create.logistics.filter.invalid_item"));
             AllSoundEvents.DENY.playOnServer(player.level(), player.blockPosition(), 1, 1);
             return;
         }

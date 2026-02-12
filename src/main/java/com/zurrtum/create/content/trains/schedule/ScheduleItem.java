@@ -92,27 +92,27 @@ public class ScheduleItem extends Item implements MenuProvider, SupportsItemCopy
             BlockPos seatPos = contraption.getSeats().get(seatIndex);
             Couple<Boolean> directions = cc.conductorSeats.get(seatPos);
             if (directions == null) {
-                pPlayer.displayClientMessage(Component.translatable("create.schedule.non_controlling_seat"), true);
+                pPlayer.sendOverlayMessage(Component.translatable("create.schedule.non_controlling_seat"));
                 AllSoundEvents.DENY.playOnServer(pPlayer.level(), pPlayer.blockPosition(), 1, 1);
                 return InteractionResult.SUCCESS;
             }
 
             if (train.runtime.getSchedule() != null) {
                 AllSoundEvents.DENY.playOnServer(pPlayer.level(), pPlayer.blockPosition(), 1, 1);
-                pPlayer.displayClientMessage(Component.translatable("create.schedule.remove_with_empty_hand"), true);
+                pPlayer.sendOverlayMessage(Component.translatable("create.schedule.remove_with_empty_hand"));
                 return InteractionResult.SUCCESS;
             }
 
             if (schedule.entries.isEmpty()) {
                 AllSoundEvents.DENY.playOnServer(pPlayer.level(), pPlayer.blockPosition(), 1, 1);
-                pPlayer.displayClientMessage(Component.translatable("create.schedule.no_stops"), true);
+                pPlayer.sendOverlayMessage(Component.translatable("create.schedule.no_stops"));
                 return InteractionResult.SUCCESS;
             }
 
             train.runtime.setSchedule(schedule, false);
             AllAdvancements.CONDUCTOR.trigger((ServerPlayer) pPlayer);
             AllSoundEvents.CONFIRM.playOnServer(pPlayer.level(), pPlayer.blockPosition(), 1, 1);
-            pPlayer.displayClientMessage(Component.translatable("create.schedule.applied_to_train").withStyle(ChatFormatting.GREEN), true);
+            pPlayer.sendOverlayMessage(Component.translatable("create.schedule.applied_to_train").withStyle(ChatFormatting.GREEN));
             pStack.shrink(1);
             pPlayer.setItemInHand(pUsedHand, pStack.isEmpty() ? ItemStack.EMPTY : pStack);
         }

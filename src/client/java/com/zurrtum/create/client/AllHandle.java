@@ -614,9 +614,9 @@ public class AllHandle extends AllClientHandle {
 
         String text = output.toString();
         mc.keyboardHandler.setClipboard(text);
-        mc.player.displayClientMessage(
+        mc.player.sendSystemMessage(
             Component.translatable("create.command.debuginfo.saved_to_clipboard")
-                .withColor(DyeHelper.getDyeColors(DyeColor.LIME).getFirst()), false
+                .withColor(DyeHelper.getDyeColors(DyeColor.LIME).getFirst())
         );
     }
 
@@ -1190,7 +1190,7 @@ public class AllHandle extends AllClientHandle {
         if (!(player instanceof LocalPlayer))
             return;
         if (be.targetOffset.equals(BlockPos.ZERO)) {
-            player.displayClientMessage(CreateLang.translateDirect("display_link.invalid"), true);
+            player.sendOverlayMessage(CreateLang.translateDirect("display_link.invalid"));
             return;
         }
         ScreenOpener.open(new DisplayLinkScreen(be));

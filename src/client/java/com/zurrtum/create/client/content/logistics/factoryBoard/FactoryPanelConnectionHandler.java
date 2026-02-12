@@ -44,7 +44,7 @@ public class FactoryPanelConnectionHandler {
 
         ServerFactoryPanelBehaviour at = ServerFactoryPanelBehaviour.at(level, connectingFrom);
         if (panel.getPanelPosition().equals(connectingFrom) || at == null) {
-            player.displayClientMessage(Component.empty(), true);
+            player.sendOverlayMessage(Component.empty());
             connectingFrom = null;
             connectingFromBox = null;
             return true;
@@ -52,7 +52,7 @@ public class FactoryPanelConnectionHandler {
 
         String checkForIssues = checkForIssues(at, panel);
         if (checkForIssues != null) {
-            player.displayClientMessage(CreateLang.translate(checkForIssues).style(ChatFormatting.RED).component(), true);
+            player.sendOverlayMessage(CreateLang.translate(checkForIssues).style(ChatFormatting.RED).component());
             connectingFrom = null;
             connectingFromBox = null;
             AllSoundEvents.DENY.playAt(player.level(), player.blockPosition(), 1, 1, false);
@@ -64,9 +64,9 @@ public class FactoryPanelConnectionHandler {
 
         ((LocalPlayer) player).connection.send(new FactoryPanelConnectionPacket(panel.getPanelPosition(), connectingFrom, false));
 
-        player.displayClientMessage(
+        player.sendOverlayMessage(
             CreateLang.translate("factory_panel.panels_connected", filterFrom.getHoverName().getString(), filterTo.getHoverName().getString())
-                .style(ChatFormatting.GREEN).component(), true
+                .style(ChatFormatting.GREEN).component()
         );
 
         connectingFrom = null;
@@ -141,15 +141,15 @@ public class FactoryPanelConnectionHandler {
         if (!connectingFrom.pos().closerThan(mc.player.blockPosition(), 16) || at == null) {
             connectingFrom = null;
             connectingFromBox = null;
-            mc.player.displayClientMessage(Component.empty(), true);
+            mc.player.sendOverlayMessage(Component.empty());
             return;
         }
 
         Outliner.getInstance().showAABB(connectingFrom, connectingFromBox).colored(AnimationTickHolder.getTicks() % 16 > 8 ? 0x38b764 : 0xa7f070)
             .lineWidth(1 / 16f);
 
-        mc.player.displayClientMessage(
-            CreateLang.translate(relocating ? "factory_panel.click_to_relocate" : "factory_panel.click_second_panel").component(), true);
+        mc.player.sendOverlayMessage(
+            CreateLang.translate(relocating ? "factory_panel.click_to_relocate" : "factory_panel.click_second_panel").component());
 
         if (!relocating)
             return;
@@ -194,7 +194,7 @@ public class FactoryPanelConnectionHandler {
             connectingFromBox = null;
 
             if (validRelocationTarget == null)
-                player.displayClientMessage(CreateLang.translate("factory_panel.relocation_aborted").component(), true);
+                player.sendOverlayMessage(CreateLang.translate("factory_panel.relocation_aborted").component());
 
             relocating = false;
             validRelocationTarget = null;
@@ -211,7 +211,7 @@ public class FactoryPanelConnectionHandler {
                 ServerFactoryPanelBehaviour at = ServerFactoryPanelBehaviour.at(world, connectingFrom);
                 String checkForIssues = checkForIssues(at, behaviour);
                 if (checkForIssues != null) {
-                    player.displayClientMessage(CreateLang.translate(checkForIssues).style(ChatFormatting.RED).component(), true);
+                    player.sendOverlayMessage(CreateLang.translate(checkForIssues).style(ChatFormatting.RED).component());
                     connectingFrom = null;
                     connectingFromBox = null;
                     AllSoundEvents.DENY.playAt(world, player.blockPosition(), 1, 1, false);
@@ -233,9 +233,9 @@ public class FactoryPanelConnectionHandler {
 
                 player.connection.send(new FactoryPanelConnectionPacket(bestPosition, connectingFrom, false));
 
-                player.displayClientMessage(
+                player.sendOverlayMessage(
                     CreateLang.translate("factory_panel.link_connected", blockEntity.getBlockState().getBlock().getName()).style(ChatFormatting.GREEN)
-                        .component(), true
+                        .component()
                 );
 
                 connectingFrom = null;
@@ -252,7 +252,7 @@ public class FactoryPanelConnectionHandler {
             return false;
         connectingFrom = null;
         connectingFromBox = null;
-        player.displayClientMessage(CreateLang.translate("factory_panel.connection_aborted").component(), true);
+        player.sendOverlayMessage(CreateLang.translate("factory_panel.connection_aborted").component());
         return true;
     }
 
