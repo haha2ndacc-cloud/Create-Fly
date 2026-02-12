@@ -5,9 +5,9 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.zurrtum.create.AllBlocks;
+import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
 import com.zurrtum.create.client.catnip.gui.render.GpuTexture;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
@@ -16,9 +16,8 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.gui.render.state.BlitRenderState;
 import net.minecraft.client.gui.render.state.GuiRenderState;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.core.BlockPos;
@@ -34,10 +33,12 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
     private int allocate = MAX;
     private static final Deque<GpuTexture> TEXTURES = new ArrayDeque<>(MAX);
     private final PoseStack matrices = new PoseStack();
+    private final BlockBakedQuadOutput output;
     private int windowScaleFactor;
 
-    public DrainRenderer(MultiBufferSource.BufferSource vertexConsumers) {
+    public DrainRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
+        output = new BlockBakedQuadOutput(vertexConsumers);
     }
 
     @Override
@@ -74,12 +75,11 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
 
         BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
-        VertexConsumer buffer = bufferSource.getBuffer(Sheets.cutoutBlockSheet());
 
         BlockState blockState = AllBlocks.ITEM_DRAIN.defaultBlockState();
         world.blockState(blockState);
         List<BlockModelPart> parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, buffer, false, parts);
+        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
 
         float from = 2 / 16f;
         float to = 1f - from;

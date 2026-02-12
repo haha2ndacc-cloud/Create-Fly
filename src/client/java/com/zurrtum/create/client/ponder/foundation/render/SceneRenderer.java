@@ -24,6 +24,7 @@ import net.minecraft.client.gui.render.state.BlitRenderState;
 import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
@@ -37,7 +38,7 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
     private final PoseStack matrices = new PoseStack();
     private int windowScaleFactor;
 
-    public SceneRenderer(MultiBufferSource.BufferSource vertexConsumers) {
+    public SceneRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
     }
 

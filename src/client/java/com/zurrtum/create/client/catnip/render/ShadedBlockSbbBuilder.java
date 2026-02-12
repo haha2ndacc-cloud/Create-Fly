@@ -3,15 +3,18 @@ package com.zurrtum.create.client.catnip.render;
 import com.mojang.blaze3d.vertex.*;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.client.renderer.block.BakedQuadOutput;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 
 @Deprecated(forRemoval = true)
-public class ShadedBlockSbbBuilder implements VertexConsumer {
+public class ShadedBlockSbbBuilder implements VertexConsumer, BakedQuadOutput {
     protected static final ByteBufferBuilder BYTE_BUFFER_BUILDER = new ByteBufferBuilder(512);
     protected BufferBuilder bufferBuilder;
     protected final IntList shadeSwapVertices = new IntArrayList();
     protected boolean currentShade;
     protected boolean invertFakeNormal;
+    protected ChunkSectionLayer filter;
 
     public static ShadedBlockSbbBuilder create() {
         return new ShadedBlockSbbBuilder();
@@ -23,7 +26,8 @@ public class ShadedBlockSbbBuilder implements VertexConsumer {
         return builder;
     }
 
-    public void begin() {
+    public void begin(ChunkSectionLayer layer) {
+        filter = layer;
         bufferBuilder = new BufferBuilder(BYTE_BUFFER_BUILDER, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
         shadeSwapVertices.clear();
         currentShade = true;
@@ -63,31 +67,27 @@ public class ShadedBlockSbbBuilder implements VertexConsumer {
     public void putBulkData(
         PoseStack.Pose pose,
         BakedQuad quad,
-        float red,
-        float green,
-        float blue,
-        float alpha,
-        int packedLight,
-        int packedOverlay
+        QuadBrightness brightness,
+        int color,
+        QuadLightmapCoords lightmapCoord,
+        int overlayCoords
     ) {
-        prepareForGeometry(quad);
-        bufferBuilder.putBulkData(pose, quad, red, green, blue, alpha, packedLight, packedOverlay);
+        if (quad.spriteInfo().layer() == filter) {
+            prepareForGeometry(quad);
+            bufferBuilder.putBulkData(pose, quad, brightness, color, lightmapCoord, overlayCoords);
+        }
     }
 
     @Override
-    public void putBulkData(
+    public void put(
         PoseStack.Pose pose,
         BakedQuad quad,
-        float[] brightnesses,
-        float red,
-        float green,
-        float blue,
-        float alpha,
-        int[] lights,
-        int overlay
+        QuadBrightness brightness,
+        int color,
+        QuadLightmapCoords lightmapCoord,
+        int overlayCoords
     ) {
-        prepareForGeometry(quad);
-        bufferBuilder.putBulkData(pose, quad, brightnesses, red, green, blue, alpha, lights, overlay);
+        putBulkData(pose, quad, brightness, color, lightmapCoord, overlayCoords);
     }
 
     @Override

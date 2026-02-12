@@ -21,7 +21,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
@@ -54,7 +53,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S extends ContraptionEntityRenderer.AbstractContraptionState> extends EntityRenderer<C, S> {
     public static final SuperByteBufferCache.Compartment<Pair<Contraption, ChunkSectionLayer>> CONTRAPTION = new SuperByteBufferCache.Compartment<>();
-    private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(ThreadLocalObjects::new);
+    private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(
+        ThreadLocalObjects::new);
     private final PoseStack matrixStack;
 
     public ContraptionEntityRenderer(EntityRendererProvider.Context context) {
@@ -69,7 +69,11 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
         ChunkSectionLayer renderType
     ) {
         return SuperByteBufferCache.getInstance()
-            .get(CONTRAPTION, Pair.of(contraption, renderType), () -> buildStructureBuffer(clientContraption, renderWorld, renderType));
+            .get(
+                CONTRAPTION,
+                Pair.of(contraption, renderType),
+                () -> buildStructureBuffer(clientContraption, renderWorld, renderType)
+            );
     }
 
     @SuppressWarnings("unchecked")
@@ -109,7 +113,7 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
         RenderedBlocks blocks = clientContraption.getRenderedBlocks();
 
         ShadedBlockSbbBuilder sbbBuilder = objects.sbbBuilder;
-        sbbBuilder.begin();
+        sbbBuilder.begin(layer);
 
         ModelBlockRenderer.enableCaching();
         for (BlockPos pos : blocks.positions()) {
@@ -118,18 +122,25 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
                 BlockStateModel model = dispatcher.getBlockModel(state);
                 long randomSeed = state.getSeed(pos);
                 random.setSeed(randomSeed);
-                if (ItemBlockRenderTypes.getChunkRenderType(state) == layer) {
-                    poseStack.pushPose();
-                    poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
-                    List<BlockModelPart> parts = new ObjectArrayList<>();
-                    if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
-                        wrapper.addPartsWithInfo(renderWorld, pos, state, random, parts);
-                    } else {
-                        model.collectParts(random, parts);
-                    }
-                    renderer.tesselateBlock(renderWorld, parts, state, pos, poseStack, sbbBuilder, true, OverlayTexture.NO_OVERLAY);
-                    poseStack.popPose();
+                poseStack.pushPose();
+                poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
+                List<BlockModelPart> parts = new ObjectArrayList<>();
+                if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
+                    wrapper.addPartsWithInfo(renderWorld, pos, state, random, parts);
+                } else {
+                    model.collectParts(random, parts);
                 }
+                renderer.tesselateBlock(
+                    renderWorld,
+                    parts,
+                    state,
+                    pos,
+                    poseStack,
+                    sbbBuilder,
+                    true,
+                    OverlayTexture.NO_OVERLAY
+                );
+                poseStack.popPose();
             }
         }
         ModelBlockRenderer.clearCache();
@@ -303,7 +314,13 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
                 if (render == null || contraption.isHiddenInPortal(context.localPos)) {
                     continue;
                 }
-                MovementRenderState renderState = render.getRenderState(camera, textRenderer, context, renderWorld, worldMatrix4f);
+                MovementRenderState renderState = render.getRenderState(
+                    camera,
+                    textRenderer,
+                    context,
+                    renderWorld,
+                    worldMatrix4f
+                );
                 if (renderState != null) {
                     actors.add(renderState);
                 }

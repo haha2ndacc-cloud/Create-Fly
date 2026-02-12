@@ -8,7 +8,7 @@ import com.zurrtum.create.AllItems;
 import com.zurrtum.create.infrastructure.component.SandPaperItemComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -27,7 +27,7 @@ public class SandPaperRenderer extends PictureInPictureRenderer<SandPaperRenderS
         return stack;
     });
 
-    public SandPaperRenderer(MultiBufferSource.BufferSource vertexConsumers) {
+    public SandPaperRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
     }
 

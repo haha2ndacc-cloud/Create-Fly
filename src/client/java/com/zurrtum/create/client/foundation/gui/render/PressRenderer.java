@@ -5,11 +5,11 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
+import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
 import com.zurrtum.create.client.catnip.gui.render.GpuTexture;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
@@ -19,9 +19,8 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.gui.render.state.BlitRenderState;
 import net.minecraft.client.gui.render.state.GuiRenderState;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.core.BlockPos;
@@ -34,10 +33,12 @@ import java.util.List;
 public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
     private static final Int2ObjectMap<GpuTexture> TEXTURES = new Int2ObjectArrayMap<>();
     private final PoseStack matrices = new PoseStack();
+    private final BlockBakedQuadOutput output;
     private int windowScaleFactor;
 
-    public PressRenderer(MultiBufferSource.BufferSource vertexConsumers) {
+    public PressRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
+        output = new BlockBakedQuadOutput(vertexConsumers);
     }
 
     @Override
@@ -72,13 +73,12 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
         List<BlockModelPart> parts;
         BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
-        VertexConsumer buffer = bufferSource.getBuffer(Sheets.cutoutBlockSheet());
         float time = AnimationTickHolder.getRenderTime();
 
         blockState = AllBlocks.MECHANICAL_PRESS.defaultBlockState();
         world.blockState(blockState);
         parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, buffer, false, parts);
+        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
 
         matrices.pushPose();
         blockState = AllBlocks.SHAFT.defaultBlockState().setValue(BlockStateProperties.AXIS, net.minecraft.core.Direction.Axis.Z);
@@ -87,7 +87,7 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.ZP.rotationDegrees(getShaftAngle(time)));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, buffer, false, parts);
+        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
         matrices.popPose();
 
         matrices.pushPose();
@@ -95,7 +95,7 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
         world.blockState(blockState);
         parts = List.of(AllPartialModels.MECHANICAL_PRESS_HEAD.get());
         matrices.translate(0, getAnimatedHeadOffset(time, item.offset()), 0);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, buffer, false, parts);
+        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
         matrices.popPose();
 
         bufferSource.endBatch();

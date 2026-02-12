@@ -5,11 +5,11 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
+import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
 import com.zurrtum.create.client.catnip.gui.render.GpuTexture;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
 import com.zurrtum.create.content.kinetics.deployer.DeployerBlock;
@@ -20,9 +20,8 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.gui.render.state.BlitRenderState;
 import net.minecraft.client.gui.render.state.GuiRenderState;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.core.BlockPos;
@@ -36,10 +35,12 @@ import java.util.List;
 public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderState> {
     private static final Int2ObjectMap<GpuTexture> TEXTURES = new Int2ObjectArrayMap<>();
     private final PoseStack matrices = new PoseStack();
+    private final BlockBakedQuadOutput output;
     private int windowScaleFactor;
 
-    public DeployerRenderer(MultiBufferSource.BufferSource vertexConsumers) {
+    public DeployerRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
+        output = new BlockBakedQuadOutput(vertexConsumers);
     }
 
     @Override
@@ -74,7 +75,6 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         List<BlockModelPart> parts;
         BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
-        VertexConsumer buffer = bufferSource.getBuffer(Sheets.cutoutBlockSheet());
         float time = AnimationTickHolder.getRenderTime();
         float cycle = (time - item.offset() * 8) % 30;
         float offset = cycle < 10 ? cycle / 10f : cycle < 20 ? (20 - cycle) / 10f : 0;
@@ -86,14 +86,14 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.ZP.rotationDegrees(getCurrentAngle(time)));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, buffer, false, parts);
+        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
         matrices.popPose();
 
         blockState = AllBlocks.DEPLOYER.defaultBlockState().setValue(DeployerBlock.FACING, Direction.DOWN)
             .setValue(DeployerBlock.AXIS_ALONG_FIRST_COORDINATE, false);
         world.blockState(blockState);
         parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, buffer, false, parts);
+        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
 
         matrices.pushPose();
         blockState = Blocks.AIR.defaultBlockState();
@@ -103,14 +103,14 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.XP.rotationDegrees(90));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, buffer, false, parts);
+        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
         matrices.popPose();
 
         matrices.translate(0, -2.06f, 0);
         blockState = AllBlocks.DEPOT.defaultBlockState();
         world.blockState(blockState);
         parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, buffer, false, parts);
+        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
 
         bufferSource.endBatch();
         matrices.popPose();

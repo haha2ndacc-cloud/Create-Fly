@@ -2,16 +2,15 @@ package com.zurrtum.create.client.foundation.gui.render;
 
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
+import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.core.BlockPos;
@@ -21,8 +20,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.List;
 
 public class MillstoneRenderer extends PictureInPictureRenderer<MillstoneRenderState> {
-    public MillstoneRenderer(MultiBufferSource.BufferSource vertexConsumers) {
+    private final BlockBakedQuadOutput output;
+
+    public MillstoneRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
+        output = new BlockBakedQuadOutput(vertexConsumers);
     }
 
     @Override
@@ -35,7 +37,6 @@ public class MillstoneRenderer extends PictureInPictureRenderer<MillstoneRenderS
         List<BlockModelPart> parts;
         BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
-        VertexConsumer buffer = bufferSource.getBuffer(Sheets.cutoutBlockSheet());
 
         matrices.pushPose();
         blockState = Blocks.AIR.defaultBlockState();
@@ -45,7 +46,7 @@ public class MillstoneRenderer extends PictureInPictureRenderer<MillstoneRenderS
         matrices.mulPose(Axis.XP.rotationDegrees(22.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(getCurrentAngle()));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, buffer, false, parts);
+        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
         matrices.popPose();
 
         blockState = AllBlocks.MILLSTONE.defaultBlockState();
@@ -55,7 +56,7 @@ public class MillstoneRenderer extends PictureInPictureRenderer<MillstoneRenderS
         matrices.mulPose(Axis.XP.rotationDegrees(22.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(22.5f));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, buffer, false, parts);
+        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
     }
 
     private static float getCurrentAngle() {

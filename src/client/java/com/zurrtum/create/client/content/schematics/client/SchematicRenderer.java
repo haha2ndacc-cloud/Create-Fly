@@ -12,7 +12,6 @@ import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper.Block
 import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
@@ -32,7 +31,8 @@ import java.util.*;
 
 public class SchematicRenderer {
 
-    private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(ThreadLocalObjects::new);
+    private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(
+        ThreadLocalObjects::new);
 
     private final Map<ChunkSectionLayer, SuperByteBuffer> bufferCache = new LinkedHashMap<>(ChunkSectionLayer.values().length);
     private boolean changed;
@@ -57,7 +57,13 @@ public class SchematicRenderer {
         changed = true;
     }
 
-    public void render(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffers, SchematicTransformation transformation, Vec3 camera) {
+    public void render(
+        Minecraft mc,
+        PoseStack ms,
+        SuperRenderTypeBuffer buffers,
+        SchematicTransformation transformation,
+        Vec3 camera
+    ) {
         if (mc.level == null || mc.player == null)
             return;
         if (changed)
@@ -81,7 +87,11 @@ public class SchematicRenderer {
         );
         if (renderState != null) {
             FeatureRenderDispatcher renderDispatcher = Minecraft.getInstance().gameRenderer.getFeatureRenderDispatcher();
-            renderState.render(ms, renderDispatcher.getSubmitNodeStorage(), mc.gameRenderer.getLevelRenderState().cameraRenderState);
+            renderState.render(
+                ms,
+                renderDispatcher.getSubmitNodeStorage(),
+                mc.gameRenderer.getLevelRenderState().cameraRenderState
+            );
         }
 
         // Don't bother looping over errored BEs again.
@@ -111,18 +121,24 @@ public class SchematicRenderer {
         BoundingBox bounds = renderWorld.getBounds();
 
         ShadedBlockSbbBuilder sbbBuilder = objects.sbbBuilder;
-        sbbBuilder.begin();
+        sbbBuilder.begin(layer);
 
         renderWorld.renderMode = true;
         ModelBlockRenderer.enableCaching();
-        for (BlockPos localPos : BlockPos.betweenClosed(bounds.minX(), bounds.minY(), bounds.minZ(), bounds.maxX(), bounds.maxY(), bounds.maxZ())) {
+        for (BlockPos localPos : BlockPos.betweenClosed(
+            bounds.minX(),
+            bounds.minY(),
+            bounds.minZ(),
+            bounds.maxX(),
+            bounds.maxY(),
+            bounds.maxZ()
+        )) {
             BlockPos pos = mutableBlockPos.setWithOffset(localPos, anchor);
             BlockState state = renderWorld.getBlockState(pos);
 
-            if (state.getRenderShape() == RenderShape.MODEL && ItemBlockRenderTypes.getChunkRenderType(state) == layer) {
-                long seed = state.getSeed(pos);
+            if (state.getRenderShape() == RenderShape.MODEL) {
                 BlockStateModel model = dispatcher.getBlockModel(state);
-                random.setSeed(seed);
+                random.setSeed(state.getSeed(pos));
                 poseStack.pushPose();
                 poseStack.translate(localPos.getX(), localPos.getY(), localPos.getZ());
                 List<BlockModelPart> parts = new ObjectArrayList<>();
@@ -131,7 +147,16 @@ public class SchematicRenderer {
                 } else {
                     model.collectParts(random, parts);
                 }
-                renderer.tesselateBlock(renderWorld, parts, state, pos, poseStack, sbbBuilder, true, OverlayTexture.NO_OVERLAY);
+                renderer.tesselateBlock(
+                    renderWorld,
+                    parts,
+                    state,
+                    pos,
+                    poseStack,
+                    sbbBuilder,
+                    true,
+                    OverlayTexture.NO_OVERLAY
+                );
                 poseStack.popPose();
             }
         }

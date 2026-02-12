@@ -1,14 +1,11 @@
 package com.zurrtum.create.client.catnip.impl.client.render.model;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.catnip.client.render.model.ShadeSeparatedBufferSource;
 import com.zurrtum.create.client.catnip.client.render.model.ShadeSeparatedResultConsumer;
 import com.zurrtum.create.client.catnip.impl.client.render.TransformingVertexConsumer;
 import com.zurrtum.create.client.infrastructure.model.CopycatModel;
 import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
-import com.zurrtum.create.client.model.LayerBakedModel;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -31,7 +28,8 @@ import java.util.List;
 
 // Modified from https://github.com/Engine-Room/Flywheel/blob/2f67f54c8898d91a48126c3c753eefa6cd224f84/forge/src/lib/java/dev/engine_room/flywheel/lib/model/baked/BakedModelBufferer.java
 public final class BakedModelBuffererImpl {
-    private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(ThreadLocalObjects::new);
+    private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(
+        ThreadLocalObjects::new);
 
     private BakedModelBuffererImpl() {
     }
@@ -69,53 +67,25 @@ public final class BakedModelBuffererImpl {
         ShadeSeparatedBufferSource bufferSource,
         UniversalMeshEmitter universalEmitter
     ) {
-        ModelBlockRenderer blockRenderer = Minecraft.getInstance().getBlockRenderer().getModelRenderer();
         int size = parts.size();
         if (size == 0) {
             return;
         }
-
-        Supplier<ChunkSectionLayer> defaultLayer = Suppliers.memoize(() -> ItemBlockRenderTypes.getChunkRenderType(state));
-        ChunkSectionLayer firstLayer = LayerBakedModel.getBlockRenderLayer(parts.getFirst(), defaultLayer);
-        if (size == 1) {
-            render(universalEmitter, bufferSource, firstLayer, poseStack, blockRenderer, level, parts, state, pos);
-        } else {
-            ChunkSectionLayer[] renderLayers = new ChunkSectionLayer[size];
-            renderLayers[0] = firstLayer;
-            boolean simple = true;
-            for (int i = 1; i < size; i++) {
-                renderLayers[i] = LayerBakedModel.getBlockRenderLayer(parts.get(i), defaultLayer);
-                if (simple && renderLayers[i] != firstLayer) {
-                    simple = false;
-                }
-            }
-            if (simple) {
-                render(universalEmitter, bufferSource, firstLayer, poseStack, blockRenderer, level, parts, state, pos);
-            } else {
-                for (int i = 0; i < size; i++) {
-                    render(universalEmitter, bufferSource, renderLayers[i], poseStack, blockRenderer, level, List.of(parts.get(i)), state, pos);
-                }
-            }
-        }
-
-        universalEmitter.clear();
-    }
-
-    private static void render(
-        UniversalMeshEmitter universalEmitter,
-        ShadeSeparatedBufferSource bufferSource,
-        ChunkSectionLayer layer,
-        PoseStack poseStack,
-        ModelBlockRenderer blockRenderer,
-        BlockAndTintGetter level,
-        List<BlockModelPart> parts,
-        BlockState state,
-        BlockPos pos
-    ) {
-        universalEmitter.prepare(bufferSource, layer);
+        ModelBlockRenderer blockRenderer = Minecraft.getInstance().getBlockRenderer().getModelRenderer();
+        universalEmitter.prepare(bufferSource);
         poseStack.pushPose();
-        blockRenderer.tesselateBlock(level, parts, state, pos, poseStack, universalEmitter, false, OverlayTexture.NO_OVERLAY);
+        blockRenderer.tesselateBlock(
+            level,
+            parts,
+            state,
+            pos,
+            poseStack,
+            universalEmitter,
+            false,
+            OverlayTexture.NO_OVERLAY
+        );
         poseStack.popPose();
+        universalEmitter.clear();
     }
 
     public static void bufferModel(
@@ -184,18 +154,20 @@ public final class BakedModelBuffererImpl {
                     transformingWrapper.prepare(bufferSource.getBuffer(renderType, true), poseStack);
 
                     poseStack.pushPose();
-                    poseStack.translate(pos.getX() - (pos.getX() & 0xF), pos.getY() - (pos.getY() & 0xF), pos.getZ() - (pos.getZ() & 0xF));
+                    poseStack.translate(
+                        pos.getX() - (pos.getX() & 0xF),
+                        pos.getY() - (pos.getY() & 0xF),
+                        pos.getZ() - (pos.getZ() & 0xF)
+                    );
                     renderDispatcher.renderLiquid(pos, level, transformingWrapper, state, fluidState);
                     poseStack.popPose();
                 }
             }
 
             if (state.getRenderShape() == RenderShape.MODEL) {
-                long seed = state.getSeed(pos);
                 BlockStateModel model = renderDispatcher.getBlockModel(state);
-                random.setSeed(seed);
-                ChunkSectionLayer renderType = ItemBlockRenderTypes.getChunkRenderType(state);
-                universalEmitter.prepare(bufferSource, renderType);
+                random.setSeed(state.getSeed(pos));
+                universalEmitter.prepare(bufferSource);
                 poseStack.pushPose();
                 poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
                 List<BlockModelPart> parts = new ObjectArrayList<>();
@@ -204,7 +176,16 @@ public final class BakedModelBuffererImpl {
                 } else {
                     model.collectParts(random, parts);
                 }
-                blockRenderer.tesselateBlock(level, parts, state, pos, poseStack, universalEmitter, true, OverlayTexture.NO_OVERLAY);
+                blockRenderer.tesselateBlock(
+                    level,
+                    parts,
+                    state,
+                    pos,
+                    poseStack,
+                    universalEmitter,
+                    true,
+                    OverlayTexture.NO_OVERLAY
+                );
                 poseStack.popPose();
             }
         }

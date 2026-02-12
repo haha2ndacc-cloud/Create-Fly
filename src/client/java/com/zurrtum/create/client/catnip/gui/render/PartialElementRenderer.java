@@ -5,17 +5,13 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
-import com.zurrtum.create.client.model.LayerBakedModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.gui.render.state.BlitRenderState;
 import net.minecraft.client.gui.render.state.GuiRenderState;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 
@@ -26,10 +22,12 @@ import java.util.Map;
 public class PartialElementRenderer extends PictureInPictureRenderer<PartialRenderState> {
     private static final Map<PartialRenderState, GpuTexture> TEXTURES = new IdentityHashMap<>();
     private final PoseStack matrices = new PoseStack();
+    private final BlockBakedQuadOutput output;
     private int windowScaleFactor;
 
-    public PartialElementRenderer(MultiBufferSource.BufferSource vertexConsumers) {
+    public PartialElementRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
+        output = new BlockBakedQuadOutput(vertexConsumers);
     }
 
     public static void clear(PartialRenderState block) {
@@ -73,15 +71,13 @@ public class PartialElementRenderer extends PictureInPictureRenderer<PartialRend
             matrices.scale(size, size, size);
             partial.transform(matrices);
             Minecraft mc = Minecraft.getInstance();
-            ChunkSectionLayer blockRenderLayer = LayerBakedModel.getBlockRenderLayer(partial.model, () -> ChunkSectionLayer.SOLID);
-            RenderType layer = blockRenderLayer == ChunkSectionLayer.TRANSLUCENT ? Sheets.translucentItemSheet() : Sheets.cutoutBlockSheet();
             SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullDark();
             mc.getBlockRenderer().renderBatched(
                 Blocks.AIR.defaultBlockState(),
                 BlockPos.ZERO,
                 world,
                 matrices,
-                bufferSource.getBuffer(layer),
+                output,
                 false,
                 List.of(partial.model)
             );

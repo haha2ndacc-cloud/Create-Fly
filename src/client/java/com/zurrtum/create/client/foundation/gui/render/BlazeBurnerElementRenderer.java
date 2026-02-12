@@ -12,7 +12,7 @@ import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
@@ -21,7 +21,7 @@ import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 
 public class BlazeBurnerElementRenderer extends PictureInPictureRenderer<BlazeBurnerRenderState> {
-    public BlazeBurnerElementRenderer(MultiBufferSource.BufferSource vertexConsumers) {
+    public BlazeBurnerElementRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
     }
 

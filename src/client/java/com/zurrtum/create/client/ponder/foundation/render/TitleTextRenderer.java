@@ -7,10 +7,10 @@ import com.zurrtum.create.client.catnip.lang.ClientFontHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 
 public class TitleTextRenderer extends PictureInPictureRenderer<TitleTextRenderState> {
-    public TitleTextRenderer(MultiBufferSource.BufferSource vertexConsumers) {
+    public TitleTextRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
     }
 

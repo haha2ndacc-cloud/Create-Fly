@@ -11,7 +11,7 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.gui.render.state.BlitRenderState;
 import net.minecraft.client.gui.render.state.GuiRenderState;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
@@ -25,7 +25,7 @@ public class ItemTransformElementRenderer extends PictureInPictureRenderer<ItemT
     private final PoseStack matrices = new PoseStack();
     private int windowScaleFactor;
 
-    public ItemTransformElementRenderer(MultiBufferSource.BufferSource vertexConsumers) {
+    public ItemTransformElementRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
     }
 

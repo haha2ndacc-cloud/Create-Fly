@@ -11,16 +11,9 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.gui.render.state.BlitRenderState;
 import net.minecraft.client.gui.render.state.GuiRenderState;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RedstoneTorchBlock;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,10 +21,12 @@ import java.util.Map;
 public class BlockTransformElementRenderer extends PictureInPictureRenderer<BlockTransformRenderState> {
     private static final Map<Object, GpuTexture> TEXTURES = new HashMap<>();
     private final PoseStack matrices = new PoseStack();
+    private final BlockBakedQuadOutput output;
     private int windowScaleFactor;
 
-    public BlockTransformElementRenderer(MultiBufferSource.BufferSource vertexConsumers) {
+    public BlockTransformElementRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
+        output = new BlockBakedQuadOutput(vertexConsumers);
     }
 
     public static void clear(Object key) {
@@ -74,15 +69,9 @@ public class BlockTransformElementRenderer extends PictureInPictureRenderer<Bloc
             matrices.scale(1, -1, 1);
             matrices.translate(-0.5F, -0.5F, -0.5F);
             Minecraft mc = Minecraft.getInstance();
-            RenderType layer;
-            if (block.state().is(Blocks.REDSTONE_TORCH) && block.state().getValue(RedstoneTorchBlock.LIT)) {
-                layer = RenderTypes.cutoutMovingBlock();
-            } else {
-                layer = ItemBlockRenderTypes.getChunkRenderType(block.state()) == ChunkSectionLayer.TRANSLUCENT ? Sheets.translucentItemSheet() : Sheets.cutoutBlockSheet();
-            }
             SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullDark();
             world.blockState(block.state());
-            mc.getBlockRenderer().renderBatched(block.state(), BlockPos.ZERO, world, matrices, bufferSource.getBuffer(layer), false, block.parts());
+            mc.getBlockRenderer().renderBatched(block.state(), BlockPos.ZERO, world, matrices, output, false, block.parts());
             bufferSource.endBatch();
             matrices.popPose();
             texture.clear();

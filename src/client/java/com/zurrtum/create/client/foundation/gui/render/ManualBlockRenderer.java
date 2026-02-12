@@ -5,8 +5,8 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
 import com.zurrtum.create.client.catnip.gui.render.GpuTexture;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
 import net.minecraft.client.Minecraft;
@@ -14,9 +14,8 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.gui.render.state.BlitRenderState;
 import net.minecraft.client.gui.render.state.GuiRenderState;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.core.BlockPos;
@@ -30,10 +29,12 @@ public class ManualBlockRenderer extends PictureInPictureRenderer<ManualBlockRen
     private int allocate = MAX;
     private static final Deque<GpuTexture> TEXTURES = new ArrayDeque<>(MAX);
     private final PoseStack matrices = new PoseStack();
+    private final BlockBakedQuadOutput output;
     private int windowScaleFactor;
 
-    public ManualBlockRenderer(MultiBufferSource.BufferSource vertexConsumers) {
+    public ManualBlockRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
+        output = new BlockBakedQuadOutput(vertexConsumers);
     }
 
     @Override
@@ -69,10 +70,9 @@ public class ManualBlockRenderer extends PictureInPictureRenderer<ManualBlockRen
 
         BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
-        VertexConsumer buffer = bufferSource.getBuffer(Sheets.cutoutBlockSheet());
         world.blockState(block.state());
         List<BlockModelPart> parts = blockRenderManager.getBlockModel(block.state()).collectParts(mc.level.getRandom());
-        blockRenderManager.renderBatched(block.state(), BlockPos.ZERO, world, matrices, buffer, false, parts);
+        blockRenderManager.renderBatched(block.state(), BlockPos.ZERO, world, matrices, output, false, parts);
 
         bufferSource.endBatch();
         matrices.popPose();
