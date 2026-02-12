@@ -92,6 +92,10 @@ sourceSets {
             exclude 'com/zurrtum/create/client/mixin/RecipeViewScreenMixin.java'
             exclude 'com/zurrtum/create/client/mixin/ViewTypeButtonMixin.java'
             exclude 'com/zurrtum/create/client/mixin/AbstractBlockRenderContextMixin.java'
+            exclude 'com/zurrtum/create/client/mixin/FabricBlockStateModelMixin.java'
+            exclude 'com/zurrtum/create/client/mixin/BlockRenderInfoMixin.java'
+            exclude 'com/zurrtum/create/client/mixin/AbstractTerrainRenderContextMixin.java'
+            exclude 'com/zurrtum/create/client/mixin/WrapperBlockStateModelMixin.java'
         }
     }
 }
@@ -116,10 +120,10 @@ dependencies {
         compileOnly fabricApi.module("fabric-rendering-fluids-v1", project.fabric_version)
         compileOnly fabricApi.module("fabric-transfer-api-v1", project.fabric_version)
         compileOnly fabricApi.module("fabric-events-interaction-v0", project.fabric_version)
-        compileOnly fabricApi.module("fabric-renderer-api-v1", project.fabric_version)
-        compileOnly fabricApi.module("fabric-renderer-indigo", project.fabric_version)
+//        compileOnly fabricApi.module("fabric-renderer-api-v1", project.fabric_version)
+//        compileOnly fabricApi.module("fabric-renderer-indigo", project.fabric_version)
         compileOnly fabricApi.module("fabric-recipe-api-v1", project.fabric_version)
-        compileOnly fabricApi.module("fabric-model-loading-api-v1", project.fabric_version)
+//        compileOnly fabricApi.module("fabric-model-loading-api-v1", project.fabric_version)
         compileOnly fabricApi.module("fabric-resource-loader-v1", project.fabric_version)
     } else {
         implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"

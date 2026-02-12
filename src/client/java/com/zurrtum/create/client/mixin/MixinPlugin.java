@@ -35,13 +35,13 @@ public class MixinPlugin implements IMixinConfigPlugin {
         if (!loader.isModLoaded("fabric-creative-tab-api-v1")) {
             mixins.add("CreativeModeInventoryScreenMixin");
         }
-        if (loader.isModLoaded("fabric-renderer-api-v1")) {
-            mixins.add("FabricBlockStateModelMixin");
-        }
-        if (loader.isModLoaded("fabric-renderer-indigo")) {
-            mixins.add("BlockRenderInfoMixin");
-            mixins.add("AbstractTerrainRenderContextMixin");
-        }
+//        if (loader.isModLoaded("fabric-renderer-api-v1")) {
+//            mixins.add("FabricBlockStateModelMixin");
+//        }
+//        if (loader.isModLoaded("fabric-renderer-indigo")) {
+//            mixins.add("BlockRenderInfoMixin");
+//            mixins.add("AbstractTerrainRenderContextMixin");
+//        }
         if (loader.isModLoaded("fabric-rendering-fluids-v1")) {
             mixins.add("WaterRenderHandlerMixin");
         }
@@ -49,7 +49,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
             mixins.add("FluidVariantRenderHandlerMixin");
         }
         if (loader.isModLoaded("fabric-model-loading-api-v1")) {
-            mixins.add("WrapperBlockStateModelMixin");
+//            mixins.add("WrapperBlockStateModelMixin");
         } else {
             mixins.add("LoadBlockModelMixin");
         }
