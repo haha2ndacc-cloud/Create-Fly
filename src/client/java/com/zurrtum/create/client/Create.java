@@ -62,7 +62,6 @@ public class Create implements ClientModInitializer {
         AllBlockEntityBehaviours.register();
         AllEntityBehaviours.register();
         AllItemTooltips.register();
-        AllBlockLayers.register();
         AllBufferCaches.register(SuperByteBufferCache.getInstance());
         AllExtensions.register();
         AllMovementRenders.register();
