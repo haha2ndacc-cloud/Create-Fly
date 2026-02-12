@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(Camera.class)
 public class CameraMixin {
-    @WrapOperation(method = "setup(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;ZZF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;getMaxZoom(F)F"))
+    @WrapOperation(method = "alignWithEntity(F)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;getMaxZoom(F)F"))
     private float getMaxZoom(Camera instance, float f, Operation<Float> original) {
         return original.call(instance, f) * CameraDistanceModifier.getMultiplier();
     }

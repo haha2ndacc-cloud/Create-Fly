@@ -109,6 +109,7 @@ public abstract class MinecraftServerMixin {
         DataFixer fixerUpper,
         Services services,
         LevelLoadListener levelLoadListener,
+        boolean propagatesCrashes,
         CallbackInfo ci
     ) {
         if ((Object) this instanceof DedicatedServer) {

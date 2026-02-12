@@ -15,7 +15,7 @@ import java.util.concurrent.Executor;
 
 @Mixin(ModelBakery.class)
 public class ModelBakeryMixin {
-    @ModifyReturnValue(method = "bakeModels(Lnet/minecraft/client/resources/model/SpriteGetter;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;", at = @At("RETURN"))
+    @ModifyReturnValue(method = "bakeModels(Lnet/minecraft/client/resources/model/MaterialBaker;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;", at = @At("RETURN"))
     private CompletableFuture<ModelBakery.BakingResult> bakeModels(
         CompletableFuture<ModelBakery.BakingResult> bakedModelFuture,
         @Local(argsOnly = true) Executor taskExecutor,

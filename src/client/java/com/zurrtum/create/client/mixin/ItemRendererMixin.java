@@ -13,20 +13,6 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(ItemRenderer.class)
 public class ItemRendererMixin {
-    @WrapOperation(method = "getSpecialFoilBuffer(Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/client/renderer/rendertype/RenderType;Lcom/mojang/blaze3d/vertex/PoseStack$Pose;)Lcom/mojang/blaze3d/vertex/VertexConsumer;", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/VertexMultiConsumer;create(Lcom/mojang/blaze3d/vertex/VertexConsumer;Lcom/mojang/blaze3d/vertex/VertexConsumer;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"))
-    private static VertexConsumer getSpecialItemGlintConsumer(
-        VertexConsumer first,
-        VertexConsumer second,
-        Operation<VertexConsumer> original,
-        @Local(argsOnly = true) MultiBufferSource provider
-    ) {
-        if (provider instanceof ItemMeshEmitterProvider) {
-            return new DualVertexConsumer(first, second);
-        } else {
-            return original.call(first, second);
-        }
-    }
-
     @WrapOperation(method = "getFoilBuffer(Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/client/renderer/rendertype/RenderType;ZZ)Lcom/mojang/blaze3d/vertex/VertexConsumer;", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/VertexMultiConsumer;create(Lcom/mojang/blaze3d/vertex/VertexConsumer;Lcom/mojang/blaze3d/vertex/VertexConsumer;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"))
     private static VertexConsumer getItemGlintConsumer(
         VertexConsumer first,

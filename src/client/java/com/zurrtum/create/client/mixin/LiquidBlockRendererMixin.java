@@ -39,8 +39,7 @@ public class LiquidBlockRendererMixin {
         return sprite;
     }
 
-    @SuppressWarnings("DiscouragedShift")
-    @ModifyVariable(method = "tesselate(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/FluidState;)V", at = @At(value = "CONSTANT", args = "intValue=16", ordinal = 0, shift = At.Shift.BEFORE), ordinal = 0)
+    @ModifyVariable(method = "tesselate(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/FluidState;)V", at = @At("STORE"), ordinal = 0)
     private int modTintColor(int tint, @Share("config") LocalRef<FluidConfig> ref) {
         FluidConfig config = ref.get();
         if (config != null) {

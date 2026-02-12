@@ -2,8 +2,8 @@ package com.zurrtum.create.client.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
+import net.minecraft.client.renderer.block.BakedQuadOutput;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
@@ -37,28 +37,28 @@ public class BlockRenderDispatcherMixin {
     @Final
     private ModelBlockRenderer modelRenderer;
 
-    @Inject(method = "renderBreakingTexture(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/block/BlockModelShaper;getBlockModel(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/renderer/block/model/BlockStateModel;", shift = At.Shift.AFTER), cancellable = true)
+    @Inject(method = "renderBreakingTexture(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/block/BakedQuadOutput;)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/block/BlockModelShaper;getBlockModel(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/renderer/block/model/BlockStateModel;", shift = At.Shift.AFTER), cancellable = true)
     private void renderDamage(
         BlockState state,
         BlockPos pos,
-        BlockAndTintGetter world,
-        PoseStack matrices,
-        VertexConsumer vertexConsumer,
+        BlockAndTintGetter level,
+        PoseStack poseStack,
+        BakedQuadOutput output,
         CallbackInfo ci,
         @Local BlockStateModel model
     ) {
         if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
             singleThreadRandom.setSeed(state.getSeed(pos));
             singleThreadPartList.clear();
-            wrapper.addPartsWithInfo(world, pos, state, singleThreadRandom, singleThreadPartList);
+            wrapper.addPartsWithInfo(level, pos, state, singleThreadRandom, singleThreadPartList);
             if (!singleThreadPartList.isEmpty()) {
                 modelRenderer.tesselateBlock(
-                    world,
-                    this.singleThreadPartList,
+                    level,
+                    singleThreadPartList,
                     state,
                     pos,
-                    matrices,
-                    vertexConsumer,
+                    poseStack,
+                    output,
                     true,
                     OverlayTexture.NO_OVERLAY
                 );

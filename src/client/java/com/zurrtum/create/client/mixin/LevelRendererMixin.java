@@ -28,14 +28,15 @@ import com.zurrtum.create.client.foundation.block.render.BlockDestructionProgres
 import com.zurrtum.create.client.foundation.block.render.MultiPosDestructionHandler;
 import com.zurrtum.create.foundation.block.LightControlBlock;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.chunk.ChunkSectionsToRender;
 import net.minecraft.client.renderer.state.BlockOutlineRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.state.LevelRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.BlockDestructionProgress;
@@ -97,18 +98,17 @@ public class LevelRendererMixin {
         }
     }
 
-    @Inject(method = "renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/Camera;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Options;getCloudsType()Lnet/minecraft/client/CloudStatus;"))
+    @Inject(method = "renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/renderer/state/CameraRenderState;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;ZLnet/minecraft/client/renderer/chunk/ChunkSectionsToRender;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Options;getCloudsType()Lnet/minecraft/client/CloudStatus;"))
     private void renderAfterParticles(
-        GraphicsResourceAllocator allocator,
-        DeltaTracker tickCounter,
-        boolean renderBlockOutline,
-        Camera camera,
-        Matrix4f positionMatrix,
-        Matrix4f matrix4f,
-        Matrix4f projectionMatrix,
-        GpuBufferSlice fogBuffer,
+        GraphicsResourceAllocator resourceAllocator,
+        DeltaTracker deltaTracker,
+        boolean renderOutline,
+        CameraRenderState cameraState,
+        Matrix4f modelViewMatrix,
+        GpuBufferSlice terrainFog,
         Vector4f fogColor,
-        boolean renderSky,
+        boolean shouldRenderSky,
+        ChunkSectionsToRender chunkSectionsToRender,
         CallbackInfo ci,
         @Local FrameGraphBuilder frameGraphBuilder,
         @Local float tickProgress
@@ -117,7 +117,7 @@ public class LevelRendererMixin {
         this.targets.main = framePass.readsAndWrites(this.targets.main);
         framePass.executes(() -> {
             PoseStack ms = new PoseStack();
-            Vec3 cameraPos = camera.position();
+            Vec3 cameraPos = cameraState.pos;
             SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBuffer.getInstance();
             GhostBlocks.getInstance().renderAll(minecraft, ms, buffer, cameraPos);
             Outliner.getInstance().renderOutlines(minecraft, ms, buffer, cameraPos, tickProgress);

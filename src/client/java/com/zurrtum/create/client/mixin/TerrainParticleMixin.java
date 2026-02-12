@@ -11,6 +11,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.TerrainParticle;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -22,15 +23,19 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(TerrainParticle.class)
 public abstract class TerrainParticleMixin {
     @Unique
-    private static final Vec3i[] DIRECTIONS = new Vec3i[]{new Vec3i(0, 0, -1), new Vec3i(0, 0, 1), new Vec3i(-1, 0, 0), new Vec3i(1, 0, 0), new Vec3i(
+    private static final Vec3i[] DIRECTIONS = new Vec3i[]{new Vec3i(0, 0, -1), new Vec3i(0, 0, 1), new Vec3i(
         -1,
         0,
-        -1
-    ), new Vec3i(1, 0, -1), new Vec3i(1, 0, 1), new Vec3i(-1, 0, 1), new Vec3i(0, -1, 0), new Vec3i(0, 1, 0), new Vec3i(
-        0,
+        0
+    ), new Vec3i(1, 0, 0), new Vec3i(-1, 0, -1), new Vec3i(1, 0, -1), new Vec3i(1, 0, 1), new Vec3i(
         -1,
-        -1
-    ), new Vec3i(0, -1, 1), new Vec3i(-1, -1, 0), new Vec3i(1, -1, 0), new Vec3i(-1, -1, -1), new Vec3i(1, -1, -1), new Vec3i(1, -1, 1), new Vec3i(
+        0,
+        1
+    ), new Vec3i(0, -1, 0), new Vec3i(0, 1, 0), new Vec3i(0, -1, -1), new Vec3i(0, -1, 1), new Vec3i(
+        -1,
+        -1,
+        0
+    ), new Vec3i(1, -1, 0), new Vec3i(-1, -1, -1), new Vec3i(1, -1, -1), new Vec3i(1, -1, 1), new Vec3i(
         -1,
         -1,
         1
@@ -52,8 +57,8 @@ public abstract class TerrainParticleMixin {
         return pos;
     }
 
-    @WrapOperation(method = "<init>(Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDDLnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockModelShaper;getParticleIcon(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;"))
-    private static TextureAtlasSprite onParticle(
+    @WrapOperation(method = "<init>(Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDDLnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockModelShaper;getParticleMaterial(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/renderer/block/model/Material$Baked;"))
+    private static Material.Baked onParticle(
         BlockModelShaper models,
         BlockState state,
         Operation<TextureAtlasSprite> original,
@@ -64,9 +69,9 @@ public abstract class TerrainParticleMixin {
         BlockStateModel model = models.getBlockModel(state);
         if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
             blockPos.set(findPos(world, pos, state));
-            return wrapper.particleSpriteWithInfo(world, blockPos.get(), state);
+            return wrapper.particleMaterialWithInfo(world, blockPos.get(), state);
         } else {
-            return model.particleIcon();
+            return model.particleMaterial();
         }
     }
 

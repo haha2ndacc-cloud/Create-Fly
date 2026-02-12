@@ -6,34 +6,19 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.zurrtum.create.client.model.NormalsBakedQuad;
 import com.zurrtum.create.client.model.NormalsModelElement;
 import net.minecraft.client.renderer.block.model.*;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(SimpleUnbakedGeometry.class)
 public class SimpleUnbakedGeometryMixin {
-    @WrapOperation(method = "bake(Ljava/util/List;Lnet/minecraft/client/renderer/block/model/TextureSlots;Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/client/resources/model/ModelDebugName;)Lnet/minecraft/client/resources/model/QuadCollection;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/model/FaceBakery;bakeQuad(Lnet/minecraft/client/resources/model/ModelBaker$PartCache;Lorg/joml/Vector3fc;Lorg/joml/Vector3fc;Lnet/minecraft/client/renderer/block/model/BlockElementFace;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/core/Direction;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/client/renderer/block/model/BlockElementRotation;ZI)Lnet/minecraft/client/renderer/block/model/BakedQuad;"))
-    private static BakedQuad bakeQuad(
-        final ModelBaker.PartCache partCache,
-        final Vector3fc from,
-        final Vector3fc to,
-        final BlockElementFace face,
-        final TextureAtlasSprite icon,
-        final Direction facing,
-        final ModelState modelState,
-        @Nullable final BlockElementRotation elementRotation,
-        final boolean shade,
-        final int lightEmission,
-        Operation<BakedQuad> original,
-        @Local BlockElement element
-    ) {
-        BakedQuad quad = original.call(partCache, from, to, face, icon, facing, modelState, elementRotation, shade, lightEmission);
+    @WrapOperation(method = "bake(Ljava/util/List;Lnet/minecraft/client/renderer/block/model/TextureSlots;Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/client/resources/model/ModelDebugName;)Lnet/minecraft/client/resources/model/QuadCollection;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/model/FaceBakery;bakeQuad(Lnet/minecraft/client/resources/model/ModelBaker;Lorg/joml/Vector3fc;Lorg/joml/Vector3fc;Lnet/minecraft/client/renderer/block/model/BlockElementFace;Lnet/minecraft/client/renderer/block/model/Material$Baked;Lnet/minecraft/core/Direction;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/client/renderer/block/model/BlockElementRotation;ZI)Lnet/minecraft/client/renderer/block/model/BakedQuad;"))
+    private static BakedQuad bakeQuad(ModelBaker modelBaker, Vector3fc from, Vector3fc to, BlockElementFace face, Material.Baked material, Direction facing, ModelState modelState, BlockElementRotation elementRotation, boolean shade, int lightEmission, Operation<BakedQuad> original, @Local BlockElement element) {
+        BakedQuad quad = original.call(modelBaker, from, to, face, material, facing, modelState, elementRotation, shade, lightEmission);
         if (NormalsModelElement.calcNormals(element)) {
             Vector3f v1 = new Vector3f(quad.position3());
             Vector3fc t1 = quad.position1();

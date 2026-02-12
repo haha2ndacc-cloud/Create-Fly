@@ -4,10 +4,10 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.zurrtum.create.client.flywheel.lib.model.baked.VanillinMeshEmitter;
+import com.zurrtum.create.client.flywheel.lib.model.baked.VanillinMeshEmitterManager;
 import com.zurrtum.create.foundation.block.LightControlBlock;
 import com.zurrtum.create.foundation.block.SelfEmissiveLightingBlock;
+import net.minecraft.client.renderer.block.BakedQuadOutput;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.ModelBlockRenderer.Cache;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
@@ -24,7 +24,7 @@ import java.util.List;
 
 @Mixin(ModelBlockRenderer.class)
 public class ModelBlockRendererMixin {
-    @WrapOperation(method = "tesselateBlock(Lnet/minecraft/world/level/BlockAndTintGetter;Ljava/util/List;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getLightEmission()I"))
+    @WrapOperation(method = "tesselateBlock(Lnet/minecraft/world/level/BlockAndTintGetter;Ljava/util/List;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/block/BakedQuadOutput;ZI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getLightEmission()I"))
     private int getLuminance(
         BlockState state,
         Operation<Integer> original,
@@ -37,7 +37,7 @@ public class ModelBlockRendererMixin {
         return original.call(state);
     }
 
-    @WrapOperation(method = "tesselateWithoutAO(Lnet/minecraft/world/level/BlockAndTintGetter;Ljava/util/List;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/ModelBlockRenderer$Cache;getLightCoords(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;)I"))
+    @WrapOperation(method = "tesselateWithoutAO(Lnet/minecraft/world/level/BlockAndTintGetter;Ljava/util/List;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/block/BakedQuadOutput;ZI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/ModelBlockRenderer$Cache;getLightCoords(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;)I"))
     private int getLuminance(
         Cache instance,
         BlockState state,
@@ -52,21 +52,21 @@ public class ModelBlockRendererMixin {
         return original.call(instance, state, world, lightPos);
     }
 
-    @Inject(method = "tesselateBlock(Lnet/minecraft/world/level/BlockAndTintGetter;Ljava/util/List;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getOffset(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/phys/Vec3;"), locals = LocalCapture.CAPTURE_FAILSOFT, require = 0)
+    @Inject(method = "tesselateBlock(Lnet/minecraft/world/level/BlockAndTintGetter;Ljava/util/List;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/block/BakedQuadOutput;ZI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getOffset(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/phys/Vec3;"), locals = LocalCapture.CAPTURE_FAILSOFT, require = 0)
     private void onTesselateBlock(
         BlockAndTintGetter level,
-        List<BlockModelPart> model,
-        BlockState state,
+        List<BlockModelPart> parts,
+        BlockState blockState,
         BlockPos pos,
         PoseStack poseStack,
-        VertexConsumer consumer,
-        boolean checkSides,
-        int packedOverlay,
+        BakedQuadOutput output,
+        boolean cull,
+        int overlayCoords,
         CallbackInfo ci,
-        boolean ao
+        boolean useAO
     ) {
-        if (consumer instanceof VanillinMeshEmitter meshEmitter) {
-            meshEmitter.prepareForModelLayer(ao);
+        if (output instanceof VanillinMeshEmitterManager meshEmitter) {
+            meshEmitter.prepareForModelLayer(useAO);
         }
     }
 }
