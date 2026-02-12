@@ -68,7 +68,10 @@ public class BlockEntityRenderHelper {
 
             try {
                 BlockEntityRenderState renderState = renderer.createRenderState();
-                int realLevelLight = LevelRenderer.getLightCoords(realLevel, getLightPos(lightTransform, blockEntity.getBlockPos()));
+                int realLevelLight = LevelRenderer.getLightCoords(
+                    realLevel,
+                    getLightPos(lightTransform, blockEntity.getBlockPos())
+                );
                 if (renderLevel != null) {
                     renderLevel.setExternalLight(realLevelLight);
                 }
@@ -100,7 +103,12 @@ public class BlockEntityRenderHelper {
 
     private static BlockPos getLightPos(@Nullable Matrix4f lightTransform, BlockPos contraptionPos) {
         if (lightTransform != null) {
-            Vector4f lightVec = new Vector4f(contraptionPos.getX() + .5f, contraptionPos.getY() + .5f, contraptionPos.getZ() + .5f, 1);
+            Vector4f lightVec = new Vector4f(
+                contraptionPos.getX() + .5f,
+                contraptionPos.getY() + .5f,
+                contraptionPos.getZ() + .5f,
+                1
+            );
             lightVec.mul(lightTransform);
             return BlockPos.containing(lightVec.x(), lightVec.y(), lightVec.z());
         } else {
@@ -114,14 +122,8 @@ public class BlockEntityRenderHelper {
         public void render(PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraRenderState) {
             Vec3 prevPos = cameraRenderState.pos;
             BlockPos prevBlockPos = cameraRenderState.blockPos;
-            Vec3 prevEntityPos = cameraRenderState.entityPos;
             cameraRenderState.pos = camera;
             cameraRenderState.blockPos = cameraPos;
-            cameraRenderState.entityPos = new Vec3(
-                prevEntityPos.x - prevPos.x + camera.x,
-                prevEntityPos.y - prevPos.y + camera.y,
-                prevEntityPos.z - prevPos.z + camera.z
-            );
             for (BlockEntityRenderState state : states) {
                 BlockEntityRenderer<BlockEntity, BlockEntityRenderState> renderer = dispatcher.getRenderer(state);
                 if (renderer == null) {
@@ -135,7 +137,6 @@ public class BlockEntityRenderHelper {
             }
             cameraRenderState.pos = prevPos;
             cameraRenderState.blockPos = prevBlockPos;
-            cameraRenderState.entityPos = prevEntityPos;
         }
     }
 }
