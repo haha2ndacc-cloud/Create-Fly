@@ -1,9 +1,12 @@
 package com.zurrtum.create.client.catnip.gui.render;
 
+import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.textures.TextureFormat;
+import net.minecraft.client.renderer.Projection;
+import net.minecraft.client.renderer.ProjectionMatrixBuffer;
 
 public record GpuTexture(
     int width, int height, com.mojang.blaze3d.textures.GpuTexture texture, GpuTextureView textureView,
@@ -38,8 +41,10 @@ public record GpuTexture(
         return new GpuTexture(width, height, texture, textureView, depthTexture, depthTextureView);
     }
 
-    public void prepare() {
-        RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(texture, 0, depthTexture, 1.0F);
+    public void prepare(Projection projection, ProjectionMatrixBuffer projectionMatrixBuffer) {
+        RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(texture, 0, depthTexture, 1.0);
+        projection.setupOrtho(-1000.0F, 1000.0F, width, height, true);
+        RenderSystem.setProjectionMatrix(projectionMatrixBuffer.getBuffer(projection), ProjectionType.ORTHOGRAPHIC);
         RenderSystem.outputColorTextureOverride = textureView;
         RenderSystem.outputDepthTextureOverride = depthTextureView;
     }

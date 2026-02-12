@@ -1,6 +1,5 @@
 package com.zurrtum.create.client.ponder.foundation.render;
 
-import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
@@ -56,8 +55,7 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
             texture = GpuTexture.create(width, height);
             TEXTURES.put(renderState.id(), texture);
         }
-        RenderSystem.setProjectionMatrix(projectionMatrixBuffer.getBuffer(width, height), ProjectionType.ORTHOGRAPHIC);
-        texture.prepare();
+        texture.prepare(projection, projectionMatrixBuffer);
         matrices.pushPose();
         matrices.scale(windowScaleFactor, windowScaleFactor, 1);
 
