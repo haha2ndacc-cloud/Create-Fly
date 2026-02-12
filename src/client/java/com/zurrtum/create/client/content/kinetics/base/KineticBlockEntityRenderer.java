@@ -12,7 +12,6 @@ import com.zurrtum.create.client.content.kinetics.KineticDebugger;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.content.kinetics.base.IRotate;
 import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -20,6 +19,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -47,7 +47,13 @@ public class KineticBlockEntityRenderer<T extends KineticBlockEntity, S extends 
     }
 
     @Override
-    public void extractRenderState(T be, S state, float tickProgress, Vec3 cameraPos, @Nullable CrumblingOverlay crumblingOverlay) {
+    public void extractRenderState(
+        T be,
+        S state,
+        float tickProgress,
+        Vec3 cameraPos,
+        @Nullable CrumblingOverlay crumblingOverlay
+    ) {
         Level world = be.getLevel();
         state.support = VisualizationManager.supportsVisualization(world);
         if (state.support) {
@@ -58,11 +64,19 @@ public class KineticBlockEntityRenderer<T extends KineticBlockEntity, S extends 
         state.angle = getAngleForBe(be, state.blockPos, state.axis);
     }
 
-    public void updateBaseRenderState(T be, S state, @Nullable Level world, @Nullable CrumblingOverlay crumblingOverlay) {
+    public void updateBaseRenderState(
+        T be,
+        S state,
+        @Nullable Level world,
+        @Nullable CrumblingOverlay crumblingOverlay
+    ) {
         state.blockPos = be.getBlockPos();
         state.blockState = getRenderedBlockState(be);
         state.blockEntityType = be.getType();
-        state.lightCoords = world != null ? LevelRenderer.getLightCoords(world, state.blockPos) : LightCoordsUtil.FULL_BRIGHT;
+        state.lightCoords = world != null ? LevelRenderer.getLightCoords(
+            world,
+            state.blockPos
+        ) : LightCoordsUtil.FULL_BRIGHT;
         state.breakProgress = crumblingOverlay;
         state.layer = getRenderType(be, state.blockState);
         state.axis = ((IRotate) state.blockState.getBlock()).getRotationAxis(state.blockState);
@@ -83,7 +97,7 @@ public class KineticBlockEntityRenderer<T extends KineticBlockEntity, S extends 
     }
 
     protected RenderType getRenderType(T be, BlockState state) {
-        return ItemBlockRenderTypes.getMovingBlockRenderType(state);
+        return RenderTypes.translucentMovingBlock();
     }
 
     protected SuperByteBuffer getRotatedModel(T be, S state) {
