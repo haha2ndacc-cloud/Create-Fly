@@ -8,6 +8,7 @@ package com.zurrtum.create.client.model.obj;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import com.mojang.blaze3d.platform.Transparency;
 import com.mojang.math.Transformation;
 import com.zurrtum.create.client.model.ExtendedUnbakedGeometry;
 import com.zurrtum.create.client.model.NeoForgeModelProperties;
@@ -15,6 +16,8 @@ import com.zurrtum.create.client.model.StandardModelParameters;
 import com.zurrtum.create.client.model.obj.ObjMaterialLibrary.Material;
 import joptsimple.internal.Strings;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BakedQuad.SpriteInfo;
+import net.minecraft.client.renderer.block.model.Material.Baked;
 import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBaker;
@@ -23,7 +26,6 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.QuadCollection;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.phys.Vec2;
@@ -347,7 +349,7 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
         int tintIndex,
         Vector4f colorTint,
         Vector4f ambientColor,
-        TextureAtlasSprite texture,
+        SpriteInfo spriteInfo,
         Transformation transform
     ) {
         boolean needsNormalRecalculation = false;
@@ -370,13 +372,12 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
 
         var quadBaker = new QuadBakingVertexConsumer();
 
-        quadBaker.setSprite(texture);
+        quadBaker.setSpriteInfo(spriteInfo);
         quadBaker.setTintIndex(tintIndex);
 
-        int uv2 = 0;
         if (emissiveAmbient) {
             int fakeLight = (int) ((ambientColor.x() + ambientColor.y() + ambientColor.z()) * 15 / 3.0f);
-            uv2 = LightCoordsUtil.pack(fakeLight, fakeLight);
+            quadBaker.setLightEmission(fakeLight);
             quadBaker.setShade(fakeLight == 0 && shadeQuads);
         } else {
             quadBaker.setShade(shadeQuads);
@@ -389,6 +390,7 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
         Vector4f[] pos = new Vector4f[4];
         Vector3f[] norm = new Vector3f[4];
 
+        TextureAtlasSprite texture = spriteInfo.sprite();
         for (int i = 0; i < 4; i++) {
             int[] index = indices[Math.min(i, indices.length - 1)];
             Vector4f position = new Vector4f(positions.get(index[0]), 1);
@@ -414,7 +416,6 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
             quadBaker.addVertex(position.x(), position.y(), position.z());
             quadBaker.setColor(tintedColor.x(), tintedColor.y(), tintedColor.z(), tintedColor.w());
             quadBaker.setUv(texture.getU(texCoord.x), texture.getV((flipV ? 1 - texCoord.y : texCoord.y)));
-            quadBaker.setLight(uv2);
             quadBaker.setNormal(normal.x(), normal.y(), normal.z());
             if (i == 0) {
                 quadBaker.setDirection(Direction.getApproximateNearest(normal.x(), normal.y(), normal.z()));
@@ -563,7 +564,10 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
             if (mat == null) {
                 return;
             }
-            TextureAtlasSprite texture = baker.sprites().resolveSlot(slots, mat.diffuseColorMap, debugName);
+            Baked texture = baker.materials().resolveSlot(slots, mat.diffuseColorMap, debugName);
+            Transparency transparency = texture.forceTranslucent() ? Transparency.TRANSLUCENT : texture.sprite()
+                .transparency();
+            SpriteInfo spriteInfo = baker.interner().spriteInfo(SpriteInfo.of(texture, transparency));
             int tintIndex = mat.diffuseTintIndex;
             Vector4f colorTint = mat.diffuseColor;
 
@@ -579,7 +583,7 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
                     tintIndex,
                     colorTint,
                     mat.ambientColor,
-                    texture,
+                    spriteInfo,
                     transform
                 );
                 if (quad.getRight() == null) {

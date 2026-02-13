@@ -5,20 +5,16 @@
 
 package com.zurrtum.create.client.model.obj;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.zurrtum.create.client.model.NormalsBakedQuad;
+import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.util.ARGB;
-import net.minecraft.util.Util;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
-import java.util.IdentityHashMap;
-import java.util.Map;
 
 /**
  * Vertex consumer that outputs {@linkplain BakedQuad baked quads}.
@@ -29,41 +25,23 @@ import java.util.Map;
  * Built quads must be retrieved after building four vertices
  */
 public class QuadBakingVertexConsumer implements VertexConsumer {
-    public static final int STRIDE = DefaultVertexFormat.BLOCK.getVertexSize() / 4;
-    public static final int POSITION = findOffset(VertexFormatElement.POSITION);
-    public static final int COLOR = findOffset(VertexFormatElement.COLOR);
-    public static final int UV0 = findOffset(VertexFormatElement.UV0);
-    public static final int UV1 = findOffset(VertexFormatElement.UV1);
-    public static final int UV2 = findOffset(VertexFormatElement.UV2);
-    public static final int NORMAL = findOffset(VertexFormatElement.NORMAL);
-
-    private static int findOffset(VertexFormatElement element) {
-        if (DefaultVertexFormat.BLOCK.contains(element)) {
-            // Divide by 4 because we want the int offset
-            return DefaultVertexFormat.BLOCK.getOffset(element) / 4;
-        }
-        return -1;
-    }
-
-    private final Map<VertexFormatElement, Integer> ELEMENT_OFFSETS = Util.make(
-        new IdentityHashMap<>(), map -> {
-            for (var element : DefaultVertexFormat.BLOCK.getElements()) {
-                map.put(element, DefaultVertexFormat.BLOCK.getOffset(element) / 4); // Int offset
-            }
-        }
-    );
-    private static final int QUAD_DATA_SIZE = STRIDE * 4;
-
-    private final int[] quadData = new int[QUAD_DATA_SIZE];
+    private final Vector3f[] positions = new Vector3f[4];
+    private final long[] uvs = new long[4];
+    private final int[] normals = new int[4];
+    private final int[] colors = new int[4];
     private int vertexIndex = 0;
     private boolean building = false;
 
     private int tintIndex = -1;
     private Direction direction = Direction.DOWN;
-    private TextureAtlasSprite sprite = UnitTextureAtlasSprite.INSTANCE;
+    private BakedQuad.@Nullable SpriteInfo spriteInfo = null;
     private boolean shade;
     private int lightEmission;
     private boolean hasAmbientOcclusion;
+
+    public QuadBakingVertexConsumer() {
+        clear();
+    }
 
     @Override
     public VertexConsumer addVertex(float x, float y, float z) {
@@ -74,70 +52,48 @@ public class QuadBakingVertexConsumer implements VertexConsumer {
         }
         building = true;
 
-        int offset = vertexIndex * STRIDE + POSITION;
-        quadData[offset] = Float.floatToRawIntBits(x);
-        quadData[offset + 1] = Float.floatToRawIntBits(y);
-        quadData[offset + 2] = Float.floatToRawIntBits(z);
+        positions[vertexIndex].set(x, y, z);
         return this;
     }
 
     @Override
     public VertexConsumer setNormal(float x, float y, float z) {
-        int offset = vertexIndex * STRIDE + NORMAL;
-        quadData[offset] = ((int) (x * 127.0f) & 0xFF) | (((int) (y * 127.0f) & 0xFF) << 8) | (((int) (z * 127.0f) & 0xFF) << 16);
+        int packedx = ((byte) Math.round(x * 127)) & 0xFF;
+        int packedy = ((byte) Math.round(y * 127)) & 0xFF;
+        int packedz = ((byte) Math.round(z * 127)) & 0xFF;
+        normals[vertexIndex] = packedx | (packedy << 8) | (packedz << 16);
         return this;
     }
 
     @Override
-    public VertexConsumer setLineWidth(float width) {
-        return this;
-    }
-
-    @Override
-    public VertexConsumer setColor(int color) {
-        int offset = vertexIndex * STRIDE + COLOR;
-        quadData[offset] = ARGB.toABGR(color);
+    public VertexConsumer setColor(int packedColor) {
+        colors[vertexIndex] = packedColor;
         return this;
     }
 
     @Override
     public VertexConsumer setColor(int r, int g, int b, int a) {
-        int offset = vertexIndex * STRIDE + COLOR;
-        quadData[offset] = ((a & 0xFF) << 24) | ((b & 0xFF) << 16) | ((g & 0xFF) << 8) | (r & 0xFF);
-        return this;
+        return setColor(ARGB.color(a, r, g, b));
     }
 
     @Override
     public VertexConsumer setUv(float u, float v) {
-        int offset = vertexIndex * STRIDE + UV0;
-        quadData[offset] = Float.floatToRawIntBits(u);
-        quadData[offset + 1] = Float.floatToRawIntBits(v);
+        uvs[vertexIndex] = UVPair.pack(u, v);
         return this;
     }
 
     @Override
     public VertexConsumer setUv1(int u, int v) {
-        if (UV1 >= 0) { // Vanilla doesn't support this, but it may be added by a 3rd party
-            int offset = vertexIndex * STRIDE + UV1;
-            quadData[offset] = (u & 0xFFFF) | ((v & 0xFFFF) << 16);
-        }
         return this;
     }
 
     @Override
     public VertexConsumer setUv2(int u, int v) {
-        int offset = vertexIndex * STRIDE + UV2;
-        quadData[offset] = (u & 0xFFFF) | ((v & 0xFFFF) << 16);
         return this;
     }
 
-    //    @Override
-    public VertexConsumer misc(VertexFormatElement element, int... rawData) {
-        Integer baseOffset = ELEMENT_OFFSETS.get(element);
-        if (baseOffset != null) {
-            int offset = vertexIndex * STRIDE + baseOffset;
-            System.arraycopy(rawData, 0, quadData, offset, rawData.length);
-        }
+    @Override
+    public VertexConsumer setLineWidth(float lineWidth) {
         return this;
     }
 
@@ -149,58 +105,59 @@ public class QuadBakingVertexConsumer implements VertexConsumer {
         this.direction = direction;
     }
 
-    public void setSprite(TextureAtlasSprite sprite) {
-        this.sprite = sprite;
+    public void setSpriteInfo(BakedQuad.SpriteInfo sprite) {
+        this.spriteInfo = sprite;
     }
 
     public void setShade(boolean shade) {
         this.shade = shade;
     }
 
-    private Vector3f getVertex(int vertexIndex) {
-        int offset = vertexIndex * STRIDE + POSITION;
-        return new Vector3f(
-            Float.intBitsToFloat(quadData[offset]),
-            Float.intBitsToFloat(quadData[offset + 1]),
-            Float.intBitsToFloat(quadData[offset + 2])
-        );
+    public void setLightEmission(int lightEmission) {
+        this.lightEmission = lightEmission;
     }
 
-    private long getUv(int vertexIndex) {
-        int offset = vertexIndex * STRIDE + UV0;
-        long high = quadData[offset] & 4294967295L;
-        long low = quadData[offset + 1] & 4294967295L;
-        return high << 32 | low;
-    }
-
-    private int getNormal(int vertexIndex) {
-        return quadData[vertexIndex * STRIDE + NORMAL];
+    public void setHasAmbientOcclusion(boolean hasAmbientOcclusion) {
+        this.hasAmbientOcclusion = hasAmbientOcclusion;
     }
 
     public BakedQuad bakeQuad() {
         if (!building || ++vertexIndex != 4) {
             throw new IllegalStateException("Not enough vertices available. Vertices in buffer: " + vertexIndex);
         }
+        if (spriteInfo == null) {
+            throw new IllegalStateException("No BakedQuad.SpriteInfo set");
+        }
 
         BakedQuad quad = new BakedQuad(
-            getVertex(0),
-            getVertex(1),
-            getVertex(2),
-            getVertex(3),
-            getUv(0),
-            getUv(1),
-            getUv(2),
-            getUv(3),
+            positions[0],
+            positions[1],
+            positions[2],
+            positions[3],
+            uvs[0],
+            uvs[1],
+            uvs[2],
+            uvs[3],
             tintIndex,
             direction,
-            sprite,
+            spriteInfo,
             shade,
             lightEmission
         );
-        NormalsBakedQuad.setNormals(quad, new int[]{getNormal(0), getNormal(1), getNormal(2), getNormal(3)});
+        NormalsBakedQuad.setNormals(quad, normals.clone());
+        clear();
+        return quad;
+    }
+
+    private void clear() {
         vertexIndex = 0;
         building = false;
-        Arrays.fill(quadData, 0);
-        return quad;
+        Arrays.setAll(positions, $ -> new Vector3f());
+        Arrays.fill(uvs, 0L);
+        Arrays.fill(normals, 0);
+        Arrays.fill(colors, 0xFFFFFFFF);
+        direction = Direction.DOWN;
+        spriteInfo = null;
+        lightEmission = 0;
     }
 }
