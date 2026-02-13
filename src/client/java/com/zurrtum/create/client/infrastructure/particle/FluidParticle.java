@@ -134,7 +134,7 @@ public class FluidParticle extends SingleQuadParticle {
 
     @Override
     protected Layer getLayer() {
-        return SingleQuadParticle.Layer.TERRAIN;
+        return SingleQuadParticle.Layer.TRANSLUCENT_TERRAIN;
     }
 
     public static class Factory implements ParticleProvider<FluidParticleData> {
