@@ -5,7 +5,6 @@ import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager
 import com.zurrtum.create.client.flywheel.backend.engine.indirect.DepthPyramid;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.Util;
@@ -195,7 +194,7 @@ public final class FrameUniforms extends UniformWriter {
         int pyramidHeight = DepthPyramid.mip0Size(mainRenderTarget.height);
         int pyramidDepth = DepthPyramid.getImageMipLevels(pyramidWidth, pyramidHeight);
 
-        ptr = writeFloat(ptr, GameRenderer.PROJECTION_Z_NEAR); // zNear
+        ptr = writeFloat(ptr, 0.05F); // zNear
         ptr = writeFloat(ptr, mc.gameRenderer.getLevelRenderState().cameraRenderState.depthFar); // zFar
         ptr = writeFloat(ptr, PROJECTION.m00()); // P00
         ptr = writeFloat(ptr, PROJECTION.m11()); // P11
