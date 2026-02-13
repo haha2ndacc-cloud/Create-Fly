@@ -93,7 +93,8 @@ public class BeltModel extends WrapperBlockStateModel {
     }
 
     private BakedQuad replaceQuad(TextureAtlasSprite replace, BakedQuad quad) {
-        TextureAtlasSprite original = quad.sprite();
+        BakedQuad.SpriteInfo spriteInfo = quad.spriteInfo();
+        TextureAtlasSprite original = spriteInfo.sprite();
         if (original != replace) {
             return quad;
         }
@@ -108,7 +109,7 @@ public class BeltModel extends WrapperBlockStateModel {
             calcSpriteUv(quad.packedUV3()),
             quad.tintIndex(),
             quad.direction(),
-            quad.sprite(),
+            spriteInfo,
             quad.shade(),
             quad.lightEmission()
         );

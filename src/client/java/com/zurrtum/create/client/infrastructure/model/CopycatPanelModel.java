@@ -103,7 +103,7 @@ public class CopycatPanelModel extends CopycatModel {
                                 if (quad.direction() != Direction.UP) {
                                     continue;
                                 }
-                                targetSprite = findSprite = quad.sprite();
+                                targetSprite = findSprite = quad.spriteInfo().sprite();
                                 break;
                             }
                         }
@@ -118,10 +118,7 @@ public class CopycatPanelModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
-                        direction,
-                        quad
-                    )
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
                 );
             }
             parts.add(new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleIcon()));
@@ -138,7 +135,8 @@ public class CopycatPanelModel extends CopycatModel {
             return;
         }
         for (BakedQuad quad : quads) {
-            TextureAtlasSprite original = quad.sprite();
+            BakedQuad.SpriteInfo spriteInfo = quad.spriteInfo();
+            TextureAtlasSprite original = spriteInfo.sprite();
             BakedQuad newQuad = new BakedQuad(
                 quad.position0(),
                 quad.position1(),
@@ -150,7 +148,7 @@ public class CopycatPanelModel extends CopycatModel {
                 BakedModelHelper.calcSpriteUv(quad.packedUV3(), original, targetSprite),
                 quad.tintIndex(),
                 quad.direction(),
-                quad.sprite(),
+                spriteInfo,
                 quad.shade(),
                 quad.lightEmission()
             );
@@ -204,10 +202,7 @@ public class CopycatPanelModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
-                        direction,
-                        quad
-                    )
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
                 );
             }
             parts.add(new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleIcon()));

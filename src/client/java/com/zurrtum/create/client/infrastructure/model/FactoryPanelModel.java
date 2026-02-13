@@ -106,7 +106,7 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
                 bakedQuad.packedUV3(),
                 bakedQuad.tintIndex(),
                 newNormal,
-                bakedQuad.sprite(),
+                bakedQuad.spriteInfo(),
                 !ponder && bakedQuad.shade(),
                 bakedQuad.lightEmission()
             );

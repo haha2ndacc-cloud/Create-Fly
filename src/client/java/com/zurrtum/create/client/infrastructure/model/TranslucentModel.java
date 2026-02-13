@@ -44,7 +44,7 @@ public class TranslucentModel implements ItemModel {
         boolean bl = false;
 
         for (BakedQuad bakedQuad : quads) {
-            if (bakedQuad.sprite().contents().isAnimated()) {
+            if (bakedQuad.spriteInfo().sprite().contents().isAnimated()) {
                 bl = true;
                 break;
             }

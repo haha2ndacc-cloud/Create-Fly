@@ -126,7 +126,8 @@ public class TableClothModel extends WrapperBlockStateModel {
     }
 
     private static BakedQuad replaceQuad(TextureAtlasSprite replace, BakedQuad quad) {
-        TextureAtlasSprite original = quad.sprite();
+        BakedQuad.SpriteInfo spriteInfo = quad.spriteInfo();
+        TextureAtlasSprite original = spriteInfo.sprite();
         if (original == replace) {
             return quad;
         }
@@ -141,7 +142,7 @@ public class TableClothModel extends WrapperBlockStateModel {
             BakedModelHelper.calcSpriteUv(quad.packedUV3(), original, replace),
             quad.tintIndex(),
             quad.direction(),
-            quad.sprite(),
+            spriteInfo,
             quad.shade(),
             quad.lightEmission()
         );

@@ -41,7 +41,7 @@ public class BakedModelHelper {
     }
 
     public static BakedQuad cropAndMove(BakedQuad quad, AABB crop, Vec3 move) {
-        TextureAtlasSprite sprite = quad.sprite();
+        TextureAtlasSprite sprite = quad.spriteInfo().sprite();
 
         Vec3 xyz0 = new Vec3(quad.position0());
         Vec3 xyz1 = new Vec3(quad.position1());
@@ -105,7 +105,7 @@ public class BakedModelHelper {
             calcSpriteUv(newXyz3.subtract(xyz3), packedUV3, uAxis, vAxis, uScale, vScale, sprite),
             quad.tintIndex(),
             quad.direction(),
-            quad.sprite(),
+            quad.spriteInfo(),
             quad.shade(),
             quad.lightEmission()
         );
@@ -148,7 +148,8 @@ public class BakedModelHelper {
         int size = quads.size();
         for (int i = 0; i < size; i++) {
             BakedQuad quad = quads.get(i);
-            TextureAtlasSprite sprite = quad.sprite();
+            BakedQuad.SpriteInfo spriteInfo = quad.spriteInfo();
+            TextureAtlasSprite sprite = spriteInfo.sprite();
             TextureAtlasSprite newSprite = spriteSwapper.apply(sprite);
             if (newSprite == null || sprite == newSprite) {
                 continue;
@@ -165,7 +166,7 @@ public class BakedModelHelper {
                 calcSpriteUv(quad.packedUV3(), sprite, newSprite),
                 quad.tintIndex(),
                 quad.direction(),
-                quad.sprite(),
+                spriteInfo,
                 quad.shade(),
                 quad.lightEmission()
             );

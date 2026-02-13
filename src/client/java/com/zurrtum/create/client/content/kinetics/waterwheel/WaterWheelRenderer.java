@@ -156,7 +156,7 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
         for (BlockModelPart part : parts) {
             List<BakedQuad> quads = part.getQuads(side);
             if (!quads.isEmpty()) {
-                return quads.getFirst().sprite();
+                return quads.getFirst().spriteInfo().sprite();
             }
         }
         random.setSeed(42L);
@@ -165,7 +165,7 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
             if (!quads.isEmpty()) {
                 for (BakedQuad quad : quads) {
                     if (quad.direction() == side) {
-                        return quad.sprite();
+                        return quad.spriteInfo().sprite();
                     }
                 }
             }

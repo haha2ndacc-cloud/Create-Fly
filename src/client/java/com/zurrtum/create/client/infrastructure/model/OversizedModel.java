@@ -55,7 +55,7 @@ public class OversizedModel implements ItemModel {
         boolean animated = false;
 
         for (BakedQuad bakedQuad : quads) {
-            if (bakedQuad.sprite().contents().isAnimated()) {
+            if (bakedQuad.spriteInfo().sprite().contents().isAnimated()) {
                 animated = true;
                 break;
             }
