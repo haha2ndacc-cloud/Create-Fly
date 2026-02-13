@@ -1,10 +1,12 @@
 package com.zurrtum.create.client.flywheel.lib.task.functional;
 
+import com.zurrtum.create.client.flywheel.api.task.Plan;
+
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
- * A consumer like interface for use with {@link com.zurrtum.create.client.flywheel.api.task.Plan Plans} and their contexts.
+ * A consumer like interface for use with {@link Plan Plans} and their contexts.
  * <br>
  * The subinterface {@link Ignored} is provided for consumers that do not need the context object.
  *

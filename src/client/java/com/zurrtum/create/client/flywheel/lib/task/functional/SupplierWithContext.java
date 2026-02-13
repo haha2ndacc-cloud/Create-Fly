@@ -1,10 +1,12 @@
 package com.zurrtum.create.client.flywheel.lib.task.functional;
 
+import com.zurrtum.create.client.flywheel.api.task.Plan;
+
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * A supplier like interface for use with {@link com.zurrtum.create.client.flywheel.api.task.Plan Plans} and their contexts.
+ * A supplier like interface for use with {@link Plan Plans} and their contexts.
  * <br>
  * The subinterface {@link Ignored} is provided for suppliers that do not need the context object.
  *

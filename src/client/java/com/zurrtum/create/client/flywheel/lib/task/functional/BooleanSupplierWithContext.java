@@ -1,10 +1,12 @@
 package com.zurrtum.create.client.flywheel.lib.task.functional;
 
+import com.zurrtum.create.client.flywheel.api.task.Plan;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
 /**
- * A boolean supplier like interface for use with {@link com.zurrtum.create.client.flywheel.api.task.Plan Plans} and their contexts.
+ * A boolean supplier like interface for use with {@link Plan Plans} and their contexts.
  *
  * @param <C> The context type.
  */

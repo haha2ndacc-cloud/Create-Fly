@@ -145,7 +145,7 @@ public abstract class FluidItemInventoryWrapper implements FluidItemInventory {
     }
 
     public java.util.Iterator<FluidStack> iterator() {
-        return new com.zurrtum.create.infrastructure.fluids.FluidItemInventoryWrapper.Iterator(this);
+        return new Iterator(this);
     }
 
     public static class Iterator implements java.util.Iterator<FluidStack> {
