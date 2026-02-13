@@ -12,13 +12,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.renderer.item.*;
 import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.ModelBaker;
@@ -45,7 +43,6 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
     public static final Identifier ITEM_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/potato_cannon/item");
     public static final Identifier COG_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/potato_cannon/cog");
 
-    private final RenderType layer = Sheets.translucentItemSheet();
     private final List<BakedQuad> itemQuads;
     private final ModelRenderProperties itemSettings;
     private final Supplier<Vector3fc[]> itemVector;
@@ -115,7 +112,6 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
         ItemStackRenderState.FoilType glint
     ) {
         LayerRenderState layerRenderState = state.newLayer();
-        layerRenderState.setRenderType(layer);
         layerRenderState.setExtents(vector);
         settings.applyToLayer(layerRenderState, displayContext);
         layerRenderState.prepareQuadList().addAll(quads);
@@ -147,7 +143,6 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
             0,
             state.tintLayers,
             state.prepareQuadList(),
-            state.renderType,
             state.foilType
         );
     }

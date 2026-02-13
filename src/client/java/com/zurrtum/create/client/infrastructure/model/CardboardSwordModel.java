@@ -3,12 +3,10 @@ package com.zurrtum.create.client.infrastructure.model;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.renderer.item.*;
 import net.minecraft.client.renderer.item.ItemStackRenderState.FoilType;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvedModel;
@@ -32,7 +30,6 @@ public class CardboardSwordModel implements ItemModel {
         "item/cardboard_sword/item_in_hand"
     );
 
-    private final RenderType layer = Sheets.translucentItemSheet();
     private final List<BakedQuad> itemQuads;
     private final Supplier<Vector3fc[]> itemVector;
     private final List<BakedQuad> blockQuads;
@@ -59,7 +56,6 @@ public class CardboardSwordModel implements ItemModel {
     ) {
         state.appendModelIdentityElement(this);
         ItemStackRenderState.LayerRenderState layerRenderState = state.newLayer();
-        layerRenderState.setRenderType(layer);
         settings.applyToLayer(layerRenderState, displayContext);
         if (stack.hasFoil()) {
             layerRenderState.setFoilType(FoilType.STANDARD);

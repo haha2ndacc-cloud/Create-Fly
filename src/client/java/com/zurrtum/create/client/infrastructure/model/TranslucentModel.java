@@ -6,11 +6,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.renderer.item.*;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvableModel;
@@ -29,7 +27,6 @@ import static com.zurrtum.create.Create.MOD_ID;
 
 public class TranslucentModel implements ItemModel {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/translucent");
-    private final RenderType layer = Sheets.translucentBlockItemSheet();
     private final List<ItemTintSource> tints;
     private final List<BakedQuad> quads;
     private final Supplier<Vector3fc[]> vector;
@@ -82,7 +79,6 @@ public class TranslucentModel implements ItemModel {
         }
 
         layerRenderState.setExtents(vector);
-        layerRenderState.setRenderType(layer);
         settings.applyToLayer(layerRenderState, displayContext);
         layerRenderState.prepareQuadList().addAll(quads);
         if (animated) {

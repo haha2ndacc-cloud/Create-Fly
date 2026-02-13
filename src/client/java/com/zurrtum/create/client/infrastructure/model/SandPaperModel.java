@@ -12,13 +12,11 @@ import com.zurrtum.create.infrastructure.component.SandPaperItemComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.renderer.item.*;
 import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.ModelBaker;
@@ -40,7 +38,6 @@ import static com.zurrtum.create.Create.MOD_ID;
 public class SandPaperModel implements ItemModel, SpecialModelRenderer<SandPaperModel.RenderData> {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/sand_paper");
 
-    private final RenderType layer = Sheets.translucentItemSheet();
     private final List<BakedQuad> quads;
     private final ModelRenderProperties settings;
     private final Supplier<Vector3fc[]> vector;
@@ -64,7 +61,6 @@ public class SandPaperModel implements ItemModel, SpecialModelRenderer<SandPaper
         state.appendModelIdentityElement(this);
         state.setAnimated();
         ItemStackRenderState.LayerRenderState layerRenderState = state.newLayer();
-        layerRenderState.setRenderType(layer);
         layerRenderState.setExtents(vector);
         settings.applyToLayer(layerRenderState, displayContext);
         layerRenderState.prepareQuadList().addAll(quads);
@@ -135,7 +131,6 @@ public class SandPaperModel implements ItemModel, SpecialModelRenderer<SandPaper
             0,
             state.tintLayers,
             state.prepareQuadList(),
-            state.renderType,
             state.foilType
         );
         matrices.popPose();

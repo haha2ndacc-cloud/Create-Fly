@@ -7,13 +7,11 @@ import com.mojang.serialization.MapCodec;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.scrollValue.ScrollValueHandler;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.renderer.item.*;
 import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.ModelBaker;
@@ -37,7 +35,6 @@ public class WrenchModel implements ItemModel, SpecialModelRenderer<LayerRenderS
     public static final Identifier ITEM_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/wrench/item");
     public static final Identifier GEAR_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/wrench/gear");
 
-    private final RenderType layer = Sheets.translucentItemSheet();
     private final List<BakedQuad> itemQuads;
     private final ModelRenderProperties itemSettings;
     private final Supplier<Vector3fc[]> itemVector;
@@ -82,7 +79,6 @@ public class WrenchModel implements ItemModel, SpecialModelRenderer<LayerRenderS
         boolean rotation
     ) {
         LayerRenderState layerRenderState = state.newLayer();
-        layerRenderState.setRenderType(layer);
         layerRenderState.setExtents(vector);
         settings.applyToLayer(layerRenderState, displayContext);
         layerRenderState.prepareQuadList().addAll(quads);
@@ -115,7 +111,6 @@ public class WrenchModel implements ItemModel, SpecialModelRenderer<LayerRenderS
             0,
             layer.tintLayers,
             layer.prepareQuadList(),
-            layer.renderType,
             layer.foilType
         );
         matrices.popPose();

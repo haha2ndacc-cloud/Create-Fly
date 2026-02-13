@@ -142,7 +142,6 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
         data.animation = data.animation * data.animation * data.animation;
         float extensionAngle = Mth.lerp(data.animation, 24f, 156f);
         data.state = state.newLayer();
-        data.state.setRenderType(itemLayer);
         data.state.setExtents(vector);
         settings.applyToLayer(data.state, displayContext);
         data.state.prepareQuadList().addAll(item);

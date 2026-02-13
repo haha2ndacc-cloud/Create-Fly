@@ -5,11 +5,9 @@ import com.mojang.serialization.MapCodec;
 import com.zurrtum.create.AllDataComponents;
 import com.zurrtum.create.infrastructure.component.ClipboardContent;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.renderer.item.*;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvedModel;
@@ -30,7 +28,6 @@ public class ClipboardModel implements ItemModel {
     public static final Identifier EMPTY_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/clipboard_0");
     public static final Identifier WRITTEN_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/clipboard_1");
     public static final Identifier EDITING_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/clipboard_2");
-    private final RenderType layer = Sheets.translucentItemSheet();
     private final ModelData[] models;
 
     public ClipboardModel(ModelData[] models) {
@@ -50,8 +47,7 @@ public class ClipboardModel implements ItemModel {
         int index = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY).type().ordinal();
         state.appendModelIdentityElement(this);
         state.appendModelIdentityElement(index);
-        models[index].update(state, layer, displayContext);
-
+        models[index].update(state, displayContext);
     }
 
     public static class Unbaked implements ItemModel.Unbaked {
@@ -90,9 +86,8 @@ public class ClipboardModel implements ItemModel {
             return new ModelData(quads, settings, Suppliers.memoize(() -> BlockModelWrapper.computeExtents(quads)));
         }
 
-        public void update(ItemStackRenderState state, RenderType layer, ItemDisplayContext displayContext) {
+        public void update(ItemStackRenderState state, ItemDisplayContext displayContext) {
             ItemStackRenderState.LayerRenderState layerRenderState = state.newLayer();
-            layerRenderState.setRenderType(layer);
             layerRenderState.setExtents(vector);
             settings.applyToLayer(layerRenderState, displayContext);
             layerRenderState.prepareQuadList().addAll(quads);

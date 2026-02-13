@@ -10,7 +10,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.renderer.item.*;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvableModel;
@@ -24,7 +23,6 @@ import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.zurrtum.create.Create.MOD_ID;
@@ -37,19 +35,11 @@ public class OversizedModel implements ItemModel {
     private final ModelRenderProperties settings;
     private final AABB box;
     private final boolean animated;
-    private final Function<ItemStack, RenderType> renderType;
 
-    public OversizedModel(
-        List<ItemTintSource> tints,
-        List<BakedQuad> quads,
-        ModelRenderProperties settings,
-        Function<ItemStack, RenderType> renderType,
-        AABB box
-    ) {
+    public OversizedModel(List<ItemTintSource> tints, List<BakedQuad> quads, ModelRenderProperties settings, AABB box) {
         this.tints = tints;
         this.quads = quads;
         this.settings = settings;
-        this.renderType = renderType;
         this.vector = Suppliers.memoize(() -> BlockModelWrapper.computeExtents(this.quads));
         this.box = box;
         boolean animated = false;
@@ -93,7 +83,6 @@ public class OversizedModel implements ItemModel {
         }
 
         layerRenderState.setExtents(vector);
-        layerRenderState.setRenderType(renderType.apply(stack));
         settings.applyToLayer(layerRenderState, displayContext);
         layerRenderState.prepareQuadList().addAll(quads);
         if (animated) {
@@ -107,17 +96,12 @@ public class OversizedModel implements ItemModel {
 
     public record Unbaked(Identifier model, List<ItemTintSource> tints, List<Double> min,
                           List<Double> max) implements ItemModel.Unbaked {
-        public static final MapCodec<com.zurrtum.create.client.infrastructure.model.OversizedModel.Unbaked> CODEC = RecordCodecBuilder.mapCodec(
-            instance -> instance.group(
-                Identifier.CODEC.fieldOf("model")
-                    .forGetter(com.zurrtum.create.client.infrastructure.model.OversizedModel.Unbaked::model),
-                ItemTintSources.CODEC.listOf().optionalFieldOf("tints", List.of())
-                    .forGetter(com.zurrtum.create.client.infrastructure.model.OversizedModel.Unbaked::tints),
-                Codec.DOUBLE.listOf(3, 3).fieldOf("min")
-                    .forGetter(com.zurrtum.create.client.infrastructure.model.OversizedModel.Unbaked::min),
-                Codec.DOUBLE.listOf(3, 3).fieldOf("max")
-                    .forGetter(com.zurrtum.create.client.infrastructure.model.OversizedModel.Unbaked::max)
-            ).apply(instance, com.zurrtum.create.client.infrastructure.model.OversizedModel.Unbaked::new));
+        public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            Identifier.CODEC.fieldOf("model").forGetter(Unbaked::model),
+            ItemTintSources.CODEC.listOf().optionalFieldOf("tints", List.of()).forGetter(Unbaked::tints),
+            Codec.DOUBLE.listOf(3, 3).fieldOf("min").forGetter(Unbaked::min),
+            Codec.DOUBLE.listOf(3, 3).fieldOf("max").forGetter(Unbaked::max)
+        ).apply(instance, Unbaked::new));
 
         @Override
         public void resolveDependencies(ResolvableModel.Resolver resolver) {
@@ -136,18 +120,16 @@ public class OversizedModel implements ItemModel {
                 bakedSimpleModel,
                 modelTextures
             );
-            Function<ItemStack, RenderType> renderTypeGetter = BlockModelWrapper.detectRenderType(quads);
             return new OversizedModel(
                 tints,
                 quads,
                 modelSettings,
-                renderTypeGetter,
                 new AABB(min.get(0), min.get(1), min.get(2), max.get(0), max.get(1), max.get(2))
             );
         }
 
         @Override
-        public MapCodec<com.zurrtum.create.client.infrastructure.model.OversizedModel.Unbaked> type() {
+        public MapCodec<Unbaked> type() {
             return CODEC;
         }
     }

@@ -62,22 +62,20 @@ public class GogglesModel implements ItemModel {
     ) {
         state.appendModelIdentityElement(this);
         if (displayContext == ItemDisplayContext.HEAD) {
-            update(state, displayContext, blockLayer, blockQuads, blockSettings, blockVector);
+            update(state, displayContext, blockQuads, blockSettings, blockVector);
         } else {
-            update(state, displayContext, itemLayer, itemQuads, itemSettings, itemVector);
+            update(state, displayContext, itemQuads, itemSettings, itemVector);
         }
     }
 
     private void update(
         ItemStackRenderState state,
         ItemDisplayContext displayContext,
-        RenderType layer,
         List<BakedQuad> quads,
         ModelRenderProperties settings,
         Supplier<Vector3fc[]> vector
     ) {
         ItemStackRenderState.LayerRenderState layerRenderState = state.newLayer();
-        layerRenderState.setRenderType(layer);
         layerRenderState.setExtents(vector);
         settings.applyToLayer(layerRenderState, displayContext);
         layerRenderState.prepareQuadList().addAll(quads);
