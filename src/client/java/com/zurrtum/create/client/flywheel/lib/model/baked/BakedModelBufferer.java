@@ -1,12 +1,9 @@
 package com.zurrtum.create.client.flywheel.lib.model.baked;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.flywheel.lib.model.SimpleModel;
 import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
-import com.zurrtum.create.client.model.LayerBakedModel;
 import com.zurrtum.create.foundation.block.LightControlBlock;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
@@ -55,19 +52,14 @@ final class BakedModelBufferer {
         if (poseStack == null) {
             poseStack = objects.identityPoseStack;
         }
-        MeshEmitterManager<VanillinMeshEmitter> emitters = objects.emitters;
+        VanillinMeshEmitterManager emitters = objects.emitters;
         emitters.prepare(blockMaterialFunction);
-        ModelBlockRenderer blockRenderer = Minecraft.getInstance().getBlockRenderer().getModelRenderer();
-        ChunkSectionLayer renderType = LayerBakedModel.getBlockRenderLayer(
-            model,
-            () -> ItemBlockRenderTypes.getChunkRenderType(state)
-        );
-        VanillinMeshEmitter emitter = emitters.getEmitter(renderType);
-        emitter.prepareForModelLayer(Minecraft.useAmbientOcclusion() && model.useAmbientOcclusion() && isDark(
+        emitters.prepareForModelLayer(Minecraft.useAmbientOcclusion() && model.useAmbientOcclusion() && isDark(
             level,
             pos,
             state
         ));
+        ModelBlockRenderer blockRenderer = Minecraft.getInstance().getBlockRenderer().getModelRenderer();
         poseStack.pushPose();
         blockRenderer.tesselateBlock(
             level,
@@ -75,7 +67,7 @@ final class BakedModelBufferer {
             state,
             pos,
             poseStack,
-            emitter,
+            emitters,
             false,
             OverlayTexture.NO_OVERLAY
         );
@@ -102,84 +94,14 @@ final class BakedModelBufferer {
         if (poseStack == null) {
             poseStack = objects.identityPoseStack;
         }
-        MeshEmitterManager<VanillinMeshEmitter> emitters = objects.emitters;
+        VanillinMeshEmitterManager emitters = objects.emitters;
         emitters.prepare(blockMaterialFunction);
+        emitters.prepareForModelLayer(Minecraft.useAmbientOcclusion() && parts.getFirst()
+            .useAmbientOcclusion() && isDark(level, pos, state));
         ModelBlockRenderer blockRenderer = Minecraft.getInstance().getBlockRenderer().getModelRenderer();
-
-        Supplier<ChunkSectionLayer> defaultLayer = Suppliers.memoize(() -> ItemBlockRenderTypes.getChunkRenderType(state));
-        ChunkSectionLayer firstLayer = LayerBakedModel.getBlockRenderLayer(parts.getFirst(), defaultLayer);
-        boolean aoEnabled = Minecraft.useAmbientOcclusion();
-        if (size == 1) {
-            VanillinMeshEmitter emitter = emitters.getEmitter(firstLayer);
-            emitter.prepareForModelLayer(aoEnabled && parts.getFirst().useAmbientOcclusion() && isDark(
-                level,
-                pos,
-                state
-            ));
-            poseStack.pushPose();
-            blockRenderer.tesselateBlock(
-                level,
-                parts,
-                state,
-                pos,
-                poseStack,
-                emitter,
-                false,
-                OverlayTexture.NO_OVERLAY
-            );
-            poseStack.popPose();
-        } else {
-            ChunkSectionLayer[] renderLayers = new ChunkSectionLayer[size];
-            boolean simple = true;
-            for (int i = 1; i < size; i++) {
-                renderLayers[i] = LayerBakedModel.getBlockRenderLayer(parts.get(i), defaultLayer);
-                if (simple && renderLayers[i] != firstLayer) {
-                    simple = false;
-                }
-            }
-            if (simple) {
-                VanillinMeshEmitter emitter = emitters.getEmitter(firstLayer);
-                emitter.prepareForModelLayer(aoEnabled && parts.getFirst().useAmbientOcclusion() && isDark(
-                    level,
-                    pos,
-                    state
-                ));
-                poseStack.pushPose();
-                blockRenderer.tesselateBlock(
-                    level,
-                    parts,
-                    state,
-                    pos,
-                    poseStack,
-                    emitter,
-                    false,
-                    OverlayTexture.NO_OVERLAY
-                );
-                poseStack.popPose();
-            } else {
-                renderLayers[0] = firstLayer;
-                if (aoEnabled) {
-                    aoEnabled = isDark(level, pos, state);
-                }
-                for (int i = 0; i < size; i++) {
-                    BlockModelPart part = parts.get(i);
-                    VanillinMeshEmitter emitter = emitters.getEmitter(renderLayers[i]);
-                    emitter.prepareForModelLayer(aoEnabled && part.useAmbientOcclusion());
-                    poseStack.pushPose();
-                    blockRenderer.tesselateBlock(
-                        level,
-                        List.of(part),
-                        state,
-                        pos,
-                        poseStack,
-                        emitter,
-                        false,
-                        OverlayTexture.NO_OVERLAY
-                    );
-                    poseStack.popPose();
-                }
-            }
-        }
+        poseStack.pushPose();
+        blockRenderer.tesselateBlock(level, parts, state, pos, poseStack, emitters, false, OverlayTexture.NO_OVERLAY);
+        poseStack.popPose();
         return emitters.end();
     }
 
@@ -195,7 +117,7 @@ final class BakedModelBufferer {
             poseStack = objects.identityPoseStack;
         }
         RandomSource random = objects.random;
-        MeshEmitterManager<VanillinMeshEmitter> emitters = objects.emitters;
+        VanillinMeshEmitterManager emitters = objects.emitters;
         TransformingVertexConsumer transformingWrapper = objects.transformingWrapper;
 
         emitters.prepare(blockMaterialFunction);
@@ -243,9 +165,7 @@ final class BakedModelBufferer {
                     model.collectParts(random, parts);
                 }
                 if (!parts.isEmpty()) {
-                    ChunkSectionLayer renderType = ItemBlockRenderTypes.getChunkRenderType(state);
-                    VanillinMeshEmitter emitter = emitters.getEmitter(renderType);
-                    emitter.prepareForModelLayer(aoEnabled && parts.getFirst().useAmbientOcclusion());
+                    emitters.prepareForModelLayer(aoEnabled && parts.getFirst().useAmbientOcclusion());
                     poseStack.pushPose();
                     poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
                     blockRenderer.tesselateBlock(
@@ -254,7 +174,7 @@ final class BakedModelBufferer {
                         state,
                         pos,
                         poseStack,
-                        emitter,
+                        emitters,
                         true,
                         OverlayTexture.NO_OVERLAY
                     );
@@ -272,7 +192,7 @@ final class BakedModelBufferer {
         public final PoseStack identityPoseStack = new PoseStack();
         public final RandomSource random = RandomSource.createNewThreadLocalInstance();
 
-        public final MeshEmitterManager<VanillinMeshEmitter> emitters = new MeshEmitterManager<>(VanillinMeshEmitter::new);
+        public final VanillinMeshEmitterManager emitters = new VanillinMeshEmitterManager();
         public final TransformingVertexConsumer transformingWrapper = new TransformingVertexConsumer();
     }
 }

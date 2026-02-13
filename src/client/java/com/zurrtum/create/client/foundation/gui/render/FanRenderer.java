@@ -7,17 +7,20 @@ import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
+import com.zurrtum.create.client.catnip.gui.render.TerrainBakedQuadOutput;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.renderer.block.BakedQuadOutput;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -28,10 +31,12 @@ import java.util.List;
 public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
     private static final RandomSource RANDOM = RandomSource.create();
     private final BlockBakedQuadOutput output;
+    private final TerrainBakedQuadOutput terrainOutput;
 
     public FanRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
         output = new BlockBakedQuadOutput(vertexConsumers);
+        terrainOutput = new TerrainBakedQuadOutput(vertexConsumers);
     }
 
     @Override
@@ -95,6 +100,12 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
         world.blockState(blockState);
         RANDOM.setSeed(blockState.getSeed(BlockPos.ZERO));
         parts = blockRenderManager.getBlockModel(blockState).collectParts(RANDOM);
+        BakedQuadOutput quadOutput;
+        if (blockState.getBlock() instanceof BaseFireBlock) {
+            quadOutput = terrainOutput;
+        } else {
+            quadOutput = output;
+        }
         blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
     }
 

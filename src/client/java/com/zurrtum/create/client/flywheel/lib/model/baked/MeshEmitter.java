@@ -9,14 +9,12 @@ import com.zurrtum.create.client.flywheel.api.model.Mesh;
 import com.zurrtum.create.client.flywheel.api.model.Model;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import org.jetbrains.annotations.UnknownNullability;
-import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 
 class MeshEmitter {
     private static final int INITIAL_CAPACITY = 1;
 
-    private final MeshEmitterManager<?> manager;
     private final ByteBufferBuilderStack byteBufferBuilderStack;
     private final ChunkSectionLayer renderType;
 
@@ -28,12 +26,7 @@ class MeshEmitter {
 
     private int currentIndex = 0;
 
-    MeshEmitter(
-        MeshEmitterManager<?> manager,
-        ByteBufferBuilderStack byteBufferBuilderStack,
-        ChunkSectionLayer renderType
-    ) {
-        this.manager = manager;
+    MeshEmitter(ByteBufferBuilderStack byteBufferBuilderStack, ChunkSectionLayer renderType) {
         this.byteBufferBuilderStack = byteBufferBuilderStack;
         this.renderType = renderType;
     }
@@ -67,12 +60,6 @@ class MeshEmitter {
 
         currentIndex = 0;
         numBufferBuildersPopulated = 0;
-    }
-
-    @Nullable
-    public BufferBuilder getBuffer(boolean shade, boolean ao) {
-        Material material = manager.getMaterial(renderType, shade, ao);
-        return material != null ? getBuffer(material) : null;
     }
 
     public BufferBuilder getBuffer(Material material) {

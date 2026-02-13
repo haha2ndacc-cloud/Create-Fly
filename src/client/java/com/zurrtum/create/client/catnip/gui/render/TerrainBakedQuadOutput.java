@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BakedQuadOutput;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 
-public record BlockBakedQuadOutput(MultiBufferSource bufferSource) implements BakedQuadOutput {
+public record TerrainBakedQuadOutput(MultiBufferSource bufferSource) implements BakedQuadOutput {
     @Override
     public void put(
         PoseStack.Pose pose,
@@ -18,7 +18,7 @@ public record BlockBakedQuadOutput(MultiBufferSource bufferSource) implements Ba
         QuadLightmapCoords lightmapCoord,
         int overlayCoords
     ) {
-        bufferSource.getBuffer(ItemBlockRenderTypes.getRenderType(quad.spriteInfo().layer()))
+        bufferSource.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(quad.spriteInfo().layer()))
             .putBulkData(pose, quad, brightness, color, lightmapCoord, overlayCoords);
     }
 }

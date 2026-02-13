@@ -8,9 +8,10 @@ import com.zurrtum.create.client.flywheel.lib.model.SimpleModel;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceArrayMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceMap;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.Nullable;
+
+import java.util.function.BiFunction;
 
 class MeshEmitterManager<T extends MeshEmitter> {
     private static final ChunkSectionLayer[] CHUNK_LAYERS = ChunkSectionLayer.values();
@@ -21,9 +22,9 @@ class MeshEmitterManager<T extends MeshEmitter> {
     @UnknownNullability
     private BlockMaterialFunction blockMaterialFunction;
 
-    MeshEmitterManager(TriFunction<MeshEmitterManager<T>, ByteBufferBuilderStack, ChunkSectionLayer, T> meshEmitterFactory) {
+    MeshEmitterManager(BiFunction<ByteBufferBuilderStack, ChunkSectionLayer, T> meshEmitterFactory) {
         for (ChunkSectionLayer renderType : CHUNK_LAYERS) {
-            emitterMap.put(renderType, meshEmitterFactory.apply(this, byteBufferBuilderStack, renderType));
+            emitterMap.put(renderType, meshEmitterFactory.apply(byteBufferBuilderStack, renderType));
         }
     }
 
@@ -55,12 +56,12 @@ class MeshEmitterManager<T extends MeshEmitter> {
     }
 
     @Nullable
-    public Material getMaterial(ChunkSectionLayer renderType, boolean shade, boolean ao) {
-        return blockMaterialFunction.apply(renderType, shade, ao);
-    }
-
-    @Nullable
     public BufferBuilder getBuffer(ChunkSectionLayer renderType, boolean shade, boolean ao) {
-        return emitterMap.get(renderType).getBuffer(shade, ao);
+        Material key = blockMaterialFunction.apply(renderType, shade, ao);
+        if (key != null) {
+            return emitterMap.get(renderType).getBuffer(key);
+        } else {
+            return null;
+        }
     }
 }

@@ -1,10 +1,10 @@
 package com.zurrtum.create.client.content.equipment.symmetryWand;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.AllItems;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
+import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
 import com.zurrtum.create.content.equipment.symmetryWand.SymmetryWandItem;
@@ -18,7 +18,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -39,6 +38,7 @@ public class SymmetryHandlerClient {
     public static void onRenderWorld(Minecraft mc, PoseStack ms, MultiBufferSource buffer, Vec3 cameraPos) {
         LocalPlayer player = mc.player;
         Inventory inventory = player.getInventory();
+        BlockBakedQuadOutput output = new BlockBakedQuadOutput(buffer);
         for (int i = 0, size = Inventory.getSelectionSize(); i < size; i++) {
             ItemStack stackInSlot = inventory.getItem(i);
             if (!stackInSlot.is(AllItems.WAND_OF_SYMMETRY)) {
@@ -62,7 +62,6 @@ public class SymmetryHandlerClient {
             ms.translate(0, yShift + .2f, 0);
             applyModelTransform(mirror, ms);
             SimpleModelWrapper model = getModel(mirror).get();
-            VertexConsumer builder = buffer.getBuffer(RenderTypes.solidMovingBlock());
 
             mc.getBlockRenderer().getModelRenderer().tesselateBlock(
                 mc.level,
@@ -70,7 +69,7 @@ public class SymmetryHandlerClient {
                 Blocks.AIR.defaultBlockState(),
                 pos,
                 ms,
-                builder,
+                output,
                 true,
                 OverlayTexture.NO_OVERLAY
             );
