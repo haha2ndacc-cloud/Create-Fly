@@ -6,11 +6,9 @@ import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlockEntity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.block.model.Material;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -25,10 +23,6 @@ import java.util.List;
 public abstract class CopycatModel extends WrapperBlockStateModel {
     public CopycatModel(BlockState state, UnbakedRoot unbaked) {
         super(state, unbaked);
-    }
-
-    public static ChunkSectionLayer getLayer(BlockAndTintGetter world, BlockPos pos) {
-        return ItemBlockRenderTypes.getChunkRenderType(CopycatBlock.getMaterial(world, pos));
     }
 
     public static int getColor(BlockState state, BlockAndTintGetter world, BlockPos pos, int i) {

@@ -3,16 +3,13 @@ package com.zurrtum.create.client;
 import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.AllItems;
 import com.zurrtum.create.client.foundation.block.render.MultiPosDestructionHandler;
-import com.zurrtum.create.client.infrastructure.model.CopycatModel;
 import com.zurrtum.create.content.kinetics.belt.BeltBlock;
 import com.zurrtum.create.content.kinetics.belt.BeltBlockEntity;
 import com.zurrtum.create.content.kinetics.waterwheel.WaterWheelStructuralBlock;
 import com.zurrtum.create.content.trains.track.TrackBlockEntity;
 import net.minecraft.client.model.HumanoidModel.ArmPose;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -20,10 +17,8 @@ import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 
 public class AllExtensions {
-    public static final Map<Block, BiFunction<BlockAndTintGetter, BlockPos, ChunkSectionLayer>> LAYER = new IdentityHashMap<>();
     public static final Map<Block, MultiPosDestructionHandler> MULTI_POS = new IdentityHashMap<>();
     public static final Set<Block> BIG_OUTLINE = new HashSet<>();
     public static final Map<Item, ArmPose> ARM_POSE = new IdentityHashMap<>();
@@ -82,7 +77,5 @@ public class AllExtensions {
         BIG_OUTLINE.add(AllBlocks.BLACK_TABLE_CLOTH);
         ARM_POSE.put(AllItems.POTATO_CANNON, ArmPose.CROSSBOW_HOLD);
         ARM_POSE.put(AllItems.WORLDSHAPER, ArmPose.CROSSBOW_HOLD);
-        LAYER.put(AllBlocks.COPYCAT_STEP, CopycatModel::getLayer);
-        LAYER.put(AllBlocks.COPYCAT_PANEL, CopycatModel::getLayer);
     }
 }
