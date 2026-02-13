@@ -9,8 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -69,12 +69,12 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
     }
 
     @Override
-    public TextureAtlasSprite particleSpriteWithInfo(BlockAndTintGetter world, BlockPos pos, BlockState state) {
+    public Material.Baked particleMaterialWithInfo(BlockAndTintGetter world, BlockPos pos, BlockState state) {
         CopycatBlockEntity copycat = (CopycatBlockEntity) world.getBlockEntity(pos);
         if (copycat == null) {
-            return model.particleIcon();
+            return model.particleMaterial();
         }
-        return getModelOf(copycat.getMaterial()).particleIcon();
+        return getModelOf(copycat.getMaterial()).particleMaterial();
     }
 
     protected void addModelParts(

@@ -11,6 +11,7 @@ import com.zurrtum.create.content.kinetics.belt.BeltBlockEntity.CasingType;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.QuadCollection;
@@ -20,10 +21,13 @@ import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class BeltModel extends WrapperBlockStateModel {
+    private static @Nullable Material.Baked ANDESITE_MATERIAL;
+
     public BeltModel(BlockState state, UnbakedRoot unbaked) {
         super(state, unbaked);
     }
@@ -31,11 +35,14 @@ public class BeltModel extends WrapperBlockStateModel {
     private static final SpriteShiftEntry SPRITE_SHIFT = AllSpriteShifts.ANDESIDE_BELT_CASING;
 
     @Override
-    public TextureAtlasSprite particleSpriteWithInfo(BlockAndTintGetter world, BlockPos pos, BlockState state) {
+    public Material.Baked particleMaterialWithInfo(BlockAndTintGetter world, BlockPos pos, BlockState state) {
         if (world.getBlockEntity(pos) instanceof BeltBlockEntity blockEntity && blockEntity.casing == CasingType.ANDESITE) {
-            return AllSpriteShifts.ANDESITE_CASING.getOriginal();
+            if (ANDESITE_MATERIAL != null) {
+                return ANDESITE_MATERIAL;
+            }
+            return ANDESITE_MATERIAL = new Material.Baked(AllSpriteShifts.ANDESITE_CASING.getOriginal(), false);
         } else {
-            return model.particleIcon();
+            return model.particleMaterial();
         }
     }
 
@@ -83,7 +90,12 @@ public class BeltModel extends WrapperBlockStateModel {
                 builder.addCulledFace(direction, replaceQuad(replace, quad));
             }
         }
-        return new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleIcon());
+        return new SimpleModelWrapper(
+            builder.build(),
+            part.useAmbientOcclusion(),
+            part.particleMaterial(),
+            part.hasTranslucency()
+        );
     }
 
     private static long calcSpriteUv(long packedUv) {

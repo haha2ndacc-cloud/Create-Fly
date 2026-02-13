@@ -4,7 +4,7 @@ import com.zurrtum.create.client.compat.fabric.WrapperModel;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -41,13 +41,13 @@ public abstract class WrapperBlockStateModel implements BlockStateModel, BlockSt
         model.collectParts(random, parts);
     }
 
-    public TextureAtlasSprite particleSpriteWithInfo(BlockAndTintGetter world, BlockPos pos, BlockState state) {
-        return particleIcon();
+    public Material.Baked particleMaterialWithInfo(BlockAndTintGetter world, BlockPos pos, BlockState state) {
+        return particleMaterial();
     }
 
     @Override
-    public TextureAtlasSprite particleIcon() {
-        return model.particleIcon();
+    public Material.Baked particleMaterial() {
+        return model.particleMaterial();
     }
 
     @Override

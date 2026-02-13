@@ -75,13 +75,15 @@ public class CopycatStepModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
-                        direction,
-                        quad
-                    )
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
                 );
             }
-            parts.add(new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleIcon()));
+            parts.add(new SimpleModelWrapper(
+                builder.build(),
+                part.useAmbientOcclusion(),
+                part.particleMaterial(),
+                part.hasTranslucency()
+            ));
         }
     }
 

@@ -58,7 +58,7 @@ public class CopycatPanelModel extends CopycatModel {
                 occlusionData,
                 state,
                 block,
-                model.particleIcon(),
+                model.particleMaterial().sprite(),
                 getMaterialParts(world, pos, material, random, model),
                 getMaterialParts(world, pos, material, random, getModelOf(bars)),
                 parts
@@ -121,7 +121,12 @@ public class CopycatPanelModel extends CopycatModel {
                     ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
                 );
             }
-            parts.add(new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleIcon()));
+            parts.add(new SimpleModelWrapper(
+                builder.build(),
+                part.useAmbientOcclusion(),
+                part.particleMaterial(),
+                part.hasTranslucency()
+            ));
         }
     }
 
@@ -205,7 +210,12 @@ public class CopycatPanelModel extends CopycatModel {
                     ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
                 );
             }
-            parts.add(new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleIcon()));
+            parts.add(new SimpleModelWrapper(
+                builder.build(),
+                part.useAmbientOcclusion(),
+                part.particleMaterial(),
+                part.hasTranslucency()
+            ));
         }
     }
 

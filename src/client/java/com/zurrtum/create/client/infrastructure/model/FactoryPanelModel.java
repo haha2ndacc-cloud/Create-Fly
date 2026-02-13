@@ -113,6 +113,11 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
             NormalsBakedQuad.setNormals(quad, normals);
             builder.addUnculledFace(quad);
         }
-        parts.add(new SimpleModelWrapper(builder.build(), model.useAmbientOcclusion(), model.particleIcon()));
+        parts.add(new SimpleModelWrapper(
+            builder.build(),
+            model.useAmbientOcclusion(),
+            model.particleMaterial(),
+            model.hasTranslucency()
+        ));
     }
 }

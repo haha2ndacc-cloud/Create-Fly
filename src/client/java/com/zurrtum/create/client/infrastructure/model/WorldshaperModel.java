@@ -130,7 +130,7 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
         ItemStackRenderState.LayerRenderState renderState = state.newLayer();
         renderState.setExtents(vector);
         renderState.setUsesBlockLight(settings.usesBlockLight());
-        renderState.setParticleIcon(settings.particleIcon());
+        renderState.setParticleMaterial(settings.particleMaterial());
         RenderData data = new RenderData();
         data.transform = settings.transforms().getTransform(displayContext);
         Minecraft mc = Minecraft.getInstance();

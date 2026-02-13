@@ -3,7 +3,7 @@ package com.zurrtum.create.client.infrastructure.model;
 import com.zurrtum.create.content.kinetics.waterwheel.LargeWaterWheelBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -17,11 +17,11 @@ public class LargeWaterWheelModel extends WrapperBlockStateModel {
     }
 
     @Override
-    public TextureAtlasSprite particleSpriteWithInfo(BlockAndTintGetter world, BlockPos pos, BlockState state) {
+    public Material.Baked particleMaterialWithInfo(BlockAndTintGetter world, BlockPos pos, BlockState state) {
         if (world.getBlockEntity(pos) instanceof LargeWaterWheelBlockEntity blockEntity) {
-            return Minecraft.getInstance().getBlockRenderer().getBlockModel(blockEntity.material).particleIcon();
+            return Minecraft.getInstance().getBlockRenderer().getBlockModel(blockEntity.material).particleMaterial();
         } else {
-            return model.particleIcon();
+            return model.particleMaterial();
         }
     }
 

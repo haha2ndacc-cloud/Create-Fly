@@ -52,7 +52,12 @@ public class CTModel extends WrapperBlockStateModel {
             for (Direction direction : Iterate.directions) {
                 addQuads(builder, part, direction, state, random, indices[direction.get3DDataValue()]);
             }
-            parts.add(new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleIcon()));
+            parts.add(new SimpleModelWrapper(
+                builder.build(),
+                part.useAmbientOcclusion(),
+                part.particleMaterial(),
+                part.hasTranslucency()
+            ));
         }
     }
 

@@ -7,6 +7,7 @@ import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import com.zurrtum.create.client.model.NormalsBakedQuad;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
@@ -79,13 +80,15 @@ public class TableClothModel extends WrapperBlockStateModel {
             parts.add(cache);
             return;
         }
-        TextureAtlasSprite sprite = model.particleIcon();
+        Material.Baked material = model.particleMaterial();
+        TextureAtlasSprite sprite = material.sprite();
         parts.add(corner[index] = new BakedCorner(
             (index & SOUTH_WEST) == SOUTH_WEST ? getSouth(sprite) : List.of(),
             (index & NORTH_WEST) == NORTH_WEST ? getWest(sprite) : List.of(),
             (index & NORTH_EAST) == NORTH_EAST ? getNorth(sprite) : List.of(),
             (index & SOUTH_EAST) == SOUTH_EAST ? getEast(sprite) : List.of(),
-            sprite
+            material,
+            model.hasTranslucency()
         ));
     }
 
@@ -151,7 +154,7 @@ public class TableClothModel extends WrapperBlockStateModel {
     }
 
     private record BakedCorner(List<BakedQuad> south, List<BakedQuad> west, List<BakedQuad> north, List<BakedQuad> east,
-                               TextureAtlasSprite particleIcon) implements BlockModelPart {
+                               Material.Baked particleMaterial, boolean hasTranslucency) implements BlockModelPart {
         @Override
         public List<BakedQuad> getQuads(@Nullable Direction side) {
             return switch (side) {

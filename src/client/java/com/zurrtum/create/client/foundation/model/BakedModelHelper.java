@@ -5,6 +5,7 @@ import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.model.NormalsBakedQuad;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.QuadCollection;
@@ -126,12 +127,17 @@ public class BakedModelHelper {
         List<BakedQuad> quads = template.getQuads(null);
         swapSprites(quads, spriteSwapper).forEach(builder::addUnculledFace);
 
-        TextureAtlasSprite particleSprite = template.particleIcon();
-        TextureAtlasSprite swappedParticleSprite = spriteSwapper.apply(particleSprite);
+        Material.Baked material = template.particleMaterial();
+        TextureAtlasSprite swappedParticleSprite = spriteSwapper.apply(material.sprite());
         if (swappedParticleSprite != null) {
-            particleSprite = swappedParticleSprite;
+            material = new Material.Baked(swappedParticleSprite, material.forceTranslucent());
         }
-        return new SimpleModelWrapper(builder.build(), template.useAmbientOcclusion(), particleSprite);
+        return new SimpleModelWrapper(
+            builder.build(),
+            template.useAmbientOcclusion(),
+            material,
+            template.hasTranslucency()
+        );
     }
 
     public static long calcSpriteUv(long packedUv, TextureAtlasSprite sprite, TextureAtlasSprite newSprite) {

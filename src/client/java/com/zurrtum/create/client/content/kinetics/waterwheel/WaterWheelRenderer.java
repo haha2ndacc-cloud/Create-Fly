@@ -170,7 +170,7 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
                 }
             }
         }
-        return model.particleIcon();
+        return model.particleMaterial().sprite();
     }
 
     public enum Variant {
