@@ -4,11 +4,17 @@ import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.content.kinetics.clock.CuckooClockBlockEntity;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.clock.WorldClocks;
+import net.minecraft.world.entity.animal.pig.PigSoundVariant;
+import net.minecraft.world.entity.animal.pig.PigSoundVariants;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.timeline.Timelines;
@@ -28,10 +34,10 @@ public class CuckooClockAnimationBehaviour extends AnimationBehaviour<CuckooCloc
         }
 
         Level world = blockEntity.getLevel();
-        int dayTime = world.dimensionType().defaultClock().or(() -> world.registryAccess().get(WorldClocks.OVERWORLD))
-            .map(clock -> (int) (world.clockManager().getTotalTicks(clock) % world.registryAccess()
-                .get(Timelines.OVERWORLD_DAY).flatMap(timeline -> timeline.value().periodTicks()).orElse(24000)))
-            .orElse(0);
+        RegistryAccess registryAccess = world.registryAccess();
+        int dayTime = world.dimensionType().defaultClock().or(() -> registryAccess.get(WorldClocks.OVERWORLD))
+            .map(clock -> (int) (world.clockManager().getTotalTicks(clock) % registryAccess.get(Timelines.OVERWORLD_DAY)
+                .flatMap(timeline -> timeline.value().periodTicks()).orElse(24000))).orElse(0);
         int hours = (dayTime / 1000 + 6) % 24;
         int minutes = (dayTime % 1000) * 60 / 1000;
         moveHands(hours, minutes);
@@ -78,7 +84,10 @@ public class CuckooClockAnimationBehaviour extends AnimationBehaviour<CuckooCloc
                 }
                 if (value == phase) {
                     if (animationType == CuckooClockBlockEntity.Animation.PIG) {
-                        playSound(SoundEvents.PIG_AMBIENT, 1 / 4f, 1f);
+                        Registry<PigSoundVariant> pigSoundVariants = registryAccess.lookupOrThrow(Registries.PIG_SOUND_VARIANT);
+                        Holder.Reference<PigSoundVariant> holder = pigSoundVariants.get(PigSoundVariants.CLASSIC)
+                            .or(pigSoundVariants::getAny).orElseThrow();
+                        playSound(holder.value().adultSounds().ambientSound().value(), 1 / 4f, 1f);
                     } else {
                         playSound(SoundEvents.CREEPER_HURT, 1 / 4f, 3f);
                     }
