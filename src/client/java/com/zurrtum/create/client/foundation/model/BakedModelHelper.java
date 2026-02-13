@@ -7,9 +7,15 @@ import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.QuadCollection;
+import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
@@ -180,5 +186,41 @@ public class BakedModelHelper {
             newQuads.set(i, newQuad);
         }
         return newQuads;
+    }
+
+    public static List<BakedQuad> bakeQuads(ModelBaker baker, Identifier id) {
+        ResolvedModel model = baker.getModel(id);
+        return model.bakeTopGeometry(model.getTopTextureSlots(), baker, BlockModelRotation.IDENTITY).getAll();
+    }
+
+    public static List<BakedQuad> replaceQuadLayer(
+        List<BakedQuad> quads,
+        ChunkSectionLayer layer,
+        RenderType itemRenderType
+    ) {
+        int size = quads.size();
+        if (size == 0) {
+            return List.of();
+        }
+        List<BakedQuad> result = new ArrayList<>(size);
+        for (BakedQuad quad : quads) {
+            BakedQuad newQuad = new BakedQuad(
+                quad.position0(),
+                quad.position1(),
+                quad.position2(),
+                quad.position3(),
+                quad.packedUV0(),
+                quad.packedUV1(),
+                quad.packedUV2(),
+                quad.packedUV3(),
+                quad.tintIndex(),
+                quad.direction(),
+                new BakedQuad.SpriteInfo(quad.spriteInfo().sprite(), layer, itemRenderType),
+                quad.shade(),
+                quad.lightEmission()
+            );
+            result.add(newQuad);
+        }
+        return result;
     }
 }

@@ -8,6 +8,7 @@ import com.mojang.serialization.MapCodec;
 import com.zurrtum.create.AllItems;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.content.equipment.extendoGrip.ExtendoGripRenderHandler;
+import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -214,7 +215,6 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
             0,
             grip.tintLayers,
             grip.prepareQuadList(),
-            grip.renderType,
             grip.foilType
         );
         renderQuads(displayContext, matrices, queue, light, overlay, pole, blockLayer);
@@ -277,17 +277,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
         List<BakedQuad> quads,
         RenderType layer
     ) {
-        queue.submitItem(
-            matrices,
-            displayContext,
-            light,
-            overlay,
-            0,
-            tints,
-            quads,
-            layer,
-            ItemStackRenderState.FoilType.NONE
-        );
+        queue.submitItem(matrices, displayContext, light, overlay, 0, tints, quads, ItemStackRenderState.FoilType.NONE);
     }
 
     public static class RenderData {
@@ -345,21 +335,16 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
             return new ExtendoGripModel(
                 settings,
                 quads,
-                bakeQuads(baker, POLE_ID),
-                bakeQuads(baker, COG_ID),
-                bakeQuads(baker, THIN_SHORT_ID),
-                bakeQuads(baker, WIDE_SHORT_ID),
-                bakeQuads(baker, THIN_LONG_ID),
-                bakeQuads(baker, WIDE_LONG_ID),
-                bakeQuads(baker, DEPLOYER_HAND_POINTING),
-                bakeQuads(baker, DEPLOYER_HAND_PUNCHING),
-                bakeQuads(baker, DEPLOYER_HAND_HOLDING)
+                BakedModelHelper.bakeQuads(baker, POLE_ID),
+                BakedModelHelper.bakeQuads(baker, COG_ID),
+                BakedModelHelper.bakeQuads(baker, THIN_SHORT_ID),
+                BakedModelHelper.bakeQuads(baker, WIDE_SHORT_ID),
+                BakedModelHelper.bakeQuads(baker, THIN_LONG_ID),
+                BakedModelHelper.bakeQuads(baker, WIDE_LONG_ID),
+                BakedModelHelper.bakeQuads(baker, DEPLOYER_HAND_POINTING),
+                BakedModelHelper.bakeQuads(baker, DEPLOYER_HAND_PUNCHING),
+                BakedModelHelper.bakeQuads(baker, DEPLOYER_HAND_HOLDING)
             );
-        }
-
-        private static List<BakedQuad> bakeQuads(ModelBaker baker, Identifier id) {
-            ResolvedModel model = baker.getModel(id);
-            return model.bakeTopGeometry(model.getTopTextureSlots(), baker, BlockModelRotation.IDENTITY).getAll();
         }
     }
 }

@@ -11,16 +11,16 @@ import com.zurrtum.create.catnip.animation.LerpedFloat.Chaser;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.content.redstone.link.controller.LinkedControllerClientHandler;
 import com.zurrtum.create.client.content.redstone.link.controller.LinkedControllerClientHandler.Mode;
+import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.TextureSlots;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.item.*;
 import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.BlockModelRotation;
@@ -92,9 +92,6 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Li
         }
     }
 
-    private final RenderType itemLayer = Sheets.translucentItemSheet();
-    private final RenderType blockLayer = Sheets.cutoutBlockSheet();
-    private final RenderType cutoutLayer = RenderTypes.cutoutMovingBlock();
     private final int[] tints = new int[0];
     private final ModelRenderProperties settings;
     private final Supplier<Vector3fc[]> vector;
@@ -236,14 +233,14 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Li
             matrices.translate(-0.5f, -0.5f, -0.5f);
         }
 
-        renderQuads(displayContext, matrices, queue, light, overlay, itemLayer, active ? powered : item);
+        renderQuads(displayContext, matrices, queue, light, overlay, active ? powered : item);
 
         if (!active) {
-            renderQuads(displayContext, matrices, queue, light, overlay, blockLayer, torchOff);
+            renderQuads(displayContext, matrices, queue, light, overlay, torchOff);
             matrices.popPose();
             return;
         }
-        renderQuads(displayContext, matrices, queue, light, overlay, cutoutLayer, torch);
+        renderQuads(displayContext, matrices, queue, light, overlay, torch);
         if (bind) {
             light = Mth.lerpInt((Mth.sin(AnimationTickHolder.getRenderTime() / 4f) + 1) / 2, 5, 15) << 20;
         }
@@ -289,7 +286,7 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Li
             float depression = b * buttons.get(index).getValue(pt);
             matrices.translate(0, depression, 0);
         }
-        renderQuads(displayContext, matrices, queue, light, overlay, itemLayer, button);
+        renderQuads(displayContext, matrices, queue, light, overlay, button);
         matrices.popPose();
     }
 
@@ -299,20 +296,9 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Li
         SubmitNodeCollector queue,
         int light,
         int overlay,
-        RenderType layer,
         List<BakedQuad> quads
     ) {
-        queue.submitItem(
-            matrices,
-            displayContext,
-            light,
-            overlay,
-            0,
-            tints,
-            quads,
-            layer,
-            ItemStackRenderState.FoilType.NONE
-        );
+        queue.submitItem(matrices, displayContext, light, overlay, 0, tints, quads, ItemStackRenderState.FoilType.NONE);
     }
 
     public record RenderData(boolean active, boolean equip, boolean bind) {
@@ -358,16 +344,19 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Li
             return new LinkedControllerModel(
                 settings,
                 quads,
-                bakeQuads(baker, POWERED_ID),
-                bakeQuads(baker, TORCH_ID),
-                bakeQuads(baker, TORCH_OFF_ID),
-                bakeQuads(baker, BUTTON_ID)
+                BakedModelHelper.bakeQuads(baker, POWERED_ID),
+                bakeBlockQuads(baker, TORCH_ID),
+                BakedModelHelper.bakeQuads(baker, TORCH_OFF_ID),
+                BakedModelHelper.bakeQuads(baker, BUTTON_ID)
             );
         }
 
-        private static List<BakedQuad> bakeQuads(ModelBaker baker, Identifier id) {
-            ResolvedModel model = baker.getModel(id);
-            return model.bakeTopGeometry(model.getTopTextureSlots(), baker, BlockModelRotation.IDENTITY).getAll();
+        private static List<BakedQuad> bakeBlockQuads(ModelBaker baker, Identifier id) {
+            return BakedModelHelper.replaceQuadLayer(
+                BakedModelHelper.bakeQuads(baker, id),
+                ChunkSectionLayer.CUTOUT,
+                RenderTypes.solidMovingBlock()
+            );
         }
     }
 }

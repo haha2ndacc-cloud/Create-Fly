@@ -3,25 +3,20 @@ package com.zurrtum.create.client.infrastructure.model;
 import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import com.zurrtum.create.AllDataComponents;
 import com.zurrtum.create.client.Create;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
-import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
+import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import com.zurrtum.create.client.foundation.render.CreateRenderTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
@@ -30,16 +25,13 @@ import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.item.ModelRenderProperties;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvedModel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -71,12 +63,25 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
         "item/handheld_worldshaper/accelerator"
     );
     private static final int[] TINTS = new int[]{-1};
-    private static final RandomSource random = RandomSource.create();
-    private static final PoseStack matrices = new PoseStack();
+    private static final int[][] LIGHT_TINTS = new int[][]{
+        {0xff313138},
+        {0xff3d3d42},
+        {0xff4b494b},
+        {0xff585451},
+        {0xff665f57},
+        {0xff7a7063},
+        {0xff8e8070},
+        {0xffa1917c},
+        {0xffb3a18a},
+        {0xffc5b299},
+        {0xffd7c3ab},
+        {0xffebd7c1},
+        {0xfffff3e1},
+        {0xffffffff},
+        {0xffffffff},
+        {0xffffffff}
+    };
 
-    private final RenderType blockLayer = Sheets.translucentBlockItemSheet();
-    private final RenderType itemLayer = CreateRenderTypes.itemGlowingSolid();
-    private final RenderType translucent = CreateRenderTypes.itemGlowingTranslucent();
     private final ModelRenderProperties settings;
     private final List<BakedQuad> item;
     private final List<BakedQuad> core;
@@ -162,7 +167,7 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
         matrices.translate(0.5F, 0.5F, 0.5F);
         matrices.pushPose();
         data.transform.apply(displayContext.leftHand(), matrices.last());
-        renderItem(displayContext, matrices, queue, light, overlay, TINTS, item, blockLayer);
+        renderItem(displayContext, matrices, queue, light, overlay, TINTS, item);
 
         float pt = AnimationTickHolder.getPartialTicks();
         float worldTime = AnimationTickHolder.getRenderTime() / 20;
@@ -175,18 +180,16 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
         } else {
             multiplier = Mth.sin(worldTime * 5);
         }
-        int glowLight;
-        int[] glowTint;
+        int lightItensity = (int) (15 * Mth.clamp(multiplier, 0, 1));
         if (displayContext == ItemDisplayContext.GUI) {
-            glowLight = 0;
-            glowTint = new int[]{(int) (225 * Mth.clamp(multiplier, 0, 1) + 30) << 24 | 0xFFFFFF};
+            int[] glowTint = LIGHT_TINTS[lightItensity];
+            renderItem(displayContext, matrices, queue, 0, overlay, glowTint, core);
+            renderItem(displayContext, matrices, queue, 0, overlay, glowTint, coreGlow);
         } else {
-            int lightItensity = (int) (15 * Mth.clamp(multiplier, 0, 1));
-            glowLight = LightCoordsUtil.pack(lightItensity, Math.max(lightItensity, 4));
-            glowTint = TINTS;
+            int glowLight = LightCoordsUtil.pack(lightItensity, Math.max(lightItensity, 4));
+            renderItem(displayContext, matrices, queue, glowLight, overlay, TINTS, core);
+            renderItem(displayContext, matrices, queue, glowLight, overlay, TINTS, coreGlow);
         }
-        renderItem(displayContext, matrices, queue, glowLight, overlay, glowTint, core, itemLayer);
-        renderItem(displayContext, matrices, queue, glowLight, overlay, glowTint, coreGlow, translucent);
 
         // Accelerator spins
         float angle = worldTime * -25;
@@ -198,7 +201,7 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
         matrices.translate(0.5f, 0.345f, 0.5f);
         matrices.mulPose(Axis.ZP.rotationDegrees(angle));
         matrices.translate(-0.5f, -0.345f, -0.5f);
-        renderItem(displayContext, matrices, queue, light, overlay, TINTS, accelerator, blockLayer);
+        renderItem(displayContext, matrices, queue, light, overlay, TINTS, accelerator);
         matrices.popPose();
 
         if (data.used != null) {
@@ -214,8 +217,7 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
         int light,
         int overlay,
         int[] tintLayers,
-        List<BakedQuad> item,
-        RenderType layer
+        List<BakedQuad> item
     ) {
         queue.submitItem(
             matrices,
@@ -225,7 +227,6 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
             0,
             tintLayers,
             item,
-            layer,
             ItemStackRenderState.FoilType.NONE
         );
     }
@@ -285,18 +286,26 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
             TextureSlots textures = model.getTopTextureSlots();
             List<BakedQuad> quads = model.bakeTopGeometry(textures, baker, BlockModelRotation.IDENTITY).getAll();
             ModelRenderProperties settings = ModelRenderProperties.fromResolvedModel(baker, model, textures);
+            List<BakedQuad> core = BakedModelHelper.replaceQuadLayer(
+                BakedModelHelper.bakeQuads(baker, CORE_ID),
+                ChunkSectionLayer.SOLID,
+                CreateRenderTypes.itemGlowingSolid()
+            );
+            List<BakedQuad> coreGlow = BakedModelHelper.replaceQuadLayer(
+                BakedModelHelper.bakeQuads(
+                    baker,
+                    CORE_GLOW_ID
+                ),
+                ChunkSectionLayer.TRANSLUCENT,
+                CreateRenderTypes.itemGlowingTranslucent()
+            );
             return new WorldshaperModel(
                 settings,
                 quads,
-                bake(baker, CORE_ID),
-                bake(baker, CORE_GLOW_ID),
-                bake(baker, ACCELERATOR_ID)
+                core,
+                coreGlow,
+                BakedModelHelper.bakeQuads(baker, ACCELERATOR_ID)
             );
-        }
-
-        private static List<BakedQuad> bake(ModelBaker baker, Identifier id) {
-            ResolvedModel model = baker.getModel(id);
-            return model.bakeTopGeometry(model.getTopTextureSlots(), baker, BlockModelRotation.IDENTITY).getAll();
         }
     }
 
@@ -316,7 +325,7 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
             if (state.getBlock() instanceof CrossCollisionBlock block) {
                 return UsedItemRenderState.create(mc, block, displayContext, world, user, seed);
             }
-            return UsedBlockRenderState.create(mc, state, random, matrices);
+            return new UsedBlockRenderState(state);
         }
 
         void render(PoseStack matrices, SubmitNodeCollector queue, int light, int overlay);
@@ -363,36 +372,13 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
         }
     }
 
-    public record UsedBlockRenderState(RenderType layer, BlockRenderDispatcher blockRenderManager, PoseStack matrices,
-                                       SinglePosVirtualBlockGetter world, BlockState state,
-                                       List<BlockModelPart> parts) implements UsedRenderState, SubmitNodeCollector.CustomGeometryRenderer {
-        public static UsedBlockRenderState create(
-            Minecraft mc,
-            BlockState state,
-            RandomSource random,
-            PoseStack matrices
-        ) {
-            RenderType layer = ItemBlockRenderTypes.getChunkRenderType(state) == ChunkSectionLayer.TRANSLUCENT ? Sheets.translucentItemSheet() : Sheets.cutoutBlockSheet();
-            BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
-            SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullDark();
-            world.blockState(state);
-            random.setSeed(42L);
-            List<BlockModelPart> parts = blockRenderManager.getBlockModel(state).collectParts(random);
-            return new UsedBlockRenderState(layer, blockRenderManager, matrices, world, state, parts);
-        }
-
+    public record UsedBlockRenderState(BlockState state) implements UsedRenderState {
         public void render(PoseStack matrices, SubmitNodeCollector queue, int light, int overlay) {
             matrices.translate(-0.42f, -0.385f, 0);
             matrices.scale(0.25f, 0.25f, 0.25f);
             matrices.mulPose(Axis.XP.rotationDegrees(30));
             matrices.mulPose(Axis.YP.rotationDegrees(45));
-            queue.submitCustomGeometry(matrices, layer, this);
-        }
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            matrices.last().set(matricesEntry);
-            blockRenderManager.renderBatched(state, BlockPos.ZERO, world, matrices, vertexConsumer, false, parts);
+            queue.submitBlock(matrices, state, light, overlay, 0);
         }
     }
 }
