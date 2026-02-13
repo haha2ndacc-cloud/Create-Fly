@@ -51,6 +51,11 @@ public abstract class WrapperBlockStateModel implements BlockStateModel, BlockSt
     }
 
     @Override
+    public boolean hasTranslucency() {
+        return model.hasTranslucency();
+    }
+
+    @Override
     public BlockStateModel bake(BlockState state, ModelBaker baker) {
         if (entry != null) {
             model = entry.bake(baker);

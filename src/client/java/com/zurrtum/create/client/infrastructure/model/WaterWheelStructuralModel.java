@@ -35,6 +35,11 @@ public class WaterWheelStructuralModel extends WrapperBlockStateModel {
     }
 
     @Override
+    public boolean hasTranslucency() {
+        return false;
+    }
+
+    @Override
     public void collectParts(RandomSource random, List<BlockModelPart> parts) {
     }
 }
