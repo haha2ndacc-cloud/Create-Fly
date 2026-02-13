@@ -29,7 +29,11 @@ public abstract class LightDataCollector {
     protected final LayerLightEventListener skyLayerListener;
     protected final LayerLightEventListener blockLayerListener;
 
-    protected LightDataCollector(LevelAccessor level, LayerLightEventListener skyLayerListener, LayerLightEventListener blockLayerListener) {
+    protected LightDataCollector(
+        LevelAccessor level,
+        LayerLightEventListener skyLayerListener,
+        LayerLightEventListener blockLayerListener
+    ) {
         this.level = level;
         this.skyLayerListener = skyLayerListener;
         this.blockLayerListener = blockLayerListener;
@@ -99,7 +103,10 @@ public abstract class LightDataCollector {
         }
 
         if (CompatMod.SCALABLELUX.isLoaded) {
-            return section -> Objects.requireNonNullElse(layerListener.getDataLayerData(SectionPos.of(section)), ALWAYS_15);
+            return section -> Objects.requireNonNullElse(
+                layerListener.getDataLayerData(SectionPos.of(section)),
+                ALWAYS_15
+            );
         }
 
         return null;
@@ -120,7 +127,10 @@ public abstract class LightDataCollector {
         }
 
         if (CompatMod.SCALABLELUX.isLoaded) {
-            return section -> Objects.requireNonNullElse(layerListener.getDataLayerData(SectionPos.of(section)), ALWAYS_0);
+            return section -> Objects.requireNonNullElse(
+                layerListener.getDataLayerData(SectionPos.of(section)),
+                ALWAYS_0
+            );
         }
 
         return null;
@@ -314,8 +324,7 @@ public abstract class LightDataCollector {
         }
 
         private enum SectionEdge {
-            LOW(15, -1, -1),
-            HIGH(0, 16, 1),
+            LOW(15, -1, -1), HIGH(0, 16, 1),
             ;
 
             public static final SectionEdge[] VALUES = values();
@@ -342,7 +351,11 @@ public abstract class LightDataCollector {
     }
 
     private static class Slow extends LightDataCollector {
-        public Slow(LevelAccessor level, LayerLightEventListener skyLayerListener, LayerLightEventListener blockLayerListener) {
+        public Slow(
+            LevelAccessor level,
+            LayerLightEventListener skyLayerListener,
+            LayerLightEventListener blockLayerListener
+        ) {
             super(level, skyLayerListener, blockLayerListener);
         }
 
@@ -360,7 +373,14 @@ public abstract class LightDataCollector {
                 for (int z = -1; z < 17; z++) {
                     for (int x = -1; x < 17; x++) {
                         blockPos.set(xMin + x, yMin + y, zMin + z);
-                        write(ptr, x, y, z, blockLayerListener.getLightValue(blockPos), skyLayerListener.getLightValue(blockPos));
+                        write(
+                            ptr,
+                            x,
+                            y,
+                            z,
+                            blockLayerListener.getLightValue(blockPos),
+                            skyLayerListener.getLightValue(blockPos)
+                        );
                     }
                 }
             }

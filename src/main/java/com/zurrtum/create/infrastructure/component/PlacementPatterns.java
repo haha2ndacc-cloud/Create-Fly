@@ -5,27 +5,22 @@ import com.mojang.serialization.Codec;
 import com.zurrtum.create.AllDataComponents;
 import com.zurrtum.create.catnip.codecs.stream.CatnipStreamCodecBuilders;
 import io.netty.buffer.ByteBuf;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.function.Predicate;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.function.Predicate;
+
 public enum PlacementPatterns implements StringRepresentable {
-    Solid,
-    Checkered,
-    InverseCheckered,
-    Chance25,
-    Chance50,
-    Chance75;
+    Solid, Checkered, InverseCheckered, Chance25, Chance50, Chance75;
 
     public static final Codec<PlacementPatterns> CODEC = StringRepresentable.fromEnum(PlacementPatterns::values);
-    public static final StreamCodec<ByteBuf, PlacementPatterns> STREAM_CODEC = CatnipStreamCodecBuilders.ofEnum(PlacementPatterns.class);
+    public static final StreamCodec<ByteBuf, PlacementPatterns> STREAM_CODEC = CatnipStreamCodecBuilders.ofEnum(
+        PlacementPatterns.class);
 
     public final String translationKey;
 

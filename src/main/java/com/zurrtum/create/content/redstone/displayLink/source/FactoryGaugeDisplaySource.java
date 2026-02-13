@@ -21,8 +21,9 @@ public class FactoryGaugeDisplaySource extends ValueListDisplaySource {
     @SuppressWarnings("NullableProblems")
     protected Stream<IntAttached<MutableComponent>> provideEntries(DisplayLinkContext context, int maxRows) {
         List<FactoryPanelPosition> panels = context.blockEntity().factoryPanelSupport.getLinkedPanels();
-        if (panels.isEmpty())
+        if (panels.isEmpty()) {
             return Stream.empty();
+        }
         return panels.stream().map(fpp -> createEntry(context.level(), fpp))
             //			.sorted(IntAttached.comparator())
             .filter(Objects::nonNull).limit(maxRows);
@@ -31,8 +32,9 @@ public class FactoryGaugeDisplaySource extends ValueListDisplaySource {
     @Nullable
     public IntAttached<MutableComponent> createEntry(Level level, FactoryPanelPosition pos) {
         ServerFactoryPanelBehaviour panel = ServerFactoryPanelBehaviour.at(level, pos);
-        if (panel == null)
+        if (panel == null) {
             return null;
+        }
 
         ItemStack filter = panel.getFilter();
 
@@ -41,12 +43,13 @@ public class FactoryGaugeDisplaySource extends ValueListDisplaySource {
 
         if (demand != 0) {
             int promised = panel.getPromised();
-            if (panel.satisfied)
+            if (panel.satisfied) {
                 s = "✔";
-            else if (promised != 0)
+            } else if (promised != 0) {
                 s = "↑";
-            else
+            } else {
                 s = "▪";
+            }
         }
 
         return IntAttached.with(

@@ -17,14 +17,16 @@ public class KineticStressDisplaySource extends PercentOrProgressBarDisplaySourc
     @Override
     protected MutableComponent formatNumeric(DisplayLinkContext context, Float currentLevel) {
         int mode = getMode(context);
-        if (mode == 1)
+        if (mode == 1) {
             return super.formatNumeric(context, currentLevel);
+        }
         if (Mth.equal(currentLevel, 0)) {
             currentLevel = 0f;
         }
         MutableComponent text = Component.literal(format.format(currentLevel).replace("\u00A0", " "));
-        if (context.getTargetBlockEntity() instanceof FlapDisplayBlockEntity)
+        if (context.getTargetBlockEntity() instanceof FlapDisplayBlockEntity) {
             text.append(Component.literal(" "));
+        }
         return text.append(Component.translatable("create.generic.unit.stress"));
     }
 
@@ -35,14 +37,16 @@ public class KineticStressDisplaySource extends PercentOrProgressBarDisplaySourc
     @Override
     @Nullable
     protected Float getProgress(DisplayLinkContext context) {
-        if (!(context.getSourceBlockEntity() instanceof StressGaugeBlockEntity stressGauge))
+        if (!(context.getSourceBlockEntity() instanceof StressGaugeBlockEntity stressGauge)) {
             return null;
+        }
 
         float capacity = stressGauge.getNetworkCapacity();
         float stress = stressGauge.getNetworkStress();
 
-        if (capacity == 0)
+        if (capacity == 0) {
             return 0f;
+        }
 
         return switch (getMode(context)) {
             case 0, 1 -> stress / capacity;

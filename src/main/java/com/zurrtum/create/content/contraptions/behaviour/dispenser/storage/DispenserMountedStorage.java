@@ -30,7 +30,12 @@ public class DispenserMountedStorage extends SimpleMountedStorage {
 
     @Override
     @Nullable
-    protected MenuProvider createMenuProvider(Component name, Container handler, Predicate<Player> stillValid, Consumer<ContainerUser> onClose) {
+    protected MenuProvider createMenuProvider(
+        Component name,
+        Container handler,
+        Predicate<Player> stillValid,
+        Consumer<ContainerUser> onClose
+    ) {
         return MountedStorageMenus.createGeneric9x9(name, handler, stillValid, onClose);
     }
 

@@ -31,11 +31,12 @@ public class WorldshaperRenderHandler {
 
     public static void tick(Minecraft mc) {
         gatherSelectedBlocks(mc);
-        if (renderedPositions == null)
+        if (renderedPositions == null) {
             return;
+        }
 
-        Outliner.getInstance().showCluster("terrainZapper", renderedPositions.get()).colored(0xbfbfbf).disableLineNormals().lineWidth(1 / 32f)
-            .withFaceTexture(AllSpecialTextures.CHECKERED);
+        Outliner.getInstance().showCluster("terrainZapper", renderedPositions.get()).colored(0xbfbfbf)
+            .disableLineNormals().lineWidth(1 / 32f).withFaceTexture(AllSpecialTextures.CHECKERED);
     }
 
     protected static void gatherSelectedBlocks(Minecraft mc) {
@@ -67,7 +68,10 @@ public class WorldshaperRenderHandler {
         }
 
         Brush brush = zapper.getOrDefault(AllDataComponents.SHAPER_BRUSH, TerrainBrushes.Cuboid).get();
-        PlacementOptions placement = zapper.getOrDefault(AllDataComponents.SHAPER_PLACEMENT_OPTIONS, PlacementOptions.Merged);
+        PlacementOptions placement = zapper.getOrDefault(
+            AllDataComponents.SHAPER_PLACEMENT_OPTIONS,
+            PlacementOptions.Merged
+        );
         TerrainTools tool = zapper.getOrDefault(AllDataComponents.SHAPER_TOOL, TerrainTools.Fill);
         BlockPos params = zapper.get(AllDataComponents.SHAPER_BRUSH_PARAMS);
         brush.set(params.getX(), params.getY(), params.getZ());
@@ -76,14 +80,27 @@ public class WorldshaperRenderHandler {
         Vec3 rotationVector = player.getLookAngle();
         Vec3 range = rotationVector.scale(128);
         Level world = player.level();
-        BlockHitResult raytrace = world.clip(new ClipContext(start, start.add(range), Block.OUTLINE, Fluid.NONE, player));
+        BlockHitResult raytrace = world.clip(new ClipContext(
+            start,
+            start.add(range),
+            Block.OUTLINE,
+            Fluid.NONE,
+            player
+        ));
         if (raytrace == null || raytrace.getType() == Type.MISS) {
             renderedPositions = null;
             return;
         }
 
-        BlockPos pos = raytrace.getBlockPos().offset(brush.getOffset(rotationVector, raytrace.getDirection(), placement));
-        renderedPositions = () -> brush.addToGlobalPositions(world, pos, raytrace.getDirection(), new ArrayList<>(), tool);
+        BlockPos pos = raytrace.getBlockPos()
+            .offset(brush.getOffset(rotationVector, raytrace.getDirection(), placement));
+        renderedPositions = () -> brush.addToGlobalPositions(
+            world,
+            pos,
+            raytrace.getDirection(),
+            new ArrayList<>(),
+            tool
+        );
     }
 
 }

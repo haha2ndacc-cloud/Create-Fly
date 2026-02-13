@@ -51,13 +51,17 @@ public abstract class DisplaySource {
         }
 
         List<MutableComponent> text = provideText(context, stats);
-        if (text.isEmpty())
+        if (text.isEmpty()) {
             text = EMPTY;
+        }
 
-        if (activeTarget.requiresComponentSanitization())
-            for (MutableComponent component : text)
-                if (NBTProcessors.textComponentHasClickEvent(component))
+        if (activeTarget.requiresComponentSanitization()) {
+            for (MutableComponent component : text) {
+                if (NBTProcessors.textComponentHasClickEvent(component)) {
                     return; // Naughty
+                }
+            }
+        }
 
         activeTarget.acceptText(line, text, context);
     }
@@ -88,13 +92,23 @@ public abstract class DisplaySource {
         return Component.translatable(this.getId().getNamespace() + ".display_source." + getTranslationKey());
     }
 
-    public void loadFlapDisplayLayout(DisplayLinkContext context, FlapDisplayBlockEntity flapDisplay, FlapDisplayLayout layout, int lineIndex) {
+    public void loadFlapDisplayLayout(
+        DisplayLinkContext context,
+        FlapDisplayBlockEntity flapDisplay,
+        FlapDisplayLayout layout,
+        int lineIndex
+    ) {
         loadFlapDisplayLayout(context, flapDisplay, layout);
     }
 
-    public void loadFlapDisplayLayout(DisplayLinkContext context, FlapDisplayBlockEntity flapDisplay, FlapDisplayLayout layout) {
-        if (!layout.isLayout("Default"))
+    public void loadFlapDisplayLayout(
+        DisplayLinkContext context,
+        FlapDisplayBlockEntity flapDisplay,
+        FlapDisplayLayout layout
+    ) {
+        if (!layout.isLayout("Default")) {
             layout.loadDefault(flapDisplay.getMaxCharCount());
+        }
     }
 
     public List<List<MutableComponent>> provideFlapDisplayText(DisplayLinkContext context, DisplayTargetStats stats) {
@@ -106,8 +120,9 @@ public abstract class DisplaySource {
      */
     @Nullable
     public static DisplaySource get(@Nullable Identifier id) {
-        if (id == null)
+        if (id == null) {
             return null;
+        }
         return CreateRegistries.DISPLAY_SOURCE.getValue(id);
     }
 
@@ -120,8 +135,9 @@ public abstract class DisplaySource {
         List<DisplaySource> byBlock = BY_BLOCK.get(state);
 
         BlockEntity be = level.getBlockEntity(pos);
-        if (be == null)
+        if (be == null) {
             return byBlock;
+        }
 
         List<DisplaySource> byBe = BY_BLOCK_ENTITY.get(be.getType());
 

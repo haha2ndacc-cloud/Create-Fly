@@ -41,12 +41,23 @@ public class SpoutBlock extends Block implements IWrenchable, IBE<SpoutBlockEnti
     }
 
     @Override
-    public VoxelShape getShape(BlockState p_220053_1_, BlockGetter p_220053_2_, BlockPos p_220053_3_, CollisionContext p_220053_4_) {
+    public VoxelShape getShape(
+        BlockState p_220053_1_,
+        BlockGetter p_220053_2_,
+        BlockPos p_220053_3_,
+        CollisionContext p_220053_4_
+    ) {
         return AllShapes.SPOUT;
     }
 
     @Override
-    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
+    public void setPlacedBy(
+        Level pLevel,
+        BlockPos pPos,
+        BlockState pState,
+        @Nullable LivingEntity pPlacer,
+        ItemStack pStack
+    ) {
         super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
         AdvancementBehaviour.setPlacedBy(pLevel, pPos, pPlacer);
     }

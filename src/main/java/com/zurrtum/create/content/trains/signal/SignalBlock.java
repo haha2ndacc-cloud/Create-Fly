@@ -35,8 +35,7 @@ public class SignalBlock extends Block implements IBE<SignalBlockEntity>, IWrenc
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
     public enum SignalType implements StringRepresentable {
-        ENTRY_SIGNAL,
-        CROSS_SIGNAL;
+        ENTRY_SIGNAL, CROSS_SIGNAL;
         public static final Codec<SignalType> CODEC = StringRepresentable.fromEnum(SignalType::values);
 
         @Override
@@ -80,11 +79,13 @@ public class SignalBlock extends Block implements IBE<SignalBlockEntity>, IWrenc
         @Nullable Orientation wireOrientation,
         boolean pIsMoving
     ) {
-        if (pLevel.isClientSide())
+        if (pLevel.isClientSide()) {
             return;
+        }
         boolean powered = pState.getValue(POWERED);
-        if (powered == pLevel.hasNeighborSignal(pPos))
+        if (powered == pLevel.hasNeighborSignal(pPos)) {
             return;
+        }
         if (powered) {
             pLevel.scheduleTick(pPos, this, 4);
         } else {
@@ -94,8 +95,9 @@ public class SignalBlock extends Block implements IBE<SignalBlockEntity>, IWrenc
 
     @Override
     public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRand) {
-        if (pState.getValue(POWERED) && !pLevel.hasNeighborSignal(pPos))
+        if (pState.getValue(POWERED) && !pLevel.hasNeighborSignal(pPos)) {
             pLevel.setBlock(pPos, pState.cycle(POWERED), Block.UPDATE_CLIENTS);
+        }
     }
 
     @Override
@@ -107,19 +109,22 @@ public class SignalBlock extends Block implements IBE<SignalBlockEntity>, IWrenc
     public InteractionResult onWrenched(BlockState state, UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
-        if (level.isClientSide())
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
+        }
         withBlockEntityDo(
             level, pos, ste -> {
                 SignalBoundary signal = ste.getSignal();
                 Player player = context.getPlayer();
                 if (signal != null) {
                     signal.cycleSignalType(pos);
-                    if (player != null)
-                        player.sendOverlayMessage(
-                            Component.translatable("create.track_signal.mode_change." + signal.getTypeFor(pos).getSerializedName()));
-                } else if (player != null)
+                    if (player != null) {
+                        player.sendOverlayMessage(Component.translatable("create.track_signal.mode_change." + signal.getTypeFor(
+                            pos).getSerializedName()));
+                    }
+                } else if (player != null) {
                     player.sendOverlayMessage(Component.translatable("create.track_signal.cannot_change_mode"));
+                }
             }
         );
         return InteractionResult.SUCCESS;

@@ -65,11 +65,13 @@ public class GoggleOverlayRenderer {
         }
 
         for (OutlineEntry entry : outlines.values()) {
-            if (!entry.isAlive())
+            if (!entry.isAlive()) {
                 continue;
+            }
             Outline outline = entry.getOutline();
-            if (outline instanceof ValueBox && !((ValueBox) outline).isPassive)
+            if (outline instanceof ValueBox && !((ValueBox) outline).isPassive) {
                 return;
+            }
         }
 
         ClientLevel world = mc.level;
@@ -95,8 +97,9 @@ public class GoggleOverlayRenderer {
         ItemStack item = new ItemStack(AllItems.GOGGLES);
         List<Component> tooltip = new ArrayList<>();
 
-        if (be instanceof IHaveCustomOverlayIcon customOverlayIcon)
+        if (be instanceof IHaveCustomOverlayIcon customOverlayIcon) {
             item = customOverlayIcon.getIcon(isShifting);
+        }
 
         if (hasGoggleInformation && wearingGoggles) {
             IHaveGoggleInformation gte = (IHaveGoggleInformation) be;
@@ -104,13 +107,15 @@ public class GoggleOverlayRenderer {
         }
 
         if (hasHoveringInformation) {
-            if (!tooltip.isEmpty())
+            if (!tooltip.isEmpty()) {
                 tooltip.add(CommonComponents.EMPTY);
+            }
             IHaveHoveringInformation hte = (IHaveHoveringInformation) be;
             hoverAddedInformation = hte.addToTooltip(tooltip, isShifting);
 
-            if (goggleAddedInformation && !hoverAddedInformation)
+            if (goggleAddedInformation && !hoverAddedInformation) {
                 tooltip.removeLast();
+            }
         }
 
         if (be instanceof IDisplayAssemblyExceptions) {
@@ -121,9 +126,11 @@ public class GoggleOverlayRenderer {
             }
         }
 
-        if (!hasHoveringInformation)
-            if (hasHoveringInformation = hoverAddedInformation = TrainRelocatorClient.addToTooltip(tooltip))
+        if (!hasHoveringInformation) {
+            if (hasHoveringInformation = hoverAddedInformation = TrainRelocatorClient.addToTooltip(tooltip)) {
                 hoverTicks = prevHoverTicks + 1;
+            }
+        }
 
         // break early if goggle or hover returned false when present
         if ((hasGoggleInformation && !goggleAddedInformation) && (hasHoveringInformation && !hoverAddedInformation)) {
@@ -134,21 +141,24 @@ public class GoggleOverlayRenderer {
         // check for piston poles if goggles are worn
         BlockState state = world.getBlockState(pos);
         if (wearingGoggles && state.is(AllBlocks.PISTON_EXTENSION_POLE)) {
-            Direction[] directions = Iterate.directionsInAxis(state.getValue(PistonExtensionPoleBlock.FACING).getAxis());
+            Direction[] directions = Iterate.directionsInAxis(state.getValue(PistonExtensionPoleBlock.FACING)
+                .getAxis());
             int poles = 1;
             boolean pistonFound = false;
             for (Direction dir : directions) {
                 int attachedPoles = PistonExtensionPoleBlock.PlacementHelper.get().attachedPoles(world, pos, dir);
                 poles += attachedPoles;
-                pistonFound |= world.getBlockState(pos.relative(dir, attachedPoles + 1)).getBlock() instanceof MechanicalPistonBlock;
+                pistonFound |= world.getBlockState(pos.relative(dir, attachedPoles + 1))
+                    .getBlock() instanceof MechanicalPistonBlock;
             }
 
             if (!pistonFound) {
                 hoverTicks = 0;
                 return;
             }
-            if (!tooltip.isEmpty())
+            if (!tooltip.isEmpty()) {
                 tooltip.add(CommonComponents.EMPTY);
+            }
 
             CreateLang.translate("gui.goggles.pole_length").text(" " + poles).forGoggles(tooltip);
         }
@@ -164,8 +174,9 @@ public class GoggleOverlayRenderer {
         int tooltipTextWidth = 0;
         for (FormattedText textLine : tooltip) {
             int textLineWidth = mc.font.width(textLine);
-            if (textLineWidth > tooltipTextWidth)
+            if (textLineWidth > tooltipTextWidth) {
                 tooltipTextWidth = textLineWidth;
+            }
         }
 
         int tooltipHeight = 8;
@@ -186,9 +197,12 @@ public class GoggleOverlayRenderer {
 
         float fade = Mth.clamp((hoverTicks + deltaTracker.getGameTimeDeltaPartialTick(false)) / 24f, 0, 1);
         Boolean useCustom = cfg.overlayCustomColor.get();
-        Color colorBackground = useCustom ? new Color(cfg.overlayBackgroundColor.get()) : BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(.75f);
-        Color colorBorderTop = useCustom ? new Color(cfg.overlayBorderColorTop.get()) : BoxElement.COLOR_VANILLA_BORDER.getFirst().copy();
-        Color colorBorderBot = useCustom ? new Color(cfg.overlayBorderColorBot.get()) : BoxElement.COLOR_VANILLA_BORDER.getSecond().copy();
+        Color colorBackground = useCustom ? new Color(cfg.overlayBackgroundColor.get()) : BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(
+            .75f);
+        Color colorBorderTop = useCustom ? new Color(cfg.overlayBorderColorTop.get()) : BoxElement.COLOR_VANILLA_BORDER.getFirst()
+            .copy();
+        Color colorBorderBot = useCustom ? new Color(cfg.overlayBorderColorBot.get()) : BoxElement.COLOR_VANILLA_BORDER.getSecond()
+            .copy();
 
         if (fade < 1) {
             poseStack.translate((float) (Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5f) * 8), 0);
@@ -259,8 +273,9 @@ public class GoggleOverlayRenderer {
 
     public static BlockPos proxiedOverlayPosition(Level level, BlockPos pos) {
         BlockState targetedState = level.getBlockState(pos);
-        if (targetedState.getBlock() instanceof IProxyHoveringInformation proxy)
+        if (targetedState.getBlock() instanceof IProxyHoveringInformation proxy) {
             return proxy.getInformationSource(level, pos, targetedState);
+        }
         return pos;
     }
 

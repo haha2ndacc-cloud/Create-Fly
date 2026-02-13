@@ -36,8 +36,9 @@ public class StockTickerInteractionHandler {
     @Nullable
     public static InteractionResult interactWithLogisticsManager(Entity entity, Player player, InteractionHand hand) {
         BlockPos targetPos = getStockTickerPosition(entity);
-        if (targetPos == null)
+        if (targetPos == null) {
             return null;
+        }
 
         if (interactWithLogisticsManagerAt(player, player.level(), targetPos)) {
             return InteractionResult.SUCCESS;
@@ -53,13 +54,16 @@ public class StockTickerInteractionHandler {
             return true;
         }
 
-        if (level.isClientSide())
+        if (level.isClientSide()) {
             return true;
-        if (!(level.getBlockEntity(targetPos) instanceof StockTickerBlockEntity stbe))
+        }
+        if (!(level.getBlockEntity(targetPos) instanceof StockTickerBlockEntity stbe)) {
             return false;
+        }
 
         if (!stbe.behaviour.mayInteract(player)) {
-            player.sendOverlayMessage(Component.translatable("create.stock_keeper.locked").withStyle(ChatFormatting.RED));
+            player.sendOverlayMessage(Component.translatable("create.stock_keeper.locked")
+                .withStyle(ChatFormatting.RED));
             return true;
         }
 
@@ -72,18 +76,22 @@ public class StockTickerInteractionHandler {
     }
 
     private static void interactWithShop(Player player, Level level, BlockPos targetPos, ItemStack mainHandItem) {
-        if (level.isClientSide())
+        if (level.isClientSide()) {
             return;
-        if (!(level.getBlockEntity(targetPos) instanceof StockTickerBlockEntity tickerBE))
+        }
+        if (!(level.getBlockEntity(targetPos) instanceof StockTickerBlockEntity tickerBE)) {
             return;
+        }
 
         ShoppingList list = ShoppingListItem.getList(mainHandItem);
-        if (list == null)
+        if (list == null) {
             return;
+        }
 
         if (!tickerBE.behaviour.freqId.equals(list.shopNetwork())) {
             AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
-            player.sendOverlayMessage(Component.translatable("create.stock_keeper.wrong_network").withStyle(ChatFormatting.RED));
+            player.sendOverlayMessage(Component.translatable("create.stock_keeper.wrong_network")
+                .withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -98,26 +106,32 @@ public class StockTickerInteractionHandler {
         // Check stock levels
         InventorySummary recentSummary = tickerBE.getRecentSummary();
         for (BigItemStack entry : order.stacks()) {
-            if (recentSummary.getCountOf(entry.stack) >= entry.count)
+            if (recentSummary.getCountOf(entry.stack) >= entry.count) {
                 continue;
+            }
 
             AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
-            player.sendOverlayMessage(Component.translatable("create.stock_keeper.stock_level_too_low").withStyle(ChatFormatting.RED));
+            player.sendOverlayMessage(Component.translatable("create.stock_keeper.stock_level_too_low")
+                .withStyle(ChatFormatting.RED));
             return;
         }
 
         // Check space in stock ticker
         int occupiedSlots = 0;
-        for (BigItemStack entry : paymentEntries.getStacksByCount())
+        for (BigItemStack entry : paymentEntries.getStacksByCount()) {
             occupiedSlots += Mth.ceil(entry.count / (float) entry.stack.getMaxStackSize());
+        }
         Container receivedPayments = tickerBE.receivedPayments;
-        for (int i = 0, size = receivedPayments.getContainerSize(); i < size; i++)
-            if (receivedPayments.getItem(i).isEmpty())
+        for (int i = 0, size = receivedPayments.getContainerSize(); i < size; i++) {
+            if (receivedPayments.getItem(i).isEmpty()) {
                 occupiedSlots--;
+            }
+        }
 
         if (occupiedSlots > 0) {
             AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
-            player.sendOverlayMessage(Component.translatable("create.stock_keeper.cash_register_full").withStyle(ChatFormatting.RED));
+            player.sendOverlayMessage(Component.translatable("create.stock_keeper.cash_register_full")
+                .withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -129,16 +143,19 @@ public class StockTickerInteractionHandler {
 
             for (int i = 0; i < Inventory.INVENTORY_SIZE; i++) {
                 ItemStack item = playerInventory.getItem(i);
-                if (item.isEmpty())
+                if (item.isEmpty()) {
                     continue;
+                }
                 int countOf = tally.getCountOf(item);
-                if (countOf == 0)
+                if (countOf == 0) {
                     continue;
+                }
                 int toRemove = Math.min(item.getCount(), countOf);
                 tally.add(item, -toRemove);
 
-                if (simulate)
+                if (simulate) {
                     continue;
+                }
 
                 int newStackSize = item.getCount() - toRemove;
                 playerInventory.setItem(i, newStackSize == 0 ? ItemStack.EMPTY : item.copyWithCount(newStackSize));
@@ -147,31 +164,37 @@ public class StockTickerInteractionHandler {
 
             if (simulate && tally.getTotalCount() != 0) {
                 AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
-                player.sendOverlayMessage(Component.translatable("create.stock_keeper.too_broke").withStyle(ChatFormatting.RED));
+                player.sendOverlayMessage(Component.translatable("create.stock_keeper.too_broke")
+                    .withStyle(ChatFormatting.RED));
                 return;
             }
 
-            if (simulate)
+            if (simulate) {
                 continue;
+            }
 
             receivedPayments.insert(toTransfer);
         }
 
         tickerBE.broadcastPackageRequest(RequestType.PLAYER, order, null, ShoppingListItem.getAddress(mainHandItem));
         player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-        if (!order.isEmpty())
+        if (!order.isEmpty()) {
             AllSoundEvents.STOCK_TICKER_TRADE.playOnServer(level, tickerBE.getBlockPos());
+        }
     }
 
     @Nullable
     public static BlockPos getStockTickerPosition(Entity entity) {
         Entity rootVehicle = entity.getRootVehicle();
-        if (!(rootVehicle instanceof SeatEntity))
+        if (!(rootVehicle instanceof SeatEntity)) {
             return null;
-        if (!(entity instanceof LivingEntity))
+        }
+        if (!(entity instanceof LivingEntity)) {
             return null;
-        if (entity.getType() == AllEntityTypes.PACKAGE)
+        }
+        if (entity.getType() == AllEntityTypes.PACKAGE) {
             return null;
+        }
 
         BlockPos pos = entity.blockPosition();
         int stations = 0;
@@ -181,15 +204,17 @@ public class StockTickerInteractionHandler {
         for (Direction d : Iterate.horizontalDirections) {
             for (int y : Iterate.zeroAndOne) {
                 BlockPos workstationPos = pos.relative(d).above(y);
-                if (!(world.getBlockState(workstationPos).getBlock() instanceof StockTickerBlock))
+                if (!(world.getBlockState(workstationPos).getBlock() instanceof StockTickerBlock)) {
                     continue;
+                }
                 targetPos = workstationPos;
                 stations++;
             }
         }
 
-        if (stations != 1)
+        if (stations != 1) {
             return null;
+        }
         return targetPos;
     }
 

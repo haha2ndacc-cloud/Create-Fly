@@ -42,8 +42,9 @@ public class ElevatorControlsHandler {
 
     public static boolean onScroll(Minecraft mc, double delta) {
         ClientLevel world = mc.level;
-        if (world == null)
+        if (world == null) {
             return false;
+        }
         LocalPlayer player = mc.player;
 
         Couple<Vec3> rayInputs = ContraptionHandlerClient.getRayInputs(mc, player);
@@ -51,34 +52,51 @@ public class ElevatorControlsHandler {
         Vec3 target = rayInputs.getSecond();
         AABB aabb = new AABB(origin, target).inflate(16);
 
-        Collection<WeakReference<AbstractContraptionEntity>> contraptions = ContraptionHandlerClient.loadedContraptions.get(world).values();
+        Collection<WeakReference<AbstractContraptionEntity>> contraptions = ContraptionHandlerClient.loadedContraptions.get(
+            world).values();
 
         for (WeakReference<AbstractContraptionEntity> ref : contraptions) {
             AbstractContraptionEntity contraptionEntity = ref.get();
-            if (contraptionEntity == null)
+            if (contraptionEntity == null) {
                 continue;
+            }
 
             Contraption contraption = contraptionEntity.getContraption();
-            if (!(contraption instanceof ElevatorContraption ec))
+            if (!(contraption instanceof ElevatorContraption ec)) {
                 continue;
+            }
 
-            if (!contraptionEntity.getBoundingBox().intersects(aabb))
+            if (!contraptionEntity.getBoundingBox().intersects(aabb)) {
                 continue;
+            }
 
-            BlockHitResult rayTraceResult = ContraptionHandlerClient.rayTraceContraption(origin, target, contraptionEntity);
-            if (rayTraceResult == null)
+            BlockHitResult rayTraceResult = ContraptionHandlerClient.rayTraceContraption(
+                origin,
+                target,
+                contraptionEntity
+            );
+            if (rayTraceResult == null) {
                 continue;
+            }
 
             BlockPos pos = rayTraceResult.getBlockPos();
             StructureBlockInfo info = contraption.getBlocks().get(pos);
 
-            if (info == null)
+            if (info == null) {
                 continue;
-            if (!info.state().is(AllBlocks.CONTRAPTION_CONTROLS))
+            }
+            if (!info.state().is(AllBlocks.CONTRAPTION_CONTROLS)) {
                 continue;
+            }
 
-            if (!slot.testHit(world, pos, info.state(), rayTraceResult.getLocation().subtract(Vec3.atLowerCornerOf(pos))))
+            if (!slot.testHit(
+                world,
+                pos,
+                info.state(),
+                rayTraceResult.getLocation().subtract(Vec3.atLowerCornerOf(pos))
+            )) {
                 continue;
+            }
 
             MovementContext ctx = null;
             for (MutablePair<StructureBlockInfo, MovementContext> pair : contraption.getActors()) {
@@ -91,8 +109,9 @@ public class ElevatorControlsHandler {
                 continue;
             }
 
-            if (!(ctx.temporaryData instanceof ElevatorFloorSelection))
+            if (!(ctx.temporaryData instanceof ElevatorFloorSelection)) {
                 ctx.temporaryData = new ElevatorFloorSelection();
+            }
 
             ElevatorFloorSelection efs = (ElevatorFloorSelection) ctx.temporaryData;
             int prev = efs.currentIndex;

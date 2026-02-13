@@ -67,10 +67,12 @@ public class MillstoneBlock extends KineticBlock implements IBE<MillstoneBlockEn
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-        if (!stack.isEmpty())
+        if (!stack.isEmpty()) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
-        if (level.isClientSide())
+        }
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
+        }
 
         withBlockEntityDo(
             level, pos, millstone -> {
@@ -103,24 +105,37 @@ public class MillstoneBlock extends KineticBlock implements IBE<MillstoneBlockEn
     public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
         super.updateEntityMovementAfterFallOn(worldIn, entityIn);
 
-        if (entityIn.level().isClientSide())
+        if (entityIn.level().isClientSide()) {
             return;
-        if (!(entityIn instanceof ItemEntity itemEntity))
+        }
+        if (!(entityIn instanceof ItemEntity itemEntity)) {
             return;
-        if (!entityIn.isAlive())
+        }
+        if (!entityIn.isAlive()) {
             return;
+        }
 
         MillstoneBlockEntity millstone = null;
-        for (BlockPos pos : Iterate.hereAndBelow(entityIn.blockPosition()))
-            if (millstone == null)
+        for (BlockPos pos : Iterate.hereAndBelow(entityIn.blockPosition())) {
+            if (millstone == null) {
                 millstone = getBlockEntity(worldIn, pos);
+            }
+        }
 
-        if (millstone == null)
+        if (millstone == null) {
             return;
+        }
 
-        Container capability = ItemHelper.getInventory(millstone.getLevel(), millstone.getBlockPos(), millstone.getBlockState(), millstone, null);
-        if (capability == null)
+        Container capability = ItemHelper.getInventory(
+            millstone.getLevel(),
+            millstone.getBlockPos(),
+            millstone.getBlockState(),
+            millstone,
+            null
+        );
+        if (capability == null) {
             return;
+        }
 
         ItemStack stack = itemEntity.getItem();
         int insert = capability.insert(stack);

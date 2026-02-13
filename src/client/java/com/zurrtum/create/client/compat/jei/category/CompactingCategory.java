@@ -67,15 +67,29 @@ public class CompactingCategory extends CreateCategory<RecipeHolder<CompactingRe
                 .addItemStacks(getStacks(ingredients.get(i)));
         }
         if (fluidIngredient != null) {
-            addFluidSlot(builder, xOffset + (i % 3) * 19, yOffset - (i / 3) * 19, fluidIngredient).setBackground(SLOT, -1, -1);
+            addFluidSlot(builder, xOffset + (i % 3) * 19, yOffset - (i / 3) * 19, fluidIngredient).setBackground(
+                SLOT,
+                -1,
+                -1
+            );
         }
         builder.addOutputSlot(142, 51).setBackground(SLOT, -1, -1).add(recipe.result());
     }
 
     @Override
-    public void draw(RecipeHolder<CompactingRecipe> entry, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
+    public void draw(
+        RecipeHolder<CompactingRecipe> entry,
+        IRecipeSlotsView recipeSlotsView,
+        GuiGraphics graphics,
+        double mouseX,
+        double mouseY
+    ) {
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 136, 32);
         AllGuiTextures.JEI_SHADOW.render(graphics, 81, 68);
-        graphics.guiRenderState.submitPicturesInPictureState(new PressBasinRenderState(new Matrix3x2f(graphics.pose()), 91, -5));
+        graphics.guiRenderState.submitPicturesInPictureState(new PressBasinRenderState(
+            new Matrix3x2f(graphics.pose()),
+            91,
+            -5
+        ));
     }
 }

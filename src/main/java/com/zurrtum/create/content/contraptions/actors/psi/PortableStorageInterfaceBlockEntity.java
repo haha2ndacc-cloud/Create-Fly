@@ -39,8 +39,9 @@ public abstract class PortableStorageInterfaceBlockEntity extends SmartBlockEnti
     }
 
     public void startTransferringTo(Contraption contraption, float distance) {
-        if (connectedEntity == contraption.entity)
+        if (connectedEntity == contraption.entity) {
             return;
+        }
         this.distance = Math.min(2, distance);
         connectedEntity = contraption.entity;
         startConnecting();
@@ -53,8 +54,9 @@ public abstract class PortableStorageInterfaceBlockEntity extends SmartBlockEnti
     }
 
     public boolean canTransfer() {
-        if (connectedEntity != null && !connectedEntity.isAlive())
+        if (connectedEntity != null && !connectedEntity.isAlive()) {
             stopTransferring();
+        }
         return connectedEntity != null && isConnected();
     }
 
@@ -62,8 +64,9 @@ public abstract class PortableStorageInterfaceBlockEntity extends SmartBlockEnti
     public void initialize() {
         super.initialize();
         powered = level.hasNeighborSignal(worldPosition);
-        if (!powered)
+        if (!powered) {
             notifyContraptions();
+        }
     }
 
     @Override
@@ -89,23 +92,27 @@ public abstract class PortableStorageInterfaceBlockEntity extends SmartBlockEnti
 
         if (timerCanDecrement && (!isVirtual() || transferTimer != ANIMATION)) {
             transferTimer--;
-            if (transferTimer == ANIMATION - 1)
+            if (transferTimer == ANIMATION - 1) {
                 sendData();
-            if (transferTimer <= 0 || powered)
+            }
+            if (transferTimer <= 0 || powered) {
                 stopTransferring();
+            }
         }
 
         boolean isConnected = isConnected();
-        if (wasConnected != isConnected && !level.isClientSide())
+        if (wasConnected != isConnected && !level.isClientSide()) {
             setChanged();
+        }
 
         float progress = 0;
-        if (isConnected)
+        if (isConnected) {
             progress = 1;
-        else if (transferTimer >= timeUnit + animation)
+        } else if (transferTimer >= timeUnit + animation) {
             progress = Mth.lerpInt((transferTimer - timeUnit - animation) / (float) animation, 1, 0);
-        else if (transferTimer < animation)
+        } else if (transferTimer < animation) {
             progress = Mth.lerpInt(transferTimer / (float) animation, 0, 1);
+        }
         connectionAnimation.setValue(progress);
     }
 
@@ -116,8 +123,9 @@ public abstract class PortableStorageInterfaceBlockEntity extends SmartBlockEnti
         distance = view.getFloatOr("Distance", 0);
         boolean poweredPreviously = powered;
         powered = view.getBooleanOr("Powered", false);
-        if (clientPacket && powered != poweredPreviously && !powered)
+        if (clientPacket && powered != poweredPreviously && !powered) {
             notifyContraptions();
+        }
     }
 
     @Override
@@ -130,18 +138,22 @@ public abstract class PortableStorageInterfaceBlockEntity extends SmartBlockEnti
 
     public void neighbourChanged() {
         boolean isBlockPowered = level.hasNeighborSignal(worldPosition);
-        if (isBlockPowered == powered)
+        if (isBlockPowered == powered) {
             return;
+        }
         powered = isBlockPowered;
-        if (!powered)
+        if (!powered) {
             notifyContraptions();
-        if (powered)
+        }
+        if (powered) {
             stopTransferring();
+        }
         sendData();
     }
 
     private void notifyContraptions() {
-        level.getEntitiesOfClass(AbstractContraptionEntity.class, new AABB(worldPosition).inflate(3)).forEach(AbstractContraptionEntity::refreshPSIs);
+        level.getEntitiesOfClass(AbstractContraptionEntity.class, new AABB(worldPosition).inflate(3))
+            .forEach(AbstractContraptionEntity::refreshPSIs);
     }
 
     public boolean isPowered() {

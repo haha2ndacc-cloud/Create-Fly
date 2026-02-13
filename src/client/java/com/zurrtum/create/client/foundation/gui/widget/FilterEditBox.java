@@ -17,7 +17,15 @@ public class FilterEditBox extends EditBox {
         filter = Objects::nonNull;
     }
 
-    public FilterEditBox(Font font, int x, int y, int width, int height, Component narration, Predicate<String> filter) {
+    public FilterEditBox(
+        Font font,
+        int x,
+        int y,
+        int width,
+        int height,
+        Component narration,
+        Predicate<String> filter
+    ) {
         super(font, x, y, width, height, null, narration);
         this.filter = filter;
     }

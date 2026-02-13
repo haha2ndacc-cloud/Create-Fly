@@ -149,7 +149,8 @@ public class ProcessingInventory implements SidedItemInventory {
         remainingTime = view.getFloatOr("ProcessingTime", 0);
         recipeDuration = view.getFloatOr("RecipeTime", 0);
         appliedRecipe = view.getBooleanOr("AppliedRecipe", false);
-        if (appliedRecipe && isEmpty())
+        if (appliedRecipe && isEmpty()) {
             appliedRecipe = false;
+        }
     }
 }

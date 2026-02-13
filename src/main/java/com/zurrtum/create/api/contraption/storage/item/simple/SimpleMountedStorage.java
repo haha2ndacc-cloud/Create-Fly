@@ -43,8 +43,9 @@ public class SimpleMountedStorage extends WrapperMountedItemStorage<ItemStackHan
 
     @Override
     public void unmount(Level level, BlockState state, BlockPos pos, @Nullable BlockEntity be) {
-        if (be == null)
+        if (be == null) {
             return;
+        }
 
         Container cap = ItemHelper.getInventory(level, pos, state, be, null);
         if (cap != null) {

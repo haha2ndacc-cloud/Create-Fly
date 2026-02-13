@@ -29,10 +29,16 @@ public class TrainRelocator {
         @Nullable List<Vec3> toVisualise
     ) {
         BlockState blockState = level.getBlockState(pos);
-        if (!(blockState.getBlock() instanceof ITrackBlock track))
+        if (!(blockState.getBlock() instanceof ITrackBlock track)) {
             return false;
+        }
 
-        Pair<Vec3, Direction.AxisDirection> nearestTrackAxis = track.getNearestTrackAxis(level, pos, blockState, lookAngle);
+        Pair<Vec3, Direction.AxisDirection> nearestTrackAxis = track.getNearestTrackAxis(
+            level,
+            pos,
+            blockState,
+            lookAngle
+        );
         TrackGraphLocation graphLocation = bezier != null ? TrackGraphHelper.getBezierGraphLocationAt(
             level,
             pos,
@@ -40,15 +46,17 @@ public class TrainRelocator {
             bezier
         ) : TrackGraphHelper.getGraphLocationAt(level, pos, nearestTrackAxis.getSecond(), nearestTrackAxis.getFirst());
 
-        if (graphLocation == null)
+        if (graphLocation == null) {
             return false;
+        }
 
         TrackGraph graph = graphLocation.graph;
         TrackNode node1 = graph.locateNode(graphLocation.edge.getFirst());
         TrackNode node2 = graph.locateNode(graphLocation.edge.getSecond());
         TrackEdge edge = graph.getConnectionsFrom(node1).get(node2);
-        if (edge == null)
+        if (edge == null) {
             return false;
+        }
 
         TravellingPoint probe = new TravellingPoint(node1, node2, edge, graphLocation.position, false);
         TravellingPoint.IEdgePointListener ignoreSignals = probe.ignoreEdgePoints();
@@ -59,14 +67,18 @@ public class TrainRelocator {
             recordedLocations.add(Pair.of(Couple.create(tp.node1, tp.node2), tp.position));
             recordedVecs.add(tp.getPosition(graph));
         };
-        TravellingPoint.ITrackSelector steer = probe.steer(TravellingPoint.SteerDirection.NONE, track.getUpNormal(level, pos, blockState));
+        TravellingPoint.ITrackSelector steer = probe.steer(
+            TravellingPoint.SteerDirection.NONE,
+            track.getUpNormal(level, pos, blockState)
+        );
         MutableBoolean blocked = new MutableBoolean(false);
         MutableBoolean portal = new MutableBoolean(false);
 
         MutableInt blockingIndex = new MutableInt(0);
         train.forEachTravellingPointBackwards((tp, d) -> {
-            if (blocked.booleanValue())
+            if (blocked.booleanValue()) {
                 return;
+            }
             probe.travel(
                 graph, d, steer, ignoreSignals, ignoreTurns, $ -> {
                     portal.setTrue();
@@ -90,18 +102,27 @@ public class TrainRelocator {
             Vec3 vec1 = recordedVecs.get(i);
             Vec3 vec2 = recordedVecs.get(i + 1);
             boolean blocking = i >= blockingIndex.intValue() - 1;
-            boolean collided = !blocked.booleanValue() && train.findCollidingTrain(level, vec1, vec2, level.dimension()) != null;
-            if (level.isClientSide() && toVisualise != null)
+            boolean collided = !blocked.booleanValue() && train.findCollidingTrain(
+                level,
+                vec1,
+                vec2,
+                level.dimension()
+            ) != null;
+            if (level.isClientSide() && toVisualise != null) {
                 toVisualise.add(vec2);
-            if (collided || blocking)
+            }
+            if (collided || blocking) {
                 return false;
+            }
         }
 
-        if (blocked.booleanValue())
+        if (blocked.booleanValue()) {
             return false;
+        }
 
-        if (toVisualise != null)
+        if (toVisualise != null) {
             return true;
+        }
 
         train.leaveStation();
         train.derailed = false;
@@ -112,8 +133,9 @@ public class TrainRelocator {
         train.migratingPoints.clear();
         train.cancelStall();
 
-        if (train.navigation.destination != null)
+        if (train.navigation.destination != null) {
             train.navigation.cancelNavigation();
+        }
 
         train.forEachTravellingPoint(tp -> {
             Pair<Couple<@Nullable TrackNode>, Double> last = recordedLocations.removeLast();
@@ -123,8 +145,9 @@ public class TrainRelocator {
             tp.edge = graph.getConnectionsFrom(tp.node1).get(tp.node2);
         });
 
-        for (Carriage carriage : train.carriages)
+        for (Carriage carriage : train.carriages) {
             carriage.updateContraptionAnchors();
+        }
 
         train.status.successfulMigration();
         train.collectInitiallyOccupiedSignalBlocks();

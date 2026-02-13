@@ -70,12 +70,14 @@ public class SpoutFillingCategory extends CreateCategory<RecipeHolder<FillingRec
                 PotionContents potion = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
                 BottleType bottleType = PotionFluidHandler.bottleTypeFromItem(stack.getItem());
                 recipes.add(new RecipeHolder<>(
-                    ResourceKey.create(Registries.RECIPE, Identifier.fromNamespaceAndPath(MOD_ID, "filling_potions_" + i.getAndIncrement())),
-                    new FillingRecipe(
-                        stack,
-                        Ingredient.of(Items.GLASS_BOTTLE),
-                        PotionFluidHandler.getFluidIngredientFromPotion(potion, bottleType, BottleFluidInventory.CAPACITY)
-                    )
+                    ResourceKey.create(
+                        Registries.RECIPE,
+                        Identifier.fromNamespaceAndPath(MOD_ID, "filling_potions_" + i.getAndIncrement())
+                    ), new FillingRecipe(
+                    stack,
+                    Ingredient.of(Items.GLASS_BOTTLE),
+                    PotionFluidHandler.getFluidIngredientFromPotion(potion, bottleType, BottleFluidInventory.CAPACITY)
+                )
                 ));
                 return;
             }
@@ -86,7 +88,10 @@ public class SpoutFillingCategory extends CreateCategory<RecipeHolder<FillingRec
                 int size = capability.size();
                 FluidStack existingFluid = size == 1 ? capability.getStack(0) : FluidStack.EMPTY;
                 for (FluidStack fluid : fluids) {
-                    if (size == 1 && !existingFluid.isEmpty() && !FluidStack.areFluidsAndComponentsEqual(existingFluid, fluid)) {
+                    if (size == 1 && !existingFluid.isEmpty() && !FluidStack.areFluidsAndComponentsEqual(
+                        existingFluid,
+                        fluid
+                    )) {
                         continue;
                     }
                     int insert = capability.insert(fluid, BucketFluidInventory.CAPACITY);
@@ -106,8 +111,11 @@ public class SpoutFillingCategory extends CreateCategory<RecipeHolder<FillingRec
                             Ingredient ingredient = stack.getComponentsPatch()
                                 .isEmpty() ? Ingredient.of(stack.getItem()) : DefaultCustomIngredients.components(stack);
                             recipes.add(new RecipeHolder<>(
-                                ResourceKey.create(Registries.RECIPE, id),
-                                new FillingRecipe(result, ingredient, new FluidStackIngredient(fluid.getFluid(), fluid.getComponentChanges(), insert))
+                                ResourceKey.create(Registries.RECIPE, id), new FillingRecipe(
+                                result,
+                                ingredient,
+                                new FluidStackIngredient(fluid.getFluid(), fluid.getComponentChanges(), insert)
+                            )
                             ));
                         }
                     }
@@ -147,24 +155,31 @@ public class SpoutFillingCategory extends CreateCategory<RecipeHolder<FillingRec
     }
 
     @Override
-    public void draw(RecipeHolder<FillingRecipe> entry, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
+    public void draw(
+        RecipeHolder<FillingRecipe> entry,
+        IRecipeSlotsView recipeSlotsView,
+        GuiGraphics graphics,
+        double mouseX,
+        double mouseY
+    ) {
         AllGuiTextures.JEI_SHADOW.render(graphics, 62, 57);
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 126, 29);
-        recipeSlotsView.findSlotByName("fluid").flatMap(view -> view.getDisplayedIngredient(FabricTypes.FLUID_STACK)).ifPresent(fluidIngredient -> {
-            FluidVariant fluidVariant = fluidIngredient.getFluidVariant();
-            int i = idGenerator.getAndIncrement();
-            if (i >= MAX) {
-                idGenerator.set(0);
-            }
-            graphics.guiRenderState.submitPicturesInPictureState(new SpoutRenderState(
-                i,
-                new Matrix3x2f(graphics.pose()),
-                fluidVariant.getFluid(),
-                fluidVariant.getComponentsPatch(),
-                75,
-                1,
-                0
-            ));
-        });
+        recipeSlotsView.findSlotByName("fluid").flatMap(view -> view.getDisplayedIngredient(FabricTypes.FLUID_STACK))
+            .ifPresent(fluidIngredient -> {
+                FluidVariant fluidVariant = fluidIngredient.getFluidVariant();
+                int i = idGenerator.getAndIncrement();
+                if (i >= MAX) {
+                    idGenerator.set(0);
+                }
+                graphics.guiRenderState.submitPicturesInPictureState(new SpoutRenderState(
+                    i,
+                    new Matrix3x2f(graphics.pose()),
+                    fluidVariant.getFluid(),
+                    fluidVariant.getComponentsPatch(),
+                    75,
+                    1,
+                    0
+                ));
+            });
     }
 }

@@ -12,5 +12,12 @@ import org.jspecify.annotations.Nullable;
 
 @FunctionalInterface
 public interface ScreenFactory<T extends AbstractContainerMenu, U extends Screen & MenuAccess<T>, H> {
-    @Nullable U create(Minecraft mc, MenuType<H> type, int syncId, Inventory playerInventory, Component title, RegistryFriendlyByteBuf extraData);
+    @Nullable U create(
+        Minecraft mc,
+        MenuType<H> type,
+        int syncId,
+        Inventory playerInventory,
+        Component title,
+        RegistryFriendlyByteBuf extraData
+    );
 }

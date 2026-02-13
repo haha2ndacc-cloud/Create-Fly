@@ -19,11 +19,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public record FactoryPanelConfigurationPacket(
-    FactoryPanelPosition position, String address, Map<FactoryPanelPosition, Integer> inputAmounts, List<ItemStack> craftingArrangement,
-    int outputAmount, int promiseClearingInterval, @Nullable FactoryPanelPosition removeConnection, boolean clearPromises, boolean reset,
-    boolean redstoneReset
-) implements Packet<ServerGamePacketListener> {
+public record FactoryPanelConfigurationPacket(FactoryPanelPosition position, String address,
+                                              Map<FactoryPanelPosition, Integer> inputAmounts,
+                                              List<ItemStack> craftingArrangement, int outputAmount,
+                                              int promiseClearingInterval,
+                                              @Nullable FactoryPanelPosition removeConnection, boolean clearPromises,
+                                              boolean reset,
+                                              boolean redstoneReset) implements Packet<ServerGamePacketListener> {
     @SuppressWarnings("DataFlowIssue")
     public static final StreamCodec<RegistryFriendlyByteBuf, FactoryPanelConfigurationPacket> CODEC = CatnipLargerStreamCodecs.composite(
         FactoryPanelPosition.PACKET_CODEC,

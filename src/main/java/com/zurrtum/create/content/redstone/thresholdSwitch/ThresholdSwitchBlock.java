@@ -60,9 +60,11 @@ public class ThresholdSwitchBlock extends DirectedDirectionalBlock implements IB
 
     @Override
     public int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
-        if (side == getTargetDirection(blockState).getOpposite())
+        if (side == getTargetDirection(blockState).getOpposite()) {
             return 0;
-        return getBlockEntityOptional(blockAccess, pos).filter(ThresholdSwitchBlockEntity::isPowered).map($ -> 15).orElse(0);
+        }
+        return getBlockEntityOptional(blockAccess, pos).filter(ThresholdSwitchBlockEntity::isPowered).map($ -> 15)
+            .orElse(0);
     }
 
     @Override
@@ -85,8 +87,9 @@ public class ThresholdSwitchBlock extends DirectedDirectionalBlock implements IB
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-        if (player != null && stack.is(AllItems.WRENCH))
+        if (player != null && stack.is(AllItems.WRENCH)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
         if (level.isClientSide()) {
             withBlockEntityDo(
                 level, pos, be -> {
@@ -118,7 +121,8 @@ public class ThresholdSwitchBlock extends DirectedDirectionalBlock implements IB
 
         if (preferredFacing == null) {
             Direction facing = context.getNearestLookingDirection();
-            preferredFacing = context.getPlayer() != null && context.getPlayer().isShiftKeyDown() ? facing : facing.getOpposite();
+            preferredFacing = context.getPlayer() != null && context.getPlayer()
+                .isShiftKeyDown() ? facing : facing.getOpposite();
         }
 
         if (preferredFacing.getAxis() == Axis.Y) {

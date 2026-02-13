@@ -32,8 +32,9 @@ public class ClockworkContraption extends Contraption {
     }
 
     private void ignoreBlocks(Set<BlockPos> blocks, BlockPos anchor) {
-        for (BlockPos blockPos : blocks)
+        for (BlockPos blockPos : blocks) {
             ignoreBlocks.add(anchor.offset(blockPos));
+        }
     }
 
     @Override
@@ -54,12 +55,14 @@ public class ClockworkContraption extends Contraption {
 
         hourArm.facing = direction;
         hourArm.handType = HandType.HOUR;
-        if (!hourArm.assemble(world, pos))
+        if (!hourArm.assemble(world, pos)) {
             return null;
+        }
         for (int i = 0; i < 16; i++) {
             BlockPos offsetPos = BlockPos.ZERO.relative(direction, i);
-            if (hourArm.getBlocks().containsKey(offsetPos))
+            if (hourArm.getBlocks().containsKey(offsetPos)) {
                 continue;
+            }
             hourArmBlocks = i;
             break;
         }
@@ -70,10 +73,12 @@ public class ClockworkContraption extends Contraption {
             minuteArm.handType = HandType.MINUTE;
             minuteArm.offset = hourArmBlocks;
             minuteArm.ignoreBlocks(hourArm.getBlocks().keySet(), hourArm.anchor);
-            if (!minuteArm.assemble(world, pos))
+            if (!minuteArm.assemble(world, pos)) {
                 return null;
-            if (minuteArm.getBlocks().isEmpty())
+            }
+            if (minuteArm.getBlocks().isEmpty()) {
                 minuteArm = null;
+            }
         }
 
         hourArm.startMoving(world);
@@ -91,7 +96,11 @@ public class ClockworkContraption extends Contraption {
     }
 
     @Override
-    public boolean searchMovedStructure(Level world, BlockPos pos, @Nullable Direction direction) throws AssemblyException {
+    public boolean searchMovedStructure(
+        Level world,
+        BlockPos pos,
+        @Nullable Direction direction
+    ) throws AssemblyException {
         return super.searchMovedStructure(world, pos.relative(direction, offset + 1), null);
     }
 
@@ -127,14 +136,14 @@ public class ClockworkContraption extends Contraption {
 
     @Override
     public boolean canBeStabilized(Direction facing, BlockPos localPos) {
-        if (BlockPos.ZERO.equals(localPos) || BlockPos.ZERO.equals(localPos.relative(facing)))
+        if (BlockPos.ZERO.equals(localPos) || BlockPos.ZERO.equals(localPos.relative(facing))) {
             return false;
+        }
         return facing.getAxis() == this.facing.getAxis();
     }
 
     public enum HandType implements StringRepresentable {
-        HOUR,
-        MINUTE;
+        HOUR, MINUTE;
 
         public static final Codec<HandType> CODEC = StringRepresentable.fromEnum(HandType::values);
 

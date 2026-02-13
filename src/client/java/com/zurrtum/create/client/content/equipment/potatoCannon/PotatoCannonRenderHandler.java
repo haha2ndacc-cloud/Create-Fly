@@ -32,8 +32,9 @@ public class PotatoCannonRenderHandler extends ShootableGadgetRenderHandler {
 
     public void beforeShoot(float nextPitch, Vec3 location, Vec3 motion, ItemStack stack) {
         this.nextPitch = nextPitch;
-        if (stack.isEmpty())
+        if (stack.isEmpty()) {
             return;
+        }
         ClientLevel world = Minecraft.getInstance().level;
         for (int i = 0; i < 2; i++) {
             Vec3 m = VecHelper.offsetRandomly(motion.scale(0.1f), world.getRandom(), .025f);

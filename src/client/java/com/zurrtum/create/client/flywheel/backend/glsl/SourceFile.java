@@ -33,7 +33,13 @@ public class SourceFile implements SourceComponent {
 
     public final String finalSource;
 
-    private SourceFile(Identifier name, SourceLines source, ImmutableList<Import> imports, List<SourceFile> included, String finalSource) {
+    private SourceFile(
+        Identifier name,
+        SourceLines source,
+        ImmutableList<Import> imports,
+        List<SourceFile> included,
+        String finalSource
+    ) {
         this.name = name;
         this.source = source;
         this.imports = imports;
@@ -42,10 +48,20 @@ public class SourceFile implements SourceComponent {
     }
 
     public static LoadResult empty(Identifier name) {
-        return new LoadResult.Success(new SourceFile(name, new SourceLines(name, ""), ImmutableList.of(), ImmutableList.of(), ""));
+        return new LoadResult.Success(new SourceFile(
+            name,
+            new SourceLines(name, ""),
+            ImmutableList.of(),
+            ImmutableList.of(),
+            ""
+        ));
     }
 
-    public static LoadResult parse(Function<Identifier, LoadResult> sourceFinder, Identifier name, String stringSource) {
+    public static LoadResult parse(
+        Function<Identifier, LoadResult> sourceFinder,
+        Identifier name,
+        String stringSource
+    ) {
         var source = new SourceLines(name, stringSource);
 
         var imports = Import.parseImports(source);

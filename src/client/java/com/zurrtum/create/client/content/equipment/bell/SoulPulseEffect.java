@@ -47,12 +47,14 @@ public class SoulPulseEffect {
 
     @Nullable
     public List<BlockPos> tick(Level world) {
-        if (finished())
+        if (finished()) {
             return null;
+        }
 
         ticks--;
-        if (ticks < 0 || ticks % TICKS_PER_LAYER != 0)
+        if (ticks < 0 || ticks % TICKS_PER_LAYER != 0) {
             return null;
+        }
 
         List<BlockPos> spawns = getPotentialSoulSpawns(world);
         while (spawns.isEmpty() && ticks > 0) {
@@ -67,10 +69,12 @@ public class SoulPulseEffect {
     }
 
     public List<BlockPos> getPotentialSoulSpawns(@Nullable Level world) {
-        if (world == null)
+        if (world == null) {
             return new ArrayList<>();
+        }
 
-        return getLayer(currentLayerIdx()).map(p -> p.offset(pos)).filter(p -> canSpawnSoulAt(world, p, true)).collect(Collectors.toList());
+        return getLayer(currentLayerIdx()).map(p -> p.offset(pos)).filter(p -> canSpawnSoulAt(world, p, true))
+            .collect(Collectors.toList());
     }
 
     public static boolean isDark(Level world, BlockPos at) {
@@ -82,21 +86,29 @@ public class SoulPulseEffect {
         double dummyWidth = 0.2, dummyHeight = 0.75;
         double w2 = dummyWidth / 2;
 
-        return world != null && SpawnPlacementTypes.ON_GROUND.isSpawnPositionOk(world, at, dummy) && (ignoreLight || isDark(
+        return world != null && SpawnPlacementTypes.ON_GROUND.isSpawnPositionOk(
             world,
-            at
-        )) && Streams.stream(world.getBlockCollisions(
-            null,
-            new AABB(at.getX() + 0.5 - w2, at.getY(), at.getZ() + 0.5 - w2, at.getX() + 0.5 + w2, at.getY() + dummyHeight, at.getZ() + 0.5 + w2)
+            at,
+            dummy
+        ) && (ignoreLight || isDark(world, at)) && Streams.stream(world.getBlockCollisions(
+            null, new AABB(
+                at.getX() + 0.5 - w2,
+                at.getY(),
+                at.getZ() + 0.5 - w2,
+                at.getX() + 0.5 + w2,
+                at.getY() + dummyHeight,
+                at.getZ() + 0.5 + w2
+            )
         )).allMatch(VoxelShape::isEmpty);
     }
 
     public void spawnParticles(@Nullable Level world, BlockPos at) {
-        if (world == null || !world.isClientSide())
+        if (world == null || !world.isClientSide()) {
             return;
+        }
 
         Vec3 p = Vec3.atLowerCornerOf(at);
-        if (canOverlap())
+        if (canOverlap()) {
             world.addAlwaysVisibleParticle(
                 ((int) Math.round(VecHelper.getCenterOf(pos)
                     .distanceTo(VecHelper.getCenterOf(at)))) >= distance ? AllParticleTypes.SOUL_PERIMETER : AllParticleTypes.SOUL_EXPANDING_PERIMETER,
@@ -107,6 +119,7 @@ public class SoulPulseEffect {
                 0,
                 0
             );
+        }
         if (SoulPulseEffect.isDark(world, at)) {
             world.addAlwaysVisibleParticle(AllParticleTypes.SOUL, p.x + 0.5, p.y + 0.5, p.z + 0.5, 0, 0, 0);
             world.addParticle(AllParticleTypes.SOUL_BASE, p.x + 0.5, p.y + 0.01, p.z + 0.5, 0, 0, 0);
@@ -115,8 +128,9 @@ public class SoulPulseEffect {
 
     private static List<List<BlockPos>> genLayers() {
         List<List<BlockPos>> layers = new ArrayList<>();
-        for (int i = 0; i < MAX_DISTANCE; i++)
+        for (int i = 0; i < MAX_DISTANCE; i++) {
             layers.add(new ArrayList<>());
+        }
 
         for (int x = 0; x < MAX_DISTANCE; x++) {
             for (int y = 0; y < MAX_DISTANCE; y++) {
@@ -124,10 +138,12 @@ public class SoulPulseEffect {
                     BlockPos candidate = new BlockPos(x, y, z);
 
                     int dist = (int) Math.round(Math.sqrt(candidate.distSqr(BlockPos.ZERO)));
-                    if (dist > MAX_DISTANCE)
+                    if (dist > MAX_DISTANCE) {
                         continue;
-                    if (dist <= 0)
+                    }
+                    if (dist <= 0) {
                         dist = 1;
+                    }
 
                     List<BlockPos> layer = layers.get(dist - 1);
                     int start = layer.size(), end = start + 1;
@@ -158,8 +174,9 @@ public class SoulPulseEffect {
     }
 
     public static Stream<BlockPos> getLayer(int idx) {
-        if (idx < 0 || idx >= MAX_DISTANCE)
+        if (idx < 0 || idx >= MAX_DISTANCE) {
             return Stream.empty();
+        }
         return LAYERS.get(idx).stream();
     }
 

@@ -41,20 +41,24 @@ public class ClipboardBlockEntity extends SmartBlockEntity {
     @Override
     public void lazyTick() {
         super.lazyTick();
-        if (level.isClientSide())
+        if (level.isClientSide()) {
             AllClientHandle.INSTANCE.advertiseToAddressHelper(this);
+        }
     }
 
     public void updateWrittenState() {
         BlockState blockState = getBlockState();
-        if (!blockState.is(AllBlocks.CLIPBOARD))
+        if (!blockState.is(AllBlocks.CLIPBOARD)) {
             return;
-        if (level.isClientSide())
+        }
+        if (level.isClientSide()) {
             return;
+        }
         boolean isWritten = blockState.getValue(ClipboardBlock.WRITTEN);
         boolean shouldBeWritten = components().has(AllDataComponents.CLIPBOARD_CONTENT);
-        if (isWritten == shouldBeWritten)
+        if (isWritten == shouldBeWritten) {
             return;
+        }
         level.setBlockAndUpdate(worldPosition, blockState.setValue(ClipboardBlock.WRITTEN, shouldBeWritten));
     }
 
@@ -68,8 +72,9 @@ public class ClipboardBlockEntity extends SmartBlockEntity {
         if (clientPacket) {
             view.store("components", DataComponentMap.CODEC, components());
         }
-        if (lastEdit != null)
+        if (lastEdit != null) {
             view.store("LastEdit", UUIDUtil.CODEC, lastEdit);
+        }
     }
 
     @Override

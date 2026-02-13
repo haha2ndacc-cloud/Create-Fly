@@ -99,7 +99,10 @@ public class HosePulleyFluidHandler implements SidedFluidInventory {
         int amount = stack.getAmount();
         if (amount <= HALF_BUCKET && drainer.pullNext(rootPosGetter.get(), true)) {
             FluidStack stack = drainer.getDrainableFluid(rootPosGetter.get());
-            if (!stack.isEmpty() && (amount == 0 || matches(this.stack, stack)) && drainer.pullNext(rootPosGetter.get(), false)) {
+            if (!stack.isEmpty() && (amount == 0 || matches(this.stack, stack)) && drainer.pullNext(
+                rootPosGetter.get(),
+                false
+            )) {
                 filler.counterpartActed();
                 setMaxSize(stack, MAX);
                 if (amount > 0) {
@@ -126,7 +129,11 @@ public class HosePulleyFluidHandler implements SidedFluidInventory {
     public void markDirty() {
         int amount = stack.getAmount();
         if (amount > previousAmount) {
-            if (amount >= BucketFluidInventory.CAPACITY && predicate.get() && filler.tryDeposit(stack.getFluid(), rootPosGetter.get(), false)) {
+            if (amount >= BucketFluidInventory.CAPACITY && predicate.get() && filler.tryDeposit(
+                stack.getFluid(),
+                rootPosGetter.get(),
+                false
+            )) {
                 drainer.counterpartActed();
                 amount -= BucketFluidInventory.CAPACITY;
                 if (amount == 0) {

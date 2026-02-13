@@ -55,8 +55,9 @@ public class SoundScape {
     }
 
     public void tick() {
-        if (AnimationTickHolder.getTicks() % SoundScapes.UPDATE_INTERVAL == 0)
+        if (AnimationTickHolder.getTicks() % SoundScapes.UPDATE_INTERVAL == 0) {
             meanPos = null;
+        }
         repeating.forEach(RepeatingSound::tick);
     }
 
@@ -75,8 +76,9 @@ public class SoundScape {
             meanPos = meanPos.add(VecHelper.getCenterOf(blockPos));
             amount++;
         }
-        if (amount == 0)
+        if (amount == 0) {
             return meanPos;
+        }
         return meanPos.scale(1f / amount);
     }
 

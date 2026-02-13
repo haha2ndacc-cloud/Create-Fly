@@ -45,7 +45,8 @@ public class PistonExtensionPoleBlock extends WrenchableDirectionalBlock impleme
 
     public PistonExtensionPoleBlock(Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP).setValue(BlockStateProperties.WATERLOGGED, false));
+        registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP)
+            .setValue(BlockStateProperties.WATERLOGGED, false));
     }
 
     @Override
@@ -60,26 +61,33 @@ public class PistonExtensionPoleBlock extends WrenchableDirectionalBlock impleme
                 BlockPos currentPos = pos.relative(direction, offset);
                 BlockState block = worldIn.getBlockState(currentPos);
 
-                if (isExtensionPole(block) && axis == block.getValue(FACING).getAxis())
+                if (isExtensionPole(block) && axis == block.getValue(FACING).getAxis()) {
                     continue;
+                }
 
-                if (isPiston(block) && block.getValue(BlockStateProperties.FACING).getAxis() == axis)
+                if (isPiston(block) && block.getValue(BlockStateProperties.FACING).getAxis() == axis) {
                     pistonBase = currentPos;
+                }
 
-                if (isPistonHead(block) && block.getValue(BlockStateProperties.FACING).getAxis() == axis)
+                if (isPistonHead(block) && block.getValue(BlockStateProperties.FACING).getAxis() == axis) {
                     pistonHead = currentPos;
+                }
 
                 break;
             }
         }
 
         if (pistonHead != null && pistonBase != null && worldIn.getBlockState(pistonHead)
-            .getValue(BlockStateProperties.FACING) == worldIn.getBlockState(pistonBase).getValue(BlockStateProperties.FACING)) {
+            .getValue(BlockStateProperties.FACING) == worldIn.getBlockState(pistonBase)
+            .getValue(BlockStateProperties.FACING)) {
 
             final BlockPos basePos = pistonBase;
             BlockPos.betweenClosedStream(pistonBase, pistonHead).filter(p -> !p.equals(pos) && !p.equals(basePos))
                 .forEach(p -> worldIn.destroyBlock(p, !player.isCreative()));
-            worldIn.setBlockAndUpdate(basePos, worldIn.getBlockState(basePos).setValue(MechanicalPistonBlock.STATE, PistonState.RETRACTED));
+            worldIn.setBlockAndUpdate(
+                basePos,
+                worldIn.getBlockState(basePos).setValue(MechanicalPistonBlock.STATE, PistonState.RETRACTED)
+            );
 
             if (worldIn.getBlockEntity(basePos) instanceof MechanicalPistonBlockEntity baseBE) {
                 baseBE.onLengthBroken();
@@ -112,8 +120,10 @@ public class PistonExtensionPoleBlock extends WrenchableDirectionalBlock impleme
         BlockHitResult hitResult
     ) {
         IPlacementHelper placementHelper = PlacementHelpers.get(placementHelperId);
-        if (placementHelper.matchesItem(stack) && !player.isShiftKeyDown())
-            return placementHelper.getOffset(player, level, state, pos, hitResult).placeInWorld(level, (BlockItem) stack.getItem(), player, hand);
+        if (placementHelper.matchesItem(stack) && !player.isShiftKeyDown()) {
+            return placementHelper.getOffset(player, level, state, pos, hitResult)
+                .placeInWorld(level, (BlockItem) stack.getItem(), player, hand);
+        }
 
         return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
@@ -140,8 +150,9 @@ public class PistonExtensionPoleBlock extends WrenchableDirectionalBlock impleme
         BlockState neighbourState,
         RandomSource random
     ) {
-        if (state.getValue(BlockStateProperties.WATERLOGGED))
+        if (state.getValue(BlockStateProperties.WATERLOGGED)) {
             tickView.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+        }
         return state;
     }
 
@@ -159,7 +170,11 @@ public class PistonExtensionPoleBlock extends WrenchableDirectionalBlock impleme
         }
 
         private PlacementHelper() {
-            super(state -> state.is(AllBlocks.PISTON_EXTENSION_POLE), state -> state.getValue(FACING).getAxis(), FACING);
+            super(
+                state -> state.is(AllBlocks.PISTON_EXTENSION_POLE),
+                state -> state.getValue(FACING).getAxis(),
+                FACING
+            );
         }
 
         @Override

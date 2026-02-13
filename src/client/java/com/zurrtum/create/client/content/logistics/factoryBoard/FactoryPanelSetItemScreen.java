@@ -65,8 +65,10 @@ public class FactoryPanelSetItemScreen extends AbstractSimiContainerScreen<Facto
 
         extraAreas = List.of(new Rect2i(leftPos + imageWidth, topPos + bgHeight - 30, 40, 20));
 
-        renderedItem = new ElementWidget(leftPos + 180, topPos + 48).showingElement(GuiGameElement.of(AllItems.FACTORY_GAUGE.getDefaultInstance())
-            .scale(3));
+        renderedItem = new ElementWidget(
+            leftPos + 180,
+            topPos + 48
+        ).showingElement(GuiGameElement.of(AllItems.FACTORY_GAUGE.getDefaultInstance()).scale(3));
         addRenderableWidget(renderedItem);
     }
 
@@ -82,7 +84,14 @@ public class FactoryPanelSetItemScreen extends AbstractSimiContainerScreen<Facto
         renderPlayerInventory(pGuiGraphics, leftPos + 5, topPos + 94);
 
         Component title = CreateLang.translate("gui.factory_panel.place_item_to_monitor").component();
-        pGuiGraphics.drawString(font, title, leftPos + imageWidth / 2 - font.width(title) / 2 - 5, topPos + 4, 0xFF3D3C48, false);
+        pGuiGraphics.drawString(
+            font,
+            title,
+            leftPos + imageWidth / 2 - font.width(title) / 2 - 5,
+            topPos + 4,
+            0xFF3D3C48,
+            false
+        );
     }
 
     @Override

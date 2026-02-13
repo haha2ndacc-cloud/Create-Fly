@@ -30,8 +30,9 @@ public class ItemNameDisplaySource extends SingleLineDisplaySource {
             );
             pos.move(direction);
 
-            if (behaviour == null)
+            if (behaviour == null) {
                 break;
+            }
 
             MutableObject<@Nullable ItemStack> stackHolder = new MutableObject<>();
             behaviour.handleCenteredProcessingOnAllItems(
@@ -42,8 +43,9 @@ public class ItemNameDisplaySource extends SingleLineDisplaySource {
             );
 
             ItemStack stack = stackHolder.get();
-            if (stack != null && !stack.isEmpty())
+            if (stack != null && !stack.isEmpty()) {
                 combined.append(stack.getHoverName());
+            }
         }
 
         return combined;

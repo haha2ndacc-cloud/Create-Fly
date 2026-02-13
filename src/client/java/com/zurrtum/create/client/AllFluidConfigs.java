@@ -59,7 +59,12 @@ public class AllFluidConfigs {
         config(fluid, fogColor, fogDistance, component -> -1);
     }
 
-    private static void config(FlowableFluid fluid, int fogColor, Supplier<Float> fogDistance, Function<DataComponentPatch, Integer> tint) {
+    private static void config(
+        FlowableFluid fluid,
+        int fogColor,
+        Supplier<Float> fogDistance,
+        Function<DataComponentPatch, Integer> tint
+    ) {
         Identifier id = BuiltInRegistries.FLUID.getKey(fluid);
         SpriteId still = Sheets.BLOCKS_MAPPER.apply(id.withSuffix("_still"));
         SpriteId flow = Sheets.BLOCKS_MAPPER.apply(id.withSuffix("_flow"));
@@ -101,9 +106,21 @@ public class AllFluidConfigs {
         Minecraft client = Minecraft.getInstance();
         FluidState state = fluid.defaultFluidState();
         config = new FluidConfig(
-            () -> handler.getFluidSprites(client.level, client.player != null ? client.player.blockPosition() : null, state)[0],
-            () -> handler.getFluidSprites(client.level, client.player != null ? client.player.blockPosition() : null, state)[1],
-            component -> handler.getFluidColor(client.level, client.player != null ? client.player.blockPosition() : null, state)
+            () -> handler.getFluidSprites(
+                client.level,
+                client.player != null ? client.player.blockPosition() : null,
+                state
+            )[0],
+            () -> handler.getFluidSprites(
+                client.level,
+                client.player != null ? client.player.blockPosition() : null,
+                state
+            )[1],
+            component -> handler.getFluidColor(
+                client.level,
+                client.player != null ? client.player.blockPosition() : null,
+                state
+            )
         );
         CACHE.put(fluid, config);
         return config;
@@ -123,7 +140,15 @@ public class AllFluidConfigs {
         );
         config(AllFluids.TEA);
         config(AllFluids.MILK);
-        config(AllFluids.HONEY, 0xEAAE2F, () -> 96.0f * (1f / 8f * AllConfigs.client().honeyTransparencyMultiplier.getF()));
-        config(AllFluids.CHOCOLATE, 0x622020, () -> 96.0f * (1f / 32f * AllConfigs.client().chocolateTransparencyMultiplier.getF()));
+        config(
+            AllFluids.HONEY,
+            0xEAAE2F,
+            () -> 96.0f * (1f / 8f * AllConfigs.client().honeyTransparencyMultiplier.getF())
+        );
+        config(
+            AllFluids.CHOCOLATE,
+            0x622020,
+            () -> 96.0f * (1f / 32f * AllConfigs.client().chocolateTransparencyMultiplier.getF())
+        );
     }
 }

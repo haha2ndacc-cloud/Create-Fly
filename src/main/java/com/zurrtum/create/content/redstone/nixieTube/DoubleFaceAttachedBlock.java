@@ -17,10 +17,7 @@ public class DoubleFaceAttachedBlock extends HorizontalDirectionalBlock {
     public static final MapCodec<DoubleFaceAttachedBlock> CODEC = simpleCodec(DoubleFaceAttachedBlock::new);
 
     public enum DoubleAttachFace implements StringRepresentable {
-        FLOOR,
-        WALL,
-        WALL_REVERSED,
-        CEILING;
+        FLOOR, WALL, WALL_REVERSED, CEILING;
 
         @Override
         public String getSerializedName() {
@@ -55,8 +52,9 @@ public class DoubleFaceAttachedBlock extends HorizontalDirectionalBlock {
                 NixieTubeBlock.DoubleAttachFace face = NixieTubeBlock.DoubleAttachFace.WALL;
                 if (pContext.getPlayer() != null) {
                     Vec3 lookAngle = pContext.getPlayer().getLookAngle();
-                    if (lookAngle.dot(n) < 0)
+                    if (lookAngle.dot(n) < 0) {
                         face = NixieTubeBlock.DoubleAttachFace.WALL_REVERSED;
+                    }
                 }
                 blockstate = defaultBlockState().setValue(FACE, face).setValue(FACING, direction.getOpposite());
             }

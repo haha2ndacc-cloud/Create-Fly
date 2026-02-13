@@ -52,8 +52,9 @@ public class ItemDrainBlock extends Block implements IWrenchable, IBE<ItemDrainB
         ItemDrainBlockEntity blockEntity,
         @Nullable Direction context
     ) {
-        if (context != null && context.getAxis().isHorizontal())
+        if (context != null && context.getAxis().isHorizontal()) {
             return blockEntity.itemHandlers.get(context);
+        }
         return null;
     }
 
@@ -78,8 +79,9 @@ public class ItemDrainBlock extends Block implements IWrenchable, IBE<ItemDrainB
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-        if (stack.getItem() instanceof BlockItem && !FluidHelper.hasFluidInventory(stack))
+        if (stack.getItem() instanceof BlockItem && !FluidHelper.hasFluidInventory(stack)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
 
         return onBlockEntityUseItemOn(
             level, pos, be -> {
@@ -87,8 +89,9 @@ public class ItemDrainBlock extends Block implements IWrenchable, IBE<ItemDrainB
                     be.internalTank.allowInsertion();
                     InteractionResult tryExchange = tryExchange(level, player, hand, stack, be);
                     be.internalTank.forbidInsertion();
-                    if (tryExchange.consumesAction())
+                    if (tryExchange.consumesAction()) {
                         return tryExchange;
+                    }
                 }
 
                 ItemStack heldItemStack = be.getHeldItemStack();
@@ -105,34 +108,56 @@ public class ItemDrainBlock extends Block implements IWrenchable, IBE<ItemDrainB
     @Override
     public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
         super.updateEntityMovementAfterFallOn(worldIn, entityIn);
-        if (!(entityIn instanceof ItemEntity itemEntity))
+        if (!(entityIn instanceof ItemEntity itemEntity)) {
             return;
-        if (!entityIn.isAlive())
+        }
+        if (!entityIn.isAlive()) {
             return;
-        if (entityIn.level().isClientSide())
+        }
+        if (entityIn.level().isClientSide()) {
             return;
+        }
 
-        DirectBeltInputBehaviour inputBehaviour = BlockEntityBehaviour.get(worldIn, entityIn.blockPosition(), DirectBeltInputBehaviour.TYPE);
-        if (inputBehaviour == null)
+        DirectBeltInputBehaviour inputBehaviour = BlockEntityBehaviour.get(
+            worldIn,
+            entityIn.blockPosition(),
+            DirectBeltInputBehaviour.TYPE
+        );
+        if (inputBehaviour == null) {
             return;
+        }
         Vec3 deltaMovement = entityIn.getDeltaMovement().multiply(1, 0, 1).normalize();
         Direction nearest = Direction.getApproximateNearest(deltaMovement.x, deltaMovement.y, deltaMovement.z);
         ItemStack remainder = inputBehaviour.handleInsertion(itemEntity.getItem(), nearest, false);
         itemEntity.setItem(remainder);
-        if (remainder.isEmpty())
+        if (remainder.isEmpty()) {
             itemEntity.discard();
+        }
     }
 
-    protected InteractionResult tryExchange(Level worldIn, Player player, InteractionHand handIn, ItemStack heldItem, ItemDrainBlockEntity be) {
-        if (FluidHelper.tryEmptyItemIntoBE(worldIn, player, handIn, heldItem, be))
+    protected InteractionResult tryExchange(
+        Level worldIn,
+        Player player,
+        InteractionHand handIn,
+        ItemStack heldItem,
+        ItemDrainBlockEntity be
+    ) {
+        if (FluidHelper.tryEmptyItemIntoBE(worldIn, player, handIn, heldItem, be)) {
             return InteractionResult.SUCCESS;
-        if (GenericItemEmptying.canItemBeEmptied(worldIn, heldItem))
+        }
+        if (GenericItemEmptying.canItemBeEmptied(worldIn, heldItem)) {
             return InteractionResult.SUCCESS;
+        }
         return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
-    public VoxelShape getShape(BlockState p_220053_1_, BlockGetter p_220053_2_, BlockPos p_220053_3_, CollisionContext p_220053_4_) {
+    public VoxelShape getShape(
+        BlockState p_220053_1_,
+        BlockGetter p_220053_2_,
+        BlockPos p_220053_3_,
+        CollisionContext p_220053_4_
+    ) {
         return AllShapes.CASING_13PX.get(Direction.UP);
     }
 
@@ -142,7 +167,13 @@ public class ItemDrainBlock extends Block implements IWrenchable, IBE<ItemDrainB
     }
 
     @Override
-    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
+    public void setPlacedBy(
+        Level pLevel,
+        BlockPos pPos,
+        BlockState pState,
+        @Nullable LivingEntity pPlacer,
+        ItemStack pStack
+    ) {
         super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
         AdvancementBehaviour.setPlacedBy(pLevel, pPos, pPlacer);
     }

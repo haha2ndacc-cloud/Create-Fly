@@ -29,8 +29,9 @@ public class CombinedTankWrapper implements SidedFluidInventory {
     }
 
     protected int getIndexForSlot(int slot) {
-        if (slot < 0)
+        if (slot < 0) {
             return -1;
+        }
 
         for (int i = 0; i < baseIndex.length; i++) {
             if (slot - baseIndex[i] < 0) {

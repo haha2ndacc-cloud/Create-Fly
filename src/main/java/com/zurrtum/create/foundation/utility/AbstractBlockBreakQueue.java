@@ -19,7 +19,14 @@ public abstract class AbstractBlockBreakQueue {
         BiConsumer<BlockPos, ItemStack> drop
     ) {
         return pos -> {
-            BlockHelper.destroyBlockAs(world, pos, playerEntity, toDamage, effectChance, stack -> drop.accept(pos, stack));
+            BlockHelper.destroyBlockAs(
+                world,
+                pos,
+                playerEntity,
+                toDamage,
+                effectChance,
+                stack -> drop.accept(pos, stack)
+            );
         };
     }
 
@@ -29,5 +36,10 @@ public abstract class AbstractBlockBreakQueue {
         destroyBlocks(world, toDamage, playerEntity, drop);
     }
 
-    public abstract void destroyBlocks(Level world, ItemStack toDamage, @Nullable Player playerEntity, BiConsumer<BlockPos, ItemStack> drop);
+    public abstract void destroyBlocks(
+        Level world,
+        ItemStack toDamage,
+        @Nullable Player playerEntity,
+        BiConsumer<BlockPos, ItemStack> drop
+    );
 }

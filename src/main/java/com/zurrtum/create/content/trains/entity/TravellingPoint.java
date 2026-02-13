@@ -24,9 +24,7 @@ public class TravellingPoint {
     public boolean upsideDown;
 
     public enum SteerDirection {
-        NONE(0),
-        LEFT(-1),
-        RIGHT(1);
+        NONE(0), LEFT(-1), RIGHT(1);
 
         final float targetDot;
 
@@ -58,7 +56,13 @@ public class TravellingPoint {
     public TravellingPoint() {
     }
 
-    public TravellingPoint(@Nullable TrackNode node1, @Nullable TrackNode node2, @Nullable TrackEdge edge, double position, boolean upsideDown) {
+    public TravellingPoint(
+        @Nullable TrackNode node1,
+        @Nullable TrackNode node2,
+        @Nullable TrackEdge edge,
+        double position,
+        boolean upsideDown
+    ) {
         this.node1 = node1;
         this.node2 = node2;
         this.edge = edge;
@@ -90,12 +94,14 @@ public class TravellingPoint {
             TrackNode target = forward ? other.node1 : other.node2;
             TrackNode secondary = forward ? other.node2 : other.node1;
 
-            for (Map.Entry<TrackNode, TrackEdge> entry : validTargets)
+            for (Map.Entry<TrackNode, TrackEdge> entry : validTargets) {
                 if (entry.getKey() == target || entry.getKey() == secondary) {
-                    if (success != null)
+                    if (success != null) {
                         success.accept(true);
+                    }
                     return entry;
                 }
+            }
 
             List<List<Map.Entry<TrackNode, TrackEdge>>> frontiers = new ArrayList<>(validTargets.size());
             List<Set<TrackEdge>> visiteds = new ArrayList<>(validTargets.size());
@@ -113,21 +119,26 @@ public class TravellingPoint {
                 for (int j = 0; j < validTargets.size(); j++) {
                     Map.Entry<TrackNode, TrackEdge> entry = validTargets.get(j);
                     List<Map.Entry<TrackNode, TrackEdge>> frontier = frontiers.get(j);
-                    if (frontier.isEmpty())
+                    if (frontier.isEmpty()) {
                         continue;
+                    }
 
                     Map.Entry<TrackNode, TrackEdge> currentEntry = frontier.removeFirst();
-                    for (Map.Entry<TrackNode, TrackEdge> nextEntry : graph.getConnectionsFrom(currentEntry.getKey()).entrySet()) {
+                    for (Map.Entry<TrackNode, TrackEdge> nextEntry : graph.getConnectionsFrom(currentEntry.getKey())
+                        .entrySet()) {
                         TrackEdge nextEdge = nextEntry.getValue();
-                        if (!visiteds.get(j).add(nextEdge))
+                        if (!visiteds.get(j).add(nextEdge)) {
                             continue;
-                        if (!currentEntry.getValue().canTravelTo(nextEdge))
+                        }
+                        if (!currentEntry.getValue().canTravelTo(nextEdge)) {
                             continue;
+                        }
 
                         TrackNode nextNode = nextEntry.getKey();
                         if (nextNode == target) {
-                            if (success != null)
+                            if (success != null) {
                                 success.accept(true);
+                            }
                             return entry;
                         }
 
@@ -136,8 +147,9 @@ public class TravellingPoint {
                 }
             }
 
-            if (success != null)
+            if (success != null) {
                 success.accept(false);
+            }
             return validTargets.getFirst();
         };
     }
@@ -154,8 +166,9 @@ public class TravellingPoint {
                 Vec3 normal = trajectory.cross(upNormal);
                 double dot = normal.dot(entryTrajectory);
                 double diff = Math.abs(direction.targetDot - dot);
-                if (diff > closest)
+                if (diff > closest) {
                     continue;
+                }
 
                 closest = diff;
                 best = entry;
@@ -174,7 +187,12 @@ public class TravellingPoint {
         return travel(graph, distance, trackSelector, ignoreEdgePoints());
     }
 
-    public double travel(TrackGraph graph, double distance, ITrackSelector trackSelector, IEdgePointListener signalListener) {
+    public double travel(
+        TrackGraph graph,
+        double distance,
+        ITrackSelector trackSelector,
+        IEdgePointListener signalListener
+    ) {
         return travel(graph, distance, trackSelector, signalListener, ignoreTurns());
     }
 
@@ -197,11 +215,13 @@ public class TravellingPoint {
         IPortalListener portalListener
     ) {
         blocked = false;
-        if (edge == null)
+        if (edge == null) {
             return 0;
+        }
         double edgeLength = edge.getLength();
-        if (Mth.equal(distance, 0))
+        if (Mth.equal(distance, 0)) {
             return 0;
+        }
 
         double prevPos = position;
         double traveled = distance;
@@ -222,7 +242,14 @@ public class TravellingPoint {
         boolean forward = distance > 0;
         double collectedDistance = forward ? -prevPos : -edgeLength + prevPos;
 
-        Double blockedLocation = edgeTraversedFrom(graph, forward, signalListener, turnListener, prevPos, collectedDistance);
+        Double blockedLocation = edgeTraversedFrom(
+            graph,
+            forward,
+            signalListener,
+            turnListener,
+            prevPos,
+            collectedDistance
+        );
         if (blockedLocation != null) {
             position = blockedLocation;
             traveled = position - prevPos;
@@ -236,12 +263,14 @@ public class TravellingPoint {
 
                 for (Map.Entry<TrackNode, TrackEdge> entry : graph.getConnectionsFrom(node2).entrySet()) {
                     TrackNode newNode = entry.getKey();
-                    if (newNode == node1)
+                    if (newNode == node1) {
                         continue;
+                    }
 
                     TrackEdge newEdge = entry.getValue();
-                    if (!edge.canTravelTo(newEdge))
+                    if (!edge.canTravelTo(newEdge)) {
                         continue;
+                    }
 
                     validTargets.add(entry);
                 }
@@ -253,12 +282,14 @@ public class TravellingPoint {
                     break;
                 }
 
-                Map.Entry<TrackNode, TrackEdge> entry = validTargets.size() == 1 ? validTargets.getFirst() : trackSelector.apply(
-                    graph,
+                Map.Entry<TrackNode, TrackEdge> entry = validTargets.size() == 1 ? validTargets.getFirst() : trackSelector.apply(graph,
                     Pair.of(true, validTargets)
                 );
 
-                if (entry.getValue().getLength() == 0 && portalListener.test(Couple.create(node2.getLocation(), entry.getKey().getLocation()))) {
+                if (entry.getValue().getLength() == 0 && portalListener.test(Couple.create(
+                    node2.getLocation(),
+                    entry.getKey().getLocation()
+                ))) {
                     traveled -= position - edgeLength;
                     position = edgeLength;
                     blocked = true;
@@ -271,8 +302,9 @@ public class TravellingPoint {
                 position -= edgeLength;
 
                 collectedDistance += edgeLength;
-                if (edge.isTurn())
+                if (edge.isTurn()) {
                     turnListener.accept(collectedDistance, edge);
+                }
 
                 blockedLocation = edgeTraversedFrom(graph, forward, signalListener, turnListener, 0, collectedDistance);
 
@@ -294,10 +326,12 @@ public class TravellingPoint {
 
                 for (Map.Entry<TrackNode, TrackEdge> entry : graph.getConnectionsFrom(node1).entrySet()) {
                     TrackNode newNode = entry.getKey();
-                    if (newNode == node2)
+                    if (newNode == node2) {
                         continue;
-                    if (!graph.getConnectionsFrom(newNode).get(node1).canTravelTo(edge))
+                    }
+                    if (!graph.getConnectionsFrom(newNode).get(node1).canTravelTo(edge)) {
                         continue;
+                    }
 
                     validTargets.add(entry);
                 }
@@ -309,12 +343,14 @@ public class TravellingPoint {
                     break;
                 }
 
-                Map.Entry<TrackNode, TrackEdge> entry = validTargets.size() == 1 ? validTargets.getFirst() : trackSelector.apply(
-                    graph,
+                Map.Entry<TrackNode, TrackEdge> entry = validTargets.size() == 1 ? validTargets.getFirst() : trackSelector.apply(graph,
                     Pair.of(false, validTargets)
                 );
 
-                if (entry.getValue().getLength() == 0 && portalListener.test(Couple.create(entry.getKey().getLocation(), node1.getLocation()))) {
+                if (entry.getValue().getLength() == 0 && portalListener.test(Couple.create(
+                    entry.getKey().getLocation(),
+                    node1.getLocation()
+                ))) {
                     traveled -= position;
                     position = 0;
                     blocked = true;
@@ -328,7 +364,14 @@ public class TravellingPoint {
                 edgeLength = edge.getLength();
                 position += edgeLength;
 
-                blockedLocation = edgeTraversedFrom(graph, forward, signalListener, turnListener, edgeLength, collectedDistance);
+                blockedLocation = edgeTraversedFrom(
+                    graph,
+                    forward,
+                    signalListener,
+                    turnListener,
+                    edgeLength,
+                    collectedDistance
+                );
 
                 if (blockedLocation != null) {
                     traveled -= position;
@@ -352,8 +395,9 @@ public class TravellingPoint {
         double prevPos,
         double totalDistance
     ) {
-        if (edge.isTurn())
+        if (edge.isTurn()) {
             turnListener.accept(Math.max(0, totalDistance), edge);
+        }
 
         double from = forward ? prevPos : position;
         double to = forward ? position : prevPos;
@@ -367,11 +411,16 @@ public class TravellingPoint {
             TrackEdgePoint nextBoundary = edgePoints.get(index);
             double locationOn = nextBoundary.getLocationOn(edge);
             double distance = forward ? locationOn : length - locationOn;
-            if (forward ? (locationOn < from || locationOn >= to) : (locationOn <= from || locationOn > to))
+            if (forward ? (locationOn < from || locationOn >= to) : (locationOn <= from || locationOn > to)) {
                 continue;
+            }
             Couple<TrackNode> nodes = Couple.create(node1, node2);
-            if (edgePointListener.test(totalDistance + distance, Pair.of(nextBoundary, forward ? nodes : nodes.swap())))
+            if (edgePointListener.test(
+                totalDistance + distance,
+                Pair.of(nextBoundary, forward ? nodes : nodes.swap())
+            )) {
                 return locationOn;
+            }
         }
 
         return null;
@@ -395,7 +444,8 @@ public class TravellingPoint {
 
     public Vec3 getPositionWithOffset(@Nullable TrackGraph trackGraph, double offset, boolean flipUpsideDown) {
         double t = (position + offset) / edge.getLength();
-        return edge.getPosition(trackGraph, t).add(edge.getNormal(trackGraph, t).scale(upsideDown ^ flipUpsideDown ? -1 : 1));
+        return edge.getPosition(trackGraph, t)
+            .add(edge.getNormal(trackGraph, t).scale(upsideDown ^ flipUpsideDown ? -1 : 1));
     }
 
     public void migrateTo(List<TrackGraphLocation> locations) {
@@ -408,8 +458,9 @@ public class TravellingPoint {
     }
 
     public void write(ValueOutput view, DimensionPalette dimensions) {
-        if (Objects.isNull(node1) || Objects.isNull(node2))
+        if (Objects.isNull(node1) || Objects.isNull(node2)) {
             return;
+        }
         ValueOutput.ValueOutputList list = view.childrenList("Nodes");
         node1.getLocation().write(list.addChild(), dimensions);
         node2.getLocation().write(list.addChild(), dimensions);
@@ -417,10 +468,16 @@ public class TravellingPoint {
         view.putBoolean("UpsideDown", upsideDown);
     }
 
-    public static <T> DataResult<T> encode(final TravellingPoint input, final DynamicOps<T> ops, final T empty, DimensionPalette dimensions) {
+    public static <T> DataResult<T> encode(
+        final TravellingPoint input,
+        final DynamicOps<T> ops,
+        final T empty,
+        DimensionPalette dimensions
+    ) {
         RecordBuilder<T> map = ops.mapBuilder();
-        if (Objects.isNull(input.node1) || Objects.isNull(input.node2))
+        if (Objects.isNull(input.node1) || Objects.isNull(input.node2)) {
             return map.build(empty);
+        }
         ListBuilder<T> list = ops.listBuilder();
         list.add(TrackNodeLocation.encode(input.node1.getLocation(), ops, empty, dimensions));
         list.add(TrackNodeLocation.encode(input.node2.getLocation(), ops, empty, dimensions));
@@ -431,8 +488,9 @@ public class TravellingPoint {
     }
 
     public static TravellingPoint read(ValueInput view, @Nullable TrackGraph graph, DimensionPalette dimensions) {
-        if (graph == null)
+        if (graph == null) {
             return new TravellingPoint(null, null, null, 0, false);
+        }
 
         Couple<@Nullable TrackNode> locs = view.childrenList("Nodes").map(list -> {
             Iterator<ValueInput> iterator = list.iterator();
@@ -442,8 +500,9 @@ public class TravellingPoint {
             );
         }).orElseGet(() -> Couple.create(null, null));
 
-        if (locs.either(Objects::isNull))
+        if (locs.either(Objects::isNull)) {
             return new TravellingPoint(null, null, null, 0, false);
+        }
 
         double position = view.getDoubleOr("Position", 0);
         return new TravellingPoint(
@@ -455,9 +514,15 @@ public class TravellingPoint {
         );
     }
 
-    public static <T> TravellingPoint decode(DynamicOps<T> ops, T input, @Nullable TrackGraph graph, DimensionPalette dimensions) {
-        if (graph == null)
+    public static <T> TravellingPoint decode(
+        DynamicOps<T> ops,
+        T input,
+        @Nullable TrackGraph graph,
+        DimensionPalette dimensions
+    ) {
+        if (graph == null) {
             return new TravellingPoint(null, null, null, 0, false);
+        }
 
         MapLike<T> map = ops.getMap(input).getOrThrow();
         Couple<@Nullable TrackNode> locs = ops.getStream(map.get("Nodes")).result().map(stream -> {
@@ -468,8 +533,9 @@ public class TravellingPoint {
             );
         }).orElseGet(() -> Couple.create(null, null));
 
-        if (locs.either(Objects::isNull))
+        if (locs.either(Objects::isNull)) {
             return new TravellingPoint(null, null, null, 0, false);
+        }
 
         double position = ops.getNumberValue(map.get("Position"), 0).doubleValue();
         return new TravellingPoint(

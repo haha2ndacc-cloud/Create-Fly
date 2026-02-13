@@ -17,8 +17,12 @@ import net.minecraft.world.level.block.Block;
 public class ToolboxDyeingRecipe extends CustomRecipe {
     public static final ToolboxDyeingRecipe INSTANCE = new ToolboxDyeingRecipe();
     public static final MapCodec<ToolboxDyeingRecipe> MAP_CODEC = MapCodec.unit(INSTANCE);
-    public static final StreamCodec<RegistryFriendlyByteBuf, ToolboxDyeingRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
-    public static final RecipeSerializer<ToolboxDyeingRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ToolboxDyeingRecipe> STREAM_CODEC = StreamCodec.unit(
+        INSTANCE);
+    public static final RecipeSerializer<ToolboxDyeingRecipe> SERIALIZER = new RecipeSerializer<>(
+        MAP_CODEC,
+        STREAM_CODEC
+    );
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
@@ -31,8 +35,9 @@ public class ToolboxDyeingRecipe extends CustomRecipe {
                 if (Block.byItem(stack.getItem()) instanceof ToolboxBlock) {
                     ++toolboxes;
                 } else {
-                    if (!stack.is(AllItemTags.DYES))
+                    if (!stack.is(AllItemTags.DYES)) {
                         return false;
+                    }
                     ++dyes;
                 }
 

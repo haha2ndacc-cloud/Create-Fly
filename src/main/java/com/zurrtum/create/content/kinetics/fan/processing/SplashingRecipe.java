@@ -15,7 +15,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 
 import java.util.List;
 
-public record SplashingRecipe(List<ProcessingOutput> results, Ingredient ingredient) implements CreateSingleStackRollableRecipe {
+public record SplashingRecipe(List<ProcessingOutput> results,
+                              Ingredient ingredient) implements CreateSingleStackRollableRecipe {
     public static final MapCodec<SplashingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
         ProcessingOutput.CODEC.listOf(1, 12).fieldOf("results").forGetter(SplashingRecipe::results),
         Ingredient.CODEC.fieldOf("ingredient").forGetter(SplashingRecipe::ingredient)

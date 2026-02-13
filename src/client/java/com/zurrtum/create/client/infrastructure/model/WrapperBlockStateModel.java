@@ -26,7 +26,13 @@ public abstract class WrapperBlockStateModel implements BlockStateModel, BlockSt
         entry = new Entry(state, unbaked);
     }
 
-    public void addPartsWithInfo(BlockAndTintGetter world, BlockPos pos, BlockState state, RandomSource random, List<BlockModelPart> parts) {
+    public void addPartsWithInfo(
+        BlockAndTintGetter world,
+        BlockPos pos,
+        BlockState state,
+        RandomSource random,
+        List<BlockModelPart> parts
+    ) {
         collectParts(random, parts);
     }
 

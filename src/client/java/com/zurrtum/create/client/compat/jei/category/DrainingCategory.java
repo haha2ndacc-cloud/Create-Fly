@@ -41,16 +41,25 @@ import java.util.stream.Stream;
 import static com.zurrtum.create.Create.MOD_ID;
 
 public class DrainingCategory extends CreateCategory<RecipeHolder<EmptyingRecipe>> {
-    public static List<RecipeHolder<EmptyingRecipe>> getRecipes(RecipeMap preparedRecipes, Stream<ItemStack> itemStream) {
+    public static List<RecipeHolder<EmptyingRecipe>> getRecipes(
+        RecipeMap preparedRecipes,
+        Stream<ItemStack> itemStream
+    ) {
         List<RecipeHolder<EmptyingRecipe>> recipes = new ArrayList<>(preparedRecipes.byType(AllRecipeTypes.EMPTYING));
         MutableInt i = new MutableInt();
         itemStream.forEach(stack -> {
             if (PotionFluidHandler.isPotionItem(stack)) {
-                Ingredient ingredient = stack.getComponentsPatch().isEmpty() ? Ingredient.of(stack.getItem()) : DefaultCustomIngredients.components(
-                    stack);
+                Ingredient ingredient = stack.getComponentsPatch()
+                    .isEmpty() ? Ingredient.of(stack.getItem()) : DefaultCustomIngredients.components(stack);
                 recipes.add(new RecipeHolder<>(
-                    ResourceKey.create(Registries.RECIPE, Identifier.fromNamespaceAndPath(MOD_ID, "draining_potions_" + i.getAndIncrement())),
-                    new EmptyingRecipe(Items.GLASS_BOTTLE.getDefaultInstance(), PotionFluidHandler.getFluidFromPotionItem(stack), ingredient)
+                    ResourceKey.create(
+                        Registries.RECIPE,
+                        Identifier.fromNamespaceAndPath(MOD_ID, "draining_potions_" + i.getAndIncrement())
+                    ), new EmptyingRecipe(
+                    Items.GLASS_BOTTLE.getDefaultInstance(),
+                    PotionFluidHandler.getFluidFromPotionItem(stack),
+                    ingredient
+                )
                 ));
                 return;
             }
@@ -68,8 +77,8 @@ public class DrainingCategory extends CreateCategory<RecipeHolder<EmptyingRecipe
                     MOD_ID,
                     "empty_" + itemName.getNamespace() + "_" + itemName.getPath() + "_with_" + fluidName.getNamespace() + "_" + fluidName.getPath()
                 );
-                Ingredient ingredient = stack.getComponentsPatch().isEmpty() ? Ingredient.of(stack.getItem()) : DefaultCustomIngredients.components(
-                    stack);
+                Ingredient ingredient = stack.getComponentsPatch()
+                    .isEmpty() ? Ingredient.of(stack.getItem()) : DefaultCustomIngredients.components(stack);
                 recipes.add(new RecipeHolder<>(
                     ResourceKey.create(Registries.RECIPE, id),
                     new EmptyingRecipe(capability.getContainer(), fluid, ingredient)
@@ -108,7 +117,13 @@ public class DrainingCategory extends CreateCategory<RecipeHolder<EmptyingRecipe
     }
 
     @Override
-    public void draw(RecipeHolder<EmptyingRecipe> entry, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
+    public void draw(
+        RecipeHolder<EmptyingRecipe> entry,
+        IRecipeSlotsView recipeSlotsView,
+        GuiGraphics graphics,
+        double mouseX,
+        double mouseY
+    ) {
         AllGuiTextures.JEI_SHADOW.render(graphics, 62, 37);
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 73, 4);
         FluidStack stack = entry.value().fluidResult();

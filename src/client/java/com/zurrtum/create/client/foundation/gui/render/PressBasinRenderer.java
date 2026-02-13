@@ -50,7 +50,8 @@ public class PressBasinRenderer extends PictureInPictureRenderer<PressBasinRende
         blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
 
         matrices.pushPose();
-        blockState = AllBlocks.SHAFT.defaultBlockState().setValue(BlockStateProperties.AXIS, net.minecraft.core.Direction.Axis.Z);
+        blockState = AllBlocks.SHAFT.defaultBlockState()
+            .setValue(BlockStateProperties.AXIS, net.minecraft.core.Direction.Axis.Z);
         world.blockState(blockState);
         parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
         matrices.translate(0.5f, 0.5f, 0.5f);
@@ -84,10 +85,12 @@ public class PressBasinRenderer extends PictureInPictureRenderer<PressBasinRende
             float progress = cycle / 10;
             return -(progress * progress * progress);
         }
-        if (cycle < 15)
+        if (cycle < 15) {
             return -1;
-        if (cycle < 20)
+        }
+        if (cycle < 20) {
             return -1 + (1 - ((20 - cycle) / 5));
+        }
         return 0;
     }
 

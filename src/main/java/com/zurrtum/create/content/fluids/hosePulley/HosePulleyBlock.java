@@ -44,7 +44,8 @@ public class HosePulleyBlock extends HorizontalKineticBlock implements IBE<HoseP
         Direction preferredHorizontalFacing = getPreferredHorizontalFacing(context);
         return defaultBlockState().setValue(
             HORIZONTAL_FACING,
-            preferredHorizontalFacing != null ? preferredHorizontalFacing.getCounterClockWise() : context.getHorizontalDirection().getOpposite()
+            preferredHorizontalFacing != null ? preferredHorizontalFacing.getCounterClockWise() : context.getHorizontalDirection()
+                .getOpposite()
         );
     }
 
@@ -61,19 +62,22 @@ public class HosePulleyBlock extends HorizontalKineticBlock implements IBE<HoseP
     @Nullable
     public Direction getPreferredHorizontalFacing(BlockPlaceContext context) {
         Direction fromParent = super.getPreferredHorizontalFacing(context);
-        if (fromParent != null)
+        if (fromParent != null) {
             return fromParent;
+        }
 
         Direction prefferedSide = null;
         for (Direction facing : Iterate.horizontalDirections) {
             BlockPos pos = context.getClickedPos().relative(facing);
             BlockState blockState = context.getLevel().getBlockState(pos);
-            if (FluidPipeBlock.canConnectTo(context.getLevel(), pos, blockState, facing))
+            if (FluidPipeBlock.canConnectTo(context.getLevel(), pos, blockState, facing)) {
                 if (prefferedSide != null && prefferedSide.getAxis() != facing.getAxis()) {
                     prefferedSide = null;
                     break;
-                } else
+                } else {
                     prefferedSide = facing;
+                }
+            }
         }
         return prefferedSide == null ? null : prefferedSide.getOpposite();
     }

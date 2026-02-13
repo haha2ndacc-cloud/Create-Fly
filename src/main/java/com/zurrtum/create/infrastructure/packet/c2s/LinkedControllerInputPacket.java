@@ -16,9 +16,8 @@ import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
-public record LinkedControllerInputPacket(
-    List<Integer> activatedButtons, boolean press, @Nullable BlockPos lecternPos
-) implements Packet<ServerGamePacketListener> {
+public record LinkedControllerInputPacket(List<Integer> activatedButtons, boolean press,
+                                          @Nullable BlockPos lecternPos) implements Packet<ServerGamePacketListener> {
     @SuppressWarnings("DataFlowIssue")
     public static final StreamCodec<ByteBuf, LinkedControllerInputPacket> CODEC = StreamCodec.composite(
         ByteBufCodecs.INT.apply(ByteBufCodecs.list()),
@@ -34,7 +33,11 @@ public record LinkedControllerInputPacket(
         this(activatedButtons, press, null);
     }
 
-    public LinkedControllerInputPacket(Collection<Integer> activatedButtons, boolean press, @Nullable BlockPos lecternPos) {
+    public LinkedControllerInputPacket(
+        Collection<Integer> activatedButtons,
+        boolean press,
+        @Nullable BlockPos lecternPos
+    ) {
         this(List.copyOf(activatedButtons), press, lecternPos);
     }
 

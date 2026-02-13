@@ -39,8 +39,7 @@ public class FluidHelper {
     private static final Map<BlockPos, FluidInventoryCache> INV_CACHE = new Object2ReferenceOpenHashMap<>();
 
     public enum FluidExchange {
-        ITEM_TO_TANK,
-        TANK_TO_ITEM;
+        ITEM_TO_TANK, TANK_TO_ITEM;
     }
 
     public static boolean isWater(Fluid fluid) {
@@ -75,16 +74,24 @@ public class FluidHelper {
     public static SoundEvent getFillSound(FluidStack fluid) {
         //TODO
         SoundEvent soundevent = null;//fluid.getFluid().getFluidType().getSound(fluid, SoundActions.BUCKET_FILL);
-        if (soundevent == null)
-            soundevent = FluidHelper.isTag(fluid, FluidTags.LAVA) ? SoundEvents.BUCKET_FILL_LAVA : SoundEvents.BUCKET_FILL;
+        if (soundevent == null) {
+            soundevent = FluidHelper.isTag(
+                fluid,
+                FluidTags.LAVA
+            ) ? SoundEvents.BUCKET_FILL_LAVA : SoundEvents.BUCKET_FILL;
+        }
         return soundevent;
     }
 
     public static SoundEvent getEmptySound(FluidStack fluid) {
         //TODO
         SoundEvent soundevent = null;//fluid.getFluid().getFluidType().getSound(fluid, SoundActions.BUCKET_EMPTY);
-        if (soundevent == null)
-            soundevent = FluidHelper.isTag(fluid, FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
+        if (soundevent == null) {
+            soundevent = FluidHelper.isTag(
+                fluid,
+                FluidTags.LAVA
+            ) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
+        }
         return soundevent;
     }
 
@@ -94,24 +101,28 @@ public class FluidHelper {
     }
 
     public static FluidStack copyStackWithAmount(FluidStack fs, int amount) {
-        if (amount <= 0)
+        if (amount <= 0) {
             return FluidStack.EMPTY;
-        if (fs.isEmpty())
+        }
+        if (fs.isEmpty()) {
             return FluidStack.EMPTY;
+        }
         FluidStack copy = fs.copy();
         copy.setAmount(amount);
         return copy;
     }
 
     public static Fluid convertToFlowing(Fluid fluid) {
-        if (fluid instanceof FlowingFluid flowableFluid)
+        if (fluid instanceof FlowingFluid flowableFluid) {
             return flowableFluid.getFlowing();
+        }
         return fluid;
     }
 
     public static Fluid convertToStill(Fluid fluid) {
-        if (fluid instanceof FlowingFluid flowableFluid)
+        if (fluid instanceof FlowingFluid flowableFluid) {
             return flowableFluid.getSource();
+        }
         return fluid;
     }
 
@@ -166,16 +177,24 @@ public class FluidHelper {
         return AllFluidItemInventory.has(stack) || AllTransfer.hasFluidInventory(stack);
     }
 
-    public static boolean tryEmptyItemIntoBE(Level worldIn, Player player, InteractionHand handIn, ItemStack heldItem, SmartBlockEntity be) {
-        if (!GenericItemEmptying.canItemBeEmptied(worldIn, heldItem))
+    public static boolean tryEmptyItemIntoBE(
+        Level worldIn,
+        Player player,
+        InteractionHand handIn,
+        ItemStack heldItem,
+        SmartBlockEntity be
+    ) {
+        if (!GenericItemEmptying.canItemBeEmptied(worldIn, heldItem)) {
             return false;
+        }
 
         FluidInventory capability = getFluidInventory(worldIn, be.getBlockPos(), null, be, null);
         if (capability == null) {
             return false;
         }
-        if (worldIn.isClientSide())
+        if (worldIn.isClientSide()) {
             return true;
+        }
         Pair<FluidStack, ItemStack> emptyingResult = GenericItemEmptying.emptyItem(worldIn, heldItem, true);
         FluidStack fluidStack = emptyingResult.getFirst();
         if (!capability.preciseInsert(fluidStack, null)) {
@@ -186,9 +205,9 @@ public class FluidHelper {
         emptyingResult = GenericItemEmptying.emptyItem(worldIn, copyOfHeld, false);
 
         if (!player.isCreative() && !(be instanceof CreativeFluidTankBlockEntity)) {
-            if (copyOfHeld.isEmpty())
+            if (copyOfHeld.isEmpty()) {
                 player.setItemInHand(handIn, emptyingResult.getSecond());
-            else {
+            } else {
                 player.setItemInHand(handIn, copyOfHeld);
                 player.getInventory().placeItemBackInInventory(emptyingResult.getSecond());
             }
@@ -196,37 +215,51 @@ public class FluidHelper {
         return true;
     }
 
-    public static boolean tryFillItemFromBE(Level world, Player player, InteractionHand handIn, ItemStack heldItem, SmartBlockEntity be) {
-        if (!GenericItemFilling.canItemBeFilled(world, heldItem))
+    public static boolean tryFillItemFromBE(
+        Level world,
+        Player player,
+        InteractionHand handIn,
+        ItemStack heldItem,
+        SmartBlockEntity be
+    ) {
+        if (!GenericItemFilling.canItemBeFilled(world, heldItem)) {
             return false;
+        }
 
         FluidInventory capability = FluidHelper.getFluidInventory(world, be.getBlockPos(), null, be, null);
 
-        if (capability == null)
+        if (capability == null) {
             return false;
+        }
 
         for (FluidStack fluid : capability) {
-            if (fluid.isEmpty())
+            if (fluid.isEmpty()) {
                 continue;
+            }
             int requiredAmountForItem = GenericItemFilling.getRequiredAmountForItem(world, heldItem, fluid.copy());
-            if (requiredAmountForItem == -1)
+            if (requiredAmountForItem == -1) {
                 continue;
-            if (requiredAmountForItem > fluid.getAmount())
+            }
+            if (requiredAmountForItem > fluid.getAmount()) {
                 continue;
+            }
 
-            if (world.isClientSide())
+            if (world.isClientSide()) {
                 return true;
+            }
 
-            if (player.isCreative() || be instanceof CreativeFluidTankBlockEntity)
+            if (player.isCreative() || be instanceof CreativeFluidTankBlockEntity) {
                 heldItem = heldItem.copy();
+            }
             ItemStack out = GenericItemFilling.fillItem(world, requiredAmountForItem, heldItem, fluid.copy());
 
             FluidStack copy = fluid.copy();
             copy.setAmount(requiredAmountForItem);
             capability.extract(copy, null);
 
-            if (!player.isCreative())
+            if (!player.isCreative()) {
                 player.getInventory().placeItemBackInInventory(out);
+            }
             be.notifyUpdate();
             return true;
         }
@@ -234,7 +267,11 @@ public class FluidHelper {
         return false;
     }
 
-    public static Supplier<FluidInventory> getFluidInventoryCache(ServerLevel world, BlockPos pos, Direction direction) {
+    public static Supplier<FluidInventory> getFluidInventoryCache(
+        ServerLevel world,
+        BlockPos pos,
+        Direction direction
+    ) {
         FluidInventoryCache cache = new FluidInventoryCache(world, pos, direction);
         INV_CACHE.put(pos, cache);
         return cache;

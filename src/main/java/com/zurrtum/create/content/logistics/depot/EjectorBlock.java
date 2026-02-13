@@ -50,7 +50,13 @@ public class EjectorBlock extends HorizontalKineticBlock implements IBE<EjectorB
     }
 
     @Override
-    public Container getInventory(LevelAccessor world, BlockPos pos, BlockState state, EjectorBlockEntity blockEntity, @Nullable Direction context) {
+    public Container getInventory(
+        LevelAccessor world,
+        BlockPos pos,
+        BlockState state,
+        EjectorBlockEntity blockEntity,
+        @Nullable Direction context
+    ) {
         return blockEntity.depotBehaviour.itemHandler;
     }
 
@@ -81,13 +87,19 @@ public class EjectorBlock extends HorizontalKineticBlock implements IBE<EjectorB
     }
 
     @Override
-    public VoxelShape getShape(BlockState p_220053_1_, BlockGetter p_220053_2_, BlockPos p_220053_3_, CollisionContext p_220053_4_) {
+    public VoxelShape getShape(
+        BlockState p_220053_1_,
+        BlockGetter p_220053_2_,
+        BlockPos p_220053_3_,
+        CollisionContext p_220053_4_
+    ) {
         return AllShapes.CASING_13PX.get(Direction.UP);
     }
 
     @Override
     public float getSlipperiness(LevelReader world, BlockPos pos) {
-        return getBlockEntityOptional(world, pos).filter(ete -> ete.state == State.LAUNCHING).isPresent() ? 1f : super.getFriction();
+        return getBlockEntityOptional(world, pos).filter(ete -> ete.state == State.LAUNCHING)
+            .isPresent() ? 1f : super.getFriction();
     }
 
     @Override
@@ -103,7 +115,13 @@ public class EjectorBlock extends HorizontalKineticBlock implements IBE<EjectorB
     }
 
     @Override
-    public void fallOn(Level p_180658_1_, BlockState p_152427_, BlockPos p_180658_2_, Entity p_180658_3_, double p_180658_4_) {
+    public void fallOn(
+        Level p_180658_1_,
+        BlockState p_152427_,
+        BlockPos p_180658_2_,
+        Entity p_180658_3_,
+        double p_180658_4_
+    ) {
         Optional<EjectorBlockEntity> blockEntityOptional = getBlockEntityOptional(p_180658_1_, p_180658_2_);
         if (blockEntityOptional.isPresent() && !p_180658_3_.isSuppressingBounce()) {
             p_180658_3_.causeFallDamage(p_180658_4_, 1.0F, p_180658_1_.damageSources().fall());
@@ -116,28 +134,35 @@ public class EjectorBlock extends HorizontalKineticBlock implements IBE<EjectorB
     public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
         super.updateEntityMovementAfterFallOn(worldIn, entityIn);
         BlockPos position = entityIn.blockPosition();
-        if (!worldIn.getBlockState(position).is(AllBlocks.WEIGHTED_EJECTOR))
+        if (!worldIn.getBlockState(position).is(AllBlocks.WEIGHTED_EJECTOR)) {
             return;
-        if (!entityIn.isAlive())
+        }
+        if (!entityIn.isAlive()) {
             return;
-        if (entityIn.isSuppressingBounce())
+        }
+        if (entityIn.isSuppressingBounce()) {
             return;
+        }
         if (!ItemHelper.fromItemEntity(entityIn).isEmpty()) {
             SharedDepotBlockMethods.onLanded(worldIn, entityIn);
             return;
         }
 
         Optional<EjectorBlockEntity> teProvider = getBlockEntityOptional(worldIn, position);
-        if (teProvider.isEmpty())
+        if (teProvider.isEmpty()) {
             return;
+        }
 
         EjectorBlockEntity ejectorBlockEntity = teProvider.get();
-        if (ejectorBlockEntity.getState() == State.RETRACTING)
+        if (ejectorBlockEntity.getState() == State.RETRACTING) {
             return;
-        if (ejectorBlockEntity.powered)
+        }
+        if (ejectorBlockEntity.powered) {
             return;
-        if (ejectorBlockEntity.launcher.getHorizontalDistance() == 0)
+        }
+        if (ejectorBlockEntity.launcher.getHorizontalDistance() == 0) {
             return;
+        }
 
         if (entityIn.onGround()) {
             entityIn.setOnGround(false);
@@ -154,8 +179,9 @@ public class EjectorBlock extends HorizontalKineticBlock implements IBE<EjectorB
 
         ejectorBlockEntity.activate();
         ejectorBlockEntity.notifyUpdate();
-        if (entityIn.level().isClientSide())
+        if (entityIn.level().isClientSide()) {
             AllClientHandle.INSTANCE.sendPacket(new EjectorTriggerPacket(ejectorBlockEntity.getBlockPos()));
+        }
     }
 
     @Override
@@ -168,8 +194,9 @@ public class EjectorBlock extends HorizontalKineticBlock implements IBE<EjectorB
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-        if (stack.is(AllItems.WRENCH))
+        if (stack.is(AllItems.WRENCH)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
         return SharedDepotBlockMethods.onUse(stack, state, level, pos, player, hand, hitResult);
     }
 

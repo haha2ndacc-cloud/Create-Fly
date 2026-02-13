@@ -8,10 +8,9 @@ import com.mojang.blaze3d.textures.TextureFormat;
 import net.minecraft.client.renderer.Projection;
 import net.minecraft.client.renderer.ProjectionMatrixBuffer;
 
-public record GpuTexture(
-    int width, int height, com.mojang.blaze3d.textures.GpuTexture texture, GpuTextureView textureView,
-    com.mojang.blaze3d.textures.GpuTexture depthTexture, GpuTextureView depthTextureView
-) {
+public record GpuTexture(int width, int height, com.mojang.blaze3d.textures.GpuTexture texture,
+                         GpuTextureView textureView, com.mojang.blaze3d.textures.GpuTexture depthTexture,
+                         GpuTextureView depthTextureView) {
     public static GpuTexture create(int size) {
         return create(size, size);
     }

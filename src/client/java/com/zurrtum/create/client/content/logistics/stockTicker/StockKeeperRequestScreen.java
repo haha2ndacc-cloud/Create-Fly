@@ -157,7 +157,10 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         blockEntity.lastClientsideStockSnapshot = null;
         blockEntity.ticksSinceLastUpdate = 15;
         menu.screenReference = this;
-        hiddenCategories = new HashSet<>(blockEntity.hiddenCategoriesByPlayer.getOrDefault(menu.player.getUUID(), List.of()));
+        hiddenCategories = new HashSet<>(blockEntity.hiddenCategoriesByPlayer.getOrDefault(
+            menu.player.getUUID(),
+            List.of()
+        ));
 
         itemToProgram = menu.player.getMainHandItem();
         encodeRequester = itemToProgram.is(AllItemTags.TABLE_CLOTHS) || itemToProgram.is(AllItems.REDSTONE_REQUESTER);
@@ -173,8 +176,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                     }
                 }
             }
-            if (!anyItems)
+            if (!anyItems) {
                 clipboardItem = null;
+            }
         }
 
         if (FabricLoader.getInstance().isModLoaded("eiv")) {
@@ -185,12 +189,15 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         for (int yOffset : Iterate.zeroAndOne) {
             for (Direction side : Iterate.horizontalDirections) {
                 BlockPos seatPos = blockEntity.getBlockPos().below(yOffset).relative(side);
-                for (SeatEntity seatEntity : blockEntity.getLevel().getEntitiesOfClass(SeatEntity.class, new AABB(seatPos))) {
-                    if (!seatEntity.getPassengers().isEmpty() && seatEntity.getPassengers().getFirst() instanceof LivingEntity keeper) {
+                for (SeatEntity seatEntity : blockEntity.getLevel()
+                    .getEntitiesOfClass(SeatEntity.class, new AABB(seatPos))) {
+                    if (!seatEntity.getPassengers().isEmpty() && seatEntity.getPassengers()
+                        .getFirst() instanceof LivingEntity keeper) {
                         stockKeeper = new WeakReference<>(keeper);
                     }
                 }
-                if (yOffset == 0 && blockEntity.getLevel().getBlockEntity(seatPos) instanceof BlazeBurnerBlockEntity bbbe) {
+                if (yOffset == 0 && blockEntity.getLevel()
+                    .getBlockEntity(seatPos) instanceof BlazeBurnerBlockEntity bbbe) {
                     blaze = new WeakReference<>(bbbe);
                     return;
                 }
@@ -207,7 +214,13 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         Component title,
         RegistryFriendlyByteBuf extraData
     ) {
-        StockKeeperRequestScreen screen = type.create(StockKeeperRequestScreen::new, syncId, inventory, title, getBlockEntity(mc, extraData));
+        StockKeeperRequestScreen screen = type.create(
+            StockKeeperRequestScreen::new,
+            syncId,
+            inventory,
+            title,
+            getBlockEntity(mc, extraData)
+        );
         if (screen == null) {
             return null;
         }
@@ -236,7 +249,15 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         boolean initial = addressBox == null;
         String previouslyUsedAddress = initial ? blockEntity.previouslyUsedAddress : addressBox.getValue();
-        addressBox = new AddressEditBox(this, new NoShadowFontWrapper(font), leftPos + 27, topPos + imageHeight - 36, 92, 10, true);
+        addressBox = new AddressEditBox(
+            this,
+            new NoShadowFontWrapper(font),
+            leftPos + 27,
+            topPos + imageHeight - 36,
+            92,
+            10,
+            true
+        );
         addressBox.setTextColor(0xFF714A40);
         addressBox.setValue(previouslyUsedAddress);
         addRenderableWidget(addressBox);
@@ -246,12 +267,19 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         int rightHeight = 50;
 
         LivingEntity keeper = stockKeeper.get();
-        if (keeper != null && keeper.isAlive())
+        if (keeper != null && keeper.isAlive()) {
             leftHeight = (int) (Math.max(0, keeper.getBoundingBox().getYsize()) * 50);
+        }
 
         extraAreas.add(new Rect2i(0, topPos + imageHeight - 15 - leftHeight, leftPos, height));
-        if (encodeRequester)
-            extraAreas.add(new Rect2i(leftPos + imageWidth, topPos + imageHeight - 15 - rightHeight, rightHeight + 10, rightHeight));
+        if (encodeRequester) {
+            extraAreas.add(new Rect2i(
+                leftPos + imageWidth,
+                topPos + imageHeight - 15 - rightHeight,
+                rightHeight + 10,
+                rightHeight
+            ));
+        }
 
         if (initial) {
             playUiSound(SoundEvents.WOOD_HIT, 0.5f, 1.5f);
@@ -262,14 +290,18 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
     private static int getAppropriateHeight() {
         int appropriateHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight() - 10;
-        appropriateHeight -= Mth.positiveModulo(appropriateHeight - HEADER.getHeight() - FOOTER.getHeight(), BODY.getHeight());
+        appropriateHeight -= Mth.positiveModulo(
+            appropriateHeight - HEADER.getHeight() - FOOTER.getHeight(),
+            BODY.getHeight()
+        );
         return Math.min(appropriateHeight, HEADER.getHeight() + FOOTER.getHeight() + BODY.getHeight() * 17);
     }
 
     private void refreshSearchResults(boolean scrollBackUp) {
         displayedItems = Collections.emptyList();
-        if (scrollBackUp)
+        if (scrollBackUp) {
             itemScroll.startWithValue(0);
+        }
 
         if (currentItemSource == null) {
             clampScrollBar();
@@ -290,7 +322,11 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             categories.add(entry);
         }
 
-        CategoryEntry unsorted = new CategoryEntry(-1, CreateLang.translate("gui.stock_keeper.unsorted_category").string(), 0);
+        CategoryEntry unsorted = new CategoryEntry(
+            -1,
+            CreateLang.translate("gui.stock_keeper.unsorted_category").string(),
+            0
+        );
         unsorted.hidden = hiddenCategories.contains(-1);
         categories.add(unsorted);
 
@@ -305,18 +341,22 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             for (int categoryIndex = 0; categoryIndex < currentItemSource.size(); categoryIndex++) {
                 categories.get(categoryIndex).y = categoryY;
                 List<BigItemStack> displayedItemsInCategory = displayedItems.get(categoryIndex);
-                if (displayedItemsInCategory.isEmpty())
+                if (displayedItemsInCategory.isEmpty()) {
                     continue;
-                if (categoryIndex < currentItemSource.size() - 1)
+                }
+                if (categoryIndex < currentItemSource.size() - 1) {
                     anyItemsInCategory = true;
+                }
 
                 categoryY += rowHeight;
-                if (!categories.get(categoryIndex).hidden)
+                if (!categories.get(categoryIndex).hidden) {
                     categoryY += Math.ceil(displayedItemsInCategory.size() / (float) cols) * rowHeight;
+                }
             }
 
-            if (!anyItemsInCategory)
+            if (!anyItemsInCategory) {
                 categories.clear();
+            }
 
             clampScrollBar();
             updateCraftableAmounts();
@@ -326,8 +366,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         // Filter by search string
         boolean modSearch = false;
         boolean tagSearch = false;
-        if ((modSearch = valueWithPrefix.startsWith("@")) || (tagSearch = valueWithPrefix.startsWith("#")))
+        if ((modSearch = valueWithPrefix.startsWith("@")) || (tagSearch = valueWithPrefix.startsWith("#"))) {
             valueWithPrefix = valueWithPrefix.substring(1);
+        }
         final String value = valueWithPrefix.toLowerCase(Locale.ROOT);
 
         displayedItems = new ArrayList<>();
@@ -338,8 +379,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             List<BigItemStack> category = currentItemSource.get(categoryIndex);
             categories.get(categoryIndex).y = categoryY;
 
-            if (displayedItems.size() <= categoryIndex)
+            if (displayedItems.size() <= categoryIndex) {
                 break;
+            }
 
             List<BigItemStack> displayedItemsInCategory = displayedItems.get(categoryIndex);
             for (BigItemStack entry : category) {
@@ -353,31 +395,36 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                 }
 
                 if (tagSearch) {
-                    if (stack.tags().anyMatch(key -> key.location().toString().contains(value)))
+                    if (stack.tags().anyMatch(key -> key.location().toString().contains(value))) {
                         displayedItemsInCategory.add(entry);
+                    }
                     continue;
                 }
 
-                if (stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains(value) || BuiltInRegistries.ITEM.getKey(stack.getItem())
-                    .getPath().contains(value)) {
+                if (stack.getHoverName().getString().toLowerCase(Locale.ROOT)
+                    .contains(value) || BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath().contains(value)) {
                     displayedItemsInCategory.add(entry);
                     continue;
                 }
             }
 
-            if (displayedItemsInCategory.isEmpty())
+            if (displayedItemsInCategory.isEmpty()) {
                 continue;
-            if (categoryIndex < currentItemSource.size() - 1)
+            }
+            if (categoryIndex < currentItemSource.size() - 1) {
                 anyItemsInCategory = true;
+            }
 
             categoryY += rowHeight;
 
-            if (!categories.get(categoryIndex).hidden)
+            if (!categories.get(categoryIndex).hidden) {
                 categoryY += Math.ceil(displayedItemsInCategory.size() / (float) cols) * rowHeight;
+            }
         }
 
-        if (!anyItemsInCategory)
+        if (!anyItemsInCategory) {
             categories.clear();
+        }
 
         clampScrollBar();
         updateCraftableAmounts();
@@ -393,23 +440,27 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             for (BigItemStack stack : forcedEntries.getStacks()) {
                 int limitedAmount = -stack.count - 1;
                 int actualAmount = summary.getCountOf(stack.stack);
-                if (actualAmount <= limitedAmount)
+                if (actualAmount <= limitedAmount) {
                     forcedEntries.erase(stack.stack);
+                }
             }
         }
 
         boolean allEmpty = true;
-        for (List<BigItemStack> list : displayedItems)
+        for (List<BigItemStack> list : displayedItems) {
             allEmpty &= list.isEmpty();
-        if (allEmpty)
+        }
+        if (allEmpty) {
             emptyTicks++;
-        else
+        } else {
             emptyTicks = 0;
+        }
 
-        if (successTicks > 0 && itemsToOrder.isEmpty())
+        if (successTicks > 0 && itemsToOrder.isEmpty()) {
             successTicks++;
-        else
+        } else {
             successTicks = 0;
+        }
 
         List<List<BigItemStack>> clientStockSnapshot = blockEntity.getClientStockSnapshot();
         if (clientStockSnapshot != currentItemSource) {
@@ -425,8 +476,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         itemScroll.tickChaser();
 
-        if (Math.abs(itemScroll.getValue() - itemScroll.getChaseTarget()) < 1 / 16f)
+        if (Math.abs(itemScroll.getValue() - itemScroll.getChaseTarget()) < 1 / 16f) {
             itemScroll.setValue(itemScroll.getChaseTarget());
+        }
 
         if (blockEntity.ticksSinceLastUpdate > 15) {
             blockEntity.resetTicksSinceLastUpdate();
@@ -435,14 +487,16 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         LivingEntity keeper = stockKeeper.get();
         BlazeBurnerBlockEntity blazeKeeper = blaze.get();
-        if ((keeper == null || !keeper.isAlive()) && (blazeKeeper == null || blazeKeeper.isRemoved()))
+        if ((keeper == null || !keeper.isAlive()) && (blazeKeeper == null || blazeKeeper.isRemoved())) {
             minecraft.player.closeContainer();
+        }
     }
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        if (this != minecraft.screen)
+        if (this != minecraft.screen) {
             return; // stencil buffer does not cooperate with ponders gui fade out
+        }
 
         partialTicks = AnimationTickHolder.getPartialTicksUI(minecraft.getDeltaTracker());
         Matrix3x2fStack ms = graphics.pose();
@@ -531,8 +585,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         // Render ordered items
         for (int index = 0; index < cols; index++) {
-            if (itemsToOrder.size() <= index)
+            if (itemsToOrder.size() <= index) {
                 break;
+            }
 
             BigItemStack entry = itemsToOrder.get(index);
             boolean isStackHovered = index == hoveredSlot.getSecond() && hoveredSlot.getFirst() == -1;
@@ -544,22 +599,38 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         }
 
         if (itemsToOrder.size() > 9) {
-            graphics.drawString(font, Component.literal("[+" + (itemsToOrder.size() - 9) + "]"), x + imageWidth - 40, orderY + 21, 0xFFF8F8EC, true);
+            graphics.drawString(
+                font,
+                Component.literal("[+" + (itemsToOrder.size() - 9) + "]"),
+                x + imageWidth - 40,
+                orderY + 21,
+                0xFFF8F8EC,
+                true
+            );
         }
 
         boolean justSent = itemsToOrder.isEmpty() && successTicks > 0;
-        if (isConfirmHovered(mouseX, mouseY) && !justSent)
+        if (isConfirmHovered(mouseX, mouseY) && !justSent) {
             AllGuiTextures.STOCK_KEEPER_REQUEST_SEND_HOVER.render(graphics, x + imageWidth - 81, y + imageHeight - 41);
+        }
 
         MutableComponent headerTitle = CreateLang.translate("gui.stock_keeper.title").component();
-        graphics.drawString(font, headerTitle, x + imageWidth / 2 - font.width(headerTitle) / 2, y + 4, 0xFF714A40, false);
-        MutableComponent component = CreateLang.translate(encodeRequester ? "gui.stock_keeper.configure" : "gui.stock_keeper.send").component();
+        graphics.drawString(
+            font,
+            headerTitle,
+            x + imageWidth / 2 - font.width(headerTitle) / 2,
+            y + 4,
+            0xFF714A40,
+            false
+        );
+        MutableComponent component = CreateLang.translate(encodeRequester ? "gui.stock_keeper.configure" : "gui.stock_keeper.send")
+            .component();
 
         if (justSent) {
             float alpha = Mth.clamp((successTicks + partialTicks - 5f) / 5f, 0f, 1f);
             ms.pushMatrix();
             ms.translate(alpha * alpha * 50, 0);
-            if (successTicks < 10)
+            if (successTicks < 10) {
                 graphics.drawString(
                     font,
                     component,
@@ -568,10 +639,18 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                     new Color(0x252525).setAlpha(1 - alpha * alpha).getRGB(),
                     false
                 );
+            }
             ms.popMatrix();
 
         } else {
-            graphics.drawString(font, component, x + imageWidth - 42 - font.width(component) / 2, y + imageHeight - 35, 0xFF252525, false);
+            graphics.drawString(
+                font,
+                component,
+                x + imageWidth - 42 - font.width(component) / 2,
+                y + imageHeight - 35,
+                0xFF252525,
+                false
+            );
         }
 
         // Request just sent
@@ -584,7 +663,14 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                 int c3 = new Color(0x8C5D4B).setAlpha(alpha).getRGB();
                 int w = font.width(msg) + 14;
                 AllGuiTextures.STOCK_KEEPER_REQUEST_BANNER_L.render(graphics, msgX - 8, msgY - 4);
-                UIRenderHelper.drawStretched(graphics, msgX, msgY - 4, w, 16, AllGuiTextures.STOCK_KEEPER_REQUEST_BANNER_M);
+                UIRenderHelper.drawStretched(
+                    graphics,
+                    msgX,
+                    msgY - 4,
+                    w,
+                    16,
+                    AllGuiTextures.STOCK_KEEPER_REQUEST_BANNER_M
+                );
                 AllGuiTextures.STOCK_KEEPER_REQUEST_BANNER_R.render(graphics, msgX + font.width(msg) + 10, msgY - 4);
                 graphics.drawString(font, msg, msgX + 5, msgY, c3, false);
             }
@@ -602,17 +688,19 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         // BG
         for (int sliceY = -2; sliceY < getMaxScroll() * rowHeight + imageHeight - 72; sliceY += AllGuiTextures.STOCK_KEEPER_REQUEST_BG.getHeight()) {
-            if (sliceY - currentScroll * rowHeight < -20)
+            if (sliceY - currentScroll * rowHeight < -20) {
                 continue;
-            if (sliceY - currentScroll * rowHeight > imageHeight - 72)
+            }
+            if (sliceY - currentScroll * rowHeight > imageHeight - 72) {
                 continue;
+            }
             AllGuiTextures.STOCK_KEEPER_REQUEST_BG.render(graphics, x + 22, y + sliceY + 18);
         }
 
         // Search bar
         AllGuiTextures.STOCK_KEEPER_REQUEST_SEARCH.render(graphics, x + 42, searchBox.getY() - 5);
         searchBox.render(graphics, mouseX, mouseY, partialTicks);
-        if (searchBox.getValue().isBlank() && !searchBox.isFocused())
+        if (searchBox.getValue().isBlank() && !searchBox.isFocused()) {
             graphics.drawString(
                 font,
                 searchBox.getMessage(),
@@ -621,11 +709,13 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                 0xff4A2D31,
                 false
             );
+        }
 
         // Something isnt right
         boolean allEmpty = true;
-        for (List<BigItemStack> list : displayedItems)
+        for (List<BigItemStack> list : displayedItems) {
             allEmpty &= list.isEmpty();
+        }
         if (allEmpty) {
             Component msg = getTroubleshootingMessage();
             float alpha = Mth.clamp((emptyTicks - 10f) / 5f, 0f, 1f);
@@ -659,29 +749,32 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             List<BigItemStack> category = displayedItems.get(categoryIndex);
             CategoryEntry categoryEntry = categories.isEmpty() ? null : categories.get(categoryIndex);
             int categoryY = categories.isEmpty() ? 0 : categoryEntry.y;
-            if (category.isEmpty())
+            if (category.isEmpty()) {
                 continue;
+            }
 
             if (!categories.isEmpty()) {
-                (categoryEntry.hidden ? AllGuiTextures.STOCK_KEEPER_CATEGORY_HIDDEN : AllGuiTextures.STOCK_KEEPER_CATEGORY_SHOWN).render(
-                    graphics,
+                (categoryEntry.hidden ? AllGuiTextures.STOCK_KEEPER_CATEGORY_HIDDEN : AllGuiTextures.STOCK_KEEPER_CATEGORY_SHOWN).render(graphics,
                     itemsX,
                     itemsY + categoryY + 6
                 );
                 graphics.drawString(font, categoryEntry.name, itemsX + 10, itemsY + categoryY + 8, 0xFF4A2D31, false);
                 graphics.drawString(font, categoryEntry.name, itemsX + 9, itemsY + categoryY + 7, 0xFFF8F8EC, false);
-                if (categoryEntry.hidden)
+                if (categoryEntry.hidden) {
                     continue;
+                }
             }
 
             for (int index = 0; index < category.size(); index++) {
                 int pY = itemsY + categoryY + (categories.isEmpty() ? 4 : rowHeight) + (index / cols) * rowHeight;
                 float cullY = pY - currentScroll * rowHeight;
 
-                if (cullY < y)
+                if (cullY < y) {
                     continue;
-                if (cullY > y + imageHeight - 72)
+                }
+                if (cullY > y + imageHeight - 72) {
                     break;
+                }
 
                 boolean isStackHovered = index == hoveredSlot.getSecond() && categoryIndex == hoveredSlot.getFirst();
                 BigItemStack entry = category.get(index);
@@ -694,8 +787,12 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         }
 
         // Render lock option
-        if (isAdmin)
-            (isLocked ? AllGuiTextures.STOCK_KEEPER_REQUEST_LOCKED : AllGuiTextures.STOCK_KEEPER_REQUEST_UNLOCKED).render(graphics, lockX, lockY);
+        if (isAdmin) {
+            (isLocked ? AllGuiTextures.STOCK_KEEPER_REQUEST_LOCKED : AllGuiTextures.STOCK_KEEPER_REQUEST_UNLOCKED).render(graphics,
+                lockX,
+                lockY
+            );
+        }
 
         ms.popMatrix();
         graphics.disableScissor();
@@ -725,8 +822,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                 256
             );
             AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_TOP.render(graphics, barX, barY);
-            if (barSize > 16)
+            if (barSize > 16) {
                 AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_MID.render(graphics, barX, barY + barSize / 2 - 4);
+            }
             AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_BOT.render(graphics, barX, barY + barSize - 5);
             ms.popMatrix();
         }
@@ -770,8 +868,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             int slot = hoveredSlot.getSecond();
             boolean recipeHovered = hoveredSlot.getFirst() == -2;
             boolean orderHovered = hoveredSlot.getFirst() == -1;
-            BigItemStack entry = recipeHovered ? recipesToOrder.get(slot) : orderHovered ? itemsToOrder.get(slot) : displayedItems.get(hoveredSlot.getFirst())
-                .get(slot);
+            BigItemStack entry = recipeHovered ? recipesToOrder.get(slot) : orderHovered ? itemsToOrder.get(slot) : displayedItems.get(
+                hoveredSlot.getFirst()).get(slot);
 
             if (recipeHovered) {
                 ArrayList<Component> lines = new ArrayList<>(entry.stack.getTooltipLines(
@@ -792,11 +890,12 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         if (currentScroll < 1 && isAdmin && mouseX > lockX && mouseX <= lockX + 15 && mouseY > lockY && mouseY <= lockY + 15) {
             graphics.setComponentTooltipForNextFrame(
                 font, List.of(
-                    CreateLang.translate(isLocked ? "gui.stock_keeper.network_locked" : "gui.stock_keeper.network_open").component(),
+                    CreateLang.translate(isLocked ? "gui.stock_keeper.network_locked" : "gui.stock_keeper.network_open")
+                        .component(),
                     CreateLang.translate("gui.stock_keeper.network_lock_tip").style(ChatFormatting.GRAY).component(),
                     CreateLang.translate("gui.stock_keeper.network_lock_tip_1").style(ChatFormatting.GRAY).component(),
-                    CreateLang.translate("gui.stock_keeper.network_lock_tip_2").style(ChatFormatting.DARK_GRAY).style(ChatFormatting.ITALIC)
-                        .component()
+                    CreateLang.translate("gui.stock_keeper.network_lock_tip_2").style(ChatFormatting.DARK_GRAY)
+                        .style(ChatFormatting.ITALIC).component()
                 ), mouseX, mouseY
             );
         }
@@ -805,14 +904,21 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         if (addressBox.getValue().isBlank() && !addressBox.isFocused() && addressBox.isHovered()) {
             graphics.setComponentTooltipForNextFrame(
                 font, List.of(
-                    CreateLang.translate("gui.factory_panel.restocker_address").color(ScrollInput.HEADER_RGB).component(),
-                    CreateLang.translate("gui.schedule.lmb_edit").style(ChatFormatting.DARK_GRAY).style(ChatFormatting.ITALIC).component()
+                    CreateLang.translate("gui.factory_panel.restocker_address").color(ScrollInput.HEADER_RGB)
+                        .component(),
+                    CreateLang.translate("gui.schedule.lmb_edit").style(ChatFormatting.DARK_GRAY)
+                        .style(ChatFormatting.ITALIC).component()
                 ), mouseX, mouseY
             );
         }
     }
 
-    private void renderItemEntry(GuiGraphics graphics, BigItemStack entry, boolean isStackHovered, boolean isRenderingOrders) {
+    private void renderItemEntry(
+        GuiGraphics graphics,
+        BigItemStack entry,
+        boolean isStackHovered,
+        boolean isRenderingOrders
+    ) {
         int customCount = entry.count;
         ItemStack stackWithCount = entry.stack.copyWithCount(customCount);
 
@@ -820,10 +926,12 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             BigItemStack order = getOrderForItem(stackWithCount);
             if (entry.count < BigItemStack.INF) {
                 int forcedCount = forcedEntries.getCountOf(stackWithCount);
-                if (forcedCount != 0)
+                if (forcedCount != 0) {
                     customCount = Math.min(customCount, -forcedCount - 1);
-                if (order != null)
+                }
+                if (order != null) {
                     customCount -= order.count;
+                }
                 customCount = Math.max(0, customCount);
             }
             AllGuiTextures.STOCK_KEEPER_REQUEST_SLOT.render(graphics, 0, 0);
@@ -833,33 +941,39 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         ms.pushMatrix();
 
         float scaleFromHover = 1;
-        if (isStackHovered)
+        if (isStackHovered) {
             scaleFromHover += .075f;
+        }
 
         ms.translate((float) ((colWidth - 18) / 2.0), (float) ((rowHeight - 18) / 2.0));
         ms.translate((float) (18 / 2.0), (float) (18 / 2.0));
         ms.scale(scaleFromHover, scaleFromHover);
         ms.translate((float) (-18 / 2.0), (float) (-18 / 2.0));
-        if (customCount != 0 || craftable)
+        if (customCount != 0 || craftable) {
             graphics.renderItem(stackWithCount, 0, 0);
+        }
         ms.popMatrix();
 
         ms.pushMatrix();
-        if (customCount != 0 || craftable)
+        if (customCount != 0 || craftable) {
             graphics.renderItemDecorations(font, stackWithCount, 1, 1, "");
-        if (customCount > 1 || craftable)
+        }
+        if (customCount > 1 || craftable) {
             drawItemCount(graphics, customCount);
+        }
         ms.popMatrix();
     }
 
     private void drawItemCount(GuiGraphics graphics, int customCount) {
         String text = customCount >= 1000000 ? (customCount / 1000000) + "m" : customCount >= 10000 ? (customCount / 1000) + "k" : customCount >= 1000 ? ((customCount * 10) / 1000) / 10f + "k" : customCount >= 100 ? customCount + "" : " " + customCount;
 
-        if (customCount >= BigItemStack.INF)
+        if (customCount >= BigItemStack.INF) {
             text = "+";
+        }
 
-        if (text.isBlank())
+        if (text.isBlank()) {
             return;
+        }
 
         int x = (int) Math.floor(-text.length() * 2.5);
         for (char c : text.toCharArray()) {
@@ -906,9 +1020,11 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
     @Nullable
     private BigItemStack getOrderForItem(ItemStack stack) {
-        for (BigItemStack entry : itemsToOrder)
-            if (ItemStack.isSameItemSameComponents(stack, entry.stack))
+        for (BigItemStack entry : itemsToOrder) {
+            if (ItemStack.isSameItemSameComponents(stack, entry.stack)) {
                 return entry;
+            }
+        }
         return null;
     }
 
@@ -921,8 +1037,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         }
         for (BigItemStack entry : itemsToOrder) {
             entry.count = Math.min(summary.getCountOf(entry.stack), entry.count);
-            if (entry.count > 0)
+            if (entry.count > 0) {
                 invalid.remove(entry);
+            }
         }
 
         itemsToOrder.removeAll(invalid);
@@ -930,14 +1047,16 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
     private Couple<Integer> getHoveredSlot(int x, int y) {
         x += 1;
-        if (x < itemsX || x >= itemsX + cols * colWidth || isSchematicListMode())
+        if (x < itemsX || x >= itemsX + cols * colWidth || isSchematicListMode()) {
             return noneHovered;
+        }
 
         // Ordered item is hovered
         if (y >= orderY && y < orderY + rowHeight) {
             int col = (x - itemsX) / colWidth;
-            if (itemsToOrder.size() <= col || col < 0)
+            if (itemsToOrder.size() <= col || col < 0) {
                 return noneHovered;
+            }
             return Couple.create(-1, col);
         }
 
@@ -945,31 +1064,37 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         if (y >= orderY - 31 && y < orderY - 31 + rowHeight) {
             int jeiX = leftPos + (imageWidth - colWidth * recipesToOrder.size()) / 2 + 1;
             int col = Mth.floorDiv(x - jeiX, colWidth);
-            if (recipesToOrder.size() > col && col >= 0)
+            if (recipesToOrder.size() > col && col >= 0) {
                 return Couple.create(-2, col);
+            }
         }
 
-        if (y < this.topPos + 16 || y > this.topPos + imageHeight - 80)
+        if (y < this.topPos + 16 || y > this.topPos + imageHeight - 80) {
             return noneHovered;
-        if (!itemScroll.settled())
+        }
+        if (!itemScroll.settled()) {
             return noneHovered;
+        }
 
         int localY = y - itemsY;
 
         for (int categoryIndex = 0; categoryIndex < displayedItems.size(); categoryIndex++) {
             CategoryEntry entry = categories.isEmpty() ? new CategoryEntry(0, "", 0) : categories.get(categoryIndex);
-            if (entry.hidden)
+            if (entry.hidden) {
                 continue;
+            }
 
             int row = Mth.floor((localY - (categories.isEmpty() ? 4 : rowHeight) - entry.y) / (float) rowHeight + itemScroll.getChaseTarget());
 
             int col = (x - itemsX) / colWidth;
             int slot = row * cols + col;
 
-            if (slot < 0)
+            if (slot < 0) {
                 return noneHovered;
-            if (displayedItems.get(categoryIndex).size() <= slot)
+            }
+            if (displayedItems.get(categoryIndex).size() <= slot) {
                 continue;
+            }
 
             return Couple.create(categoryIndex, slot);
         }
@@ -1046,21 +1171,26 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         int confirmW = 78;
         int confirmH = 18;
 
-        if (mouseX < confirmX || mouseX >= confirmX + confirmW)
+        if (mouseX < confirmX || mouseX >= confirmX + confirmW) {
             return false;
+        }
         return mouseY >= confirmY && mouseY < confirmY + confirmH;
     }
 
     private Component getTroubleshootingMessage() {
-        if (currentItemSource == null)
+        if (currentItemSource == null) {
             return CreateLang.translate("gui.stock_keeper.checking_stocks").component();
-        if (blockEntity.activeLinks == 0)
+        }
+        if (blockEntity.activeLinks == 0) {
             return CreateLang.translate("gui.stock_keeper.no_packagers_linked").component();
-        if (currentItemSource.isEmpty())
+        }
+        if (currentItemSource.isEmpty()) {
             return CreateLang.translate("gui.stock_keeper.inventories_empty").component();
-        if (isSchematicListMode())
+        }
+        if (isSchematicListMode()) {
             return CreateLang.translate(itemsToOrder.isEmpty() ? "gui.stock_keeper.schematic_list.no_results" : "gui.stock_keeper.schematic_list.requesting")
                 .component();
+        }
         return CreateLang.translate("gui.stock_keeper.no_search_results").component();
     }
 
@@ -1084,13 +1214,15 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         if (addressBox.isFocused()) {
             boolean result = addressBox.mouseClicked(click, doubled);
-            if (addressBox.isHovered() || result)
+            if (addressBox.isHovered() || result) {
                 return result;
+            }
             addressBox.setFocused(false);
         }
         if (searchBox.isFocused()) {
-            if (searchBox.isHovered())
+            if (searchBox.isHovered()) {
                 return searchBox.mouseClicked(click, doubled);
+            }
             searchBox.setFocused(false);
         }
 
@@ -1098,8 +1230,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         int barX = itemsX + cols * colWidth - 1;
         if (getMaxScroll() > 0 && lmb && pMouseX > barX && pMouseX <= barX + 8 && pMouseY > topPos + 15 && pMouseY < topPos + imageHeight - 82) {
             scrollHandleActive = true;
-            if (minecraft.isWindowActive())
+            if (minecraft.isWindowActive()) {
                 GLFW.glfwSetInputMode(minecraft.getWindow().handle(), 208897, GLFW.GLFW_CURSOR_HIDDEN);
+            }
             return true;
         }
 
@@ -1125,13 +1258,16 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         if (itemScroll.settled() && lmb && !categories.isEmpty() && pMouseX >= itemsX && pMouseX < itemsX + cols * colWidth && pMouseY >= topPos + 16 && pMouseY <= topPos + imageHeight - 80) {
             for (int categoryIndex = 0; categoryIndex < displayedItems.size(); categoryIndex++) {
                 CategoryEntry entry = categories.get(categoryIndex);
-                if (Mth.floor((localY - entry.y) / (float) rowHeight + itemScroll.getChaseTarget()) != 0)
+                if (Mth.floor((localY - entry.y) / (float) rowHeight + itemScroll.getChaseTarget()) != 0) {
                     continue;
-                if (displayedItems.get(categoryIndex).isEmpty())
+                }
+                if (displayedItems.get(categoryIndex).isEmpty()) {
                     continue;
+                }
                 int indexOf = entry.targetBECategory;
-                if (indexOf >= blockEntity.categories.size())
+                if (indexOf >= blockEntity.categories.size()) {
                     continue;
+                }
 
                 if (!entry.hidden) {
                     hiddenCategories.add(indexOf);
@@ -1147,14 +1283,15 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             }
         }
 
-        if (hoveredSlot == noneHovered || !lmb && !rmb)
+        if (hoveredSlot == noneHovered || !lmb && !rmb) {
             return super.mouseClicked(click, doubled);
+        }
 
         // Items
         boolean orderClicked = hoveredSlot.getFirst() == -1;
         boolean recipeClicked = hoveredSlot.getFirst() == -2;
-        BigItemStack entry = recipeClicked ? recipesToOrder.get(hoveredSlot.getSecond()) : orderClicked ? itemsToOrder.get(hoveredSlot.getSecond()) : displayedItems.get(
-            hoveredSlot.getFirst()).get(hoveredSlot.getSecond());
+        BigItemStack entry = recipeClicked ? recipesToOrder.get(hoveredSlot.getSecond()) : orderClicked ? itemsToOrder.get(
+            hoveredSlot.getSecond()) : displayedItems.get(hoveredSlot.getFirst()).get(hoveredSlot.getSecond());
 
         ItemStack itemStack = entry.stack;
         int transfer = click.hasShiftDown() ? itemStack.getMaxStackSize() : click.hasControlDown() ? 10 : 1;
@@ -1170,8 +1307,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         BigItemStack existingOrder = getOrderForItem(entry.stack);
         if (existingOrder == null) {
-            if (itemsToOrder.size() >= cols || rmb)
+            if (itemsToOrder.size() >= cols || rmb) {
                 return true;
+            }
             itemsToOrder.add(existingOrder = new BigItemStack(itemStack.copyWithCount(1), 0));
             playUiSound(SoundEvents.WOOL_STEP, 0.75f, 1.2f);
             playUiSound(SoundEvents.BAMBOO_WOOD_STEP, 0.75f, 0.8f);
@@ -1197,16 +1335,18 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
     public boolean mouseReleased(MouseButtonEvent click) {
         if (click.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT && scrollHandleActive) {
             scrollHandleActive = false;
-            if (minecraft.isWindowActive())
+            if (minecraft.isWindowActive()) {
                 GLFW.glfwSetInputMode(minecraft.getWindow().handle(), 208897, GLFW.GLFW_CURSOR_NORMAL);
+            }
         }
         return super.mouseReleased(click);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (addressBox.mouseScrolled(mouseX, mouseY, scrollX, scrollY))
+        if (addressBox.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) {
             return true;
+        }
 
         Couple<Integer> hoveredSlot = getHoveredSlot((int) mouseX, (int) mouseY);
         boolean noHover = hoveredSlot == noneHovered;
@@ -1224,8 +1364,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         boolean orderClicked = hoveredSlot.getFirst() == -1;
         boolean recipeClicked = hoveredSlot.getFirst() == -2;
-        BigItemStack entry = recipeClicked ? recipesToOrder.get(hoveredSlot.getSecond()) : orderClicked ? itemsToOrder.get(hoveredSlot.getSecond()) : displayedItems.get(
-            hoveredSlot.getFirst()).get(hoveredSlot.getSecond());
+        BigItemStack entry = recipeClicked ? recipesToOrder.get(hoveredSlot.getSecond()) : orderClicked ? itemsToOrder.get(
+            hoveredSlot.getSecond()) : displayedItems.get(hoveredSlot.getFirst()).get(hoveredSlot.getSecond());
 
         boolean remove = scrollY < 0;
         int transfer = Mth.ceil(Math.abs(scrollY)) * (AllKeys.hasControlDown() ? 10 : 1);
@@ -1237,8 +1377,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         BigItemStack existingOrder = orderClicked ? entry : getOrderForItem(entry.stack);
         if (existingOrder == null) {
-            if (itemsToOrder.size() >= cols || remove)
+            if (itemsToOrder.size() >= cols || remove) {
                 return true;
+            }
             itemsToOrder.add(existingOrder = new BigItemStack(entry.stack.copyWithCount(1), 0));
             playUiSound(SoundEvents.WOOL_STEP, 0.75f, 1.2f);
             playUiSound(SoundEvents.BAMBOO_WOOD_STEP, 0.75f, 0.8f);
@@ -1252,15 +1393,20 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                 itemsToOrder.remove(existingOrder);
                 playUiSound(SoundEvents.WOOL_STEP, 0.75f, 1.8f);
                 playUiSound(SoundEvents.BAMBOO_WOOD_STEP, 0.75f, 1.8f);
-            } else if (existingOrder.count != current)
+            } else if (existingOrder.count != current) {
                 playUiSound(AllSoundEvents.SCROLL_VALUE.getMainEvent(), 0.25f, 1.2f);
+            }
             return true;
         }
 
-        existingOrder.count = current + Math.min(transfer, blockEntity.getLastClientsideStockSnapshotAsSummary().getCountOf(entry.stack) - current);
+        existingOrder.count = current + Math.min(
+            transfer,
+            blockEntity.getLastClientsideStockSnapshotAsSummary().getCountOf(entry.stack) - current
+        );
 
-        if (existingOrder.count != current && current != 0)
+        if (existingOrder.count != current && current != 0) {
             playUiSound(AllSoundEvents.SCROLL_VALUE.getMainEvent(), 0.25f, 1.2f);
+        }
 
         return true;
     }
@@ -1269,8 +1415,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         int maxScroll = getMaxScroll();
         float prevTarget = itemScroll.getChaseTarget();
         float newTarget = Mth.clamp(prevTarget, 0, maxScroll);
-        if (prevTarget != newTarget)
+        if (prevTarget != newTarget) {
             itemScroll.startWithValue(newTarget);
+        }
     }
 
     private int getMaxScroll() {
@@ -1278,11 +1425,13 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         int totalRows = 2;
         for (int i = 0; i < displayedItems.size(); i++) {
             List<BigItemStack> list = displayedItems.get(i);
-            if (list.isEmpty())
+            if (list.isEmpty()) {
                 continue;
+            }
             totalRows++;
-            if (categories.size() > i && categories.get(i).hidden)
+            if (categories.size() > i && categories.get(i).hidden) {
                 continue;
+            }
             totalRows += Math.ceil(list.size() / (float) cols);
         }
         return Math.max(0, (totalRows * rowHeight - visibleHeight + 50) / rowHeight);
@@ -1290,8 +1439,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
     @Override
     public boolean mouseDragged(MouseButtonEvent click, double pDragX, double pDragY) {
-        if (click.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT || !scrollHandleActive)
+        if (click.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT || !scrollHandleActive) {
             return super.mouseDragged(click, pDragX, pDragY);
+        }
 
         Window window = minecraft.getWindow();
         double scaleX = window.getGuiScaledWidth() / (double) window.getScreenWidth();
@@ -1304,8 +1454,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         int minY = topPos + 15 + barSize / 2;
         int maxY = topPos + 15 + windowH - barSize / 2;
 
-        if (barSize >= windowH - 2)
+        if (barSize >= windowH - 2) {
             return true;
+        }
 
         int barX = itemsX + cols * colWidth;
         double target = (click.y() - topPos - 15 - barSize / 2.0) * totalH / (windowH - 2) / rowHeight;
@@ -1322,10 +1473,12 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
     @Override
     public boolean charTyped(CharacterEvent input) {
-        if (ignoreTextInput)
+        if (ignoreTextInput) {
             return false;
-        if (addressBox.isFocused() && addressBox.charTyped(input))
+        }
+        if (addressBox.isFocused() && addressBox.charTyped(input)) {
             return true;
+        }
         String s = searchBox.getValue();
         if (!searchBox.charTyped(input)) {
             return super.charTyped(input);
@@ -1341,7 +1494,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
     @Override
     public boolean keyPressed(KeyEvent input) {
         ignoreTextInput = false;
-        if (!(getFocused() instanceof EditBox) && !addressBox.isFocused() && !searchBox.isFocused() && minecraft.options.keyChat.matches(input)) {
+        if (!(getFocused() instanceof EditBox) && !addressBox.isFocused() && !searchBox.isFocused() && minecraft.options.keyChat.matches(
+            input)) {
             ignoreTextInput = true;
             searchBox.setFocused(true);
             return true;
@@ -1358,8 +1512,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             return true;
         }
 
-        if (addressBox.isFocused() && addressBox.keyPressed(input))
+        if (addressBox.isFocused() && addressBox.keyPressed(input)) {
             return true;
+        }
 
         String s = searchBox.getValue();
         if (!searchBox.keyPressed(input)) {
@@ -1389,23 +1544,30 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
     public void removed() {
         BlockPos pos = blockEntity.getBlockPos();
         ClientPacketListener networkHandler = minecraft.player.connection;
-        networkHandler.send(new PackageOrderRequestPacket(pos, PackageOrderWithCrafts.empty(), addressBox.getValue(), false));
+        networkHandler.send(new PackageOrderRequestPacket(
+            pos,
+            PackageOrderWithCrafts.empty(),
+            addressBox.getValue(),
+            false
+        ));
         networkHandler.send(new StockKeeperCategoryHidingPacket(pos, new ArrayList<>(hiddenCategories)));
         super.removed();
     }
 
     private void sendIt() {
         revalidateOrders();
-        if (itemsToOrder.isEmpty())
+        if (itemsToOrder.isEmpty()) {
             return;
+        }
 
         forcedEntries = new InventorySummary();
         InventorySummary summary = blockEntity.getLastClientsideStockSnapshotAsSummary();
         for (BigItemStack toOrder : itemsToOrder) {
             // momentarily cut the displayed stack size until the stock updates come in
             int countOf = summary.getCountOf(toOrder.stack);
-            if (countOf == BigItemStack.INF)
+            if (countOf == BigItemStack.INF) {
                 continue;
+            }
             forcedEntries.add(toOrder.stack.copy(), -1 - Math.max(0, countOf - toOrder.count));
         }
 
@@ -1434,13 +1596,16 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                         itemsExhausted = true;
                         Pattern:
                         for (BigItemStack patternStack : pattern.stacks()) {
-                            if (patternStack.stack.isEmpty())
+                            if (patternStack.stack.isEmpty()) {
                                 continue;
+                            }
                             for (BigItemStack ordered : mutableOrder) {
-                                if (!ItemStack.isSameItemSameComponents(ordered.stack, patternStack.stack))
+                                if (!ItemStack.isSameItemSameComponents(ordered.stack, patternStack.stack)) {
                                     continue;
-                                if (ordered.count == 0)
+                                }
+                                if (ordered.count == 0) {
                                     continue;
+                                }
                                 ordered.count -= 1;
                                 itemsExhausted = false;
                                 continue Pattern;
@@ -1451,8 +1616,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                         availableCrafts++;
                     }
 
-                    if (availableCrafts == 0)
+                    if (availableCrafts == 0) {
                         break;
+                    }
 
                     craftList.add(new CraftingEntry(pattern, availableCrafts));
                     craftedCount += availableCrafts;
@@ -1462,15 +1628,21 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             order = new PackageOrderWithCrafts(order.orderedStacks(), craftList);
         }
 
-        minecraft.player.connection.send(new PackageOrderRequestPacket(blockEntity.getBlockPos(), order, addressBox.getValue(), encodeRequester));
+        minecraft.player.connection.send(new PackageOrderRequestPacket(
+            blockEntity.getBlockPos(),
+            order,
+            addressBox.getValue(),
+            encodeRequester
+        ));
 
         itemsToOrder = new ArrayList<>();
         recipesToOrder = new ArrayList<>();
         blockEntity.ticksSinceLastUpdate = 10;
         successTicks = 1;
 
-        if (isSchematicListMode())
+        if (isSchematicListMode()) {
             minecraft.player.closeContainer();
+        }
     }
 
     @Override
@@ -1495,8 +1667,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             for (ClipboardEntry entry : list) {
                 ItemStack stack = entry.icon;
                 int toOrder = Math.min(entry.itemAmount, availableItems.getCountOf(stack));
-                if (toOrder == 0)
+                if (toOrder == 0) {
                     continue;
+                }
                 itemsToOrder.add(new BigItemStack(stack, toOrder));
             }
         }
@@ -1504,10 +1677,12 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
     public void requestCraftable(CraftableBigItemStack cbis, int requestedDifference) {
         boolean takeOrdersAway = requestedDifference < 0;
-        if (takeOrdersAway)
+        if (takeOrdersAway) {
             requestedDifference = Math.max(-cbis.count, requestedDifference);
-        if (requestedDifference == 0)
+        }
+        if (requestedDifference == 0) {
             return;
+        }
 
         InventorySummary availableItems = blockEntity.getLastClientsideStockSnapshotAsSummary();
         Function<ItemStack, Integer> countModifier = stack -> {
@@ -1517,8 +1692,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         if (takeOrdersAway) {
             availableItems = new InventorySummary();
-            for (BigItemStack ordered : itemsToOrder)
+            for (BigItemStack ordered : itemsToOrder) {
                 availableItems.add(ordered.stack, ordered.count);
+            }
             countModifier = stack -> 0;
         }
 
@@ -1532,8 +1708,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         int adjustToRecipeAmount = Mth.ceil(Math.abs(requestedDifference) / (float) outputCount) * outputCount;
         int maxCraftable = Math.min(adjustToRecipeAmount, craftingResult.getFirst());
 
-        if (maxCraftable == 0)
+        if (maxCraftable == 0) {
             return;
+        }
 
         cbis.count += takeOrdersAway ? -maxCraftable : maxCraftable;
 
@@ -1541,8 +1718,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         for (List<BigItemStack> list : validEntriesByIngredient) {
             int remaining = maxCraftable / outputCount;
             for (BigItemStack entry : list) {
-                if (remaining <= 0)
+                if (remaining <= 0) {
                     break;
+                }
 
                 int toTransfer = Math.min(remaining, entry.count);
                 BigItemStack order = getOrderForItem(entry.stack);
@@ -1550,12 +1728,14 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                 if (takeOrdersAway) {
                     if (order != null) {
                         order.count -= toTransfer;
-                        if (order.count == 0)
+                        if (order.count == 0) {
                             itemsToOrder.remove(order);
+                        }
                     }
                 } else {
-                    if (order == null)
+                    if (order == null) {
                         itemsToOrder.add(order = new BigItemStack(entry.stack.copyWithCount(1), 0));
+                    }
                     order.count += toTransfer;
                 }
 
@@ -1570,11 +1750,17 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         InventorySummary usedItems = new InventorySummary();
         InventorySummary availableItems = new InventorySummary();
 
-        for (BigItemStack ordered : itemsToOrder)
+        for (BigItemStack ordered : itemsToOrder) {
             availableItems.add(ordered.stack, ordered.count);
+        }
 
         for (CraftableBigItemStack cbis : recipesToOrder) {
-            Pair<Integer, List<List<BigItemStack>>> craftingResult = maxCraftable(cbis, availableItems, stack -> -usedItems.getCountOf(stack), -1);
+            Pair<Integer, List<List<BigItemStack>>> craftingResult = maxCraftable(
+                cbis,
+                availableItems,
+                stack -> -usedItems.getCountOf(stack),
+                -1
+            );
             int maxCraftable = craftingResult.getFirst();
             List<List<BigItemStack>> validEntriesByIngredient = craftingResult.getSecond();
             int outputCount = cbis.stack.getCount();
@@ -1586,8 +1772,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             for (List<BigItemStack> list : validEntriesByIngredient) {
                 int remaining = cbis.count / outputCount;
                 for (BigItemStack entry : list) {
-                    if (remaining <= 0)
+                    if (remaining <= 0) {
                         break;
+                    }
                     usedItems.add(entry.stack, Math.min(remaining, entry.count));
                     remaining -= entry.count;
                 }
@@ -1595,9 +1782,11 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         }
 
         canRequestCraftingPackage = false;
-        for (BigItemStack ordered : itemsToOrder)
-            if (usedItems.getCountOf(ordered.stack) != ordered.count)
+        for (BigItemStack ordered : itemsToOrder) {
+            if (usedItems.getCountOf(ordered.stack) != ordered.count) {
                 return;
+            }
+        }
         canRequestCraftingPackage = true;
     }
 
@@ -1613,27 +1802,38 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         for (Object2ObjectMap.Entry<List<ItemStack>, IntList> value : cbis.input.entrySet()) {
             List<ItemStack> ingredient = value.getKey();
             List<BigItemStack> valid = new ArrayList<>();
-            for (List<BigItemStack> list : summary.getItemMap().values())
-                Entries:for (BigItemStack entry : list) {
-                    if (!CraftableInput.contains(ingredient, entry.stack))
+            for (List<BigItemStack> list : summary.getItemMap().values()) {
+                Entries:
+                for (BigItemStack entry : list) {
+                    if (!CraftableInput.contains(ingredient, entry.stack)) {
                         continue;
+                    }
                     for (BigItemStack visitedStack : alreadyCreated) {
-                        if (!ItemStack.isSameItemSameComponents(visitedStack.stack, entry.stack))
+                        if (!ItemStack.isSameItemSameComponents(visitedStack.stack, entry.stack)) {
                             continue;
+                        }
                         valid.add(visitedStack);
                         continue Entries;
                     }
-                    BigItemStack asBis = new BigItemStack(entry.stack, summary.getCountOf(entry.stack) + countModifier.apply(entry.stack));
+                    BigItemStack asBis = new BigItemStack(
+                        entry.stack,
+                        summary.getCountOf(entry.stack) + countModifier.apply(entry.stack)
+                    );
                     if (asBis.count > 0) {
                         valid.add(asBis);
                         alreadyCreated.add(asBis);
                     }
                 }
+            }
 
-            if (valid.isEmpty())
+            if (valid.isEmpty()) {
                 return Pair.of(0, List.of());
+            }
 
-            valid.sort((bis1, bis2) -> -Integer.compare(summary.getCountOf(bis1.stack), summary.getCountOf(bis2.stack)));
+            valid.sort((bis1, bis2) -> -Integer.compare(
+                summary.getCountOf(bis1.stack),
+                summary.getCountOf(bis2.stack)
+            ));
             for (int i = 0, size = value.getValue().size(); i < size; i++) {
                 validEntriesByIngredient.add(valid);
             }
@@ -1641,11 +1841,12 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         // Used new items may have to be trimmed
         if (newTypeLimit != -1) {
-            int toRemove = (int) validEntriesByIngredient.stream().flatMap(Collection::stream).filter(entry -> getOrderForItem(entry.stack) == null)
-                .distinct().count() - newTypeLimit;
+            int toRemove = (int) validEntriesByIngredient.stream().flatMap(Collection::stream)
+                .filter(entry -> getOrderForItem(entry.stack) == null).distinct().count() - newTypeLimit;
 
-            for (int i = 0; i < toRemove; i++)
+            for (int i = 0; i < toRemove; i++) {
                 removeLeastEssentialItemStack(validEntriesByIngredient);
+            }
         }
 
         // Ingredients with shared items must divide counts
@@ -1655,13 +1856,15 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         int minCount = Integer.MAX_VALUE;
         for (List<BigItemStack> list : validEntriesByIngredient) {
             int sum = 0;
-            for (BigItemStack entry : list)
+            for (BigItemStack entry : list) {
                 sum += entry.count;
+            }
             minCount = Math.min(sum, minCount);
         }
 
-        if (minCount == 0)
+        if (minCount == 0) {
             return Pair.of(0, List.of());
+        }
 
         return Pair.of(minCount * cbis.stack.getCount(), validEntriesByIngredient);
     }
@@ -1671,32 +1874,37 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         int most = 0;
         for (List<BigItemStack> list : validIngredients) {
             int count = (int) list.stream().filter(entry -> getOrderForItem(entry.stack) == null).count();
-            if (longest != null && count <= most)
+            if (longest != null && count <= most) {
                 continue;
+            }
             longest = list;
             most = count;
         }
 
-        if (longest.isEmpty())
+        if (longest.isEmpty()) {
             return;
+        }
 
         BigItemStack chosen = null;
         for (int i = 0; i < longest.size(); i++) {
             BigItemStack entry = longest.get(longest.size() - 1 - i);
-            if (getOrderForItem(entry.stack) != null)
+            if (getOrderForItem(entry.stack) != null) {
                 continue;
+            }
             chosen = entry;
             break;
         }
 
-        for (List<BigItemStack> list : validIngredients)
+        for (List<BigItemStack> list : validIngredients) {
             list.remove(chosen);
+        }
     }
 
     private List<List<BigItemStack>> resolveIngredientAmounts(List<List<BigItemStack>> validIngredients) {
         List<List<BigItemStack>> resolvedIngredients = new ArrayList<>();
-        for (int i = 0; i < validIngredients.size(); i++)
+        for (int i = 0; i < validIngredients.size(); i++) {
             resolvedIngredients.add(new ArrayList<>());
+        }
 
         boolean everythingTaken = false;
         while (!everythingTaken) {
@@ -1706,8 +1914,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                 List<BigItemStack> list = validIngredients.get(i);
                 List<BigItemStack> resolvedList = resolvedIngredients.get(i);
                 for (BigItemStack bigItemStack : list) {
-                    if (bigItemStack.count == 0)
+                    if (bigItemStack.count == 0) {
                         continue;
+                    }
 
                     bigItemStack.count -= 1;
                     everythingTaken = false;

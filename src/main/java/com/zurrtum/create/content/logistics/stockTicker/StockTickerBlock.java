@@ -77,13 +77,15 @@ public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-        if (stack.getItem() instanceof LogisticallyLinkedBlockItem)
+        if (stack.getItem() instanceof LogisticallyLinkedBlockItem) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
 
         return onBlockEntityUseItemOn(
             level, pos, stbe -> {
-                if (!stbe.behaviour.mayInteractMessage(player))
+                if (!stbe.behaviour.mayInteractMessage(player)) {
                     return InteractionResult.SUCCESS;
+                }
 
                 if (!level.isClientSide()) {
                     StockTickerInventory inventory = stbe.receivedPayments;
@@ -113,10 +115,11 @@ public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<
                 }
 
                 if (player instanceof ServerPlayer sp) {
-                    if (stbe.isKeeperPresent())
+                    if (stbe.isKeeperPresent()) {
                         MenuProvider.openHandledScreen(sp, stbe::createCategoryMenu);
-                    else
+                    } else {
                         player.sendOverlayMessage(Component.translatable("create.stock_ticker.keeper_missing"));
+                    }
                 }
 
                 return InteractionResult.SUCCESS;

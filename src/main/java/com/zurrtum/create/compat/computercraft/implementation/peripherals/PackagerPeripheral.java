@@ -38,11 +38,13 @@ public class PackagerPeripheral extends SyncedPeripheral<PackagerBlockEntity> {
 
     @LuaFunction(mainThread = true)
     public final boolean makePackage() {
-        if (!blockEntity.heldBox.isEmpty())
+        if (!blockEntity.heldBox.isEmpty()) {
             return false;
+        }
         blockEntity.activate();
-        if (blockEntity.heldBox.isEmpty())
+        if (blockEntity.heldBox.isEmpty()) {
             return false;
+        }
         return true;
     }
 
@@ -54,7 +56,11 @@ public class PackagerPeripheral extends SyncedPeripheral<PackagerBlockEntity> {
     @LuaFunction(mainThread = true)
     @Nullable
     public Map<String, ?> getItemDetail(int slot) throws LuaException {
-        return ComputerUtil.getItemDetail(blockEntity.getLevel().registryAccess(), blockEntity.targetInventory.getInventory(), slot);
+        return ComputerUtil.getItemDetail(
+            blockEntity.getLevel().registryAccess(),
+            blockEntity.targetInventory.getInventory(),
+            slot
+        );
     }
 
     @LuaFunction(mainThread = true)
@@ -80,8 +86,9 @@ public class PackagerPeripheral extends SyncedPeripheral<PackagerBlockEntity> {
     @Nullable
     public final PackageLuaObject getPackage() {
         ItemStack box = blockEntity.heldBox;
-        if (box.isEmpty())
+        if (box.isEmpty()) {
             return null;
+        }
         return new PackageLuaObject(blockEntity, box);
     }
 

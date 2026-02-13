@@ -30,7 +30,16 @@ public class AddressEditBox extends EditBox {
         this(screen, pFont, pX, pY, pWidth, pHeight, anchorToBottom, null);
     }
 
-    public AddressEditBox(Screen screen, Font pFont, int pX, int pY, int pWidth, int pHeight, boolean anchorToBottom, @Nullable String localAddress) {
+    public AddressEditBox(
+        Screen screen,
+        Font pFont,
+        int pX,
+        int pY,
+        int pWidth,
+        int pHeight,
+        boolean anchorToBottom,
+        @Nullable String localAddress
+    ) {
         super(pFont, pX, pY, pWidth, pHeight, Component.empty());
         destinationSuggestions = AddressEditBoxHelper.createSuggestions(screen, this, anchorToBottom, localAddress);
         destinationSuggestions.setAllowSuggestions(true);
@@ -54,8 +63,9 @@ public class AddressEditBox extends EditBox {
 
     @Override
     public boolean keyPressed(KeyEvent input) {
-        if (destinationSuggestions.keyPressed(input))
+        if (destinationSuggestions.keyPressed(input)) {
             return true;
+        }
         if (isFocused() && input.key() == GLFW.GLFW_KEY_ENTER) {
             setFocused(false);
             moveCursorToEnd(false);
@@ -67,8 +77,9 @@ public class AddressEditBox extends EditBox {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (destinationSuggestions.mouseScrolled(Mth.clamp(scrollY, -1.0D, 1.0D)))
+        if (destinationSuggestions.mouseScrolled(Mth.clamp(scrollY, -1.0D, 1.0D))) {
             return true;
+        }
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
@@ -108,8 +119,9 @@ public class AddressEditBox extends EditBox {
         super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         destinationSuggestions.render(pGuiGraphics, pMouseX, pMouseY);
 
-        if (!destinationSuggestions.isEmpty())
+        if (!destinationSuggestions.isEmpty()) {
             return;
+        }
 
         int itemX = getX() + width + 4;
         int itemY = getY() - 4;
@@ -132,10 +144,12 @@ public class AddressEditBox extends EditBox {
     }
 
     public void tick() {
-        if (!isFocused())
+        if (!isFocused()) {
             destinationSuggestions.hide();
-        if (isFocused() && destinationSuggestions.suggestions == null)
+        }
+        if (isFocused() && destinationSuggestions.suggestions == null) {
             destinationSuggestions.updateCommandInfo();
+        }
         destinationSuggestions.tick();
     }
 }

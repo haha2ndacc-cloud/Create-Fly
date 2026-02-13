@@ -50,8 +50,8 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock implements 
 
     public ElevatorContactBlock(Properties pProperties) {
         super(pProperties);
-        registerDefaultState(defaultBlockState().setValue(CALLING, false).setValue(POWERING, false).setValue(POWERED, false)
-            .setValue(FACING, Direction.SOUTH));
+        registerDefaultState(defaultBlockState().setValue(CALLING, false).setValue(POWERING, false)
+            .setValue(POWERED, false).setValue(FACING, Direction.SOUTH));
     }
 
     @Override
@@ -62,18 +62,24 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock implements 
     @Override
     public InteractionResult onWrenched(BlockState state, UseOnContext context) {
         InteractionResult onWrenched = super.onWrenched(state, context);
-        if (onWrenched != InteractionResult.SUCCESS)
+        if (onWrenched != InteractionResult.SUCCESS) {
             return onWrenched;
+        }
 
         Level level = context.getLevel();
-        if (level.isClientSide())
+        if (level.isClientSide()) {
             return onWrenched;
+        }
 
         BlockPos pos = context.getClickedPos();
         state = level.getBlockState(pos);
         Direction facing = state.getValue(RedstoneContactBlock.FACING);
-        if (facing.getAxis() != Axis.Y && ElevatorColumn.get(level, new ColumnCoords(pos.getX(), pos.getZ(), facing)) != null)
+        if (facing.getAxis() != Axis.Y && ElevatorColumn.get(
+            level,
+            new ColumnCoords(pos.getX(), pos.getZ(), facing)
+        ) != null) {
             return onWrenched;
+        }
 
         level.setBlockAndUpdate(pos, BlockHelper.copyProperties(state, AllBlocks.REDSTONE_CONTACT.defaultBlockState()));
 
@@ -83,8 +89,9 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock implements 
     @Nullable
     public static ColumnCoords getColumnCoords(LevelAccessor level, BlockPos pos) {
         BlockState blockState = level.getBlockState(pos);
-        if (!blockState.is(AllBlocks.ELEVATOR_CONTACT) && !blockState.is(AllBlocks.REDSTONE_CONTACT))
+        if (!blockState.is(AllBlocks.ELEVATOR_CONTACT) && !blockState.is(AllBlocks.REDSTONE_CONTACT)) {
             return null;
+        }
         Direction facing = blockState.getValue(FACING);
         return new ColumnCoords(pos.getX(), pos.getZ(), facing);
     }
@@ -98,19 +105,23 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock implements 
         @Nullable Orientation wireOrientation,
         boolean pIsMoving
     ) {
-        if (pLevel.isClientSide())
+        if (pLevel.isClientSide()) {
             return;
+        }
 
         boolean isPowered = pState.getValue(POWERED);
-        if (isPowered == pLevel.hasNeighborSignal(pPos))
+        if (isPowered == pLevel.hasNeighborSignal(pPos)) {
             return;
+        }
 
         pLevel.setBlock(pPos, pState.cycle(POWERED), Block.UPDATE_CLIENTS);
 
-        if (isPowered)
+        if (isPowered) {
             return;
-        if (pState.getValue(CALLING))
+        }
+        if (pState.getValue(CALLING)) {
             return;
+        }
 
         ColumnCoords coords = getColumnCoords(pLevel, pPos);
         if (coords == null) {
@@ -120,21 +131,30 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock implements 
         callToContactAndUpdate(elevatorColumn, pState, pLevel, pPos, true);
     }
 
-    public void callToContactAndUpdate(ElevatorColumn elevatorColumn, BlockState pState, Level pLevel, BlockPos pPos, boolean powered) {
+    public void callToContactAndUpdate(
+        ElevatorColumn elevatorColumn,
+        BlockState pState,
+        Level pLevel,
+        BlockPos pPos,
+        boolean powered
+    ) {
         pLevel.setBlock(pPos, pState.cycle(CALLING), Block.UPDATE_CLIENTS);
 
         for (BlockPos otherPos : elevatorColumn.getContacts()) {
-            if (otherPos.equals(pPos))
+            if (otherPos.equals(pPos)) {
                 continue;
+            }
             BlockState otherState = pLevel.getBlockState(otherPos);
-            if (!otherState.is(AllBlocks.ELEVATOR_CONTACT))
+            if (!otherState.is(AllBlocks.ELEVATOR_CONTACT)) {
                 continue;
+            }
             pLevel.setBlock(otherPos, otherState.setValue(CALLING, false), 2 | 16);
             scheduleActivation(pLevel, otherPos);
         }
 
-        if (powered)
+        if (powered) {
             pState = pState.setValue(POWERED, true);
+        }
         pLevel.setBlock(pPos, pState.setValue(CALLING, true), Block.UPDATE_CLIENTS);
         pLevel.updateNeighborsAt(pPos, this, null);
 
@@ -143,8 +163,9 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock implements 
     }
 
     public void scheduleActivation(ScheduledTickAccess pLevel, BlockPos pPos) {
-        if (!pLevel.getBlockTicks().hasScheduledTick(pPos, this))
+        if (!pLevel.getBlockTicks().hasScheduledTick(pPos, this)) {
             pLevel.scheduleTick(pPos, this, 1);
+        }
     }
 
     @Override
@@ -161,8 +182,9 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock implements 
 
         shouldBePowering |= RedstoneContactBlock.hasValidContact(pLevel, pPos, pState.getValue(FACING));
 
-        if (wasPowering || shouldBePowering)
+        if (wasPowering || shouldBePowering) {
             pLevel.setBlock(pPos, pState.setValue(POWERING, shouldBePowering), 2 | 16);
+        }
 
         pLevel.updateNeighborsAt(pPos, this, null);
     }
@@ -178,11 +200,13 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock implements 
         BlockState facingState,
         RandomSource random
     ) {
-        if (facing != stateIn.getValue(FACING))
+        if (facing != stateIn.getValue(FACING)) {
             return stateIn;
+        }
         boolean hasValidContact = RedstoneContactBlock.hasValidContact(worldIn, currentPos, facing);
-        if (stateIn.getValue(POWERING) != hasValidContact)
+        if (stateIn.getValue(POWERING) != hasValidContact) {
             scheduleActivation(tickView, currentPos);
+        }
         return stateIn;
     }
 
@@ -203,18 +227,21 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock implements 
 
     @Override
     public boolean canConnectRedstone(BlockState state, @Nullable Direction side) {
-        if (side == null)
+        if (side == null) {
             return true;
+        }
         return state.getValue(FACING) != side.getOpposite();
     }
 
     @Override
     public int getSignal(BlockState state, BlockGetter blockAccess, BlockPos pos, @Nullable Direction side) {
-        if (side == null)
+        if (side == null) {
             return 0;
+        }
         BlockState toState = blockAccess.getBlockState(pos.relative(side.getOpposite()));
-        if (toState.is(this))
+        if (toState.is(this)) {
             return 0;
+        }
         return state.getValue(POWERING) ? 15 : 0;
     }
 
@@ -243,8 +270,9 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock implements 
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-        if (player != null && stack.is(AllItems.WRENCH))
+        if (player != null && stack.is(AllItems.WRENCH)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
         if (level.isClientSide()) {
             withBlockEntityDo(
                 level, pos, be -> {

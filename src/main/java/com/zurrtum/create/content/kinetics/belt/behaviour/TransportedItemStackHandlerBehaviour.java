@@ -43,11 +43,17 @@ public class TransportedItemStackHandlerBehaviour extends BlockEntityBehaviour<S
             return new TransportedResult(outputs, null);
         }
 
-        public static TransportedResult convertToAndLeaveHeld(List<TransportedItemStack> outputs, TransportedItemStack heldOutput) {
+        public static TransportedResult convertToAndLeaveHeld(
+            List<TransportedItemStack> outputs,
+            TransportedItemStack heldOutput
+        ) {
             return new TransportedResult(outputs, heldOutput);
         }
 
-        private TransportedResult(@Nullable List<TransportedItemStack> outputs, @Nullable TransportedItemStack heldOutput) {
+        private TransportedResult(
+            @Nullable List<TransportedItemStack> outputs,
+            @Nullable TransportedItemStack heldOutput
+        ) {
             this.outputs = outputs;
             this.heldOutput = heldOutput;
         }
@@ -57,12 +63,16 @@ public class TransportedItemStackHandlerBehaviour extends BlockEntityBehaviour<S
         }
 
         public boolean didntChangeFrom(ItemStack stackBefore) {
-            return doesNothing() || outputs.size() == 1 && ItemStack.matches(outputs.getFirst().stack, stackBefore) && !hasHeldOutput();
+            return doesNothing() || outputs.size() == 1 && ItemStack.matches(
+                outputs.getFirst().stack,
+                stackBefore
+            ) && !hasHeldOutput();
         }
 
         public List<TransportedItemStack> getOutputs() {
-            if (outputs == null)
+            if (outputs == null) {
                 throw new IllegalStateException("Do not call getOutputs() on a Result that doesNothing().");
+            }
             return outputs;
         }
 
@@ -72,8 +82,9 @@ public class TransportedItemStackHandlerBehaviour extends BlockEntityBehaviour<S
 
         @Nullable
         public TransportedItemStack getHeldOutput() {
-            if (heldOutput == null)
+            if (heldOutput == null) {
                 throw new IllegalStateException("Do not call getHeldOutput() on a Result with hasHeldOutput() == false.");
+            }
             return heldOutput;
         }
 
@@ -97,8 +108,9 @@ public class TransportedItemStackHandlerBehaviour extends BlockEntityBehaviour<S
     public void handleProcessingOnItem(TransportedItemStack item, TransportedResult processOutput) {
         handleCenteredProcessingOnAllItems(
             .51f, t -> {
-                if (t == item)
+                if (t == item) {
                     return processOutput;
+                }
                 return null;
             }
         );
@@ -122,7 +134,10 @@ public class TransportedItemStackHandlerBehaviour extends BlockEntityBehaviour<S
 
     @FunctionalInterface
     public interface ProcessingCallback {
-        void applyToAllItems(float maxDistanceFromCenter, Function<TransportedItemStack, TransportedResult> processFunction);
+        void applyToAllItems(
+            float maxDistanceFromCenter,
+            Function<TransportedItemStack, TransportedResult> processFunction
+        );
     }
 
     @FunctionalInterface

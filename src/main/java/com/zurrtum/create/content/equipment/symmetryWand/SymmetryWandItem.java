@@ -46,8 +46,9 @@ public class SymmetryWandItem extends Item {
     public InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
         BlockPos pos = context.getClickedPos();
-        if (player == null)
+        if (player == null) {
             return InteractionResult.PASS;
+        }
         ItemStack wand = player.getItemInHand(context.getHand());
         player.getCooldowns().addCooldown(wand, 5);
         checkComponents(wand);
@@ -61,8 +62,9 @@ public class SymmetryWandItem extends Item {
             return InteractionResult.SUCCESS;
         }
 
-        if (context.getLevel().isClientSide() || context.getHand() != InteractionHand.MAIN_HAND)
+        if (context.getLevel().isClientSide() || context.getHand() != InteractionHand.MAIN_HAND) {
             return InteractionResult.SUCCESS;
+        }
 
         pos = pos.relative(context.getClickedFace());
         SymmetryMirror previousElement = wand.get(AllDataComponents.SYMMETRY_WAND);
@@ -127,8 +129,7 @@ public class SymmetryWandItem extends Item {
 
     public static boolean isEnabled(ItemStack stack) {
         checkComponents(stack);
-        return stack.getOrDefault(AllDataComponents.SYMMETRY_WAND_ENABLE, false) && !stack.getOrDefault(
-            AllDataComponents.SYMMETRY_WAND_SIMULATE,
+        return stack.getOrDefault(AllDataComponents.SYMMETRY_WAND_ENABLE, false) && !stack.getOrDefault(AllDataComponents.SYMMETRY_WAND_SIMULATE,
             false
         );
     }
@@ -155,18 +156,21 @@ public class SymmetryWandItem extends Item {
         InteractionHand hand
     ) {
         checkComponents(wand);
-        if (!isEnabled(wand))
+        if (!isEnabled(wand)) {
             return;
-        if (!BlockItem.BY_BLOCK.containsKey(block.getBlock()))
+        }
+        if (!BlockItem.BY_BLOCK.containsKey(block.getBlock())) {
             return;
+        }
 
         Map<BlockPos, Pair<Direction, BlockState>> blockSet = new HashMap<>();
         blockSet.put(pos, Pair.of(side, block));
         SymmetryMirror symmetry = wand.get(AllDataComponents.SYMMETRY_WAND);
 
         Vec3 mirrorPos = symmetry.getPosition();
-        if (mirrorPos.distanceTo(Vec3.atLowerCornerOf(pos)) > AllConfigs.server().equipment.maxSymmetryWandRange.get())
+        if (mirrorPos.distanceTo(Vec3.atLowerCornerOf(pos)) > AllConfigs.server().equipment.maxSymmetryWandRange.get()) {
             return;
+        }
 
         symmetry.process(blockSet);
         BlockPos to = BlockPos.containing(mirrorPos);
@@ -175,14 +179,15 @@ public class SymmetryWandItem extends Item {
 
         double y = hitPos.y();
         for (BlockPos position : blockSet.keySet()) {
-            if (position.equals(pos))
+            if (position.equals(pos)) {
                 continue;
+            }
 
             if (world.isUnobstructed(block, position, CollisionContext.of(player))) {
                 Pair<Direction, BlockState> pair = blockSet.get(position);
                 Direction direction = pair.getFirst();
                 BlockState blockState = pair.getSecond();
-                for (Direction face : Iterate.directions)
+                for (Direction face : Iterate.directions) {
                     blockState = blockState.updateShape(
                         world,
                         world,
@@ -192,6 +197,7 @@ public class SymmetryWandItem extends Item {
                         world.getBlockState(position.relative(face)),
                         world.getRandom()
                     );
+                }
 
                 if (player.isCreative()) {
                     world.setBlockAndUpdate(position, blockState);
@@ -200,20 +206,29 @@ public class SymmetryWandItem extends Item {
                 }
 
                 BlockState toReplace = world.getBlockState(position);
-                if (toReplace.getDestroySpeed(world, position) == -1)
+                if (toReplace.getDestroySpeed(world, position) == -1) {
                     continue;
+                }
 
                 ItemStack current;
                 List<Runnable> tasks;
                 if (blockState.is(AllBlocks.CART_ASSEMBLER)) {
                     BlockState railBlock = CartAssemblerBlock.getRailBlock(blockState);
-                    Pair<ItemStack, List<Runnable>> findRail = BlockHelper.findInInventory(toReplace, railBlock, player);
+                    Pair<ItemStack, List<Runnable>> findRail = BlockHelper.findInInventory(
+                        toReplace,
+                        railBlock,
+                        player
+                    );
                     ItemStack rail = findRail.getFirst();
                     if (rail.isEmpty()) {
                         continue;
                     }
                     tasks = findRail.getSecond();
-                    Pair<ItemStack, List<Runnable>> findBlock = BlockHelper.findInInventory(toReplace, blockState, player);
+                    Pair<ItemStack, List<Runnable>> findBlock = BlockHelper.findInInventory(
+                        toReplace,
+                        blockState,
+                        player
+                    );
                     ItemStack cartAssembler = findBlock.getFirst();
                     if (cartAssembler.isEmpty()) {
                         current = rail;
@@ -242,8 +257,9 @@ public class SymmetryWandItem extends Item {
                     toReplace,
                     blockState
                 );
-                if (!(toReplace.canBeReplaced() || toReplace.canBeReplaced(placementContext)))
+                if (!(toReplace.canBeReplaced() || toReplace.canBeReplaced(placementContext))) {
                     continue;
+                }
 
                 wand.set(AllDataComponents.SYMMETRY_WAND_SIMULATE, true);
                 InteractionResult actionResult = InteractionResult.FAIL;
@@ -277,16 +293,18 @@ public class SymmetryWandItem extends Item {
     public static void remove(ServerLevel world, ItemStack wand, Player player, BlockPos pos, BlockState ogBlock) {
         BlockState air = Blocks.AIR.defaultBlockState();
         checkComponents(wand);
-        if (!isEnabled(wand))
+        if (!isEnabled(wand)) {
             return;
+        }
 
         Set<BlockPos> positions = new HashSet<>();
         positions.add(pos);
         SymmetryMirror symmetry = wand.get(AllDataComponents.SYMMETRY_WAND);
 
         Vec3 mirrorPos = symmetry.getPosition();
-        if (mirrorPos.distanceTo(Vec3.atLowerCornerOf(pos)) > AllConfigs.server().equipment.maxSymmetryWandRange.get())
+        if (mirrorPos.distanceTo(Vec3.atLowerCornerOf(pos)) > AllConfigs.server().equipment.maxSymmetryWandRange.get()) {
             return;
+        }
 
         symmetry.process(positions);
 
@@ -296,10 +314,12 @@ public class SymmetryWandItem extends Item {
         targets.add(pos);
         boolean noCreative = !player.isCreative();
         for (BlockPos position : positions) {
-            if (noCreative && ogBlock.getBlock() != world.getBlockState(position).getBlock())
+            if (noCreative && ogBlock.getBlock() != world.getBlockState(position).getBlock()) {
                 continue;
-            if (position.equals(pos))
+            }
+            if (position.equals(pos)) {
                 continue;
+            }
 
             BlockState blockstate = world.getBlockState(position);
             if (!blockstate.isAir()) {
@@ -309,10 +329,18 @@ public class SymmetryWandItem extends Item {
 
                 if (noCreative) {
                     ItemStack stack = player.getMainHandItem();
-                    if (!stack.isEmpty())
+                    if (!stack.isEmpty()) {
                         stack.mineBlock(world, blockstate, position, player);
+                    }
                     BlockEntity blockEntity = blockstate.hasBlockEntity() ? world.getBlockEntity(position) : null;
-                    Block.dropResources(blockstate, world, pos, blockEntity, player, stack); // Add fortune, silk touch and other loot modifiers
+                    Block.dropResources(
+                        blockstate,
+                        world,
+                        pos,
+                        blockEntity,
+                        player,
+                        stack
+                    ); // Add fortune, silk touch and other loot modifiers
                 }
             }
         }
@@ -322,9 +350,11 @@ public class SymmetryWandItem extends Item {
 
     public static boolean presentInHotbar(Player player) {
         Inventory inv = player.getInventory();
-        for (int i = 0, size = Inventory.getSelectionSize(); i < size; i++)
-            if (inv.getItem(i).is(AllItems.WAND_OF_SYMMETRY))
+        for (int i = 0, size = Inventory.getSelectionSize(); i < size; i++) {
+            if (inv.getItem(i).is(AllItems.WAND_OF_SYMMETRY)) {
                 return true;
+            }
+        }
         return false;
     }
 

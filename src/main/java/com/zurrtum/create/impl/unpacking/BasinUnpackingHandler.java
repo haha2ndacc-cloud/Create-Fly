@@ -26,8 +26,9 @@ public class BasinUnpackingHandler implements UnpackingHandler {
         boolean simulate
     ) {
         BlockEntity be = level.getBlockEntity(pos);
-        if (!(be instanceof BasinBlockEntity basin))
+        if (!(be instanceof BasinBlockEntity basin)) {
             return false;
+        }
 
         basin.itemCapability.disableCheck();
 

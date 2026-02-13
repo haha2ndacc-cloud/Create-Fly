@@ -8,5 +8,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
 
 public interface ClientRightClickPreHandle {
-    @Nullable InteractionResult onRightClickBlock(Level world, LocalPlayer player, InteractionHand hand, BlockHitResult ray);
+    @Nullable InteractionResult onRightClickBlock(
+        Level world,
+        LocalPlayer player,
+        InteractionHand hand,
+        BlockHitResult ray
+    );
 }

@@ -17,7 +17,8 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import java.util.List;
 import java.util.Optional;
 
-public record PressingDisplay(EntryIngredient input, EntryIngredient output, Optional<Identifier> location) implements Display {
+public record PressingDisplay(EntryIngredient input, EntryIngredient output,
+                              Optional<Identifier> location) implements Display {
     public static final DisplaySerializer<PressingDisplay> SERIALIZER = DisplaySerializer.of(
         RecordCodecBuilder.mapCodec(instance -> instance.group(
             EntryIngredient.codec().fieldOf("inputs").forGetter(PressingDisplay::input),
@@ -39,7 +40,11 @@ public record PressingDisplay(EntryIngredient input, EntryIngredient output, Opt
     }
 
     public PressingDisplay(Identifier id, PressingRecipe recipe) {
-        this(IngredientHelper.getInputEntryIngredient(recipe.ingredient()), EntryIngredients.of(recipe.result()), Optional.of(id));
+        this(
+            IngredientHelper.getInputEntryIngredient(recipe.ingredient()),
+            EntryIngredients.of(recipe.result()),
+            Optional.of(id)
+        );
     }
 
     @Override

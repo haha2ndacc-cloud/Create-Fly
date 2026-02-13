@@ -10,12 +10,27 @@ public class CClient extends ConfigBase {
 
     //no group
     public final ConfigBool tooltips = b(true, "enableTooltips", Comments.tooltips);
-    public final ConfigBool enableOverstressedTooltip = b(true, "enableOverstressedTooltip", Comments.enableOverstressedTooltip);
+    public final ConfigBool enableOverstressedTooltip = b(
+        true,
+        "enableOverstressedTooltip",
+        Comments.enableOverstressedTooltip
+    );
     public final ConfigBool explainRenderErrors = b(false, "explainRenderErrors", Comments.explainRenderErrors);
     public final ConfigFloat fanParticleDensity = f(.5f, 0, 1, "fanParticleDensity", Comments.fanParticleDensity);
-    public final ConfigFloat filterItemRenderDistance = f(10f, 1, "filterItemRenderDistance", Comments.filterItemRenderDistance);
+    public final ConfigFloat filterItemRenderDistance = f(
+        10f,
+        1,
+        "filterItemRenderDistance",
+        Comments.filterItemRenderDistance
+    );
     // no group
-    public final ConfigInt mainMenuConfigButtonRow = i(2, 0, 4, "mainMenuConfigButtonRow", Comments.mainMenuConfigButtonRow);
+    public final ConfigInt mainMenuConfigButtonRow = i(
+        2,
+        0,
+        4,
+        "mainMenuConfigButtonRow",
+        Comments.mainMenuConfigButtonRow
+    );
     public final ConfigInt mainMenuConfigButtonOffsetX = i(
         -4,
         Integer.MIN_VALUE,
@@ -23,7 +38,13 @@ public class CClient extends ConfigBase {
         "mainMenuConfigButtonOffsetX",
         Comments.mainMenuConfigButtonOffsetX
     );
-    public final ConfigInt ingameMenuConfigButtonRow = i(3, 0, 5, "ingameMenuConfigButtonRow", Comments.ingameMenuConfigButtonRow);
+    public final ConfigInt ingameMenuConfigButtonRow = i(
+        3,
+        0,
+        5,
+        "ingameMenuConfigButtonRow",
+        Comments.ingameMenuConfigButtonRow
+    );
     public final ConfigInt ingameMenuConfigButtonOffsetX = i(
         -4,
         Integer.MIN_VALUE,
@@ -36,13 +57,37 @@ public class CClient extends ConfigBase {
 
     // custom fluid fog
     public final ConfigGroup fluidFogSettings = group(1, "fluidFogSettings", Comments.fluidFogSettings);
-    public final ConfigFloat honeyTransparencyMultiplier = f(1, .125f, 256, "honey", Comments.honeyTransparencyMultiplier);
-    public final ConfigFloat chocolateTransparencyMultiplier = f(1, .125f, 256, "chocolate", Comments.chocolateTransparencyMultiplier);
+    public final ConfigFloat honeyTransparencyMultiplier = f(
+        1,
+        .125f,
+        256,
+        "honey",
+        Comments.honeyTransparencyMultiplier
+    );
+    public final ConfigFloat chocolateTransparencyMultiplier = f(
+        1,
+        .125f,
+        256,
+        "chocolate",
+        Comments.chocolateTransparencyMultiplier
+    );
 
     //overlay group
     public final ConfigGroup overlay = group(1, "goggleOverlay", Comments.overlay);
-    public final ConfigInt overlayOffsetX = i(20, Integer.MIN_VALUE, Integer.MAX_VALUE, "overlayOffsetX", Comments.overlayOffset);
-    public final ConfigInt overlayOffsetY = i(0, Integer.MIN_VALUE, Integer.MAX_VALUE, "overlayOffsetY", Comments.overlayOffset);
+    public final ConfigInt overlayOffsetX = i(
+        20,
+        Integer.MIN_VALUE,
+        Integer.MAX_VALUE,
+        "overlayOffsetX",
+        Comments.overlayOffset
+    );
+    public final ConfigInt overlayOffsetY = i(
+        0,
+        Integer.MIN_VALUE,
+        Integer.MAX_VALUE,
+        "overlayOffsetY",
+        Comments.overlayOffset
+    );
     public final ConfigBool overlayCustomColor = b(false, "customColorsOverlay", Comments.overlayCustomColor);
     public final ConfigInt overlayBackgroundColor = i(
         0xf0_100010,
@@ -79,9 +124,17 @@ public class CClient extends ConfigBase {
     public final ConfigGroup trains = group(1, "trains", Comments.trains);
     public final ConfigFloat mountedZoomMultiplier = f(3, 0, "mountedZoomMultiplier", Comments.mountedZoomMultiplier);
     public final ConfigBool showTrackGraphOnF3 = b(false, "showTrackGraphOnF3", Comments.showTrackGraphOnF3);
-    public final ConfigBool showExtendedTrackGraphOnF3 = b(false, "showExtendedTrackGraphOnF3", Comments.showExtendedTrackGraphOnF3);
+    public final ConfigBool showExtendedTrackGraphOnF3 = b(
+        false,
+        "showExtendedTrackGraphOnF3",
+        Comments.showExtendedTrackGraphOnF3
+    );
     public final ConfigBool showTrainMapOverlay = b(true, "showTrainMapOverlay", Comments.showTrainMapOverlay);
-    public final ConfigEnum<TrainMapTheme> trainMapColorTheme = e(TrainMapTheme.RED, "trainMapColorTheme", Comments.trainMapColorTheme);
+    public final ConfigEnum<TrainMapTheme> trainMapColorTheme = e(
+        TrainMapTheme.RED,
+        "trainMapColorTheme",
+        Comments.trainMapColorTheme
+    );
 
     @Override
     public String getName() {
@@ -89,15 +142,11 @@ public class CClient extends ConfigBase {
     }
 
     public enum PlacementIndicatorSetting {
-        TEXTURE,
-        TRIANGLE,
-        NONE
+        TEXTURE, TRIANGLE, NONE
     }
 
     public enum TrainMapTheme {
-        RED,
-        GREY,
-        WHITE
+        RED, GREY, WHITE
     }
 
     private static class Comments {

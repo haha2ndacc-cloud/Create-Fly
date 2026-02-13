@@ -42,7 +42,8 @@ import java.util.function.Supplier;
 public class AllTransfer {
     public static final boolean DISABLE = !FabricLoader.getInstance().isModLoaded("fabric-transfer-api-v1");
     private static final Map<Storage<ItemVariant>, Container> WRAPPERS_ITEM = new MapMaker().weakValues().makeMap();
-    private static final Map<Storage<FluidVariant>, FluidInventory> WRAPPERS_FLUID = new MapMaker().weakValues().makeMap();
+    private static final Map<Storage<FluidVariant>, FluidInventory> WRAPPERS_FLUID = new MapMaker().weakValues()
+        .makeMap();
 
     @Nullable
     public static Supplier<@Nullable Container> getCacheInventory(
@@ -54,7 +55,11 @@ public class AllTransfer {
         if (DISABLE) {
             return null;
         }
-        BlockApiCache<Storage<ItemVariant>, @Nullable Direction> cache = BlockApiCache.create(ItemStorage.SIDED, world, pos);
+        BlockApiCache<Storage<ItemVariant>, @Nullable Direction> cache = BlockApiCache.create(
+            ItemStorage.SIDED,
+            world,
+            pos
+        );
         return () -> {
             Storage<ItemVariant> inventory = cache.find(direction);
             if (inventory == null || (filter != null && !filter.test(cache.getBlockEntity(), direction))) {
@@ -96,11 +101,19 @@ public class AllTransfer {
     }
 
     @Nullable
-    public static Supplier<@Nullable FluidInventory> getCacheFluidInventory(ServerLevel world, BlockPos pos, Direction direction) {
+    public static Supplier<@Nullable FluidInventory> getCacheFluidInventory(
+        ServerLevel world,
+        BlockPos pos,
+        Direction direction
+    ) {
         if (DISABLE) {
             return null;
         }
-        BlockApiCache<Storage<FluidVariant>, @Nullable Direction> cache = BlockApiCache.create(FluidStorage.SIDED, world, pos);
+        BlockApiCache<Storage<FluidVariant>, @Nullable Direction> cache = BlockApiCache.create(
+            FluidStorage.SIDED,
+            world,
+            pos
+        );
         return () -> {
             Storage<FluidVariant> inventory = cache.find(direction);
             if (inventory == null) {
@@ -152,7 +165,10 @@ public class AllTransfer {
         return FluidItemInventoryWrapper.of(inventory, context);
     }
 
-    private static <T extends SmartBlockEntity> void registerItemSide(BlockEntityType<T> type, Function<T, @Nullable Container> factory) {
+    private static <T extends SmartBlockEntity> void registerItemSide(
+        BlockEntityType<T> type,
+        Function<T, @Nullable Container> factory
+    ) {
         BlockEntityBehaviour.add(type, (T be) -> new CachedInventoryBehaviour<>(be, factory));
         ItemStorage.SIDED.registerForBlockEntity(CachedInventoryBehaviour::get, type);
     }
@@ -165,7 +181,10 @@ public class AllTransfer {
         ItemStorage.SIDED.registerForBlockEntity(CachedDirectionInventoryBehaviour::get, type);
     }
 
-    private static <T extends SmartBlockEntity> void registerFluidSide(BlockEntityType<T> type, Function<T, @Nullable FluidInventory> factory) {
+    private static <T extends SmartBlockEntity> void registerFluidSide(
+        BlockEntityType<T> type,
+        Function<T, @Nullable FluidInventory> factory
+    ) {
         BlockEntityBehaviour.add(type, (T be) -> new CachedFluidInventoryBehaviour<>(be, factory));
         FluidStorage.SIDED.registerForBlockEntity(CachedFluidInventoryBehaviour::get, type);
     }
@@ -178,10 +197,12 @@ public class AllTransfer {
         registerItemSide(AllBlockEntityTypes.WEIGHTED_EJECTOR, be -> be.depotBehaviour.itemHandler);
         registerItemSide(
             AllBlockEntityTypes.BELT, be -> {
-                if (!BeltBlock.canTransportObjects(be.getBlockState()))
+                if (!BeltBlock.canTransportObjects(be.getBlockState())) {
                     return null;
-                if (!be.isRemoved() && be.itemHandler == null)
+                }
+                if (!be.isRemoved() && be.itemHandler == null) {
                     be.initializeItemHandler();
+                }
                 return be.itemHandler;
             }
         );
@@ -197,7 +218,13 @@ public class AllTransfer {
                     if (state.is(AllBlocks.BELT)) {
                         BlockEntity beBelow = world.getBlockEntity(pos.below());
                         if (beBelow != null) {
-                            Container capBelow = ItemHelper.getInventory(world, pos.below(), state, beBelow, Direction.UP);
+                            Container capBelow = ItemHelper.getInventory(
+                                world,
+                                pos.below(),
+                                state,
+                                beBelow,
+                                Direction.UP
+                            );
                             if (capBelow != null) {
                                 be.cap = capBelow;
                             }
@@ -213,15 +240,17 @@ public class AllTransfer {
         registerItemSide(AllBlockEntityTypes.PORTABLE_STORAGE_INTERFACE, be -> be.capability);
         registerItemSide(
             AllBlockEntityTypes.ITEM_DRAIN, (be, context) -> {
-                if (context != null && context.getAxis().isHorizontal())
+                if (context != null && context.getAxis().isHorizontal()) {
                     return be.itemHandlers.get(context);
+                }
                 return null;
             }
         );
         registerItemSide(
             AllBlockEntityTypes.DEPLOYER, be -> {
-                if (be.invHandler == null)
+                if (be.invHandler == null) {
                     be.initHandler();
+                }
                 return be.invHandler;
             }
         );
@@ -236,8 +265,9 @@ public class AllTransfer {
         registerItemSide(AllBlockEntityTypes.TRACK_STATION, be -> be.depotBehaviour.itemHandler);
         registerFluidSide(
             AllBlockEntityTypes.FLUID_TANK, be -> {
-                if (be.fluidCapability == null)
+                if (be.fluidCapability == null) {
                     be.refreshCapability();
+                }
                 return be.fluidCapability;
             }
         );

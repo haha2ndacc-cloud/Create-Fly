@@ -74,7 +74,12 @@ public class OitFramebuffer {
         GlStateManager._bindTexture(((GlTexture) NoiseTextures.BLUE_NOISE.getTexture()).glId());
 
         GlStateManager._glBindFramebuffer(GL32.GL_FRAMEBUFFER, fbo);
-        GL32.glFramebufferTexture(GL32.GL_FRAMEBUFFER, GL32.GL_DEPTH_ATTACHMENT, ((GlTexture) renderTarget.getDepthTexture()).glId(), 0);
+        GL32.glFramebufferTexture(
+            GL32.GL_FRAMEBUFFER,
+            GL32.GL_DEPTH_ATTACHMENT,
+            ((GlTexture) renderTarget.getDepthTexture()).glId(),
+            0
+        );
     }
 
     /**
@@ -296,7 +301,18 @@ public class OitFramebuffer {
             GL32.glTexParameteri(GL32.GL_TEXTURE_2D, GL32.GL_TEXTURE_WRAP_T, GL32.GL_CLAMP_TO_EDGE);
 
             GL32.glBindTexture(GL32.GL_TEXTURE_2D_ARRAY, coefficients);
-            GL32.glTexImage3D(GL32.GL_TEXTURE_2D_ARRAY, 0, GL32.GL_RGBA16F, width, height, 4, 0, GL46.GL_RGBA, GL46.GL_BYTE, 0);
+            GL32.glTexImage3D(
+                GL32.GL_TEXTURE_2D_ARRAY,
+                0,
+                GL32.GL_RGBA16F,
+                width,
+                height,
+                4,
+                0,
+                GL46.GL_RGBA,
+                GL46.GL_BYTE,
+                0
+            );
 
             GL32.glTexParameteri(GL32.GL_TEXTURE_2D_ARRAY, GL32.GL_TEXTURE_MIN_FILTER, GL32.GL_NEAREST);
             GL32.glTexParameteri(GL32.GL_TEXTURE_2D_ARRAY, GL32.GL_TEXTURE_MAG_FILTER, GL32.GL_NEAREST);

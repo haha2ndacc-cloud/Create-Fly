@@ -35,7 +35,8 @@ public class RecipeTrie<R extends Recipe<?>> {
     private final Int2ObjectMap<@Nullable IntSet> variantToIngredients;
     private final int universalIngredientId;
 
-    private final Cache<Set<AbstractVariant>, IntSet> ingredientCache = CacheBuilder.newBuilder().maximumSize(MAX_CACHE_SIZE).build();
+    private final Cache<Set<AbstractVariant>, IntSet> ingredientCache = CacheBuilder.newBuilder()
+        .maximumSize(MAX_CACHE_SIZE).build();
 
     private RecipeTrie(
         IntArrayTrie<R> trie,
@@ -49,14 +50,18 @@ public class RecipeTrie<R extends Recipe<?>> {
         this.universalIngredientId = universalIngredientId;
     }
 
-    public static Set<AbstractVariant> getVariants(@Nullable Container itemStorage, @Nullable FluidInventory fluidStorage) {
+    public static Set<AbstractVariant> getVariants(
+        @Nullable Container itemStorage,
+        @Nullable FluidInventory fluidStorage
+    ) {
         Set<AbstractVariant> variants = new HashSet<>();
 
         if (itemStorage != null) {
             for (int slot = 0, size = itemStorage.getContainerSize(); slot < size; slot++) {
                 ItemStack item = itemStorage.getItem(slot);
-                if (item.isEmpty())
+                if (item.isEmpty()) {
                     continue;
+                }
 
                 variants.add(new AbstractVariant.AbstractItem(item.getItem()));
             }
@@ -65,8 +70,9 @@ public class RecipeTrie<R extends Recipe<?>> {
         if (fluidStorage != null) {
             for (int tank = 0, size = fluidStorage.size(); tank < size; tank++) {
                 FluidStack fluid = fluidStorage.getStack(tank);
-                if (fluid.isEmpty())
+                if (fluid.isEmpty()) {
                     continue;
+                }
 
                 variants.add(new AbstractVariant.AbstractFluid(fluid.getFluid()));
             }
@@ -159,7 +165,10 @@ public class RecipeTrie<R extends Recipe<?>> {
         }
 
         private AbstractVariant getOrAssignVariant(Fluid fluid) {
-            AbstractVariant variant = variantCache.computeIfAbsent(fluid, _ -> new AbstractVariant.AbstractFluid(fluid));
+            AbstractVariant variant = variantCache.computeIfAbsent(
+                fluid,
+                _ -> new AbstractVariant.AbstractFluid(fluid)
+            );
             getOrAssignId(variant);
             return variant;
         }
@@ -190,7 +199,8 @@ public class RecipeTrie<R extends Recipe<?>> {
             Iterator<Ingredient> items = null;
             List<FluidIngredient> fluids = null;
             if (recipe instanceof ShapedRecipe shapedRecipe) {
-                items = shapedRecipe.getIngredients().stream().filter(Optional::isPresent).map(Optional::get).iterator();
+                items = shapedRecipe.getIngredients().stream().filter(Optional::isPresent).map(Optional::get)
+                    .iterator();
             } else if (recipe instanceof ShapelessRecipe shapelessRecipe) {
                 items = shapelessRecipe.ingredients.iterator();
             } else if (recipe instanceof BasinRecipe basinRecipe) {

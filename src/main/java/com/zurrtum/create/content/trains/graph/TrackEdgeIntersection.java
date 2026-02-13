@@ -28,13 +28,15 @@ public class TrackEdgeIntersection {
     }
 
     public boolean targets(TrackNodeLocation target1, TrackNodeLocation target2) {
-        return target1.equals(target.getFirst()) && target2.equals(target.getSecond()) || target1.equals(target.getSecond()) && target2.equals(target.getFirst());
+        return target1.equals(target.getFirst()) && target2.equals(target.getSecond()) || target1.equals(target.getSecond()) && target2.equals(
+            target.getFirst());
     }
 
     public void write(ValueOutput view, DimensionPalette dimensions) {
         view.store("Id", UUIDUtil.CODEC, id);
-        if (groupId != null)
+        if (groupId != null) {
             view.store("GroupId", UUIDUtil.CODEC, groupId);
+        }
         view.putDouble("Location", location);
         view.putDouble("TargetLocation", targetLocation);
         ValueOutput.ValueOutputList edge = view.childrenList("TargetEdge");
@@ -42,11 +44,17 @@ public class TrackEdgeIntersection {
         target.getSecond().write(edge.addChild(), dimensions);
     }
 
-    public static <T> DataResult<T> encode(final TrackEdgeIntersection input, final DynamicOps<T> ops, final T empty, DimensionPalette dimensions) {
+    public static <T> DataResult<T> encode(
+        final TrackEdgeIntersection input,
+        final DynamicOps<T> ops,
+        final T empty,
+        DimensionPalette dimensions
+    ) {
         RecordBuilder<T> builder = ops.mapBuilder();
         builder.add("Id", input.id, UUIDUtil.CODEC);
-        if (input.groupId != null)
+        if (input.groupId != null) {
             builder.add("GroupId", input.groupId, UUIDUtil.CODEC);
+        }
         builder.add("Location", ops.createDouble(input.location));
         builder.add("TargetLocation", ops.createDouble(input.targetLocation));
         ListBuilder<T> edge = ops.listBuilder();
@@ -63,7 +71,10 @@ public class TrackEdgeIntersection {
         intersection.location = view.getDoubleOr("Location", 0);
         intersection.targetLocation = view.getDoubleOr("TargetLocation", 0);
         Iterator<ValueInput> edge = view.childrenListOrEmpty("TargetEdge").iterator();
-        intersection.target = Couple.create(TrackNodeLocation.read(edge.next(), dimensions), TrackNodeLocation.read(edge.next(), dimensions));
+        intersection.target = Couple.create(
+            TrackNodeLocation.read(edge.next(), dimensions),
+            TrackNodeLocation.read(edge.next(), dimensions)
+        );
         return intersection;
     }
 
@@ -71,7 +82,8 @@ public class TrackEdgeIntersection {
         MapLike<T> map = ops.getMap(input).getOrThrow();
         TrackEdgeIntersection intersection = new TrackEdgeIntersection();
         intersection.id = UUIDUtil.CODEC.decode(ops, map.get("Id")).getOrThrow().getFirst();
-        UUIDUtil.CODEC.decode(ops, map.get("GroupId")).result().map(Pair::getFirst).ifPresent(id -> intersection.groupId = id);
+        UUIDUtil.CODEC.decode(ops, map.get("GroupId")).result().map(Pair::getFirst)
+            .ifPresent(id -> intersection.groupId = id);
         intersection.location = ops.getNumberValue(map.get("Location"), 0).intValue();
         intersection.targetLocation = ops.getNumberValue(map.get("TargetLocation"), 0).intValue();
         intersection.target = Couple.create(null, null);

@@ -43,10 +43,9 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public record SequencedAssemblyRecipe(
-    Ingredient ingredient, ItemStackTemplate transitionalItem, ProcessingOutput result, List<ProcessingOutput> junks, int loops,
-    List<Recipe<?>> sequence
-) implements CreateRecipe<SingleRecipeInput> {
+public record SequencedAssemblyRecipe(Ingredient ingredient, ItemStackTemplate transitionalItem,
+                                      ProcessingOutput result, List<ProcessingOutput> junks, int loops,
+                                      List<Recipe<?>> sequence) implements CreateRecipe<SingleRecipeInput> {
     public static final String INGREDIENT_ID = "$ingredient";
     public static final String RESULT_ID = "$result";
     public static final Map<Identifier, Recipe<?>> GENERATE_RECIPES = new HashMap<>();
@@ -66,7 +65,10 @@ public record SequencedAssemblyRecipe(
         SequencedAssemblyRecipe::sequence,
         SequencedAssemblyRecipe::new
     );
-    public static final RecipeSerializer<SequencedAssemblyRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+    public static final RecipeSerializer<SequencedAssemblyRecipe> SERIALIZER = new RecipeSerializer<>(
+        MAP_CODEC,
+        STREAM_CODEC
+    );
 
     @Override
     public RecipeType<SequencedAssemblyRecipe> getType() {
@@ -115,16 +117,21 @@ public record SequencedAssemblyRecipe(
                     throw new UnsupportedOperationException("ops must be a JsonOps");
                 }
                 DynamicOps<JsonElement> ops = (DynamicOps<JsonElement>) dynamicOps;
-                int loops = Optional.ofNullable(input.get("loops")).map(value -> dynamicOps.getNumberValue(value, 1).intValue()).orElse(1);
+                int loops = Optional.ofNullable(input.get("loops"))
+                    .map(value -> dynamicOps.getNumberValue(value, 1).intValue()).orElse(1);
                 int sequenceSize = sequenceJson.size();
                 int size = sequenceSize * loops;
                 if (size <= 1) {
                     throw new UnsupportedOperationException("sequence must have at least two steps");
                 }
 
-                ItemStackTemplate transitionalItem = ItemStackTemplate.CODEC.parse(dynamicOps, input.get("transitional_item")).getOrThrow();
+                ItemStackTemplate transitionalItem = ItemStackTemplate.CODEC.parse(
+                    dynamicOps,
+                    input.get("transitional_item")
+                ).getOrThrow();
                 ProcessingOutput result = ProcessingOutput.CODEC.parse(dynamicOps, input.get("result")).getOrThrow();
-                List<ProcessingOutput> junks = JUNKS_CODEC.parse(dynamicOps, input.get("junks")).result().orElse(List.of());
+                List<ProcessingOutput> junks = JUNKS_CODEC.parse(dynamicOps, input.get("junks")).result()
+                    .orElse(List.of());
 
                 List<Component> RecipeName = new ArrayList<>(sequenceSize);
                 for (int i = 0; i < sequenceSize; i++) {
@@ -132,7 +139,8 @@ public record SequencedAssemblyRecipe(
                     RecipeName.add(AllAssemblyRecipeNames.get(ops, object));
                 }
 
-                Reference2ObjectMap<DataComponentType<?>, Optional<?>> transitionalComponents = new Reference2ObjectArrayMap<>(transitionalItem.components().map);
+                Reference2ObjectMap<DataComponentType<?>, Optional<?>> transitionalComponents = new Reference2ObjectArrayMap<>(
+                    transitionalItem.components().map);
                 ItemStackTemplate transitional = new ItemStackTemplate(
                     transitionalItem.item(),
                     transitionalItem.count(),
@@ -166,15 +174,18 @@ public record SequencedAssemblyRecipe(
                     lore.add(CommonComponents.EMPTY);
                     lore.add(Component.translatable("create.recipe.sequenced_assembly").withStyle(ChatFormatting.GRAY)
                         .withStyle(style -> style.withItalic(false)));
-                    lore.add(Component.translatable("create.recipe.assembly.progress", index, size).withStyle(ChatFormatting.DARK_GRAY)
-                        .withStyle(style -> style.withItalic(false)));
+                    lore.add(Component.translatable("create.recipe.assembly.progress", index, size)
+                        .withStyle(ChatFormatting.DARK_GRAY).withStyle(style -> style.withItalic(false)));
                     lore.add(Component.translatable("create.recipe.assembly.next", RecipeName.get(index % sequenceSize))
                         .withStyle(ChatFormatting.AQUA).withStyle(style -> style.withItalic(false)));
                     for (int i = index + 1, end = Math.min(i + 2, size); i < end; i++) {
-                        lore.add(Component.literal("-> ").append(RecipeName.get(i % sequenceSize)).withStyle(ChatFormatting.DARK_AQUA)
-                            .withStyle(style -> style.withItalic(false)));
+                        lore.add(Component.literal("-> ").append(RecipeName.get(i % sequenceSize))
+                            .withStyle(ChatFormatting.DARK_AQUA).withStyle(style -> style.withItalic(false)));
                     }
-                    transitionalComponents.put(AllDataComponents.SEQUENCED_ASSEMBLY_PROGRESS, Optional.of((float) index / size));
+                    transitionalComponents.put(
+                        AllDataComponents.SEQUENCED_ASSEMBLY_PROGRESS,
+                        Optional.of((float) index / size)
+                    );
                     transitionalComponents.put(DataComponents.LORE, Optional.of(new ItemLore(lore, lore)));
                     return ItemStackTemplate.CODEC.encodeStart(ops, transitional).getOrThrow();
                 };
@@ -193,7 +204,8 @@ public record SequencedAssemblyRecipe(
                 ).getOrThrow();
 
                 Identifier id = Identifier.parse(AllRecipeTypes.SEQUENCED_ASSEMBLY.toString())
-                    .withSuffix("_" + idGenerator.incrementAndGet() + "_" + BuiltInRegistries.ITEM.getKey(result.item().value()).getPath() + "_");
+                    .withSuffix("_" + idGenerator.incrementAndGet() + "_" + BuiltInRegistries.ITEM.getKey(result.item()
+                        .value()).getPath() + "_");
                 List<Recipe<?>> sequence = new ArrayList<>(size);
                 TriConsumer<Integer, JsonElement, JsonElement> recipeAdd = (i, ingredientJson, resultJson) -> {
                     JsonObject object = sequenceJsonFactory.get(i % sequenceSize).apply(ingredientJson, resultJson);
@@ -203,7 +215,11 @@ public record SequencedAssemblyRecipe(
                 };
 
                 JsonElement ingredientJson = (JsonElement) input.get("ingredient");
-                recipeAdd.accept(0, ingredientJson, size == 2 ? transitionalJsonChanceResult.get() : transitionalJsonResult.get());
+                recipeAdd.accept(
+                    0,
+                    ingredientJson,
+                    size == 2 ? transitionalJsonChanceResult.get() : transitionalJsonResult.get()
+                );
                 for (int i = 1, end = size - 2; i < end; i++) {
                     recipeAdd.accept(i, transitionalJsonIngredient.get(), transitionalJsonResult.get());
                 }
@@ -265,7 +281,8 @@ public record SequencedAssemblyRecipe(
         }
 
         private static boolean match(JsonElement target, String id) {
-            return target instanceof JsonPrimitive primitive && primitive.isString() && primitive.getAsString().equals(id);
+            return target instanceof JsonPrimitive primitive && primitive.isString() && primitive.getAsString()
+                .equals(id);
         }
 
         @Override

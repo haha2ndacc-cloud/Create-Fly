@@ -18,9 +18,8 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;
 
-public record TrainRelocationPacket(
-    UUID trainId, BlockPos pos, Vec3 lookAngle, int entityId, boolean direction, @Nullable BezierTrackPointLocation hoveredBezier
-) implements Packet<ServerGamePacketListener> {
+public record TrainRelocationPacket(UUID trainId, BlockPos pos, Vec3 lookAngle, int entityId, boolean direction,
+                                    @Nullable BezierTrackPointLocation hoveredBezier) implements Packet<ServerGamePacketListener> {
     @SuppressWarnings("DataFlowIssue")
     public static final StreamCodec<RegistryFriendlyByteBuf, TrainRelocationPacket> CODEC = StreamCodec.composite(
         UUIDUtil.STREAM_CODEC,

@@ -25,13 +25,19 @@ public non-sealed interface IHaveGoggleInformation extends IHaveCustomOverlayIco
         return false;
     }
 
-    default boolean containedFluidTooltip(List<Component> tooltip, boolean isPlayerSneaking, @Nullable FluidInventory handler) {
-        if (handler == null)
+    default boolean containedFluidTooltip(
+        List<Component> tooltip,
+        boolean isPlayerSneaking,
+        @Nullable FluidInventory handler
+    ) {
+        if (handler == null) {
             return false;
+        }
 
         int size = handler.size();
-        if (size == 0)
+        if (size == 0) {
             return false;
+        }
 
         LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
         CreateLang.translate("gui.goggles.fluid_container").forGoggles(tooltip);
@@ -39,31 +45,35 @@ public non-sealed interface IHaveGoggleInformation extends IHaveCustomOverlayIco
         boolean isEmpty = true;
         for (int i = 0; i < size; i++) {
             FluidStack fluidStack = handler.getStack(i);
-            if (fluidStack.isEmpty())
+            if (fluidStack.isEmpty()) {
                 continue;
+            }
 
             CreateLang.fluidName(fluidStack).style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
 
-            CreateLang.builder().add(CreateLang.number((double) fluidStack.getAmount() / 81).add(mb).style(ChatFormatting.GOLD))
+            CreateLang.builder()
+                .add(CreateLang.number((double) fluidStack.getAmount() / 81).add(mb).style(ChatFormatting.GOLD))
                 .text(ChatFormatting.GRAY, " / ")
-                .add(CreateLang.number((double) handler.getMaxAmount(fluidStack) / 81).add(mb).style(ChatFormatting.DARK_GRAY))
-                .forGoggles(tooltip, 1);
+                .add(CreateLang.number((double) handler.getMaxAmount(fluidStack) / 81).add(mb)
+                    .style(ChatFormatting.DARK_GRAY)).forGoggles(tooltip, 1);
 
             isEmpty = false;
         }
 
         if (size > 1) {
-            if (isEmpty)
+            if (isEmpty) {
                 tooltip.removeLast();
+            }
             return true;
         }
 
-        if (!isEmpty)
+        if (!isEmpty) {
             return true;
+        }
 
         CreateLang.translate("gui.goggles.fluid_container.capacity")
-            .add(CreateLang.number((double) handler.getMaxAmountPerStack() / 81).add(mb).style(ChatFormatting.GOLD)).style(ChatFormatting.GRAY)
-            .forGoggles(tooltip, 1);
+            .add(CreateLang.number((double) handler.getMaxAmountPerStack() / 81).add(mb).style(ChatFormatting.GOLD))
+            .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
 
         return true;
     }

@@ -2,13 +2,12 @@ package com.zurrtum.create.catnip.theme;
 
 import com.google.common.hash.Hashing;
 import com.zurrtum.create.catnip.data.Couple;
-import org.joml.Vector3f;
-
-import java.util.function.UnaryOperator;
-
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
+
+import java.util.function.UnaryOperator;
 
 @SuppressWarnings("PointlessBitwiseExpression")
 public class Color {
@@ -90,14 +89,17 @@ public class Color {
 
     private static int colorInPhase(int phase, int progress) {
         phase = phase % 6;
-        if (phase <= 1)
+        if (phase <= 1) {
             return 0;
-        if (phase == 2)
+        }
+        if (phase == 2) {
             return progress;
-        if (phase <= 4)
+        }
+        if (phase <= 4) {
             return 255;
-        else
+        } else {
             return 255 - progress;
+        }
     }
 
     public static Color generateFromLong(long l) {
@@ -109,10 +111,11 @@ public class Color {
     }
 
     public Color copy(boolean mutable) {
-        if (mutable)
+        if (mutable) {
             return new Color(value);
-        else
+        } else {
             return new Color(value).setImmutable();
+        }
     }
 
     /**
@@ -275,8 +278,9 @@ public class Color {
 
     public Color modifyValue(UnaryOperator<Integer> function) {
         int newValue = function.apply(value);
-        if (newValue == value)
+        if (newValue == value) {
             return this;
+        }
 
         return ensureMutable().setValueUnchecked(newValue);
     }
@@ -284,8 +288,9 @@ public class Color {
     // ********* //
 
     public Color ensureMutable() {
-        if (this.mutable)
+        if (this.mutable) {
             return this;
+        }
 
         return new Color(this.value);
     }

@@ -45,7 +45,11 @@ public class SawingCategory extends CreateCategory<SawingDisplay> {
             drawSlotBackground(graphics, input, output);
             AllGuiTextures.JEI_DOWN_ARROW.render(graphics, bounds.x + 75, bounds.y + 11);
             AllGuiTextures.JEI_SHADOW.render(graphics, bounds.x + 60, bounds.y + 60);
-            graphics.guiRenderState.submitPicturesInPictureState(new SawRenderState(new Matrix3x2f(graphics.pose()), bounds.x + 69, bounds.y + 36));
+            graphics.guiRenderState.submitPicturesInPictureState(new SawRenderState(
+                new Matrix3x2f(graphics.pose()),
+                bounds.x + 69,
+                bounds.y + 36
+            ));
         }));
         widgets.add(createInputSlot(input).entries(display.input()));
         widgets.add(createOutputSlot(output).entries(display.output()));

@@ -24,13 +24,23 @@ public class ModularGuiLineBuilder {
         this.y = y;
     }
 
-    public ModularGuiLineBuilder addScrollInput(int x, int width, BiConsumer<ScrollInput, Label> inputTransform, String dataKey) {
+    public ModularGuiLineBuilder addScrollInput(
+        int x,
+        int width,
+        BiConsumer<ScrollInput, Label> inputTransform,
+        String dataKey
+    ) {
         ScrollInput input = new ScrollInput(x + this.x, y - 4, width, 18);
         addScrollInput(input, inputTransform, dataKey);
         return this;
     }
 
-    public ModularGuiLineBuilder addSelectionScrollInput(int x, int width, BiConsumer<SelectionScrollInput, Label> inputTransform, String dataKey) {
+    public ModularGuiLineBuilder addSelectionScrollInput(
+        int x,
+        int width,
+        BiConsumer<SelectionScrollInput, Label> inputTransform,
+        String dataKey
+    ) {
         SelectionScrollInput input = new SelectionScrollInput(x + this.x, y - 4, width, 18);
         addScrollInput(input, inputTransform, dataKey);
         return this;
@@ -55,11 +65,17 @@ public class ModularGuiLineBuilder {
         target.add(Pair.of(input, dataKey));
     }
 
-    public ModularGuiLineBuilder addIntegerTextInput(int x, int width, BiConsumer<FilterEditBox, TooltipArea> inputTransform, String dataKey) {
+    public ModularGuiLineBuilder addIntegerTextInput(
+        int x,
+        int width,
+        BiConsumer<FilterEditBox, TooltipArea> inputTransform,
+        String dataKey
+    ) {
         return addTextInput(
             x, width, inputTransform.andThen((editBox, $) -> editBox.setFilter(s -> {
-                if (s.isEmpty())
+                if (s.isEmpty()) {
                     return true;
+                }
                 try {
                     Integer.parseInt(s);
                     return true;
@@ -70,7 +86,12 @@ public class ModularGuiLineBuilder {
         );
     }
 
-    public ModularGuiLineBuilder addTextInput(int x, int width, BiConsumer<FilterEditBox, TooltipArea> inputTransform, String dataKey) {
+    public ModularGuiLineBuilder addTextInput(
+        int x,
+        int width,
+        BiConsumer<FilterEditBox, TooltipArea> inputTransform,
+        String dataKey
+    ) {
         FilterEditBox input = new FilterEditBox(font, x + this.x + 5, y, width - 9, 8, CommonComponents.EMPTY);
         input.setBordered(false);
         input.setTextColor(0xffffffff);

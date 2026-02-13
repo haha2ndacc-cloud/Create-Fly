@@ -16,7 +16,10 @@ public interface DeployerPlayer {
     UUID FALLBACK_ID = UUID.fromString("9e2faded-cafe-4ec2-c314-dad129ae971d");
 
     static DeployerPlayer create(ServerLevel world, @Nullable UUID owner, @Nullable String name) {
-        GameProfile profile = new GameProfile(owner == null ? FALLBACK_ID : owner, owner == null || name == null ? "Deployer" : name);
+        GameProfile profile = new GameProfile(
+            owner == null ? FALLBACK_ID : owner,
+            owner == null || name == null ? "Deployer" : name
+        );
         if (FakePlayerHandler.FABRIC) {
             return new DeployerFabricFakePlayer(world, profile);
         } else {

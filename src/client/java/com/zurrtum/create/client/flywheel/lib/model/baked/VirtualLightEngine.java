@@ -18,7 +18,11 @@ public final class VirtualLightEngine extends LevelLightEngine {
     private final LayerLightEventListener blockListener;
     private final LayerLightEventListener skyListener;
 
-    public VirtualLightEngine(ToIntFunction<BlockPos> blockLightFunc, ToIntFunction<BlockPos> skyLightFunc, BlockGetter level) {
+    public VirtualLightEngine(
+        ToIntFunction<BlockPos> blockLightFunc,
+        ToIntFunction<BlockPos> skyLightFunc,
+        BlockGetter level
+    ) {
         super(
             new LightChunkGetter() {
                 @Override

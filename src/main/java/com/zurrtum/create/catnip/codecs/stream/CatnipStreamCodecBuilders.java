@@ -30,7 +30,10 @@ public interface CatnipStreamCodecBuilders {
         };
     }
 
-    static <B extends ByteBuf, L, R> StreamCodec<B, Pair<L, R>> pair(StreamCodec<B, L> codecL, StreamCodec<B, R> codecR) {
+    static <B extends ByteBuf, L, R> StreamCodec<B, Pair<L, R>> pair(
+        StreamCodec<B, L> codecL,
+        StreamCodec<B, R> codecR
+    ) {
         return new StreamCodec<>() {
             @Override
             public Pair<L, R> decode(B buffer) {
@@ -89,7 +92,10 @@ public interface CatnipStreamCodecBuilders {
         return base.apply(nonNullList());
     }
 
-    static <B extends FriendlyByteBuf, V> StreamCodec<B, NonNullList<V>> nonNullList(StreamCodec<B, V> base, int maxSize) {
+    static <B extends FriendlyByteBuf, V> StreamCodec<B, NonNullList<V>> nonNullList(
+        StreamCodec<B, V> base,
+        int maxSize
+    ) {
         return base.apply(nonNullList(maxSize));
     }
 

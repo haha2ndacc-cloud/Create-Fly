@@ -26,12 +26,14 @@ public class DefaultUnpackingHandler implements UnpackingHandler {
         boolean simulate
     ) {
         BlockEntity targetBE = level.getBlockEntity(pos);
-        if (targetBE == null)
+        if (targetBE == null) {
             return false;
+        }
 
         Container targetInv = ItemHelper.getInventory(level, pos, state, targetBE, side);
-        if (targetInv == null)
+        if (targetInv == null) {
             return false;
+        }
 
         if (!simulate) {
             targetInv.insert(items);

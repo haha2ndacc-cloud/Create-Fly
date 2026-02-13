@@ -43,8 +43,9 @@ public class TransparentStraightPipeRenderer implements BlockEntityRenderer<Stra
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
         FluidTransportBehaviour pipe = be.getBehaviour(FluidTransportBehaviour.TYPE);
-        if (pipe == null)
+        if (pipe == null) {
             return;
+        }
         BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
         state.layer = RenderTypes.translucentMovingBlock();
         Direction[] directions = Iterate.directions;
@@ -71,25 +72,42 @@ public class TransparentStraightPipeRenderer implements BlockEntityRenderer<Stra
             if (value == 1) {
                 if (inbound) {
                     Flow opposite = pipe.getFlow(side.getOpposite());
-                    if (opposite == null)
+                    if (opposite == null) {
                         value -= 1e-6f;
+                    }
                 } else {
-                    FluidTransportBehaviour adjacent = BlockEntityBehaviour.get(world, state.blockPos.relative(side), FluidTransportBehaviour.TYPE);
-                    if (adjacent == null)
+                    FluidTransportBehaviour adjacent = BlockEntityBehaviour.get(
+                        world,
+                        state.blockPos.relative(side),
+                        FluidTransportBehaviour.TYPE
+                    );
+                    if (adjacent == null) {
                         value -= 1e-6f;
-                    else {
+                    } else {
                         Flow other = adjacent.getFlow(side.getOpposite());
-                        if (other == null || !other.inbound && !other.complete)
+                        if (other == null || !other.inbound && !other.complete) {
                             value -= 1e-6f;
+                        }
                     }
                 }
             }
-            state.data[i] = new FluidRenderData(fluidStack.getFluid(), fluidStack.getComponentChanges(), side, value, inbound);
+            state.data[i] = new FluidRenderData(
+                fluidStack.getFluid(),
+                fluidStack.getComponentChanges(),
+                side,
+                value,
+                inbound
+            );
         }
     }
 
     @Override
-    public void submit(TransparentStraightPipeRenderState state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
+    public void submit(
+        TransparentStraightPipeRenderState state,
+        PoseStack matrices,
+        SubmitNodeCollector queue,
+        CameraRenderState cameraState
+    ) {
         if (state.data != null) {
             queue.submitCustomGeometry(matrices, state.layer, state);
         }
@@ -121,8 +139,7 @@ public class TransparentStraightPipeRenderer implements BlockEntityRenderer<Stra
         }
     }
 
-    public record FluidRenderData(
-        Fluid fluid, DataComponentPatch changes, Direction side, float value, boolean inbound
-    ) {
+    public record FluidRenderData(Fluid fluid, DataComponentPatch changes, Direction side, float value,
+                                  boolean inbound) {
     }
 }

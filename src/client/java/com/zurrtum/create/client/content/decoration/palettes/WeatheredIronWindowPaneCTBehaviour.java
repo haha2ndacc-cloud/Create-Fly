@@ -31,17 +31,28 @@ public class WeatheredIronWindowPaneCTBehaviour extends GlassPaneCTBehaviour {
     }
 
     @Override
-    public @Nullable CTSpriteShiftEntry getShift(BlockState state, RandomSource rand, Direction direction, @Nullable TextureAtlasSprite sprite) {
-        if (direction.getAxis() == Axis.Y || sprite == null)
+    public @Nullable CTSpriteShiftEntry getShift(
+        BlockState state,
+        RandomSource rand,
+        Direction direction,
+        @Nullable TextureAtlasSprite sprite
+    ) {
+        if (direction.getAxis() == Axis.Y || sprite == null) {
             return null;
+        }
         CTSpriteShiftEntry entry = shifts.get(rand.nextInt(shifts.size()));
-        if (entry.getOriginal() == sprite)
+        if (entry.getOriginal() == sprite) {
             return entry;
+        }
         return super.getShift(state, rand, direction, sprite);
     }
 
     @Override
-    public @Nullable CTSpriteShiftEntry getShift(BlockState state, Direction direction, @Nullable TextureAtlasSprite sprite) {
+    public @Nullable CTSpriteShiftEntry getShift(
+        BlockState state,
+        Direction direction,
+        @Nullable TextureAtlasSprite sprite
+    ) {
         return null;
     }
 

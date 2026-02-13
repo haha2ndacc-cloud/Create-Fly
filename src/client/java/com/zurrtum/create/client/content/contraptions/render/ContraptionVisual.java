@@ -74,8 +74,9 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 
         Contraption contraption = entity.getContraption();
         // The contraption could be null if it wasn't synced (ex. too much data)
-        if (contraption == null)
+        if (contraption == null) {
             return;
+        }
 
         var clientContraption = getOrCreateClientContraptionLazy(contraption);
 
@@ -165,7 +166,8 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 
     @SuppressWarnings("unchecked")
     protected <T extends BlockEntity> void setupVisualizer(T be, float partialTicks) {
-        BlockEntityVisualizer<? super T> visualizer = (BlockEntityVisualizer<? super T>) VisualizerRegistry.getVisualizer(be.getType());
+        BlockEntityVisualizer<? super T> visualizer = (BlockEntityVisualizer<? super T>) VisualizerRegistry.getVisualizer(
+            be.getType());
         if (visualizer == null) {
             return;
         }
@@ -183,7 +185,10 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
         }
     }
 
-    protected void setupActor(MutablePair<StructureTemplate.StructureBlockInfo, @Nullable MovementContext> actor, VirtualRenderWorld renderLevel) {
+    protected void setupActor(
+        MutablePair<StructureTemplate.StructureBlockInfo, @Nullable MovementContext> actor,
+        VirtualRenderWorld renderLevel
+    ) {
         MovementContext context = actor.getRight();
         if (context == null) {
             return;
@@ -216,7 +221,8 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
     @Override
     public Plan<DynamicVisual.Context> planFrame() {
         // Must run beginFrame first to ensure changes to child visuals are picked up.
-        return RunnablePlan.of(this::beginFrame).then(NestedPlan.of(ForEachPlan.of(() -> actors, ActorVisual::beginFrame), dynamicVisuals));
+        return RunnablePlan.of(this::beginFrame)
+            .then(NestedPlan.of(ForEachPlan.of(() -> actors, ActorVisual::beginFrame), dynamicVisuals));
     }
 
     protected void beginFrame(DynamicVisual.Context context) {
@@ -280,8 +286,7 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
         int maxSectionY = SectionPos.posToSectionCoord(Mth.ceil(boundingBox.maxY) + lightPaddingBlocks);
         int maxSectionZ = SectionPos.posToSectionCoord(Mth.ceil(boundingBox.maxZ) + lightPaddingBlocks);
 
-        if (minSection == SectionPos.asLong(minSectionX, minSectionY, minSectionZ) && maxSection == SectionPos.asLong(
-            maxSectionX,
+        if (minSection == SectionPos.asLong(minSectionX, minSectionY, minSectionZ) && maxSection == SectionPos.asLong(maxSectionX,
             maxSectionY,
             maxSectionZ
         )) {

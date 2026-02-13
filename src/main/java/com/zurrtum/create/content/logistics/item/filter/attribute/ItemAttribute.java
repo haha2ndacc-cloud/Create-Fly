@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface ItemAttribute {
-    Codec<ItemAttribute> CODEC = CreateRegistries.ITEM_ATTRIBUTE_TYPE.byNameCodec().dispatch(ItemAttribute::getType, ItemAttributeType::codec);
+    Codec<ItemAttribute> CODEC = CreateRegistries.ITEM_ATTRIBUTE_TYPE.byNameCodec()
+        .dispatch(ItemAttribute::getType, ItemAttributeType::codec);
     StreamCodec<RegistryFriendlyByteBuf, ItemAttribute> PACKET_CODEC = ByteBufCodecs.registry(CreateRegistryKeys.ITEM_ATTRIBUTE_TYPE)
         .dispatch(ItemAttribute::getType, ItemAttributeType::packetCodec);
 
@@ -47,7 +48,10 @@ public interface ItemAttribute {
     ItemAttributeType getType();
 
     default MutableComponent format(boolean inverted) {
-        return Component.translatable("create.item_attributes." + getTranslationKey() + (inverted ? ".inverted" : ""), getTranslationParameters());
+        return Component.translatable(
+            "create.item_attributes." + getTranslationKey() + (inverted ? ".inverted" : ""),
+            getTranslationParameters()
+        );
     }
 
     String getTranslationKey();

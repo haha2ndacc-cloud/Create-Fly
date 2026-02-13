@@ -45,8 +45,9 @@ public class ChassisBlockEntity extends SmartBlockEntity {
     @Override
     protected void read(ValueInput view, boolean clientPacket) {
         super.read(view, clientPacket);
-        if (clientPacket)
+        if (clientPacket) {
             currentlySelectedRange = getRange();
+        }
     }
 
     public int getRange() {
@@ -55,9 +56,13 @@ public class ChassisBlockEntity extends SmartBlockEntity {
 
     @Nullable
     public List<BlockPos> getIncludedBlockPositions(@Nullable Direction forcedMovement, boolean visualize) {
-        if (!(getBlockState().getBlock() instanceof AbstractChassisBlock))
+        if (!(getBlockState().getBlock() instanceof AbstractChassisBlock)) {
             return Collections.emptyList();
-        return isRadial() ? getIncludedBlockPositionsRadial(forcedMovement, visualize) : getIncludedBlockPositionsLinear(forcedMovement, visualize);
+        }
+        return isRadial() ? getIncludedBlockPositionsRadial(
+            forcedMovement,
+            visualize
+        ) : getIncludedBlockPositionsLinear(forcedMovement, visualize);
     }
 
     protected boolean isRadial() {
@@ -72,8 +77,9 @@ public class ChassisBlockEntity extends SmartBlockEntity {
         frontier.add(worldPosition);
         while (!frontier.isEmpty()) {
             BlockPos current = frontier.poll();
-            if (visited.contains(current))
+            if (visited.contains(current)) {
                 continue;
+            }
             visited.add(current);
             BlockEntity blockEntity = level.getBlockEntity(current);
             if (blockEntity instanceof ChassisBlockEntity chassis) {
@@ -87,8 +93,9 @@ public class ChassisBlockEntity extends SmartBlockEntity {
 
     public boolean addAttachedChasses(Queue<BlockPos> frontier, Set<BlockPos> visited) {
         BlockState state = getBlockState();
-        if (!(state.getBlock() instanceof AbstractChassisBlock))
+        if (!(state.getBlock() instanceof AbstractChassisBlock)) {
             return false;
+        }
         Axis axis = state.getValue(AbstractChassisBlock.AXIS);
         if (isRadial()) {
 
@@ -96,16 +103,20 @@ public class ChassisBlockEntity extends SmartBlockEntity {
             for (int offset : new int[]{-1, 1}) {
                 Direction direction = Direction.get(AxisDirection.POSITIVE, axis);
                 BlockPos currentPos = worldPosition.relative(direction, offset);
-                if (!level.isLoaded(currentPos))
+                if (!level.isLoaded(currentPos)) {
                     return false;
+                }
 
                 BlockState neighbourState = level.getBlockState(currentPos);
-                if (!neighbourState.is(AllBlocks.RADIAL_CHASSIS))
+                if (!neighbourState.is(AllBlocks.RADIAL_CHASSIS)) {
                     continue;
-                if (axis != neighbourState.getValue(BlockStateProperties.AXIS))
+                }
+                if (axis != neighbourState.getValue(BlockStateProperties.AXIS)) {
                     continue;
-                if (!visited.contains(currentPos))
+                }
+                if (!visited.contains(currentPos)) {
                     frontier.add(currentPos);
+                }
             }
 
             return true;
@@ -114,18 +125,23 @@ public class ChassisBlockEntity extends SmartBlockEntity {
         // Collect group of connected linear chassis
         for (Direction offset : Iterate.directions) {
             BlockPos current = worldPosition.relative(offset);
-            if (visited.contains(current))
+            if (visited.contains(current)) {
                 continue;
-            if (!level.isLoaded(current))
+            }
+            if (!level.isLoaded(current)) {
                 return false;
+            }
 
             BlockState neighbourState = level.getBlockState(current);
-            if (!LinearChassisBlock.isChassis(neighbourState))
+            if (!LinearChassisBlock.isChassis(neighbourState)) {
                 continue;
-            if (!LinearChassisBlock.sameKind(state, neighbourState))
+            }
+            if (!LinearChassisBlock.sameKind(state, neighbourState)) {
                 continue;
-            if (neighbourState.getValue(LinearChassisBlock.AXIS) != axis)
+            }
+            if (neighbourState.getValue(LinearChassisBlock.AXIS) != axis) {
                 continue;
+            }
 
             frontier.add(current);
         }
@@ -142,27 +158,32 @@ public class ChassisBlockEntity extends SmartBlockEntity {
         int chassisRange = visualize ? currentlySelectedRange : getRange();
 
         for (int offset : new int[]{1, -1}) {
-            if (offset == -1)
+            if (offset == -1) {
                 facing = facing.getOpposite();
+            }
             BooleanProperty property = block.getGlueableSide(state, facing);
             boolean sticky = property != null && state.getValue(property);
             for (int i = 1; i <= chassisRange; i++) {
                 BlockPos current = worldPosition.relative(facing, i);
                 BlockState currentState = level.getBlockState(current);
 
-                if (forcedMovement != facing && !sticky)
+                if (forcedMovement != facing && !sticky) {
                     break;
+                }
 
                 // Ignore replaceable Blocks and Air-like
-                if (!BlockMovementChecks.isMovementNecessary(currentState, level, current))
+                if (!BlockMovementChecks.isMovementNecessary(currentState, level, current)) {
                     break;
-                if (BlockMovementChecks.isBrittle(currentState))
+                }
+                if (BlockMovementChecks.isBrittle(currentState)) {
                     break;
+                }
 
                 positions.add(current);
 
-                if (BlockMovementChecks.isNotSupportive(currentState, facing))
+                if (BlockMovementChecks.isNotSupportive(currentState, facing)) {
                     break;
+                }
             }
         }
 
@@ -177,11 +198,13 @@ public class ChassisBlockEntity extends SmartBlockEntity {
         int chassisRange = visualize ? currentlySelectedRange : getRange();
 
         for (Direction facing : Iterate.directions) {
-            if (facing.getAxis() == axis)
+            if (facing.getAxis() == axis) {
                 continue;
+            }
             BooleanProperty property = block.getGlueableSide(state, facing);
-            if (property != null && !state.getValue(property))
+            if (property != null && !state.getValue(property)) {
                 continue;
+            }
 
             BlockPos startPos = worldPosition.relative(facing);
             List<BlockPos> localFrontier = new LinkedList<>();
@@ -192,26 +215,34 @@ public class ChassisBlockEntity extends SmartBlockEntity {
                 BlockPos searchPos = localFrontier.removeFirst();
                 BlockState searchedState = level.getBlockState(searchPos);
 
-                if (localVisited.contains(searchPos))
+                if (localVisited.contains(searchPos)) {
                     continue;
-                if (!searchPos.closerThan(worldPosition, chassisRange + .5f))
+                }
+                if (!searchPos.closerThan(worldPosition, chassisRange + .5f)) {
                     continue;
-                if (!BlockMovementChecks.isMovementNecessary(searchedState, level, searchPos))
+                }
+                if (!BlockMovementChecks.isMovementNecessary(searchedState, level, searchPos)) {
                     continue;
-                if (BlockMovementChecks.isBrittle(searchedState))
+                }
+                if (BlockMovementChecks.isBrittle(searchedState)) {
                     continue;
+                }
 
                 localVisited.add(searchPos);
-                if (!searchPos.equals(worldPosition))
+                if (!searchPos.equals(worldPosition)) {
                     positions.add(searchPos);
+                }
 
                 for (Direction offset : Iterate.directions) {
-                    if (offset.getAxis() == axis)
+                    if (offset.getAxis() == axis) {
                         continue;
-                    if (searchPos.equals(worldPosition) && offset != facing)
+                    }
+                    if (searchPos.equals(worldPosition) && offset != facing) {
                         continue;
-                    if (BlockMovementChecks.isNotSupportive(searchedState, offset))
+                    }
+                    if (BlockMovementChecks.isNotSupportive(searchedState, offset)) {
                         continue;
+                    }
 
                     localFrontier.add(searchPos.relative(offset));
                 }

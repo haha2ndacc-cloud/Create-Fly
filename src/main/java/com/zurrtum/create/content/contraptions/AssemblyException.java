@@ -25,19 +25,22 @@ public class AssemblyException extends Exception {
     private @Nullable BlockPos position = null;
 
     public static void write(ValueOutput view, @Nullable AssemblyException exception) {
-        if (exception == null)
+        if (exception == null) {
             return;
+        }
 
         ValueOutput lastException = view.child("LastException");
         lastException.store("Component", ComponentSerialization.CODEC, exception.component);
-        if (exception.position != null)
+        if (exception.position != null) {
             lastException.store("Position", BlockPos.CODEC, exception.position);
+        }
     }
 
     @Nullable
     public static AssemblyException read(ValueInput view) {
         return view.child("LastException").map(lastException -> {
-            Component component = lastException.read("Component", ComponentSerialization.CODEC).orElse(CommonComponents.EMPTY);
+            Component component = lastException.read("Component", ComponentSerialization.CODEC)
+                .orElse(CommonComponents.EMPTY);
             AssemblyException exception = new AssemblyException(component);
             lastException.read("Position", BlockPos.CODEC).ifPresent(position -> {
                 exception.position = position;
@@ -61,7 +64,13 @@ public class AssemblyException extends Exception {
     }
 
     public static AssemblyException unmovableBlock(BlockPos pos, BlockState state) {
-        AssemblyException e = new AssemblyException("unmovableBlock", pos.getX(), pos.getY(), pos.getZ(), state.getBlock().getName());
+        AssemblyException e = new AssemblyException(
+            "unmovableBlock",
+            pos.getX(),
+            pos.getY(),
+            pos.getZ(),
+            state.getBlock().getName()
+        );
         e.position = pos;
         return e;
     }
@@ -85,7 +94,11 @@ public class AssemblyException extends Exception {
     }
 
     public static AssemblyException notEnoughSails(int sails) {
-        return new AssemblyException("not_enough_sails", sails, AllConfigs.server().kinetics.minimumWindmillSails.get());
+        return new AssemblyException(
+            "not_enough_sails",
+            sails,
+            AllConfigs.server().kinetics.minimumWindmillSails.get()
+        );
     }
 
     public boolean hasPosition() {

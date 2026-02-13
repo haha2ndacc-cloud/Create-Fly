@@ -29,22 +29,35 @@ public class VerticalGearboxItem extends BlockItem {
     }
 
     @Override
-    protected boolean updateCustomBlockEntityTag(BlockPos pos, Level world, @Nullable Player player, ItemStack stack, BlockState state) {
+    protected boolean updateCustomBlockEntityTag(
+        BlockPos pos,
+        Level world,
+        @Nullable Player player,
+        ItemStack stack,
+        BlockState state
+    ) {
         Axis prefferedAxis = null;
         for (Direction side : Iterate.horizontalDirections) {
             BlockState blockState = world.getBlockState(pos.relative(side));
             if (blockState.getBlock() instanceof IRotate) {
-                if (((IRotate) blockState.getBlock()).hasShaftTowards(world, pos.relative(side), blockState, side.getOpposite()))
+                if (((IRotate) blockState.getBlock()).hasShaftTowards(
+                    world,
+                    pos.relative(side),
+                    blockState,
+                    side.getOpposite()
+                )) {
                     if (prefferedAxis != null && prefferedAxis != side.getAxis()) {
                         prefferedAxis = null;
                         break;
                     } else {
                         prefferedAxis = side.getAxis();
                     }
+                }
             }
         }
 
-        Axis axis = prefferedAxis == null ? player.getDirection().getClockWise().getAxis() : prefferedAxis == Axis.X ? Axis.Z : Axis.X;
+        Axis axis = prefferedAxis == null ? player.getDirection().getClockWise()
+            .getAxis() : prefferedAxis == Axis.X ? Axis.Z : Axis.X;
         world.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.AXIS, axis));
         return super.updateCustomBlockEntityTag(pos, world, player, stack, state);
     }

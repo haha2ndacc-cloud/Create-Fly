@@ -26,7 +26,8 @@ public class FunnelFilterSlotPositioning extends ValueBoxTransform.Sided {
         if (state.getBlock() instanceof BeltFunnelBlock) {
             return switch (state.getValue(BeltFunnelBlock.SHAPE)) {
                 case EXTENDED -> VecHelper.rotateCentered(VecHelper.voxelSpace(8, 15.5f, 13), stateAngle, Axis.Y);
-                case PULLING, PUSHING -> VecHelper.rotateCentered(VecHelper.voxelSpace(8, 12.0f, 8.675f), horizontalAngle, Axis.Y);
+                case PULLING, PUSHING ->
+                    VecHelper.rotateCentered(VecHelper.voxelSpace(8, 12.0f, 8.675f), horizontalAngle, Axis.Y);
                 default -> VecHelper.rotateCentered(VecHelper.voxelSpace(8, 13, 7.5f), horizontalAngle, Axis.Y);
             };
         }
@@ -52,8 +53,9 @@ public class FunnelFilterSlotPositioning extends ValueBoxTransform.Sided {
         if (isBeltFunnel && state.getValue(BeltFunnelBlock.SHAPE) != Shape.EXTENDED) {
             Shape shape = state.getValue(BeltFunnelBlock.SHAPE);
             super.rotate(state, ms);
-            if (shape == Shape.PULLING || shape == Shape.PUSHING)
+            if (shape == Shape.PULLING || shape == Shape.PUSHING) {
                 TransformStack.of(ms).rotateXDegrees(-22.5f);
+            }
             return;
         }
 
@@ -71,12 +73,15 @@ public class FunnelFilterSlotPositioning extends ValueBoxTransform.Sided {
     protected boolean isSideActive(BlockState state, Direction direction) {
         Direction facing = FunnelBlock.getFunnelFacing(state);
 
-        if (facing == null)
+        if (facing == null) {
             return false;
-        if (facing.getAxis().isVertical())
+        }
+        if (facing.getAxis().isVertical()) {
             return direction.getAxis().isHorizontal();
-        if (state.getBlock() instanceof BeltFunnelBlock && state.getValue(BeltFunnelBlock.SHAPE) == Shape.EXTENDED)
+        }
+        if (state.getBlock() instanceof BeltFunnelBlock && state.getValue(BeltFunnelBlock.SHAPE) == Shape.EXTENDED) {
             return direction == Direction.UP;
+        }
         return direction == facing;
     }
 

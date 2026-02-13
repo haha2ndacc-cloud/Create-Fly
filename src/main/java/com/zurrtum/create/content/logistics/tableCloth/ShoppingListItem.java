@@ -61,35 +61,43 @@ public class ShoppingListItem extends Item {
                 List<BigItemStack> entries = items.getStacksByCount();
                 boolean cost = items == lists.getSecond();
 
-                if (cost)
+                if (cost) {
                     textConsumer.accept(Component.empty());
+                }
 
                 if (entries.size() == 1) {
                     BigItemStack entry = entries.getFirst();
-                    textConsumer.accept((cost ? Component.translatable("create.table_cloth.total_cost") : Component.literal("")).withStyle(
-                        ChatFormatting.GOLD).append(entry.stack.getHoverName().plainCopy().append(" x").append(String.valueOf(entry.count))
-                        .withStyle(cost ? ChatFormatting.YELLOW : ChatFormatting.GRAY)));
+                    textConsumer.accept((cost ? Component.translatable("create.table_cloth.total_cost") : Component.literal(
+                        "")).withStyle(ChatFormatting.GOLD)
+                        .append(entry.stack.getHoverName().plainCopy().append(" x").append(String.valueOf(entry.count))
+                            .withStyle(cost ? ChatFormatting.YELLOW : ChatFormatting.GRAY)));
 
                 } else {
-                    if (cost)
-                        textConsumer.accept(Component.translatable("create.table_cloth.total_cost").withStyle(ChatFormatting.GOLD));
+                    if (cost) {
+                        textConsumer.accept(Component.translatable("create.table_cloth.total_cost")
+                            .withStyle(ChatFormatting.GOLD));
+                    }
                     for (BigItemStack entry : entries) {
-                        textConsumer.accept(entry.stack.getHoverName().plainCopy().append(" x").append(String.valueOf(entry.count))
+                        textConsumer.accept(entry.stack.getHoverName().plainCopy().append(" x")
+                            .append(String.valueOf(entry.count))
                             .withStyle(cost ? ChatFormatting.YELLOW : ChatFormatting.GRAY));
                     }
                 }
             }
         }
 
-        textConsumer.accept(Component.translatable("create.table_cloth.hand_to_shop_keeper").withStyle(ChatFormatting.GRAY));
+        textConsumer.accept(Component.translatable("create.table_cloth.hand_to_shop_keeper")
+            .withStyle(ChatFormatting.GRAY));
 
-        textConsumer.accept(Component.translatable("create.table_cloth.sneak_click_discard").withStyle(ChatFormatting.DARK_GRAY));
+        textConsumer.accept(Component.translatable("create.table_cloth.sneak_click_discard")
+            .withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override
     public InteractionResult use(Level pLevel, @Nullable Player pPlayer, InteractionHand pUsedHand) {
-        if (pUsedHand == InteractionHand.OFF_HAND || pPlayer == null || !pPlayer.isShiftKeyDown())
+        if (pUsedHand == InteractionHand.OFF_HAND || pPlayer == null || !pPlayer.isShiftKeyDown()) {
             return InteractionResult.PASS;
+        }
 
         pPlayer.sendOverlayMessage(Component.translatable("create.table_cloth.shopping_list_discarded"));
         pPlayer.makeSound(SoundEvents.BOOK_PAGE_TURN);
@@ -100,8 +108,9 @@ public class ShoppingListItem extends Item {
     public InteractionResult useOn(UseOnContext pContext) {
         InteractionHand pUsedHand = pContext.getHand();
         Player pPlayer = pContext.getPlayer();
-        if (pUsedHand == InteractionHand.OFF_HAND || pPlayer == null || !pPlayer.isShiftKeyDown())
+        if (pUsedHand == InteractionHand.OFF_HAND || pPlayer == null || !pPlayer.isShiftKeyDown()) {
             return InteractionResult.PASS;
+        }
         pPlayer.setItemInHand(pUsedHand, ItemStack.EMPTY);
 
         pPlayer.sendOverlayMessage(Component.translatable("create.table_cloth.shopping_list_discarded"));

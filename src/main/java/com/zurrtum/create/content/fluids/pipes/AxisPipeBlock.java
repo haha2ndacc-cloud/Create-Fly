@@ -49,8 +49,9 @@ public class AxisPipeBlock extends RotatedPillarBlock implements IWrenchableWith
     @Override
     public void affectNeighborsAfterRemoval(BlockState state, ServerLevel world, BlockPos pos, boolean isMoving) {
         FluidPropagator.propagateChangedPipe(world, pos, state);
-        if (!isMoving)
+        if (!isMoving) {
             removeBracket(world, pos, true).ifPresent(stack -> Block.popResource(world, pos, stack));
+        }
     }
 
     @Override
@@ -63,13 +64,16 @@ public class AxisPipeBlock extends RotatedPillarBlock implements IWrenchableWith
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-        if (!stack.is(AllItems.COPPER_CASING))
+        if (!stack.is(AllItems.COPPER_CASING)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
-        if (level.isClientSide())
+        }
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
+        }
         BlockState newState = AllBlocks.ENCASED_FLUID_PIPE.defaultBlockState();
-        for (Direction d : Iterate.directionsInAxis(getAxis(state)))
+        for (Direction d : Iterate.directionsInAxis(getAxis(state))) {
             newState = newState.setValue(EncasedPipeBlock.FACING_TO_PROPERTY_MAP.get(d), true);
+        }
         FluidTransportBehaviour.cacheFlows(level, pos);
         level.setBlockAndUpdate(pos, newState);
         FluidTransportBehaviour.loadFlows(level, pos);
@@ -77,17 +81,25 @@ public class AxisPipeBlock extends RotatedPillarBlock implements IWrenchableWith
     }
 
     @Override
-    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
+    public void setPlacedBy(
+        Level pLevel,
+        BlockPos pPos,
+        BlockState pState,
+        @Nullable LivingEntity pPlacer,
+        ItemStack pStack
+    ) {
         super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
         AdvancementBehaviour.setPlacedBy(pLevel, pPos, pPlacer);
     }
 
     @Override
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean isMoving) {
-        if (world.isClientSide())
+        if (world.isClientSide()) {
             return;
-        if (state != oldState)
+        }
+        if (state != oldState) {
             world.scheduleTick(pos, this, 1, TickPriority.HIGH);
+        }
     }
 
     @Override
@@ -96,12 +108,21 @@ public class AxisPipeBlock extends RotatedPillarBlock implements IWrenchableWith
     }
 
     @Override
-    public void neighborUpdate(BlockState state, Level world, BlockPos pos, Block otherBlock, BlockPos neighborPos, boolean isMoving) {
+    public void neighborUpdate(
+        BlockState state,
+        Level world,
+        BlockPos pos,
+        Block otherBlock,
+        BlockPos neighborPos,
+        boolean isMoving
+    ) {
         Direction d = FluidPropagator.validateNeighbourChange(state, world, pos, otherBlock, neighborPos, isMoving);
-        if (d == null)
+        if (d == null) {
             return;
-        if (!isOpenAt(state, d))
+        }
+        if (!isOpenAt(state, d)) {
             return;
+        }
         world.scheduleTick(pos, this, 1, TickPriority.HIGH);
     }
 
@@ -126,7 +147,12 @@ public class AxisPipeBlock extends RotatedPillarBlock implements IWrenchableWith
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter p_220053_2_, BlockPos p_220053_3_, CollisionContext p_220053_4_) {
+    public VoxelShape getShape(
+        BlockState state,
+        BlockGetter p_220053_2_,
+        BlockPos p_220053_3_,
+        CollisionContext p_220053_4_
+    ) {
         return AllShapes.EIGHT_VOXEL_POLE.get(state.getValue(AXIS));
     }
 
@@ -146,12 +172,18 @@ public class AxisPipeBlock extends RotatedPillarBlock implements IWrenchableWith
 
     @Override
     public Optional<ItemStack> removeBracket(BlockGetter world, BlockPos pos, boolean inOnReplacedContext) {
-        BracketedBlockEntityBehaviour behaviour = BlockEntityBehaviour.get(world, pos, BracketedBlockEntityBehaviour.TYPE);
-        if (behaviour == null)
+        BracketedBlockEntityBehaviour behaviour = BlockEntityBehaviour.get(
+            world,
+            pos,
+            BracketedBlockEntityBehaviour.TYPE
+        );
+        if (behaviour == null) {
             return Optional.empty();
+        }
         BlockState bracket = behaviour.removeBracket(inOnReplacedContext);
-        if (bracket == null)
+        if (bracket == null) {
             return Optional.empty();
+        }
         return Optional.of(new ItemStack(bracket.getBlock()));
     }
 

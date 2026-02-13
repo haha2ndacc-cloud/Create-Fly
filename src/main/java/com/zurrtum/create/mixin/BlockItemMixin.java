@@ -58,7 +58,11 @@ public class BlockItemMixin {
     }
 
     @WrapOperation(method = "place(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/InteractionResult;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/SoundType;getVolume()F"))
-    private float getVolume(SoundType instance, Operation<Float> original, @Share("group") LocalRef<ItemPlacementSoundContext> group) {
+    private float getVolume(
+        SoundType instance,
+        Operation<Float> original,
+        @Share("group") LocalRef<ItemPlacementSoundContext> group
+    ) {
         if (instance == null) {
             return group.get().getVolume();
         }
@@ -66,7 +70,11 @@ public class BlockItemMixin {
     }
 
     @WrapOperation(method = "place(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/InteractionResult;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/SoundType;getPitch()F"))
-    private float getPitch(SoundType instance, Operation<Float> original, @Share("group") LocalRef<ItemPlacementSoundContext> group) {
+    private float getPitch(
+        SoundType instance,
+        Operation<Float> original,
+        @Share("group") LocalRef<ItemPlacementSoundContext> group
+    ) {
         if (instance == null) {
             return group.get().getPitch();
         }

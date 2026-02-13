@@ -23,7 +23,12 @@ public class VoxelShaper {
     }
 
     public static VoxelShaper forHorizontalAxis(VoxelShape shape, Axis along) {
-        return forDirectionsWithRotation(shape, axisAsFace(along), Arrays.asList(Direction.SOUTH, Direction.EAST), new HorizontalRotationValues());
+        return forDirectionsWithRotation(
+            shape,
+            axisAsFace(along),
+            Arrays.asList(Direction.SOUTH, Direction.EAST),
+            new HorizontalRotationValues()
+        );
     }
 
     public static VoxelShaper forDirectional(VoxelShape shape, Direction facing) {
@@ -60,16 +65,23 @@ public class VoxelShaper {
         return voxelShaper;
     }
 
-    protected static VoxelShape rotate(VoxelShape shape, Direction from, Direction to, Function<Direction, Vec3> usingValues) {
-        if (from == to)
+    protected static VoxelShape rotate(
+        VoxelShape shape,
+        Direction from,
+        Direction to,
+        Function<Direction, Vec3> usingValues
+    ) {
+        if (from == to) {
             return shape;
+        }
 
         return rotatedCopy(shape, usingValues.apply(from).reverse().add(usingValues.apply(to)));
     }
 
     protected static VoxelShape rotatedCopy(VoxelShape shape, Vec3 rotation) {
-        if (rotation.equals(Vec3.ZERO))
+        if (rotation.equals(Vec3.ZERO)) {
             return shape;
+        }
 
         MutableObject<VoxelShape> result = new MutableObject<>(Shapes.empty());
         Vec3 center = new Vec3(8, 8, 8);

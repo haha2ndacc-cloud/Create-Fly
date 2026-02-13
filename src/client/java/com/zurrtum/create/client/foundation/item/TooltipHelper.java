@@ -22,8 +22,10 @@ public class TooltipHelper {
     public static final int MAX_WIDTH_PER_LINE = 200;
 
     public static MutableComponent holdShift(FontHelper.Palette palette, boolean highlighted) {
-        return CreateLang.translateDirect("tooltip.holdForDescription", CreateLang.translateDirect("tooltip.keyShift").withStyle(ChatFormatting.GRAY))
-            .withStyle(ChatFormatting.DARK_GRAY);
+        return CreateLang.translateDirect(
+            "tooltip.holdForDescription",
+            CreateLang.translateDirect("tooltip.keyShift").withStyle(ChatFormatting.GRAY)
+        ).withStyle(ChatFormatting.DARK_GRAY);
     }
 
     public static String makeProgressBar(int length, int filledLength) {
@@ -43,8 +45,9 @@ public class TooltipHelper {
         CreateLang.translate(hintKey + ".title").style(ChatFormatting.GOLD).forGoggles(tooltip);
         Component hint = CreateLang.translateDirect(hintKey);
         List<Component> cutComponent = cutTextComponent(hint, FontHelper.Palette.GRAY_AND_WHITE);
-        for (Component component : cutComponent)
+        for (Component component : cutComponent) {
             CreateLang.builder().add(component).forGoggles(tooltip);
+        }
     }
 
     public static List<Component> cutStringTextComponent(String s, FontHelper.Palette palette) {
@@ -63,7 +66,12 @@ public class TooltipHelper {
         return cutTextComponent(c, primaryStyle, highlightStyle, 0);
     }
 
-    public static List<Component> cutStringTextComponent(String c, Style primaryStyle, Style highlightStyle, int indent) {
+    public static List<Component> cutStringTextComponent(
+        String c,
+        Style primaryStyle,
+        Style highlightStyle,
+        int indent
+    ) {
         return cutTextComponent(Component.literal(c), primaryStyle, highlightStyle, indent);
     }
 

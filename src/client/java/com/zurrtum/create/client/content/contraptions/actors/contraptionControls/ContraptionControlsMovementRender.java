@@ -61,12 +61,19 @@ public class ContraptionControlsMovementRender implements MovementRenderBehaviou
         BlockPos pos = context.localPos;
         ContraptionControlsMovementRenderState state = new ContraptionControlsMovementRenderState(pos);
         float flicker = RANDOM.get().nextFloat();
-        if (ClientContraption.getBlockEntityClientSide(context.contraption, pos) instanceof ContraptionControlsBlockEntity cbe) {
+        if (ClientContraption.getBlockEntityClientSide(
+            context.contraption,
+            pos
+        ) instanceof ContraptionControlsBlockEntity cbe) {
             state.buttondepth = -1 / 24f * cbe.button.getValue(AnimationTickHolder.getPartialTicks(renderWorld));
         }
         state.layer = RenderTypes.solidMovingBlock();
         Direction facing = blockState.getValue(ContraptionControlsBlock.FACING);
-        state.button = CachedBuffers.partialFacing(AllPartialModels.CONTRAPTION_CONTROLS_BUTTON, blockState, facing.getOpposite());
+        state.button = CachedBuffers.partialFacing(
+            AllPartialModels.CONTRAPTION_CONTROLS_BUTTON,
+            blockState,
+            facing.getOpposite()
+        );
         state.light = LevelRenderer.getLightCoords(renderWorld, pos);
         state.world = context.world;
         state.worldMatrix4f = worldMatrix4f;
@@ -145,9 +152,31 @@ public class ContraptionControlsMovementRender implements MovementRenderBehaviou
                     matrices.pushPose();
                     matrices.translate(0, 0.15f, offsetZ);
                     matrices.scale(textScale, -textScale, textScale);
-                    queue.submitText(matrices, textX, textY, text, false, Font.DisplayMode.NORMAL, LightCoordsUtil.FULL_BRIGHT, color, 0, 0);
+                    queue.submitText(
+                        matrices,
+                        textX,
+                        textY,
+                        text,
+                        false,
+                        Font.DisplayMode.NORMAL,
+                        LightCoordsUtil.FULL_BRIGHT,
+                        color,
+                        0,
+                        0
+                    );
                     matrices.translate(0.5f, 0.5f, -0.0625f);
-                    queue.submitText(matrices, textX, textY, text, false, Font.DisplayMode.NORMAL, LightCoordsUtil.FULL_BRIGHT, shadowColor, 0, 0);
+                    queue.submitText(
+                        matrices,
+                        textX,
+                        textY,
+                        text,
+                        false,
+                        Font.DisplayMode.NORMAL,
+                        LightCoordsUtil.FULL_BRIGHT,
+                        shadowColor,
+                        0,
+                        0
+                    );
                     matrices.popPose();
                 }
                 if (description != null) {

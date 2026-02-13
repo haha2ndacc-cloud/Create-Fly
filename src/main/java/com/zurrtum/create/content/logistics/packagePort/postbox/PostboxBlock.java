@@ -52,7 +52,13 @@ public class PostboxBlock extends HorizontalDirectionalBlock implements IBE<Post
     }
 
     @Override
-    public Container getInventory(LevelAccessor world, BlockPos pos, BlockState state, PostboxBlockEntity blockEntity, @Nullable Direction context) {
+    public Container getInventory(
+        LevelAccessor world,
+        BlockPos pos,
+        BlockState state,
+        PostboxBlockEntity blockEntity,
+        @Nullable Direction context
+    ) {
         return blockEntity.inventory;
     }
 
@@ -123,7 +129,13 @@ public class PostboxBlock extends HorizontalDirectionalBlock implements IBE<Post
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+    protected InteractionResult useWithoutItem(
+        BlockState state,
+        Level level,
+        BlockPos pos,
+        Player player,
+        BlockHitResult hitResult
+    ) {
         return onBlockEntityUse(level, pos, be -> be.use(player));
     }
 

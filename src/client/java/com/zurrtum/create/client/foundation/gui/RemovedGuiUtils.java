@@ -123,8 +123,9 @@ public class RemovedGuiUtils {
         int borderColorEnd,
         Font font
     ) {
-        if (textLines.isEmpty())
+        if (textLines.isEmpty()) {
             return;
+        }
 
         List<ClientTooltipComponent> list = new ArrayList<>();
         for (FormattedText textLine : textLines) {
@@ -138,8 +139,9 @@ public class RemovedGuiUtils {
 
         for (FormattedText textLine : textLines) {
             int textLineWidth = font.width(textLine);
-            if (textLineWidth > tooltipTextWidth)
+            if (textLineWidth > tooltipTextWidth) {
                 tooltipTextWidth = textLineWidth;
+            }
         }
 
         boolean needsWrap = false;
@@ -150,10 +152,11 @@ public class RemovedGuiUtils {
             tooltipX = mouseX - 16 - tooltipTextWidth;
             if (tooltipX < 4) // if the tooltip doesn't fit on the screen
             {
-                if (mouseX > screenWidth / 2)
+                if (mouseX > screenWidth / 2) {
                     tooltipTextWidth = mouseX - 12 - 8;
-                else
+                } else {
                     tooltipTextWidth = screenWidth - 16 - mouseX;
+                }
                 needsWrap = true;
             }
         }
@@ -168,24 +171,28 @@ public class RemovedGuiUtils {
             List<FormattedText> wrappedTextLines = new ArrayList<>();
             for (int i = 0; i < textLines.size(); i++) {
                 FormattedText textLine = textLines.get(i);
-                List<FormattedText> wrappedLine = font.getSplitter().splitLines(textLine, tooltipTextWidth, Style.EMPTY);
-                if (i == 0)
+                List<FormattedText> wrappedLine = font.getSplitter()
+                    .splitLines(textLine, tooltipTextWidth, Style.EMPTY);
+                if (i == 0) {
                     titleLinesCount = wrappedLine.size();
+                }
 
                 for (FormattedText line : wrappedLine) {
                     int lineWidth = font.width(line);
-                    if (lineWidth > wrappedTooltipWidth)
+                    if (lineWidth > wrappedTooltipWidth) {
                         wrappedTooltipWidth = lineWidth;
+                    }
                     wrappedTextLines.add(line);
                 }
             }
             tooltipTextWidth = wrappedTooltipWidth;
             textLines = wrappedTextLines;
 
-            if (mouseX > screenWidth / 2)
+            if (mouseX > screenWidth / 2) {
                 tooltipX = mouseX - 16 - tooltipTextWidth;
-            else
+            } else {
                 tooltipX = mouseX + 12;
+            }
         }
 
         int tooltipY = mouseY - 12;
@@ -193,16 +200,25 @@ public class RemovedGuiUtils {
 
         if (textLines.size() > 1) {
             tooltipHeight += (textLines.size() - 1) * 10;
-            if (textLines.size() > titleLinesCount)
+            if (textLines.size() > titleLinesCount) {
                 tooltipHeight += 2; // gap between title lines and next lines
+            }
         }
 
-        if (tooltipY < 4)
+        if (tooltipY < 4) {
             tooltipY = 4;
-        else if (tooltipY + tooltipHeight + 4 > screenHeight)
+        } else if (tooltipY + tooltipHeight + 4 > screenHeight) {
             tooltipY = screenHeight - tooltipHeight - 4;
+        }
 
-        graphics.fillGradient(tooltipX - 3, tooltipY - 4, tooltipX + tooltipTextWidth + 3, tooltipY - 3, backgroundColor, backgroundColor);
+        graphics.fillGradient(
+            tooltipX - 3,
+            tooltipY - 4,
+            tooltipX + tooltipTextWidth + 3,
+            tooltipY - 3,
+            backgroundColor,
+            backgroundColor
+        );
         graphics.fillGradient(
             tooltipX - 3,
             tooltipY + tooltipHeight + 3,
@@ -219,7 +235,14 @@ public class RemovedGuiUtils {
             backgroundColor,
             backgroundColor
         );
-        graphics.fillGradient(tooltipX - 4, tooltipY - 3, tooltipX - 3, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
+        graphics.fillGradient(
+            tooltipX - 4,
+            tooltipY - 3,
+            tooltipX - 3,
+            tooltipY + tooltipHeight + 3,
+            backgroundColor,
+            backgroundColor
+        );
         graphics.fillGradient(
             tooltipX + tooltipTextWidth + 3,
             tooltipY - 3,
@@ -228,7 +251,14 @@ public class RemovedGuiUtils {
             backgroundColor,
             backgroundColor
         );
-        graphics.fillGradient(tooltipX - 3, tooltipY - 3 + 1, tooltipX - 3 + 1, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
+        graphics.fillGradient(
+            tooltipX - 3,
+            tooltipY - 3 + 1,
+            tooltipX - 3 + 1,
+            tooltipY + tooltipHeight + 3 - 1,
+            borderColorStart,
+            borderColorEnd
+        );
         graphics.fillGradient(
             tooltipX + tooltipTextWidth + 2,
             tooltipY - 3 + 1,
@@ -237,7 +267,14 @@ public class RemovedGuiUtils {
             borderColorStart,
             borderColorEnd
         );
-        graphics.fillGradient(tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY - 3 + 1, borderColorStart, borderColorStart);
+        graphics.fillGradient(
+            tooltipX - 3,
+            tooltipY - 3,
+            tooltipX + tooltipTextWidth + 3,
+            tooltipY - 3 + 1,
+            borderColorStart,
+            borderColorStart
+        );
         graphics.fillGradient(
             tooltipX - 3,
             tooltipY + tooltipHeight + 2,
@@ -250,11 +287,13 @@ public class RemovedGuiUtils {
         for (int lineNumber = 0; lineNumber < list.size(); ++lineNumber) {
             ClientTooltipComponent line = list.get(lineNumber);
 
-            if (line != null)
+            if (line != null) {
                 line.renderText(graphics, font, tooltipX, tooltipY);
+            }
 
-            if (lineNumber + 1 == titleLinesCount)
+            if (lineNumber + 1 == titleLinesCount) {
                 tooltipY += 2;
+            }
 
             tooltipY += line == null ? 10 : line.getHeight(font);
         }

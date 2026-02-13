@@ -67,9 +67,16 @@ public class DirectBeltInputBehaviour extends BlockEntityBehaviour<SmartBlockEnt
     }
 
     private ItemStack defaultInsertionCallback(TransportedItemStack inserted, Direction side, boolean simulate) {
-        Container lazy = ItemHelper.getInventory(blockEntity.getLevel(), blockEntity.getBlockPos(), null, blockEntity, side);
-        if (lazy == null)
+        Container lazy = ItemHelper.getInventory(
+            blockEntity.getLevel(),
+            blockEntity.getBlockPos(),
+            null,
+            blockEntity,
+            side
+        );
+        if (lazy == null) {
             return inserted.stack;
+        }
         int count = inserted.stack.getCount();
         int insert;
         if (simulate) {
@@ -128,20 +135,26 @@ public class DirectBeltInputBehaviour extends BlockEntityBehaviour<SmartBlockEnt
         BlockPos funnelPos = blockEntity.getBlockPos().above();
         Level world = getLevel();
         BlockState funnelState = world.getBlockState(funnelPos);
-        if (!(funnelState.getBlock() instanceof BeltFunnelBlock))
+        if (!(funnelState.getBlock() instanceof BeltFunnelBlock)) {
             return null;
-        if (funnelState.getValue(BeltFunnelBlock.SHAPE) != Shape.PULLING)
+        }
+        if (funnelState.getValue(BeltFunnelBlock.SHAPE) != Shape.PULLING) {
             return null;
-        if (side != null && FunnelBlock.getFunnelFacing(funnelState) != side)
+        }
+        if (side != null && FunnelBlock.getFunnelFacing(funnelState) != side) {
             return null;
+        }
         BlockEntity be = world.getBlockEntity(funnelPos);
-        if (!(be instanceof FunnelBlockEntity))
+        if (!(be instanceof FunnelBlockEntity)) {
             return null;
-        if (funnelState.getValue(BeltFunnelBlock.POWERED))
+        }
+        if (funnelState.getValue(BeltFunnelBlock.POWERED)) {
             return null;
+        }
         ItemStack insert = FunnelBlock.tryInsert(world, funnelPos, stack, simulate);
-        if (insert.getCount() != stack.getCount() && !simulate)
+        if (insert.getCount() != stack.getCount() && !simulate) {
             ((FunnelBlockEntity) be).flap(true);
+        }
         return insert;
     }
 

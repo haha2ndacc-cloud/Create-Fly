@@ -71,6 +71,9 @@ public interface VisualizationManager {
          *
          * @param destructionProgress The destruction progress map from {@link net.minecraft.client.renderer.LevelRenderer LevelRenderer}.
          */
-        void beforeCrumbling(RenderContext ctx, Long2ObjectMap<SortedSet<BlockDestructionProgress>> destructionProgress);
+        void beforeCrumbling(
+            RenderContext ctx,
+            Long2ObjectMap<SortedSet<BlockDestructionProgress>> destructionProgress
+        );
     }
 }

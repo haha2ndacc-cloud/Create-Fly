@@ -30,7 +30,13 @@ public class ContraptionControlsBlock extends ControlsBlock implements IBE<Contr
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+    protected InteractionResult useWithoutItem(
+        BlockState state,
+        Level level,
+        BlockPos pos,
+        Player player,
+        BlockHitResult hitResult
+    ) {
         return onBlockEntityUse(
             level, pos, cte -> {
                 cte.pressButton();
@@ -38,7 +44,13 @@ public class ContraptionControlsBlock extends ControlsBlock implements IBE<Contr
                     cte.disabled = !cte.disabled;
                     cte.notifyUpdate();
                     ContraptionControlsBlockEntity.sendStatus(player, cte.filtering.getFilter(), !cte.disabled);
-                    AllSoundEvents.CONTROLLER_CLICK.play(cte.getLevel(), null, cte.getBlockPos(), 1, cte.disabled ? 0.8f : 1.5f);
+                    AllSoundEvents.CONTROLLER_CLICK.play(
+                        cte.getLevel(),
+                        null,
+                        cte.getBlockPos(),
+                        1,
+                        cte.disabled ? 0.8f : 1.5f
+                    );
                 }
                 return InteractionResult.SUCCESS;
             }
@@ -63,7 +75,12 @@ public class ContraptionControlsBlock extends ControlsBlock implements IBE<Contr
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public VoxelShape getCollisionShape(
+        BlockState pState,
+        BlockGetter pLevel,
+        BlockPos pPos,
+        CollisionContext pContext
+    ) {
         return AllShapes.CONTRAPTION_CONTROLS_COLLISION.get(pState.getValue(FACING));
     }
 

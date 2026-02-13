@@ -13,7 +13,8 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 
-public record EmptyingRecipe(ItemStackTemplate result, FluidStack fluidResult, Ingredient ingredient) implements CreateSingleStackRecipe {
+public record EmptyingRecipe(ItemStackTemplate result, FluidStack fluidResult,
+                             Ingredient ingredient) implements CreateSingleStackRecipe {
     public static final MapCodec<EmptyingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
         ItemStackTemplate.CODEC.fieldOf("result").forGetter(EmptyingRecipe::result),
         FluidStack.CODEC.fieldOf("fluid_result").forGetter(EmptyingRecipe::fluidResult),

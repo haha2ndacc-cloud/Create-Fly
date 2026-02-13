@@ -4,10 +4,6 @@ import com.mojang.serialization.MapCodec;
 import com.zurrtum.create.AllBlockEntityTypes;
 import com.zurrtum.create.AllItems;
 import com.zurrtum.create.foundation.block.IBE;
-
-import java.util.Map;
-import java.util.function.Function;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -33,6 +29,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.Map;
+import java.util.function.Function;
 
 public class AnalogLeverBlock extends FaceAttachedHorizontalDirectionalBlock implements IBE<AnalogLeverBlockEntity> {
 
@@ -106,20 +105,23 @@ public class AnalogLeverBlock extends FaceAttachedHorizontalDirectionalBlock imp
     public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand) {
         withBlockEntityDo(
             worldIn, pos, be -> {
-                if (be.state != 0 && rand.nextFloat() < 0.25F)
+                if (be.state != 0 && rand.nextFloat() < 0.25F) {
                     addParticles(stateIn, worldIn, pos, 0.5F);
+                }
             }
         );
     }
 
     @Override
     public void affectNeighborsAfterRemoval(BlockState state, ServerLevel worldIn, BlockPos pos, boolean isMoving) {
-        if (isMoving)
+        if (isMoving) {
             return;
+        }
         withBlockEntityDo(
             worldIn, pos, be -> {
-                if (be.state != 0)
+                if (be.state != 0) {
                     updateNeighbors(state, worldIn, pos);
+                }
                 worldIn.removeBlockEntity(pos);
             }
         );

@@ -73,7 +73,11 @@ public abstract class MapItemSavedDataMixin implements StationMapData {
         byte localXByte = (byte) (int) (localX * 2.0F + 0.5F);
         byte localZByte = (byte) (int) (localZ * 2.0F + 0.5F);
 
-        MapDecoration decoration = StationMarker.createStationDecoration(localXByte, localZByte, Optional.of(marker.getName()));
+        MapDecoration decoration = StationMarker.createStationDecoration(
+            localXByte,
+            localZByte,
+            Optional.of(marker.getName())
+        );
         MapDecoration oldDecoration = decorations.put(marker.getId(), decoration);
         if (!decoration.equals(oldDecoration)) {
             if (oldDecoration != null && oldDecoration.type().value().trackCount()) {
@@ -98,7 +102,11 @@ public abstract class MapItemSavedDataMixin implements StationMapData {
     public abstract boolean isTrackedCountOverLimit(int trackedCount);
 
     @Override
-    public boolean create$toggleStation(@NonNull LevelAccessor level, @NonNull BlockPos pos, @NonNull StationBlockEntity stationBlockEntity) {
+    public boolean create$toggleStation(
+        @NonNull LevelAccessor level,
+        @NonNull BlockPos pos,
+        @NonNull StationBlockEntity stationBlockEntity
+    ) {
         double xCenter = pos.getX() + 0.5D;
         double zCenter = pos.getZ() + 0.5D;
         int scaleMultiplier = 1 << scale;
@@ -106,12 +114,14 @@ public abstract class MapItemSavedDataMixin implements StationMapData {
         double localX = (xCenter - (double) centerX) / (double) scaleMultiplier;
         double localZ = (zCenter - (double) centerZ) / (double) scaleMultiplier;
 
-        if (localX < -63.0D || localX > 63.0D || localZ < -63.0D || localZ > 63.0D)
+        if (localX < -63.0D || localX > 63.0D || localZ < -63.0D || localZ > 63.0D) {
             return false;
+        }
 
         StationMarker marker = StationMarker.fromWorld(level, pos);
-        if (marker == null)
+        if (marker == null) {
             return false;
+        }
 
         if (create$stationMarkers.remove(marker.getId(), marker)) {
             removeDecoration(marker.getId());

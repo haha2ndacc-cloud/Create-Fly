@@ -33,10 +33,7 @@ public class CuckooClockBlockEntity extends KineticBlockEntity {
     private boolean sendAnimationUpdate;
 
     public enum Animation implements StringRepresentable {
-        PIG,
-        CREEPER,
-        SURPRISE,
-        NONE;
+        PIG, CREEPER, SURPRISE, NONE;
         public static final Codec<Animation> CODEC = StringRepresentable.fromEnum(Animation::values);
 
         public String getSerializedName() {
@@ -67,8 +64,9 @@ public class CuckooClockBlockEntity extends KineticBlockEntity {
 
     @Override
     public void write(ValueOutput view, boolean clientPacket) {
-        if (clientPacket && sendAnimationUpdate)
+        if (clientPacket && sendAnimationUpdate) {
             view.store("Animation", Animation.CODEC, animationType);
+        }
         sendAnimationUpdate = false;
         super.write(view, clientPacket);
     }
@@ -76,31 +74,34 @@ public class CuckooClockBlockEntity extends KineticBlockEntity {
     @Override
     public void tick() {
         super.tick();
-        if (level.isClientSide() || getSpeed() == 0)
+        if (level.isClientSide() || getSpeed() == 0) {
             return;
+        }
 
         if (animationType == Animation.NONE) {
-            level.dimensionType().defaultClock().or(() -> level.registryAccess().get(WorldClocks.OVERWORLD)).ifPresent(clock -> {
-                ClockInstance instance = ((ServerLevel) level).clockManager().getInstance(clock);
-                Map<ResourceKey<ClockTimeMarker>, ClockTimeMarker> timeMarkers = instance.timeMarkers;
-                ClockTimeMarker marker = timeMarkers.get(ClockTimeMarkers.NOON);
-                long totalTicks = instance.totalTicks;
-                if (marker != null && marker.occursAt(totalTicks)) {
-                    startAnimation(Animation.PIG);
-                    return;
-                }
-                marker = timeMarkers.get(ClockTimeMarkers.NIGHT);
-                if (marker != null) {
-                    totalTicks += 500;
-                    if (marker.occursAt(totalTicks)) {
-                        startAnimation(Animation.CREEPER);
+            level.dimensionType().defaultClock().or(() -> level.registryAccess().get(WorldClocks.OVERWORLD))
+                .ifPresent(clock -> {
+                    ClockInstance instance = ((ServerLevel) level).clockManager().getInstance(clock);
+                    Map<ResourceKey<ClockTimeMarker>, ClockTimeMarker> timeMarkers = instance.timeMarkers;
+                    ClockTimeMarker marker = timeMarkers.get(ClockTimeMarkers.NOON);
+                    long totalTicks = instance.totalTicks;
+                    if (marker != null && marker.occursAt(totalTicks)) {
+                        startAnimation(Animation.PIG);
+                        return;
                     }
-                }
-            });
+                    marker = timeMarkers.get(ClockTimeMarkers.NIGHT);
+                    if (marker != null) {
+                        totalTicks += 500;
+                        if (marker.occursAt(totalTicks)) {
+                            startAnimation(Animation.CREEPER);
+                        }
+                    }
+                });
         } else {
             float value = getAndIncrementProgress();
-            if (value > 100)
+            if (value > 100) {
                 animationType = Animation.NONE;
+            }
 
             if (animationType == Animation.SURPRISE && Mth.equal(animationProgress.getValue(), 50)) {
                 Vec3 center = VecHelper.getCenterOf(worldPosition);
@@ -128,13 +129,15 @@ public class CuckooClockBlockEntity extends KineticBlockEntity {
 
     public void startAnimation(Animation animation) {
         animationType = animation;
-        if (animation != null && CuckooClockBlock.containsSurprise(getBlockState()))
+        if (animation != null && CuckooClockBlock.containsSurprise(getBlockState())) {
             animationType = Animation.SURPRISE;
+        }
         animationProgress.startWithValue(0);
         sendAnimationUpdate = true;
 
-        if (animation == Animation.CREEPER)
+        if (animation == Animation.CREEPER) {
             awardIfNear(AllAdvancements.CUCKOO_CLOCK, 32);
+        }
 
         sendData();
     }

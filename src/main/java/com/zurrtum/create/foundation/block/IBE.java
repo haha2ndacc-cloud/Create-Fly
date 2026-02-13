@@ -31,7 +31,11 @@ public interface IBE<T extends BlockEntity> extends EntityBlock {
         return getBlockEntityOptional(world, pos).map(action).orElse(InteractionResult.PASS);
     }
 
-    default InteractionResult onBlockEntityUseItemOn(BlockGetter world, BlockPos pos, Function<T, InteractionResult> action) {
+    default InteractionResult onBlockEntityUseItemOn(
+        BlockGetter world,
+        BlockPos pos,
+        Function<T, InteractionResult> action
+    ) {
         return getBlockEntityOptional(world, pos).map(action).orElse(InteractionResult.TRY_WITH_EMPTY_HAND);
     }
 
@@ -47,9 +51,14 @@ public interface IBE<T extends BlockEntity> extends EntityBlock {
 
     @Override
     @Nullable
-    default <S extends BlockEntity> BlockEntityTicker<S> getTicker(Level p_153212_, BlockState p_153213_, BlockEntityType<S> p_153214_) {
-        if (SmartBlockEntity.class.isAssignableFrom(getBlockEntityClass()))
+    default <S extends BlockEntity> BlockEntityTicker<S> getTicker(
+        Level p_153212_,
+        BlockState p_153213_,
+        BlockEntityType<S> p_153214_
+    ) {
+        if (SmartBlockEntity.class.isAssignableFrom(getBlockEntityClass())) {
             return new SmartBlockEntityTicker<>();
+        }
         return null;
     }
 
@@ -59,10 +68,12 @@ public interface IBE<T extends BlockEntity> extends EntityBlock {
         BlockEntity blockEntity = worldIn.getBlockEntity(pos);
         Class<T> expectedClass = getBlockEntityClass();
 
-        if (blockEntity == null)
+        if (blockEntity == null) {
             return null;
-        if (!expectedClass.isInstance(blockEntity))
+        }
+        if (!expectedClass.isInstance(blockEntity)) {
             return null;
+        }
 
         return (T) blockEntity;
     }

@@ -65,28 +65,36 @@ public class CartAssemblerBlockEntity extends SmartBlockEntity {
     }
 
     public void tryAssemble(@Nullable AbstractMinecart cart) {
-        if (cart == null)
+        if (cart == null) {
             return;
+        }
 
-        if (!isMinecartUpdateValid())
+        if (!isMinecartUpdateValid()) {
             return;
+        }
         resetTicksSinceMinecartUpdate();
 
         BlockState state = level.getBlockState(worldPosition);
-        if (!state.is(AllBlocks.CART_ASSEMBLER))
+        if (!state.is(AllBlocks.CART_ASSEMBLER)) {
             return;
+        }
         CartAssemblerBlock.CartAssemblerAction action = CartAssemblerBlock.getActionForCart(state, cart);
-        if (action.shouldAssemble())
+        if (action.shouldAssemble()) {
             assemble(level, worldPosition, cart);
-        if (action.shouldDisassemble())
+        }
+        if (action.shouldDisassemble()) {
             disassemble(level, worldPosition, cart);
+        }
         if (action == CartAssemblerBlock.CartAssemblerAction.ASSEMBLE_ACCELERATE) {
             if (cart.getDeltaMovement().length() > 1 / 128f) {
                 Direction facing = cart.getMotionDirection();
                 RailShape railShape = state.getValue(CartAssemblerBlock.RAIL_SHAPE);
-                for (Direction d : Iterate.directionsInAxis(railShape == RailShape.EAST_WEST ? Axis.X : Axis.Z))
-                    if (level.getBlockState(worldPosition.relative(d)).isRedstoneConductor(level, worldPosition.relative(d)))
+                for (Direction d : Iterate.directionsInAxis(railShape == RailShape.EAST_WEST ? Axis.X : Axis.Z)) {
+                    if (level.getBlockState(worldPosition.relative(d))
+                        .isRedstoneConductor(level, worldPosition.relative(d))) {
                         facing = d.getOpposite();
+                    }
+                }
 
                 double speed = cart.getMaxSpeed((ServerLevel) level);
                 cart.setDeltaMovement(facing.getStepX() * speed, facing.getStepY() * speed, facing.getStepZ() * speed);
@@ -106,8 +114,9 @@ public class CartAssemblerBlockEntity extends SmartBlockEntity {
     }
 
     protected void assemble(Level world, BlockPos pos, AbstractMinecart cart) {
-        if (!cart.getPassengers().isEmpty())
+        if (!cart.getPassengers().isEmpty()) {
             return;
+        }
 
         Optional<MinecartController> value = AllSynchedDatas.MINECART_CONTROLLER.get(cart);
         if (value.map(MinecartController::isCoupledThroughContraption).orElse(false)) {
@@ -118,8 +127,9 @@ public class CartAssemblerBlockEntity extends SmartBlockEntity {
 
         MountedContraption contraption = new MountedContraption(mode);
         try {
-            if (!contraption.assemble(world, pos))
+            if (!contraption.assemble(world, pos)) {
                 return;
+            }
 
             lastException = null;
             sendData();
@@ -134,8 +144,9 @@ public class CartAssemblerBlockEntity extends SmartBlockEntity {
 
         if (couplingFound) {
             cart.setPos(pos.getX() + .5f, pos.getY(), pos.getZ() + .5f);
-            if (!CouplingHandler.tryToCoupleCarts(null, world, cart.getId(), contraption.connectedCart.getId()))
+            if (!CouplingHandler.tryToCoupleCarts(null, world, cart.getId(), contraption.connectedCart.getId())) {
                 return;
+            }
         }
 
         contraption.removeBlocksFromWorld(world, BlockPos.ZERO);
@@ -148,14 +159,18 @@ public class CartAssemblerBlockEntity extends SmartBlockEntity {
         }
 
         OrientedContraptionEntity entity = OrientedContraptionEntity.create(world, contraption, initialOrientation);
-        if (couplingFound)
+        if (couplingFound) {
             entity.setCouplingId(cart.getUUID());
+        }
         entity.setPos(pos.getX() + .5, pos.getY(), pos.getZ() + .5);
         world.addFreshEntity(entity);
         entity.startRiding(cart);
 
         if (cart instanceof MinecartFurnace) {
-            try (ProblemReporter.ScopedCollector logging = new ProblemReporter.ScopedCollector(problemPath(), Create.LOGGER)) {
+            try (ProblemReporter.ScopedCollector logging = new ProblemReporter.ScopedCollector(
+                problemPath(),
+                Create.LOGGER
+            )) {
                 TagValueOutput view = TagValueOutput.createWithContext(logging, world.registryAccess());
                 if (cart.save(view)) {
                     view.putDouble("PushZ", 0);
@@ -166,16 +181,19 @@ public class CartAssemblerBlockEntity extends SmartBlockEntity {
             }
         }
 
-        if (contraption.containsBlockBreakers())
+        if (contraption.containsBlockBreakers()) {
             award(AllAdvancements.CONTRAPTION_ACTORS);
+        }
     }
 
     protected void disassemble(Level world, BlockPos pos, AbstractMinecart cart) {
-        if (cart.getPassengers().isEmpty())
+        if (cart.getPassengers().isEmpty()) {
             return;
+        }
         Entity entity = cart.getPassengers().getFirst();
-        if (!(entity instanceof OrientedContraptionEntity contraption))
+        if (!(entity instanceof OrientedContraptionEntity contraption)) {
             return;
+        }
         UUID couplingId = contraption.getCouplingId();
 
         if (couplingId == null) {
@@ -185,31 +203,39 @@ public class CartAssemblerBlockEntity extends SmartBlockEntity {
         }
 
         Couple<MinecartController> coupledCarts = contraption.getCoupledCartsIfPresent();
-        if (coupledCarts == null)
+        if (coupledCarts == null) {
             return;
+        }
 
         // Make sure connected cart is present and being disassembled
         for (boolean current : Iterate.trueAndFalse) {
             MinecartController minecartController = coupledCarts.get(current);
-            if (minecartController.cart() == cart)
+            if (minecartController.cart() == cart) {
                 continue;
+            }
             BlockPos otherPos = minecartController.cart().blockPosition();
             BlockState blockState = world.getBlockState(otherPos);
-            if (!blockState.is(AllBlocks.CART_ASSEMBLER))
+            if (!blockState.is(AllBlocks.CART_ASSEMBLER)) {
                 return;
-            if (!CartAssemblerBlock.getActionForCart(blockState, minecartController.cart()).shouldDisassemble())
+            }
+            if (!CartAssemblerBlock.getActionForCart(blockState, minecartController.cart()).shouldDisassemble()) {
                 return;
+            }
         }
 
-        for (boolean current : Iterate.trueAndFalse)
+        for (boolean current : Iterate.trueAndFalse) {
             coupledCarts.get(current).removeConnection(current);
+        }
         disassembleCart(cart);
     }
 
     protected void disassembleCart(AbstractMinecart cart) {
         cart.ejectPassengers();
         if (cart instanceof MinecartFurnace) {
-            try (ProblemReporter.ScopedCollector logging = new ProblemReporter.ScopedCollector(problemPath(), Create.LOGGER)) {
+            try (ProblemReporter.ScopedCollector logging = new ProblemReporter.ScopedCollector(
+                problemPath(),
+                Create.LOGGER
+            )) {
                 TagValueOutput view = TagValueOutput.createWithContext(logging, level.registryAccess());
                 cart.saveAsPassenger(view);
                 Vec3 velocity = cart.getDeltaMovement();
@@ -249,9 +275,7 @@ public class CartAssemblerBlockEntity extends SmartBlockEntity {
     }
 
     public enum CartMovementMode implements StringRepresentable {
-        ROTATE,
-        ROTATE_PAUSED,
-        ROTATION_LOCKED;
+        ROTATE, ROTATE_PAUSED, ROTATION_LOCKED;
 
         public static final Codec<CartMovementMode> CODEC = StringRepresentable.fromEnum(CartMovementMode::values);
 
@@ -266,8 +290,9 @@ public class CartAssemblerBlockEntity extends SmartBlockEntity {
     }
 
     public void assembleNextTick(AbstractMinecart cart) {
-        if (cartToAssemble == null)
+        if (cartToAssemble == null) {
             cartToAssemble = cart;
+        }
     }
 
     public boolean isMinecartUpdateValid() {

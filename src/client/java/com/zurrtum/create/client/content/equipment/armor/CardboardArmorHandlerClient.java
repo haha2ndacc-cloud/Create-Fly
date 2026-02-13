@@ -24,8 +24,9 @@ public class CardboardArmorHandlerClient {
     private static final Random RANDOM = new Random();
 
     public static void keepCacheAliveDesignDespiteNotRendering(AbstractClientPlayer player) {
-        if (!CardboardArmorHandler.testForStealth(player))
+        if (!CardboardArmorHandler.testForStealth(player)) {
             return;
+        }
         try {
             getCurrentBoxIndex(player.getId());
         } catch (ExecutionException e) {
@@ -40,16 +41,19 @@ public class CardboardArmorHandlerClient {
         SubmitNodeCollector queue
     ) {
         if (state.pose != Pose.CROUCHING || !CardboardArmorHandler.isCardboardArmor(state.headEquipment) || !CardboardArmorHandler.isCardboardArmor(
-            state.chestEquipment) || !CardboardArmorHandler.isCardboardArmor(state.legsEquipment) || !CardboardArmorHandler.isCardboardArmor(state.feetEquipment)) {
+            state.chestEquipment) || !CardboardArmorHandler.isCardboardArmor(state.legsEquipment) || !CardboardArmorHandler.isCardboardArmor(
+            state.feetEquipment)) {
             return false;
         }
 
         CardboardRenderState renderState = (CardboardRenderState) state;
-        if (renderState.create$isFlying())
+        if (renderState.create$isFlying()) {
             return false;
+        }
 
-        if (renderState.create$isSkip())
+        if (renderState.create$isSkip()) {
             return true;
+        }
 
         ms.pushPose();
 
@@ -58,12 +62,10 @@ public class CardboardArmorHandlerClient {
 
         if (renderState.create$isOnGround()) {
             ms.translate(
-                0,
-                Math.min(
+                0, Math.min(
                     Math.abs(Mth.cos((AnimationTickHolder.getRenderTime() % 256) / 2.0f)) * -renderOffset.y,
                     renderState.create$getMovement() * 5
-                ),
-                0
+                ), 0
             );
         }
 
@@ -72,7 +74,12 @@ public class CardboardArmorHandlerClient {
 
         try {
             PartialModel model = AllPartialModels.PACKAGES_TO_HIDE_AS.get(getCurrentBoxIndex(state.id));
-            PackageRenderer.getBoxRenderState(state.id, renderState.create$getInterpolatedYaw(), state.lightCoords, model).render(ms, queue);
+            PackageRenderer.getBoxRenderState(
+                state.id,
+                renderState.create$getInterpolatedYaw(),
+                state.lightCoords,
+                model
+            ).render(ms, queue);
         } catch (ExecutionException e) {
             e.printStackTrace();
         }

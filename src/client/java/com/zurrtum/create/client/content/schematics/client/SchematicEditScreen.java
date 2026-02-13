@@ -27,8 +27,19 @@ import java.util.List;
 
 public class SchematicEditScreen extends AbstractSimiScreen {
 
-    private final List<Component> rotationOptions = CreateLang.translatedOptions("schematic.rotation", "none", "cw90", "cw180", "cw270");
-    private final List<Component> mirrorOptions = CreateLang.translatedOptions("schematic.mirror", "none", "leftRight", "frontBack");
+    private final List<Component> rotationOptions = CreateLang.translatedOptions(
+        "schematic.rotation",
+        "none",
+        "cw90",
+        "cw180",
+        "cw270"
+    );
+    private final List<Component> mirrorOptions = CreateLang.translatedOptions(
+        "schematic.mirror",
+        "none",
+        "leftRight",
+        "frontBack"
+    );
     private final Component rotationLabel = CreateLang.translateDirect("schematic.rotation");
     private final Component mirrorLabel = CreateLang.translateDirect("schematic.mirror");
 
@@ -58,9 +69,33 @@ public class SchematicEditScreen extends AbstractSimiScreen {
         int x = guiLeft;
         int y = guiTop + 2;
 
-        xInput = new FilterEditBox(font, x + 50, y + 26, 34, 10, CommonComponents.EMPTY, SchematicEditScreen::filterText);
-        yInput = new FilterEditBox(font, x + 90, y + 26, 34, 10, CommonComponents.EMPTY, SchematicEditScreen::filterText);
-        zInput = new FilterEditBox(font, x + 130, y + 26, 34, 10, CommonComponents.EMPTY, SchematicEditScreen::filterText);
+        xInput = new FilterEditBox(
+            font,
+            x + 50,
+            y + 26,
+            34,
+            10,
+            CommonComponents.EMPTY,
+            SchematicEditScreen::filterText
+        );
+        yInput = new FilterEditBox(
+            font,
+            x + 90,
+            y + 26,
+            34,
+            10,
+            CommonComponents.EMPTY,
+            SchematicEditScreen::filterText
+        );
+        zInput = new FilterEditBox(
+            font,
+            x + 130,
+            y + 26,
+            34,
+            10,
+            CommonComponents.EMPTY,
+            SchematicEditScreen::filterText
+        );
 
         BlockPos anchor = handler.getTransformation().getAnchor();
         if (handler.isDeployed()) {
@@ -84,17 +119,21 @@ public class SchematicEditScreen extends AbstractSimiScreen {
 
         StructurePlaceSettings settings = handler.getTransformation().toSettings();
         Label labelR = new Label(x + 50, y + 48, CommonComponents.EMPTY).withShadow();
-        rotationArea = new SelectionScrollInput(x + 45, y + 43, 118, 18).forOptions(rotationOptions).titled(rotationLabel.plainCopy())
-            .setState(settings.getRotation().ordinal()).writingTo(labelR);
+        rotationArea = new SelectionScrollInput(x + 45, y + 43, 118, 18).forOptions(rotationOptions)
+            .titled(rotationLabel.plainCopy()).setState(settings.getRotation().ordinal()).writingTo(labelR);
 
         Label labelM = new Label(x + 50, y + 70, CommonComponents.EMPTY).withShadow();
-        mirrorArea = new SelectionScrollInput(x + 45, y + 65, 118, 18).forOptions(mirrorOptions).titled(mirrorLabel.plainCopy())
-            .setState(settings.getMirror().ordinal()).writingTo(labelM);
+        mirrorArea = new SelectionScrollInput(x + 45, y + 65, 118, 18).forOptions(mirrorOptions)
+            .titled(mirrorLabel.plainCopy()).setState(settings.getMirror().ordinal()).writingTo(labelM);
 
         addRenderableWidgets(xInput, yInput, zInput);
         addRenderableWidgets(labelR, labelM, rotationArea, mirrorArea);
 
-        confirmButton = new IconButton(x + background.getWidth() - 33, y + background.getHeight() - 26, AllIcons.I_CONFIRM);
+        confirmButton = new IconButton(
+            x + background.getWidth() - 33,
+            y + background.getHeight() - 26,
+            AllIcons.I_CONFIRM
+        );
         confirmButton.withCallback(this::onClose);
         addRenderableWidget(confirmButton);
 
@@ -106,8 +145,9 @@ public class SchematicEditScreen extends AbstractSimiScreen {
     }
 
     private static boolean filterText(String s) {
-        if (s.isEmpty() || s.equals("-"))
+        if (s.isEmpty() || s.equals("-")) {
             return true;
+        }
         try {
             Integer.parseInt(s);
             return true;
@@ -158,7 +198,14 @@ public class SchematicEditScreen extends AbstractSimiScreen {
 
         background.render(graphics, x, y);
         String title = handler.getCurrentSchematicName();
-        graphics.drawString(font, title, x + (background.getWidth() - 8 - font.width(title)) / 2, y + 4, 0xFF505050, false);
+        graphics.drawString(
+            font,
+            title,
+            x + (background.getWidth() - 8 - font.width(title)) / 2,
+            y + 4,
+            0xFF505050,
+            false
+        );
     }
 
     @Override
@@ -166,7 +213,11 @@ public class SchematicEditScreen extends AbstractSimiScreen {
         boolean validCoords = true;
         BlockPos newLocation = null;
         try {
-            newLocation = new BlockPos(Integer.parseInt(xInput.getValue()), Integer.parseInt(yInput.getValue()), Integer.parseInt(zInput.getValue()));
+            newLocation = new BlockPos(
+                Integer.parseInt(xInput.getValue()),
+                Integer.parseInt(yInput.getValue()),
+                Integer.parseInt(zInput.getValue())
+            );
         } catch (NumberFormatException e) {
             validCoords = false;
         }

@@ -18,8 +18,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 public class ToolboxMountedStorage extends WrapperMountedItemStorage<ToolboxInventory> {
-    public static final MapCodec<ToolboxMountedStorage> CODEC = ToolboxInventory.CODEC.xmap(ToolboxMountedStorage::new, storage -> storage.wrapped)
-        .fieldOf("value");
+    public static final MapCodec<ToolboxMountedStorage> CODEC = ToolboxInventory.CODEC.xmap(
+        ToolboxMountedStorage::new,
+        storage -> storage.wrapped
+    ).fieldOf("value");
 
     protected ToolboxMountedStorage(MountedItemStorageType<?> type, ToolboxInventory wrapped) {
         super(type, wrapped);
@@ -37,7 +39,11 @@ public class ToolboxMountedStorage extends WrapperMountedItemStorage<ToolboxInve
     }
 
     @Override
-    public boolean handleInteraction(ServerPlayer player, Contraption contraption, StructureTemplate.StructureBlockInfo info) {
+    public boolean handleInteraction(
+        ServerPlayer player,
+        Contraption contraption,
+        StructureTemplate.StructureBlockInfo info
+    ) {
         // The default impl will fail anyway, might as well cancel trying
         return false;
     }

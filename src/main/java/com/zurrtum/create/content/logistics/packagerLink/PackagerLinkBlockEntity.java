@@ -45,10 +45,12 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 
     public InventorySummary fetchSummaryFromPackager(@Nullable IdentifiedInventory ignoredHandler) {
         PackagerBlockEntity packager = getPackager();
-        if (packager == null)
+        if (packager == null) {
             return InventorySummary.EMPTY;
-        if (packager.isTargetingSameInventory(ignoredHandler))
+        }
+        if (packager.isTargetingSameInventory(ignoredHandler)) {
             return InventorySummary.EMPTY;
+        }
         return packager.getAvailableItems();
     }
 
@@ -60,12 +62,15 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
         float f = 1;
 
         AttachFace face = state.getValueOrElse(PackagerLinkBlock.FACE, AttachFace.FLOOR);
-        if (face != AttachFace.FLOOR)
+        if (face != AttachFace.FLOOR) {
             f = -1;
-        if (face == AttachFace.WALL)
+        }
+        if (face == AttachFace.WALL) {
             vec3 = vec3.add(0, 0.25, 0);
+        }
 
-        vec3 = vec3.add(Vec3.atLowerCornerOf(state.getValueOrElse(PackagerLinkBlock.FACING, Direction.SOUTH).getUnitVec3i()).scale(f * 0.125));
+        vec3 = vec3.add(Vec3.atLowerCornerOf(state.getValueOrElse(PackagerLinkBlock.FACING, Direction.SOUTH)
+            .getUnitVec3i()).scale(f * 0.125));
 
         pulse();
         level.addParticle(AllParticleTypes.WIFI, vec3.x, vec3.y, vec3.z, 1, face == AttachFace.CEILING ? -1 : 1, 1);
@@ -83,24 +88,31 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
         @Nullable IdentifiedInventory ignoredHandler
     ) {
         PackagerBlockEntity packager = getPackager();
-        if (packager == null)
+        if (packager == null) {
             return null;
-        if (packager.isTargetingSameInventory(ignoredHandler))
+        }
+        if (packager.isTargetingSameInventory(ignoredHandler)) {
             return null;
+        }
 
         InventorySummary summary = packager.getAvailableItems();
         int availableCount = summary.getCountOf(stack);
-        if (availableCount == 0)
+        if (availableCount == 0) {
             return null;
+        }
         int toWithdraw = Math.min(amount, availableCount);
-        return Pair.of(packager, PackagingRequest.create(stack, toWithdraw, address, linkIndex, finalLink, 0, orderId, context));
+        return Pair.of(
+            packager,
+            PackagingRequest.create(stack, toWithdraw, address, linkIndex, finalLink, 0, orderId, context)
+        );
     }
 
     @Override
     protected void write(ValueOutput view, boolean clientPacket) {
         super.write(view, clientPacket);
-        if (placedBy != null)
+        if (placedBy != null) {
             view.store("PlacedBy", UUIDUtil.CODEC, placedBy);
+        }
     }
 
     @Override
@@ -119,20 +131,24 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
         super.initialize();
         behaviour.redstonePowerChanged(PackagerLinkBlock.getPower(getBlockState(), level, worldPosition));
         PackagerBlockEntity packager = getPackager();
-        if (packager != null)
+        if (packager != null) {
             packager.recheckIfLinksPresent();
+        }
     }
 
     @Nullable
     public PackagerBlockEntity getPackager() {
         BlockState blockState = getBlockState();
-        if (behaviour.redstonePower == 15)
+        if (behaviour.redstonePower == 15) {
             return null;
+        }
         BlockPos source = worldPosition.relative(PackagerLinkBlock.getConnectedDirection(blockState).getOpposite());
-        if (!(level.getBlockEntity(source) instanceof PackagerBlockEntity packager))
+        if (!(level.getBlockEntity(source) instanceof PackagerBlockEntity packager)) {
             return null;
-        if (packager instanceof RepackagerBlockEntity)
+        }
+        if (packager instanceof RepackagerBlockEntity) {
             return null;
+        }
         return packager;
     }
 
@@ -152,10 +168,12 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
                 AttachFace face = s.getValue(PackagerLinkBlock.FACE);
                 Vec3 vec = face == AttachFace.WALL ? wallOffset : offset;
                 float angle = AngleHelper.horizontalAngle(s.getValue(PackagerLinkBlock.FACING));
-                if (face == AttachFace.CEILING)
+                if (face == AttachFace.CEILING) {
                     angle = -angle;
-                if (face == AttachFace.WALL)
+                }
+                if (face == AttachFace.WALL) {
                     angle = 0;
+                }
                 return VecHelper.rotateCentered(vec, angle, Axis.Y);
             }
         );

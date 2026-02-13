@@ -63,12 +63,15 @@ public class LogisticallyLinkedBlockItem extends BlockItem {
         super.appendHoverText(stack, tooltipContext, displayComponent, textConsumer, type);
 
         TypedEntityData<BlockEntityType<?>> data = stack.get(DataComponents.BLOCK_ENTITY_DATA);
-        if (data == null || !data.contains("Freq"))
+        if (data == null || !data.contains("Freq")) {
             return;
+        }
 
-        textConsumer.accept(Component.translatable("create.logistically_linked.tooltip").withStyle(ChatFormatting.GOLD));
+        textConsumer.accept(Component.translatable("create.logistically_linked.tooltip")
+            .withStyle(ChatFormatting.GOLD));
 
-        textConsumer.accept(Component.translatable("create.logistically_linked.tooltip_clear").withStyle(ChatFormatting.GRAY));
+        textConsumer.accept(Component.translatable("create.logistically_linked.tooltip_clear")
+            .withStyle(ChatFormatting.GRAY));
     }
 
     @Override
@@ -76,7 +79,14 @@ public class LogisticallyLinkedBlockItem extends BlockItem {
         ItemStack stack = player.getItemInHand(usedHand);
         if (isTuned(stack)) {
             if (world.isClientSide()) {
-                world.playSound(player, player.blockPosition(), SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.75f, 1.0f);
+                world.playSound(
+                    player,
+                    player.blockPosition(),
+                    SoundEvents.ITEM_FRAME_REMOVE_ITEM,
+                    SoundSource.BLOCKS,
+                    0.75f,
+                    1.0f
+                );
             } else {
                 player.sendOverlayMessage(Component.translatable("create.logistically_linked.cleared"));
                 stack.remove(DataComponents.BLOCK_ENTITY_DATA);
@@ -94,32 +104,35 @@ public class LogisticallyLinkedBlockItem extends BlockItem {
         Level level = pContext.getLevel();
         Player player = pContext.getPlayer();
 
-        if (player == null)
+        if (player == null) {
             return InteractionResult.FAIL;
-        if (player.isShiftKeyDown())
+        }
+        if (player.isShiftKeyDown()) {
             return super.useOn(pContext);
+        }
 
         LogisticallyLinkedBehaviour link = BlockEntityBehaviour.get(level, pos, LogisticallyLinkedBehaviour.TYPE);
         boolean tuned = isTuned(stack);
 
         if (link != null) {
-            if (level.isClientSide())
+            if (level.isClientSide()) {
                 return InteractionResult.SUCCESS;
-            if (!link.mayInteractMessage(player))
+            }
+            if (!link.mayInteractMessage(player)) {
                 return InteractionResult.SUCCESS;
+            }
 
             assignFrequency(stack, player, link.freqId);
             return InteractionResult.SUCCESS;
         }
 
         InteractionResult useOn = super.useOn(pContext);
-        if (level.isClientSide() || useOn == InteractionResult.FAIL)
+        if (level.isClientSide() || useOn == InteractionResult.FAIL) {
             return useOn;
+        }
 
-        player.sendOverlayMessage(
-            tuned ? Component.translatable("create.logistically_linked.connected") : Component.translatable(
-                "create.logistically_linked.new_network_started")
-        );
+        player.sendOverlayMessage(tuned ? Component.translatable("create.logistically_linked.connected") : Component.translatable(
+            "create.logistically_linked.new_network_started"));
         return useOn;
     }
 

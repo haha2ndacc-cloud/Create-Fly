@@ -56,7 +56,10 @@ public record FluidContentsAttribute(@Nullable Fluid fluid) implements ItemAttri
         if (fluid != null) {
             Block block = fluid.defaultFluidState().createLegacyBlock().getBlock();
             if (fluid != Fluids.EMPTY && block == Blocks.AIR) {
-                parameter = Component.translatable(Util.makeDescriptionId("block", BuiltInRegistries.FLUID.getKey(fluid)));
+                parameter = Component.translatable(Util.makeDescriptionId(
+                    "block",
+                    BuiltInRegistries.FLUID.getKey(fluid)
+                ));
             } else {
                 parameter = block.getName();
             }

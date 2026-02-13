@@ -59,8 +59,9 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
 
                 affine.translate(offset.subtract(Vec3.atBottomCenterOf(pos)));
                 affine.translate(0, -4 / 16f, 0);
-            } else
+            } else {
                 return;
+            }
         }
 
         if (normal == null) {
@@ -73,20 +74,22 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
 
         affine.center().rotateY((float) angles.y).rotateX((float) angles.x).uncenter();
 
-        if (axis != null)
+        if (axis != null) {
             affine.translate(0, axis.y != 0 ? 7 / 16f : 0, axis.y != 0 ? direction.getStep() * 2.5f / 16f : 0);
-        else {
+        } else {
             affine.translate(0, 4 / 16f, 0);
-            if (direction == AxisDirection.NEGATIVE)
+            if (direction == AxisDirection.NEGATIVE) {
                 affine.rotateCentered(Mth.PI, Direction.UP);
+            }
         }
 
         if (bezierPoint == null && world.getBlockEntity(pos) instanceof TrackBlockEntity trackTE && trackTE.isTilted()) {
             double yOffset = 0;
-            for (BezierConnection bc : trackTE.getConnections().values())
+            for (BezierConnection bc : trackTE.getConnections().values()) {
                 yOffset += bc.starts.getFirst().y - pos.getY();
-            affine.center().rotateXDegrees((float) (-direction.getStep() * trackTE.tilt.smoothingAngle.get())).uncenter()
-                .translate(0, yOffset / 2, 0);
+            }
+            affine.center().rotateXDegrees((float) (-direction.getStep() * trackTE.tilt.smoothingAngle.get()))
+                .uncenter().translate(0, yOffset / 2, 0);
         }
     }
 
@@ -161,7 +164,13 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
 
     @Override
     @Nullable
-    public TrackBlockRenderState getAssemblyRenderState(StationBlockEntity be, Vec3 offset, Level world, BlockPos pos, BlockState blockState) {
+    public TrackBlockRenderState getAssemblyRenderState(
+        StationBlockEntity be,
+        Vec3 offset,
+        Level world,
+        BlockPos pos,
+        BlockState blockState
+    ) {
         Direction direction = be.assemblyDirection;
         if (direction == null) {
             return null;
@@ -192,7 +201,10 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
             index = location;
             for (; i < index; i++) {
                 if (be.isValidBogeyOffset(i)) {
-                    data[i] = new int[]{colorWhenValid, LevelRenderer.getLightCoords(world, currentPos.move(direction, 1))};
+                    data[i] = new int[]{colorWhenValid, LevelRenderer.getLightCoords(
+                        world,
+                        currentPos.move(direction, 1)
+                    )};
                 }
             }
             data[i] = new int[]{colorWhenCarriage, LevelRenderer.getLightCoords(world, currentPos.move(direction, 1))};
@@ -200,7 +212,10 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
         }
         for (; index < length; index++) {
             if (be.isValidBogeyOffset(index)) {
-                data[index] = new int[]{colorWhenValid, LevelRenderer.getLightCoords(world, currentPos.move(direction, 1))};
+                data[index] = new int[]{colorWhenValid, LevelRenderer.getLightCoords(
+                    world,
+                    currentPos.move(direction, 1)
+                )};
             }
         }
         return state;
@@ -245,7 +260,8 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
 
         @Override
         public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            model.translate(.5f, 0, .5f).scale(scale).translate(-.5f, 0, -.5f).light(light).renderInto(matricesEntry, vertexConsumer);
+            model.translate(.5f, 0, .5f).scale(scale).translate(-.5f, 0, -.5f).light(light)
+                .renderInto(matricesEntry, vertexConsumer);
         }
     }
 

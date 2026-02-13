@@ -45,7 +45,8 @@ public final class NeoForgeModelProperties {
     public static final ContextKey<Map<String, Boolean>> PART_VISIBILITY = ContextKey.vanilla("part_visibility");
 
     public static final ContextKeySet EMPTY_TYPE = new ContextKeySet.Builder().build();
-    public static final ContextKeySet TYPE = new ContextKeySet.Builder().optional(TRANSFORM).optional(RENDER_TYPE).optional(PART_VISIBILITY).build();
+    public static final ContextKeySet TYPE = new ContextKeySet.Builder().optional(TRANSFORM).optional(RENDER_TYPE)
+        .optional(PART_VISIBILITY).build();
 
     /**
      * {@return a {@link Transformation} if the {@code transform} key is present, otherwise {@code null}}
@@ -84,7 +85,10 @@ public final class NeoForgeModelProperties {
     /**
      * Puts the given {@linkplain Transformation root transform} into the given builder if present, overwriting any value specified in a parent model
      */
-    public static void fillRootTransformProperty(ContextMap.Builder propertiesBuilder, @Nullable Transformation rootTransform) {
+    public static void fillRootTransformProperty(
+        ContextMap.Builder propertiesBuilder,
+        @Nullable Transformation rootTransform
+    ) {
         if (rootTransform != null) {
             propertiesBuilder.withParameter(NeoForgeModelProperties.TRANSFORM, rootTransform);
         }
@@ -94,7 +98,10 @@ public final class NeoForgeModelProperties {
      * Puts the given part visibility into the given builder if present, merging the with values from parent models
      * on a per-key basis and overwriting existing keys
      */
-    public static void fillPartVisibilityProperty(ContextMap.Builder propertiesBuilder, Map<String, Boolean> partVisibility) {
+    public static void fillPartVisibilityProperty(
+        ContextMap.Builder propertiesBuilder,
+        Map<String, Boolean> partVisibility
+    ) {
         if (!partVisibility.isEmpty()) {
             Map<String, Boolean> visibility = propertiesBuilder.getOptionalParameter(NeoForgeModelProperties.PART_VISIBILITY);
             if (visibility != null) {

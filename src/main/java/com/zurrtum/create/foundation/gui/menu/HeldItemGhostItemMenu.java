@@ -16,8 +16,9 @@ public abstract class HeldItemGhostItemMenu extends GhostItemMenu<ItemStack> {
 
     @Override
     public void clicked(int slotId, int dragType, ContainerInput clickTypeIn, Player player) {
-        if (slotId == playerInventory.getSelectedSlot() && clickTypeIn != ContainerInput.THROW)
+        if (slotId == playerInventory.getSelectedSlot() && clickTypeIn != ContainerInput.THROW) {
             return;
+        }
         super.clicked(slotId, dragType, clickTypeIn, player);
     }
 

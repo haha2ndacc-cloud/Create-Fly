@@ -15,10 +15,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
-public record AutoRequestData(
-    PackageOrderWithCrafts encodedRequest, String encodedTargetAddress, BlockPos targetOffset, String targetDim,
-    boolean isValid
-) {
+public record AutoRequestData(PackageOrderWithCrafts encodedRequest, String encodedTargetAddress, BlockPos targetOffset,
+                              String targetDim, boolean isValid) {
 
     public static final Codec<AutoRequestData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         PackageOrderWithCrafts.CODEC.fieldOf("encoded_request").forGetter(AutoRequestData::encodedRequest),
@@ -53,21 +51,29 @@ public record AutoRequestData(
     }
 
     @Nullable
-    public static AutoRequestData readFromItem(Level level, @Nullable Player player, BlockPos position, ItemStack itemStack) {
+    public static AutoRequestData readFromItem(
+        Level level,
+        @Nullable Player player,
+        BlockPos position,
+        ItemStack itemStack
+    ) {
         AutoRequestData requestData = itemStack.get(AllDataComponents.AUTO_REQUEST_DATA);
-        if (requestData == null)
+        if (requestData == null) {
             return null;
+        }
 
         Mutable mutable = new Mutable(requestData);
 
         mutable.targetOffset = mutable.targetOffset.subtract(position);
-        mutable.isValid = mutable.targetOffset.closerThan(BlockPos.ZERO, 128) && requestData.targetDim.equals(level.dimension().identifier()
-            .toString());
+        mutable.isValid = mutable.targetOffset.closerThan(
+            BlockPos.ZERO,
+            128
+        ) && requestData.targetDim.equals(level.dimension().identifier().toString());
 
         if (player != null) {
-            MutableComponent message = mutable.isValid ? Component.translatable("create.redstone_requester.keeper_connected")
-                .withStyle(ChatFormatting.WHITE) : Component.translatable("create.redstone_requester.keeper_too_far_away")
-                .withStyle(ChatFormatting.RED);
+            MutableComponent message = mutable.isValid ? Component.translatable(
+                "create.redstone_requester.keeper_connected").withStyle(ChatFormatting.WHITE) : Component.translatable(
+                "create.redstone_requester.keeper_too_far_away").withStyle(ChatFormatting.RED);
             player.sendOverlayMessage(message);
         }
 

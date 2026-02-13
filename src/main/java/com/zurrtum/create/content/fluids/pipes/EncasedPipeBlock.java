@@ -50,8 +50,8 @@ public class EncasedPipeBlock extends Block implements IWrenchable, SpecialBlock
     public EncasedPipeBlock(Properties properties, Block casing) {
         super(properties);
         this.casing = casing;
-        registerDefaultState(defaultBlockState().setValue(NORTH, false).setValue(SOUTH, false).setValue(DOWN, false).setValue(UP, false)
-            .setValue(WEST, false).setValue(EAST, false));
+        registerDefaultState(defaultBlockState().setValue(NORTH, false).setValue(SOUTH, false).setValue(DOWN, false)
+            .setValue(UP, false).setValue(WEST, false).setValue(EAST, false));
     }
 
     public static EncasedPipeBlock copper(Properties properties) {
@@ -65,23 +65,32 @@ public class EncasedPipeBlock extends Block implements IWrenchable, SpecialBlock
     }
 
     @Override
-    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
+    public void setPlacedBy(
+        Level pLevel,
+        BlockPos pPos,
+        BlockState pState,
+        @Nullable LivingEntity pPlacer,
+        ItemStack pStack
+    ) {
         super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
         AdvancementBehaviour.setPlacedBy(pLevel, pPos, pPlacer);
     }
 
     @Override
     public void affectNeighborsAfterRemoval(BlockState state, ServerLevel world, BlockPos pos, boolean isMoving) {
-        if (!world.isClientSide())
+        if (!world.isClientSide()) {
             FluidPropagator.propagateChangedPipe(world, pos, state);
-        if (state.hasBlockEntity())
+        }
+        if (state.hasBlockEntity()) {
             world.removeBlockEntity(pos);
+        }
     }
 
     @Override
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean isMoving) {
-        if (!world.isClientSide() && state != oldState)
+        if (!world.isClientSide() && state != oldState) {
             world.scheduleTick(pos, this, 1, TickPriority.HIGH);
+        }
     }
 
     @Override
@@ -90,12 +99,21 @@ public class EncasedPipeBlock extends Block implements IWrenchable, SpecialBlock
     }
 
     @Override
-    public void neighborUpdate(BlockState state, Level world, BlockPos pos, Block otherBlock, BlockPos neighborPos, boolean isMoving) {
+    public void neighborUpdate(
+        BlockState state,
+        Level world,
+        BlockPos pos,
+        Block otherBlock,
+        BlockPos neighborPos,
+        boolean isMoving
+    ) {
         Direction d = FluidPropagator.validateNeighbourChange(state, world, pos, otherBlock, neighborPos, isMoving);
-        if (d == null)
+        if (d == null) {
             return;
-        if (!state.getValue(FACING_TO_PROPERTY_MAP.get(d)))
+        }
+        if (!state.getValue(FACING_TO_PROPERTY_MAP.get(d))) {
             return;
+        }
         world.scheduleTick(pos, this, 1, TickPriority.HIGH);
     }
 
@@ -120,21 +138,26 @@ public class EncasedPipeBlock extends Block implements IWrenchable, SpecialBlock
         Level world = context.getLevel();
         BlockPos pos = context.getClickedPos();
 
-        if (world.isClientSide())
+        if (world.isClientSide()) {
             return InteractionResult.SUCCESS;
+        }
 
         context.getLevel().levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, context.getClickedPos(), Block.getId(state));
         BlockState equivalentPipe = transferSixWayProperties(state, AllBlocks.FLUID_PIPE.defaultBlockState());
 
         Direction firstFound = Direction.UP;
-        for (Direction d : Iterate.directions)
+        for (Direction d : Iterate.directions) {
             if (state.getValue(FACING_TO_PROPERTY_MAP.get(d))) {
                 firstFound = d;
                 break;
             }
+        }
 
         FluidTransportBehaviour.cacheFlows(world, pos);
-        world.setBlockAndUpdate(pos, AllBlocks.FLUID_PIPE.updateBlockState(equivalentPipe, firstFound, null, world, pos));
+        world.setBlockAndUpdate(
+            pos,
+            AllBlocks.FLUID_PIPE.updateBlockState(equivalentPipe, firstFound, null, world, pos)
+        );
         FluidTransportBehaviour.loadFlows(world, pos);
         return InteractionResult.SUCCESS;
     }

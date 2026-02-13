@@ -67,8 +67,9 @@ public class ComponentsIngredient extends Ingredient {
 
     @Override
     public boolean test(ItemStack stack) {
-        if (!base.test(stack))
+        if (!base.test(stack)) {
             return false;
+        }
 
         // None strict matching
         for (Map.Entry<DataComponentType<?>, Optional<?>> entry : components.entrySet()) {
@@ -111,10 +112,12 @@ public class ComponentsIngredient extends Ingredient {
 
     @Override
     public boolean equals(@Nullable Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
         ComponentsIngredient that = (ComponentsIngredient) o;
         return base.equals(that.base) && components.equals(that.components);
     }

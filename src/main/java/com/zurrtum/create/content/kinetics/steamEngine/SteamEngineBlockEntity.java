@@ -62,42 +62,55 @@ public class SteamEngineBlockEntity extends SmartBlockEntity {
         PoweredShaftBlockEntity shaft = getShaft();
 
         if (tank == null || shaft == null || !isValid()) {
-            if (level.isClientSide())
+            if (level.isClientSide()) {
                 return;
-            if (shaft == null)
+            }
+            if (shaft == null) {
                 return;
-            if (!shaft.getBlockPos().subtract(worldPosition).equals(shaft.enginePos))
+            }
+            if (!shaft.getBlockPos().subtract(worldPosition).equals(shaft.enginePos)) {
                 return;
-            if (shaft.engineEfficiency == 0)
+            }
+            if (shaft.engineEfficiency == 0) {
                 return;
+            }
             Direction facing = SteamEngineBlock.getFacing(getBlockState());
-            if (level.isLoaded(worldPosition.relative(facing.getOpposite())))
+            if (level.isLoaded(worldPosition.relative(facing.getOpposite()))) {
                 shaft.update(worldPosition, 0, 0);
+            }
             return;
         }
 
         BlockState shaftState = shaft.getBlockState();
         Axis targetAxis = Axis.X;
-        if (shaftState.getBlock() instanceof IRotate ir)
+        if (shaftState.getBlock() instanceof IRotate ir) {
             targetAxis = ir.getRotationAxis(shaftState);
+        }
         boolean verticalTarget = targetAxis == Axis.Y;
 
         BlockState blockState = getBlockState();
-        if (!blockState.is(AllBlocks.STEAM_ENGINE))
+        if (!blockState.is(AllBlocks.STEAM_ENGINE)) {
             return;
+        }
         Direction facing = SteamEngineBlock.getFacing(blockState);
-        if (facing.getAxis() == Axis.Y)
+        if (facing.getAxis() == Axis.Y) {
             facing = blockState.getValue(SteamEngineBlock.FACING);
+        }
 
         float efficiency = Mth.clamp(tank.boiler.getEngineEfficiency(tank.getTotalTankSize()), 0, 1);
-        if (efficiency > 0)
+        if (efficiency > 0) {
             award(AllAdvancements.STEAM_ENGINE);
+        }
 
-        int conveyedSpeedLevel = efficiency == 0 ? 1 : verticalTarget ? 1 : (int) GeneratingKineticBlockEntity.convertToDirection(1, facing);
-        if (targetAxis == Axis.Z)
+        int conveyedSpeedLevel = efficiency == 0 ? 1 : verticalTarget ? 1 : (int) GeneratingKineticBlockEntity.convertToDirection(1,
+            facing
+        );
+        if (targetAxis == Axis.Z) {
             conveyedSpeedLevel *= -1;
-        if (movementDirection.get() == RotationDirection.COUNTER_CLOCKWISE)
+        }
+        if (movementDirection.get() == RotationDirection.COUNTER_CLOCKWISE) {
             conveyedSpeedLevel *= -1;
+        }
 
         float shaftSpeed = shaft.getTheoreticalSpeed();
         if (shaft.hasSource() && shaftSpeed != 0 && conveyedSpeedLevel != 0 && (shaftSpeed > 0) != (conveyedSpeedLevel > 0)) {
@@ -107,8 +120,9 @@ public class SteamEngineBlockEntity extends SmartBlockEntity {
 
         shaft.update(worldPosition, conveyedSpeedLevel, efficiency);
 
-        if (!level.isClientSide())
+        if (!level.isClientSide()) {
             return;
+        }
 
         AllClientHandle.INSTANCE.spawnSteamEngineParticles(this);
     }
@@ -116,8 +130,9 @@ public class SteamEngineBlockEntity extends SmartBlockEntity {
     @Override
     public void remove() {
         PoweredShaftBlockEntity shaft = getShaft();
-        if (shaft != null)
+        if (shaft != null) {
             shaft.remove(worldPosition);
+        }
         super.remove();
     }
 
@@ -130,12 +145,14 @@ public class SteamEngineBlockEntity extends SmartBlockEntity {
     public PoweredShaftBlockEntity getShaft() {
         PoweredShaftBlockEntity shaft = target.get();
         if (shaft == null || shaft.isRemoved() || !shaft.canBePoweredBy(worldPosition)) {
-            if (shaft != null)
+            if (shaft != null) {
                 target = new WeakReference<>(null);
+            }
             Direction facing = SteamEngineBlock.getFacing(getBlockState());
             BlockEntity anyShaftAt = level.getBlockEntity(worldPosition.relative(facing, 2));
-            if (anyShaftAt instanceof PoweredShaftBlockEntity ps && ps.canBePoweredBy(worldPosition))
+            if (anyShaftAt instanceof PoweredShaftBlockEntity ps && ps.canBePoweredBy(worldPosition)) {
                 target = new WeakReference<>(shaft = ps);
+            }
         }
         return shaft;
     }
@@ -144,15 +161,18 @@ public class SteamEngineBlockEntity extends SmartBlockEntity {
     public FluidTankBlockEntity getTank() {
         FluidTankBlockEntity tank = source.get();
         if (tank == null || tank.isRemoved()) {
-            if (tank != null)
+            if (tank != null) {
                 source = new WeakReference<>(null);
+            }
             Direction facing = SteamEngineBlock.getFacing(getBlockState());
             BlockEntity be = level.getBlockEntity(worldPosition.relative(facing.getOpposite()));
-            if (be instanceof FluidTankBlockEntity tankBe)
+            if (be instanceof FluidTankBlockEntity tankBe) {
                 source = new WeakReference<>(tank = tankBe);
+            }
         }
-        if (tank == null)
+        if (tank == null) {
             return null;
+        }
         return tank.getControllerBE();
     }
 
@@ -160,8 +180,9 @@ public class SteamEngineBlockEntity extends SmartBlockEntity {
         Direction dir = SteamEngineBlock.getConnectedDirection(getBlockState()).getOpposite();
 
         Level level = getLevel();
-        if (level == null)
+        if (level == null) {
             return false;
+        }
 
         return level.getBlockState(getBlockPos().relative(dir)).is(AllBlocks.FLUID_TANK);
     }

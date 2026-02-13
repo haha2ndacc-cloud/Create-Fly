@@ -52,7 +52,9 @@ public interface ItemApplicationRecipe extends CreateRollableRecipe<ItemApplicat
         ).apply(instance, factory::create));
     }
 
-    static <T extends ItemApplicationRecipe> StreamCodec<RegistryFriendlyByteBuf, T> createStreamCodec(ItemApplicationRecipeFactory<T> factory) {
+    static <T extends ItemApplicationRecipe> StreamCodec<RegistryFriendlyByteBuf, T> createStreamCodec(
+        ItemApplicationRecipeFactory<T> factory
+    ) {
         return StreamCodec.composite(
             ProcessingOutput.STREAM_CODEC.apply(ByteBufCodecs.list()),
             ItemApplicationRecipe::results,

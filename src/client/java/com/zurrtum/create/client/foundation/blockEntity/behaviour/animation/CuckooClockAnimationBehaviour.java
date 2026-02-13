@@ -23,55 +23,69 @@ public class CuckooClockAnimationBehaviour extends AnimationBehaviour<CuckooCloc
 
     @Override
     public void tickAnimation() {
-        if (blockEntity.getSpeed() == 0)
+        if (blockEntity.getSpeed() == 0) {
             return;
+        }
 
         Level world = blockEntity.getLevel();
         int dayTime = world.dimensionType().defaultClock().or(() -> world.registryAccess().get(WorldClocks.OVERWORLD))
-            .map(clock -> (int) (world.clockManager().getTotalTicks(clock) % world.registryAccess().get(Timelines.OVERWORLD_DAY)
-                .flatMap(timeline -> timeline.value().periodTicks()).orElse(24000))).orElse(0);
+            .map(clock -> (int) (world.clockManager().getTotalTicks(clock) % world.registryAccess()
+                .get(Timelines.OVERWORLD_DAY).flatMap(timeline -> timeline.value().periodTicks()).orElse(24000)))
+            .orElse(0);
         int hours = (dayTime / 1000 + 6) % 24;
         int minutes = (dayTime % 1000) * 60 / 1000;
         moveHands(hours, minutes);
 
         CuckooClockBlockEntity.Animation animationType = blockEntity.animationType;
         if (animationType == CuckooClockBlockEntity.Animation.NONE) {
-            if (AnimationTickHolder.getTicks() % 32 == 0)
+            if (AnimationTickHolder.getTicks() % 32 == 0) {
                 playSound(SoundEvents.NOTE_BLOCK_HAT.value(), 1 / 16f, 2f);
-            else if (AnimationTickHolder.getTicks() % 16 == 0)
+            } else if (AnimationTickHolder.getTicks() % 16 == 0) {
                 playSound(SoundEvents.NOTE_BLOCK_HAT.value(), 1 / 16f, 1.5f);
+            }
         } else {
             boolean isSurprise = animationType == CuckooClockBlockEntity.Animation.SURPRISE;
             float value = blockEntity.getAndIncrementProgress();
-            if (value > 100)
+            if (value > 100) {
                 animationType = null;
+            }
 
             // sounds
 
-            if (value == 1)
+            if (value == 1) {
                 playSound(SoundEvents.NOTE_BLOCK_CHIME.value(), 2, .5f);
-            if (value == 21)
+            }
+            if (value == 21) {
                 playSound(SoundEvents.NOTE_BLOCK_CHIME.value(), 2, 0.793701f);
+            }
 
             if (value > 30 && isSurprise) {
-                Vec3 pos = VecHelper.offsetRandomly(VecHelper.getCenterOf(blockEntity.getBlockPos()), world.getRandom(), .5f);
+                Vec3 pos = VecHelper.offsetRandomly(
+                    VecHelper.getCenterOf(blockEntity.getBlockPos()),
+                    world.getRandom(),
+                    .5f
+                );
                 world.addParticle(ParticleTypes.LARGE_SMOKE, pos.x, pos.y, pos.z, 0, 0, 0);
             }
-            if (value == 40 && isSurprise)
+            if (value == 40 && isSurprise) {
                 playSound(SoundEvents.TNT_PRIMED, 1f, 1f);
+            }
 
             int step = isSurprise ? 3 : 15;
             for (int phase = 30; phase <= 60; phase += step) {
-                if (value == phase - step / 3)
+                if (value == phase - step / 3) {
                     playSound(SoundEvents.CHEST_OPEN, 1 / 16f, 2f);
-                if (value == phase) {
-                    if (animationType == CuckooClockBlockEntity.Animation.PIG)
-                        playSound(SoundEvents.PIG_AMBIENT, 1 / 4f, 1f);
-                    else
-                        playSound(SoundEvents.CREEPER_HURT, 1 / 4f, 3f);
                 }
-                if (value == phase + step / 3)
+                if (value == phase) {
+                    if (animationType == CuckooClockBlockEntity.Animation.PIG) {
+                        playSound(SoundEvents.PIG_AMBIENT, 1 / 4f, 1f);
+                    } else {
+                        playSound(SoundEvents.CREEPER_HURT, 1 / 4f, 3f);
+                    }
+                }
+                if (value == phase + step / 3) {
                     playSound(SoundEvents.CHEST_CLOSE, 1 / 16f, 2f);
+                }
 
             }
 

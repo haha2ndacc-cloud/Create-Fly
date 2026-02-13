@@ -45,22 +45,25 @@ public class PonderTagRegistry implements TagRegistryAccess {
     //
 
     public void registerTag(PonderTag tag) {
-        if (!allowRegistration)
+        if (!allowRegistration) {
             throw new IllegalStateException("Registration Phase has already ended!");
+        }
 
         registeredTags.put(tag.getId(), tag);
     }
 
     public void listTag(PonderTag tag) {
-        if (!allowRegistration)
+        if (!allowRegistration) {
             throw new IllegalStateException("Registration Phase has already ended!");
+        }
 
         listedTags.add(tag);
     }
 
     public void addTagToComponent(Identifier tag, Identifier item) {
-        if (!allowRegistration)
+        if (!allowRegistration) {
             throw new IllegalStateException("Registration Phase has already ended!");
+        }
 
         synchronized (componentTagMap) {
             componentTagMap.put(item, tag);
@@ -86,7 +89,8 @@ public class PonderTagRegistry implements TagRegistryAccess {
 
     @Override
     public Set<Identifier> getItems(Identifier tag) {
-        return componentTagMap.entries().stream().filter(e -> e.getValue().equals(tag)).map(Map.Entry::getKey).collect(ImmutableSet.toImmutableSet());
+        return componentTagMap.entries().stream().filter(e -> e.getValue().equals(tag)).map(Map.Entry::getKey)
+            .collect(ImmutableSet.toImmutableSet());
     }
 
     @Override

@@ -45,8 +45,9 @@ public enum ContraptionMovementSetting {
      */
     @Nullable
     public static ContraptionMovementSetting get(Block block) {
-        if (block instanceof MovementSettingProvider provider)
+        if (block instanceof MovementSettingProvider provider) {
             return provider.getContraptionMovementSetting();
+        }
         Supplier<ContraptionMovementSetting> supplier = REGISTRY.get(block);
         return supplier == null ? null : supplier.get();
     }
@@ -54,7 +55,10 @@ public enum ContraptionMovementSetting {
     /**
      * Check if any of the blocks in the collection match the given setting.
      */
-    public static boolean anyAre(Collection<StructureTemplate.StructureBlockInfo> blocks, ContraptionMovementSetting setting) {
+    public static boolean anyAre(
+        Collection<StructureTemplate.StructureBlockInfo> blocks,
+        ContraptionMovementSetting setting
+    ) {
         return blocks.stream().anyMatch(b -> get(b.state().getBlock()) == setting);
     }
 

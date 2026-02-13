@@ -35,14 +35,16 @@ public class ChainConveyorPackagePhysicsData {
     }
 
     public boolean shouldTick() {
-        if (lastTick == AnimationTickHolder.getTicks())
+        if (lastTick == AnimationTickHolder.getTicks()) {
             return false;
+        }
         lastTick = AnimationTickHolder.getTicks();
         return true;
     }
 
     public void setBE(ChainConveyorBlockEntity ccbe) {
-        if (beReference == null || beReference.get() != ccbe)
+        if (beReference == null || beReference.get() != ccbe) {
             beReference = new WeakReference<>(ccbe);
+        }
     }
 }

@@ -78,8 +78,9 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 
     @Override
     public void renderInto(PoseStack.Pose entry, VertexConsumer consumer) {
-        if (isEmpty())
+        if (isEmpty()) {
             return;
+        }
 
         Matrix4f modelMatrix = new Matrix4f(entry.pose());
         Matrix4f localTransforms = transforms.last().pose();
@@ -173,8 +174,9 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 
     @Override
     public DefaultSuperByteBuffer reset() {
-        while (!transforms.isEmpty())
+        while (!transforms.isEmpty()) {
             transforms.popPose();
+        }
 
         transforms.pushPose();
 
@@ -304,8 +306,10 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
     @Override
     public DefaultSuperByteBuffer shiftUVtoSheet(SpriteShiftEntry entry, float uTarget, float vTarget, int sheetSize) {
         spriteShiftFunc = (u, v, output) -> {
-            float targetU = entry.getTarget().getU((SpriteShiftEntry.getUnInterpolatedU(entry.getOriginal(), u) / sheetSize) + uTarget);
-            float targetV = entry.getTarget().getV((SpriteShiftEntry.getUnInterpolatedV(entry.getOriginal(), v) / sheetSize) + vTarget);
+            float targetU = entry.getTarget()
+                .getU((SpriteShiftEntry.getUnInterpolatedU(entry.getOriginal(), u) / sheetSize) + uTarget);
+            float targetV = entry.getTarget()
+                .getV((SpriteShiftEntry.getUnInterpolatedV(entry.getOriginal(), v) / sheetSize) + vTarget);
             output.accept(targetU, targetV);
         };
         return this;

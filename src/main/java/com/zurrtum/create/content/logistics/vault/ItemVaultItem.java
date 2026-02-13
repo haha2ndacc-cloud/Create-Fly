@@ -33,8 +33,9 @@ public class ItemVaultItem extends BlockItem {
     @Override
     public InteractionResult place(BlockPlaceContext ctx) {
         InteractionResult initialResult = super.place(ctx);
-        if (!initialResult.consumesAction())
+        if (!initialResult.consumesAction()) {
             return initialResult;
+        }
         tryMultiPlace(ctx);
         return initialResult;
     }
@@ -48,8 +49,9 @@ public class ItemVaultItem extends BlockItem {
         BlockState blockState
     ) {
         MinecraftServer minecraftserver = level.getServer();
-        if (minecraftserver == null)
+        if (minecraftserver == null) {
             return false;
+        }
         TypedEntityData<BlockEntityType<?>> data = itemStack.get(DataComponents.BLOCK_ENTITY_DATA);
         if (data != null) {
             CompoundTag nbt = data.copyTagWithoutId();
@@ -57,17 +59,22 @@ public class ItemVaultItem extends BlockItem {
             nbt.remove("Size");
             nbt.remove("Controller");
             nbt.remove("LastKnownPos");
-            itemStack.set(DataComponents.BLOCK_ENTITY_DATA, TypedEntityData.of(((IBE<?>) getBlock()).getBlockEntityType(), nbt));
+            itemStack.set(
+                DataComponents.BLOCK_ENTITY_DATA,
+                TypedEntityData.of(((IBE<?>) getBlock()).getBlockEntityType(), nbt)
+            );
         }
         return super.updateCustomBlockEntityTag(blockPos, level, player, itemStack, blockState);
     }
 
     private void tryMultiPlace(BlockPlaceContext ctx) {
         Player player = ctx.getPlayer();
-        if (player == null)
+        if (player == null) {
             return;
-        if (player.isShiftKeyDown())
+        }
+        if (player.isShiftKeyDown()) {
             return;
+        }
         Direction face = ctx.getClickedFace();
         ItemStack stack = ctx.getItemInHand();
         Level world = ctx.getLevel();
@@ -75,57 +82,76 @@ public class ItemVaultItem extends BlockItem {
         BlockPos placedOnPos = pos.relative(face.getOpposite());
         BlockState placedOnState = world.getBlockState(placedOnPos);
 
-        if (!ItemVaultBlock.isVault(placedOnState))
+        if (!ItemVaultBlock.isVault(placedOnState)) {
             return;
-        if (SymmetryWandItem.presentInHotbar(player))
+        }
+        if (SymmetryWandItem.presentInHotbar(player)) {
             return;
+        }
         ItemVaultBlockEntity tankAt = ConnectivityHandler.partAt(AllBlockEntityTypes.ITEM_VAULT, world, placedOnPos);
-        if (tankAt == null)
+        if (tankAt == null) {
             return;
+        }
         ItemVaultBlockEntity controllerBE = tankAt.getControllerBE();
-        if (controllerBE == null)
+        if (controllerBE == null) {
             return;
+        }
 
         int width = controllerBE.radius;
-        if (width == 1)
+        if (width == 1) {
             return;
+        }
 
         int tanksToPlace = 0;
         Axis vaultBlockAxis = ItemVaultBlock.getVaultBlockAxis(placedOnState);
-        if (vaultBlockAxis == null)
+        if (vaultBlockAxis == null) {
             return;
-        if (face.getAxis() != vaultBlockAxis)
+        }
+        if (face.getAxis() != vaultBlockAxis) {
             return;
+        }
 
         Direction vaultFacing = Direction.fromAxisAndDirection(vaultBlockAxis, Direction.AxisDirection.POSITIVE);
         BlockPos startPos = face == vaultFacing.getOpposite() ? controllerBE.getBlockPos()
-            .relative(vaultFacing.getOpposite()) : controllerBE.getBlockPos().relative(vaultFacing, controllerBE.length);
+            .relative(vaultFacing.getOpposite()) : controllerBE.getBlockPos()
+            .relative(vaultFacing, controllerBE.length);
 
-        if (VecHelper.getCoordinate(startPos, vaultBlockAxis) != VecHelper.getCoordinate(pos, vaultBlockAxis))
+        if (VecHelper.getCoordinate(startPos, vaultBlockAxis) != VecHelper.getCoordinate(pos, vaultBlockAxis)) {
             return;
+        }
 
         for (int xOffset = 0; xOffset < width; xOffset++) {
             for (int zOffset = 0; zOffset < width; zOffset++) {
-                BlockPos offsetPos = vaultBlockAxis == Axis.X ? startPos.offset(0, xOffset, zOffset) : startPos.offset(xOffset, zOffset, 0);
+                BlockPos offsetPos = vaultBlockAxis == Axis.X ? startPos.offset(0, xOffset, zOffset) : startPos.offset(xOffset,
+                    zOffset,
+                    0
+                );
                 BlockState blockState = world.getBlockState(offsetPos);
-                if (ItemVaultBlock.isVault(blockState))
+                if (ItemVaultBlock.isVault(blockState)) {
                     continue;
-                if (!blockState.canBeReplaced())
+                }
+                if (!blockState.canBeReplaced()) {
                     return;
+                }
                 tanksToPlace++;
             }
         }
 
-        if (!player.isCreative() && stack.getCount() < tanksToPlace)
+        if (!player.isCreative() && stack.getCount() < tanksToPlace) {
             return;
+        }
 
         ItemPlacementSoundContext context = new ItemPlacementSoundContext(ctx, 0.1f, 1.5f, null);
         for (int xOffset = 0; xOffset < width; xOffset++) {
             for (int zOffset = 0; zOffset < width; zOffset++) {
-                BlockPos offsetPos = vaultBlockAxis == Axis.X ? startPos.offset(0, xOffset, zOffset) : startPos.offset(xOffset, zOffset, 0);
+                BlockPos offsetPos = vaultBlockAxis == Axis.X ? startPos.offset(0, xOffset, zOffset) : startPos.offset(xOffset,
+                    zOffset,
+                    0
+                );
                 BlockState blockState = world.getBlockState(offsetPos);
-                if (ItemVaultBlock.isVault(blockState))
+                if (ItemVaultBlock.isVault(blockState)) {
                     continue;
+                }
                 super.place(context.offset(offsetPos, face));
             }
         }

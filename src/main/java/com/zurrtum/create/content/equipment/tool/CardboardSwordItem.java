@@ -21,10 +21,9 @@ import static com.zurrtum.create.Create.MOD_ID;
 
 public class CardboardSwordItem extends Item implements DamageControlItem, CustomAttackSoundItem {
     public static final AttributeModifier KNOCKBACK_MODIFIER = new AttributeModifier(
-        Identifier.fromNamespaceAndPath(
-            MOD_ID,
-            "cardboard_sword_knockback_attribute_modifier"
-    ), 2, AttributeModifier.Operation.ADD_VALUE
+        Identifier.fromNamespaceAndPath(MOD_ID, "cardboard_sword_knockback_attribute_modifier"),
+        2,
+        AttributeModifier.Operation.ADD_VALUE
     );
 
     public CardboardSwordItem(Properties settings) {

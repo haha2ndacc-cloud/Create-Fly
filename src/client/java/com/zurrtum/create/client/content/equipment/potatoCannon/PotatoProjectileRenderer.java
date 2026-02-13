@@ -54,7 +54,12 @@ public class PotatoProjectileRenderer extends EntityRenderer<PotatoProjectileEnt
     }
 
     @Override
-    public void submit(PotatoProjectileState state, PoseStack ms, SubmitNodeCollector queue, CameraRenderState cameraState) {
+    public void submit(
+        PotatoProjectileState state,
+        PoseStack ms,
+        SubmitNodeCollector queue,
+        CameraRenderState cameraState
+    ) {
         if (state.item.isEmpty()) {
             return;
         }

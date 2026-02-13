@@ -56,10 +56,7 @@ public class GantryShaftBlock extends DirectionalKineticBlock implements IBE<Gan
     private static final int placementHelperId = PlacementHelpers.register(new PlacementHelper());
 
     public enum Part implements StringRepresentable {
-        START,
-        MIDDLE,
-        END,
-        SINGLE;
+        START, MIDDLE, END, SINGLE;
 
         @Override
         public String getSerializedName() {
@@ -83,14 +80,21 @@ public class GantryShaftBlock extends DirectionalKineticBlock implements IBE<Gan
         BlockHitResult hitResult
     ) {
         IPlacementHelper placementHelper = PlacementHelpers.get(placementHelperId);
-        if (!placementHelper.matchesItem(stack))
+        if (!placementHelper.matchesItem(stack)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
 
-        return placementHelper.getOffset(player, level, state, pos, hitResult).placeInWorld(level, ((BlockItem) stack.getItem()), player, hand);
+        return placementHelper.getOffset(player, level, state, pos, hitResult)
+            .placeInWorld(level, ((BlockItem) stack.getItem()), player, hand);
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter p_220053_2_, BlockPos p_220053_3_, CollisionContext p_220053_4_) {
+    public VoxelShape getShape(
+        BlockState state,
+        BlockGetter p_220053_2_,
+        BlockPos p_220053_3_,
+        CollisionContext p_220053_4_
+    ) {
         return AllShapes.EIGHT_VOXEL_POLE.get(state.getValue(FACING).getAxis());
     }
 
@@ -107,34 +111,43 @@ public class GantryShaftBlock extends DirectionalKineticBlock implements IBE<Gan
     ) {
         Direction facing = state.getValue(FACING);
         Axis axis = facing.getAxis();
-        if (direction.getAxis() != axis)
+        if (direction.getAxis() != axis) {
             return state;
+        }
         boolean connect = neighbour.is(AllBlocks.GANTRY_SHAFT) && neighbour.getValue(FACING) == facing;
 
         Part part = state.getValue(PART);
         if (direction.getAxisDirection() == facing.getAxisDirection()) {
             if (connect) {
-                if (part == Part.END)
+                if (part == Part.END) {
                     part = Part.MIDDLE;
-                if (part == Part.SINGLE)
+                }
+                if (part == Part.SINGLE) {
                     part = Part.START;
+                }
             } else {
-                if (part == Part.MIDDLE)
+                if (part == Part.MIDDLE) {
                     part = Part.END;
-                if (part == Part.START)
+                }
+                if (part == Part.START) {
                     part = Part.SINGLE;
+                }
             }
         } else {
             if (connect) {
-                if (part == Part.START)
+                if (part == Part.START) {
                     part = Part.MIDDLE;
-                if (part == Part.SINGLE)
+                }
+                if (part == Part.SINGLE) {
                     part = Part.END;
+                }
             } else {
-                if (part == Part.MIDDLE)
+                if (part == Part.MIDDLE) {
                     part = Part.START;
-                if (part == Part.END)
+                }
+                if (part == Part.END) {
                     part = Part.SINGLE;
+                }
             }
         }
 
@@ -155,11 +168,16 @@ public class GantryShaftBlock extends DirectionalKineticBlock implements IBE<Gan
 
         BlockState neighbour = world.getBlockState(pos.relative(state.getValue(FACING).getOpposite()));
 
-        BlockState clickedState = neighbour.is(AllBlocks.GANTRY_SHAFT) ? neighbour : world.getBlockState(pos.relative(face.getOpposite()));
+        BlockState clickedState = neighbour.is(AllBlocks.GANTRY_SHAFT) ? neighbour : world.getBlockState(pos.relative(
+            face.getOpposite()));
 
-        if (clickedState.is(AllBlocks.GANTRY_SHAFT) && clickedState.getValue(FACING).getAxis() == state.getValue(FACING).getAxis()) {
+        if (clickedState.is(AllBlocks.GANTRY_SHAFT) && clickedState.getValue(FACING).getAxis() == state.getValue(FACING)
+            .getAxis()) {
             Direction facing = clickedState.getValue(FACING);
-            state = state.setValue(FACING, context.getPlayer() == null || !context.getPlayer().isShiftKeyDown() ? facing : facing.getOpposite());
+            state = state.setValue(
+                FACING,
+                context.getPlayer() == null || !context.getPlayer().isShiftKeyDown() ? facing : facing.getOpposite()
+            );
         }
 
         return state.setValue(POWERED, shouldBePowered(state, world, pos));
@@ -184,8 +202,9 @@ public class GantryShaftBlock extends DirectionalKineticBlock implements IBE<Gan
             Part oldPart = oldState.getValue(PART), part = state.getValue(PART);
             if ((oldPart != Part.MIDDLE && part == Part.MIDDLE) || (oldPart == Part.SINGLE && part != Part.SINGLE)) {
                 BlockEntity be = worldIn.getBlockEntity(pos);
-                if (be instanceof GantryShaftBlockEntity)
+                if (be instanceof GantryShaftBlockEntity) {
                     ((GantryShaftBlockEntity) be).checkAttachedCarriageBlocks();
+                }
             }
         }
     }
@@ -199,8 +218,9 @@ public class GantryShaftBlock extends DirectionalKineticBlock implements IBE<Gan
         @Nullable Orientation wireOrientation,
         boolean p_220069_6_
     ) {
-        if (worldIn.isClientSide())
+        if (worldIn.isClientSide()) {
             return;
+        }
         boolean previouslyPowered = state.getValue(POWERED);
         boolean shouldPower = worldIn.hasNeighborSignal(pos); // shouldBePowered(state, worldIn, pos);
 
@@ -209,8 +229,9 @@ public class GantryShaftBlock extends DirectionalKineticBlock implements IBE<Gan
             return;
         }
 
-        if (previouslyPowered == shouldPower)
+        if (previouslyPowered == shouldPower) {
             return;
+        }
 
         // Collect affected gantry shafts
         List<BlockPos> toUpdate = new ArrayList<>();
@@ -219,17 +240,22 @@ public class GantryShaftBlock extends DirectionalKineticBlock implements IBE<Gan
         for (Direction d : Iterate.directionsInAxis(axis)) {
             BlockPos currentPos = pos.relative(d);
             while (true) {
-                if (!worldIn.isLoaded(currentPos))
+                if (!worldIn.isLoaded(currentPos)) {
                     break;
+                }
                 BlockState currentState = worldIn.getBlockState(currentPos);
-                if (!(currentState.getBlock() instanceof GantryShaftBlock))
+                if (!(currentState.getBlock() instanceof GantryShaftBlock)) {
                     break;
-                if (currentState.getValue(FACING) != facing)
+                }
+                if (currentState.getValue(FACING) != facing) {
                     break;
-                if (!shouldPower && currentState.getValue(POWERED) && worldIn.hasNeighborSignal(currentPos))
+                }
+                if (!shouldPower && currentState.getValue(POWERED) && worldIn.hasNeighborSignal(currentPos)) {
                     return;
-                if (currentState.getValue(POWERED) == shouldPower)
+                }
+                if (currentState.getValue(POWERED) == shouldPower) {
                     break;
+                }
                 toUpdate.add(currentPos);
                 currentPos = currentPos.relative(d);
             }
@@ -239,10 +265,12 @@ public class GantryShaftBlock extends DirectionalKineticBlock implements IBE<Gan
         for (BlockPos blockPos : toUpdate) {
             BlockState blockState = worldIn.getBlockState(blockPos);
             BlockEntity be = worldIn.getBlockEntity(blockPos);
-            if (be instanceof KineticBlockEntity)
+            if (be instanceof KineticBlockEntity) {
                 ((KineticBlockEntity) be).detachKinetics();
-            if (blockState.getBlock() instanceof GantryShaftBlock)
+            }
+            if (blockState.getBlock() instanceof GantryShaftBlock) {
                 worldIn.setBlock(blockPos, blockState.setValue(POWERED, shouldPower), Block.UPDATE_CLIENTS);
+            }
         }
     }
 
@@ -252,13 +280,16 @@ public class GantryShaftBlock extends DirectionalKineticBlock implements IBE<Gan
         Direction facing = state.getValue(FACING);
         for (Direction d : Iterate.directionsInAxis(facing.getAxis())) {
             BlockPos neighbourPos = pos.relative(d);
-            if (!worldIn.isLoaded(neighbourPos))
+            if (!worldIn.isLoaded(neighbourPos)) {
                 continue;
+            }
             BlockState neighbourState = worldIn.getBlockState(neighbourPos);
-            if (!(neighbourState.getBlock() instanceof GantryShaftBlock))
+            if (!(neighbourState.getBlock() instanceof GantryShaftBlock)) {
                 continue;
-            if (neighbourState.getValue(FACING) != facing)
+            }
+            if (neighbourState.getValue(FACING) != facing) {
                 continue;
+            }
             shouldPower |= neighbourState.getValue(POWERED);
         }
 
@@ -277,7 +308,10 @@ public class GantryShaftBlock extends DirectionalKineticBlock implements IBE<Gan
 
     @Override
     protected boolean areStatesKineticallyEquivalent(BlockState oldState, BlockState newState) {
-        return super.areStatesKineticallyEquivalent(oldState, newState) && oldState.getValue(POWERED) == newState.getValue(POWERED);
+        return super.areStatesKineticallyEquivalent(
+            oldState,
+            newState
+        ) && oldState.getValue(POWERED) == newState.getValue(POWERED);
     }
 
     @Override
@@ -307,7 +341,13 @@ public class GantryShaftBlock extends DirectionalKineticBlock implements IBE<Gan
         }
 
         @Override
-        public PlacementOffset getOffset(@Nullable Player player, Level world, BlockState state, BlockPos pos, BlockHitResult ray) {
+        public PlacementOffset getOffset(
+            @Nullable Player player,
+            Level world,
+            BlockState state,
+            BlockPos pos,
+            BlockHitResult ray
+        ) {
             PlacementOffset offset = super.getOffset(player, world, state, pos, ray);
             offset.withTransform(offset.getTransform().andThen(s -> s.setValue(POWERED, state.getValue(POWERED))));
             return offset;

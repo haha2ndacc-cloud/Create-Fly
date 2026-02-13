@@ -21,17 +21,21 @@ public class TrackGraphBounds {
         box = null;
 
         for (TrackNode node : graph.nodes.values()) {
-            if (node.location.dimension != dimension)
+            if (node.location.dimension != dimension) {
                 continue;
+            }
             include(node);
             Map<TrackNode, TrackEdge> connections = graph.getConnectionsFrom(node);
-            for (TrackEdge edge : connections.values())
-                if (edge.turn != null && edge.turn.isPrimary())
+            for (TrackEdge edge : connections.values()) {
+                if (edge.turn != null && edge.turn.isPrimary()) {
                     beziers.add(edge.turn);
+                }
+            }
         }
 
-        if (box != null)
+        if (box != null) {
             box = box.inflate(2);
+        }
     }
 
     private void include(TrackNode node) {

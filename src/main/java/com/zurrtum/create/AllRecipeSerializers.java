@@ -31,7 +31,10 @@ public class AllRecipeSerializers {
     public static final RecipeSerializer<CuttingRecipe> CUTTING = register("cutting", CuttingRecipe.SERIALIZER);
     public static final RecipeSerializer<MillingRecipe> MILLING = register("milling", MillingRecipe.SERIALIZER);
     public static final RecipeSerializer<MixingRecipe> MIXING = register("mixing", MixingRecipe.SERIALIZER);
-    public static final RecipeSerializer<CompactingRecipe> COMPACTING = register("compacting", CompactingRecipe.SERIALIZER);
+    public static final RecipeSerializer<CompactingRecipe> COMPACTING = register(
+        "compacting",
+        CompactingRecipe.SERIALIZER
+    );
     public static final RecipeSerializer<PressingRecipe> PRESSING = register("pressing", PressingRecipe.SERIALIZER);
     public static final RecipeSerializer<SandPaperPolishingRecipe> SANDPAPER_POLISHING = register(
         "sandpaper_polishing",
@@ -39,10 +42,16 @@ public class AllRecipeSerializers {
     );
     public static final RecipeSerializer<SplashingRecipe> SPLASHING = register("splashing", SplashingRecipe.SERIALIZER);
     public static final RecipeSerializer<HauntingRecipe> HAUNTING = register("haunting", HauntingRecipe.SERIALIZER);
-    public static final RecipeSerializer<DeployerApplicationRecipe> DEPLOYING = register("deploying", DeployerApplicationRecipe.SERIALIZER);
+    public static final RecipeSerializer<DeployerApplicationRecipe> DEPLOYING = register(
+        "deploying",
+        DeployerApplicationRecipe.SERIALIZER
+    );
     public static final RecipeSerializer<FillingRecipe> FILLING = register("filling", FillingRecipe.SERIALIZER);
     public static final RecipeSerializer<EmptyingRecipe> EMPTYING = register("emptying", EmptyingRecipe.SERIALIZER);
-    public static final RecipeSerializer<ManualApplicationRecipe> ITEM_APPLICATION = register("item_application", ManualApplicationRecipe.SERIALIZER);
+    public static final RecipeSerializer<ManualApplicationRecipe> ITEM_APPLICATION = register(
+        "item_application",
+        ManualApplicationRecipe.SERIALIZER
+    );
     public static final RecipeSerializer<MechanicalCraftingRecipe> MECHANICAL_CRAFTING = register(
         "mechanical_crafting",
         MechanicalCraftingRecipe.SERIALIZER
@@ -51,12 +60,22 @@ public class AllRecipeSerializers {
         "sequenced_assembly",
         SequencedAssemblyRecipe.SERIALIZER
     );
-    public static final RecipeSerializer<ItemCopyingRecipe> ITEM_COPYING = register("item_copying", ItemCopyingRecipe.SERIALIZER);
-    public static final RecipeSerializer<ToolboxDyeingRecipe> TOOLBOX_DYEING = register("toolbox_dyeing", ToolboxDyeingRecipe.SERIALIZER);
+    public static final RecipeSerializer<ItemCopyingRecipe> ITEM_COPYING = register(
+        "item_copying",
+        ItemCopyingRecipe.SERIALIZER
+    );
+    public static final RecipeSerializer<ToolboxDyeingRecipe> TOOLBOX_DYEING = register(
+        "toolbox_dyeing",
+        ToolboxDyeingRecipe.SERIALIZER
+    );
     public static final RecipeSerializer<PotionRecipe> POTION = register("potion", PotionRecipe.SERIALIZER);
 
     static <S extends RecipeSerializer<T>, T extends Recipe<?>> S register(String id, S serializer) {
-        return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MOD_ID, id), serializer);
+        return Registry.register(
+            BuiltInRegistries.RECIPE_SERIALIZER,
+            Identifier.fromNamespaceAndPath(MOD_ID, id),
+            serializer
+        );
     }
 
     public static void register() {

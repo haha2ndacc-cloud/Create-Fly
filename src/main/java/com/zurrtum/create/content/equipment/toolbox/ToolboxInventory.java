@@ -24,7 +24,8 @@ public class ToolboxInventory implements ItemInventory {
     public static final int STACKS_PER_COMPARTMENT = 4;
     public static final int SIZE = 8 * STACKS_PER_COMPARTMENT;
     public static final Codec<ToolboxInventory> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        ItemSlots.maxSizeCodec(8 * STACKS_PER_COMPARTMENT).fieldOf("items").forGetter(ItemSlots::fromHandler),
+        ItemSlots.maxSizeCodec(
+            8 * STACKS_PER_COMPARTMENT).fieldOf("items").forGetter(ItemSlots::fromHandler),
         ItemStack.OPTIONAL_CODEC.listOf().fieldOf("filters").forGetter(toolbox -> toolbox.filters)
     ).apply(instance, ToolboxInventory::deserialize));
 
@@ -239,16 +240,19 @@ public class ToolboxInventory implements ItemInventory {
     }
 
     public static ItemStack cleanItemNBT(ItemStack stack) {
-        if (stack.is(AllItems.BELT_CONNECTOR))
+        if (stack.is(AllItems.BELT_CONNECTOR)) {
             stack.remove(AllDataComponents.BELT_FIRST_SHAFT);
+        }
         return stack;
     }
 
     public static boolean canItemsShareCompartment(ItemStack stack1, ItemStack stack2) {
-        if (!stack1.isStackable() && !stack2.isStackable() && stack1.isDamageableItem() && stack2.isDamageableItem())
+        if (!stack1.isStackable() && !stack2.isStackable() && stack1.isDamageableItem() && stack2.isDamageableItem()) {
             return stack1.getItem() == stack2.getItem();
-        if (stack1.is(AllItems.BELT_CONNECTOR) && stack2.is(AllItems.BELT_CONNECTOR))
+        }
+        if (stack1.is(AllItems.BELT_CONNECTOR) && stack2.is(AllItems.BELT_CONNECTOR)) {
             return true;
+        }
         return ItemStack.isSameItemSameComponents(stack1, stack2);
     }
 
@@ -292,10 +296,14 @@ public class ToolboxInventory implements ItemInventory {
 
     @Override
     public final boolean equals(Object o) {
-        if (!(o instanceof ToolboxInventory that))
+        if (!(o instanceof ToolboxInventory that)) {
             return false;
+        }
 
-        return limitedMode == that.limitedMode && filters.equals(that.filters) && Objects.equals(blockEntity, that.blockEntity);
+        return limitedMode == that.limitedMode && filters.equals(that.filters) && Objects.equals(
+            blockEntity,
+            that.blockEntity
+        );
     }
 
     @Override

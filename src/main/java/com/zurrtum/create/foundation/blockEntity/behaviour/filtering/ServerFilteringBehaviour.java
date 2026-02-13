@@ -122,11 +122,13 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
 
     public boolean setFilter(ItemStack stack) {
         ItemStack filter = stack.copy();
-        if (!filter.isEmpty() && !predicate.test(filter))
+        if (!filter.isEmpty() && !predicate.test(filter)) {
             return false;
+        }
         this.filter = FilterItemStack.of(filter);
-        if (!upTo && !stack.isEmpty())
+        if (!upTo && !stack.isEmpty()) {
             count = Math.min(count, stack.getMaxStackSize());
+        }
         callback.accept(filter);
         blockEntity.setChanged();
         blockEntity.sendData();
@@ -135,8 +137,9 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
 
     @Override
     public void setValueSettings(Player player, ValueSettings settings, boolean ctrlDown) {
-        if (getValueSettings().equals(settings))
+        if (getValueSettings().equals(settings)) {
             return;
+        }
         count = Mth.clamp(settings.value(), 1, getMaxStackSize());
         upTo = settings.row() == 0;
         blockEntity.setChanged();
@@ -161,8 +164,9 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
 
     @Override
     public ItemRequirement getRequiredItems() {
-        if (filter.isFilterItem())
+        if (filter.isFilterItem()) {
             return new ItemRequirement(ItemRequirement.ItemUseType.CONSUME, getFilter());
+        }
 
         return ItemRequirement.NONE;
     }
@@ -176,8 +180,9 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
     }
 
     public int getMaxStackSize(ItemStack filter) {
-        if (filter.isEmpty())
+        if (filter.isEmpty()) {
             return 64;
+        }
         return filter.getMaxStackSize();
     }
 
@@ -238,21 +243,26 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
 
     @Override
     public boolean readFromClipboard(ValueInput view, Player player, Direction side, boolean simulate) {
-        if (!mayInteract(player))
+        if (!mayInteract(player)) {
             return false;
+        }
         boolean upstreamResult = ValueSettingsHandleBehaviour.super.readFromClipboard(view, player, side, simulate);
         Optional<ItemStack> filterItem = view.read("Filter", ItemStack.OPTIONAL_CODEC);
-        if (filterItem.isEmpty())
+        if (filterItem.isEmpty()) {
             return upstreamResult;
-        if (simulate)
+        }
+        if (simulate) {
             return true;
-        if (getLevel().isClientSide())
+        }
+        if (getLevel().isClientSide()) {
             return true;
+        }
 
         ItemStack refund = ItemStack.EMPTY;
         ItemStack filter = getFilter(side);
-        if (filter.getItem() instanceof FilterItem && !player.isCreative())
+        if (filter.getItem() instanceof FilterItem && !player.isCreative()) {
             refund = filter.copy();
+        }
 
         ItemStack copied = filterItem.get();
 
@@ -261,26 +271,28 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
             if (refund.getItem() == filterType) {
                 setFilter(side, copied);
                 return true;
-            } else if (inventory.extract(filterType.getDefaultInstance()) == 1 || !inventory.extract(stack -> stack.getItem() == filterType, 1)
-                .isEmpty()) {
-                if (!refund.isEmpty())
+            } else if (inventory.extract(filterType.getDefaultInstance()) == 1 || !inventory.extract(
+                stack -> stack.getItem() == filterType,
+                1
+            ).isEmpty()) {
+                if (!refund.isEmpty()) {
                     inventory.placeItemBackInInventory(refund);
+                }
                 setFilter(side, copied);
                 return true;
             }
 
-            player.sendOverlayMessage(
-                Component.translatable(
-                    "create.logistics.filter.requires_item_in_inventory",
-                    copied.getHoverName().copy().withStyle(ChatFormatting.WHITE)
-                ).withStyle(ChatFormatting.RED)
-            );
+            player.sendOverlayMessage(Component.translatable(
+                "create.logistics.filter.requires_item_in_inventory",
+                copied.getHoverName().copy().withStyle(ChatFormatting.WHITE)
+            ).withStyle(ChatFormatting.RED));
             AllSoundEvents.DENY.playOnServer(player.level(), player.blockPosition(), 1, 1);
             return false;
         }
 
-        if (!refund.isEmpty())
+        if (!refund.isEmpty()) {
             inventory.placeItemBackInInventory(refund);
+        }
 
         return setFilter(side, copied);
     }
@@ -292,20 +304,24 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
         ItemStack itemInHand = player.getItemInHand(hand);
         ItemStack toApply = itemInHand.copy();
 
-        if (!canShortInteract(toApply))
+        if (!canShortInteract(toApply)) {
             return;
-        if (level.isClientSide())
+        }
+        if (level.isClientSide()) {
             return;
+        }
 
         ItemStack filter = getFilter(side);
         if (filter.getItem() instanceof FilterItem) {
             Inventory inventory = player.getInventory();
-            if (!player.isCreative() || inventory.count(filter, 1) == 0)
+            if (!player.isCreative() || inventory.count(filter, 1) == 0) {
                 inventory.placeItemBackInInventory(filter.copy());
+            }
         }
 
-        if (toApply.getItem() instanceof FilterItem)
+        if (toApply.getItem() instanceof FilterItem) {
             toApply.setCount(1);
+        }
 
         if (!setFilter(side, toApply)) {
             player.sendOverlayMessage(Component.translatable("create.logistics.filter.invalid_item"));
@@ -315,10 +331,11 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
 
         if (!player.isCreative()) {
             if (toApply.getItem() instanceof FilterItem) {
-                if (itemInHand.getCount() == 1)
+                if (itemInHand.getCount() == 1) {
                     player.setItemInHand(hand, ItemStack.EMPTY);
-                else
+                } else {
                     itemInHand.shrink(1);
+                }
             }
         }
 
@@ -326,8 +343,9 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
     }
 
     public boolean canShortInteract(ItemStack toApply) {
-        if (toApply.is(AllItems.WRENCH))
+        if (toApply.is(AllItems.WRENCH)) {
             return false;
+        }
         return !toApply.is(AllItems.MECHANICAL_ARM);
     }
 

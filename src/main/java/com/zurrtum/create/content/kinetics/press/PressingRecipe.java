@@ -15,7 +15,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 
 import java.util.List;
 
-public record PressingRecipe(List<ProcessingOutput> results, Ingredient ingredient) implements CreateSingleStackRollableRecipe {
+public record PressingRecipe(List<ProcessingOutput> results,
+                             Ingredient ingredient) implements CreateSingleStackRollableRecipe {
     public static final MapCodec<PressingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
         ProcessingOutput.CODEC.listOf(1, 2).fieldOf("results").forGetter(PressingRecipe::results),
         Ingredient.CODEC.fieldOf("ingredient").forGetter(PressingRecipe::ingredient)

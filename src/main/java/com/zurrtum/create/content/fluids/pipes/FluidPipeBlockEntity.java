@@ -63,33 +63,46 @@ public class FluidPipeBlockEntity extends SmartBlockEntity implements Transforma
 
         @Override
         public boolean canHaveFlowToward(BlockState state, Direction direction) {
-            return (FluidPipeBlock.isPipe(state) || state.getBlock() instanceof EncasedPipeBlock) && state.getValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(
-                direction));
+            return (FluidPipeBlock.isPipe(state) || state.getBlock() instanceof EncasedPipeBlock) && state.getValue(
+                FluidPipeBlock.PROPERTY_BY_DIRECTION.get(direction));
         }
 
         @Override
-        public AttachmentTypes getRenderedRimAttachment(BlockAndTintGetter world, BlockPos pos, BlockState state, Direction direction) {
+        public AttachmentTypes getRenderedRimAttachment(
+            BlockAndTintGetter world,
+            BlockPos pos,
+            BlockState state,
+            Direction direction
+        ) {
             AttachmentTypes attachment = super.getRenderedRimAttachment(world, pos, state, direction);
 
             BlockPos offsetPos = pos.relative(direction);
             BlockState otherState = world.getBlockState(offsetPos);
 
-            if (state.getBlock() instanceof EncasedPipeBlock && attachment != AttachmentTypes.DRAIN)
+            if (state.getBlock() instanceof EncasedPipeBlock && attachment != AttachmentTypes.DRAIN) {
                 return AttachmentTypes.NONE;
+            }
 
             if (attachment == AttachmentTypes.RIM) {
                 if (!FluidPipeBlock.isPipe(otherState) && !(otherState.getBlock() instanceof EncasedPipeBlock) && !(otherState.getBlock() instanceof GlassFluidPipeBlock)) {
-                    FluidTransportBehaviour pipeBehaviour = BlockEntityBehaviour.get(world, offsetPos, FluidTransportBehaviour.TYPE);
-                    if (pipeBehaviour != null && pipeBehaviour.canHaveFlowToward(otherState, direction.getOpposite()))
+                    FluidTransportBehaviour pipeBehaviour = BlockEntityBehaviour.get(
+                        world,
+                        offsetPos,
+                        FluidTransportBehaviour.TYPE
+                    );
+                    if (pipeBehaviour != null && pipeBehaviour.canHaveFlowToward(otherState, direction.getOpposite())) {
                         return AttachmentTypes.DETAILED_CONNECTION;
+                    }
                 }
 
-                if (!FluidPipeBlock.shouldDrawRim(world, pos, state, direction))
+                if (!FluidPipeBlock.shouldDrawRim(world, pos, state, direction)) {
                     return FluidPropagator.getStraightPipeAxis(state) == direction.getAxis() ? AttachmentTypes.CONNECTION : AttachmentTypes.DETAILED_CONNECTION;
+                }
             }
 
-            if (attachment == AttachmentTypes.NONE && state.getValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(direction)))
+            if (attachment == AttachmentTypes.NONE && state.getValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(direction))) {
                 return AttachmentTypes.DETAILED_CONNECTION;
+            }
 
             return attachment;
         }

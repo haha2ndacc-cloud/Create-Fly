@@ -28,8 +28,9 @@ public class TorquePropagator {
         Long id = be.network;
         KineticNetwork network;
         Map<Long, KineticNetwork> map = networks.computeIfAbsent(be.getLevel(), $ -> new HashMap<>());
-        if (id == null)
+        if (id == null) {
             return null;
+        }
 
         if (!map.containsKey(id)) {
             network = new KineticNetwork(id);

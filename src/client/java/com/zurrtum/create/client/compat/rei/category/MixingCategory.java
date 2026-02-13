@@ -69,7 +69,11 @@ public class MixingCategory extends CreateCategory<MixingDisplay> {
                     requiredHeat.visualizeAsBlazeBurner()
                 ));
             }
-            graphics.guiRenderState.submitPicturesInPictureState(new MixingBasinRenderState(pose, bounds.x + 96, bounds.y));
+            graphics.guiRenderState.submitPicturesInPictureState(new MixingBasinRenderState(
+                pose,
+                bounds.x + 96,
+                bounds.y
+            ));
             graphics.drawString(
                 Minecraft.getInstance().font,
                 CreateLang.translateDirect(requiredHeat.getTranslationKey()),
@@ -84,10 +88,16 @@ public class MixingCategory extends CreateCategory<MixingDisplay> {
         }
         widgets.add(createOutputSlot(output).entries(getRenderEntryStack(display.output())));
         if (!requiredHeat.testBlazeBurner(HeatLevel.NONE)) {
-            widgets.add(createSlot(new Point(bounds.x + 139, bounds.y + 86)).entries(EntryIngredients.of(AllItems.BLAZE_BURNER)));
+            widgets.add(createSlot(new Point(
+                bounds.x + 139,
+                bounds.y + 86
+            )).entries(EntryIngredients.of(AllItems.BLAZE_BURNER)));
         }
         if (!requiredHeat.testBlazeBurner(HeatLevel.KINDLED)) {
-            widgets.add(createSlot(new Point(bounds.x + 158, bounds.y + 86)).entries(EntryIngredients.of(AllItems.BLAZE_CAKE)));
+            widgets.add(createSlot(new Point(
+                bounds.x + 158,
+                bounds.y + 86
+            )).entries(EntryIngredients.of(AllItems.BLAZE_CAKE)));
         }
     }
 

@@ -58,8 +58,9 @@ public class MillstoneBlockEntity extends KineticBlockEntity implements Clearabl
     public void tick() {
         super.tick();
 
-        if (getSpeed() == 0)
+        if (getSpeed() == 0) {
             return;
+        }
         for (int i = 1, size = capability.getContainerSize(); i < size; i++) {
             ItemStack stack = capability.getItem(i);
             if (stack.getCount() == capability.getMaxStackSize(stack)) {
@@ -74,20 +75,23 @@ public class MillstoneBlockEntity extends KineticBlockEntity implements Clearabl
                 spawnParticles();
                 return;
             }
-            if (timer <= 0)
+            if (timer <= 0) {
                 process();
+            }
             return;
         } else if (level.isClientSide()) {
             return;
         }
 
         ItemStack stack = capability.getItem(0);
-        if (stack.isEmpty())
+        if (stack.isEmpty()) {
             return;
+        }
 
         SingleRecipeInput input = new SingleRecipeInput(stack);
         if (lastRecipe == null || !lastRecipe.matches(input, level)) {
-            Optional<RecipeHolder<MillingRecipe>> recipe = ((ServerLevel) level).recipeAccess().getRecipeFor(AllRecipeTypes.MILLING, input, level);
+            Optional<RecipeHolder<MillingRecipe>> recipe = ((ServerLevel) level).recipeAccess()
+                .getRecipeFor(AllRecipeTypes.MILLING, input, level);
             if (recipe.isEmpty()) {
                 timer = 100;
                 sendData();
@@ -119,9 +123,11 @@ public class MillstoneBlockEntity extends KineticBlockEntity implements Clearabl
         SingleRecipeInput input = new SingleRecipeInput(stack);
 
         if (lastRecipe == null || !lastRecipe.matches(input, level)) {
-            Optional<RecipeHolder<MillingRecipe>> recipe = ((ServerLevel) level).recipeAccess().getRecipeFor(AllRecipeTypes.MILLING, input, level);
-            if (recipe.isEmpty())
+            Optional<RecipeHolder<MillingRecipe>> recipe = ((ServerLevel) level).recipeAccess()
+                .getRecipeFor(AllRecipeTypes.MILLING, input, level);
+            if (recipe.isEmpty()) {
                 return;
+            }
             lastRecipe = recipe.get().value();
         }
 
@@ -148,10 +154,14 @@ public class MillstoneBlockEntity extends KineticBlockEntity implements Clearabl
 
     public void spawnParticles() {
         ItemStack stackInSlot = capability.getItem(0);
-        if (stackInSlot.isEmpty())
+        if (stackInSlot.isEmpty()) {
             return;
+        }
 
-        ItemParticleOption data = new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(stackInSlot));
+        ItemParticleOption data = new ItemParticleOption(
+            ParticleTypes.ITEM,
+            ItemStackTemplate.fromNonEmptyStack(stackInSlot)
+        );
         float angle = level.getRandom().nextFloat() * 360;
         Vec3 offset = new Vec3(0, 0, 0.5f);
         offset = VecHelper.rotate(offset, angle, Axis.Y);
@@ -182,9 +192,11 @@ public class MillstoneBlockEntity extends KineticBlockEntity implements Clearabl
 
     private boolean canProcess(ItemStack stack) {
         SingleRecipeInput input = new SingleRecipeInput(stack);
-        if (lastRecipe != null && lastRecipe.matches(input, level))
+        if (lastRecipe != null && lastRecipe.matches(input, level)) {
             return true;
-        Optional<RecipeHolder<MillingRecipe>> recipe = ((ServerLevel) level).recipeAccess().getRecipeFor(AllRecipeTypes.MILLING, input, level);
+        }
+        Optional<RecipeHolder<MillingRecipe>> recipe = ((ServerLevel) level).recipeAccess()
+            .getRecipeFor(AllRecipeTypes.MILLING, input, level);
         if (recipe.isEmpty()) {
             return false;
         }

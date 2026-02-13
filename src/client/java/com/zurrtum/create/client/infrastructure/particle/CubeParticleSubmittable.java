@@ -69,16 +69,33 @@ public class CubeParticleSubmittable implements SubmitNodeCollector.ParticleGrou
         }
         int i = particles * 24;
         try (ByteBufferBuilder bufferAllocator = ByteBufferBuilder.exactlySized(i * DefaultVertexFormat.PARTICLE.getVertexSize())) {
-            BufferBuilder bufferBuilder = new BufferBuilder(bufferAllocator, VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+            BufferBuilder bufferBuilder = new BufferBuilder(
+                bufferAllocator,
+                VertexFormat.Mode.QUADS,
+                DefaultVertexFormat.PARTICLE
+            );
             vertices.render((x, y, z, scale, color) -> drawFace(bufferBuilder, x, y, z, scale, color));
-            QuadParticleRenderState.PreparedLayer layer = new QuadParticleRenderState.PreparedLayer(0, vertices.nextVertexIndex() * 36);
+            QuadParticleRenderState.PreparedLayer layer = new QuadParticleRenderState.PreparedLayer(
+                0,
+                vertices.nextVertexIndex() * 36
+            );
             MeshData builtBuffer = bufferBuilder.build();
             if (builtBuffer != null) {
                 cache.write(builtBuffer.vertexBuffer());
-                RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS).getBuffer(builtBuffer.drawState().indexCount());
+                RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS)
+                    .getBuffer(builtBuffer.drawState().indexCount());
                 GpuBufferSlice gpuBufferSlice = RenderSystem.getDynamicUniforms()
-                    .writeTransform(RenderSystem.getModelViewMatrix(), new Vector4f(1.0F, 1.0F, 1.0F, 1.0F), new Vector3f(), new Matrix4f());
-                return new PreparedBuffers(builtBuffer.drawState().indexCount(), gpuBufferSlice, Map.of(CubeParticleRenderer.RENDER_TYPE, layer));
+                    .writeTransform(
+                        RenderSystem.getModelViewMatrix(),
+                        new Vector4f(1.0F, 1.0F, 1.0F, 1.0F),
+                        new Vector3f(),
+                        new Matrix4f()
+                    );
+                return new PreparedBuffers(
+                    builtBuffer.drawState().indexCount(),
+                    gpuBufferSlice,
+                    Map.of(CubeParticleRenderer.RENDER_TYPE, layer)
+                );
             }
         }
         return null;
@@ -97,12 +114,18 @@ public class CubeParticleSubmittable implements SubmitNodeCollector.ParticleGrou
     }
 
     @Override
-    public void render(PreparedBuffers buffers, ParticleFeatureRenderer.ParticleBufferCache cache, RenderPass renderPass, TextureManager manager) {
+    public void render(
+        PreparedBuffers buffers,
+        ParticleFeatureRenderer.ParticleBufferCache cache,
+        RenderPass renderPass,
+        TextureManager manager
+    ) {
         RenderSystem.AutoStorageIndexBuffer shapeIndexBuffer = RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
         renderPass.setVertexBuffer(0, cache.get());
         renderPass.setIndexBuffer(shapeIndexBuffer.getBuffer(buffers.indexCount()), shapeIndexBuffer.type());
         renderPass.setUniform("DynamicTransforms", buffers.dynamicTransforms());
-        for (Map.Entry<SingleQuadParticle.Layer, QuadParticleRenderState.PreparedLayer> entry : buffers.layers().entrySet()) {
+        for (Map.Entry<SingleQuadParticle.Layer, QuadParticleRenderState.PreparedLayer> entry : buffers.layers()
+            .entrySet()) {
             renderPass.setPipeline(entry.getKey().pipeline());
             AbstractTexture texture = manager.getTexture(entry.getKey().textureAtlasLocation());
             renderPass.bindTexture("Sampler0", texture.getTextureView(), texture.getSampler());

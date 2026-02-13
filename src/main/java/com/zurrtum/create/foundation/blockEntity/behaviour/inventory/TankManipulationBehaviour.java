@@ -24,15 +24,20 @@ public class TankManipulationBehaviour extends CapManipulationBehaviourBase<Flui
         this(OBSERVE, be, target);
     }
 
-    private TankManipulationBehaviour(BehaviourType<TankManipulationBehaviour> type, SmartBlockEntity be, InterfaceProvider target) {
+    private TankManipulationBehaviour(
+        BehaviourType<TankManipulationBehaviour> type,
+        SmartBlockEntity be,
+        InterfaceProvider target
+    ) {
         super(be, target);
         behaviourType = type;
     }
 
     public FluidStack extractAny() {
         FluidInventory inventory = getInventory();
-        if (inventory == null)
+        if (inventory == null) {
             return FluidStack.EMPTY;
+        }
         Predicate<FluidStack> filterTest = getFilterTest(Predicates.alwaysTrue());
         if (simulateNext) {
             return inventory.count(filterTest);
@@ -44,14 +49,20 @@ public class TankManipulationBehaviour extends CapManipulationBehaviourBase<Flui
     protected Predicate<FluidStack> getFilterTest(Predicate<FluidStack> customFilter) {
         Predicate<FluidStack> test = customFilter;
         ServerFilteringBehaviour filter = blockEntity.getBehaviour(ServerFilteringBehaviour.TYPE);
-        if (filter != null)
+        if (filter != null) {
             test = customFilter.and(filter::test);
+        }
         return test;
     }
 
     @Override
     @Nullable
-    protected FluidInventory getCapability(Level world, BlockPos pos, @Nullable BlockEntity blockEntity, @Nullable Direction side) {
+    protected FluidInventory getCapability(
+        Level world,
+        BlockPos pos,
+        @Nullable BlockEntity blockEntity,
+        @Nullable Direction side
+    ) {
         return FluidHelper.getFluidInventory(world, pos, null, blockEntity, side);
     }
 

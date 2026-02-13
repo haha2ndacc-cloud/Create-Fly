@@ -19,10 +19,12 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 public record AddedByAttribute(String modId) implements ItemAttribute {
-    public static final MapCodec<AddedByAttribute> CODEC = Codec.STRING.xmap(AddedByAttribute::new, AddedByAttribute::modId).fieldOf("value");
-
-    public static final StreamCodec<ByteBuf, AddedByAttribute> PACKET_CODEC = ByteBufCodecs.STRING_UTF8.map(
+    public static final MapCodec<AddedByAttribute> CODEC = Codec.STRING.xmap(
         AddedByAttribute::new,
+        AddedByAttribute::modId
+    ).fieldOf("value");
+
+    public static final StreamCodec<ByteBuf, AddedByAttribute> PACKET_CODEC = ByteBufCodecs.STRING_UTF8.map(AddedByAttribute::new,
         AddedByAttribute::modId
     );
 

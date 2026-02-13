@@ -243,7 +243,14 @@ public class SchematicChunkSource extends ChunkSource {
             }
 
             @Override
-            public void playSound(@Nullable Entity pPlayer, Entity pEntity, SoundEvent pEvent, SoundSource pCategory, float pVolume, float pPitch) {
+            public void playSound(
+                @Nullable Entity pPlayer,
+                Entity pEntity,
+                SoundEvent pEvent,
+                SoundSource pCategory,
+                float pVolume,
+                float pPitch
+            ) {
             }
 
             @Override

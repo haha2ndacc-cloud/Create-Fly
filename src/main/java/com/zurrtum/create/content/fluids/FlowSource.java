@@ -26,9 +26,9 @@ public abstract class FlowSource {
     }
 
     public FluidStack provideFluid(Predicate<FluidStack> extractionPredicate) {
-        return Optional.ofNullable(provideHandler())
-            .flatMap(tank -> tank.stream(location.getOppositeFace()).filter(stack -> !stack.isEmpty() && extractionPredicate.test(stack)).findFirst()
-                .map(stack -> stack.copyWithAmount(1))).orElse(FluidStack.EMPTY);
+        return Optional.ofNullable(provideHandler()).flatMap(tank -> tank.stream(location.getOppositeFace())
+            .filter(stack -> !stack.isEmpty() && extractionPredicate.test(stack)).findFirst()
+            .map(stack -> stack.copyWithAmount(1))).orElse(FluidStack.EMPTY);
     }
 
     // Layer III. PFIs need active attention to prevent them from disengaging early
@@ -90,22 +90,25 @@ public abstract class FlowSource {
 
         @Override
         public void manageSource(Level world, BlockEntity networkBE) {
-            if (cached != null && cached.get() != null && !cached.get().blockEntity.isRemoved())
+            if (cached != null && cached.get() != null && !cached.get().blockEntity.isRemoved()) {
                 return;
+            }
             cached = null;
             FluidTransportBehaviour fluidTransportBehaviour = BlockEntityBehaviour.get(
                 world,
                 location.getConnectedPos(),
                 FluidTransportBehaviour.TYPE
             );
-            if (fluidTransportBehaviour != null)
+            if (fluidTransportBehaviour != null) {
                 cached = new WeakReference<>(fluidTransportBehaviour);
+            }
         }
 
         @Override
         public FluidStack provideFluid(Predicate<FluidStack> extractionPredicate) {
-            if (cached == null || cached.get() == null)
+            if (cached == null || cached.get() == null) {
                 return FluidStack.EMPTY;
+            }
             FluidTransportBehaviour behaviour = cached.get();
             FluidStack providedOutwardFluid = behaviour.getProvidedOutwardFluid(location.getOppositeFace());
             return extractionPredicate.test(providedOutwardFluid) ? providedOutwardFluid : FluidStack.EMPTY;

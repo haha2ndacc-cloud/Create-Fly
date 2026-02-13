@@ -40,8 +40,9 @@ public class DeferralBehaviour extends BlockEntityBehaviour<SmartBlockEntity> {
     @Override
     public void tick() {
         super.tick();
-        if (needsUpdate && callback.get())
+        if (needsUpdate && callback.get()) {
             needsUpdate = false;
+        }
     }
 
     public void scheduleUpdate() {

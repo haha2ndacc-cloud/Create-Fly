@@ -59,7 +59,13 @@ public class DisplayLinkBlock extends WrenchableDirectionalBlock implements IBE<
     }
 
     @Override
-    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
+    public void setPlacedBy(
+        Level pLevel,
+        BlockPos pPos,
+        BlockState pState,
+        @Nullable LivingEntity pPlacer,
+        ItemStack pStack
+    ) {
         super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
         AdvancementBehaviour.setPlacedBy(pLevel, pPos, pPlacer);
     }
@@ -77,37 +83,55 @@ public class DisplayLinkBlock extends WrenchableDirectionalBlock implements IBE<
     ) {
         forEachAttachedGatherer(
             level, pos, dgte -> {
-                if (type.isInstance(dgte.activeSource))
+                if (type.isInstance(dgte.activeSource)) {
                     callback.accept(dgte, (T) dgte.activeSource);
+                }
             }
         );
     }
 
-    private static void forEachAttachedGatherer(LevelAccessor level, BlockPos pos, Consumer<DisplayLinkBlockEntity> callback) {
+    private static void forEachAttachedGatherer(
+        LevelAccessor level,
+        BlockPos pos,
+        Consumer<DisplayLinkBlockEntity> callback
+    ) {
         for (Direction d : Iterate.directions) {
             BlockPos offsetPos = pos.relative(d);
             BlockState blockState = level.getBlockState(offsetPos);
-            if (!blockState.is(AllBlocks.DISPLAY_LINK))
+            if (!blockState.is(AllBlocks.DISPLAY_LINK)) {
                 continue;
+            }
 
             BlockEntity blockEntity = level.getBlockEntity(offsetPos);
-            if (!(blockEntity instanceof DisplayLinkBlockEntity dlbe))
+            if (!(blockEntity instanceof DisplayLinkBlockEntity dlbe)) {
                 continue;
-            if (dlbe.activeSource == null)
+            }
+            if (dlbe.activeSource == null) {
                 continue;
-            if (dlbe.getDirection() != d.getOpposite())
+            }
+            if (dlbe.getDirection() != d.getOpposite()) {
                 continue;
+            }
 
             callback.accept(dlbe);
         }
     }
 
     @Override
-    public void neighborUpdate(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-        if (worldIn.isClientSide())
+    public void neighborUpdate(
+        BlockState state,
+        Level worldIn,
+        BlockPos pos,
+        Block blockIn,
+        BlockPos fromPos,
+        boolean isMoving
+    ) {
+        if (worldIn.isClientSide()) {
             return;
-        if (fromPos.equals(pos.relative(state.getValue(FACING).getOpposite())))
+        }
+        if (fromPos.equals(pos.relative(state.getValue(FACING).getOpposite()))) {
             sendToGatherers(worldIn, fromPos, (dlte, p) -> dlte.tickSource(), RedstonePowerDisplaySource.class);
+        }
     }
 
     @Override
@@ -119,25 +143,29 @@ public class DisplayLinkBlock extends WrenchableDirectionalBlock implements IBE<
         @Nullable Orientation wireOrientation,
         boolean isMoving
     ) {
-        if (worldIn.isClientSide())
+        if (worldIn.isClientSide()) {
             return;
+        }
 
         boolean powered = shouldBePowered(state, worldIn, pos);
         boolean previouslyPowered = state.getValue(POWERED);
         if (previouslyPowered != powered) {
             worldIn.setBlock(pos, state.cycle(POWERED), Block.UPDATE_CLIENTS);
-            if (!powered)
+            if (!powered) {
                 withBlockEntityDo(worldIn, pos, DisplayLinkBlockEntity::onNoLongerPowered);
+            }
         }
     }
 
     private boolean shouldBePowered(BlockState state, Level worldIn, BlockPos pos) {
         boolean powered = false;
         for (Direction d : Iterate.directions) {
-            if (d.getOpposite() == state.getValue(FACING))
+            if (d.getOpposite() == state.getValue(FACING)) {
                 continue;
-            if (worldIn.getSignal(pos.relative(d), d) == 0)
+            }
+            if (worldIn.getSignal(pos.relative(d), d) == 0) {
                 continue;
+            }
             powered = true;
             break;
         }
@@ -150,11 +178,19 @@ public class DisplayLinkBlock extends WrenchableDirectionalBlock implements IBE<
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (player == null)
+    protected InteractionResult useWithoutItem(
+        BlockState state,
+        Level level,
+        BlockPos pos,
+        Player player,
+        BlockHitResult hitResult
+    ) {
+        if (player == null) {
             return InteractionResult.PASS;
-        if (player.isShiftKeyDown())
+        }
+        if (player.isShiftKeyDown()) {
             return InteractionResult.PASS;
+        }
         if (level.isClientSide()) {
             withBlockEntityDo(level, pos, be -> AllClientHandle.INSTANCE.openDisplayLinkScreen(be, player));
         }

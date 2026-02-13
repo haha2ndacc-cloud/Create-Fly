@@ -33,7 +33,13 @@ public class BearingRenderer<T extends KineticBlockEntity & IBearingBlockEntity>
     }
 
     @Override
-    public void extractRenderState(T be, BearingRenderState state, float tickProgress, Vec3 cameraPos, @Nullable CrumblingOverlay crumblingOverlay) {
+    public void extractRenderState(
+        T be,
+        BearingRenderState state,
+        float tickProgress,
+        Vec3 cameraPos,
+        @Nullable CrumblingOverlay crumblingOverlay
+    ) {
         super.extractRenderState(be, state, tickProgress, cameraPos, crumblingOverlay);
         if (state.support) {
             return;
@@ -50,7 +56,12 @@ public class BearingRenderer<T extends KineticBlockEntity & IBearingBlockEntity>
     }
 
     @Override
-    public void updateBaseRenderState(T be, BearingRenderState state, Level world, @Nullable CrumblingOverlay crumblingOverlay) {
+    public void updateBaseRenderState(
+        T be,
+        BearingRenderState state,
+        Level world,
+        @Nullable CrumblingOverlay crumblingOverlay
+    ) {
         super.updateBaseRenderState(be, state, world, crumblingOverlay);
         state.facing = state.blockState.getValue(BlockStateProperties.FACING);
     }

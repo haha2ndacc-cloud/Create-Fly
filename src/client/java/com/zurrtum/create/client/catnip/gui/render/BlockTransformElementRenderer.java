@@ -69,14 +69,17 @@ public class BlockTransformElementRenderer extends PictureInPictureRenderer<Bloc
             Minecraft mc = Minecraft.getInstance();
             SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullDark();
             world.blockState(block.state());
-            mc.getBlockRenderer().renderBatched(block.state(), BlockPos.ZERO, world, matrices, output, false, block.parts());
+            mc.getBlockRenderer()
+                .renderBatched(block.state(), BlockPos.ZERO, world, matrices, output, false, block.parts());
             bufferSource.endBatch();
             matrices.popPose();
             texture.clear();
         }
         state.submitBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-            TextureSetup.singleTexture(texture.textureView(), RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)),
+            TextureSetup.singleTexture(texture.textureView(),
+                RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)
+            ),
             block.pose(),
             block.x0(),
             block.y0(),

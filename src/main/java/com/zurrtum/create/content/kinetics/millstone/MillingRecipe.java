@@ -17,7 +17,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 
 import java.util.List;
 
-public record MillingRecipe(int time, List<ProcessingOutput> results, Ingredient ingredient) implements CreateSingleStackRollableRecipe, TimedRecipe {
+public record MillingRecipe(int time, List<ProcessingOutput> results,
+                            Ingredient ingredient) implements CreateSingleStackRollableRecipe, TimedRecipe {
     public static final MapCodec<MillingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
         Codec.INT.fieldOf("processing_time").forGetter(MillingRecipe::time),
         ProcessingOutput.CODEC.listOf(1, 4).fieldOf("results").forGetter(MillingRecipe::results),

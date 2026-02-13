@@ -19,7 +19,10 @@ import java.util.stream.StreamSupport;
 public interface FluidInventory extends Clearable, Iterable<FluidStack> {
     Hash.Strategy<FluidStack> FLUID_STACK_HASH_STRATEGY = new Hash.Strategy<>() {
         public boolean equals(@Nullable FluidStack stack, @Nullable FluidStack other) {
-            return stack == other || stack != null && other != null && FluidStack.areFluidsAndComponentsEqual(stack, other);
+            return stack == other || stack != null && other != null && FluidStack.areFluidsAndComponentsEqual(
+                stack,
+                other
+            );
         }
 
         public int hashCode(FluidStack stack) {
@@ -223,7 +226,8 @@ public interface FluidInventory extends Clearable, Iterable<FluidStack> {
             int amount = stack.getAmount();
             return countSpace(stack, amount) == amount;
         }
-        Object2IntLinkedOpenCustomHashMap<FluidStack> map = new Object2IntLinkedOpenCustomHashMap<>(FLUID_STACK_HASH_STRATEGY);
+        Object2IntLinkedOpenCustomHashMap<FluidStack> map = new Object2IntLinkedOpenCustomHashMap<>(
+            FLUID_STACK_HASH_STRATEGY);
         for (FluidStack stack : stacks) {
             map.merge(stack, stack.getAmount(), Integer::sum);
         }
@@ -566,7 +570,8 @@ public interface FluidInventory extends Clearable, Iterable<FluidStack> {
             }
             return List.of(stack.directCopy(amount - insert));
         }
-        Object2IntLinkedOpenCustomHashMap<FluidStack> map = new Object2IntLinkedOpenCustomHashMap<>(FLUID_STACK_HASH_STRATEGY);
+        Object2IntLinkedOpenCustomHashMap<FluidStack> map = new Object2IntLinkedOpenCustomHashMap<>(
+            FLUID_STACK_HASH_STRATEGY);
         for (FluidStack stack : stacks) {
             map.merge(stack, stack.getAmount(), Integer::sum);
         }
@@ -886,7 +891,8 @@ public interface FluidInventory extends Clearable, Iterable<FluidStack> {
         if (listSize == 1) {
             return preciseInsert(stacks.getFirst());
         }
-        Object2IntLinkedOpenCustomHashMap<FluidStack> map = new Object2IntLinkedOpenCustomHashMap<>(FLUID_STACK_HASH_STRATEGY);
+        Object2IntLinkedOpenCustomHashMap<FluidStack> map = new Object2IntLinkedOpenCustomHashMap<>(
+            FLUID_STACK_HASH_STRATEGY);
         for (FluidStack stack : stacks) {
             map.merge(stack, stack.getAmount(), Integer::sum);
         }

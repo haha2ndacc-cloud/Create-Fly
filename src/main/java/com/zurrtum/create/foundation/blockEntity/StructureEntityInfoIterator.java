@@ -14,7 +14,11 @@ public class StructureEntityInfoIterator implements Iterator<StructureEntityInfo
     private @Nullable Iterator<StructureEntityInfo> iterator;
     private @Nullable StructureEntityInfo next;
 
-    public StructureEntityInfoIterator(Level world, List<EntityControlStructureProcessor> controls, Iterator<StructureEntityInfo> iterator) {
+    public StructureEntityInfoIterator(
+        Level world,
+        List<EntityControlStructureProcessor> controls,
+        Iterator<StructureEntityInfo> iterator
+    ) {
         this.world = world;
         this.controls = controls;
         this.iterator = iterator;

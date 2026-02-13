@@ -45,11 +45,13 @@ public class ContraptionControlsBlockEntity extends SmartBlockEntity implements 
     }
 
     public void updatePoweredState() {
-        if (level.isClientSide())
+        if (level.isClientSide()) {
             return;
+        }
         boolean powered = level.hasNeighborSignal(worldPosition);
-        if (this.powered == powered)
+        if (this.powered == powered) {
             return;
+        }
         this.powered = powered;
         this.disabled = powered;
         notifyUpdate();
@@ -64,8 +66,9 @@ public class ContraptionControlsBlockEntity extends SmartBlockEntity implements 
     @Override
     public void tick() {
         super.tick();
-        if (!level.isClientSide())
+        if (!level.isClientSide()) {
             return;
+        }
         tickAnimations();
         int value = disabled ? 4 * 45 : 0;
         indicator.setValue(value);
@@ -105,12 +108,10 @@ public class ContraptionControlsBlockEntity extends SmartBlockEntity implements 
             return;
         }
 
-        player.sendOverlayMessage(
-            Component.translatable(
-                "create.contraption.controls.specific_actor_toggle",
-                filter.getHoverName().getString(),
-                state
-            )
-        );
+        player.sendOverlayMessage(Component.translatable(
+            "create.contraption.controls.specific_actor_toggle",
+            filter.getHoverName().getString(),
+            state
+        ));
     }
 }

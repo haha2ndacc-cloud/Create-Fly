@@ -34,19 +34,33 @@ public class ControlsHandler {
         currentlyPressed.clear();
     }
 
-    public static void startControlling(LocalPlayer player, AbstractContraptionEntity entity, BlockPos controllerLocalPos) {
+    public static void startControlling(
+        LocalPlayer player,
+        AbstractContraptionEntity entity,
+        BlockPos controllerLocalPos
+    ) {
         entityRef = new WeakReference<>(entity);
         controlsPos = controllerLocalPos;
 
-        player.sendOverlayMessage(CreateLang.translateDirect("contraption.controls.start_controlling", entity.getContraptionName()));
+        player.sendOverlayMessage(CreateLang.translateDirect(
+            "contraption.controls.start_controlling",
+            entity.getContraptionName()
+        ));
     }
 
     public static void stopControlling(LocalPlayer player) {
         ControlsUtil.getControls().forEach(kb -> kb.setDown(ControlsUtil.isActuallyPressed(kb)));
         AbstractContraptionEntity abstractContraptionEntity = entityRef.get();
 
-        if (!currentlyPressed.isEmpty() && abstractContraptionEntity != null && controlsPos != null)
-            player.connection.send(new ControlsInputPacket(currentlyPressed, false, abstractContraptionEntity.getId(), controlsPos, false));
+        if (!currentlyPressed.isEmpty() && abstractContraptionEntity != null && controlsPos != null) {
+            player.connection.send(new ControlsInputPacket(
+                currentlyPressed,
+                false,
+                abstractContraptionEntity.getId(),
+                controlsPos,
+                false
+            ));
+        }
 
         packetCooldown = 0;
         entityRef = new WeakReference<>(null);
@@ -58,12 +72,17 @@ public class ControlsHandler {
 
     public static void tick(Minecraft mc) {
         AbstractContraptionEntity entity = entityRef.get();
-        if (entity == null)
+        if (entity == null) {
             return;
-        if (packetCooldown > 0)
+        }
+        if (packetCooldown > 0) {
             packetCooldown--;
+        }
 
-        if (controlsPos != null && (entity.isRemoved() || InputConstants.isKeyDown(mc.getWindow(), GLFW.GLFW_KEY_ESCAPE))) {
+        if (controlsPos != null && (entity.isRemoved() || InputConstants.isKeyDown(
+            mc.getWindow(),
+            GLFW.GLFW_KEY_ESCAPE
+        ))) {
             BlockPos pos = controlsPos;
             stopControlling(mc.player);
             mc.player.connection.send(new ControlsInputPacket(currentlyPressed, false, entity.getId(), pos, true));
@@ -73,8 +92,9 @@ public class ControlsHandler {
         List<KeyMapping> controls = ControlsUtil.getControls();
         Collection<Integer> pressedKeys = new HashSet<>();
         for (int i = 0; i < controls.size(); i++) {
-            if (ControlsUtil.isActuallyPressed(controls.get(i)))
+            if (ControlsUtil.isActuallyPressed(controls.get(i))) {
                 pressedKeys.add(i);
+            }
         }
 
         Collection<Integer> newKeys = new HashSet<>(pressedKeys);

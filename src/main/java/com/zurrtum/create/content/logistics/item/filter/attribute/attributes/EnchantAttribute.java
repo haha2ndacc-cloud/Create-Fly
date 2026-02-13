@@ -17,11 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record EnchantAttribute(@Nullable Holder<Enchantment> enchantment) implements ItemAttribute {
-    public static final MapCodec<EnchantAttribute> CODEC = Enchantment.CODEC.xmap(EnchantAttribute::new, EnchantAttribute::enchantment)
-        .fieldOf("value");
-
-    public static final StreamCodec<RegistryFriendlyByteBuf, EnchantAttribute> PACKET_CODEC = Enchantment.STREAM_CODEC.map(
+    public static final MapCodec<EnchantAttribute> CODEC = Enchantment.CODEC.xmap(
         EnchantAttribute::new,
+        EnchantAttribute::enchantment
+    ).fieldOf("value");
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, EnchantAttribute> PACKET_CODEC = Enchantment.STREAM_CODEC.map(EnchantAttribute::new,
         EnchantAttribute::enchantment
     );
 
@@ -38,8 +39,9 @@ public record EnchantAttribute(@Nullable Holder<Enchantment> enchantment) implem
     @Override
     public Object[] getTranslationParameters() {
         String parameter = "";
-        if (enchantment != null)
+        if (enchantment != null) {
             parameter = enchantment.value().description().getString();
+        }
         return new Object[]{parameter};
     }
 

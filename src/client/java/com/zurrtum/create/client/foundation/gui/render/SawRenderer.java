@@ -46,7 +46,8 @@ public class SawRenderer extends PictureInPictureRenderer<SawRenderState> {
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
 
         matrices.pushPose();
-        blockState = AllBlocks.SHAFT.defaultBlockState().setValue(BlockStateProperties.AXIS, net.minecraft.core.Direction.Axis.X);
+        blockState = AllBlocks.SHAFT.defaultBlockState()
+            .setValue(BlockStateProperties.AXIS, net.minecraft.core.Direction.Axis.X);
         world.blockState(blockState);
         parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
         matrices.translate(0.5f, 0.5f, 0.5f);
@@ -67,15 +68,7 @@ public class SawRenderer extends PictureInPictureRenderer<SawRenderState> {
         matrices.mulPose(Axis.ZP.rotationDegrees(-90));
         matrices.mulPose(Axis.YP.rotationDegrees(-90));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(
-            blockState,
-            BlockPos.ZERO,
-            world,
-            matrices,
-            output,
-            false,
-            parts
-        );
+        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
     }
 
     public static float getCurrentAngle() {

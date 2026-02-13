@@ -77,7 +77,11 @@ public interface AutoCompactingDisplay {
             )
         );
 
-        public ShapelessDisplay(List<EntryIngredient> input, List<EntryIngredient> output, Optional<Identifier> location) {
+        public ShapelessDisplay(
+            List<EntryIngredient> input,
+            List<EntryIngredient> output,
+            Optional<Identifier> location
+        ) {
             super(input, output, location);
         }
 
@@ -90,7 +94,10 @@ public interface AutoCompactingDisplay {
         }
 
         @Override
-        public List<InputIngredient<EntryStack<?>>> getInputIngredients(@Nullable AbstractContainerMenu menu, @Nullable Player player) {
+        public List<InputIngredient<EntryStack<?>>> getInputIngredients(
+            @Nullable AbstractContainerMenu menu,
+            @Nullable Player player
+        ) {
             return CollectionUtils.mapIndexed(getInputEntries(), InputIngredient::of);
         }
 
@@ -130,7 +137,10 @@ public interface AutoCompactingDisplay {
 
         public ShapedDisplay(RecipeHolder<ShapedRecipe> recipe) {
             super(
-                CollectionUtils.map(recipe.value().getIngredients(), opt -> opt.map(EntryIngredients::ofIngredient).orElse(EntryIngredient.empty())),
+                CollectionUtils.map(
+                    recipe.value().getIngredients(),
+                    opt -> opt.map(EntryIngredients::ofIngredient).orElse(EntryIngredient.empty())
+                ),
                 List.of(EntryIngredients.of(recipe.value().result)),
                 Optional.of(recipe.id().identifier()),
                 recipe.value().getWidth(),
@@ -139,12 +149,21 @@ public interface AutoCompactingDisplay {
         }
 
         @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-        public ShapedDisplay(List<EntryIngredient> input, List<EntryIngredient> output, Optional<Identifier> location, int width, int height) {
+        public ShapedDisplay(
+            List<EntryIngredient> input,
+            List<EntryIngredient> output,
+            Optional<Identifier> location,
+            int width,
+            int height
+        ) {
             super(input, output, location, width, height);
         }
 
         @Override
-        public List<InputIngredient<EntryStack<?>>> getInputIngredients(@Nullable AbstractContainerMenu menu, @Nullable Player player) {
+        public List<InputIngredient<EntryStack<?>>> getInputIngredients(
+            @Nullable AbstractContainerMenu menu,
+            @Nullable Player player
+        ) {
             return CollectionUtils.mapIndexed(getInputEntries(), InputIngredient::of);
         }
 
@@ -165,7 +184,8 @@ public interface AutoCompactingDisplay {
             RecordCodecBuilder.mapCodec(instance -> instance.group(
                 EntryIngredient.codec().listOf().fieldOf("inputs").forGetter(Shaped::getInputEntries),
                 EntryIngredient.codec().listOf().fieldOf("outputs").forGetter(Shaped::getOutputEntries),
-                Codec.INT.xmap(RecipeDisplayId::new, RecipeDisplayId::index).optionalFieldOf("id").forGetter(Shaped::recipeDisplayId),
+                Codec.INT.xmap(RecipeDisplayId::new, RecipeDisplayId::index).optionalFieldOf("id")
+                    .forGetter(Shaped::recipeDisplayId),
                 Codec.INT.fieldOf("width").forGetter(Shaped::getWidth),
                 Codec.INT.fieldOf("height").forGetter(Shaped::getHeight)
             ).apply(instance, CraftingDisplayShaped::new)), StreamCodec.composite(
@@ -198,7 +218,10 @@ public interface AutoCompactingDisplay {
         }
 
         @Override
-        public List<InputIngredient<EntryStack<?>>> getInputIngredients(@Nullable AbstractContainerMenu menu, @Nullable Player player) {
+        public List<InputIngredient<EntryStack<?>>> getInputIngredients(
+            @Nullable AbstractContainerMenu menu,
+            @Nullable Player player
+        ) {
             return CollectionUtils.mapIndexed(getInputEntries(), InputIngredient::of);
         }
 
@@ -219,7 +242,8 @@ public interface AutoCompactingDisplay {
             RecordCodecBuilder.mapCodec(instance -> instance.group(
                 EntryIngredient.codec().listOf().fieldOf("inputs").forGetter(Shapeless::getInputEntries),
                 EntryIngredient.codec().listOf().fieldOf("outputs").forGetter(Shapeless::getOutputEntries),
-                Codec.INT.xmap(RecipeDisplayId::new, RecipeDisplayId::index).optionalFieldOf("id").forGetter(Shapeless::recipeDisplayId)
+                Codec.INT.xmap(RecipeDisplayId::new, RecipeDisplayId::index).optionalFieldOf("id")
+                    .forGetter(Shapeless::recipeDisplayId)
             ).apply(instance, CraftingDisplayShapeless::new)), StreamCodec.composite(
                 EntryIngredient.streamCodec().apply(ByteBufCodecs.list()),
                 Shapeless::getInputEntries,
@@ -235,12 +259,19 @@ public interface AutoCompactingDisplay {
             super(recipe, Optional.empty());
         }
 
-        public CraftingDisplayShapeless(List<EntryIngredient> inputs, List<EntryIngredient> outputs, Optional<RecipeDisplayId> id) {
+        public CraftingDisplayShapeless(
+            List<EntryIngredient> inputs,
+            List<EntryIngredient> outputs,
+            Optional<RecipeDisplayId> id
+        ) {
             super(inputs, outputs, id);
         }
 
         @Override
-        public List<InputIngredient<EntryStack<?>>> getInputIngredients(@Nullable AbstractContainerMenu menu, @Nullable Player player) {
+        public List<InputIngredient<EntryStack<?>>> getInputIngredients(
+            @Nullable AbstractContainerMenu menu,
+            @Nullable Player player
+        ) {
             return CollectionUtils.mapIndexed(getInputEntries(), InputIngredient::of);
         }
 

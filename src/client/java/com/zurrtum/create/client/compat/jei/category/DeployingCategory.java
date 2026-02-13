@@ -74,7 +74,11 @@ public class DeployingCategory extends CreateCategory<RecipeHolder<? extends Ite
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<? extends ItemApplicationRecipe> entry, IFocusGroup focuses) {
+    public void setRecipe(
+        IRecipeLayoutBuilder builder,
+        RecipeHolder<? extends ItemApplicationRecipe> entry,
+        IFocusGroup focuses
+    ) {
         ItemApplicationRecipe recipe = entry.value();
         builder.addInputSlot(51, 5).setBackground(SLOT, -1, -1).add(recipe.ingredient());
         builder.addInputSlot(27, 51).setBackground(SLOT, -1, -1).add(recipe.target());
@@ -91,6 +95,10 @@ public class DeployingCategory extends CreateCategory<RecipeHolder<? extends Ite
     ) {
         AllGuiTextures.JEI_SHADOW.render(graphics, 62, 57);
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 126, 29);
-        graphics.guiRenderState.submitPicturesInPictureState(new DeployerRenderState(new Matrix3x2f(graphics.pose()), 75, -10));
+        graphics.guiRenderState.submitPicturesInPictureState(new DeployerRenderState(
+            new Matrix3x2f(graphics.pose()),
+            75,
+            -10
+        ));
     }
 }

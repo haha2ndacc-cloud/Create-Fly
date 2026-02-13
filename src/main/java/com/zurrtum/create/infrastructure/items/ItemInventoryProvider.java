@@ -55,12 +55,19 @@ public interface ItemInventoryProvider<T extends SmartBlockEntity> extends World
             }
         }
         Class<T> expectedClass = getBlockEntityClass();
-        if (!expectedClass.isInstance(blockEntity))
+        if (!expectedClass.isInstance(blockEntity)) {
             return null;
+        }
         return getInventory(world, pos, state, (T) blockEntity, context);
     }
 
     Class<T> getBlockEntityClass();
 
-    @Nullable Container getInventory(LevelAccessor world, BlockPos pos, BlockState state, T blockEntity, @Nullable Direction context);
+    @Nullable Container getInventory(
+        LevelAccessor world,
+        BlockPos pos,
+        BlockState state,
+        T blockEntity,
+        @Nullable Direction context
+    );
 }

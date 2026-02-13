@@ -23,10 +23,13 @@ public class FetchPackagesInstructionRender extends TextScheduleInstructionRende
     @Override
     public List<Component> getTitleAs(FetchPackagesInstruction input, String type) {
         return ImmutableList.of(
-            CreateLang.translate("schedule.instruction.package_retrieval.summary").style(ChatFormatting.GOLD).component(),
+            CreateLang.translate("schedule.instruction.package_retrieval.summary").style(ChatFormatting.GOLD)
+                .component(),
             CreateLang.translateDirect("generic.in_quotes", Component.literal(input.getLabelText())),
-            CreateLang.translateDirect("schedule.instruction.package_retrieval.summary_1").withStyle(ChatFormatting.GRAY),
-            CreateLang.translateDirect("schedule.instruction.package_retrieval.summary_2").withStyle(ChatFormatting.GRAY)
+            CreateLang.translateDirect("schedule.instruction.package_retrieval.summary_1")
+                .withStyle(ChatFormatting.GRAY),
+            CreateLang.translateDirect("schedule.instruction.package_retrieval.summary_2")
+                .withStyle(ChatFormatting.GRAY)
         );
     }
 
@@ -40,8 +43,10 @@ public class FetchPackagesInstructionRender extends TextScheduleInstructionRende
         return ImmutableList.of(
             CreateLang.translateDirect("schedule.instruction.address_filter_edit_box"),
             CreateLang.translateDirect("schedule.instruction.address_filter_edit_box_1").withStyle(ChatFormatting.GRAY),
-            CreateLang.translateDirect("schedule.instruction.address_filter_edit_box_2").withStyle(ChatFormatting.DARK_GRAY),
-            CreateLang.translateDirect("schedule.instruction.address_filter_edit_box_3").withStyle(ChatFormatting.DARK_GRAY)
+            CreateLang.translateDirect("schedule.instruction.address_filter_edit_box_2")
+                .withStyle(ChatFormatting.DARK_GRAY),
+            CreateLang.translateDirect("schedule.instruction.address_filter_edit_box_3")
+                .withStyle(ChatFormatting.DARK_GRAY)
         );
     }
 

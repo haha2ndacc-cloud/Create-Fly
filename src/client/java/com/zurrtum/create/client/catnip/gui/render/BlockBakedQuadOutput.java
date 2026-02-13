@@ -10,7 +10,14 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 
 public record BlockBakedQuadOutput(BufferSource bufferSource) implements BakedQuadOutput {
     @Override
-    public void put(PoseStack.Pose pose, BakedQuad quad, QuadBrightness brightness, int color, QuadLightmapCoords lightmapCoord, int overlayCoords) {
+    public void put(
+        PoseStack.Pose pose,
+        BakedQuad quad,
+        QuadBrightness brightness,
+        int color,
+        QuadLightmapCoords lightmapCoord,
+        int overlayCoords
+    ) {
         bufferSource.getBuffer(ItemBlockRenderTypes.getRenderType(quad.spriteInfo().layer()))
             .putBulkData(pose, quad, brightness, color, lightmapCoord, overlayCoords);
     }

@@ -64,10 +64,12 @@ public class SelectionImpl {
 
         private Vec3 evalCenter() {
             Vec3 center = Vec3.ZERO;
-            if (posSet.isEmpty())
+            if (posSet.isEmpty()) {
                 return center;
-            for (BlockPos blockPos : posSet)
+            }
+            for (BlockPos blockPos : posSet) {
                 center = center.add(Vec3.atLowerCornerOf(blockPos));
+            }
             center = center.scale(1f / posSet.size());
             return center.add(new Vec3(.5, .5, .5));
         }

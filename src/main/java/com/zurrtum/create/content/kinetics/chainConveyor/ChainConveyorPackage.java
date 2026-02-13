@@ -10,12 +10,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChainConveyorPackage {
     public static final Codec<ChainConveyorPackage> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        Codec.FLOAT.fieldOf("Position")
-            .forGetter(i -> i.chainPosition), ItemStack.OPTIONAL_CODEC.fieldOf("Item").forGetter(i -> i.item)
+        Codec.FLOAT.fieldOf("Position").forGetter(i -> i.chainPosition),
+        ItemStack.OPTIONAL_CODEC.fieldOf("Item").forGetter(i -> i.item)
     ).apply(instance, ChainConveyorPackage::new));
     public static final Codec<ChainConveyorPackage> CLIENT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        Codec.FLOAT.fieldOf("Position")
-            .forGetter(i -> i.chainPosition),
+        Codec.FLOAT.fieldOf("Position").forGetter(i -> i.chainPosition),
         ItemStack.OPTIONAL_CODEC.fieldOf("Item").forGetter(i -> i.item),
         Codec.INT.optionalFieldOf("NetID", 0).forGetter(i -> i.netId)
     ).apply(

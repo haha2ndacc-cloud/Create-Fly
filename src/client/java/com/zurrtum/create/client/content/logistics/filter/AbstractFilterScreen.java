@@ -50,13 +50,21 @@ public abstract class AbstractFilterScreen<F extends AbstractFilterMenu> extends
     protected void init() {
         super.init();
 
-        resetButton = new IconButton(leftPos + background.getWidth() - 62, topPos + background.getHeight() - 24, AllIcons.I_TRASH);
+        resetButton = new IconButton(
+            leftPos + background.getWidth() - 62,
+            topPos + background.getHeight() - 24,
+            AllIcons.I_TRASH
+        );
         resetButton.withCallback(() -> {
             menu.clearContents();
             contentsCleared();
             minecraft.player.connection.send(AllPackets.CLEAR_CONTAINER);
         });
-        confirmButton = new IconButton(leftPos + background.getWidth() - 33, topPos + background.getHeight() - 24, AllIcons.I_CONFIRM);
+        confirmButton = new IconButton(
+            leftPos + background.getWidth() - 33,
+            topPos + background.getHeight() - 24,
+            AllIcons.I_CONFIRM
+        );
         confirmButton.withCallback(() -> {
             minecraft.player.closeContainer();
         });
@@ -64,10 +72,17 @@ public abstract class AbstractFilterScreen<F extends AbstractFilterMenu> extends
         addRenderableWidget(resetButton);
         addRenderableWidget(confirmButton);
 
-        extraAreas = ImmutableList.of(new Rect2i(leftPos + background.getWidth(), topPos + background.getHeight() - 40, 80, 48));
+        extraAreas = ImmutableList.of(new Rect2i(
+            leftPos + background.getWidth(),
+            topPos + background.getHeight() - 40,
+            80,
+            48
+        ));
 
-        renderedItem = new ElementWidget(leftPos + background.getWidth() + 8, topPos + background.getHeight() - 52).showingElement(GuiGameElement.of(
-            menu.contentHolder).scale(4));
+        renderedItem = new ElementWidget(
+            leftPos + background.getWidth() + 8,
+            topPos + background.getHeight() - 52
+        ).showingElement(GuiGameElement.of(menu.contentHolder).scale(4));
         addRenderableWidget(renderedItem);
     }
 
@@ -84,7 +99,14 @@ public abstract class AbstractFilterScreen<F extends AbstractFilterMenu> extends
         renderPlayerInventory(graphics, invX, invY);
 
         background.render(graphics, leftPos, topPos);
-        graphics.drawString(font, title, leftPos + (background.getWidth() - 8) / 2 - font.width(title) / 2, topPos + 4, getTitleColor(), false);
+        graphics.drawString(
+            font,
+            title,
+            leftPos + (background.getWidth() - 8) / 2 - font.width(title) / 2,
+            topPos + 4,
+            getTitleColor(),
+            false
+        );
     }
 
     protected int getTitleColor() {
@@ -93,8 +115,9 @@ public abstract class AbstractFilterScreen<F extends AbstractFilterMenu> extends
 
     @Override
     protected void containerTick() {
-        if (!ItemStack.matches(minecraft.player.getMainHandItem(), menu.contentHolder))
+        if (!ItemStack.matches(minecraft.player.getMainHandItem(), menu.contentHolder)) {
             minecraft.player.closeContainer();
+        }
 
         super.containerTick();
 
@@ -114,14 +137,16 @@ public abstract class AbstractFilterScreen<F extends AbstractFilterMenu> extends
 
         if (AllKeys.hasShiftDown()) {
             List<MutableComponent> tooltipDescriptions = getTooltipDescriptions();
-            for (int i = 0; i < tooltipButtons.size(); i++)
+            for (int i = 0; i < tooltipButtons.size(); i++) {
                 fillToolTip(tooltipButtons.get(i), tooltipDescriptions.get(i));
+            }
         }
     }
 
     public void handleIndicators() {
-        for (IconButton button : getTooltipButtons())
+        for (IconButton button : getTooltipButtons()) {
             button.green = !isButtonEnabled(button);
+        }
     }
 
     protected abstract boolean isButtonEnabled(IconButton button);
@@ -135,8 +160,9 @@ public abstract class AbstractFilterScreen<F extends AbstractFilterMenu> extends
     }
 
     private void fillToolTip(IconButton button, Component tooltip) {
-        if (!button.isHoveredOrFocused())
+        if (!button.isHoveredOrFocused()) {
             return;
+        }
         List<Component> tip = button.getToolTip();
         tip.addAll(TooltipHelper.cutTextComponent(tooltip, Palette.ALL_GRAY));
     }

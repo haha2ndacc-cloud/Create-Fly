@@ -18,10 +18,9 @@ public class LogisticsNetworkSavedData extends SavedData {
         .xmap(LogisticsNetworkSavedData::createMap, LogisticsNetworkSavedData::toList)
         .xmap(LogisticsNetworkSavedData::new, LogisticsNetworkSavedData::getLogisticsNetworks);
     private static final SavedDataType<LogisticsNetworkSavedData> TYPE = new SavedDataType<>(
-        Identifier.fromNamespaceAndPath(MOD_ID, "logistics"),
-        LogisticsNetworkSavedData::new,
-        CODEC,
-        null
+        Identifier.fromNamespaceAndPath(MOD_ID,
+            "logistics"
+    ), LogisticsNetworkSavedData::new, CODEC, null
     );
 
     private final Map<UUID, LogisticsNetwork> logisticsNetworks;

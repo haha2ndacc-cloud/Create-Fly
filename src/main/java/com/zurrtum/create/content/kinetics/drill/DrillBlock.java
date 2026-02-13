@@ -53,17 +53,31 @@ public class DrillBlock extends DirectionalKineticBlock implements IBE<DrillBloc
     }
 
     @Override
-    public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn, InsideBlockEffectApplier handler, boolean bl) {
-        if (entityIn instanceof ItemEntity)
+    public void entityInside(
+        BlockState state,
+        Level worldIn,
+        BlockPos pos,
+        Entity entityIn,
+        InsideBlockEffectApplier handler,
+        boolean bl
+    ) {
+        if (entityIn instanceof ItemEntity) {
             return;
-        if (!new AABB(pos).deflate(.1f).intersects(entityIn.getBoundingBox()))
+        }
+        if (!new AABB(pos).deflate(.1f).intersects(entityIn.getBoundingBox())) {
             return;
+        }
         withBlockEntityDo(
             worldIn, pos, be -> {
-                if (be.getSpeed() == 0)
+                if (be.getSpeed() == 0) {
                     return;
+                }
                 if (worldIn instanceof ServerLevel serverWorld) {
-                    entityIn.hurtServer(serverWorld, AllDamageSources.get(worldIn).drill, (float) getDamage(be.getSpeed()));
+                    entityIn.hurtServer(
+                        serverWorld,
+                        AllDamageSources.get(worldIn).drill,
+                        (float) getDamage(be.getSpeed())
+                    );
                 }
             }
         );
@@ -123,15 +137,17 @@ public class DrillBlock extends DirectionalKineticBlock implements IBE<DrillBloc
         BlockState neighbourState,
         RandomSource random
     ) {
-        if (state.getValue(BlockStateProperties.WATERLOGGED))
+        if (state.getValue(BlockStateProperties.WATERLOGGED)) {
             tickView.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+        }
         return state;
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         FluidState FluidState = context.getLevel().getFluidState(context.getClickedPos());
-        return super.getStateForPlacement(context).setValue(BlockStateProperties.WATERLOGGED, FluidState.getType() == Fluids.WATER);
+        return super.getStateForPlacement(context)
+            .setValue(BlockStateProperties.WATERLOGGED, FluidState.getType() == Fluids.WATER);
     }
 
     public static double getDamage(float speed) {
@@ -165,7 +181,8 @@ public class DrillBlock extends DirectionalKineticBlock implements IBE<DrillBloc
         IPlacementHelper placementHelper = PlacementHelpers.get(placementHelperId);
         if (!player.isShiftKeyDown() && player.mayBuild()) {
             if (placementHelper.matchesItem(stack)) {
-                placementHelper.getOffset(player, level, state, pos, hitResult).placeInWorld(level, (BlockItem) stack.getItem(), player, hand);
+                placementHelper.getOffset(player, level, state, pos, hitResult)
+                    .placeInWorld(level, (BlockItem) stack.getItem(), player, hand);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -186,7 +203,13 @@ public class DrillBlock extends DirectionalKineticBlock implements IBE<DrillBloc
         }
 
         @Override
-        public PlacementOffset getOffset(Player player, Level world, BlockState state, BlockPos pos, BlockHitResult ray) {
+        public PlacementOffset getOffset(
+            Player player,
+            Level world,
+            BlockState state,
+            BlockPos pos,
+            BlockHitResult ray
+        ) {
             List<Direction> directions = IPlacementHelper.orderedByDistanceExceptAxis(
                 pos,
                 ray.getLocation(),
@@ -194,10 +217,13 @@ public class DrillBlock extends DirectionalKineticBlock implements IBE<DrillBloc
                 dir -> world.getBlockState(pos.relative(dir)).canBeReplaced()
             );
 
-            if (directions.isEmpty())
+            if (directions.isEmpty()) {
                 return PlacementOffset.fail();
-            else {
-                return PlacementOffset.success(pos.relative(directions.getFirst()), s -> s.setValue(FACING, state.getValue(FACING)));
+            } else {
+                return PlacementOffset.success(
+                    pos.relative(directions.getFirst()),
+                    s -> s.setValue(FACING, state.getValue(FACING))
+                );
             }
         }
     }

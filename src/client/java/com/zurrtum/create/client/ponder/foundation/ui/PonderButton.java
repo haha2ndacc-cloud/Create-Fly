@@ -20,13 +20,22 @@ import java.util.Locale;
 
 public class PonderButton extends BoxWidget {
 
-    public static final Couple<Color> COLOR_IDLE = Couple.create(new Color(0x60_c0c0ff, true), new Color(0x30_c0c0ff, true)).map(Color::setImmutable);
-    public static final Couple<Color> COLOR_HOVER = Couple.create(new Color(0xf0_c0c0ff, true), new Color(0xa0_c0c0ff, true))
-        .map(Color::setImmutable);
-    public static final Couple<Color> COLOR_CLICK = Couple.create(new Color(0xff_ffffff, true), new Color(0xdd_ffffff, true))
-        .map(Color::setImmutable);
-    public static final Couple<Color> COLOR_DISABLED = Couple.create(new Color(0x80_909090, true), new Color(0x20_909090, true))
-        .map(Color::setImmutable);
+    public static final Couple<Color> COLOR_IDLE = Couple.create(
+        new Color(0x60_c0c0ff, true),
+        new Color(0x30_c0c0ff, true)
+    ).map(Color::setImmutable);
+    public static final Couple<Color> COLOR_HOVER = Couple.create(
+        new Color(0xf0_c0c0ff, true),
+        new Color(0xa0_c0c0ff, true)
+    ).map(Color::setImmutable);
+    public static final Couple<Color> COLOR_CLICK = Couple.create(
+        new Color(0xff_ffffff, true),
+        new Color(0xdd_ffffff, true)
+    ).map(Color::setImmutable);
+    public static final Couple<Color> COLOR_DISABLED = Couple.create(
+        new Color(0x80_909090, true),
+        new Color(0x20_909090, true)
+    ).map(Color::setImmutable);
 
     @Nullable
     protected ItemStack item;
@@ -101,8 +110,9 @@ public class PonderButton extends BoxWidget {
     public void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         super.doRender(graphics, mouseX, mouseY, partialTicks);
 
-        if (!isVisible())
+        if (!isVisible()) {
             return;
+        }
 
         if (shortcut != null) {
             graphics.drawCenteredString(

@@ -32,8 +32,16 @@ public class DynamicPack implements PackResources {
         this.packId = packId;
         this.packType = packType;
 
-        metadata = new PackMetadataSection(title, SharedConstants.getCurrentVersion().packVersion(packType).minorRange());
-        packLocationInfo = new PackLocationInfo(packId, Component.literal(packId), PackSource.BUILT_IN, Optional.empty());
+        metadata = new PackMetadataSection(
+            title,
+            SharedConstants.getCurrentVersion().packVersion(packType).minorRange()
+        );
+        packLocationInfo = new PackLocationInfo(
+            packId,
+            Component.literal(packId),
+            PackSource.BUILT_IN,
+            Optional.empty()
+        );
     }
 
     private static String getPath(PackType packType, Identifier identifier) {
@@ -78,8 +86,12 @@ public class DynamicPack implements PackResources {
         String directoryAndNamespace = packType.getDirectory() + "/" + namespace + "/";
         String prefix = directoryAndNamespace + path + "/";
         files.forEach((filePath, streamSupplier) -> {
-            if (filePath.startsWith(prefix))
-                resourceOutput.accept(identifier.withPath(filePath.substring(directoryAndNamespace.length())), streamSupplier);
+            if (filePath.startsWith(prefix)) {
+                resourceOutput.accept(
+                    identifier.withPath(filePath.substring(directoryAndNamespace.length())),
+                    streamSupplier
+                );
+            }
         });
     }
 

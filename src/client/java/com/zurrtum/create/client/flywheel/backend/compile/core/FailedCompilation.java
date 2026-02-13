@@ -30,7 +30,13 @@ public class FailedCompilation {
     // Unused, but handy for debugging.
     private final String completeSource;
 
-    public FailedCompilation(String shaderName, List<SourceFile> files, String generatedSource, String completeSource, String errorLog) {
+    public FailedCompilation(
+        String shaderName,
+        List<SourceFile> files,
+        String generatedSource,
+        String completeSource,
+        String errorLog
+    ) {
         this.shaderName = shaderName;
         this.files = files;
         this.generatedSource = new SourceLines(GENERATED_SOURCE_NAME, generatedSource);
@@ -112,7 +118,13 @@ public class FailedCompilation {
         return ErrorBuilder.create().error(msg).pointAtFile(sourceFile).pointAt(span, 1);
     }
 
-    private ErrorBuilder interpretWithSpan(ErrorLevel errorLevel, int fileId, int lineNo, @Nullable String span, String msg) {
+    private ErrorBuilder interpretWithSpan(
+        ErrorLevel errorLevel,
+        int fileId,
+        int lineNo,
+        @Nullable String span,
+        String msg
+    ) {
         var sourceFile = files.get(fileId - 1);
 
         Span errorSpan = sourceFile.getLineSpanMatching(lineNo, span);
@@ -121,7 +133,8 @@ public class FailedCompilation {
     }
 
     private ErrorBuilder interpretGeneratedError(ErrorLevel errorLevel, int lineNo, String msg) {
-        return ErrorBuilder.create().header(errorLevel, msg).pointAtFile("[in generated source]").pointAtLine(generatedSource, lineNo, 1)
+        return ErrorBuilder.create().header(errorLevel, msg).pointAtFile("[in generated source]")
+            .pointAtLine(generatedSource, lineNo, 1)
             .note("This generally indicates a bug in Flywheel, not your shader code.");
     }
 

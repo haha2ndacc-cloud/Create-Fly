@@ -17,20 +17,29 @@ import org.jspecify.annotations.Nullable;
 
 public class LinkHandler {
     @Nullable
-    public static InteractionResult onBlockActivated(Level world, LocalPlayer player, InteractionHand hand, BlockHitResult ray) {
-        if (player.isShiftKeyDown() || player.isSpectator())
+    public static InteractionResult onBlockActivated(
+        Level world,
+        LocalPlayer player,
+        InteractionHand hand,
+        BlockHitResult ray
+    ) {
+        if (player.isShiftKeyDown() || player.isSpectator()) {
             return null;
+        }
 
         ItemStack heldItem = player.getItemInHand(hand);
-        if (heldItem.is(AllItems.LINKED_CONTROLLER))
+        if (heldItem.is(AllItems.LINKED_CONTROLLER)) {
             return null;
-        if (heldItem.is(AllItems.WRENCH))
+        }
+        if (heldItem.is(AllItems.WRENCH)) {
             return null;
+        }
 
         BlockPos pos = ray.getBlockPos();
         LinkBehaviour behaviour = BlockEntityBehaviour.get(world, pos, LinkBehaviour.TYPE);
-        if (behaviour == null)
+        if (behaviour == null) {
             return null;
+        }
 
         for (boolean first : Iterate.trueAndFalse) {
             if (behaviour.testHit(first, ray.getLocation())) {

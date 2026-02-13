@@ -126,10 +126,11 @@ public class PonderSceneBuilder implements SceneBuilder {
     @Override
     public void showBasePlate() {
         world.showSection(
-            scene.getSceneBuildingUtil().select().cuboid(
-                new BlockPos(scene.getBasePlateOffsetX(), 0, scene.getBasePlateOffsetZ()),
-                new Vec3i(scene.getBasePlateSize() - 1, 0, scene.getBasePlateSize() - 1)
-            ), Direction.UP
+            scene.getSceneBuildingUtil().select()
+                .cuboid(
+                    new BlockPos(scene.getBasePlateOffsetX(), 0, scene.getBasePlateOffsetZ()),
+                    new Vec3i(scene.getBasePlateSize() - 1, 0, scene.getBasePlateSize() - 1)
+                ), Direction.UP
         );
     }
 
@@ -274,8 +275,9 @@ public class PonderSceneBuilder implements SceneBuilder {
             float q = 1 / 6f;
             Vec3 expands = new Vec3(q, s, q);
             addInstruction(new HighlightValueBoxInstruction(
-                scene.getSceneBuildingUtil().vector().blockSurface(pos, Direction.DOWN)
-                    .add(0, 3 / 16f, 0), expands, duration
+                scene.getSceneBuildingUtil().vector().blockSurface(pos, Direction.DOWN).add(0, 3 / 16f, 0),
+                expands,
+                duration
             ));
         }
 
@@ -337,7 +339,13 @@ public class PonderSceneBuilder implements SceneBuilder {
         }
 
         @Override
-        public void rotateParrot(ElementLink<ParrotElement> link, double xRotation, double yRotation, double zRotation, int duration) {
+        public void rotateParrot(
+            ElementLink<ParrotElement> link,
+            double xRotation,
+            double yRotation,
+            double zRotation,
+            int duration
+        ) {
             addInstruction(AnimateParrotInstruction.rotate(link, new Vec3(xRotation, yRotation, zRotation), duration));
         }
 
@@ -388,19 +396,34 @@ public class PonderSceneBuilder implements SceneBuilder {
                     world.destroyBlock(pos, false);
                     world.setBlockBreakingProgress(pos, 0);
                     scene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
-                } else
+                } else {
                     world.setBlockBreakingProgress(pos, progress + 1);
+                }
             });
         }
 
         @Override
         public void showSection(Selection selection, @Nullable Direction fadeInDirection) {
-            addInstruction(new DisplayWorldSectionInstruction(15, fadeInDirection, selection, scene::getBaseWorldSection));
+            addInstruction(new DisplayWorldSectionInstruction(
+                15,
+                fadeInDirection,
+                selection,
+                scene::getBaseWorldSection
+            ));
         }
 
         @Override
-        public void showSectionAndMerge(Selection selection, Direction fadeInDirection, ElementLink<WorldSectionElement> link) {
-            addInstruction(new DisplayWorldSectionInstruction(15, fadeInDirection, selection, () -> scene.resolve(link)));
+        public void showSectionAndMerge(
+            Selection selection,
+            Direction fadeInDirection,
+            ElementLink<WorldSectionElement> link
+        ) {
+            addInstruction(new DisplayWorldSectionInstruction(
+                15,
+                fadeInDirection,
+                selection,
+                () -> scene.resolve(link)
+            ));
         }
 
         @Override
@@ -415,15 +438,28 @@ public class PonderSceneBuilder implements SceneBuilder {
         }
 
         @Override
-        public ElementLink<WorldSectionElement> showIndependentSection(Selection selection, @Nullable Direction fadeInDirection) {
-            DisplayWorldSectionInstruction instruction = new DisplayWorldSectionInstruction(15, fadeInDirection, selection, null);
+        public ElementLink<WorldSectionElement> showIndependentSection(
+            Selection selection,
+            @Nullable Direction fadeInDirection
+        ) {
+            DisplayWorldSectionInstruction instruction = new DisplayWorldSectionInstruction(
+                15,
+                fadeInDirection,
+                selection,
+                null
+            );
             addInstruction(instruction);
             return instruction.createLink(scene);
         }
 
         @Override
         public ElementLink<WorldSectionElement> showIndependentSectionImmediately(Selection selection) {
-            DisplayWorldSectionInstruction instruction = new DisplayWorldSectionInstruction(0, Direction.DOWN, selection, null);
+            DisplayWorldSectionInstruction instruction = new DisplayWorldSectionInstruction(
+                0,
+                Direction.DOWN,
+                selection,
+                null
+            );
             addInstruction(instruction);
             return instruction.createLink(scene);
         }
@@ -444,7 +480,10 @@ public class PonderSceneBuilder implements SceneBuilder {
         }
 
         @Override
-        public void hideIndependentSection(ElementLink<WorldSectionElement> link, @Nullable Direction fadeOutDirection) {
+        public void hideIndependentSection(
+            ElementLink<WorldSectionElement> link,
+            @Nullable Direction fadeOutDirection
+        ) {
             addInstruction(new FadeOutOfSceneInstruction<>(15, fadeOutDirection, link));
         }
 
@@ -472,8 +511,18 @@ public class PonderSceneBuilder implements SceneBuilder {
         }
 
         @Override
-        public void rotateSection(ElementLink<WorldSectionElement> link, double xRotation, double yRotation, double zRotation, int duration) {
-            addInstruction(AnimateWorldSectionInstruction.rotate(link, new Vec3(xRotation, yRotation, zRotation), duration));
+        public void rotateSection(
+            ElementLink<WorldSectionElement> link,
+            double xRotation,
+            double yRotation,
+            double zRotation,
+            int duration
+        ) {
+            addInstruction(AnimateWorldSectionInstruction.rotate(
+                link,
+                new Vec3(xRotation, yRotation, zRotation),
+                duration
+            ));
         }
 
         @Override
@@ -518,7 +567,11 @@ public class PonderSceneBuilder implements SceneBuilder {
 
         @Override
         public void cycleBlockProperty(BlockPos pos, Property<?> property) {
-            modifyBlocks(scene.getSceneBuildingUtil().select().position(pos), s -> s.hasProperty(property) ? s.cycle(property) : s, false);
+            modifyBlocks(
+                scene.getSceneBuildingUtil().select().position(pos),
+                s -> s.hasProperty(property) ? s.cycle(property) : s,
+                false
+            );
         }
 
         @Override
@@ -530,12 +583,18 @@ public class PonderSceneBuilder implements SceneBuilder {
         public void toggleRedstonePower(Selection selection) {
             modifyBlocks(
                 selection, s -> {
-                    if (s.hasProperty(BlockStateProperties.POWER))
-                        s = s.setValue(BlockStateProperties.POWER, s.getValue(BlockStateProperties.POWER) == 0 ? 15 : 0);
-                    if (s.hasProperty(BlockStateProperties.POWERED))
+                    if (s.hasProperty(BlockStateProperties.POWER)) {
+                        s = s.setValue(
+                            BlockStateProperties.POWER,
+                            s.getValue(BlockStateProperties.POWER) == 0 ? 15 : 0
+                        );
+                    }
+                    if (s.hasProperty(BlockStateProperties.POWERED)) {
                         s = s.cycle(BlockStateProperties.POWERED);
-                    if (s.hasProperty(RedstoneTorchBlock.LIT))
+                    }
+                    if (s.hasProperty(RedstoneTorchBlock.LIT)) {
                         s = s.cycle(RedstoneTorchBlock.LIT);
+                    }
                     return s;
                 }, false
             );
@@ -547,11 +606,16 @@ public class PonderSceneBuilder implements SceneBuilder {
         }
 
         @Override
-        public <T extends Entity> void modifyEntitiesInside(Class<T> entityClass, Selection area, Consumer<T> entityCallBack) {
+        public <T extends Entity> void modifyEntitiesInside(
+            Class<T> entityClass,
+            Selection area,
+            Consumer<T> entityCallBack
+        ) {
             addInstruction(scene -> scene.forEachWorldEntity(
                 entityClass, e -> {
-                    if (area.test(e.blockPosition()))
+                    if (area.test(e.blockPosition())) {
                         entityCallBack.accept(e);
+                    }
                 }
             ));
         }
@@ -560,8 +624,9 @@ public class PonderSceneBuilder implements SceneBuilder {
         public void modifyEntity(ElementLink<EntityElement> link, Consumer<Entity> entityCallBack) {
             addInstruction(scene -> {
                 EntityElement resolve = scene.resolve(link);
-                if (resolve != null)
+                if (resolve != null) {
                     resolve.ifPresent(entityCallBack);
+                }
             });
         }
 
@@ -589,16 +654,25 @@ public class PonderSceneBuilder implements SceneBuilder {
         }
 
         @Override
-        public void modifyBlockEntityNBT(Selection selection, Class<? extends BlockEntity> beType, Consumer<CompoundTag> consumer) {
+        public void modifyBlockEntityNBT(
+            Selection selection,
+            Class<? extends BlockEntity> beType,
+            Consumer<CompoundTag> consumer
+        ) {
             modifyBlockEntityNBT(selection, beType, consumer, false);
         }
 
         @Override
-        public <T extends BlockEntity> void modifyBlockEntity(BlockPos position, Class<T> beType, Consumer<T> consumer) {
+        public <T extends BlockEntity> void modifyBlockEntity(
+            BlockPos position,
+            Class<T> beType,
+            Consumer<T> consumer
+        ) {
             addInstruction(scene -> {
                 BlockEntity blockEntity = scene.getLevel().getBlockEntity(position);
-                if (beType.isInstance(blockEntity))
+                if (beType.isInstance(blockEntity)) {
                     consumer.accept(beType.cast(blockEntity));
+                }
             });
         }
 
@@ -622,7 +696,8 @@ public class PonderSceneBuilder implements SceneBuilder {
 
         @Override
         public void debugSchematic() {
-            addInstruction(scene -> scene.addElement(new WorldSectionElementImpl(scene.getSceneBuildingUtil().select().everywhere())));
+            addInstruction(scene -> scene.addElement(new WorldSectionElementImpl(scene.getSceneBuildingUtil().select()
+                .everywhere())));
         }
 
         @Override

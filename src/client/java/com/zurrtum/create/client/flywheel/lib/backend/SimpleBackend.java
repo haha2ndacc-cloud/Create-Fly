@@ -16,7 +16,11 @@ public final class SimpleBackend implements Backend {
     private final IntSupplier priority;
     private final BooleanSupplier isSupported;
 
-    public SimpleBackend(Function<LevelAccessor, Engine> engineFactory, IntSupplier priority, BooleanSupplier isSupported) {
+    public SimpleBackend(
+        Function<LevelAccessor, Engine> engineFactory,
+        IntSupplier priority,
+        BooleanSupplier isSupported
+    ) {
         this.engineFactory = engineFactory;
         this.priority = priority;
         this.isSupported = isSupported;
@@ -68,7 +72,10 @@ public final class SimpleBackend implements Backend {
         public Backend register(Identifier id) {
             Objects.requireNonNull(this.engineFactory);
             Objects.requireNonNull(this.isSupported);
-            return Backend.REGISTRY.registerAndGet(id, new SimpleBackend(this.engineFactory, this.priority, this.isSupported));
+            return Backend.REGISTRY.registerAndGet(
+                id,
+                new SimpleBackend(this.engineFactory, this.priority, this.isSupported)
+            );
         }
     }
 }

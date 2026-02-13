@@ -44,7 +44,11 @@ public class PressingCategory extends CreateCategory<PressingDisplay> {
             drawSlotBackground(graphics, input, output);
             AllGuiTextures.JEI_SHADOW.render(graphics, bounds.x + 66, bounds.y + 46);
             AllGuiTextures.JEI_LONG_ARROW.render(graphics, bounds.x + 57, bounds.y + 59);
-            graphics.guiRenderState.submitPicturesInPictureState(new PressRenderState(new Matrix3x2f(graphics.pose()), bounds.x + 78, bounds.y - 11));
+            graphics.guiRenderState.submitPicturesInPictureState(new PressRenderState(
+                new Matrix3x2f(graphics.pose()),
+                bounds.x + 78,
+                bounds.y - 11
+            ));
         }));
         widgets.add(createInputSlot(input).entries(display.input()));
         widgets.add(createOutputSlot(output).entries(display.output()));

@@ -77,8 +77,9 @@ public class PlacementOffset {
     }
 
     public BlockPos getBlockPos() {
-        if (pos instanceof BlockPos)
+        if (pos instanceof BlockPos) {
             return (BlockPos) pos;
+        }
 
         return new BlockPos(pos);
     }
@@ -97,25 +98,29 @@ public class PlacementOffset {
     }
 
     public boolean isReplaceable(Level world) {
-        if (!success)
+        if (!success) {
             return false;
+        }
 
         return world.getBlockState(new BlockPos(pos)).canBeReplaced();
     }
 
     public InteractionResult placeInWorld(Level world, BlockItem blockItem, Player player, InteractionHand hand) {
 
-        if (!isReplaceable(world))
+        if (!isReplaceable(world)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
 
-        if (world.isClientSide())
+        if (world.isClientSide()) {
             return InteractionResult.SUCCESS;
+        }
 
         BlockPos newPos = new BlockPos(pos);
         ItemStack stackBefore = player.getItemInHand(hand).copy();
 
-        if (!world.mayInteract(player, newPos))
+        if (!world.mayInteract(player, newPos)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
 
         BlockState newState = stateTransform.apply(blockItem.getBlock().defaultBlockState());
         if (newState.hasProperty(BlockStateProperties.WATERLOGGED)) {
@@ -138,11 +143,13 @@ public class PlacementOffset {
         player.awardStat(Stats.ITEM_USED.get(blockItem));
         newState.getBlock().setPlacedBy(world, newPos, newState, player, stackBefore);
 
-        if (player instanceof ServerPlayer serverPlayer)
+        if (player instanceof ServerPlayer serverPlayer) {
             CriteriaTriggers.PLACED_BLOCK.trigger(serverPlayer, newPos, player.getItemInHand(hand));
+        }
 
-        if (!player.isCreative())
+        if (!player.isCreative()) {
             player.getItemInHand(hand).shrink(1);
+        }
 
         return InteractionResult.SUCCESS;
     }

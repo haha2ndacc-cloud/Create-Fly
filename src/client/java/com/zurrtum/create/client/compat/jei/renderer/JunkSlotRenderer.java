@@ -28,7 +28,8 @@ public class JunkSlotRenderer implements IIngredientRenderer<ItemStack> {
         CompoundTag nbt = new CompoundTag();
         nbt.putFloat("chance", chance);
         CustomData.set(DataComponents.CUSTOM_DATA, temp, nbt);
-        builder.addSlot(RecipeIngredientRole.RENDER_ONLY, x, y).setCustomRenderer(VanillaTypes.ITEM_STACK, INSTANCE).add(temp);
+        builder.addSlot(RecipeIngredientRole.RENDER_ONLY, x, y).setCustomRenderer(VanillaTypes.ITEM_STACK, INSTANCE)
+            .add(temp);
     }
 
     @Override
@@ -47,7 +48,8 @@ public class JunkSlotRenderer implements IIngredientRenderer<ItemStack> {
 
     @Override
     public List<Component> getTooltip(ItemStack temp, TooltipFlag tooltipFlag) {
-        float chance = temp.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getFloatOr("chance", 0);
+        float chance = temp.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag()
+            .getFloatOr("chance", 0);
         String number = chance < 0.01 ? "<1" : chance > 0.99 ? ">99" : String.valueOf(Math.round(chance * 100));
         return List.of(
             CreateLang.translateDirect("recipe.assembly.junk"),

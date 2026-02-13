@@ -51,8 +51,9 @@ public abstract class ParrotPose {
             double phase = Math.min(length * 15, 8);
             float f = (float) ((PonderUI.ponderTicks % 100) * phase);
             entity.flapSpeed = Mth.sin(f) + 1;
-            if (length == 0)
+            if (length == 0) {
                 entity.flapSpeed = 0;
+            }
         }
 
     }

@@ -99,7 +99,8 @@ public abstract class AbstractSimiScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        partialTicks = NavigatableSimiScreen.currentlyRenderingPreviousScreen ? 0 : AnimationTickHolder.getPartialTicksUI(minecraft.getDeltaTracker());
+        partialTicks = NavigatableSimiScreen.currentlyRenderingPreviousScreen ? 0 : AnimationTickHolder.getPartialTicksUI(
+            minecraft.getDeltaTracker());
         Matrix3x2fStack poseStack = graphics.pose();
 
         poseStack.pushMatrix();
@@ -109,8 +110,9 @@ public abstract class AbstractSimiScreen extends Screen {
         renderWindowBackground(graphics, mouseX, mouseY, partialTicks);
         renderWindow(graphics, mouseX, mouseY, partialTicks);
 
-        for (Renderable renderable : getRenderables())
+        for (Renderable renderable : getRenderables()) {
             renderable.render(graphics, mouseX, mouseY, partialTicks);
+        }
 
         renderWindowForeground(graphics, mouseX, mouseY, partialTicks);
 
@@ -122,8 +124,9 @@ public abstract class AbstractSimiScreen extends Screen {
     @Override
     public boolean keyPressed(KeyEvent input) {
         boolean keyPressed = super.keyPressed(input);
-        if (keyPressed || getFocused() != null)
+        if (keyPressed || getFocused() != null) {
             return keyPressed;
+        }
 
         if (this.minecraft.options.keyInventory.matches(input)) {
             this.onClose();
@@ -134,8 +137,9 @@ public abstract class AbstractSimiScreen extends Screen {
 
         for (GuiEventListener widget : children()) {
             if (widget instanceof AbstractSimiWidget simiWidget) {
-                if (simiWidget.keyPressed(input))
+                if (simiWidget.keyPressed(input)) {
                     consumed = true;
+                }
             }
         }
 
@@ -170,8 +174,9 @@ public abstract class AbstractSimiScreen extends Screen {
     @Override
     public GuiEventListener getFocused() {
         GuiEventListener focused = super.getFocused();
-        if (focused instanceof AbstractWidget && !focused.isFocused())
+        if (focused instanceof AbstractWidget && !focused.isFocused()) {
             focused = null;
+        }
         setFocused(focused);
         return focused;
     }

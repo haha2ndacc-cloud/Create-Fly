@@ -64,10 +64,12 @@ public class SchematicRenderer {
         SchematicTransformation transformation,
         Vec3 camera
     ) {
-        if (mc.level == null || mc.player == null)
+        if (mc.level == null || mc.player == null) {
             return;
-        if (changed)
+        }
+        if (changed) {
             redraw(mc);
+        }
         changed = false;
 
         bufferCache.forEach((layer, buffer) -> {
@@ -103,8 +105,9 @@ public class SchematicRenderer {
 
         for (ChunkSectionLayer layer : ChunkSectionLayer.values()) {
             SuperByteBuffer buffer = drawLayer(mc, layer);
-            if (!buffer.isEmpty())
+            if (!buffer.isEmpty()) {
                 bufferCache.put(layer, buffer);
+            }
         }
     }
 

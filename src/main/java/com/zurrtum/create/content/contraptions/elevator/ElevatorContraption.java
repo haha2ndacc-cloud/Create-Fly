@@ -59,16 +59,19 @@ public class ElevatorContraption extends PulleyContraption {
     public void tickStorage(AbstractContraptionEntity entity) {
         super.tickStorage(entity);
 
-        if (entity.tickCount % 10 != 0)
+        if (entity.tickCount % 10 != 0) {
             return;
+        }
 
         ColumnCoords coords = getGlobalColumn();
         ElevatorColumn column = ElevatorColumn.get(entity.level(), coords);
 
-        if (column == null)
+        if (column == null) {
             return;
-        if (column.namesListVersion == namesListVersion)
+        }
+        if (column.namesListVersion == namesListVersion) {
             return;
+        }
 
         namesList = column.compileNamesList();
         namesListVersion = column.namesListVersion;
@@ -89,13 +92,16 @@ public class ElevatorContraption extends PulleyContraption {
     public Integer getCurrentTargetY(Level level) {
         ColumnCoords coords = getGlobalColumn();
         ElevatorColumn column = ElevatorColumn.get(level, coords);
-        if (column == null)
+        if (column == null) {
             return null;
-        if (!column.isTargetAvailable())
+        }
+        if (!column.isTargetAvailable()) {
             return null;
+        }
         int targetedYLevel = column.getTargetedYLevel();
-        if (isTargetUnreachable(targetedYLevel))
+        if (isTargetUnreachable(targetedYLevel)) {
             return null;
+        }
         return targetedYLevel;
     }
 
@@ -105,17 +111,22 @@ public class ElevatorContraption extends PulleyContraption {
 
     @Override
     public boolean assemble(Level world, BlockPos pos) throws AssemblyException {
-        if (!searchMovedStructure(world, pos, null))
+        if (!searchMovedStructure(world, pos, null)) {
             return false;
-        if (blocks.size() <= 0)
+        }
+        if (blocks.size() <= 0) {
             return false;
-        if (contacts == 0)
+        }
+        if (contacts == 0) {
             throw new AssemblyException(Component.translatable("create.gui.assembly.exception.no_contacts"));
-        if (contacts > 1)
+        }
+        if (contacts > 1) {
             throw new AssemblyException(Component.translatable("create.gui.assembly.exception.too_many_contacts"));
+        }
         ElevatorColumn column = ElevatorColumn.get(world, getGlobalColumn());
-        if (column != null && column.isActive())
+        if (column != null && column.isActive()) {
             throw new AssemblyException(Component.translatable("create.gui.assembly.exception.column_conflict"));
+        }
         startMoving(world);
         return true;
     }
@@ -124,12 +135,14 @@ public class ElevatorContraption extends PulleyContraption {
     protected Pair<StructureBlockInfo, BlockEntity> capture(Level world, BlockPos pos) {
         BlockState blockState = world.getBlockState(pos);
 
-        if (!blockState.is(AllBlocks.REDSTONE_CONTACT))
+        if (!blockState.is(AllBlocks.REDSTONE_CONTACT)) {
             return super.capture(world, pos);
+        }
 
         Direction facing = blockState.getValue(RedstoneContactBlock.FACING);
-        if (facing.getAxis() == Axis.Y)
+        if (facing.getAxis() == Axis.Y) {
             return super.capture(world, pos);
+        }
 
         contacts++;
         BlockPos local = toLocalPos(pos.relative(facing));
@@ -145,10 +158,12 @@ public class ElevatorContraption extends PulleyContraption {
 
     public void broadcastFloorData(Level level, BlockPos contactPos) {
         ElevatorColumn column = ElevatorColumn.get(level, getGlobalColumn());
-        if (!(level.getBlockEntity(contactPos) instanceof ElevatorContactBlockEntity ecbe))
+        if (!(level.getBlockEntity(contactPos) instanceof ElevatorContactBlockEntity ecbe)) {
             return;
-        if (column != null)
+        }
+        if (column != null) {
             column.floorReached(level, ecbe.shortName);
+        }
     }
 
     @Override
@@ -177,25 +192,31 @@ public class ElevatorContraption extends PulleyContraption {
     }
 
     public void setClientYTarget(int clientYTarget) {
-        if (this.clientYTarget == clientYTarget)
+        if (this.clientYTarget == clientYTarget) {
             return;
+        }
 
         this.clientYTarget = clientYTarget;
         syncControlDisplays();
     }
 
     public void syncControlDisplays() {
-        if (namesList.isEmpty())
+        if (namesList.isEmpty()) {
             return;
-        for (int i = 0; i < namesList.size(); i++)
-            if (namesList.get(i).getFirst() == clientYTarget)
+        }
+        for (int i = 0; i < namesList.size(); i++) {
+            if (namesList.get(i).getFirst() == clientYTarget) {
                 setAllControlsToFloor(i);
+            }
+        }
     }
 
     public void setAllControlsToFloor(int floorIndex) {
-        for (MutablePair<StructureBlockInfo, @Nullable MovementContext> pair : actors)
-            if (pair.right != null && pair.right.temporaryData instanceof ElevatorFloorSelection efs)
+        for (MutablePair<StructureBlockInfo, @Nullable MovementContext> pair : actors) {
+            if (pair.right != null && pair.right.temporaryData instanceof ElevatorFloorSelection efs) {
                 efs.currentIndex = floorIndex;
+            }
+        }
     }
 
 }

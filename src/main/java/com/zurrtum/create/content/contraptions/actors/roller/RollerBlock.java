@@ -67,7 +67,13 @@ public class RollerBlock extends AttachedActorBlock implements IBE<RollerBlockEn
     }
 
     @Override
-    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
+    public void setPlacedBy(
+        Level pLevel,
+        BlockPos pPos,
+        BlockState pState,
+        @Nullable LivingEntity pPlacer,
+        ItemStack pStack
+    ) {
         super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
         withBlockEntityDo(pLevel, pPos, RollerBlockEntity::searchForSharedValues);
     }
@@ -85,7 +91,8 @@ public class RollerBlock extends AttachedActorBlock implements IBE<RollerBlockEn
         IPlacementHelper placementHelper = PlacementHelpers.get(placementHelperId);
         if (!player.isShiftKeyDown() && player.mayBuild()) {
             if (placementHelper.matchesItem(stack)) {
-                placementHelper.getOffset(player, level, state, pos, hitResult).placeInWorld(level, (BlockItem) stack.getItem(), player, hand);
+                placementHelper.getOffset(player, level, state, pos, hitResult)
+                    .placeInWorld(level, (BlockItem) stack.getItem(), player, hand);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -96,7 +103,11 @@ public class RollerBlock extends AttachedActorBlock implements IBE<RollerBlockEn
     private static class PlacementHelper extends PoleHelper<Direction> {
 
         public PlacementHelper() {
-            super(state -> state.is(AllBlocks.MECHANICAL_ROLLER), state -> state.getValue(FACING).getClockWise().getAxis(), FACING);
+            super(
+                state -> state.is(AllBlocks.MECHANICAL_ROLLER),
+                state -> state.getValue(FACING).getClockWise().getAxis(),
+                FACING
+            );
         }
 
         @Override

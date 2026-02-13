@@ -71,11 +71,12 @@ public class MixingCategory extends CreateCategory<RecipeHolder<MixingRecipe>> {
                 .addItemStacks(getStacks(ingredients.get(i)));
         }
         for (; i < size; i++) {
-            addFluidSlot(builder, xOffset + (i % 3) * 19, yOffset - (i / 3) * 19, fluidIngredients.get(i - ingredientSize)).setBackground(
-                SLOT,
-                -1,
-                -1
-            );
+            addFluidSlot(
+                builder,
+                xOffset + (i % 3) * 19,
+                yOffset - (i / 3) * 19,
+                fluidIngredients.get(i - ingredientSize)
+            ).setBackground(SLOT, -1, -1);
         }
         ItemStack result = recipe.result();
         if (result.isEmpty()) {
@@ -93,7 +94,13 @@ public class MixingCategory extends CreateCategory<RecipeHolder<MixingRecipe>> {
     }
 
     @Override
-    public void draw(RecipeHolder<MixingRecipe> entry, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
+    public void draw(
+        RecipeHolder<MixingRecipe> entry,
+        IRecipeSlotsView recipeSlotsView,
+        GuiGraphics graphics,
+        double mouseX,
+        double mouseY
+    ) {
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 136, 32);
         Matrix3x2f pose = new Matrix3x2f(graphics.pose());
         HeatCondition requiredHeat = entry.value().heat();

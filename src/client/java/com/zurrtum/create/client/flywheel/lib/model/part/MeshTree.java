@@ -21,7 +21,8 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 public final class MeshTree {
-    private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(ThreadLocalObjects::new);
+    private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(
+        ThreadLocalObjects::new);
     private static final PoseStack.Pose IDENTITY_POSE = new PoseStack().last();
     private static final RendererReloadCache<ModelLayerLocation, MeshTree> CACHE = new RendererReloadCache<>(MeshTree::convert);
 

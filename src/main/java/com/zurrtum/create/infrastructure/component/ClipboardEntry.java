@@ -24,8 +24,9 @@ public class ClipboardEntry {
     ).apply(
         i, (checked, text, icon, itemAmount) -> {
             ClipboardEntry entry = new ClipboardEntry(checked, text.copy());
-            if (!icon.isEmpty())
+            if (!icon.isEmpty()) {
                 entry.displayItem(icon, itemAmount);
+            }
 
             return entry;
         }
@@ -42,8 +43,9 @@ public class ClipboardEntry {
         c -> c.itemAmount,
         (checked, text, icon, itemAmount) -> {
             ClipboardEntry entry = new ClipboardEntry(checked, text.copy());
-            if (!icon.isEmpty())
+            if (!icon.isEmpty()) {
                 entry.displayItem(icon, itemAmount);
+            }
 
             return entry;
         }
@@ -75,15 +77,17 @@ public class ClipboardEntry {
     }
 
     public static List<List<ClipboardEntry>> readAll(@Nullable ClipboardContent content) {
-        if (content == null)
+        if (content == null) {
             return new ArrayList<>();
+        }
 
         // Both these lists are immutable, so we unfortunately need to re-create them to make them mutable
         List<List<ClipboardEntry>> saved = content.pages();
 
         List<List<ClipboardEntry>> entries = new ArrayList<>(saved.size());
-        for (List<ClipboardEntry> inner : saved)
+        for (List<ClipboardEntry> inner : saved) {
             entries.add(new ArrayList<>(inner));
+        }
 
         return entries;
     }
@@ -93,17 +97,20 @@ public class ClipboardEntry {
         if (pages.isEmpty()) {
             return new ArrayList<>();
         }
-        int previouslyOpenedPage = heldItem.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY).previouslyOpenedPage();
+        int previouslyOpenedPage = heldItem.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY)
+            .previouslyOpenedPage();
         int page = Math.min(previouslyOpenedPage, pages.size() - 1);
         return pages.get(page);
     }
 
     @Override
     public final boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof ClipboardEntry that))
+        }
+        if (!(o instanceof ClipboardEntry that)) {
             return false;
+        }
 
         return checked == that.checked && text.equals(that.text) && ItemStack.isSameItemSameComponents(icon, that.icon);
     }

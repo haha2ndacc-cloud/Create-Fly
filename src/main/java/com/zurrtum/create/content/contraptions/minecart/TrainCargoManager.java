@@ -53,7 +53,12 @@ public class TrainCargoManager extends MountedStorageManager {
     }
 
     @Override
-    public <T> void read(final DynamicOps<T> ops, MapLike<T> map, boolean clientPacket, @Nullable Contraption contraption) {
+    public <T> void read(
+        final DynamicOps<T> ops,
+        MapLike<T> map,
+        boolean clientPacket,
+        @Nullable Contraption contraption
+    ) {
         super.read(ops, map, clientPacket, contraption);
         ticksSinceLastExchange = ops.getNumberValue(map.get("TicksSinceLastExchange"), 0).intValue();
     }

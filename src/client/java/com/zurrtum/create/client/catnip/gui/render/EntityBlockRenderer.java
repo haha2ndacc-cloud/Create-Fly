@@ -103,7 +103,8 @@ public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRen
         }
         blockRenderManager.renderBatched(blockState, BlockPos.ZERO, lightWorld, matrices, output, false, parts);
         if (blockEntity != null) {
-            BlockEntityRenderer<BlockEntity, BlockEntityRenderState> renderer = mc.getBlockEntityRenderDispatcher().getRenderer(blockEntity);
+            BlockEntityRenderer<BlockEntity, BlockEntityRenderState> renderer = mc.getBlockEntityRenderDispatcher()
+                .getRenderer(blockEntity);
             if (renderer != null) {
                 FeatureRenderDispatcher renderDispatcher = gameRenderer.getFeatureRenderDispatcher();
                 Level previousLevel = blockEntity.getLevel();
@@ -124,7 +125,9 @@ public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRen
         texture.clear();
         state.submitBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-            TextureSetup.singleTexture(texture.textureView(), RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)),
+            TextureSetup.singleTexture(texture.textureView(),
+                RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)
+            ),
             block.pose(),
             block.x0(),
             block.y0(),

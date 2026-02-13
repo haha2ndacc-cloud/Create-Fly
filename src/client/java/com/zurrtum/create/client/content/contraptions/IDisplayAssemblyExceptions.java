@@ -16,11 +16,13 @@ public interface IDisplayAssemblyExceptions {
 
     default boolean addExceptionToTooltip(List<Component> tooltip) {
         AssemblyException e = getLastAssemblyException();
-        if (e == null)
+        if (e == null) {
             return false;
+        }
 
-        if (!tooltip.isEmpty())
+        if (!tooltip.isEmpty()) {
             tooltip.add(CommonComponents.EMPTY);
+        }
 
         CreateLang.translate("gui.assembly.exception").style(ChatFormatting.GOLD).forGoggles(tooltip);
 

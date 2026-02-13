@@ -42,7 +42,11 @@ public abstract class ConductorBlockInteractionBehavior extends MovingInteractio
      * @param hasSchedule      true if the schedule was set, false if it was removed
      * @param blockStateSetter a consumer that will change the BlockState of this conductor on the contraption
      */
-    protected void onScheduleUpdate(boolean hasSchedule, BlockState currentBlockState, Consumer<BlockState> blockStateSetter) {
+    protected void onScheduleUpdate(
+        boolean hasSchedule,
+        BlockState currentBlockState,
+        Consumer<BlockState> blockStateSetter
+    ) {
     }
 
     @Override
@@ -52,29 +56,36 @@ public abstract class ConductorBlockInteractionBehavior extends MovingInteractio
         BlockPos localPos,
         AbstractContraptionEntity contraptionEntity
     ) {
-        if (!(contraptionEntity instanceof CarriageContraptionEntity carriageEntity))
+        if (!(contraptionEntity instanceof CarriageContraptionEntity carriageEntity)) {
             return false;
-        if (activeHand == InteractionHand.OFF_HAND)
+        }
+        if (activeHand == InteractionHand.OFF_HAND) {
             return false;
+        }
         Contraption contraption = carriageEntity.getContraption();
-        if (!(contraption instanceof CarriageContraption carriageContraption))
+        if (!(contraption instanceof CarriageContraption carriageContraption)) {
             return false;
+        }
 
         StructureBlockInfo info = carriageContraption.getBlocks().get(localPos);
-        if (info == null || !this.isValidConductor(info.state()))
+        if (info == null || !this.isValidConductor(info.state())) {
             return false;
+        }
 
         Direction assemblyDirection = carriageContraption.getAssemblyDirection();
         ItemStack itemInHand = player.getItemInHand(activeHand);
         for (Direction direction : Iterate.directionsInAxis(assemblyDirection.getAxis())) {
-            if (!carriageContraption.inControl(localPos, direction))
+            if (!carriageContraption.inControl(localPos, direction)) {
                 continue;
+            }
 
             Train train = carriageEntity.getCarriage().train;
-            if (train == null)
+            if (train == null) {
                 return false;
-            if (player.level().isClientSide())
+            }
+            if (player.level().isClientSide()) {
                 return true;
+            }
 
             if (train.runtime.getSchedule() != null) {
                 if (train.runtime.paused && !train.runtime.completed) {
@@ -98,31 +109,40 @@ public abstract class ConductorBlockInteractionBehavior extends MovingInteractio
                     .2f,
                     1f + player.level().getRandom().nextFloat()
                 );
-                player.sendOverlayMessage(
-                    Component.translatable(train.runtime.isAutoSchedule ? "create.schedule.auto_removed_from_train" : "create.schedule.removed_from_train")
-                );
+                player.sendOverlayMessage(Component.translatable(train.runtime.isAutoSchedule ? "create.schedule.auto_removed_from_train" : "create.schedule.removed_from_train"));
                 player.setItemInHand(activeHand, train.runtime.returnSchedule(player.registryAccess()));
-                this.onScheduleUpdate(false, info.state(), newBlockState -> setBlockState(localPos, contraptionEntity, newBlockState));
+                this.onScheduleUpdate(
+                    false,
+                    info.state(),
+                    newBlockState -> setBlockState(localPos, contraptionEntity, newBlockState)
+                );
                 return true;
             }
 
-            if (!itemInHand.is(AllItems.SCHEDULE))
+            if (!itemInHand.is(AllItems.SCHEDULE)) {
                 return true;
+            }
 
             Schedule schedule = ScheduleItem.getSchedule(player.registryAccess(), itemInHand);
-            if (schedule == null)
+            if (schedule == null) {
                 return false;
+            }
 
             if (schedule.entries.isEmpty()) {
                 AllSoundEvents.DENY.playOnServer(player.level(), player.blockPosition(), 1, 1);
                 player.sendOverlayMessage(Component.translatable("create.schedule.no_stops"));
                 return true;
             }
-            this.onScheduleUpdate(true, info.state(), newBlockState -> setBlockState(localPos, contraptionEntity, newBlockState));
+            this.onScheduleUpdate(
+                true,
+                info.state(),
+                newBlockState -> setBlockState(localPos, contraptionEntity, newBlockState)
+            );
             train.runtime.setSchedule(schedule, false);
             AllAdvancements.CONDUCTOR.trigger((ServerPlayer) player);
             AllSoundEvents.CONFIRM.playOnServer(player.level(), player.blockPosition(), 1, 1);
-            player.sendOverlayMessage(Component.translatable("create.schedule.applied_to_train").withStyle(ChatFormatting.GREEN));
+            player.sendOverlayMessage(Component.translatable("create.schedule.applied_to_train")
+                .withStyle(ChatFormatting.GREEN));
             itemInHand.shrink(1);
             player.setItemInHand(activeHand, itemInHand.isEmpty() ? ItemStack.EMPTY : itemInHand);
             return true;

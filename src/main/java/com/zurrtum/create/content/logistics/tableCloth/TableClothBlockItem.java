@@ -33,10 +33,12 @@ public class TableClothBlockItem extends BlockItem {
         TooltipFlag type
     ) {
         super.appendHoverText(stack, context, displayComponent, textConsumer, type);
-        if (!isFoil(stack))
+        if (!isFoil(stack)) {
             return;
+        }
 
-        textConsumer.accept(Component.translatable("create.table_cloth.shop_configured").withStyle(ChatFormatting.GOLD));
+        textConsumer.accept(Component.translatable("create.table_cloth.shop_configured")
+            .withStyle(ChatFormatting.GOLD));
 
         RedstoneRequesterBlock.appendRequesterTooltip(stack, textConsumer);
     }

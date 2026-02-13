@@ -61,7 +61,13 @@ public class BeltTunnelBlock extends Block implements IBE<BeltTunnelBlockEntity>
             if (downState.is(AllBlocks.BELT)) {
                 BlockEntity beBelow = world.getBlockEntity(pos.below());
                 if (beBelow != null) {
-                    Container capBelow = AllBlocks.BELT.getInventory(world, pos.below(), downState, (BeltBlockEntity) beBelow, Direction.UP);
+                    Container capBelow = AllBlocks.BELT.getInventory(
+                        world,
+                        pos.below(),
+                        downState,
+                        (BeltBlockEntity) beBelow,
+                        Direction.UP
+                    );
                     if (capBelow != null) {
                         blockEntity.cap = capBelow;
                     }
@@ -72,12 +78,7 @@ public class BeltTunnelBlock extends Block implements IBE<BeltTunnelBlockEntity>
     }
 
     public enum Shape implements StringRepresentable {
-        STRAIGHT,
-        WINDOW,
-        CLOSED,
-        T_LEFT,
-        T_RIGHT,
-        CROSS;
+        STRAIGHT, WINDOW, CLOSED, T_LEFT, T_RIGHT, CROSS;
 
         @Override
         public String getSerializedName() {
@@ -93,15 +94,17 @@ public class BeltTunnelBlock extends Block implements IBE<BeltTunnelBlockEntity>
     @Override
     public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
         BlockState blockState = worldIn.getBlockState(pos.below());
-        if (!isValidPositionForPlacement(state, worldIn, pos))
+        if (!isValidPositionForPlacement(state, worldIn, pos)) {
             return false;
+        }
         return blockState.getValue(BeltBlock.CASING);
     }
 
     public boolean isValidPositionForPlacement(BlockState state, LevelReader worldIn, BlockPos pos) {
         BlockState blockState = worldIn.getBlockState(pos.below());
-        if (!blockState.is(AllBlocks.BELT))
+        if (!blockState.is(AllBlocks.BELT)) {
             return false;
+        }
         return blockState.getValue(BeltBlock.SLOPE) == BeltSlope.HORIZONTAL;
     }
 
@@ -125,8 +128,9 @@ public class BeltTunnelBlock extends Block implements IBE<BeltTunnelBlockEntity>
 
     @Override
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState p_220082_4_, boolean p_220082_5_) {
-        if (!(world instanceof WrappedLevel) && !world.isClientSide())
+        if (!(world instanceof WrappedLevel) && !world.isClientSide()) {
             withBlockEntityDo(world, pos, BeltTunnelBlockEntity::updateTunnelConnections);
+        }
     }
 
     @Override
@@ -140,14 +144,17 @@ public class BeltTunnelBlock extends Block implements IBE<BeltTunnelBlockEntity>
         BlockState facingState,
         RandomSource random
     ) {
-        if (facing.getAxis().isVertical())
+        if (facing.getAxis().isVertical()) {
             return state;
-        if (!(worldIn instanceof WrappedLevel) && !worldIn.isClientSide())
+        }
+        if (!(worldIn instanceof WrappedLevel) && !worldIn.isClientSide()) {
             withBlockEntityDo(worldIn, currentPos, BeltTunnelBlockEntity::updateTunnelConnections);
+        }
         BlockState tunnelState = getTunnelState(worldIn, currentPos);
         if (tunnelState.getValue(HORIZONTAL_AXIS) == state.getValue(HORIZONTAL_AXIS)) {
-            if (hasWindow(tunnelState) == hasWindow(state))
+            if (hasWindow(tunnelState) == hasWindow(state)) {
                 return state;
+            }
         }
 
         return tunnelState;
@@ -159,16 +166,18 @@ public class BeltTunnelBlock extends Block implements IBE<BeltTunnelBlockEntity>
         if (tunnel != newTunnel && !world.isClientSide()) {
             world.setBlock(pos, newTunnel, 3);
             BlockEntity be = world.getBlockEntity(pos);
-            if ((be instanceof BeltTunnelBlockEntity))
+            if ((be instanceof BeltTunnelBlockEntity)) {
                 ((BeltTunnelBlockEntity) be).updateTunnelConnections();
+            }
         }
     }
 
     private BlockState getTunnelState(BlockGetter reader, BlockPos pos) {
         BlockState state = defaultBlockState();
         BlockState belt = reader.getBlockState(pos.below());
-        if (belt.is(AllBlocks.BELT))
+        if (belt.is(AllBlocks.BELT)) {
             state = state.setValue(HORIZONTAL_AXIS, belt.getValue(BeltBlock.HORIZONTAL_FACING).getAxis());
+        }
         Axis axis = state.getValue(HORIZONTAL_AXIS);
 
         // T and Cross
@@ -176,17 +185,19 @@ public class BeltTunnelBlock extends Block implements IBE<BeltTunnelBlockEntity>
         boolean onLeft = hasValidOutput(reader, pos.below(), left);
         boolean onRight = hasValidOutput(reader, pos.below(), left.getOpposite());
 
-        if (onLeft && onRight)
+        if (onLeft && onRight) {
             state = state.setValue(SHAPE, Shape.CROSS);
-        else if (onLeft)
+        } else if (onLeft) {
             state = state.setValue(SHAPE, Shape.T_LEFT);
-        else if (onRight)
+        } else if (onRight) {
             state = state.setValue(SHAPE, Shape.T_RIGHT);
+        }
 
         if (state.getValue(SHAPE) == Shape.STRAIGHT) {
             boolean canHaveWindow = canHaveWindow(reader, pos, axis);
-            if (canHaveWindow)
+            if (canHaveWindow) {
                 state = state.setValue(SHAPE, Shape.WINDOW);
+            }
         }
 
         return state;
@@ -209,23 +220,30 @@ public class BeltTunnelBlock extends Block implements IBE<BeltTunnelBlockEntity>
 
     private boolean hasValidOutput(BlockGetter world, BlockPos pos, Direction side) {
         BlockState blockState = world.getBlockState(pos.relative(side));
-        if (blockState.is(AllBlocks.BELT))
+        if (blockState.is(AllBlocks.BELT)) {
             return blockState.getValue(BeltBlock.HORIZONTAL_FACING).getAxis() == side.getAxis();
-        DirectBeltInputBehaviour behaviour = BlockEntityBehaviour.get(world, pos.relative(side), DirectBeltInputBehaviour.TYPE);
+        }
+        DirectBeltInputBehaviour behaviour = BlockEntityBehaviour.get(
+            world,
+            pos.relative(side),
+            DirectBeltInputBehaviour.TYPE
+        );
         return behaviour != null && behaviour.canInsertFromSide(side);
     }
 
     @Override
     public InteractionResult onWrenched(BlockState state, UseOnContext context) {
-        if (!hasWindow(state))
+        if (!hasWindow(state)) {
             return InteractionResult.PASS;
+        }
 
         // Toggle windows
         Shape shape = state.getValue(SHAPE);
         shape = shape == Shape.CLOSED ? Shape.WINDOW : Shape.CLOSED;
         Level world = context.getLevel();
-        if (!world.isClientSide())
+        if (!world.isClientSide()) {
             world.setBlock(context.getClickedPos(), state.setValue(SHAPE, shape), Block.UPDATE_CLIENTS);
+        }
         return InteractionResult.SUCCESS;
     }
 
@@ -238,9 +256,17 @@ public class BeltTunnelBlock extends Block implements IBE<BeltTunnelBlockEntity>
     }
 
     @Override
-    public void neighborUpdate(BlockState state, Level worldIn, BlockPos pos, Block sourceBlock, BlockPos fromPos, boolean isMoving) {
-        if (worldIn.isClientSide())
+    public void neighborUpdate(
+        BlockState state,
+        Level worldIn,
+        BlockPos pos,
+        Block sourceBlock,
+        BlockPos fromPos,
+        boolean isMoving
+    ) {
+        if (worldIn.isClientSide()) {
             return;
+        }
 
         if (fromPos.equals(pos.below())) {
             if (!canSurvive(state, worldIn, pos)) {

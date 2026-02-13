@@ -34,13 +34,15 @@ public class ObjTokenizer implements AutoCloseable {
         //noinspection LoopConditionNotUpdatedInsideLoop
         do {
             String currentLine = lineReader.readLine();
-            if (currentLine == null)
+            if (currentLine == null) {
                 return null;
+            }
 
             List<String> lineParts = new ArrayList<>();
 
-            if (currentLine.startsWith("#"))
+            if (currentLine.startsWith("#")) {
                 currentLine = "";
+            }
 
             if (!currentLine.isEmpty()) {
 
@@ -53,17 +55,20 @@ public class ObjTokenizer implements AutoCloseable {
 
                     if (hasContinuation) {
                         currentLine = lineReader.readLine();
-                        if (currentLine == null)
+                        if (currentLine == null) {
                             break;
+                        }
 
-                        if (currentLine.isEmpty() || currentLine.startsWith("#"))
+                        if (currentLine.isEmpty() || currentLine.startsWith("#")) {
                             break;
+                        }
                     }
                 } while (hasContinuation);
             }
 
-            if (!lineParts.isEmpty())
+            if (!lineParts.isEmpty()) {
                 return lineParts.toArray(new String[0]);
+            }
         } while (ignoreEmptyLines);
 
         return new String[0];

@@ -133,9 +133,13 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class AllHandle {
-    public static void onConfigureSchematicannon(ServerGamePacketListenerImpl listener, ConfigureSchematicannonPacket packet) {
-        if (!(listener.player.containerMenu instanceof SchematicannonMenu menu))
+    public static void onConfigureSchematicannon(
+        ServerGamePacketListenerImpl listener,
+        ConfigureSchematicannonPacket packet
+    ) {
+        if (!(listener.player.containerMenu instanceof SchematicannonMenu menu)) {
             return;
+        }
 
         SchematicannonBlockEntity be = menu.contentHolder;
         ConfigureSchematicannonPacket.Option option = packet.option();
@@ -197,7 +201,10 @@ public class AllHandle {
         }
     }
 
-    public static void onConfigureThresholdSwitch(ServerGamePacketListenerImpl listener, ConfigureThresholdSwitchPacket packet) {
+    public static void onConfigureThresholdSwitch(
+        ServerGamePacketListenerImpl listener,
+        ConfigureThresholdSwitchPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         onBlockEntityConfiguration(
             listener, packet.pos(), 20, blockEntity -> {
@@ -213,7 +220,10 @@ public class AllHandle {
         );
     }
 
-    public static void onConfigureSequencedGearshift(ServerGamePacketListenerImpl listener, ConfigureSequencedGearshiftPacket packet) {
+    public static void onConfigureSequencedGearshift(
+        ServerGamePacketListenerImpl listener,
+        ConfigureSequencedGearshiftPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         onBlockEntityConfiguration(
             listener, packet.pos(), 20, blockEntity -> {
@@ -252,42 +262,50 @@ public class AllHandle {
                     GlobalStation station = be.getStation();
 
                     if (packet.dropSchedule()) {
-                        if (station == null)
+                        if (station == null) {
                             return true;
+                        }
                         be.dropSchedule(player, station.getPresentTrain());
                         return true;
                     }
 
-                    if (packet.doorControl() != null)
+                    if (packet.doorControl() != null) {
                         be.doorControls.set(packet.doorControl());
+                    }
 
-                    if (packet.name() != null && !packet.name().isBlank())
+                    if (packet.name() != null && !packet.name().isBlank()) {
                         be.updateName(packet.name());
+                    }
 
-                    if (!(blockState.getBlock() instanceof StationBlock))
+                    if (!(blockState.getBlock() instanceof StationBlock)) {
                         return true;
+                    }
 
                     Boolean isAssemblyMode = blockState.getValue(StationBlock.ASSEMBLING);
                     boolean assemblyComplete = false;
 
                     if (packet.tryAssemble() != null) {
-                        if (!isAssemblyMode)
+                        if (!isAssemblyMode) {
                             return true;
+                        }
                         if (packet.tryAssemble()) {
                             be.assemble(player.getUUID());
                             assemblyComplete = station != null && station.getPresentTrain() != null;
                         } else {
-                            if (be.tryDisassembleTrain(player) && be.tryEnterAssemblyMode())
+                            if (be.tryDisassembleTrain(player) && be.tryEnterAssemblyMode()) {
                                 be.refreshAssemblyInfo();
+                            }
                         }
-                        if (!assemblyComplete)
+                        if (!assemblyComplete) {
                             return true;
+                        }
                     }
 
-                    if (packet.assemblyMode())
+                    if (packet.assemblyMode()) {
                         be.enterAssemblyMode(player);
-                    else
+                    } else {
                         be.exitAssemblyMode();
+                    }
                     return true;
                 }
                 return false;
@@ -295,7 +313,10 @@ public class AllHandle {
         );
     }
 
-    public static void onDisplayLinkConfiguration(ServerGamePacketListenerImpl listener, DisplayLinkConfigurationPacket packet) {
+    public static void onDisplayLinkConfiguration(
+        ServerGamePacketListenerImpl listener,
+        DisplayLinkConfigurationPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         onBlockEntityConfiguration(
             listener, packet.pos(), 20, blockEntity -> {
@@ -349,23 +370,32 @@ public class AllHandle {
                     BezierConnection bezierConnection = be.getConnections().get(targetPos);
 
                     be.removeConnection(targetPos);
-                    if (world.getBlockEntity(targetPos) instanceof TrackBlockEntity other)
+                    if (world.getBlockEntity(targetPos) instanceof TrackBlockEntity other) {
                         other.removeConnection(pos);
+                    }
 
                     BlockState blockState = be.getBlockState();
                     TrackPropagator.onRailRemoved(world, pos, blockState);
 
                     if (packet.wrench()) {
-                        AllSoundEvents.WRENCH_REMOVE.playOnServer(world, packet.soundSource(), 1, world.getRandom().nextFloat() * .5f + .5f);
-                        if (!player.isCreative() && bezierConnection != null)
+                        AllSoundEvents.WRENCH_REMOVE.playOnServer(
+                            world,
+                            packet.soundSource(),
+                            1,
+                            world.getRandom().nextFloat() * .5f + .5f
+                        );
+                        if (!player.isCreative() && bezierConnection != null) {
                             bezierConnection.addItemsToPlayer(player);
-                    } else if (!player.isCreative() && bezierConnection != null)
+                        }
+                    } else if (!player.isCreative() && bezierConnection != null) {
                         bezierConnection.spawnItems(world);
+                    }
 
                     bezierConnection.spawnDestroyParticles(world);
                     SoundType soundtype = blockState.getSoundType();
-                    if (soundtype == null)
+                    if (soundtype == null) {
                         return true;
+                    }
 
                     world.playSound(
                         null,
@@ -382,7 +412,10 @@ public class AllHandle {
         );
     }
 
-    public static void onCurvedTrackSelection(ServerGamePacketListenerImpl listener, CurvedTrackSelectionPacket packet) {
+    public static void onCurvedTrackSelection(
+        ServerGamePacketListenerImpl listener,
+        CurvedTrackSelectionPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         BlockPos pos = packet.pos();
         onBlockEntityConfiguration(
@@ -390,11 +423,13 @@ public class AllHandle {
                 if (blockEntity instanceof TrackBlockEntity be) {
                     ServerPlayer player = listener.player;
                     ServerLevel world = player.level();
-                    if (player.getInventory().getSelectedSlot() != packet.slot())
+                    if (player.getInventory().getSelectedSlot() != packet.slot()) {
                         return true;
+                    }
                     ItemStack stack = player.getInventory().getItem(packet.slot());
-                    if (!(stack.getItem() instanceof TrackTargetingBlockItem))
+                    if (!(stack.getItem() instanceof TrackTargetingBlockItem)) {
                         return true;
+                    }
                     if (player.isShiftKeyDown() && stack.has(AllDataComponents.TRACK_TARGETING_ITEM_SELECTED_POS)) {
                         player.sendOverlayMessage(Component.translatable("create.track_target.clear"));
                         stack.remove(AllDataComponents.TRACK_TARGETING_ITEM_SELECTED_POS);
@@ -406,7 +441,10 @@ public class AllHandle {
 
                     EdgePointType<?> type = stack.is(AllItems.TRACK_SIGNAL) ? EdgePointType.SIGNAL : EdgePointType.STATION;
                     MutableObject<@Nullable OverlapResult> result = new MutableObject<>(null);
-                    BezierTrackPointLocation bezierTrackPointLocation = new BezierTrackPointLocation(packet.targetPos(), packet.segment());
+                    BezierTrackPointLocation bezierTrackPointLocation = new BezierTrackPointLocation(
+                        packet.targetPos(),
+                        packet.segment()
+                    );
                     TrackTargetingBlockItem.withGraphLocation(
                         world,
                         pos,
@@ -417,7 +455,8 @@ public class AllHandle {
                     );
 
                     if (result.get().feedback != null) {
-                        player.sendOverlayMessage(Component.translatable("create." + result.get().feedback).withStyle(ChatFormatting.RED));
+                        player.sendOverlayMessage(Component.translatable("create." + result.get().feedback)
+                            .withStyle(ChatFormatting.RED));
                         AllSoundEvents.DENY.play(world, null, pos, .5f, 1);
                         return true;
                     }
@@ -500,7 +539,11 @@ public class AllHandle {
         );
     }
 
-    private static boolean handleValueSettings(ServerPlayer player, @Nullable ValueSettingsHandleBehaviour handle, ValueSettingsPacket packet) {
+    private static boolean handleValueSettings(
+        ServerPlayer player,
+        @Nullable ValueSettingsHandleBehaviour handle,
+        ValueSettingsPacket packet
+    ) {
         if (handle == null || !handle.acceptsValueSettings() || packet.behaviourIndex() != handle.netId()) {
             return false;
         }
@@ -512,7 +555,10 @@ public class AllHandle {
         return true;
     }
 
-    public static void onLogisticalStockRequest(ServerGamePacketListenerImpl listener, LogisticalStockRequestPacket packet) {
+    public static void onLogisticalStockRequest(
+        ServerGamePacketListenerImpl listener,
+        LogisticalStockRequestPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         onBlockEntityConfiguration(
             listener, packet.pos(), 4096, blockEntity -> {
@@ -535,8 +581,9 @@ public class AllHandle {
                 if (blockEntity instanceof StockTickerBlockEntity be) {
                     PackageOrderWithCrafts order = packet.order();
                     if (packet.encodeRequester()) {
-                        if (!order.isEmpty())
+                        if (!order.isEmpty()) {
                             AllSoundEvents.CONFIRM.playOnServer(world, pos);
+                        }
                         player.closeContainer();
                         RedstoneRequesterBlock.programRequester(player, be, order, packet.address());
                         return true;
@@ -545,8 +592,15 @@ public class AllHandle {
                     if (!order.isEmpty()) {
                         AllSoundEvents.STOCK_TICKER_REQUEST.playOnServer(world, pos);
                         AllAdvancements.STOCK_TICKER.trigger(player);
-                        listener.server.getPlayerList()
-                            .broadcast(null, pos.getX(), pos.getY(), pos.getZ(), 32, world.dimension(), new WiFiEffectPacket(pos));
+                        listener.server.getPlayerList().broadcast(
+                            null,
+                            pos.getX(),
+                            pos.getY(),
+                            pos.getZ(),
+                            32,
+                            world.dimension(),
+                            new WiFiEffectPacket(pos)
+                        );
                     }
 
                     be.broadcastPackageRequest(RequestType.PLAYER, order, null, packet.address());
@@ -557,7 +611,10 @@ public class AllHandle {
         );
     }
 
-    public static void onChainConveyorConnection(ServerGamePacketListenerImpl listener, ChainConveyorConnectionPacket packet) {
+    public static void onChainConveyorConnection(
+        ServerGamePacketListenerImpl listener,
+        ChainConveyorConnectionPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         ServerPlayer player = listener.player;
         ServerLevel world = player.level();
@@ -567,16 +624,24 @@ public class AllHandle {
                 if (blockEntity instanceof ChainConveyorBlockEntity be) {
                     BlockPos targetPos = packet.targetPos();
                     boolean connect = packet.connect();
-                    if (!be.getBlockPos().closerThan(targetPos, maxRange - 16 + 1))
+                    if (!be.getBlockPos().closerThan(targetPos, maxRange - 16 + 1)) {
                         return true;
-                    if (!(world.getBlockEntity(targetPos) instanceof ChainConveyorBlockEntity clbe))
+                    }
+                    if (!(world.getBlockEntity(targetPos) instanceof ChainConveyorBlockEntity clbe)) {
                         return true;
+                    }
 
                     if (connect && !player.isCreative()) {
                         int chainCost = ChainConveyorBlockEntity.getChainCost(targetPos.subtract(be.getBlockPos()));
-                        boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(player, packet.chain(), chainCost, true);
-                        if (!hasEnough)
+                        boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(
+                            player,
+                            packet.chain(),
+                            chainCost,
+                            true
+                        );
+                        if (!hasEnough) {
                             return true;
+                        }
                         ChainConveyorBlockEntity.getChainsFromInventory(player, packet.chain(), chainCost, false);
                     }
 
@@ -584,7 +649,8 @@ public class AllHandle {
                         if (!player.isCreative()) {
                             int chainCost = ChainConveyorBlockEntity.getChainCost(targetPos.subtract(packet.pos()));
                             while (chainCost > 0) {
-                                player.getInventory().placeItemBackInInventory(new ItemStack(Items.IRON_CHAIN, Math.min(chainCost, 64)));
+                                player.getInventory()
+                                    .placeItemBackInInventory(new ItemStack(Items.IRON_CHAIN, Math.min(chainCost, 64)));
                                 chainCost -= 64;
                             }
                         }
@@ -593,16 +659,20 @@ public class AllHandle {
                     }
 
                     if (connect) {
-                        if (!clbe.addConnectionTo(be.getBlockPos()))
+                        if (!clbe.addConnectionTo(be.getBlockPos())) {
                             return true;
-                    } else
+                        }
+                    } else {
                         clbe.removeConnectionTo(be.getBlockPos());
+                    }
 
                     if (connect) {
-                        if (!be.addConnectionTo(targetPos))
+                        if (!be.addConnectionTo(targetPos)) {
                             clbe.removeConnectionTo(be.getBlockPos());
-                    } else
+                        }
+                    } else {
                         be.removeConnectionTo(targetPos);
+                    }
                     return true;
                 }
                 return false;
@@ -610,7 +680,10 @@ public class AllHandle {
         );
     }
 
-    public static void onServerboundChainConveyorRiding(ServerGamePacketListenerImpl listener, ServerboundChainConveyorRidingPacket packet) {
+    public static void onServerboundChainConveyorRiding(
+        ServerGamePacketListenerImpl listener,
+        ServerboundChainConveyorRidingPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         ServerPlayer sender = listener.player;
         onBlockEntityConfiguration(
@@ -631,7 +704,10 @@ public class AllHandle {
         );
     }
 
-    public static void onChainPackageInteraction(ServerGamePacketListenerImpl listener, ChainPackageInteractionPacket packet) {
+    public static void onChainPackageInteraction(
+        ServerGamePacketListenerImpl listener,
+        ChainPackageInteractionPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         ServerPlayer player = listener.player;
         int maxRange = AllConfigs.server().kinetics.maxChainConveyorLength.get() + 16;
@@ -647,16 +723,17 @@ public class AllHandle {
                         List<ChainConveyorPackage> list = selectedConnection.equals(BlockPos.ZERO) ? be.getLoopingPackages() : be.getTravellingPackages()
                             .get(selectedConnection);
 
-                        if (list == null || list.isEmpty())
+                        if (list == null || list.isEmpty()) {
                             return true;
+                        }
 
                         for (ChainConveyorPackage liftPackage : list) {
-                            float diff = Math.abs(selectedConnection == null ? AngleHelper.getShortestAngleDiff(
-                                liftPackage.chainPosition,
+                            float diff = Math.abs(selectedConnection == null ? AngleHelper.getShortestAngleDiff(liftPackage.chainPosition,
                                 chainPosition
                             ) : liftPackage.chainPosition - chainPosition);
-                            if (diff > bestDiff)
+                            if (diff > bestDiff) {
                                 continue;
+                            }
                             bestDiff = diff;
                             best = liftPackage;
                         }
@@ -670,9 +747,13 @@ public class AllHandle {
                         list.remove(best);
                         be.sendData();
                     } else {
-                        ChainConveyorPackage chainConveyorPackage = new ChainConveyorPackage(chainPosition, player.getMainHandItem().copy());
-                        if (!be.canAcceptPackagesFor(selectedConnection))
+                        ChainConveyorPackage chainConveyorPackage = new ChainConveyorPackage(
+                            chainPosition,
+                            player.getMainHandItem().copy()
+                        );
+                        if (!be.canAcceptPackagesFor(selectedConnection)) {
                             return true;
+                        }
 
                         if (!player.isCreative()) {
                             player.getMainHandItem().shrink(1);
@@ -694,13 +775,17 @@ public class AllHandle {
         );
     }
 
-    public static void onPackagePortConfiguration(ServerGamePacketListenerImpl listener, PackagePortConfigurationPacket packet) {
+    public static void onPackagePortConfiguration(
+        ServerGamePacketListenerImpl listener,
+        PackagePortConfigurationPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         onBlockEntityConfiguration(
             listener, packet.pos(), 20, blockEntity -> {
                 if (blockEntity instanceof PackagePortBlockEntity be) {
-                    if (be.addressFilter.equals(packet.newFilter()) && be.acceptsPackages == packet.acceptPackages())
+                    if (be.addressFilter.equals(packet.newFilter()) && be.acceptsPackages == packet.acceptPackages()) {
                         return true;
+                    }
                     be.addressFilter = packet.newFilter();
                     be.acceptsPackages = packet.acceptPackages();
                     be.filterChanged();
@@ -711,18 +796,26 @@ public class AllHandle {
         );
     }
 
-    public static void onFactoryPanelConnection(ServerGamePacketListenerImpl listener, FactoryPanelConnectionPacket packet) {
+    public static void onFactoryPanelConnection(
+        ServerGamePacketListenerImpl listener,
+        FactoryPanelConnectionPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         ServerPlayer player = listener.player;
         onBlockEntityConfiguration(
             listener, packet.toPos().pos(), 40, blockEntity -> {
                 if (blockEntity instanceof FactoryPanelBlockEntity be) {
-                    ServerFactoryPanelBehaviour behaviour = ServerFactoryPanelBehaviour.at(be.getLevel(), packet.toPos());
-                    if (behaviour != null)
-                        if (packet.relocate())
+                    ServerFactoryPanelBehaviour behaviour = ServerFactoryPanelBehaviour.at(
+                        be.getLevel(),
+                        packet.toPos()
+                    );
+                    if (behaviour != null) {
+                        if (packet.relocate()) {
                             behaviour.moveTo(packet.fromPos(), player);
-                        else
+                        } else {
                             behaviour.addConnection(packet.fromPos());
+                        }
+                    }
                     return true;
                 }
                 return false;
@@ -730,14 +823,18 @@ public class AllHandle {
         );
     }
 
-    public static void onFactoryPanelConfiguration(ServerGamePacketListenerImpl listener, FactoryPanelConfigurationPacket packet) {
+    public static void onFactoryPanelConfiguration(
+        ServerGamePacketListenerImpl listener,
+        FactoryPanelConfigurationPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         onBlockEntityConfiguration(
             listener, packet.position().pos(), 20, blockEntity -> {
                 if (blockEntity instanceof FactoryPanelBlockEntity be) {
                     ServerFactoryPanelBehaviour behaviour = be.panels.get(packet.position().slot());
-                    if (behaviour == null)
+                    if (behaviour == null) {
                         return false;
+                    }
 
                     boolean reset = packet.reset();
                     behaviour.recipeAddress = reset ? "" : packet.address();
@@ -762,23 +859,28 @@ public class AllHandle {
                     for (Map.Entry<FactoryPanelPosition, Integer> entry : packet.inputAmounts().entrySet()) {
                         FactoryPanelPosition key = entry.getKey();
                         FactoryPanelConnection connection = behaviour.targetedBy.get(key);
-                        if (connection != null)
+                        if (connection != null) {
                             connection.amount = entry.getValue();
+                        }
                     }
 
                     FactoryPanelPosition removeConnection = packet.removeConnection();
                     if (removeConnection != null) {
                         behaviour.targetedBy.remove(removeConnection);
                         behaviour.searchForCraftingRecipe();
-                        ServerFactoryPanelBehaviour source = ServerFactoryPanelBehaviour.at(be.getLevel(), removeConnection);
+                        ServerFactoryPanelBehaviour source = ServerFactoryPanelBehaviour.at(
+                            be.getLevel(),
+                            removeConnection
+                        );
                         if (source != null) {
                             source.targeting.remove(behaviour.getPanelPosition());
                             source.blockEntity.sendData();
                         }
                     }
 
-                    if (packet.clearPromises())
+                    if (packet.clearPromises()) {
                         behaviour.forceClearPromises = true;
+                    }
 
                     return true;
                 }
@@ -787,7 +889,10 @@ public class AllHandle {
         );
     }
 
-    public static void onRedstoneRequesterConfiguration(ServerGamePacketListenerImpl listener, RedstoneRequesterConfigurationPacket packet) {
+    public static void onRedstoneRequesterConfiguration(
+        ServerGamePacketListenerImpl listener,
+        RedstoneRequesterConfigurationPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         onBlockEntityConfiguration(
             listener, packet.pos(), 20, blockEntity -> {
@@ -797,11 +902,13 @@ public class AllHandle {
                     List<Integer> amounts = packet.amounts();
                     for (int i = 0; i < stacks.size() && i < amounts.size(); i++) {
                         ItemStack stack = stacks.get(i).stack;
-                        if (!stack.isEmpty())
+                        if (!stack.isEmpty()) {
                             stacks.set(i, new BigItemStack(stack, amounts.get(i)));
+                        }
                     }
-                    if (!be.encodedRequest.orderedStacksMatchOrderedRecipes())
+                    if (!be.encodedRequest.orderedStacksMatchOrderedRecipes()) {
                         be.encodedRequest = PackageOrderWithCrafts.simple(be.encodedRequest.stacks());
+                    }
                     be.allowPartialRequests = packet.allowPartial();
                     return true;
                 }
@@ -810,7 +917,10 @@ public class AllHandle {
         );
     }
 
-    public static void onStockKeeperCategoryEdit(ServerGamePacketListenerImpl listener, StockKeeperCategoryEditPacket packet) {
+    public static void onStockKeeperCategoryEdit(
+        ServerGamePacketListenerImpl listener,
+        StockKeeperCategoryEditPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         onBlockEntityConfiguration(
             listener, packet.pos(), 20, blockEntity -> {
@@ -823,14 +933,18 @@ public class AllHandle {
         );
     }
 
-    public static void onStockKeeperCategoryRefund(ServerGamePacketListenerImpl listener, StockKeeperCategoryRefundPacket packet) {
+    public static void onStockKeeperCategoryRefund(
+        ServerGamePacketListenerImpl listener,
+        StockKeeperCategoryRefundPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         onBlockEntityConfiguration(
             listener, packet.pos(), 20, blockEntity -> {
                 if (blockEntity instanceof StockTickerBlockEntity be) {
                     ItemStack filter = packet.filter();
-                    if (!filter.isEmpty() && filter.getItem() instanceof FilterItem)
+                    if (!filter.isEmpty() && filter.getItem() instanceof FilterItem) {
                         listener.player.getInventory().placeItemBackInInventory(filter);
+                    }
                     return true;
                 }
                 return false;
@@ -844,8 +958,9 @@ public class AllHandle {
         onBlockEntityConfiguration(
             listener, packet.pos(), 20, blockEntity -> {
                 if (blockEntity instanceof StockTickerBlockEntity be) {
-                    if (!be.behaviour.mayAdministrate(player))
+                    if (!be.behaviour.mayAdministrate(player)) {
                         return true;
+                    }
                     LogisticsNetwork network = Create.LOGISTICS.logisticsNetworks.get(be.behaviour.freqId);
                     if (network != null) {
                         network.locked = packet.lock();
@@ -858,7 +973,10 @@ public class AllHandle {
         );
     }
 
-    public static void onStockKeeperCategoryHiding(ServerGamePacketListenerImpl listener, StockKeeperCategoryHidingPacket packet) {
+    public static void onStockKeeperCategoryHiding(
+        ServerGamePacketListenerImpl listener,
+        StockKeeperCategoryHidingPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         onBlockEntityConfiguration(
             listener, packet.pos(), 20, blockEntity -> {
@@ -928,8 +1046,9 @@ public class AllHandle {
     }
 
     public static void onClearContainer(ServerGamePacketListenerImpl listener) {
-        if (!(listener.player.containerMenu instanceof IClearableMenu menu))
+        if (!(listener.player.containerMenu instanceof IClearableMenu menu)) {
             return;
+        }
         menu.clearContents();
     }
 
@@ -939,49 +1058,70 @@ public class AllHandle {
         FilterScreenPacket.Option option = packet.option();
 
         if (player.containerMenu instanceof FilterMenu c) {
-            if (option == FilterScreenPacket.Option.WHITELIST)
+            if (option == FilterScreenPacket.Option.WHITELIST) {
                 c.blacklist = false;
-            if (option == FilterScreenPacket.Option.BLACKLIST)
+            }
+            if (option == FilterScreenPacket.Option.BLACKLIST) {
                 c.blacklist = true;
-            if (option == FilterScreenPacket.Option.RESPECT_DATA)
+            }
+            if (option == FilterScreenPacket.Option.RESPECT_DATA) {
                 c.respectNBT = true;
-            if (option == FilterScreenPacket.Option.IGNORE_DATA)
+            }
+            if (option == FilterScreenPacket.Option.IGNORE_DATA) {
                 c.respectNBT = false;
-            if (option == FilterScreenPacket.Option.UPDATE_FILTER_ITEM)
-                c.ghostInventory.setItem(tag.getIntOr("Slot", 0), tag.read("Item", ItemStack.CODEC).orElse(ItemStack.EMPTY));
+            }
+            if (option == FilterScreenPacket.Option.UPDATE_FILTER_ITEM) {
+                c.ghostInventory.setItem(
+                    tag.getIntOr("Slot", 0),
+                    tag.read("Item", ItemStack.CODEC).orElse(ItemStack.EMPTY)
+                );
+            }
         } else if (player.containerMenu instanceof AttributeFilterMenu c) {
-            if (option == FilterScreenPacket.Option.WHITELIST)
+            if (option == FilterScreenPacket.Option.WHITELIST) {
                 c.whitelistMode = AttributeFilterWhitelistMode.WHITELIST_DISJ;
-            if (option == FilterScreenPacket.Option.WHITELIST2)
+            }
+            if (option == FilterScreenPacket.Option.WHITELIST2) {
                 c.whitelistMode = AttributeFilterWhitelistMode.WHITELIST_CONJ;
-            if (option == FilterScreenPacket.Option.BLACKLIST)
+            }
+            if (option == FilterScreenPacket.Option.BLACKLIST) {
                 c.whitelistMode = AttributeFilterWhitelistMode.BLACKLIST;
-            if (option == FilterScreenPacket.Option.ADD_TAG)
+            }
+            if (option == FilterScreenPacket.Option.ADD_TAG) {
                 c.appendSelectedAttribute(ItemAttribute.loadStatic(packet.data(), player.registryAccess()), false);
-            if (option == FilterScreenPacket.Option.ADD_INVERTED_TAG)
+            }
+            if (option == FilterScreenPacket.Option.ADD_INVERTED_TAG) {
                 c.appendSelectedAttribute(ItemAttribute.loadStatic(packet.data(), player.registryAccess()), true);
+            }
         } else if (player.containerMenu instanceof PackageFilterMenu c) {
-            if (option == FilterScreenPacket.Option.UPDATE_ADDRESS)
+            if (option == FilterScreenPacket.Option.UPDATE_ADDRESS) {
                 c.address = tag.getStringOr("Address", "");
+            }
         }
     }
 
-    public static void onContraptionInteraction(ServerGamePacketListenerImpl listener, ContraptionInteractionPacket packet) {
+    public static void onContraptionInteraction(
+        ServerGamePacketListenerImpl listener,
+        ContraptionInteractionPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         ServerPlayer sender = listener.player;
         Entity entityByID = sender.level().getEntity(packet.target());
-        if (!(entityByID instanceof AbstractContraptionEntity contraptionEntity))
+        if (!(entityByID instanceof AbstractContraptionEntity contraptionEntity)) {
             return;
+        }
         AABB bb = contraptionEntity.getBoundingBox();
         double boundsExtra = Math.max(bb.getXsize(), bb.getYsize());
         double d = sender.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) + 10 + boundsExtra;
-        if (!sender.hasLineOfSight(entityByID))
+        if (!sender.hasLineOfSight(entityByID)) {
             d -= 3;
+        }
         d *= d;
-        if (sender.distanceToSqr(entityByID) > d)
+        if (sender.distanceToSqr(entityByID) > d) {
             return;
-        if (contraptionEntity.handlePlayerInteraction(sender, packet.localPos(), packet.face(), packet.hand()))
+        }
+        if (contraptionEntity.handlePlayerInteraction(sender, packet.localPos(), packet.face(), packet.hand())) {
             sender.swing(packet.hand(), true);
+        }
     }
 
     public static void onClientMotion(ServerGamePacketListenerImpl listener, ClientMotionPacket packet) {
@@ -994,41 +1134,52 @@ public class AllHandle {
             sender.connection.aboveGroundTickCount = 0;
             sender.connection.aboveGroundVehicleTickCount = 0;
         }
-        sender.level().getChunkSource()
-            .sendToTrackingPlayers(sender, new LimbSwingUpdatePacket(sender.getId(), sender.position(), packet.limbSwing()));
+        sender.level().getChunkSource().sendToTrackingPlayers(
+            sender,
+            new LimbSwingUpdatePacket(sender.getId(), sender.position(), packet.limbSwing())
+        );
     }
 
     public static void onArmPlacement(ServerGamePacketListenerImpl listener, ArmPlacementPacket packet) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         Level world = listener.player.level();
-        if (!world.isLoaded(packet.pos()))
+        if (!world.isLoaded(packet.pos())) {
             return;
+        }
         BlockEntity blockEntity = world.getBlockEntity(packet.pos());
-        if (!(blockEntity instanceof ArmBlockEntity arm))
+        if (!(blockEntity instanceof ArmBlockEntity arm)) {
             return;
+        }
 
         arm.interactionPointTag = packet.tag();
     }
 
-    public static void onPackagePortPlacement(ServerGamePacketListenerImpl listener, PackagePortPlacementPacket packet) {
+    public static void onPackagePortPlacement(
+        ServerGamePacketListenerImpl listener,
+        PackagePortPlacementPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         Level world = listener.player.level();
         BlockPos pos = packet.pos();
-        if (world == null || !world.isLoaded(pos))
+        if (world == null || !world.isLoaded(pos)) {
             return;
+        }
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (!(blockEntity instanceof PackagePortBlockEntity ppbe))
+        if (!(blockEntity instanceof PackagePortBlockEntity ppbe)) {
             return;
+        }
         PackagePortTarget target = packet.target();
-        if (!target.canSupport(ppbe))
+        if (!target.canSupport(ppbe)) {
             return;
+        }
 
         Vec3 targetLocation = target.getExactTargetLocation(ppbe, world, pos);
         if (targetLocation == Vec3.ZERO || !targetLocation.closerThan(
             Vec3.atBottomCenterOf(pos),
             AllConfigs.server().logistics.packagePortRange.get() + 2
-        ))
+        )) {
             return;
+        }
 
         target.setup(ppbe, world, pos);
         ppbe.target = target;
@@ -1043,7 +1194,13 @@ public class AllHandle {
 
     public static void onInstantSchematic(ServerGamePacketListenerImpl listener, InstantSchematicPacket packet) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
-        Create.SCHEMATIC_RECEIVER.handleInstantSchematic(listener.player, packet.name(), listener.player.level(), packet.origin(), packet.bounds());
+        Create.SCHEMATIC_RECEIVER.handleInstantSchematic(
+            listener.player,
+            packet.name(),
+            listener.player.level(),
+            packet.origin(),
+            packet.bounds()
+        );
     }
 
     public static void onSchematicSync(ServerGamePacketListenerImpl listener, SchematicSyncPacket packet) {
@@ -1076,24 +1233,29 @@ public class AllHandle {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         ServerLevel world = listener.player.level();
         BlockPos pos = packet.pos();
-        if (!world.isLoaded(pos))
+        if (!world.isLoaded(pos)) {
             return;
+        }
         BlockEntity blockEntity = world.getBlockEntity(pos);
         BlockState state = world.getBlockState(pos);
-        if (blockEntity instanceof EjectorBlockEntity ejector)
+        if (blockEntity instanceof EjectorBlockEntity ejector) {
             ejector.setTarget(packet.h(), packet.v());
-        if (state.is(AllBlocks.WEIGHTED_EJECTOR))
+        }
+        if (state.is(AllBlocks.WEIGHTED_EJECTOR)) {
             world.setBlockAndUpdate(pos, state.setValue(EjectorBlock.HORIZONTAL_FACING, packet.facing()));
+        }
     }
 
     public static void onEjectorElytra(ServerGamePacketListenerImpl listener, EjectorElytraPacket packet) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         ServerLevel world = listener.player.level();
-        if (!world.isLoaded(packet.pos()))
+        if (!world.isLoaded(packet.pos())) {
             return;
+        }
         BlockEntity blockEntity = world.getBlockEntity(packet.pos());
-        if (blockEntity instanceof EjectorBlockEntity ejector)
+        if (blockEntity instanceof EjectorBlockEntity ejector) {
             ejector.deployElytra(listener.player);
+        }
     }
 
     private static void onLinkedController(
@@ -1110,14 +1272,18 @@ public class AllHandle {
             ItemStack controller = player.getMainHandItem();
             if (!controller.is(AllItems.LINKED_CONTROLLER)) {
                 controller = player.getOffhandItem();
-                if (!controller.is(AllItems.LINKED_CONTROLLER))
+                if (!controller.is(AllItems.LINKED_CONTROLLER)) {
                     return;
+                }
             }
             onStack.accept(controller);
         }
     }
 
-    public static void onLinkedControllerInput(ServerGamePacketListenerImpl listener, LinkedControllerInputPacket packet) {
+    public static void onLinkedControllerInput(
+        ServerGamePacketListenerImpl listener,
+        LinkedControllerInputPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         ServerPlayer player = listener.player;
         Consumer<ItemStack> handleItem = stack -> {
@@ -1125,28 +1291,34 @@ public class AllHandle {
             UUID uniqueID = player.getUUID();
             BlockPos pos = player.blockPosition();
 
-            if (player.isSpectator() && packet.press())
+            if (player.isSpectator() && packet.press()) {
                 return;
+            }
 
             LinkedControllerServerHandler.receivePressed(
                 world,
                 pos,
                 uniqueID,
-                packet.activatedButtons().stream().map(i -> LinkedControllerItem.toFrequency(stack, i)).collect(Collectors.toList()),
+                packet.activatedButtons().stream().map(i -> LinkedControllerItem.toFrequency(stack, i))
+                    .collect(Collectors.toList()),
                 packet.press()
             );
         };
         onLinkedController(
             player, packet.lecternPos(), blockEntity -> {
                 if (blockEntity instanceof LecternControllerBlockEntity lectern) {
-                    if (lectern.isUsedBy(player))
+                    if (lectern.isUsedBy(player)) {
                         handleItem.accept(lectern.getController());
+                    }
                 }
             }, handleItem
         );
     }
 
-    public static void onLinkedControllerBind(ServerGamePacketListenerImpl listener, LinkedControllerBindPacket packet) {
+    public static void onLinkedControllerBind(
+        ServerGamePacketListenerImpl listener,
+        LinkedControllerBindPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         ServerPlayer player = listener.player;
         if (player.isSpectator()) {
@@ -1155,20 +1327,34 @@ public class AllHandle {
         onLinkedController(
             player, null, null, stack -> {
                 ItemStackHandler frequencyItems = LinkedControllerItem.getFrequencyItems(stack);
-                ServerLinkBehaviour linkBehaviour = BlockEntityBehaviour.get(player.level(), packet.linkLocation(), ServerLinkBehaviour.TYPE);
-                if (linkBehaviour == null)
+                ServerLinkBehaviour linkBehaviour = BlockEntityBehaviour.get(
+                    player.level(),
+                    packet.linkLocation(),
+                    ServerLinkBehaviour.TYPE
+                );
+                if (linkBehaviour == null) {
                     return;
+                }
 
                 int button = packet.button();
                 linkBehaviour.getNetworkKey()
-                    .forEachWithContext((f, first) -> frequencyItems.setItem(button * 2 + (first ? 0 : 1), f.getStack().copy()));
+                    .forEachWithContext((f, first) -> frequencyItems.setItem(
+                        button * 2 + (first ? 0 : 1),
+                        f.getStack().copy()
+                    ));
 
-                stack.set(AllDataComponents.LINKED_CONTROLLER_ITEMS, ItemHelper.containerContentsFromHandler(frequencyItems));
+                stack.set(
+                    AllDataComponents.LINKED_CONTROLLER_ITEMS,
+                    ItemHelper.containerContentsFromHandler(frequencyItems)
+                );
             }
         );
     }
 
-    public static void onLinkedControllerStopLectern(ServerGamePacketListenerImpl listener, LinkedControllerStopLecternPacket packet) {
+    public static void onLinkedControllerStopLectern(
+        ServerGamePacketListenerImpl listener,
+        LinkedControllerStopLecternPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         ServerPlayer player = listener.player;
         onLinkedController(
@@ -1193,7 +1379,10 @@ public class AllHandle {
         }
     }
 
-    public static void onBlueprintAssignCompleteRecipe(ServerGamePacketListenerImpl listener, BlueprintAssignCompleteRecipePacket packet) {
+    public static void onBlueprintAssignCompleteRecipe(
+        ServerGamePacketListenerImpl listener,
+        BlueprintAssignCompleteRecipePacket packet
+    ) {
         ServerPlayer player = listener.player;
         if (player.containerMenu instanceof BlueprintMenu menu) {
             Container inventory = menu.ghostInventory;
@@ -1206,14 +1395,20 @@ public class AllHandle {
         }
     }
 
-    public static void onConfigureSymmetryWand(ServerGamePacketListenerImpl listener, ConfigureSymmetryWandPacket packet) {
+    public static void onConfigureSymmetryWand(
+        ServerGamePacketListenerImpl listener,
+        ConfigureSymmetryWandPacket packet
+    ) {
         ItemStack stack = listener.player.getItemInHand(packet.hand());
         if (stack.getItem() instanceof SymmetryWandItem) {
             SymmetryWandItem.configureSettings(stack, packet.mirror());
         }
     }
 
-    public static void onConfigureWorldshaper(ServerGamePacketListenerImpl listener, ConfigureWorldshaperPacket packet) {
+    public static void onConfigureWorldshaper(
+        ServerGamePacketListenerImpl listener,
+        ConfigureWorldshaperPacket packet
+    ) {
         ItemStack stack = listener.player.getItemInHand(packet.hand());
         if (stack.getItem() instanceof ZapperItem) {
             packet.configureZapper(stack);
@@ -1234,10 +1429,16 @@ public class AllHandle {
         ServerLevel world = player.level();
         BlockEntity blockEntity = world.getBlockEntity(toolboxPos);
         double maxRange = ToolboxHandler.getMaxRange(player);
-        if (player.distanceToSqr(toolboxPos.getX() + 0.5, toolboxPos.getY(), toolboxPos.getZ() + 0.5) > maxRange * maxRange)
+        if (player.distanceToSqr(
+            toolboxPos.getX() + 0.5,
+            toolboxPos.getY(),
+            toolboxPos.getZ() + 0.5
+        ) > maxRange * maxRange) {
             return;
-        if (!(blockEntity instanceof ToolboxBlockEntity toolboxBlockEntity))
+        }
+        if (!(blockEntity instanceof ToolboxBlockEntity toolboxBlockEntity)) {
             return;
+        }
 
         ToolboxHandler.unequip(player, hotbarSlot, false);
 
@@ -1248,13 +1449,21 @@ public class AllHandle {
 
         Inventory playerInventory = player.getInventory();
         ItemStack playerStack = playerInventory.getItem(hotbarSlot);
-        if (!playerStack.isEmpty() && !ToolboxInventory.canItemsShareCompartment(playerStack, toolboxBlockEntity.inventory.filters.get(slot))) {
+        if (!playerStack.isEmpty() && !ToolboxInventory.canItemsShareCompartment(
+            playerStack,
+            toolboxBlockEntity.inventory.filters.get(slot)
+        )) {
             toolboxBlockEntity.inventory.inLimitedMode(inventory -> {
                 int count = playerStack.getCount();
                 int insert = inventory.insertExist(playerStack);
                 if (insert != count) {
                     count -= insert;
-                    insert = playerInventory.insert(playerStack, count, Inventory.getSelectionSize(), Inventory.INVENTORY_SIZE);
+                    insert = playerInventory.insert(
+                        playerStack,
+                        count,
+                        Inventory.getSelectionSize(),
+                        Inventory.INVENTORY_SIZE
+                    );
                 }
                 if (insert == count) {
                     playerInventory.setItem(hotbarSlot, ItemStack.EMPTY);
@@ -1284,10 +1493,16 @@ public class AllHandle {
         BlockEntity blockEntity = world.getBlockEntity(toolboxPos);
 
         double maxRange = ToolboxHandler.getMaxRange(player);
-        if (player.distanceToSqr(toolboxPos.getX() + 0.5, toolboxPos.getY(), toolboxPos.getZ() + 0.5) > maxRange * maxRange)
+        if (player.distanceToSqr(
+            toolboxPos.getX() + 0.5,
+            toolboxPos.getY(),
+            toolboxPos.getZ() + 0.5
+        ) > maxRange * maxRange) {
             return;
-        if (!(blockEntity instanceof ToolboxBlockEntity toolbox))
+        }
+        if (!(blockEntity instanceof ToolboxBlockEntity toolbox)) {
             return;
+        }
 
         CompoundTag compound = AllSynchedDatas.TOOLBOX.get(player);
         MutableBoolean sendData = new MutableBoolean(false);
@@ -1295,8 +1510,8 @@ public class AllHandle {
         Inventory playerInventory = player.getInventory();
         toolbox.inventory.inLimitedMode(inventory -> {
             for (int i = 0; i < 36; i++) {
-                if (compound.getCompound(String.valueOf(i)).flatMap(nbt -> nbt.read("Pos", BlockPos.CODEC)).map(pos -> pos.equals(toolboxPos))
-                    .orElse(false)) {
+                if (compound.getCompound(String.valueOf(i)).flatMap(nbt -> nbt.read("Pos", BlockPos.CODEC))
+                    .map(pos -> pos.equals(toolboxPos)).orElse(false)) {
                     ToolboxHandler.unequip(player, i, true);
                     sendData.setTrue();
                 }
@@ -1315,20 +1530,25 @@ public class AllHandle {
             }
         });
 
-        if (sendData.booleanValue())
+        if (sendData.booleanValue()) {
             ToolboxHandler.syncData(player, compound);
+        }
     }
 
     public static void onScheduleEdit(ServerGamePacketListenerImpl listener, ScheduleEditPacket packet) {
         ServerPlayer sender = listener.player;
         ItemStack mainHandItem = sender.getMainHandItem();
-        if (!mainHandItem.is(AllItems.SCHEDULE))
+        if (!mainHandItem.is(AllItems.SCHEDULE)) {
             return;
+        }
 
         if (packet.schedule().entries.isEmpty()) {
             mainHandItem.remove(AllDataComponents.TRAIN_SCHEDULE);
         } else {
-            try (ProblemReporter.ScopedCollector logging = new ProblemReporter.ScopedCollector(() -> "ScheduleEdit", Create.LOGGER)) {
+            try (ProblemReporter.ScopedCollector logging = new ProblemReporter.ScopedCollector(
+                () -> "ScheduleEdit",
+                Create.LOGGER
+            )) {
                 TagValueOutput view = TagValueOutput.createWithContext(logging, sender.registryAccess());
                 packet.schedule().write(view);
                 mainHandItem.set(AllDataComponents.TRAIN_SCHEDULE, view.buildResult());
@@ -1342,14 +1562,16 @@ public class AllHandle {
         ServerPlayer sender = listener.player;
         ServerLevel world = sender.level();
         Train train = Create.RAILWAYS.sided(world).trains.get(packet.id());
-        if (train == null)
+        if (train == null) {
             return;
+        }
         if (!packet.name().isBlank()) {
             train.name = Component.literal(packet.name());
         }
         train.icon = TrainIconType.byId(packet.iconType());
         train.mapColorIndex = packet.mapColor();
-        listener.server.getPlayerList().broadcastAll(new TrainEditReturnPacket(packet.id(), packet.name(), packet.iconType(), packet.mapColor()));
+        listener.server.getPlayerList()
+            .broadcastAll(new TrainEditReturnPacket(packet.id(), packet.name(), packet.iconType(), packet.mapColor()));
     }
 
     public static void onTrainRelocation(ServerGamePacketListenerImpl listener, TrainRelocationPacket packet) {
@@ -1364,8 +1586,9 @@ public class AllHandle {
             return;
         }
 
-        if (!train.id.equals(cce.trainId))
+        if (!train.id.equals(cce.trainId)) {
             return;
+        }
 
         int verifyDistance = AllConfigs.server().trains.maxTrackPlacementLength.get() * 2;
         if (!sender.position().closerThan(Vec3.atCenterOf(packet.pos()), verifyDistance)) {
@@ -1377,11 +1600,21 @@ public class AllHandle {
             return;
         }
 
-        if (TrainRelocator.relocate(train, sender.level(), packet.pos(), packet.hoveredBezier(), packet.direction(), packet.lookAngle(), null)) {
-            sender.sendOverlayMessage(Component.translatable("create.train.relocate.success").withStyle(ChatFormatting.GREEN));
+        if (TrainRelocator.relocate(
+            train,
+            sender.level(),
+            packet.pos(),
+            packet.hoveredBezier(),
+            packet.direction(),
+            packet.lookAngle(),
+            null
+        )) {
+            sender.sendOverlayMessage(Component.translatable("create.train.relocate.success")
+                .withStyle(ChatFormatting.GREEN));
             train.carriages.forEach(c -> c.forEachPresentEntity(e -> {
                 e.nonDamageTicks = 10;
-                listener.player.level().getChunkSource().sendToTrackingPlayers(e, new ContraptionRelocationPacket(e.getId()));
+                listener.player.level().getChunkSource()
+                    .sendToTrackingPlayers(e, new ContraptionRelocationPacket(e.getId()));
             }));
             return;
         }
@@ -1394,25 +1627,36 @@ public class AllHandle {
         ServerLevel world = player.level();
         UUID uniqueID = player.getUUID();
 
-        if (player.isSpectator() && packet.press())
+        if (player.isSpectator() && packet.press()) {
             return;
+        }
 
         Entity entity = world.getEntity(packet.contraptionEntityId());
-        if (!(entity instanceof AbstractContraptionEntity ace))
+        if (!(entity instanceof AbstractContraptionEntity ace)) {
             return;
+        }
         if (packet.stopControlling()) {
             ace.stopControlling(packet.controlsPos());
             return;
         }
 
-        if (ace.toGlobalVector(Vec3.atCenterOf(packet.controlsPos()), 0).closerThan(player.position(), 16))
-            ControlsServerHandler.receivePressed(world, ace, packet.controlsPos(), uniqueID, packet.activatedButtons(), packet.press());
+        if (ace.toGlobalVector(Vec3.atCenterOf(packet.controlsPos()), 0).closerThan(player.position(), 16)) {
+            ControlsServerHandler.receivePressed(
+                world,
+                ace,
+                packet.controlsPos(),
+                uniqueID,
+                packet.activatedButtons(),
+                packet.press()
+            );
+        }
     }
 
     public static void onPlaceExtendedCurve(ServerGamePacketListenerImpl listener, PlaceExtendedCurvePacket packet) {
         ItemStack stack = listener.player.getItemInHand(packet.mainHand() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
-        if (!stack.is(AllItemTags.TRACKS))
+        if (!stack.is(AllItemTags.TRACKS)) {
             return;
+        }
         stack.set(AllDataComponents.TRACK_EXTENDED_CURVE, true);
     }
 
@@ -1422,19 +1666,24 @@ public class AllHandle {
         ServerLevel world = player.level();
         double range = player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) + 2;
         BlockPos to = packet.to();
-        if (player.distanceToSqr(Vec3.atCenterOf(to)) > range * range)
+        if (player.distanceToSqr(Vec3.atCenterOf(to)) > range * range) {
             return;
+        }
         BlockPos from = packet.from();
-        if (!to.closerThan(from, 25))
+        if (!to.closerThan(from, 25)) {
             return;
+        }
 
         Set<BlockPos> group = SuperGlueSelectionHelper.searchGlueGroup(world, from, to, false);
-        if (group == null)
+        if (group == null) {
             return;
-        if (!group.contains(to))
+        }
+        if (!group.contains(to)) {
             return;
-        if (!SuperGlueSelectionHelper.collectGlueFromInventory(player, 1, true))
+        }
+        if (!SuperGlueSelectionHelper.collectGlueFromInventory(player, 1, true)) {
             return;
+        }
 
         AABB bb = SuperGlueEntity.span(from, to);
         SuperGlueSelectionHelper.collectGlueFromInventory(player, 1, false);
@@ -1450,11 +1699,13 @@ public class AllHandle {
         ServerPlayer player = listener.player;
         ServerLevel world = player.level();
         Entity entity = world.getEntity(packet.entityId());
-        if (!(entity instanceof SuperGlueEntity superGlue))
+        if (!(entity instanceof SuperGlueEntity superGlue)) {
             return;
+        }
         double range = 32;
-        if (player.distanceToSqr(superGlue.position()) > range * range)
+        if (player.distanceToSqr(superGlue.position()) > range * range) {
             return;
+        }
         AllSoundEvents.SLIME_ADDED.play(world, null, packet.soundSource(), 0.5F, 0.5F);
         superGlue.spawnParticles();
         entity.discard();
@@ -1465,8 +1716,9 @@ public class AllHandle {
         ServerPlayer player = listener.player;
         ServerLevel world = player.level();
         Entity entity = world.getEntity(packet.contraptionEntityId());
-        if (!(entity instanceof CarriageContraptionEntity cce))
+        if (!(entity instanceof CarriageContraptionEntity cce)) {
             return;
+        }
 
         player.hurtServer(world, AllDamageSources.get(world).runOver(cce), packet.damage());
         world.playSound(player, entity.blockPosition(), SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.NEUTRAL, 1, .75f);
@@ -1475,18 +1727,21 @@ public class AllHandle {
     public static void onTrainHUDUpdate(ServerGamePacketListenerImpl listener, TrainHUDUpdatePacket packet) {
         ServerPlayer player = listener.player;
         Train train = Create.RAILWAYS.sided(player.level()).trains.get(packet.trainId());
-        if (train == null)
+        if (train == null) {
             return;
+        }
 
-        if (packet.throttle() != null)
+        if (packet.throttle() != null) {
             train.throttle = packet.throttle();
+        }
     }
 
     public static void onTrainHonk(ServerGamePacketListenerImpl listener, HonkPacket packet) {
         ServerPlayer player = listener.player;
         Train train = Create.RAILWAYS.sided(player.level()).trains.get(packet.trainId());
-        if (train == null)
+        if (train == null) {
             return;
+        }
 
         AllAdvancements.TRAIN_WHISTLE.trigger(player);
         listener.server.getPlayerList().broadcastAll(new HonkReturnPacket(train, packet.isHonk()));
@@ -1503,13 +1758,18 @@ public class AllHandle {
         }
     }
 
-    public static void onElevatorRequestFloorList(ServerGamePacketListenerImpl listener, RequestFloorListPacket packet) {
+    public static void onElevatorRequestFloorList(
+        ServerGamePacketListenerImpl listener,
+        RequestFloorListPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         Entity entityByID = listener.player.level().getEntity(packet.entityId());
-        if (!(entityByID instanceof AbstractContraptionEntity ace))
+        if (!(entityByID instanceof AbstractContraptionEntity ace)) {
             return;
-        if (!(ace.getContraption() instanceof ElevatorContraption ec))
+        }
+        if (!(ace.getContraption() instanceof ElevatorContraption ec)) {
             return;
+        }
         listener.send(new ElevatorFloorListPacket(ace, ec.namesList));
     }
 
@@ -1518,27 +1778,33 @@ public class AllHandle {
         ServerPlayer sender = listener.player;
         ServerLevel world = sender.level();
         Entity entityByID = world.getEntity(packet.entityId());
-        if (!(entityByID instanceof AbstractContraptionEntity ace))
+        if (!(entityByID instanceof AbstractContraptionEntity ace)) {
             return;
-        if (!(ace.getContraption() instanceof ElevatorContraption ec))
+        }
+        if (!(ace.getContraption() instanceof ElevatorContraption ec)) {
             return;
-        if (ace.distanceToSqr(sender) > 50 * 50)
+        }
+        if (ace.distanceToSqr(sender) > 50 * 50) {
             return;
+        }
 
         ElevatorColumn elevatorColumn = ElevatorColumn.get(world, ec.getGlobalColumn());
         if (elevatorColumn == null) {
             return;
         }
         int targetY = packet.targetY();
-        if (!elevatorColumn.contacts.contains(targetY))
+        if (!elevatorColumn.contacts.contains(targetY)) {
             return;
-        if (ec.isTargetUnreachable(targetY))
+        }
+        if (ec.isTargetUnreachable(targetY)) {
             return;
+        }
 
         BlockPos pos = elevatorColumn.contactAt(targetY);
         BlockState blockState = world.getBlockState(pos);
-        if (!(blockState.getBlock() instanceof ElevatorContactBlock ecb))
+        if (!(blockState.getBlock() instanceof ElevatorContactBlock ecb)) {
             return;
+        }
 
         ecb.callToContactAndUpdate(elevatorColumn, blockState, world, pos, false);
     }
@@ -1550,10 +1816,12 @@ public class AllHandle {
         BlockPos targetedBlock = packet.targetedBlock();
         if (targetedBlock != null) {
             ServerLevel world = sender.level();
-            if (!world.isLoaded(targetedBlock))
+            if (!world.isLoaded(targetedBlock)) {
                 return;
-            if (!targetedBlock.closerThan(sender.blockPosition(), 20))
+            }
+            if (!targetedBlock.closerThan(sender.blockPosition(), 20)) {
                 return;
+            }
             if (world.getBlockEntity(targetedBlock) instanceof ClipboardBlockEntity cbe) {
                 PatchedDataComponentMap map = new PatchedDataComponentMap(cbe.components());
                 if (processedContent == null) {
@@ -1568,8 +1836,9 @@ public class AllHandle {
         }
 
         ItemStack itemStack = sender.getInventory().getItem(packet.hotbarSlot());
-        if (!itemStack.is(AllItems.CLIPBOARD))
+        if (!itemStack.is(AllItems.CLIPBOARD)) {
             return;
+        }
         if (processedContent == null) {
             itemStack.remove(AllDataComponents.CLIPBOARD_CONTENT);
         } else {
@@ -1579,32 +1848,43 @@ public class AllHandle {
 
     @Nullable
     private static ClipboardContent clipboardProcessor(@Nullable ClipboardContent content) {
-        if (content == null)
+        if (content == null) {
             return null;
+        }
 
         for (List<ClipboardEntry> page : content.pages()) {
             for (ClipboardEntry entry : page) {
-                if (NBTProcessors.textComponentHasClickEvent(entry.text))
+                if (NBTProcessors.textComponentHasClickEvent(entry.text)) {
                     return null;
+                }
             }
         }
 
         return content;
     }
 
-    public static void onContraptionColliderLockRequest(ServerGamePacketListenerImpl listener, ContraptionColliderLockPacketRequest packet) {
+    public static void onContraptionColliderLockRequest(
+        ServerGamePacketListenerImpl listener,
+        ContraptionColliderLockPacketRequest packet
+    ) {
         ServerPlayer player = listener.player;
-        player.level().getChunkSource()
-            .sendToTrackingPlayers(player, new ContraptionColliderLockPacket(packet.contraption(), packet.offset(), player.getId()));
+        player.level().getChunkSource().sendToTrackingPlayers(
+            player,
+            new ContraptionColliderLockPacket(packet.contraption(), packet.offset(), player.getId())
+        );
     }
 
-    public static void onRadialWrenchMenuSubmit(ServerGamePacketListenerImpl listener, RadialWrenchMenuSubmitPacket packet) {
+    public static void onRadialWrenchMenuSubmit(
+        ServerGamePacketListenerImpl listener,
+        RadialWrenchMenuSubmitPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         ServerLevel world = listener.player.level();
         BlockPos blockPos = packet.blockPos();
         BlockState newState = packet.newState();
-        if (!world.getBlockState(blockPos).is(newState.getBlock()))
+        if (!world.getBlockState(blockPos).is(newState.getBlock())) {
             return;
+        }
 
         BlockState updatedState = Block.updateFromNeighbourShapes(newState, world, blockPos);
         KineticBlockEntity.switchToBlockState(world, blockPos, updatedState);
@@ -1631,7 +1911,10 @@ public class AllHandle {
         );
     }
 
-    public static void onBlueprintPreviewRequest(ServerGamePacketListenerImpl listener, BlueprintPreviewRequestPacket packet) {
+    public static void onBlueprintPreviewRequest(
+        ServerGamePacketListenerImpl listener,
+        BlueprintPreviewRequestPacket packet
+    ) {
         PacketUtils.ensureRunningOnSameThread(packet, listener, listener.server.packetProcessor());
         Entity entity = listener.player.level().getEntity(packet.entityId());
         if (!(entity instanceof BlueprintEntity blueprint)) {

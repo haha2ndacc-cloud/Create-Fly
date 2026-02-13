@@ -24,8 +24,9 @@ public class TagProviderImpl<K, V> implements SimpleRegistry.Provider<K, V> {
     // eye of the beholder? check the nametag, buddy
     public static Holder<BlockEntityType<?>> getBeHolder(BlockEntityType<?> type) {
         Identifier key = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(type);
-        if (key == null)
+        if (key == null) {
             throw new IllegalStateException("Unregistered BlockEntityType: " + type);
+        }
 
         return BuiltInRegistries.BLOCK_ENTITY_TYPE.get(key).orElseThrow();
     }

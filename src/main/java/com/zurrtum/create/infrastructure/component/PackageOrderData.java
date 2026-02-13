@@ -10,9 +10,8 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
-public record PackageOrderData(
-    int orderId, int linkIndex, boolean isFinalLink, int fragmentIndex, boolean isFinal, @Nullable PackageOrderWithCrafts orderContext
-) {
+public record PackageOrderData(int orderId, int linkIndex, boolean isFinalLink, int fragmentIndex, boolean isFinal,
+                               @Nullable PackageOrderWithCrafts orderContext) {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public PackageOrderData(
         int orderId,
@@ -31,7 +30,8 @@ public record PackageOrderData(
         Codec.BOOL.fieldOf("is_final_link").forGetter(PackageOrderData::isFinalLink),
         Codec.INT.fieldOf("fragment_index").forGetter(PackageOrderData::fragmentIndex),
         Codec.BOOL.fieldOf("is_final").forGetter(PackageOrderData::isFinal),
-        PackageOrderWithCrafts.CODEC.optionalFieldOf("order_context").forGetter(i -> Optional.ofNullable(i.orderContext))
+        PackageOrderWithCrafts.CODEC.optionalFieldOf("order_context")
+            .forGetter(i -> Optional.ofNullable(i.orderContext))
     ).apply(instance, PackageOrderData::new));
 
     @SuppressWarnings("DataFlowIssue")

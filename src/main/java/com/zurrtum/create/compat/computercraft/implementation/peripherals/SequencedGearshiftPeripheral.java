@@ -33,8 +33,11 @@ public class SequencedGearshiftPeripheral extends SyncedPeripheral<SequencedGear
         int speedModifier = arguments.count() > 1 ? arguments.getInt(1) : 1;
         this.blockEntity.getInstructions().clear();
 
-        this.blockEntity.getInstructions()
-            .add(new Instruction(instructionType, InstructionSpeedModifiers.getByModifier(speedModifier), Math.abs(arguments.getInt(0))));
+        this.blockEntity.getInstructions().add(new Instruction(
+            instructionType,
+            InstructionSpeedModifiers.getByModifier(speedModifier),
+            Math.abs(arguments.getInt(0))
+        ));
         this.blockEntity.getInstructions().add(new Instruction(SequencerInstructions.END));
 
         this.blockEntity.run(0);

@@ -44,8 +44,9 @@ public class WorldshaperItem extends ZapperItem {
 
     @Override
     public Component validateUsage(ItemStack item) {
-        if (!item.has(AllDataComponents.SHAPER_BRUSH_PARAMS))
+        if (!item.has(AllDataComponents.SHAPER_BRUSH_PARAMS)) {
             return Component.translatable("create.terrainzapper.shiftRightClickToSet");
+        }
         return super.validateUsage(item);
     }
 
@@ -70,7 +71,10 @@ public class WorldshaperItem extends ZapperItem {
 
         Brush brush = stack.getOrDefault(AllDataComponents.SHAPER_BRUSH, TerrainBrushes.Cuboid).get();
         BlockPos params = stack.get(AllDataComponents.SHAPER_BRUSH_PARAMS);
-        PlacementOptions option = stack.getOrDefault(AllDataComponents.SHAPER_PLACEMENT_OPTIONS, PlacementOptions.Merged);
+        PlacementOptions option = stack.getOrDefault(
+            AllDataComponents.SHAPER_PLACEMENT_OPTIONS,
+            PlacementOptions.Merged
+        );
         TerrainTools tool = stack.getOrDefault(AllDataComponents.SHAPER_TOOL, TerrainTools.Fill);
 
         brush.set(params.getX(), params.getY(), params.getZ());

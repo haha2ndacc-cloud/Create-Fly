@@ -41,8 +41,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class ChestVisual<T extends BlockEntity & LidBlockEntity> extends AbstractBlockEntityVisual<T> implements SimpleDynamicVisual {
-    private static final Material MATERIAL = SimpleMaterial.builder().cutout(CutoutShaders.ONE_TENTH).texture(Sheets.CHEST_SHEET).mipmap(false)
-        .build();
+    private static final Material MATERIAL = SimpleMaterial.builder().cutout(CutoutShaders.ONE_TENTH)
+        .texture(Sheets.CHEST_SHEET).mipmap(false).build();
 
     private static final Map<ChestType, ModelLayerLocation> LAYER_LOCATIONS = new EnumMap<>(ChestType.class);
 
@@ -76,12 +76,13 @@ public class ChestVisual<T extends BlockEntity & LidBlockEntity> extends Abstrac
         Block block = blockState.getBlock();
         if (block instanceof AbstractChestBlock<?> chestBlock) {
             ChestType chestType = blockState.hasProperty(ChestBlock.TYPE) ? blockState.getValue(ChestBlock.TYPE) : ChestType.SINGLE;
-            ChestRenderer<?> renderer = (ChestRenderer) Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
-            SpriteId texture = Sheets.chooseSprite(
-                renderer.getChestMaterial(blockEntity, isChristmas()),
-                chestType
+            ChestRenderer<?> renderer = (ChestRenderer) Minecraft.getInstance().getBlockEntityRenderDispatcher()
+                .getRenderer(blockEntity);
+            SpriteId texture = Sheets.chooseSprite(renderer.getChestMaterial(blockEntity, isChristmas()), chestType);
+            instances = InstanceTree.create(
+                instancerProvider(),
+                ModelTrees.of(LAYER_LOCATIONS.get(chestType), texture, MATERIAL)
             );
-            instances = InstanceTree.create(instancerProvider(), ModelTrees.of(LAYER_LOCATIONS.get(chestType), texture, MATERIAL));
             lid = instances.childOrThrow("lid");
             lock = instances.childOrThrow("lock");
 
@@ -109,8 +110,8 @@ public class ChestVisual<T extends BlockEntity & LidBlockEntity> extends Abstrac
     private Matrix4f createInitialPose() {
         BlockPos visualPos = getVisualPosition();
         float horizontalAngle = blockState.getValue(ChestBlock.FACING).toYRot();
-        return new Matrix4f().translate(visualPos.getX(), visualPos.getY(), visualPos.getZ()).translate(0.5F, 0.5F, 0.5F)
-            .rotateY(-horizontalAngle * Mth.DEG_TO_RAD).translate(-0.5F, -0.5F, -0.5F);
+        return new Matrix4f().translate(visualPos.getX(), visualPos.getY(), visualPos.getZ())
+            .translate(0.5F, 0.5F, 0.5F).rotateY(-horizontalAngle * Mth.DEG_TO_RAD).translate(-0.5F, -0.5F, -0.5F);
     }
 
     @Override
@@ -209,7 +210,10 @@ public class ChestVisual<T extends BlockEntity & LidBlockEntity> extends Abstrac
             int secondBlockLight = LightCoordsUtil.block(secondLight);
             int firstSkyLight = LightCoordsUtil.sky(firstLight);
             int secondSkyLight = LightCoordsUtil.sky(secondLight);
-            return LightCoordsUtil.pack(Math.max(firstBlockLight, secondBlockLight), Math.max(firstSkyLight, secondSkyLight));
+            return LightCoordsUtil.pack(
+                Math.max(firstBlockLight, secondBlockLight),
+                Math.max(firstSkyLight, secondSkyLight)
+            );
         }
 
         @Override

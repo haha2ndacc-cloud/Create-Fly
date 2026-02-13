@@ -46,15 +46,17 @@ public class ElevatorColumn {
     public void markDirty() {
         for (BlockPos pos : getContacts()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof ElevatorContactBlockEntity ecbe)
+            if (blockEntity instanceof ElevatorContactBlockEntity ecbe) {
                 ecbe.setChanged();
+            }
         }
     }
 
     public void floorReached(LevelAccessor level, String name) {
         getContacts().forEach(p -> {
-            if (level.getBlockEntity(p) instanceof ElevatorContactBlockEntity ecbe)
+            if (level.getBlockEntity(p) instanceof ElevatorContactBlockEntity ecbe) {
                 ecbe.updateDisplayedFloor(name);
+            }
         });
     }
 
@@ -63,8 +65,9 @@ public class ElevatorColumn {
     @SuppressWarnings("NullableProblems")
     public List<IntAttached<Couple<String>>> compileNamesList() {
         return getContacts().stream().map(p -> {
-            if (level.getBlockEntity(p) instanceof ElevatorContactBlockEntity ecbe)
+            if (level.getBlockEntity(p) instanceof ElevatorContactBlockEntity ecbe) {
                 return IntAttached.with(p.getY(), ecbe.getNames());
+            }
             return null;
         }).filter(Objects::nonNull).toList();
     }
@@ -79,8 +82,11 @@ public class ElevatorColumn {
 
     public void gatherAll() {
         BlockPos.betweenClosedStream(contactAt(level.getMinY()), contactAt(level.getMaxY()))
-            .filter(p -> coords.equals(ElevatorContactBlock.getColumnCoords(level, p)))
-            .forEach(p -> level.setBlock(p, BlockHelper.copyProperties(level.getBlockState(p), AllBlocks.ELEVATOR_CONTACT.defaultBlockState()), 3));
+            .filter(p -> coords.equals(ElevatorContactBlock.getColumnCoords(level, p))).forEach(p -> level.setBlock(
+                p,
+                BlockHelper.copyProperties(level.getBlockState(p), AllBlocks.ELEVATOR_CONTACT.defaultBlockState()),
+                3
+            ));
     }
 
     public BlockPos contactAt(int y) {
@@ -117,31 +123,37 @@ public class ElevatorColumn {
             Integer y = contacts.get(i);
 
             BlockPos pos = contactAt(y);
-            if (!(level.getBlockEntity(pos) instanceof ElevatorContactBlockEntity ecbe))
+            if (!(level.getBlockEntity(pos) instanceof ElevatorContactBlockEntity ecbe)) {
                 continue;
+            }
 
             Integer currentLevel = null;
 
             if (!ecbe.shortName.isBlank()) {
                 Integer tryValueOf = tryValueOf(ecbe.shortName);
-                if (tryValueOf != null)
+                if (tryValueOf != null) {
                     currentLevel = tryValueOf;
-                if (currentLevel == null)
+                }
+                if (currentLevel == null) {
                     continue;
+                }
             }
 
-            if (prevLevel != null)
+            if (prevLevel != null) {
                 currentLevel = prevLevel + 1;
+            }
 
             Integer nextLevel = null;
 
             for (int peekI = i + 1; peekI < contacts.size(); peekI++) {
                 BlockPos peekPos = contactAt(contacts.get(peekI));
-                if (!(level.getBlockEntity(peekPos) instanceof ElevatorContactBlockEntity peekEcbe))
+                if (!(level.getBlockEntity(peekPos) instanceof ElevatorContactBlockEntity peekEcbe)) {
                     continue;
+                }
                 Integer tryValueOf = tryValueOf(peekEcbe.shortName);
-                if (tryValueOf == null)
+                if (tryValueOf == null) {
                     continue;
+                }
                 if (currentLevel != null && currentLevel >= tryValueOf) {
                     peekEcbe.shortName = "";
                     break;
@@ -150,8 +162,9 @@ public class ElevatorColumn {
                 break;
             }
 
-            if (currentLevel == null)
+            if (currentLevel == null) {
                 currentLevel = nextLevel != null ? nextLevel - 1 : 0;
+            }
 
             ecbe.updateName(String.valueOf(currentLevel), ecbe.longName);
             prevLevel = currentLevel;
@@ -170,12 +183,15 @@ public class ElevatorColumn {
 
     public void add(BlockPos contactPos) {
         int coord = contactPos.getY();
-        if (contacts.contains(coord))
+        if (contacts.contains(coord)) {
             return;
+        }
         int index = 0;
-        for (; index < contacts.size(); index++)
-            if (contacts.get(index) > coord)
+        for (; index < contacts.size(); index++) {
+            if (contacts.get(index) > coord) {
                 break;
+            }
+        }
         contacts.add(index, coord);
         namesChanged();
     }
@@ -187,8 +203,9 @@ public class ElevatorColumn {
     }
 
     private void checkEmpty() {
-        if (contacts.isEmpty() && !isActive())
+        if (contacts.isEmpty() && !isActive()) {
             LOADED_COLUMNS.get(level).remove(coords);
+        }
     }
 
     public record ColumnCoords(int x, int z, Direction side) {

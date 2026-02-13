@@ -26,8 +26,9 @@ public class CarriageClientContraption extends ClientContraption {
     @Override
     public RenderedBlocks getRenderedBlocks() {
         CarriageContraption contraption = (CarriageContraption) this.contraption;
-        if (contraption.notInPortal())
+        if (contraption.notInPortal()) {
             return super.getRenderedBlocks();
+        }
 
         Map<BlockPos, BlockState> values = new HashMap<>();
         contraption.getBlocks().forEach((pos, info) -> {
@@ -43,8 +44,9 @@ public class CarriageClientContraption extends ClientContraption {
     @Override
     @Nullable
     public BlockEntity readBlockEntity(Level level, StructureBlockInfo info, boolean legacy) {
-        if (info.state().getBlock() instanceof AbstractBogeyBlock<?> bogey && !bogey.captureBlockEntityForTrain())
+        if (info.state().getBlock() instanceof AbstractBogeyBlock<?> bogey && !bogey.captureBlockEntityForTrain()) {
             return null; // Bogeys are typically rendered by the carriage contraption, not the BE
+        }
 
         return super.readBlockEntity(level, info, legacy);
     }

@@ -21,7 +21,15 @@ import static com.zurrtum.create.client.catnip.render.SpriteShiftEntry.getUnInte
 import static com.zurrtum.create.client.catnip.render.SpriteShiftEntry.getUnInterpolatedV;
 
 public class BakedModelHelper {
-    private static long calcSpriteUv(Vec3 diff, long packedUV, Vec3 uAxis, Vec3 vAxis, float uScale, float vScale, TextureAtlasSprite sprite) {
+    private static long calcSpriteUv(
+        Vec3 diff,
+        long packedUV,
+        Vec3 uAxis,
+        Vec3 vAxis,
+        float uScale,
+        float vScale,
+        TextureAtlasSprite sprite
+    ) {
         if (diff.lengthSqr() == 0) {
             return packedUV;
         }
@@ -53,16 +61,28 @@ public class BakedModelHelper {
         float v0 = UVPair.unpackV(packedUV0);
         float v1 = UVPair.unpackV(packedUV1);
 
-        float uScale = (float) Math.round((getUnInterpolatedU(sprite, u3) - getUnInterpolatedU(sprite, u0)) / xyz3.distanceTo(xyz0));
-        float vScale = (float) Math.round((getUnInterpolatedV(sprite, v1) - getUnInterpolatedV(sprite, v0)) / xyz1.distanceTo(xyz0));
+        float uScale = (float) Math.round((getUnInterpolatedU(sprite, u3) - getUnInterpolatedU(
+            sprite,
+            u0
+        )) / xyz3.distanceTo(xyz0));
+        float vScale = (float) Math.round((getUnInterpolatedV(sprite, v1) - getUnInterpolatedV(
+            sprite,
+            v0
+        )) / xyz1.distanceTo(xyz0));
 
         if (uScale == 0) {
             float v3 = UVPair.unpackV(packedUV3);
             float u1 = UVPair.unpackU(packedUV1);
             uAxis = xyz1.add(xyz2).scale(.5);
             vAxis = xyz3.add(xyz2).scale(.5);
-            uScale = (float) Math.round((getUnInterpolatedU(sprite, u1) - getUnInterpolatedU(sprite, u0)) / xyz1.distanceTo(xyz0));
-            vScale = (float) Math.round((getUnInterpolatedV(sprite, v3) - getUnInterpolatedV(sprite, v0)) / xyz3.distanceTo(xyz0));
+            uScale = (float) Math.round((getUnInterpolatedU(sprite, u1) - getUnInterpolatedU(
+                sprite,
+                u0
+            )) / xyz1.distanceTo(xyz0));
+            vScale = (float) Math.round((getUnInterpolatedV(sprite, v3) - getUnInterpolatedV(
+                sprite,
+                v0
+            )) / xyz3.distanceTo(xyz0));
         }
 
         uAxis = uAxis.subtract(center).normalize();
@@ -93,7 +113,10 @@ public class BakedModelHelper {
         return newQuad;
     }
 
-    public static SimpleModelWrapper generateModel(SimpleModelWrapper template, UnaryOperator<@Nullable TextureAtlasSprite> spriteSwapper) {
+    public static SimpleModelWrapper generateModel(
+        SimpleModelWrapper template,
+        UnaryOperator<@Nullable TextureAtlasSprite> spriteSwapper
+    ) {
         QuadCollection.Builder builder = new QuadCollection.Builder();
         for (Direction cullFace : Iterate.directions) {
             List<BakedQuad> quads = template.getQuads(cullFace);
@@ -117,15 +140,19 @@ public class BakedModelHelper {
         return UVPair.pack(u, v);
     }
 
-    public static List<BakedQuad> swapSprites(List<BakedQuad> quads, UnaryOperator<@Nullable TextureAtlasSprite> spriteSwapper) {
+    public static List<BakedQuad> swapSprites(
+        List<BakedQuad> quads,
+        UnaryOperator<@Nullable TextureAtlasSprite> spriteSwapper
+    ) {
         List<BakedQuad> newQuads = new ArrayList<>(quads);
         int size = quads.size();
         for (int i = 0; i < size; i++) {
             BakedQuad quad = quads.get(i);
             TextureAtlasSprite sprite = quad.sprite();
             TextureAtlasSprite newSprite = spriteSwapper.apply(sprite);
-            if (newSprite == null || sprite == newSprite)
+            if (newSprite == null || sprite == newSprite) {
                 continue;
+            }
 
             BakedQuad newQuad = new BakedQuad(
                 quad.position0(),

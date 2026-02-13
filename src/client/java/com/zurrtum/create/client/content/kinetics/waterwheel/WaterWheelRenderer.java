@@ -67,12 +67,16 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
                 BlockState state1 = key.state();
                 Direction dir;
                 if (key.large()) {
-                    dir = Direction.fromAxisAndDirection(state1.getValue(LargeWaterWheelBlock.AXIS), AxisDirection.POSITIVE);
+                    dir = Direction.fromAxisAndDirection(
+                        state1.getValue(LargeWaterWheelBlock.AXIS),
+                        AxisDirection.POSITIVE
+                    );
                 } else {
                     dir = state1.getValue(WaterWheelBlock.FACING);
                 }
                 PoseStack transform = CachedBuffers.rotateToFaceVertical(dir).get();
-                return SuperBufferFactory.getInstance().createForBlock(model, Blocks.AIR.defaultBlockState(), transform);
+                return SuperBufferFactory.getInstance()
+                    .createForBlock(model, Blocks.AIR.defaultBlockState(), transform);
             }
         );
     }
@@ -90,8 +94,9 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
         Identifier id = RegisteredObjectsHelper.getKeyOrThrow(planksBlock);
         String wood = plankStateToWoodName(planksBlockState);
 
-        if (wood == null)
+        if (wood == null) {
             return BakedModelHelper.generateModel(template, sprite -> null);
+        }
 
         String namespace = id.getNamespace();
         BlockState logBlockState = getLogBlockState(namespace, wood);
@@ -111,10 +116,14 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
         String path = id.getPath();
 
         if (path.endsWith("_planks")) // Covers most wood types
+        {
             return (path.startsWith("archwood") ? "blue_" : "") + path.substring(0, path.length() - 7);
+        }
 
         if (path.contains("wood/planks/")) // TerraFirmaCraft
+        {
             return path.substring(12);
+        }
 
         return null;
     }
@@ -132,8 +141,9 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
                 Registries.BLOCK,
                 Identifier.fromNamespaceAndPath(namespace, location.replace("x", wood))
             )).map(Holder::value).map(Block::defaultBlockState);
-            if (state.isPresent())
+            if (state.isPresent()) {
                 return state.get();
+            }
         }
         return Blocks.OAK_LOG.defaultBlockState();
     }
@@ -164,9 +174,7 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
     }
 
     public enum Variant {
-        SMALL(AllPartialModels.WATER_WHEEL),
-        LARGE(AllPartialModels.LARGE_WATER_WHEEL),
-        LARGE_EXTENSION(AllPartialModels.LARGE_WATER_WHEEL_EXTENSION),
+        SMALL(AllPartialModels.WATER_WHEEL), LARGE(AllPartialModels.LARGE_WATER_WHEEL), LARGE_EXTENSION(AllPartialModels.LARGE_WATER_WHEEL_EXTENSION),
         ;
 
         private final PartialModel partial;

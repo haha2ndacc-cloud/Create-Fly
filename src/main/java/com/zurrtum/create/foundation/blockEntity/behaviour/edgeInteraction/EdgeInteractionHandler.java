@@ -31,17 +31,27 @@ public class EdgeInteractionHandler {
         BlockHitResult ray,
         BlockPos pos
     ) {
-        if (player.isShiftKeyDown())
+        if (player.isShiftKeyDown()) {
             return null;
+        }
         EdgeInteractionBehaviour behaviour = BlockEntityBehaviour.get(world, pos, EdgeInteractionBehaviour.TYPE);
-        if (behaviour == null)
+        if (behaviour == null) {
             return null;
-        if (!behaviour.requiredItem.test(heldItem.getItem()))
+        }
+        if (!behaviour.requiredItem.test(heldItem.getItem())) {
             return null;
+        }
 
-        Direction activatedDirection = getActivatedDirection(world, pos, ray.getDirection(), ray.getLocation(), behaviour);
-        if (activatedDirection == null)
+        Direction activatedDirection = getActivatedDirection(
+            world,
+            pos,
+            ray.getDirection(),
+            ray.getLocation(),
+            behaviour
+        );
+        if (activatedDirection == null) {
             return null;
+        }
 
         if (!world.isClientSide()) {
             behaviour.connectionCallback.apply(world, pos, pos.relative(activatedDirection));
@@ -50,24 +60,38 @@ public class EdgeInteractionHandler {
         return InteractionResult.SUCCESS;
     }
 
-    public static List<Direction> getConnectiveSides(Level world, BlockPos pos, Direction face, EdgeInteractionBehaviour behaviour) {
+    public static List<Direction> getConnectiveSides(
+        Level world,
+        BlockPos pos,
+        Direction face,
+        EdgeInteractionBehaviour behaviour
+    ) {
         List<Direction> sides = new ArrayList<>(6);
-        if (BlockHelper.hasBlockSolidSide(world.getBlockState(pos.relative(face)), world, pos.relative(face), face.getOpposite()))
+        if (BlockHelper.hasBlockSolidSide(
+            world.getBlockState(pos.relative(face)),
+            world,
+            pos.relative(face),
+            face.getOpposite()
+        )) {
             return sides;
+        }
 
         for (Direction direction : Iterate.directions) {
-            if (direction.getAxis() == face.getAxis())
+            if (direction.getAxis() == face.getAxis()) {
                 continue;
+            }
             BlockPos neighbourPos = pos.relative(direction);
             if (BlockHelper.hasBlockSolidSide(
                 world.getBlockState(neighbourPos.relative(face)),
                 world,
                 neighbourPos.relative(face),
                 face.getOpposite()
-            ))
+            )) {
                 continue;
-            if (!behaviour.connectivityPredicate.test(world, pos, face, direction))
+            }
+            if (!behaviour.connectivityPredicate.test(world, pos, face, direction)) {
                 continue;
+            }
             sides.add(direction);
         }
 
@@ -75,11 +99,18 @@ public class EdgeInteractionHandler {
     }
 
     @Nullable
-    public static Direction getActivatedDirection(Level world, BlockPos pos, Direction face, Vec3 hit, EdgeInteractionBehaviour behaviour) {
+    public static Direction getActivatedDirection(
+        Level world,
+        BlockPos pos,
+        Direction face,
+        Vec3 hit,
+        EdgeInteractionBehaviour behaviour
+    ) {
         for (Direction facing : getConnectiveSides(world, pos, face, behaviour)) {
             AABB bb = getBB(pos, facing);
-            if (bb.contains(hit))
+            if (bb.contains(hit)) {
                 return facing;
+            }
         }
         return null;
     }

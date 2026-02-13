@@ -34,11 +34,18 @@ public class AllBogeyStyleRenders {
         if (sizeRenderers == null) {
             return null;
         }
-        return sizeRenderers.get(size).renderer().getRenderData(bogeyData, wheelAngle, tickProgress, light, inContraption);
+        return sizeRenderers.get(size).renderer()
+            .getRenderData(bogeyData, wheelAngle, tickProgress, light, inContraption);
     }
 
     @Nullable
-    public static BogeyVisual createVisual(BogeyStyle style, BogeySize size, VisualizationContext ctx, float partialTick, boolean inContraption) {
+    public static BogeyVisual createVisual(
+        BogeyStyle style,
+        BogeySize size,
+        VisualizationContext ctx,
+        float partialTick,
+        boolean inContraption
+    ) {
         Map<BogeySize, SizeRenderer> sizeRenderers = ALL.get(style.id);
         if (sizeRenderers == null) {
             return null;

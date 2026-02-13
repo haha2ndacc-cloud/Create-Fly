@@ -26,20 +26,29 @@ import java.util.Set;
 
 public class AddressEditBoxHelper {
 
-    private static final Cache<BlockPos, WeakReference<ClipboardBlockEntity>> NEARBY_CLIPBOARDS = new TickBasedCache<>(20, false);
+    private static final Cache<BlockPos, WeakReference<ClipboardBlockEntity>> NEARBY_CLIPBOARDS = new TickBasedCache<>(20,
+        false
+    );
 
     public static void advertiseClipboard(ClipboardBlockEntity blockEntity) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (player == null)
+        if (player == null) {
             return;
+        }
         BlockPos blockPos = blockEntity.getBlockPos();
-        if (player.distanceToSqr(Vec3.atCenterOf(blockPos)) > 32 * 32)
+        if (player.distanceToSqr(Vec3.atCenterOf(blockPos)) > 32 * 32) {
             return;
+        }
         NEARBY_CLIPBOARDS.put(blockPos, new WeakReference<>(blockEntity));
     }
 
-    public static DestinationSuggestions createSuggestions(Screen screen, EditBox pInput, boolean anchorToBottom, @Nullable String localAddress) {
+    public static DestinationSuggestions createSuggestions(
+        Screen screen,
+        EditBox pInput,
+        boolean anchorToBottom,
+        @Nullable String localAddress
+    ) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
         List<IntAttached<String>> options = new ArrayList<>();
@@ -55,8 +64,9 @@ public class AddressEditBoxHelper {
             -72 + pInput.getY() + (anchorToBottom ? 0 : pInput.getHeight())
         );
 
-        if (player == null)
+        if (player == null) {
             return destinationSuggestions;
+        }
 
         if (localAddress != null) {
             options.add(IntAttached.with(-1, localAddress));
@@ -70,34 +80,48 @@ public class AddressEditBoxHelper {
 
         for (WeakReference<ClipboardBlockEntity> wr : NEARBY_CLIPBOARDS.asMap().values()) {
             ClipboardBlockEntity cbe = wr.get();
-            if (cbe != null)
+            if (cbe != null) {
                 appendAddresses(options, alreadyAdded, cbe.components());
+            }
         }
 
         return destinationSuggestions;
     }
 
-    private static void appendAddresses(List<IntAttached<String>> options, Set<String> alreadyAdded, @Nullable ItemStack item) {
-        if (item == null || !item.is(AllItems.CLIPBOARD))
+    private static void appendAddresses(
+        List<IntAttached<String>> options,
+        Set<String> alreadyAdded,
+        @Nullable ItemStack item
+    ) {
+        if (item == null || !item.is(AllItems.CLIPBOARD)) {
             return;
+        }
 
         appendAddresses(options, alreadyAdded, item.getComponents());
     }
 
-    private static void appendAddresses(List<IntAttached<String>> options, Set<String> alreadyAdded, DataComponentMap components) {
+    private static void appendAddresses(
+        List<IntAttached<String>> options,
+        Set<String> alreadyAdded,
+        DataComponentMap components
+    ) {
         List<List<ClipboardEntry>> pages = ClipboardEntry.readAll(components);
         pages.forEach(page -> page.forEach(entry -> {
             String string = entry.text.getString();
-            if (entry.checked)
+            if (entry.checked) {
                 return;
-            if (!string.startsWith("#") || string.length() == 1)
+            }
+            if (!string.startsWith("#") || string.length() == 1) {
                 return;
+            }
             String address = string.substring(1);
-            if (address.isBlank())
+            if (address.isBlank()) {
                 return;
+            }
             String trim = address.trim();
-            if (!alreadyAdded.add(trim))
+            if (!alreadyAdded.add(trim)) {
                 return;
+            }
             options.add(IntAttached.withZero(trim));
         }));
     }

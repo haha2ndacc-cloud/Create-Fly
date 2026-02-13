@@ -19,16 +19,17 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 import java.util.Optional;
 
-public record MechanicalCraftingRecipe(
-    ShapedRecipePattern raw, ItemStackTemplate result, boolean symmetrical
-) implements CreateRecipe<CraftingInput> {
+public record MechanicalCraftingRecipe(ShapedRecipePattern raw, ItemStackTemplate result,
+                                       boolean symmetrical) implements CreateRecipe<CraftingInput> {
     public static final MapCodec<ShapedRecipePattern.Data> DATA_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-        ExtraCodecs.strictUnboundedMap(Codec.STRING.xmap(key -> key.charAt(0), String::valueOf), Ingredient.CODEC).fieldOf("key")
-            .forGetter(ShapedRecipePattern.Data::key), Codec.STRING.listOf().fieldOf("pattern").forGetter(ShapedRecipePattern.Data::pattern)
+        ExtraCodecs.strictUnboundedMap(Codec.STRING.xmap(key -> key.charAt(0), String::valueOf), Ingredient.CODEC)
+            .fieldOf("key").forGetter(ShapedRecipePattern.Data::key),
+        Codec.STRING.listOf().fieldOf("pattern").forGetter(ShapedRecipePattern.Data::pattern)
     ).apply(instance, ShapedRecipePattern.Data::new));
     public static final MapCodec<ShapedRecipePattern> RAW_CODEC = DATA_CODEC.flatXmap(
         ShapedRecipePattern::unpack,
-        recipe -> recipe.data.map(DataResult::success).orElseGet(() -> DataResult.error(() -> "Cannot encode unpacked recipe"))
+        recipe -> recipe.data.map(DataResult::success)
+            .orElseGet(() -> DataResult.error(() -> "Cannot encode unpacked recipe"))
     );
     public static final MapCodec<MechanicalCraftingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
         RAW_CODEC.forGetter(MechanicalCraftingRecipe::raw),
@@ -44,12 +45,16 @@ public record MechanicalCraftingRecipe(
         MechanicalCraftingRecipe::symmetrical,
         MechanicalCraftingRecipe::new
     );
-    public static final RecipeSerializer<MechanicalCraftingRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+    public static final RecipeSerializer<MechanicalCraftingRecipe> SERIALIZER = new RecipeSerializer<>(
+        MAP_CODEC,
+        STREAM_CODEC
+    );
 
     @Override
     public boolean matches(CraftingInput input, Level worldIn) {
-        if (symmetrical)
+        if (symmetrical) {
             return raw.matches(input);
+        }
 
         // From ShapedRecipe except the symmetry
         if (input.ingredientCount() != raw.ingredientCount) {

@@ -39,36 +39,44 @@ public class MaterialChecklist {
     }
 
     public void require(ItemRequirement requirement) {
-        if (requirement.isEmpty())
+        if (requirement.isEmpty()) {
             return;
-        if (requirement.isInvalid())
+        }
+        if (requirement.isInvalid()) {
             return;
+        }
 
         for (ItemRequirement.StackRequirement stack : requirement.getRequiredItems()) {
-            if (stack.usage == ItemUseType.DAMAGE)
+            if (stack.usage == ItemUseType.DAMAGE) {
                 putOrIncrement(damageRequired, stack.stack);
-            if (stack.usage == ItemUseType.CONSUME)
+            }
+            if (stack.usage == ItemUseType.CONSUME) {
                 putOrIncrement(required, stack.stack);
+            }
         }
     }
 
     private void putOrIncrement(Object2IntMap<Item> map, ItemStack stack) {
         Item item = stack.getItem();
-        if (item == Items.AIR)
+        if (item == Items.AIR) {
             return;
-        if (map.containsKey(item))
+        }
+        if (map.containsKey(item)) {
             map.put(item, map.getInt(item) + stack.getCount());
-        else
+        } else {
             map.put(item, stack.getCount());
+        }
     }
 
     public void collect(ItemStack stack) {
         Item item = stack.getItem();
-        if (required.containsKey(item) || damageRequired.containsKey(item))
-            if (gathered.containsKey(item))
+        if (required.containsKey(item) || damageRequired.containsKey(item)) {
+            if (gathered.containsKey(item)) {
                 gathered.put(item, gathered.getInt(item) + stack.getCount());
-            else
+            } else {
                 gathered.put(item, stack.getCount());
+            }
+        }
     }
 
     public ItemStack createWrittenBook() {
@@ -88,8 +96,10 @@ public class MaterialChecklist {
         List<Item> keys = new ArrayList<>(Sets.union(required.keySet(), damageRequired.keySet()));
         keys.sort((item1, item2) -> {
             Locale locale = Locale.ENGLISH;
-            String name1 = item1.components().getOrDefault(DataComponents.ITEM_NAME, CommonComponents.EMPTY).getString().toLowerCase(locale);
-            String name2 = item2.components().getOrDefault(DataComponents.ITEM_NAME, CommonComponents.EMPTY).getString().toLowerCase(locale);
+            String name1 = item1.components().getOrDefault(DataComponents.ITEM_NAME, CommonComponents.EMPTY).getString()
+                .toLowerCase(locale);
+            String name2 = item2.components().getOrDefault(DataComponents.ITEM_NAME, CommonComponents.EMPTY).getString()
+                .toLowerCase(locale);
             return name1.compareTo(name2);
         });
 
@@ -97,8 +107,9 @@ public class MaterialChecklist {
         List<Item> completed = new ArrayList<>();
         for (Item item : keys) {
             int amount = getRequiredAmount(item);
-            if (gathered.containsKey(item))
+            if (gathered.containsKey(item)) {
                 amount -= gathered.getInt(item);
+            }
 
             if (amount <= 0) {
                 completed.add(item);
@@ -161,16 +172,19 @@ public class MaterialChecklist {
         List<Item> keys = new ArrayList<>(Sets.union(required.keySet(), damageRequired.keySet()));
         keys.sort((item1, item2) -> {
             Locale locale = Locale.ENGLISH;
-            String name1 = item1.components().getOrDefault(DataComponents.ITEM_NAME, CommonComponents.EMPTY).getString().toLowerCase(locale);
-            String name2 = item2.components().getOrDefault(DataComponents.ITEM_NAME, CommonComponents.EMPTY).getString().toLowerCase(locale);
+            String name1 = item1.components().getOrDefault(DataComponents.ITEM_NAME, CommonComponents.EMPTY).getString()
+                .toLowerCase(locale);
+            String name2 = item2.components().getOrDefault(DataComponents.ITEM_NAME, CommonComponents.EMPTY).getString()
+                .toLowerCase(locale);
             return name1.compareTo(name2);
         });
 
         List<Item> completed = new ArrayList<>();
         for (Item item : keys) {
             int amount = getRequiredAmount(item);
-            if (gathered.containsKey(item))
+            if (gathered.containsKey(item)) {
                 amount -= gathered.getInt(item);
+            }
 
             if (amount <= 0) {
                 completed.add(item);
@@ -179,39 +193,55 @@ public class MaterialChecklist {
 
             if (itemsWritten == MAX_ENTRIES_PER_CLIPBOARD_PAGE) {
                 itemsWritten = 0;
-                currentPage.add(new ClipboardEntry(false, Component.literal(">>>").withStyle(ChatFormatting.DARK_GRAY)));
+                currentPage.add(new ClipboardEntry(
+                    false,
+                    Component.literal(">>>").withStyle(ChatFormatting.DARK_GRAY)
+                ));
                 pages.add(currentPage);
                 currentPage = new ArrayList<>();
             }
 
             itemsWritten++;
-            currentPage.add(new ClipboardEntry(false, entry(item, amount, true, false)).displayItem(new ItemStack(item), amount));
+            currentPage.add(new ClipboardEntry(false, entry(item, amount, true, false)).displayItem(
+                new ItemStack(item),
+                amount
+            ));
         }
 
         for (Item item : completed) {
             if (itemsWritten == MAX_ENTRIES_PER_CLIPBOARD_PAGE) {
                 itemsWritten = 0;
-                currentPage.add(new ClipboardEntry(true, Component.literal(">>>").withStyle(ChatFormatting.DARK_GREEN)));
+                currentPage.add(new ClipboardEntry(
+                    true,
+                    Component.literal(">>>").withStyle(ChatFormatting.DARK_GREEN)
+                ));
                 pages.add(currentPage);
                 currentPage = new ArrayList<>();
             }
 
             itemsWritten++;
-            currentPage.add(new ClipboardEntry(true, entry(item, getRequiredAmount(item), false, false)).displayItem(new ItemStack(item), 0));
+            currentPage.add(new ClipboardEntry(
+                true,
+                entry(item, getRequiredAmount(item), false, false)
+            ).displayItem(new ItemStack(item), 0));
         }
 
         pages.add(currentPage);
 
         ItemStack clipboard = AllItems.CLIPBOARD.getDefaultInstance();
         clipboard.set(AllDataComponents.CLIPBOARD_CONTENT, new ClipboardContent(ClipboardType.WRITTEN, pages, true));
-        clipboard.set(DataComponents.CUSTOM_NAME, Component.translatable("create.materialChecklist").setStyle(Style.EMPTY.withItalic(false)));
+        clipboard.set(
+            DataComponents.CUSTOM_NAME,
+            Component.translatable("create.materialChecklist").setStyle(Style.EMPTY.withItalic(false))
+        );
         return clipboard;
     }
 
     public int getRequiredAmount(Item item) {
         int amount = required.getOrDefault(item, 0);
-        if (damageRequired.containsKey(item))
+        if (damageRequired.containsKey(item)) {
             amount += (int) Math.ceil(damageRequired.getInt(item) / (float) new ItemStack(item).getMaxDamage());
+        }
         return amount;
     }
 
@@ -222,12 +252,15 @@ public class MaterialChecklist {
         tc.append(Component.translatable(item.getDescriptionId())
             .setStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowItem(new ItemStackTemplate(item)))));
 
-        if (!unfinished && forBook)
+        if (!unfinished && forBook) {
             tc.append(" ✔");
-        if (!unfinished || forBook)
+        }
+        if (!unfinished || forBook) {
             tc.withStyle(unfinished ? ChatFormatting.BLUE : ChatFormatting.DARK_GREEN);
+        }
         return tc.append(Component.literal("\n" + " x" + amount).withStyle(ChatFormatting.BLACK))
-            .append(Component.literal(" | " + stacks + "▤ +" + remainder + (forBook ? "\n" : "")).withStyle(ChatFormatting.GRAY));
+            .append(Component.literal(" | " + stacks + "▤ +" + remainder + (forBook ? "\n" : ""))
+                .withStyle(ChatFormatting.GRAY));
     }
 
 }

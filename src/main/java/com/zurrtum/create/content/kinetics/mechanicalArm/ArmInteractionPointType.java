@@ -24,9 +24,11 @@ public abstract class ArmInteractionPointType {
 
     @Nullable
     public static ArmInteractionPointType getPrimaryType(Level level, BlockPos pos, BlockState state) {
-        for (ArmInteractionPointType type : SORTED_TYPES_VIEW)
-            if (type.canCreatePoint(level, pos, state))
+        for (ArmInteractionPointType type : SORTED_TYPES_VIEW) {
+            if (type.canCreatePoint(level, pos, state)) {
                 return type;
+            }
+        }
         return null;
     }
 

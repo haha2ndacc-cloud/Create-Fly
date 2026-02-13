@@ -329,7 +329,8 @@ public interface BaseInventory extends Iterable<ItemStack> {
             int count = stack.getCount();
             return countSpace(stack, count) == count;
         }
-        Object2IntLinkedOpenCustomHashMap<ItemStack> map = new Object2IntLinkedOpenCustomHashMap<>(ITEM_STACK_HASH_STRATEGY);
+        Object2IntLinkedOpenCustomHashMap<ItemStack> map = new Object2IntLinkedOpenCustomHashMap<>(
+            ITEM_STACK_HASH_STRATEGY);
         for (ItemStack stack : stacks) {
             map.merge(stack, stack.getCount(), Integer::sum);
         }
@@ -397,7 +398,8 @@ public interface BaseInventory extends Iterable<ItemStack> {
             int count = stack.getCount();
             return countSpace(stack, count, start, end) == count;
         }
-        Object2IntLinkedOpenCustomHashMap<ItemStack> map = new Object2IntLinkedOpenCustomHashMap<>(ITEM_STACK_HASH_STRATEGY);
+        Object2IntLinkedOpenCustomHashMap<ItemStack> map = new Object2IntLinkedOpenCustomHashMap<>(
+            ITEM_STACK_HASH_STRATEGY);
         for (ItemStack stack : stacks) {
             map.merge(stack, stack.getCount(), Integer::sum);
         }
@@ -600,7 +602,8 @@ public interface BaseInventory extends Iterable<ItemStack> {
             }
             return List.of(directCopy(stack, count - extract));
         }
-        Object2IntLinkedOpenCustomHashMap<ItemStack> map = new Object2IntLinkedOpenCustomHashMap<>(ITEM_STACK_HASH_STRATEGY);
+        Object2IntLinkedOpenCustomHashMap<ItemStack> map = new Object2IntLinkedOpenCustomHashMap<>(
+            ITEM_STACK_HASH_STRATEGY);
         for (ItemStack stack : stacks) {
             map.merge(stack, stack.getCount(), Integer::sum);
         }
@@ -1000,7 +1003,8 @@ public interface BaseInventory extends Iterable<ItemStack> {
             }
             return List.of(directCopy(stack, count - insert));
         }
-        Object2IntLinkedOpenCustomHashMap<ItemStack> map = new Object2IntLinkedOpenCustomHashMap<>(ITEM_STACK_HASH_STRATEGY);
+        Object2IntLinkedOpenCustomHashMap<ItemStack> map = new Object2IntLinkedOpenCustomHashMap<>(
+            ITEM_STACK_HASH_STRATEGY);
         for (ItemStack stack : stacks) {
             map.merge(stack, stack.getCount(), Integer::sum);
         }
@@ -1104,7 +1108,8 @@ public interface BaseInventory extends Iterable<ItemStack> {
             }
             return List.of(directCopy(stack, count - insert));
         }
-        Object2IntLinkedOpenCustomHashMap<ItemStack> map = new Object2IntLinkedOpenCustomHashMap<>(ITEM_STACK_HASH_STRATEGY);
+        Object2IntLinkedOpenCustomHashMap<ItemStack> map = new Object2IntLinkedOpenCustomHashMap<>(
+            ITEM_STACK_HASH_STRATEGY);
         for (ItemStack stack : stacks) {
             map.merge(stack, stack.getCount(), Integer::sum);
         }
@@ -1280,7 +1285,8 @@ public interface BaseInventory extends Iterable<ItemStack> {
                 }
                 return true;
             }
-            return stackComponentMap.reference2ObjectEntrySet().containsAll(otherStackComponentMap.reference2ObjectEntrySet());
+            return stackComponentMap.reference2ObjectEntrySet()
+                .containsAll(otherStackComponentMap.reference2ObjectEntrySet());
         }
         return false;
     }
@@ -1456,7 +1462,8 @@ public interface BaseInventory extends Iterable<ItemStack> {
         if (listSize == 1) {
             return preciseInsert(stacks.getFirst());
         }
-        Object2IntLinkedOpenCustomHashMap<ItemStack> map = new Object2IntLinkedOpenCustomHashMap<>(ITEM_STACK_HASH_STRATEGY);
+        Object2IntLinkedOpenCustomHashMap<ItemStack> map = new Object2IntLinkedOpenCustomHashMap<>(
+            ITEM_STACK_HASH_STRATEGY);
         for (ItemStack stack : stacks) {
             map.merge(stack, stack.getCount(), Integer::sum);
         }
@@ -1518,7 +1525,11 @@ public interface BaseInventory extends Iterable<ItemStack> {
         return false;
     }
 
-    default boolean update(Predicate<ItemStack> predicate, Function<ItemStack, ItemStack> update, @Nullable Direction side) {
+    default boolean update(
+        Predicate<ItemStack> predicate,
+        Function<ItemStack, ItemStack> update,
+        @Nullable Direction side
+    ) {
         return update(predicate, update);
     }
 

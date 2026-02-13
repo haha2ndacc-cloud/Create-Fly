@@ -31,16 +31,18 @@ public class ZapperRenderHandler extends ShootableGadgetRenderHandler {
     public void tick() {
         super.tick();
 
-        if (cachedBeams == null)
+        if (cachedBeams == null) {
             cachedBeams = new LinkedList<>();
+        }
 
         cachedBeams.removeIf(b -> b.itensity < .1f);
-        if (cachedBeams.isEmpty())
+        if (cachedBeams.isEmpty()) {
             return;
+        }
 
         cachedBeams.forEach(beam -> {
-            Outliner.getInstance().endChasingLine(beam, beam.start, beam.end, 1 - beam.itensity, false).disableLineNormals().colored(0xffffff)
-                .lineWidth(beam.itensity * 1 / 8f);
+            Outliner.getInstance().endChasingLine(beam, beam.start, beam.end, 1 - beam.itensity, false)
+                .disableLineNormals().colored(0xffffff).lineWidth(beam.itensity * 1 / 8f);
         });
 
         cachedBeams.forEach(b -> b.itensity *= .6f);
@@ -73,7 +75,15 @@ public class ZapperRenderHandler extends ShootableGadgetRenderHandler {
         Supplier<Double> randomOffset = () -> (random.nextDouble() - .5d) * .2f;
         for (int i = 0; i < 10; i++) {
             world.addParticle(ParticleTypes.END_ROD, x, y, z, randomSpeed.get(), randomSpeed.get(), randomSpeed.get());
-            world.addParticle(ParticleTypes.FIREWORK, x + randomOffset.get(), y + randomOffset.get(), z + randomOffset.get(), 0, 0, 0);
+            world.addParticle(
+                ParticleTypes.FIREWORK,
+                x + randomOffset.get(),
+                y + randomOffset.get(),
+                z + randomOffset.get(),
+                0,
+                0,
+                0
+            );
         }
 
         cachedBeams.add(beam);

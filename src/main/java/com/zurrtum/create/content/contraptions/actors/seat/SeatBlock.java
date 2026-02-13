@@ -95,7 +95,9 @@ public class SeatBlock extends Block implements ProperWaterloggedBlock {
     @Override
     public void updateEntityMovementAfterFallOn(BlockGetter reader, Entity entity) {
         BlockPos pos = entity.blockPosition();
-        if (entity instanceof Player || !(entity instanceof LivingEntity) || !canBePickedUp(entity) || isSeatOccupied(entity.level(), pos)) {
+        if (entity instanceof Player || !(entity instanceof LivingEntity) || !canBePickedUp(entity) || isSeatOccupied(entity.level(),
+            pos
+        )) {
             if (entity.isSuppressingBounce()) {
                 super.updateEntityMovementAfterFallOn(reader, entity);
                 return;
@@ -109,10 +111,12 @@ public class SeatBlock extends Block implements ProperWaterloggedBlock {
 
             return;
         }
-        if (reader.getBlockState(pos).getBlock() != this)
+        if (reader.getBlockState(pos).getBlock() != this) {
             return;
-        if (entity instanceof Leashable leashable && leashable.isLeashed())
+        }
+        if (entity instanceof Leashable leashable && leashable.isLeashed()) {
             return;
+        }
         sitDown(entity.level(), pos, entity);
     }
 
@@ -123,14 +127,25 @@ public class SeatBlock extends Block implements ProperWaterloggedBlock {
     //    }
 
     @Override
-    public VoxelShape getShape(BlockState p_220053_1_, BlockGetter p_220053_2_, BlockPos p_220053_3_, CollisionContext p_220053_4_) {
+    public VoxelShape getShape(
+        BlockState p_220053_1_,
+        BlockGetter p_220053_2_,
+        BlockPos p_220053_3_,
+        CollisionContext p_220053_4_
+    ) {
         return AllShapes.SEAT;
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState p_220071_1_, BlockGetter p_220071_2_, BlockPos p_220071_3_, CollisionContext ctx) {
-        if (ctx instanceof EntityCollisionContext ecc && ecc.getEntity() instanceof Player)
+    public VoxelShape getCollisionShape(
+        BlockState p_220071_1_,
+        BlockGetter p_220071_2_,
+        BlockPos p_220071_3_,
+        CollisionContext ctx
+    ) {
+        if (ctx instanceof EntityCollisionContext ecc && ecc.getEntity() instanceof Player) {
             return AllShapes.SEAT_COLLISION_PLAYERS;
+        }
         return AllShapes.SEAT_COLLISION;
     }
 
@@ -165,13 +180,15 @@ public class SeatBlock extends Block implements ProperWaterloggedBlock {
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-        if (player.isShiftKeyDown() || FakePlayerHandler.has(player))
+        if (player.isShiftKeyDown() || FakePlayerHandler.has(player)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
 
         DyeColor color = AllItemTags.getDyeColor(stack);
         if (color != null && color != this.color) {
-            if (level.isClientSide())
+            if (level.isClientSide()) {
                 return InteractionResult.SUCCESS;
+            }
             BlockState newState = BlockHelper.copyProperties(state, getColorBlock(color).defaultBlockState());
             level.setBlockAndUpdate(pos, newState);
             return InteractionResult.SUCCESS;
@@ -181,8 +198,9 @@ public class SeatBlock extends Block implements ProperWaterloggedBlock {
         if (!seats.isEmpty()) {
             SeatEntity seatEntity = seats.getFirst();
             List<Entity> passengers = seatEntity.getPassengers();
-            if (!passengers.isEmpty() && passengers.getFirst() instanceof Player)
+            if (!passengers.isEmpty() && passengers.getFirst() instanceof Player) {
                 return InteractionResult.TRY_WITH_EMPTY_HAND;
+            }
             if (!level.isClientSide()) {
                 seatEntity.ejectPassengers();
                 player.startRiding(seatEntity);
@@ -190,8 +208,9 @@ public class SeatBlock extends Block implements ProperWaterloggedBlock {
             return InteractionResult.SUCCESS;
         }
 
-        if (level.isClientSide())
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
+        }
         Optional<Entity> leashed = getLeashed(level, player);
         if (leashed.isPresent()) {
             ((Leashable) leashed.get()).removeLeash();
@@ -209,34 +228,43 @@ public class SeatBlock extends Block implements ProperWaterloggedBlock {
     }
 
     public static Optional<Entity> getLeashed(Level level, Player player) {
-        List<Entity> entities = player.level().getEntities((Entity) null, player.getBoundingBox().inflate(10), e -> true);
-        for (Entity e : entities)
-            if (e instanceof Mob mob && mob.getLeashHolder() == player && SeatBlock.canBePickedUp(e))
+        List<Entity> entities = player.level()
+            .getEntities((Entity) null, player.getBoundingBox().inflate(10), e -> true);
+        for (Entity e : entities) {
+            if (e instanceof Mob mob && mob.getLeashHolder() == player && SeatBlock.canBePickedUp(e)) {
                 return Optional.of(mob);
+            }
+        }
         return Optional.absent();
     }
 
     public static boolean canBePickedUp(Entity passenger) {
-        if (passenger instanceof Shulker)
+        if (passenger instanceof Shulker) {
             return false;
-        if (passenger instanceof Player)
+        }
+        if (passenger instanceof Player) {
             return false;
-        if (passenger.is(AllEntityTags.IGNORE_SEAT))
+        }
+        if (passenger.is(AllEntityTags.IGNORE_SEAT)) {
             return false;
-        if (!AllConfigs.server().logistics.seatHostileMobs.get() && !passenger.getType().getCategory().isFriendly())
+        }
+        if (!AllConfigs.server().logistics.seatHostileMobs.get() && !passenger.getType().getCategory().isFriendly()) {
             return false;
+        }
         return passenger instanceof LivingEntity;
     }
 
     public static void sitDown(Level level, BlockPos pos, Entity entity) {
-        if (level.isClientSide())
+        if (level.isClientSide()) {
             return;
+        }
         SeatEntity seat = new SeatEntity(level);
         seat.setPos(pos.getX() + .5, pos.getY(), pos.getZ() + .5);
         level.addFreshEntity(seat);
         entity.startRiding(seat, true, true);
-        if (entity instanceof TamableAnimal ta)
+        if (entity instanceof TamableAnimal ta) {
             ta.setInSittingPose(true);
+        }
     }
 
     public DyeColor getColor() {

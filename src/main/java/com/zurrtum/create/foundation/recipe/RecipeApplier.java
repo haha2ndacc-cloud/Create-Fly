@@ -17,7 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeApplier {
-    public static <T extends RecipeInput> void applyRecipeOn(ItemEntity entity, T input, CreateRollableRecipe<T> recipe) {
+    public static <T extends RecipeInput> void applyRecipeOn(
+        ItemEntity entity,
+        T input,
+        CreateRollableRecipe<T> recipe
+    ) {
         Level world = entity.level();
         List<ItemStack> stacks = applyRecipeOn(world.getRandom(), entity.getItem().getCount(), input, recipe);
         int size = stacks.size();
@@ -40,7 +44,12 @@ public class RecipeApplier {
         }
     }
 
-    public static <T extends RecipeInput> List<ItemStack> applyRecipeOn(RandomSource random, int count, T input, CreateRollableRecipe<T> recipe) {
+    public static <T extends RecipeInput> List<ItemStack> applyRecipeOn(
+        RandomSource random,
+        int count,
+        T input,
+        CreateRollableRecipe<T> recipe
+    ) {
         List<ItemStack> remainders;
         remainders = new ArrayList<>();
         for (int i = 0, size = input.size(); i < size; i++) {
@@ -58,7 +67,8 @@ public class RecipeApplier {
             remainders = null;
         }
         List<ItemStack> stacks = new ArrayList<>();
-        Object2ObjectMap<ItemStack, @Nullable ObjectIntPair<ItemStack>> buffer = new Object2ObjectOpenCustomHashMap<>(BaseInventory.ITEM_STACK_HASH_STRATEGY);
+        Object2ObjectMap<ItemStack, @Nullable ObjectIntPair<ItemStack>> buffer = new Object2ObjectOpenCustomHashMap<>(
+            BaseInventory.ITEM_STACK_HASH_STRATEGY);
         int max, amount;
         ItemStack exist;
         for (int i = 0; i < count; i++) {

@@ -106,7 +106,10 @@ public final class SimpleBlockEntityVisualizer<T extends BlockEntity> implements
                 skipVanillaRender = blockEntity -> true;
             }
 
-            SimpleBlockEntityVisualizer<T> visualizer = new SimpleBlockEntityVisualizer<>(visualFactory, skipVanillaRender);
+            SimpleBlockEntityVisualizer<T> visualizer = new SimpleBlockEntityVisualizer<>(
+                visualFactory,
+                skipVanillaRender
+            );
             VisualizerRegistry.setVisualizer(type, visualizer);
             return visualizer;
         }

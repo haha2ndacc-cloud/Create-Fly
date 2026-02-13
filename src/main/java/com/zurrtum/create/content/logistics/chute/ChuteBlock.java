@@ -47,14 +47,12 @@ public class ChuteBlock extends AbstractChuteBlock implements ProperWaterloggedB
 
     public ChuteBlock(Properties p_i48440_1_) {
         super(p_i48440_1_);
-        registerDefaultState(defaultBlockState().setValue(SHAPE, Shape.NORMAL).setValue(FACING, Direction.DOWN).setValue(WATERLOGGED, false));
+        registerDefaultState(defaultBlockState().setValue(SHAPE, Shape.NORMAL).setValue(FACING, Direction.DOWN)
+            .setValue(WATERLOGGED, false));
     }
 
     public enum Shape implements StringRepresentable {
-        INTERSECTION,
-        WINDOW,
-        NORMAL,
-        ENCASED;
+        INTERSECTION, WINDOW, NORMAL, ENCASED;
 
         @Override
         public String getSerializedName() {
@@ -86,11 +84,13 @@ public class ChuteBlock extends AbstractChuteBlock implements ProperWaterloggedB
     public InteractionResult onWrenched(BlockState state, UseOnContext context) {
         Shape shape = state.getValue(SHAPE);
         boolean down = state.getValue(FACING) == Direction.DOWN;
-        if (shape == Shape.INTERSECTION)
+        if (shape == Shape.INTERSECTION) {
             return InteractionResult.PASS;
+        }
         Level level = context.getLevel();
-        if (level.isClientSide())
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
+        }
         if (shape == Shape.ENCASED) {
             level.setBlockAndUpdate(context.getClickedPos(), state.setValue(SHAPE, Shape.NORMAL));
             level.levelEvent(
@@ -100,8 +100,12 @@ public class ChuteBlock extends AbstractChuteBlock implements ProperWaterloggedB
             );
             return InteractionResult.SUCCESS;
         }
-        if (down)
-            level.setBlockAndUpdate(context.getClickedPos(), state.setValue(SHAPE, shape != Shape.NORMAL ? Shape.NORMAL : Shape.WINDOW));
+        if (down) {
+            level.setBlockAndUpdate(
+                context.getClickedPos(),
+                state.setValue(SHAPE, shape != Shape.NORMAL ? Shape.NORMAL : Shape.WINDOW)
+            );
+        }
         return InteractionResult.SUCCESS;
     }
 
@@ -116,12 +120,15 @@ public class ChuteBlock extends AbstractChuteBlock implements ProperWaterloggedB
         BlockHitResult hitResult
     ) {
         Shape shape = state.getValue(SHAPE);
-        if (!stack.is(AllItems.INDUSTRIAL_IRON_BLOCK))
+        if (!stack.is(AllItems.INDUSTRIAL_IRON_BLOCK)) {
             return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
-        if (shape == Shape.INTERSECTION || shape == Shape.ENCASED)
+        }
+        if (shape == Shape.INTERSECTION || shape == Shape.ENCASED) {
             return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
-        if (player == null || level.isClientSide())
+        }
+        if (player == null || level.isClientSide()) {
             return InteractionResult.SUCCESS;
+        }
 
         level.setBlockAndUpdate(pos, state.setValue(SHAPE, Shape.ENCASED));
         level.playSound(null, pos, SoundEvents.NETHERITE_BLOCK_HIT, SoundSource.BLOCKS, 0.5f, 1.05f);
@@ -169,8 +176,9 @@ public class ChuteBlock extends AbstractChuteBlock implements ProperWaterloggedB
 
     @Override
     public BlockState updateChuteState(BlockState state, BlockState above, BlockGetter world, BlockPos pos) {
-        if (!(state.getBlock() instanceof ChuteBlock))
+        if (!(state.getBlock() instanceof ChuteBlock)) {
             return state;
+        }
 
         Map<Direction, Boolean> connections = new HashMap<>();
         int amtConnections = 0;
@@ -179,33 +187,40 @@ public class ChuteBlock extends AbstractChuteBlock implements ProperWaterloggedB
 
         if (!vertical) {
             BlockState target = world.getBlockState(pos.below().relative(facing.getOpposite()));
-            if (!isChute(target))
+            if (!isChute(target)) {
                 return state.setValue(FACING, Direction.DOWN).setValue(SHAPE, Shape.NORMAL);
+            }
         }
 
         for (Direction direction : Iterate.horizontalDirections) {
             BlockState diagonalInputChute = world.getBlockState(pos.above().relative(direction));
             boolean value = diagonalInputChute.getBlock() instanceof ChuteBlock && diagonalInputChute.getValue(FACING) == direction;
             connections.put(direction, value);
-            if (value)
+            if (value) {
                 amtConnections++;
+            }
         }
 
         boolean noConnections = amtConnections == 0;
-        if (vertical)
+        if (vertical) {
             return state.setValue(
                 SHAPE,
                 noConnections ? state.getValue(SHAPE) == Shape.INTERSECTION ? Shape.NORMAL : state.getValue(SHAPE) : Shape.INTERSECTION
             );
-        if (noConnections)
+        }
+        if (noConnections) {
             return state.setValue(SHAPE, Shape.INTERSECTION);
-        if (connections.get(Direction.NORTH) && connections.get(Direction.SOUTH))
+        }
+        if (connections.get(Direction.NORTH) && connections.get(Direction.SOUTH)) {
             return state.setValue(SHAPE, Shape.INTERSECTION);
-        if (connections.get(Direction.EAST) && connections.get(Direction.WEST))
+        }
+        if (connections.get(Direction.EAST) && connections.get(Direction.WEST)) {
             return state.setValue(SHAPE, Shape.INTERSECTION);
+        }
         if (amtConnections == 1 && connections.get(facing) && !(getChuteFacing(above) == Direction.DOWN) && !(above.getBlock() instanceof FunnelBlock && FunnelBlock.getFunnelFacing(
-            above) == Direction.DOWN))
+            above) == Direction.DOWN)) {
             return state.setValue(SHAPE, state.getValue(SHAPE) == Shape.ENCASED ? Shape.ENCASED : Shape.NORMAL);
+        }
         return state.setValue(SHAPE, Shape.INTERSECTION);
     }
 

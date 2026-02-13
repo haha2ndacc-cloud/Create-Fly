@@ -10,9 +10,8 @@ import org.jspecify.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public record Pipeline(
-    Identifier vertexMain, Identifier fragmentMain, InstanceAssembler assembler, String compilerMarker, Consumer<GlProgram> onLink
-) {
+public record Pipeline(Identifier vertexMain, Identifier fragmentMain, InstanceAssembler assembler,
+                       String compilerMarker, Consumer<GlProgram> onLink) {
 
     @FunctionalInterface
     public interface InstanceAssembler {

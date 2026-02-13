@@ -122,7 +122,13 @@ public class ScrollValueBehaviour<B extends SmartBlockEntity, T extends ServerSc
 
     @Override
     public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
-        return new ValueSettingsBoard(label, behaviour.getMax(), 10, ImmutableList.of(Component.literal("Value")), new ValueSettingsFormatter());
+        return new ValueSettingsBoard(
+            label,
+            behaviour.getMax(),
+            10,
+            ImmutableList.of(Component.literal("Value")),
+            new ValueSettingsFormatter()
+        );
     }
 
     @Override

@@ -51,8 +51,9 @@ public class DisplayWorldSectionInstruction extends FadeIntoSceneInstruction<Wor
     @Override
     public void tick(PonderScene scene) {
         super.tick(scene);
-        if (remainingTicks > 0)
+        if (remainingTicks > 0) {
             return;
+        }
         Optional.ofNullable(mergeOnto).ifPresent(c -> element.mergeOnto(c.get()));
         //TODO
         //if (glue != null)

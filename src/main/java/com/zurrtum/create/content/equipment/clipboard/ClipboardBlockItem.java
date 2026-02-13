@@ -27,19 +27,29 @@ public class ClipboardBlockItem extends BlockItem implements SupportsItemCopying
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
-        if (player == null)
+        if (player == null) {
             return InteractionResult.PASS;
-        if (player.isShiftKeyDown())
+        }
+        if (player.isShiftKeyDown()) {
             return super.useOn(context);
+        }
         return use(context.getLevel(), player, context.getHand());
     }
 
     @Override
-    protected boolean updateCustomBlockEntityTag(BlockPos pPos, Level pLevel, @Nullable Player pPlayer, ItemStack pStack, BlockState pState) {
-        if (pLevel.isClientSide())
+    protected boolean updateCustomBlockEntityTag(
+        BlockPos pPos,
+        Level pLevel,
+        @Nullable Player pPlayer,
+        ItemStack pStack,
+        BlockState pState
+    ) {
+        if (pLevel.isClientSide()) {
             return false;
-        if (!(pLevel.getBlockEntity(pPos) instanceof ClipboardBlockEntity cbe))
+        }
+        if (!(pLevel.getBlockEntity(pPos) instanceof ClipboardBlockEntity cbe)) {
             return false;
+        }
         cbe.notifyUpdate();
         return true;
     }
@@ -47,12 +57,14 @@ public class ClipboardBlockItem extends BlockItem implements SupportsItemCopying
     @Override
     public InteractionResult use(Level world, Player player, InteractionHand hand) {
         ItemStack heldItem = player.getItemInHand(hand);
-        if (hand == InteractionHand.OFF_HAND)
+        if (hand == InteractionHand.OFF_HAND) {
             return InteractionResult.PASS;
+        }
 
         player.getCooldowns().addCooldown(heldItem, 10);
-        if (world.isClientSide())
+        if (world.isClientSide()) {
             AllClientHandle.INSTANCE.openClipboardScreen(player, heldItem.getComponents(), null);
+        }
         ClipboardContent content = heldItem.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
         heldItem.set(AllDataComponents.CLIPBOARD_CONTENT, content.setType(ClipboardType.EDITING));
 

@@ -36,15 +36,19 @@ public class AttributeFilterItem extends FilterItem {
         AttributeFilterWhitelistMode whitelistMode = filter.get(AllDataComponents.ATTRIBUTE_FILTER_WHITELIST_MODE);
         list.add((whitelistMode == AttributeFilterWhitelistMode.WHITELIST_CONJ ? Component.translatable(
             "create.gui.attribute_filter.allow_list_conjunctive") : whitelistMode == AttributeFilterWhitelistMode.WHITELIST_DISJ ? Component.translatable(
-            "create.gui.attribute_filter.allow_list_disjunctive") : Component.translatable("create.gui.attribute_filter.deny_list")).withStyle(
-            ChatFormatting.GOLD));
+            "create.gui.attribute_filter.allow_list_disjunctive") : Component.translatable(
+            "create.gui.attribute_filter.deny_list")).withStyle(ChatFormatting.GOLD));
 
         int count = 0;
-        List<ItemAttributeEntry> attributes = filter.getOrDefault(AllDataComponents.ATTRIBUTE_FILTER_MATCHED_ATTRIBUTES, List.of());
+        List<ItemAttributeEntry> attributes = filter.getOrDefault(
+            AllDataComponents.ATTRIBUTE_FILTER_MATCHED_ATTRIBUTES,
+            List.of()
+        );
         for (ItemAttributeEntry attributeEntry : attributes) {
             ItemAttribute attribute = attributeEntry.attribute();
-            if (attribute == null)
+            if (attribute == null) {
                 continue;
+            }
             boolean inverted = attributeEntry.inverted();
             if (count > 3) {
                 list.add(Component.literal("- ...").withStyle(ChatFormatting.DARK_GRAY));
@@ -54,8 +58,9 @@ public class AttributeFilterItem extends FilterItem {
             count++;
         }
 
-        if (count == 0)
+        if (count == 0) {
             return Collections.emptyList();
+        }
 
         return list;
     }
@@ -80,7 +85,10 @@ public class AttributeFilterItem extends FilterItem {
     @Override
     public ItemStack[] getFilterItems(ItemStack stack) {
         AttributeFilterWhitelistMode whitelistMode = stack.get(AllDataComponents.ATTRIBUTE_FILTER_WHITELIST_MODE);
-        List<ItemAttributeEntry> attributes = stack.getOrDefault(AllDataComponents.ATTRIBUTE_FILTER_MATCHED_ATTRIBUTES, List.of());
+        List<ItemAttributeEntry> attributes = stack.getOrDefault(
+            AllDataComponents.ATTRIBUTE_FILTER_MATCHED_ATTRIBUTES,
+            List.of()
+        );
 
         if (whitelistMode == AttributeFilterWhitelistMode.WHITELIST_DISJ && attributes.size() == 1) {
             ItemAttribute attribute = attributes.getFirst().attribute();

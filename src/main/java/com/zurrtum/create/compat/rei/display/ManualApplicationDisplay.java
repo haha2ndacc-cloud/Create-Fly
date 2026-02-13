@@ -16,9 +16,8 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import java.util.List;
 import java.util.Optional;
 
-public record ManualApplicationDisplay(
-    EntryIngredient input, EntryIngredient target, EntryIngredient output, Optional<Identifier> location
-) implements Display {
+public record ManualApplicationDisplay(EntryIngredient input, EntryIngredient target, EntryIngredient output,
+                                       Optional<Identifier> location) implements Display {
     public static final DisplaySerializer<ManualApplicationDisplay> SERIALIZER = DisplaySerializer.of(
         RecordCodecBuilder.mapCodec(instance -> instance.group(
             EntryIngredient.codec().fieldOf("input").forGetter(ManualApplicationDisplay::input),

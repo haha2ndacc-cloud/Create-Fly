@@ -23,8 +23,9 @@ public class TableClothShopPeripheral extends SyncedPeripheral<TableClothBlockEn
     }
 
     private void assertShop() throws LuaException {
-        if (!blockEntity.isShop())
+        if (!blockEntity.isShop()) {
             throw new LuaException("TableCloth is not a shop!");
+        }
     }
 
     @LuaFunction(mainThread = true)
@@ -49,7 +50,10 @@ public class TableClothShopPeripheral extends SyncedPeripheral<TableClothBlockEn
     @LuaFunction(mainThread = true)
     public final Map<String, ?> getPriceTagItem() throws LuaException {
         assertShop();
-        return VanillaDetailRegistries.ITEM_STACK.getDetails(blockEntity.getLevel().registryAccess(), blockEntity.priceTag.getFilter());
+        return VanillaDetailRegistries.ITEM_STACK.getDetails(
+            blockEntity.getLevel().registryAccess(),
+            blockEntity.priceTag.getFilter()
+        );
     }
 
     @LuaFunction(mainThread = true)
@@ -57,8 +61,9 @@ public class TableClothShopPeripheral extends SyncedPeripheral<TableClothBlockEn
     public final void setPriceTagItem(Optional<String> itemName) throws LuaException {
         assertShop();
         Identifier resourceLocation = Identifier.tryParse("minecraft:air");
-        if (itemName.isPresent())
+        if (itemName.isPresent()) {
             resourceLocation = Identifier.tryParse(itemName.get());
+        }
         ItemLike item = BuiltInRegistries.ITEM.getValue(resourceLocation);
         blockEntity.priceTag.setFilter(new ItemStack(item));
     }
@@ -85,7 +90,10 @@ public class TableClothShopPeripheral extends SyncedPeripheral<TableClothBlockEn
         RegistryAccess registryAccess = blockEntity.getLevel().registryAccess();
         for (int i = 0; i < wares.size(); i++) {
             ItemStack stack = wares.get(i).stack;
-            Map<String, Object> details = new HashMap<>(VanillaDetailRegistries.ITEM_STACK.getDetails(registryAccess, stack));
+            Map<String, Object> details = new HashMap<>(VanillaDetailRegistries.ITEM_STACK.getDetails(
+                registryAccess,
+                stack
+            ));
             details.put("count", wares.get(i).count);
             result.put(i + 1, details); // +1 because lua
         }
@@ -102,8 +110,9 @@ public class TableClothShopPeripheral extends SyncedPeripheral<TableClothBlockEn
      */
     @LuaFunction(mainThread = true)
     public final void setWares(IArguments arguments) throws LuaException {
-        if (!blockEntity.manuallyAddedItems.isEmpty())
+        if (!blockEntity.manuallyAddedItems.isEmpty()) {
             throw new LuaException("Tablecloth isn't empty.");
+        }
         ArrayList<BigItemStack> list = new ArrayList<>();
         for (int i = 0; i <= 8; i++) {
             if (arguments.get(i) != null) {
@@ -120,14 +129,16 @@ public class TableClothShopPeripheral extends SyncedPeripheral<TableClothBlockEn
                 if (itemData.get("count") instanceof Number) {
                     Object countObj = itemData.get("count");
                     count = (countObj instanceof Number) ? ((Number) countObj).intValue() : 1;
-                    if (count > 256)
+                    if (count > 256) {
                         throw new LuaException("Count for item " + itemName + " exceeds 256");
+                    }
                 }
                 Identifier resourceLocation = Identifier.tryParse(itemName);
                 ItemLike item = BuiltInRegistries.ITEM.getValue(resourceLocation);
                 ItemStack itemStack = new ItemStack(item);
-                if (itemStack.isEmpty())
+                if (itemStack.isEmpty()) {
                     throw new LuaException("Invalid item at index: " + (i + 1));
+                }
                 list.add(new BigItemStack(itemStack, count));
             }
         }

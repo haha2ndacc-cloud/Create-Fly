@@ -67,7 +67,12 @@ public class LinkBulbRenderer implements BlockEntityRenderer<LinkWithBulbBlockEn
     }
 
     @Override
-    public void submit(LinkBulbRenderState state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
+    public void submit(
+        LinkBulbRenderState state,
+        PoseStack matrices,
+        SubmitNodeCollector queue,
+        CameraRenderState cameraState
+    ) {
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.YP.rotation(state.yRot));
         matrices.mulPose(Axis.XP.rotation(state.xRot));
@@ -93,7 +98,8 @@ public class LinkBulbRenderer implements BlockEntityRenderer<LinkWithBulbBlockEn
         }
 
         public void renderGlow(PoseStack.Pose entry, VertexConsumer vertexConsumer) {
-            glow.translate(offset).light(lightCoords).color(color, color, color, 255).disableDiffuse().renderInto(entry, vertexConsumer);
+            glow.translate(offset).light(lightCoords).color(color, color, color, 255).disableDiffuse()
+                .renderInto(entry, vertexConsumer);
         }
     }
 }

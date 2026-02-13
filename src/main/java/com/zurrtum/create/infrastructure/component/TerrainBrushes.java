@@ -4,21 +4,18 @@ import com.mojang.serialization.Codec;
 import com.zurrtum.create.catnip.codecs.stream.CatnipStreamCodecBuilders;
 import com.zurrtum.create.content.equipment.zapper.terrainzapper.*;
 import io.netty.buffer.ByteBuf;
-
-import java.util.Locale;
-
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 
+import java.util.Locale;
+
 public enum TerrainBrushes implements StringRepresentable {
-    Cuboid(new CuboidBrush()),
-    Sphere(new SphereBrush()),
-    Cylinder(new CylinderBrush()),
-    Surface(new DynamicBrush(true)),
-    Cluster(new DynamicBrush(false));
+    Cuboid(new CuboidBrush()), Sphere(new SphereBrush()), Cylinder(new CylinderBrush()), Surface(new DynamicBrush(true)), Cluster(
+        new DynamicBrush(false));
 
     public static final Codec<TerrainBrushes> CODEC = StringRepresentable.fromEnum(TerrainBrushes::values);
-    public static final StreamCodec<ByteBuf, TerrainBrushes> STREAM_CODEC = CatnipStreamCodecBuilders.ofEnum(TerrainBrushes.class);
+    public static final StreamCodec<ByteBuf, TerrainBrushes> STREAM_CODEC = CatnipStreamCodecBuilders.ofEnum(
+        TerrainBrushes.class);
 
     private final Brush brush;
 

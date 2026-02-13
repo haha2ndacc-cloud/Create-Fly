@@ -15,7 +15,12 @@ import org.jspecify.annotations.Nullable;
 public abstract class ConnectedTextureBehaviour {
 
     @Nullable
-    public CTSpriteShiftEntry getShift(BlockState state, RandomSource rand, Direction direction, TextureAtlasSprite sprite) {
+    public CTSpriteShiftEntry getShift(
+        BlockState state,
+        RandomSource rand,
+        Direction direction,
+        TextureAtlasSprite sprite
+    ) {
         return getShift(state, direction, sprite);
     }
 
@@ -30,15 +35,24 @@ public abstract class ConnectedTextureBehaviour {
         return false;
     }
 
-    protected boolean isBeingBlocked(BlockState state, BlockAndTintGetter reader, BlockPos pos, BlockPos otherPos, Direction face) {
+    protected boolean isBeingBlocked(
+        BlockState state,
+        BlockAndTintGetter reader,
+        BlockPos pos,
+        BlockPos otherPos,
+        Direction face
+    ) {
         BlockPos blockingPos = otherPos.relative(face);
         BlockState blockState = reader.getBlockState(pos);
         BlockState blockingState = reader.getBlockState(blockingPos);
 
-        if (!Block.isFaceFull(blockingState.getShape(reader, blockingPos), face.getOpposite()))
+        if (!Block.isFaceFull(blockingState.getShape(reader, blockingPos), face.getOpposite())) {
             return false;
-        if (face.getAxis().choose(pos.getX(), pos.getY(), pos.getZ()) != face.getAxis().choose(otherPos.getX(), otherPos.getY(), otherPos.getZ()))
+        }
+        if (face.getAxis().choose(pos.getX(), pos.getY(), pos.getZ()) != face.getAxis()
+            .choose(otherPos.getX(), otherPos.getY(), otherPos.getZ())) {
             return false;
+        }
 
         return connectsTo(
             state,
@@ -63,7 +77,14 @@ public abstract class ConnectedTextureBehaviour {
         return connectsTo(state, other, reader, pos, otherPos, face);
     }
 
-    public boolean connectsTo(BlockState state, BlockState other, BlockAndTintGetter reader, BlockPos pos, BlockPos otherPos, Direction face) {
+    public boolean connectsTo(
+        BlockState state,
+        BlockState other,
+        BlockAndTintGetter reader,
+        BlockPos pos,
+        BlockPos otherPos,
+        Direction face
+    ) {
         return !isBeingBlocked(state, reader, pos, otherPos, face) && state.getBlock() == other.getBlock();
     }
 
@@ -79,7 +100,13 @@ public abstract class ConnectedTextureBehaviour {
     ) {
         BlockState trueCurrentState = reader.getBlockState(currentPos);
         BlockPos targetPos = currentPos.relative(horizontal, sh).relative(vertical, sv);
-        BlockState connectiveTargetState = getCTBlockState(reader, trueCurrentState, textureSide, currentPos, targetPos);
+        BlockState connectiveTargetState = getCTBlockState(
+            reader,
+            trueCurrentState,
+            textureSide,
+            currentPos,
+            targetPos
+        );
         return connectsTo(
             connectiveCurrentState,
             connectiveTargetState,
@@ -92,7 +119,13 @@ public abstract class ConnectedTextureBehaviour {
         );
     }
 
-    public BlockState getCTBlockState(BlockAndTintGetter reader, BlockState reference, Direction face, BlockPos fromPos, BlockPos toPos) {
+    public BlockState getCTBlockState(
+        BlockAndTintGetter reader,
+        BlockState reference,
+        Direction face,
+        BlockPos fromPos,
+        BlockPos toPos
+    ) {
         BlockState blockState = reader.getBlockState(toPos);
         if (blockState.getBlock() instanceof AppearanceControlBlock block) {
             return block.getAppearance(blockState, reader, toPos, face, reference, fromPos);
@@ -122,7 +155,13 @@ public abstract class ConnectedTextureBehaviour {
         return axis == Axis.X ? Direction.SOUTH : Direction.WEST;
     }
 
-    public CTContext buildContext(BlockAndTintGetter reader, BlockPos pos, BlockState state, Direction face, ContextRequirement requirement) {
+    public CTContext buildContext(
+        BlockAndTintGetter reader,
+        BlockPos pos,
+        BlockState state,
+        Direction face,
+        ContextRequirement requirement
+    ) {
         boolean positive = face.getAxisDirection() == AxisDirection.POSITIVE;
         Direction h = getRightDirection(reader, pos, state, face);
         Direction v = getUpDirection(reader, pos, state, face);
@@ -156,16 +195,52 @@ public abstract class ConnectedTextureBehaviour {
         }
 
         if (requirement.topLeft) {
-            context.topLeft = context.up && context.left && testConnection(reader, pos, state, face, horizontal, vertical, -sh, sv);
+            context.topLeft = context.up && context.left && testConnection(
+                reader,
+                pos,
+                state,
+                face,
+                horizontal,
+                vertical,
+                -sh,
+                sv
+            );
         }
         if (requirement.topRight) {
-            context.topRight = context.up && context.right && testConnection(reader, pos, state, face, horizontal, vertical, sh, sv);
+            context.topRight = context.up && context.right && testConnection(
+                reader,
+                pos,
+                state,
+                face,
+                horizontal,
+                vertical,
+                sh,
+                sv
+            );
         }
         if (requirement.bottomLeft) {
-            context.bottomLeft = context.down && context.left && testConnection(reader, pos, state, face, horizontal, vertical, -sh, -sv);
+            context.bottomLeft = context.down && context.left && testConnection(
+                reader,
+                pos,
+                state,
+                face,
+                horizontal,
+                vertical,
+                -sh,
+                -sv
+            );
         }
         if (requirement.bottomRight) {
-            context.bottomRight = context.down && context.right && testConnection(reader, pos, state, face, horizontal, vertical, sh, -sv);
+            context.bottomRight = context.down && context.right && testConnection(
+                reader,
+                pos,
+                state,
+                face,
+                horizontal,
+                vertical,
+                sh,
+                -sv
+            );
         }
 
         return context;
@@ -291,7 +366,11 @@ public abstract class ConnectedTextureBehaviour {
     public static abstract class Base extends ConnectedTextureBehaviour {
         @Override
         @Nullable
-        public abstract CTSpriteShiftEntry getShift(BlockState state, Direction direction, @Nullable TextureAtlasSprite sprite);
+        public abstract CTSpriteShiftEntry getShift(
+            BlockState state,
+            Direction direction,
+            @Nullable TextureAtlasSprite sprite
+        );
 
         @Override
         @Nullable

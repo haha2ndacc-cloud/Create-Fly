@@ -62,12 +62,17 @@ public class ItemHatchBlock extends HorizontalDirectionalBlock implements IBE<It
     @Nullable
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         BlockState state = super.getStateForPlacement(pContext);
-        if (state == null)
+        if (state == null) {
             return state;
-        if (pContext.getClickedFace().getAxis().isVertical())
+        }
+        if (pContext.getClickedFace().getAxis().isVertical()) {
             return null;
+        }
 
-        return withWater(state.setValue(FACING, pContext.getClickedFace().getOpposite()).setValue(OPEN, false), pContext);
+        return withWater(
+            state.setValue(FACING, pContext.getClickedFace().getOpposite()).setValue(OPEN, false),
+            pContext
+        );
     }
 
     @Override
@@ -100,28 +105,34 @@ public class ItemHatchBlock extends HorizontalDirectionalBlock implements IBE<It
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-        if (level.isClientSide())
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
-        if (FakePlayerHandler.has(player))
+        }
+        if (FakePlayerHandler.has(player)) {
             return InteractionResult.SUCCESS;
+        }
 
         BlockEntity blockEntity = level.getBlockEntity(pos.relative(state.getValue(FACING)));
-        if (blockEntity == null)
+        if (blockEntity == null) {
             return InteractionResult.FAIL;
+        }
         Container targetInv = ItemHelper.getInventory(level, blockEntity.getBlockPos(), null, blockEntity, null);
-        if (targetInv == null)
+        if (targetInv == null) {
             return InteractionResult.FAIL;
+        }
 
         ServerFilteringBehaviour filter = BlockEntityBehaviour.get(level, pos, ServerFilteringBehaviour.TYPE);
-        if (filter == null)
+        if (filter == null) {
             return InteractionResult.FAIL;
+        }
 
         Inventory inventory = player.getInventory();
         boolean anyInserted = false;
         boolean depositItemInHand = !player.isShiftKeyDown();
 
-        if (!depositItemInHand && stack.is(AllItemTags.TOOLS_WRENCH))
+        if (!depositItemInHand && stack.is(AllItemTags.TOOLS_WRENCH)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
 
         int start, end;
         if (depositItemInHand) {
@@ -132,12 +143,15 @@ public class ItemHatchBlock extends HorizontalDirectionalBlock implements IBE<It
         }
         for (int i = start; i <= end; i++) {
             ItemStack item = inventory.getItem(i);
-            if (item.isEmpty())
+            if (item.isEmpty()) {
                 continue;
-            if (!item.getItem().canFitInsideContainerItems() && !PackageItem.isPackage(item))
+            }
+            if (!item.getItem().canFitInsideContainerItems() && !PackageItem.isPackage(item)) {
                 continue;
-            if (!filter.getFilter().isEmpty() && !filter.test(item))
+            }
+            if (!filter.getFilter().isEmpty() && !filter.test(item)) {
                 continue;
+            }
 
             int count = item.getCount();
             int insert = targetInv.insertExist(item, count);
@@ -152,16 +166,15 @@ public class ItemHatchBlock extends HorizontalDirectionalBlock implements IBE<It
             }
         }
 
-        if (!anyInserted)
+        if (!anyInserted) {
             return InteractionResult.SUCCESS;
+        }
 
         AllSoundEvents.ITEM_HATCH.playOnServer(level, pos);
         level.setBlockAndUpdate(pos, state.setValue(OPEN, true));
         level.scheduleTick(pos, this, 10);
 
-        player.sendOverlayMessage(
-            Component.translatable(depositItemInHand ? "create.item_hatch.deposit_item" : "create.item_hatch.deposit_inventory")
-        );
+        player.sendOverlayMessage(Component.translatable(depositItemInHand ? "create.item_hatch.deposit_item" : "create.item_hatch.deposit_inventory"));
         return InteractionResult.SUCCESS;
     }
 
@@ -172,8 +185,9 @@ public class ItemHatchBlock extends HorizontalDirectionalBlock implements IBE<It
 
     @Override
     public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
-        if (pState.getValue(OPEN))
+        if (pState.getValue(OPEN)) {
             pLevel.setBlockAndUpdate(pPos, pState.setValue(OPEN, false));
+        }
     }
 
     @Override

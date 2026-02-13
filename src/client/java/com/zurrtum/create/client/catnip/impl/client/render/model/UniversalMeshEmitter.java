@@ -31,14 +31,8 @@ public class UniversalMeshEmitter implements VertexConsumer, BakedQuadOutput {
         QuadLightmapCoords lightmapCoord,
         int overlayCoords
     ) {
-        bufferSource.getBuffer(quad.spriteInfo().layer(), quad.shade()).putBulkData(
-            pose,
-            quad,
-            brightness,
-            color,
-            lightmapCoord,
-            overlayCoords
-        );
+        bufferSource.getBuffer(quad.spriteInfo().layer(), quad.shade())
+            .putBulkData(pose, quad, brightness, color, lightmapCoord, overlayCoords);
     }
 
     @Override

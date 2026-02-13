@@ -17,7 +17,13 @@ public final class SimpleInstanceType<I extends Instance> implements InstanceTyp
     private final Identifier vertexShader;
     private final Identifier cullShader;
 
-    public SimpleInstanceType(Factory<I> factory, Layout layout, InstanceWriter<I> writer, Identifier vertexShader, Identifier cullShader) {
+    public SimpleInstanceType(
+        Factory<I> factory,
+        Layout layout,
+        InstanceWriter<I> writer,
+        Identifier vertexShader,
+        Identifier cullShader
+    ) {
         this.factory = factory;
         this.layout = layout;
         this.writer = writer;

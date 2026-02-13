@@ -44,31 +44,35 @@ public class WhistleBlockEntity extends SmartBlockEntity {
         int newPitch;
         for (newPitch = 0; newPitch <= 24; newPitch += 2) {
             BlockState blockState = level.getBlockState(currentPos);
-            if (!blockState.is(AllBlocks.STEAM_WHISTLE_EXTENSION))
+            if (!blockState.is(AllBlocks.STEAM_WHISTLE_EXTENSION)) {
                 break;
+            }
             if (blockState.getValue(WhistleExtenderBlock.SHAPE) == WhistleExtenderShape.SINGLE) {
                 newPitch++;
                 break;
             }
             currentPos = currentPos.above();
         }
-        if (pitch == newPitch)
+        if (pitch == newPitch) {
             return;
+        }
         pitch = newPitch;
 
         notifyUpdate();
 
         FluidTankBlockEntity tank = getTank();
-        if (tank != null && tank.boiler != null)
+        if (tank != null && tank.boiler != null) {
             tank.boiler.checkPipeOrganAdvancement(tank);
+        }
     }
 
     @Override
     public void tick() {
         super.tick();
         if (!level.isClientSide()) {
-            if (isPowered())
+            if (isPowered()) {
                 award(AllAdvancements.STEAM_WHISTLE);
+            }
         }
     }
 
@@ -100,15 +104,18 @@ public class WhistleBlockEntity extends SmartBlockEntity {
     public FluidTankBlockEntity getTank() {
         FluidTankBlockEntity tank = source.get();
         if (tank == null || tank.isRemoved()) {
-            if (tank != null)
+            if (tank != null) {
                 source = new WeakReference<>(null);
+            }
             Direction facing = WhistleBlock.getAttachedDirection(getBlockState());
             BlockEntity be = level.getBlockEntity(worldPosition.relative(facing));
-            if (be instanceof FluidTankBlockEntity tankBe)
+            if (be instanceof FluidTankBlockEntity tankBe) {
                 source = new WeakReference<>(tank = tankBe);
+            }
         }
-        if (tank == null)
+        if (tank == null) {
             return null;
+        }
         return tank.getControllerBE();
     }
 

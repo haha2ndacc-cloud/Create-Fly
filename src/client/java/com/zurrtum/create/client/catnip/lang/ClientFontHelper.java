@@ -55,7 +55,15 @@ public class ClientFontHelper {
         return lines;
     }
 
-    public static void drawSplitString(GuiGraphics graphics, Font font, String text, int x, int y, int width, int color) {
+    public static void drawSplitString(
+        GuiGraphics graphics,
+        Font font,
+        String text,
+        int x,
+        int y,
+        int width,
+        int color
+    ) {
         List<String> list = cutString(font, text, width);
 
         boolean rightToLeft = font.isBidirectional();
@@ -77,7 +85,16 @@ public class ClientFontHelper {
         }
     }
 
-    public static void drawSplitString(MultiBufferSource buffer, PoseStack matrixStack, Font font, String text, int x, int y, int width, int color) {
+    public static void drawSplitString(
+        MultiBufferSource buffer,
+        PoseStack matrixStack,
+        Font font,
+        String text,
+        int x,
+        int y,
+        int width,
+        int color
+    ) {
         List<String> list = cutString(font, text, width);
         Matrix4f matrix4f = matrixStack.last().pose();
 
@@ -94,7 +111,26 @@ public class ClientFontHelper {
         }
     }
 
-    private static void draw(MultiBufferSource buffer, Font font, String text, int x, int y, int color, Matrix4f matrix4f) {
-        font.drawInBatch(text, x, y, color, false, matrix4f, buffer, Font.DisplayMode.NORMAL, 0, LightCoordsUtil.FULL_BRIGHT);
+    private static void draw(
+        MultiBufferSource buffer,
+        Font font,
+        String text,
+        int x,
+        int y,
+        int color,
+        Matrix4f matrix4f
+    ) {
+        font.drawInBatch(
+            text,
+            x,
+            y,
+            color,
+            false,
+            matrix4f,
+            buffer,
+            Font.DisplayMode.NORMAL,
+            0,
+            LightCoordsUtil.FULL_BRIGHT
+        );
     }
 }

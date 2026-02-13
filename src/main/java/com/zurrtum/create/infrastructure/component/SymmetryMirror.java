@@ -103,7 +103,10 @@ public abstract class SymmetryMirror {
         positions.addAll(result);
     }
 
-    public abstract Map<BlockPos, Pair<Direction, BlockState>> process(BlockPos position, Pair<Direction, BlockState> block);
+    public abstract Map<BlockPos, Pair<Direction, BlockState>> process(
+        BlockPos position,
+        Pair<Direction, BlockState> block
+    );
 
     public abstract Set<BlockPos> process(BlockPos position);
 
@@ -155,12 +158,20 @@ public abstract class SymmetryMirror {
 
     protected BlockPos flipD2(BlockPos position) {
         BlockPos diff = getIDiff(position);
-        return new BlockPos(position.getX() - diff.getX() + diff.getZ(), position.getY(), position.getZ() - diff.getZ() + diff.getX());
+        return new BlockPos(
+            position.getX() - diff.getX() + diff.getZ(),
+            position.getY(),
+            position.getZ() - diff.getZ() + diff.getX()
+        );
     }
 
     protected BlockPos flipD1(BlockPos position) {
         BlockPos diff = getIDiff(position);
-        return new BlockPos(position.getX() - diff.getX() - diff.getZ(), position.getY(), position.getZ() - diff.getZ() - diff.getX());
+        return new BlockPos(
+            position.getX() - diff.getX() - diff.getZ(),
+            position.getY(),
+            position.getZ() - diff.getZ() - diff.getX()
+        );
     }
 
     protected Direction flipZ(Direction side) {
@@ -249,13 +260,14 @@ public abstract class SymmetryMirror {
 
     @Override
     public final boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof SymmetryMirror that))
+        }
+        if (!(o instanceof SymmetryMirror that)) {
             return false;
+        }
 
-        return getOrientationIndex() == that.getOrientationIndex() && enable == that.enable && Objects.equals(
-            getPosition(),
+        return getOrientationIndex() == that.getOrientationIndex() && enable == that.enable && Objects.equals(getPosition(),
             that.getPosition()
         ) && Objects.equals(getOrientation(), that.getOrientation());
     }

@@ -99,7 +99,13 @@ public class ErrorBuilder {
     }
 
     public ErrorBuilder pointAtLine(SourceLines lines, int spanLine, int ctxLines) {
-        return this.pointAtLine(lines, spanLine, ctxLines, lines.lineStartColTrimmed(spanLine), lines.lineWidth(spanLine));
+        return this.pointAtLine(
+            lines,
+            spanLine,
+            ctxLines,
+            lines.lineStartColTrimmed(spanLine),
+            lines.lineWidth(spanLine)
+        );
     }
 
     public ErrorBuilder pointAtLine(SourceLines lines, int spanLine, int ctxLines, int firstCol, int lastCol) {

@@ -90,7 +90,10 @@ public class AllItemTags {
     private static final Map<TagKey<Item>, DyeColor> dyesTag = Util.make(
         new HashMap<>(), map -> {
             for (DyeColor color : DyeColor.values()) {
-                map.put(TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("c", "dyes/" + color.getName())), color);
+                map.put(
+                    TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("c", "dyes/" + color.getName())),
+                    color
+                );
             }
         }
     );
@@ -101,7 +104,8 @@ public class AllItemTags {
         if (color != null) {
             return color;
         }
-        return dyesTag.entrySet().stream().filter(entry -> stack.is(entry.getKey())).map(Map.Entry::getValue).findAny().orElse(null);
+        return dyesTag.entrySet().stream().filter(entry -> stack.is(entry.getKey())).map(Map.Entry::getValue).findAny()
+            .orElse(null);
     }
 
     public static void register() {

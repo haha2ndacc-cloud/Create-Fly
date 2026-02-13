@@ -68,12 +68,11 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
         VirtualRenderWorld renderWorld,
         ChunkSectionLayer renderType
     ) {
-        return SuperByteBufferCache.getInstance()
-            .get(
-                CONTRAPTION,
-                Pair.of(contraption, renderType),
-                () -> buildStructureBuffer(clientContraption, renderWorld, renderType)
-            );
+        return SuperByteBufferCache.getInstance().get(
+            CONTRAPTION,
+            Pair.of(contraption, renderType),
+            () -> buildStructureBuffer(clientContraption, renderWorld, renderType)
+        );
     }
 
     @SuppressWarnings("unchecked")
@@ -150,12 +149,15 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
 
     @Override
     public boolean shouldRender(C entity, Frustum frustum, double cameraX, double cameraY, double cameraZ) {
-        if (entity.getContraption() == null)
+        if (entity.getContraption() == null) {
             return false;
-        if (!entity.isAliveOrStale())
+        }
+        if (!entity.isAliveOrStale()) {
             return false;
-        if (!entity.isReadyForRender())
+        }
+        if (!entity.isReadyForRender()) {
             return false;
+        }
 
         return super.shouldRender(entity, frustum, cameraX, cameraY, cameraZ);
     }
@@ -281,9 +283,8 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
         };
     }
 
-    public record ContraptionBlockLayer(
-        RenderType renderLayer, SuperByteBuffer buffer, Level world, Matrix4f lightTransform
-    ) implements SubmitNodeCollector.CustomGeometryRenderer {
+    public record ContraptionBlockLayer(RenderType renderLayer, SuperByteBuffer buffer, Level world,
+                                        Matrix4f lightTransform) implements SubmitNodeCollector.CustomGeometryRenderer {
         @Override
         public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
             buffer.useLevelLight(world, lightTransform).renderInto(matricesEntry, vertexConsumer);

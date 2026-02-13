@@ -69,7 +69,11 @@ public class SchematicHandler {
     public SchematicHandler() {
         overlay = new SchematicHotbarSlotOverlay();
         currentTool = ToolType.DEPLOY;
-        selectionScreen = new ToolSelectionScreen(Minecraft.getInstance(), ImmutableList.of(ToolType.DEPLOY), this::equip);
+        selectionScreen = new ToolSelectionScreen(
+            Minecraft.getInstance(),
+            ImmutableList.of(ToolType.DEPLOY),
+            this::equip
+        );
         transformation = new SchematicTransformation();
     }
 
@@ -84,8 +88,9 @@ public class SchematicHandler {
             return;
         }
 
-        if (activeSchematicItem != null && transformation != null)
+        if (activeSchematicItem != null && transformation != null) {
             transformation.tick();
+        }
 
         LocalPlayer player = mc.player;
         ItemStack stack = findBlueprintInHand(player);
@@ -102,13 +107,16 @@ public class SchematicHandler {
         if (!active || !stack.get(AllDataComponents.SCHEMATIC_FILE).equals(displayedSchematic)) {
             init(mc, stack);
         }
-        if (!active)
+        if (!active) {
             return;
+        }
 
-        if (syncCooldown > 0)
+        if (syncCooldown > 0) {
             syncCooldown--;
-        if (syncCooldown == 1)
+        }
+        if (syncCooldown == 1) {
             sync(player);
+        }
 
         selectionScreen.update();
         currentTool.getTool().updateSelection(mc);
@@ -127,16 +135,18 @@ public class SchematicHandler {
                 selectionScreen.setSelectedElement(toolBefore);
                 equip(toolBefore);
             }
-        } else
+        } else {
             selectionScreen = new ToolSelectionScreen(mc, ImmutableList.of(ToolType.DEPLOY), this::equip);
+        }
     }
 
     private void setupRenderer(Minecraft mc) {
         Level clientWorld = mc.level;
         StructureTemplate schematic = SchematicItem.loadSchematic(clientWorld, activeSchematicItem);
         Vec3i size = schematic.getSize();
-        if (size.equals(Vec3i.ZERO))
+        if (size.equals(Vec3i.ZERO)) {
             return;
+        }
 
         SchematicLevel w = new SchematicLevel(clientWorld);
         SchematicLevel wMirroredFB = new SchematicLevel(clientWorld);
@@ -165,7 +175,12 @@ public class SchematicHandler {
         placementSettings.setMirror(Mirror.FRONT_BACK);
         pos = BlockPos.ZERO.east(size.getX() - 1);
         schematic.placeInWorld(wMirroredFB, pos, pos, placementSettings, wMirroredFB.getRandom(), Block.UPDATE_CLIENTS);
-        transform = new StructureTransform(placementSettings.getRotationPivot(), Axis.Y, Rotation.NONE, placementSettings.getMirror());
+        transform = new StructureTransform(
+            placementSettings.getRotationPivot(),
+            Axis.Y,
+            Rotation.NONE,
+            placementSettings.getMirror()
+        );
         for (BlockEntity be : wMirroredFB.getRenderedBlockEntities()) {
             transform.apply(be);
             if (be instanceof SmartBlockEntity smartBlockEntity) {
@@ -177,7 +192,12 @@ public class SchematicHandler {
         placementSettings.setMirror(Mirror.LEFT_RIGHT);
         pos = BlockPos.ZERO.south(size.getZ() - 1);
         schematic.placeInWorld(wMirroredLR, pos, pos, placementSettings, wMirroredFB.getRandom(), Block.UPDATE_CLIENTS);
-        transform = new StructureTransform(placementSettings.getRotationPivot(), Axis.Y, Rotation.NONE, placementSettings.getMirror());
+        transform = new StructureTransform(
+            placementSettings.getRotationPivot(),
+            Axis.Y,
+            Rotation.NONE,
+            placementSettings.getMirror()
+        );
         for (BlockEntity be : wMirroredLR.getRenderedBlockEntities()) {
             transform.apply(be);
             if (be instanceof SmartBlockEntity smartBlockEntity) {
@@ -193,18 +213,22 @@ public class SchematicHandler {
 
     private void fixControllerBlockEntities(SchematicLevel level) {
         for (BlockEntity blockEntity : level.getBlockEntities()) {
-            if (!(blockEntity instanceof IMultiBlockEntityContainer multiBlockEntity))
+            if (!(blockEntity instanceof IMultiBlockEntityContainer multiBlockEntity)) {
                 continue;
+            }
             BlockPos lastKnown = multiBlockEntity.getLastKnownPos();
             BlockPos current = blockEntity.getBlockPos();
-            if (lastKnown == null || current == null)
+            if (lastKnown == null || current == null) {
                 continue;
-            if (multiBlockEntity.isController())
+            }
+            if (multiBlockEntity.isController()) {
                 continue;
+            }
             if (!lastKnown.equals(current)) {
                 BlockPos newControllerPos = multiBlockEntity.getController().offset(current.subtract(lastKnown));
-                if (multiBlockEntity instanceof SmartBlockEntity sbe)
+                if (multiBlockEntity instanceof SmartBlockEntity sbe) {
                     sbe.markVirtual();
+                }
                 multiBlockEntity.setController(newControllerPos);
             }
         }
@@ -253,38 +277,48 @@ public class SchematicHandler {
     }
 
     public void render(Minecraft mc, GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-        if (!active)
+        if (!active) {
             return;
+        }
         float tickProgress = deltaTracker.getGameTimeDeltaPartialTick(false);
-        if (activeSchematicItem != null)
+        if (activeSchematicItem != null) {
             overlay.renderOn(mc, guiGraphics, activeHotbarSlot, tickProgress);
-        currentTool.getTool().renderOverlay(mc.gui, guiGraphics, tickProgress, guiGraphics.guiWidth(), guiGraphics.guiHeight());
+        }
+        currentTool.getTool()
+            .renderOverlay(mc.gui, guiGraphics, tickProgress, guiGraphics.guiWidth(), guiGraphics.guiHeight());
         selectionScreen.renderPassive(guiGraphics, tickProgress);
     }
 
     public boolean onMouseInput(Minecraft mc, int button) {
-        if (!active)
+        if (!active) {
             return false;
-        if (button != 1)
+        }
+        if (button != 1) {
             return false;
-        if (mc.player.isShiftKeyDown())
+        }
+        if (mc.player.isShiftKeyDown()) {
             return false;
+        }
         if (mc.hitResult instanceof BlockHitResult blockRayTraceResult) {
             BlockState clickedBlock = mc.level.getBlockState(blockRayTraceResult.getBlockPos());
-            if (clickedBlock.is(AllBlocks.SCHEMATICANNON))
+            if (clickedBlock.is(AllBlocks.SCHEMATICANNON)) {
                 return false;
-            if (clickedBlock.is(AllBlocks.DEPLOYER))
+            }
+            if (clickedBlock.is(AllBlocks.DEPLOYER)) {
                 return false;
+            }
         }
         return currentTool.getTool().handleRightClick(mc);
     }
 
     public boolean onKeyInput(KeyEvent input, boolean pressed) {
-        if (!active || !AllKeys.TOOL_MENU.matches(input))
+        if (!active || !AllKeys.TOOL_MENU.matches(input)) {
             return false;
+        }
 
-        if (pressed && !selectionScreen.focused)
+        if (pressed && !selectionScreen.focused) {
             selectionScreen.focused = true;
+        }
         if (!pressed && selectionScreen.focused) {
             selectionScreen.focused = false;
             selectionScreen.onClose();
@@ -293,25 +327,29 @@ public class SchematicHandler {
     }
 
     public boolean mouseScrolled(double delta) {
-        if (!active)
+        if (!active) {
             return false;
+        }
 
         if (selectionScreen.focused) {
             selectionScreen.cycle((int) Math.signum(delta));
             return true;
         }
-        if (AllKeys.hasControlDown())
+        if (AllKeys.hasControlDown()) {
             return currentTool.getTool().handleMouseWheel(delta);
+        }
         return false;
     }
 
     @Nullable
     private ItemStack findBlueprintInHand(Player player) {
         ItemStack stack = player.getMainHandItem();
-        if (!stack.is(AllItems.SCHEMATIC))
+        if (!stack.is(AllItems.SCHEMATIC)) {
             return null;
-        if (!stack.has(AllDataComponents.SCHEMATIC_FILE))
+        }
+        if (!stack.has(AllDataComponents.SCHEMATIC_FILE)) {
             return null;
+        }
 
         activeSchematicItem = stack;
         activeHotbarSlot = player.getInventory().getSelectedSlot();
@@ -321,10 +359,12 @@ public class SchematicHandler {
     private boolean itemLost(Player player) {
         Inventory inventory = player.getInventory();
         for (int i = 0, size = Inventory.getSelectionSize(); i < size; i++) {
-            if (inventory.getItem(i).is(activeSchematicItem.getItem()))
+            if (inventory.getItem(i).is(activeSchematicItem.getItem())) {
                 continue;
-            if (!ItemStack.matches(inventory.getItem(i), activeSchematicItem))
+            }
+            if (!ItemStack.matches(inventory.getItem(i), activeSchematicItem)) {
                 continue;
+            }
             return false;
         }
         return true;
@@ -335,9 +375,15 @@ public class SchematicHandler {
     }
 
     public void sync(LocalPlayer player) {
-        if (activeSchematicItem == null)
+        if (activeSchematicItem == null) {
             return;
-        player.connection.send(new SchematicSyncPacket(activeHotbarSlot, transformation.toSettings(), transformation.getAnchor(), deployed));
+        }
+        player.connection.send(new SchematicSyncPacket(
+            activeHotbarSlot,
+            transformation.toSettings(),
+            transformation.getAnchor(),
+            deployed
+        ));
     }
 
     public void equip(ToolType tool) {

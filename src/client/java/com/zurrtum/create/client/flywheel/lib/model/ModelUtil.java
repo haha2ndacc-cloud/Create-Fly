@@ -36,12 +36,14 @@ public final class ModelUtil {
             Material baseChunkMaterial = baseChunkMaterials[chunkLayerIdx];
 
             // shaded: false, ambientOcclusion: false
-            CHUNK_MATERIALS[baseMaterialIdx] = SimpleMaterial.builderOf(baseChunkMaterial).cardinalLightingMode(CardinalLightingMode.OFF)
-                .ambientOcclusion(false).build();
+            CHUNK_MATERIALS[baseMaterialIdx] = SimpleMaterial.builderOf(baseChunkMaterial)
+                .cardinalLightingMode(CardinalLightingMode.OFF).ambientOcclusion(false).build();
             // shaded: false, ambientOcclusion: true
-            CHUNK_MATERIALS[baseMaterialIdx + 1] = SimpleMaterial.builderOf(baseChunkMaterial).cardinalLightingMode(CardinalLightingMode.OFF).build();
+            CHUNK_MATERIALS[baseMaterialIdx + 1] = SimpleMaterial.builderOf(baseChunkMaterial)
+                .cardinalLightingMode(CardinalLightingMode.OFF).build();
             // shaded: true, ambientOcclusion: false
-            CHUNK_MATERIALS[baseMaterialIdx + 2] = SimpleMaterial.builderOf(baseChunkMaterial).ambientOcclusion(false).build();
+            CHUNK_MATERIALS[baseMaterialIdx + 2] = SimpleMaterial.builderOf(baseChunkMaterial).ambientOcclusion(false)
+                .build();
             // shaded: true, ambientOcclusion: true
             CHUNK_MATERIALS[baseMaterialIdx + 3] = baseChunkMaterial;
         }

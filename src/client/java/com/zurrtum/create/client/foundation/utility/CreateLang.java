@@ -27,8 +27,9 @@ public class CreateLang extends Lang {
 
     public static List<Component> translatedOptions(@Nullable String prefix, String... keys) {
         List<Component> result = new ArrayList<>(keys.length);
-        for (String key : keys)
+        for (String key : keys) {
             result.add(translate((prefix != null ? prefix + "." : "") + key).component());
+        }
         return result;
     }
 

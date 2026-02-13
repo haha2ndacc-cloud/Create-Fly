@@ -27,15 +27,17 @@ public abstract class ValueBoxTransform {
 
     public boolean testHit(LevelAccessor level, BlockPos pos, BlockState state, Vec3 localHit) {
         Vec3 offset = getLocalOffset(state);
-        if (offset == null)
+        if (offset == null) {
             return false;
+        }
         return localHit.distanceTo(offset) < scale / 2;
     }
 
     public void transform(BlockState state, PoseStack ms) {
         Vec3 position = getLocalOffset(state);
-        if (position == null)
+        if (position == null) {
             return;
+        }
         ms.translate(position.x, position.y, position.z);
         rotate(state, ms);
         ms.scale(scale, scale, scale);
@@ -51,10 +53,12 @@ public abstract class ValueBoxTransform {
 
     protected Vec3 rotateHorizontally(BlockState state, Vec3 vec) {
         float yRot = 0;
-        if (state.hasProperty(BlockStateProperties.FACING))
+        if (state.hasProperty(BlockStateProperties.FACING)) {
             yRot = AngleHelper.horizontalAngle(state.getValue(BlockStateProperties.FACING));
-        if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING))
+        }
+        if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
             yRot = AngleHelper.horizontalAngle(state.getValue(BlockStateProperties.HORIZONTAL_FACING));
+        }
         return VecHelper.rotateCentered(vec, yRot, Axis.Y);
     }
 
@@ -85,8 +89,9 @@ public abstract class ValueBoxTransform {
         @Override
         public boolean testHit(LevelAccessor level, BlockPos pos, BlockState state, Vec3 localHit) {
             Vec3 offset = getLocalOffset(state);
-            if (offset == null)
+            if (offset == null) {
                 return false;
+            }
             return localHit.distanceTo(offset) < scale / 3.5f;
         }
 

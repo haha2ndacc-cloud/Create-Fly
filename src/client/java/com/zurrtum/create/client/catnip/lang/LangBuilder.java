@@ -32,9 +32,11 @@ public class LangBuilder {
     }
 
     public static Object[] resolveBuilders(Object[] args) {
-        for (int i = 0; i < args.length; i++)
-            if (args[i] instanceof LangBuilder cb)
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof LangBuilder cb) {
                 args[i] = cb.component();
+            }
+        }
         return args;
     }
 
@@ -132,10 +134,11 @@ public class LangBuilder {
      * @return this builder
      */
     public LangBuilder add(Component component) {
-        if (component instanceof MutableComponent mutableComponent)
+        if (component instanceof MutableComponent mutableComponent) {
             return add(mutableComponent);
-        else
+        } else {
             return add(component.copy());
+        }
     }
 
     /**
@@ -176,7 +179,8 @@ public class LangBuilder {
     }
 
     public String json() {
-        return GSON.toJson(ComponentSerialization.CODEC.encodeStart(RegistryAccess.EMPTY.createSerializationContext(JsonOps.INSTANCE), component())
+        return GSON.toJson(ComponentSerialization.CODEC.encodeStart(
+                RegistryAccess.EMPTY.createSerializationContext(JsonOps.INSTANCE), component())
             .getOrThrow(JsonParseException::new));
     }
 
@@ -200,8 +204,9 @@ public class LangBuilder {
 
     @Contract(" -> fail")
     private void assertComponent() {
-        if (component == null)
+        if (component == null) {
             throw new IllegalStateException("No components were added to builder");
+        }
     }
 
     public void forGoggles(List<? super MutableComponent> tooltip) {
@@ -209,7 +214,9 @@ public class LangBuilder {
     }
 
     public void forGoggles(List<? super MutableComponent> tooltip, int indents) {
-        tooltip.add(new LangBuilder(namespace).text(Strings.repeat(' ', getIndents(Minecraft.getInstance().font, 4 + indents))).add(this)
-            .component());
+        tooltip.add(new LangBuilder(namespace).text(Strings.repeat(
+            ' ',
+            getIndents(Minecraft.getInstance().font, 4 + indents)
+        )).add(this).component());
     }
 }

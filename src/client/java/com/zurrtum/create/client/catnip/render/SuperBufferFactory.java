@@ -20,7 +20,8 @@ import java.util.List;
 public class SuperBufferFactory {
 
     private static final RandomSource random = RandomSource.create();
-    private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(ThreadLocalObjects::new);
+    private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(
+        ThreadLocalObjects::new);
     private static SuperBufferFactory instance = new SuperBufferFactory();
 
     public static SuperBufferFactory getInstance() {
@@ -38,7 +39,11 @@ public class SuperBufferFactory {
     public SuperByteBuffer createForBlock(BlockState renderedState) {
         Minecraft client = Minecraft.getInstance();
         BlockStateModel model = client.getBlockRenderer().getBlockModel(renderedState);
-        return createForBlock(model.collectParts(client.level != null ? client.level.getRandom() : random), renderedState, new PoseStack());
+        return createForBlock(
+            model.collectParts(client.level != null ? client.level.getRandom() : random),
+            renderedState,
+            new PoseStack()
+        );
     }
 
     public SuperByteBuffer createForBlock(SimpleModelWrapper model, BlockState referenceState) {
@@ -53,7 +58,14 @@ public class SuperBufferFactory {
         ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
         SbbBuilder sbbBuilder = objects.sbbBuilder;
         sbbBuilder.prepare();
-        BakedModelBufferer.bufferModel(parts, BlockPos.ZERO, EmptyVirtualBlockGetter.FULL_DARK, state, poseStack, sbbBuilder);
+        BakedModelBufferer.bufferModel(
+            parts,
+            BlockPos.ZERO,
+            EmptyVirtualBlockGetter.FULL_DARK,
+            state,
+            poseStack,
+            sbbBuilder
+        );
         return sbbBuilder.build();
     }
 

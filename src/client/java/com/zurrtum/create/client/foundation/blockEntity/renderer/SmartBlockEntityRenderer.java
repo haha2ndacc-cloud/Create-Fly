@@ -37,7 +37,13 @@ public class SmartBlockEntityRenderer<T extends SmartBlockEntity, S extends Smar
     }
 
     @Override
-    public void extractRenderState(T be, S state, float tickProgress, Vec3 cameraPos, @Nullable CrumblingOverlay crumblingOverlay) {
+    public void extractRenderState(
+        T be,
+        S state,
+        float tickProgress,
+        Vec3 cameraPos,
+        @Nullable CrumblingOverlay crumblingOverlay
+    ) {
         BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
         if (be.isRemoved()) {
             return;
@@ -74,7 +80,8 @@ public class SmartBlockEntityRenderer<T extends SmartBlockEntity, S extends Smar
             return null;
         }
         HitResult hitResult = Minecraft.getInstance().hitResult;
-        if (!(hitResult instanceof BlockHitResult bhr) || bhr.getType() == Type.MISS || !bhr.getBlockPos().equals(pos)) {
+        if (!(hitResult instanceof BlockHitResult bhr) || bhr.getType() == Type.MISS || !bhr.getBlockPos()
+            .equals(pos)) {
             return null;
         }
         Vec3 labelPos = new Vec3(0.5, yOffset - 0.25, 0.5);

@@ -1,10 +1,9 @@
 package com.zurrtum.create.catnip.codecs.stream;
 
 import com.mojang.datafixers.util.*;
+import net.minecraft.network.codec.StreamCodec;
 
 import java.util.function.Function;
-
-import net.minecraft.network.codec.StreamCodec;
 
 public interface CatnipLargerStreamCodecs {
     static <B, C, T1, T2, T3, T4, T5, T6, T7> StreamCodec<B, C> composite(

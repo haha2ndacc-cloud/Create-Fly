@@ -289,7 +289,8 @@ public class AtomicBitSet {
         int longPosition = longIndexInSegmentForPosition(fromIndex);
         long[] segment = segments.getSegment(segmentPosition);
 
-        long word = (long) AA.getAcquire(segment, longPosition) & (0xffffffffffffffffL << bitPosInLongForPosition(fromIndex));
+        long word = (long) AA.getAcquire(segment, longPosition) & (0xffffffffffffffffL << bitPosInLongForPosition(
+            fromIndex));
 
         while (true) {
             if (word != 0) {
@@ -324,7 +325,8 @@ public class AtomicBitSet {
         int longPosition = longIndexInSegmentForPosition(fromIndex);
         long[] segment = segments.getSegment(segmentPosition);
 
-        long word = ~((long) AA.getAcquire(segment, longPosition)) & (0xffffffffffffffffL << bitPosInLongForPosition(fromIndex));
+        long word = ~((long) AA.getAcquire(segment, longPosition)) & (0xffffffffffffffffL << bitPosInLongForPosition(
+            fromIndex));
 
         while (true) {
             if (word != 0) {
@@ -483,7 +485,11 @@ public class AtomicBitSet {
         while (visibleSegments.numSegments() <= segmentIndex) {
             // Thread safety: newVisibleSegments contains all of the segments from the currently visible segments, plus extra.
             // all of the segments in the currently visible segments are canonical and will not change.
-            AtomicBitSetSegments newVisibleSegments = new AtomicBitSetSegments(visibleSegments, segmentIndex + 1, numLongsPerSegment);
+            AtomicBitSetSegments newVisibleSegments = new AtomicBitSetSegments(
+                visibleSegments,
+                segmentIndex + 1,
+                numLongsPerSegment
+            );
 
             // because we are using a compareAndSet, if this thread "wins the race" and successfully sets this variable, then the segments
             // which are newly defined in newVisibleSegments become canonical.

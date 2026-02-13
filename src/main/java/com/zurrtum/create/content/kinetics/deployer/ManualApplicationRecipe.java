@@ -12,13 +12,16 @@ import net.minecraft.world.item.crafting.RecipeType;
 
 import java.util.List;
 
-public record ManualApplicationRecipe(
-    List<ProcessingOutput> results, boolean keepHeldItem, Ingredient target, Ingredient ingredient
-) implements ItemApplicationRecipe {
-    public static final MapCodec<ManualApplicationRecipe> MAP_CODEC = ItemApplicationRecipe.createCodec(ManualApplicationRecipe::new);
+public record ManualApplicationRecipe(List<ProcessingOutput> results, boolean keepHeldItem, Ingredient target,
+                                      Ingredient ingredient) implements ItemApplicationRecipe {
+    public static final MapCodec<ManualApplicationRecipe> MAP_CODEC = ItemApplicationRecipe.createCodec(
+        ManualApplicationRecipe::new);
     public static final StreamCodec<RegistryFriendlyByteBuf, ManualApplicationRecipe> STREAM_CODEC = ItemApplicationRecipe.createStreamCodec(
         ManualApplicationRecipe::new);
-    public static final RecipeSerializer<ManualApplicationRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+    public static final RecipeSerializer<ManualApplicationRecipe> SERIALIZER = new RecipeSerializer<>(
+        MAP_CODEC,
+        STREAM_CODEC
+    );
 
     @Override
     public RecipeSerializer<ManualApplicationRecipe> getSerializer() {

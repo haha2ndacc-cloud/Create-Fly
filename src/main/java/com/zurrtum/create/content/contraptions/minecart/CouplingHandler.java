@@ -28,29 +28,35 @@ public class CouplingHandler {
         if (entityBeingMounted instanceof AbstractMinecart cart) {
             Optional<MinecartController> value = AllSynchedDatas.MINECART_CONTROLLER.get(cart);
             if (value.isPresent()) {
-                return !(entityMounting instanceof AbstractContraptionEntity) && value.get().isCoupledThroughContraption();
+                return !(entityMounting instanceof AbstractContraptionEntity) && value.get()
+                    .isCoupledThroughContraption();
             }
         }
         return false;
     }
 
     public static void forEachLoadedCoupling(@Nullable Level world, Consumer<Couple<MinecartController>> consumer) {
-        if (world == null)
+        if (world == null) {
             return;
+        }
         Set<UUID> cartsWithCoupling = CapabilityMinecartController.loadedMinecartsWithCoupling.get(world);
-        if (cartsWithCoupling == null)
+        if (cartsWithCoupling == null) {
             return;
+        }
 
         for (UUID id : cartsWithCoupling) {
             MinecartController controller = CapabilityMinecartController.getIfPresent(world, id);
-            if (controller == null)
+            if (controller == null) {
                 return;
-            if (!controller.isLeadingCoupling())
+            }
+            if (!controller.isLeadingCoupling()) {
                 return;
+            }
             UUID coupledCart = controller.getCoupledCart(true);
             MinecartController coupledController = CapabilityMinecartController.getIfPresent(world, coupledCart);
-            if (coupledController == null)
+            if (coupledController == null) {
                 return;
+            }
             consumer.accept(Couple.create(controller, coupledController));
         }
         ;
@@ -60,10 +66,12 @@ public class CouplingHandler {
         Entity entity1 = world.getEntity(cartId1);
         Entity entity2 = world.getEntity(cartId2);
 
-        if (!(entity1 instanceof AbstractMinecart cart1))
+        if (!(entity1 instanceof AbstractMinecart cart1)) {
             return false;
-        if (!(entity2 instanceof AbstractMinecart cart2))
+        }
+        if (!(entity2 instanceof AbstractMinecart cart2)) {
             return false;
+        }
 
         String tooMany = "two_couplings_max";
         String unloaded = "unloaded";
@@ -74,8 +82,9 @@ public class CouplingHandler {
         boolean contraptionCoupling = player == null;
 
         if (distanceTo < 2) {
-            if (contraptionCoupling)
+            if (contraptionCoupling) {
                 return false; // dont allow train contraptions with <2 distance
+            }
             distanceTo = 2;
         }
 
@@ -99,8 +108,10 @@ public class CouplingHandler {
         }
 
         if (mainController.isLeadingCoupling() && mainController.getCoupledCart(true)
-            .equals(connectedID) || connectedController.isLeadingCoupling() && connectedController.getCoupledCart(true).equals(mainID))
+            .equals(connectedID) || connectedController.isLeadingCoupling() && connectedController.getCoupledCart(true)
+            .equals(mainID)) {
             return false;
+        }
 
         for (boolean main : Iterate.trueAndFalse) {
             MinecartController current = main ? mainController : connectedController;
@@ -131,11 +142,13 @@ public class CouplingHandler {
 
         if (!contraptionCoupling) {
             for (InteractionHand hand : InteractionHand.values()) {
-                if (player.isCreative())
+                if (player.isCreative()) {
                     break;
+                }
                 ItemStack heldItem = player.getItemInHand(hand);
-                if (!heldItem.is(AllItems.MINECART_COUPLING))
+                if (!heldItem.is(AllItems.MINECART_COUPLING)) {
                     continue;
+                }
                 heldItem.shrink(1);
                 break;
             }
@@ -153,24 +166,35 @@ public class CouplingHandler {
      * Optional.EMPTY if none connected, null if not yet loaded
      */
     @Nullable
-    public static Optional<MinecartController> getNextInCouplingChainLegacy(Level world, MinecartController controller, boolean forward) {
+    public static Optional<MinecartController> getNextInCouplingChainLegacy(
+        Level world,
+        MinecartController controller,
+        boolean forward
+    ) {
         UUID coupledCart = controller.getCoupledCart(forward);
-        if (coupledCart == null)
+        if (coupledCart == null) {
             return Optional.empty();
+        }
         MinecartController coupledController = CapabilityMinecartController.getIfPresent(world, coupledCart);
         return coupledController == null ? null : Optional.of(coupledController);
     }
 
-    public static Optional<@Nullable MinecartController> getNextInCouplingChain(Level world, MinecartController controller, boolean forward) {
+    public static Optional<@Nullable MinecartController> getNextInCouplingChain(
+        Level world,
+        MinecartController controller,
+        boolean forward
+    ) {
         UUID coupledCart = controller.getCoupledCart(forward);
-        if (coupledCart == null)
+        if (coupledCart == null) {
             return Optional.empty();
+        }
         return Optional.ofNullable(CapabilityMinecartController.getIfPresent(world, coupledCart));
     }
 
     public static void status(@Nullable Player player, String key) {
-        if (player == null)
+        if (player == null) {
             return;
+        }
         player.sendOverlayMessage(Component.translatable("create.minecart_coupling." + key));
     }
 

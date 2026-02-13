@@ -34,7 +34,11 @@ import static com.zurrtum.create.client.content.contraptions.actors.harvester.Ha
 public class HarvesterMovementRenderBehaviour implements MovementRenderBehaviour {
     @Nullable
     @Override
-    public ActorVisual createVisual(VisualizationContext visualizationContext, VirtualRenderWorld simulationWorld, MovementContext movementContext) {
+    public ActorVisual createVisual(
+        VisualizationContext visualizationContext,
+        VirtualRenderWorld simulationWorld,
+        MovementContext movementContext
+    ) {
         return new HarvesterActorVisual(visualizationContext, simulationWorld, movementContext);
     }
 
@@ -55,7 +59,10 @@ public class HarvesterMovementRenderBehaviour implements MovementRenderBehaviour
         Direction facing = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING);
         state.layer = RenderTypes.cutoutMovingBlock();
         state.model = CachedBuffers.partial(AllPartialModels.HARVESTER_BLADE, blockState);
-        float speed = !VecHelper.isVecPointingTowards(context.relativeMotion, facing.getOpposite()) ? context.getAnimationSpeed() : 0;
+        float speed = !VecHelper.isVecPointingTowards(
+            context.relativeMotion,
+            facing.getOpposite()
+        ) ? context.getAnimationSpeed() : 0;
         if (context.contraption.stalled) {
             speed = 0;
         }
@@ -91,9 +98,9 @@ public class HarvesterMovementRenderBehaviour implements MovementRenderBehaviour
 
         @Override
         public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            model.rotateCentered(horizontalAngle, Direction.UP).translate(rotOffset.x, rotOffset.y, rotOffset.z).rotate(angle, Direction.WEST)
-                .translate(-rotOffset.x, -rotOffset.y, -rotOffset.z).light(light).useLevelLight(world, worldMatrix4f)
-                .renderInto(matricesEntry, vertexConsumer);
+            model.rotateCentered(horizontalAngle, Direction.UP).translate(rotOffset.x, rotOffset.y, rotOffset.z)
+                .rotate(angle, Direction.WEST).translate(-rotOffset.x, -rotOffset.y, -rotOffset.z).light(light)
+                .useLevelLight(world, worldMatrix4f).renderInto(matricesEntry, vertexConsumer);
         }
     }
 }

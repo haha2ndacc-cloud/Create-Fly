@@ -46,9 +46,11 @@ public record ShoppingList(@Unmodifiable List<IntAttached<BlockPos>> purchases, 
     }
 
     public int getPurchases(BlockPos clothPos) {
-        for (IntAttached<BlockPos> entry : purchases)
-            if (clothPos.equals(entry.getValue()))
+        for (IntAttached<BlockPos> entry : purchases) {
+            if (clothPos.equals(entry.getValue())) {
                 return entry.getFirst();
+            }
+        }
         return 0;
     }
 
@@ -57,13 +59,16 @@ public record ShoppingList(@Unmodifiable List<IntAttached<BlockPos>> purchases, 
         InventorySummary output = new InventorySummary();
 
         for (IntAttached<BlockPos> entry : purchases) {
-            if (clothPosToIgnore != null && clothPosToIgnore.equals(entry.getValue()))
+            if (clothPosToIgnore != null && clothPosToIgnore.equals(entry.getValue())) {
                 continue;
-            if (!(level.getBlockEntity(entry.getValue()) instanceof TableClothBlockEntity dcbe))
+            }
+            if (!(level.getBlockEntity(entry.getValue()) instanceof TableClothBlockEntity dcbe)) {
                 continue;
+            }
             input.add(dcbe.getPaymentItem(), dcbe.getPaymentAmount() * entry.getFirst());
-            for (BigItemStack stackEntry : dcbe.requestData.encodedRequest().stacks())
+            for (BigItemStack stackEntry : dcbe.requestData.encodedRequest().stacks()) {
                 output.add(stackEntry.stack, stackEntry.count * entry.getFirst());
+            }
         }
 
         return Couple.create(output, input);

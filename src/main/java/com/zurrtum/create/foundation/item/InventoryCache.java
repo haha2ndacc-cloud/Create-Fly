@@ -26,7 +26,12 @@ public class InventoryCache implements Supplier<@Nullable Container> {
     public @Nullable Container inventory;
     public @Nullable Supplier<@Nullable Container> getter = this::refresh;
 
-    public InventoryCache(ServerLevel world, BlockPos pos, Direction direction, @Nullable BiPredicate<BlockEntity, Direction> filter) {
+    public InventoryCache(
+        ServerLevel world,
+        BlockPos pos,
+        Direction direction,
+        @Nullable BiPredicate<BlockEntity, Direction> filter
+    ) {
         this.world = world;
         this.direction = direction;
         this.pos = pos;

@@ -24,10 +24,12 @@ public abstract class ShapedBrush extends Brush {
         TerrainTools usedTool
     ) {
         List<BlockPos> includedPositions = getIncludedPositions();
-        if (includedPositions == null)
+        if (includedPositions == null) {
             return affectedPositions;
-        for (BlockPos blockPos : includedPositions)
+        }
+        for (BlockPos blockPos : includedPositions) {
             affectedPositions.add(targetPos.offset(blockPos));
+        }
         return affectedPositions;
     }
 

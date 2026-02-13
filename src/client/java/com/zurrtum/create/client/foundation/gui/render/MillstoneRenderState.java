@@ -5,7 +5,8 @@ import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import org.joml.Matrix3x2f;
 import org.jspecify.annotations.Nullable;
 
-public record MillstoneRenderState(Matrix3x2f pose, int x0, int y0, ScreenRectangle bounds) implements PictureInPictureRenderState {
+public record MillstoneRenderState(Matrix3x2f pose, int x0, int y0,
+                                   ScreenRectangle bounds) implements PictureInPictureRenderState {
     public MillstoneRenderState(Matrix3x2f pose, int x, int y) {
         this(pose, x, y, new ScreenRectangle(x, y, 29, 30).transformMaxBounds(pose));
     }

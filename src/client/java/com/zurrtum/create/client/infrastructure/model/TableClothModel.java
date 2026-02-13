@@ -58,7 +58,13 @@ public class TableClothModel extends WrapperBlockStateModel {
     }
 
     @Override
-    public void addPartsWithInfo(BlockAndTintGetter world, BlockPos pos, BlockState state, RandomSource random, List<BlockModelPart> parts) {
+    public void addPartsWithInfo(
+        BlockAndTintGetter world,
+        BlockPos pos,
+        BlockState state,
+        RandomSource random,
+        List<BlockModelPart> parts
+    ) {
         model.collectParts(random, parts);
         int index = 0;
         MutableBlockPos mutable = new MutableBlockPos();
@@ -143,9 +149,8 @@ public class TableClothModel extends WrapperBlockStateModel {
         return newQuad;
     }
 
-    private record BakedCorner(
-        List<BakedQuad> south, List<BakedQuad> west, List<BakedQuad> north, List<BakedQuad> east, TextureAtlasSprite particleIcon
-    ) implements BlockModelPart {
+    private record BakedCorner(List<BakedQuad> south, List<BakedQuad> west, List<BakedQuad> north, List<BakedQuad> east,
+                               TextureAtlasSprite particleIcon) implements BlockModelPart {
         @Override
         public List<BakedQuad> getQuads(@Nullable Direction side) {
             return switch (side) {

@@ -43,10 +43,12 @@ public class ArmInteractionPointHandler {
         InteractionHand hand,
         BlockHitResult hit
     ) {
-        if (currentItem == null)
+        if (currentItem == null) {
             return null;
-        if (player != null && player.isSpectator())
+        }
+        if (player != null && player.isSpectator()) {
             return null;
+        }
 
         BlockPos pos = hit.getBlockPos();
         ArmInteractionPoint selected = getSelected(pos);
@@ -54,8 +56,9 @@ public class ArmInteractionPointHandler {
 
         if (selected == null) {
             ArmInteractionPoint point = ArmInteractionPoint.create(world, pos, state);
-            if (point == null)
+            if (point == null) {
                 return null;
+            }
             selected = point;
             put(point);
         }
@@ -63,8 +66,10 @@ public class ArmInteractionPointHandler {
         selected.cycleMode();
         if (player != null) {
             Mode mode = selected.getMode();
-            Component text = Component.translatable(mode.getTranslationKey(), CreateLang.blockName(state).style(ChatFormatting.WHITE).component())
-                .withColor(mode.getColor());
+            Component text = Component.translatable(
+                mode.getTranslationKey(),
+                CreateLang.blockName(state).style(ChatFormatting.WHITE).component()
+            ).withColor(mode.getColor());
             player.sendOverlayMessage(text);
         }
 
@@ -72,8 +77,9 @@ public class ArmInteractionPointHandler {
     }
 
     public static boolean leftClickingBlocksDeselectsThem(BlockPos pos) {
-        if (currentItem == null)
+        if (currentItem == null) {
             return false;
+        }
         return remove(pos);
     }
 
@@ -81,25 +87,30 @@ public class ArmInteractionPointHandler {
         int removed = 0;
         for (Iterator<ArmInteractionPoint> iterator = currentSelection.iterator(); iterator.hasNext(); ) {
             ArmInteractionPoint point = iterator.next();
-            if (point.getPos().closerThan(pos, ArmBlockEntity.getRange()))
+            if (point.getPos().closerThan(pos, ArmBlockEntity.getRange())) {
                 continue;
+            }
             iterator.remove();
             removed++;
         }
 
         if (removed > 0) {
-            CreateLang.builder().translate("mechanical_arm.points_outside_range", removed).style(ChatFormatting.RED).sendStatus(player);
+            CreateLang.builder().translate("mechanical_arm.points_outside_range", removed).style(ChatFormatting.RED)
+                .sendStatus(player);
         } else {
             int inputs = 0;
             int outputs = 0;
             for (ArmInteractionPoint armInteractionPoint : currentSelection) {
-                if (armInteractionPoint.getMode() == Mode.DEPOSIT)
+                if (armInteractionPoint.getMode() == Mode.DEPOSIT) {
                     outputs++;
-                else
+                } else {
                     inputs++;
+                }
             }
-            if (inputs + outputs > 0)
-                CreateLang.builder().translate("mechanical_arm.summary", inputs, outputs).style(ChatFormatting.WHITE).sendStatus(player);
+            if (inputs + outputs > 0) {
+                CreateLang.builder().translate("mechanical_arm.summary", inputs, outputs).style(ChatFormatting.WHITE)
+                    .sendStatus(player);
+            }
         }
 
         player.connection.send(new ArmPlacementPacket(currentSelection, pos));
@@ -110,8 +121,9 @@ public class ArmInteractionPointHandler {
     public static void tick(Minecraft mc) {
         Player player = mc.player;
 
-        if (player == null)
+        if (player == null) {
             return;
+        }
 
         ItemStack heldItemMainhand = player.getMainHandItem();
         if (!heldItemMainhand.is(AllItems.MECHANICAL_ARM)) {
@@ -172,8 +184,9 @@ public class ArmInteractionPointHandler {
             BlockPos pos = point.getPos();
             BlockState state = level.getBlockState(pos);
             VoxelShape shape = state.getShape(level, pos);
-            if (shape.isEmpty())
+            if (shape.isEmpty()) {
                 continue;
+            }
 
             int color = point.getMode().getColor();
             Outliner.getInstance().showAABB(point, shape.bounds().move(pos)).colored(color).lineWidth(1 / 16f);
@@ -195,9 +208,11 @@ public class ArmInteractionPointHandler {
 
     @Nullable
     private static ArmInteractionPoint getSelected(BlockPos pos) {
-        for (ArmInteractionPoint point : currentSelection)
-            if (point.getPos().equals(pos))
+        for (ArmInteractionPoint point : currentSelection) {
+            if (point.getPos().equals(pos)) {
                 return point;
+            }
+        }
         return null;
     }
 }

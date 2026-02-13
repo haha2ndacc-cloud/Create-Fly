@@ -49,8 +49,9 @@ public abstract class FilterItem extends Item implements MenuProvider, SupportsI
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (context.getPlayer() == null)
+        if (context.getPlayer() == null) {
             return InteractionResult.PASS;
+        }
         return use(context.getLevel(), context.getPlayer(), context.getHand());
     }
 
@@ -63,11 +64,13 @@ public abstract class FilterItem extends Item implements MenuProvider, SupportsI
         Consumer<Component> textConsumer,
         TooltipFlag type
     ) {
-        if (AllClientHandle.INSTANCE.shiftDown())
+        if (AllClientHandle.INSTANCE.shiftDown()) {
             return;
+        }
         List<Component> makeSummary = makeSummary(stack);
-        if (makeSummary.isEmpty())
+        if (makeSummary.isEmpty()) {
             return;
+        }
         textConsumer.accept(CommonComponents.SPACE);
         makeSummary.forEach(textConsumer);
     }
@@ -77,15 +80,21 @@ public abstract class FilterItem extends Item implements MenuProvider, SupportsI
     @Override
     public InteractionResult use(Level world, Player player, InteractionHand hand) {
         if (!player.isShiftKeyDown() && hand == InteractionHand.MAIN_HAND) {
-            if (!world.isClientSide() && player instanceof ServerPlayer serverPlayer)
+            if (!world.isClientSide() && player instanceof ServerPlayer serverPlayer) {
                 openHandledScreen(serverPlayer);
+            }
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }
 
     @Override
-    public abstract @Nullable MenuBase<?> createMenu(int id, Inventory inv, Player player, RegistryFriendlyByteBuf extraData);
+    public abstract @Nullable MenuBase<?> createMenu(
+        int id,
+        Inventory inv,
+        Player player,
+        RegistryFriendlyByteBuf extraData
+    );
 
     @Override
     public Component getDisplayName() {
@@ -94,29 +103,35 @@ public abstract class FilterItem extends Item implements MenuProvider, SupportsI
 
     public static boolean testDirect(ItemStack filter, ItemStack stack, boolean matchNBT) {
         if (matchNBT) {
-            if (PackageItem.isPackage(filter) && PackageItem.isPackage(stack))
+            if (PackageItem.isPackage(filter) && PackageItem.isPackage(stack)) {
                 return doPackagesHaveSameData(filter, stack);
+            }
 
             return ItemStack.isSameItemSameComponents(filter, stack);
         }
 
-        if (PackageItem.isPackage(filter) && PackageItem.isPackage(stack))
+        if (PackageItem.isPackage(filter) && PackageItem.isPackage(stack)) {
             return true;
+        }
 
         return ItemHelper.sameItem(filter, stack);
     }
 
     public static boolean doPackagesHaveSameData(ItemStack a, ItemStack b) {
-        if (a.isEmpty())
+        if (a.isEmpty()) {
             return false;
-        if (!ItemStack.isSameItemSameComponents(a, b))
+        }
+        if (!ItemStack.isSameItemSameComponents(a, b)) {
             return false;
+        }
         for (TypedDataComponent<?> component : a.getComponents()) {
             DataComponentType<?> type = component.type();
-            if (type.equals(AllDataComponents.PACKAGE_ORDER_DATA) || type.equals(AllDataComponents.PACKAGE_ORDER_CONTEXT))
+            if (type.equals(AllDataComponents.PACKAGE_ORDER_DATA) || type.equals(AllDataComponents.PACKAGE_ORDER_CONTEXT)) {
                 continue;
-            if (!Objects.equals(a.get(type), b.get(type)))
+            }
+            if (!Objects.equals(a.get(type), b.get(type))) {
                 return false;
+            }
         }
         return true;
     }

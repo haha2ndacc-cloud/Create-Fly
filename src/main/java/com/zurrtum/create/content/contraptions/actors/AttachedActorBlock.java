@@ -58,14 +58,16 @@ public abstract class AttachedActorBlock extends HorizontalDirectionalBlock impl
     @Nullable
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction facing;
-        if (context.getClickedFace().getAxis().isVertical())
+        if (context.getClickedFace().getAxis().isVertical()) {
             facing = context.getHorizontalDirection().getOpposite();
-        else {
-            BlockState blockState = context.getLevel().getBlockState(context.getClickedPos().relative(context.getClickedFace().getOpposite()));
-            if (blockState.getBlock() instanceof AttachedActorBlock)
+        } else {
+            BlockState blockState = context.getLevel()
+                .getBlockState(context.getClickedPos().relative(context.getClickedFace().getOpposite()));
+            if (blockState.getBlock() instanceof AttachedActorBlock) {
                 facing = blockState.getValue(FACING);
-            else
+            } else {
                 facing = context.getClickedFace();
+            }
         }
         return withWater(defaultBlockState().setValue(FACING, facing), context);
     }

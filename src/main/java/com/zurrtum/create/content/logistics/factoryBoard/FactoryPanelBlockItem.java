@@ -46,7 +46,13 @@ public class FactoryPanelBlockItem extends LogisticallyLinkedBlockItem {
     }
 
     @Override
-    protected boolean updateCustomBlockEntityTag(BlockPos pos, Level level, @Nullable Player player, ItemStack stack, BlockState state) {
+    protected boolean updateCustomBlockEntityTag(
+        BlockPos pos,
+        Level level,
+        @Nullable Player player,
+        ItemStack stack,
+        BlockState state
+    ) {
         return super.updateCustomBlockEntityTag(pos, level, player, fixCtrlCopiedStack(stack), state);
     }
 
@@ -66,14 +72,20 @@ public class FactoryPanelBlockItem extends LogisticallyLinkedBlockItem {
             UUID frequency = UUID.randomUUID();
 
             for (PanelSlot slot : PanelSlot.values()) {
-                Optional<UUID> freq = bet.getCompound(slot.name().toLowerCase(Locale.ROOT)).flatMap(tag -> tag.read("Freq", UUIDUtil.CODEC));
-                if (freq.isPresent())
+                Optional<UUID> freq = bet.getCompound(slot.name().toLowerCase(Locale.ROOT))
+                    .flatMap(tag -> tag.read("Freq", UUIDUtil.CODEC));
+                if (freq.isPresent()) {
                     frequency = freq.get();
+                }
             }
 
             bet = new CompoundTag();
             bet.store("Freq", UUIDUtil.CODEC, frequency);
-            bet.store("id", CreateCodecs.BLOCK_ENTITY_TYPE_CODEC, ((IBE<?>) ((BlockItem) stack.getItem()).getBlock()).getBlockEntityType());
+            bet.store(
+                "id",
+                CreateCodecs.BLOCK_ENTITY_TYPE_CODEC,
+                ((IBE<?>) ((BlockItem) stack.getItem()).getBlock()).getBlockEntityType()
+            );
             stack.set(DataComponents.BLOCK_ENTITY_DATA, TypedEntityData.of(type, bet));
         }
 

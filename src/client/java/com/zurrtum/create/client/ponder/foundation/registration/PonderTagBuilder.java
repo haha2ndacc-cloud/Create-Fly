@@ -46,13 +46,19 @@ public class PonderTagBuilder implements TagBuilder {
 
     @Override
     public TagBuilder icon(Identifier location) {
-        this.textureIconLocation = Identifier.fromNamespaceAndPath(location.getNamespace(), "textures/ponder/tag/" + location.getPath() + ".png");
+        this.textureIconLocation = Identifier.fromNamespaceAndPath(
+            location.getNamespace(),
+            "textures/ponder/tag/" + location.getPath() + ".png"
+        );
         return this;
     }
 
     @Override
     public TagBuilder icon(String path) {
-        this.textureIconLocation = Identifier.fromNamespaceAndPath(id.getNamespace(), "textures/ponder/tag/" + path + ".png");
+        this.textureIconLocation = Identifier.fromNamespaceAndPath(
+            id.getNamespace(),
+            "textures/ponder/tag/" + path + ".png"
+        );
         return this;
     }
 
@@ -64,10 +70,12 @@ public class PonderTagBuilder implements TagBuilder {
     @Override
     public TagBuilder item(ItemLike item, boolean useAsIcon, boolean useAsMainItem) {
         Item renderItem = item.asItem();
-        if (useAsIcon)
+        if (useAsIcon) {
             this.itemIcon = new ItemStackTemplate(renderItem);
-        if (useAsMainItem)
+        }
+        if (useAsMainItem) {
             this.mainItem = new ItemStackTemplate(renderItem);
+        }
         return this;
     }
 

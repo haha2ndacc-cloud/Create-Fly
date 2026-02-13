@@ -32,7 +32,8 @@ import java.util.Optional;
 public abstract class PackagePortTarget {
     public static final Codec<PackagePortTarget> CODEC = CreateRegistries.PACKAGE_PORT_TARGET_TYPE.byNameCodec()
         .dispatch(PackagePortTarget::getType, PackagePortTargetType::codec);
-    public static final StreamCodec<? super RegistryFriendlyByteBuf, PackagePortTarget> PACKET_CODEC = ByteBufCodecs.registry(CreateRegistryKeys.PACKAGE_PORT_TARGET_TYPE)
+    public static final StreamCodec<? super RegistryFriendlyByteBuf, PackagePortTarget> PACKET_CODEC = ByteBufCodecs.registry(
+            CreateRegistryKeys.PACKAGE_PORT_TARGET_TYPE)
         .dispatch(PackagePortTarget::getType, PackagePortTargetType::packetCodec);
 
     public BlockPos relativePos;
@@ -66,8 +67,9 @@ public abstract class PackagePortTarget {
 
     @Nullable
     public BlockEntity be(LevelAccessor level, BlockPos portPos) {
-        if (level instanceof Level l && !l.isLoaded(portPos.offset(relativePos)))
+        if (level instanceof Level l && !l.isLoaded(portPos.offset(relativePos))) {
             return null;
+        }
         return level.getBlockEntity(portPos.offset(relativePos));
     }
 
@@ -98,11 +100,21 @@ public abstract class PackagePortTarget {
         public boolean flipped;
 
         @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-        public ChainConveyorFrogportTarget(BlockPos relativePos, float chainPos, Optional<BlockPos> connection, boolean flipped) {
+        public ChainConveyorFrogportTarget(
+            BlockPos relativePos,
+            float chainPos,
+            Optional<BlockPos> connection,
+            boolean flipped
+        ) {
             this(relativePos, chainPos, connection.orElse(null), flipped);
         }
 
-        public ChainConveyorFrogportTarget(BlockPos relativePos, float chainPos, @Nullable BlockPos connection, boolean flipped) {
+        public ChainConveyorFrogportTarget(
+            BlockPos relativePos,
+            float chainPos,
+            @Nullable BlockPos connection,
+            boolean flipped
+        ) {
             super(relativePos);
             this.chainPos = chainPos;
             this.connection = connection;
@@ -111,8 +123,9 @@ public abstract class PackagePortTarget {
 
         @Override
         public void setup(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
-            if (be(level, portPos) instanceof ChainConveyorBlockEntity clbe)
+            if (be(level, portPos) instanceof ChainConveyorBlockEntity clbe) {
                 flipped = clbe.getSpeed() < 0;
+            }
         }
 
         @Override
@@ -122,45 +135,54 @@ public abstract class PackagePortTarget {
 
         @Override
         public boolean export(LevelAccessor level, BlockPos portPos, ItemStack box, boolean simulate) {
-            if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe))
+            if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe)) {
                 return false;
-            if (connection != null && !clbe.connections.contains(connection))
+            }
+            if (connection != null && !clbe.connections.contains(connection)) {
                 return false;
-            if (simulate)
+            }
+            if (simulate) {
                 return clbe.getSpeed() != 0 && clbe.canAcceptPackagesFor(connection);
+            }
             ChainConveyorPackage box2 = new ChainConveyorPackage(chainPos, box.copy());
-            if (connection == null)
+            if (connection == null) {
                 return clbe.addLoopingPackage(box2);
+            }
             return clbe.addTravellingPackage(box2, connection);
         }
 
         @Override
         public void register(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
-            if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe))
+            if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe)) {
                 return;
+            }
             ChainConveyorBlockEntity actualBe = clbe;
 
             // Jump to opposite chain if motion reversed
             if (connection != null && clbe.getSpeed() < 0 != flipped) {
                 deregister(ppbe, level, portPos);
                 actualBe = AllBlocks.CHAIN_CONVEYOR.getBlockEntity(level, clbe.getBlockPos().offset(connection));
-                if (actualBe == null)
+                if (actualBe == null) {
                     return;
+                }
                 clbe.prepareStats();
                 ConnectionStats stats = clbe.connectionStats.get(connection);
-                if (stats != null)
+                if (stats != null) {
                     chainPos = stats.chainLength() - chainPos;
+                }
                 connection = connection.multiply(-1);
                 flipped = !flipped;
                 relativePos = actualBe.getBlockPos().subtract(portPos);
                 ppbe.notifyUpdate();
             }
 
-            if (connection != null && !actualBe.connections.contains(connection))
+            if (connection != null && !actualBe.connections.contains(connection)) {
                 return;
+            }
             String portFilter = ppbe.getFilterString();
-            if (portFilter == null)
+            if (portFilter == null) {
                 return;
+            }
             actualBe.routingTable.receivePortInfo(portFilter, connection == null ? BlockPos.ZERO : connection);
             Map<BlockPos, ConnectedPort> portMap = connection == null ? actualBe.loopPorts : actualBe.travelPorts;
             portMap.put(relativePos.multiply(-1), new ConnectedPort(chainPos, connection, portFilter));
@@ -168,21 +190,24 @@ public abstract class PackagePortTarget {
 
         @Override
         public void deregister(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
-            if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe))
+            if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe)) {
                 return;
+            }
             clbe.loopPorts.remove(relativePos.multiply(-1));
             clbe.travelPorts.remove(relativePos.multiply(-1));
             String portFilter = ppbe.getFilterString();
-            if (portFilter == null)
+            if (portFilter == null) {
                 return;
+            }
             clbe.routingTable.entriesByDistance.removeIf(e -> e.endOfRoute() && e.port().equals(portFilter));
             clbe.routingTable.changed = true;
         }
 
         @Override
         public Vec3 getExactTargetLocation(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
-            if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe))
+            if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe)) {
                 return Vec3.ZERO;
+            }
             return clbe.getPackagePosition(chainPos, connection);
         }
 
@@ -210,11 +235,11 @@ public abstract class PackagePortTarget {
     }
 
     public static class TrainStationFrogportTarget extends PackagePortTarget {
-        public static MapCodec<TrainStationFrogportTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(BlockPos.CODEC.fieldOf(
-            "relative_pos").forGetter(i -> i.relativePos)).apply(instance, TrainStationFrogportTarget::new));
+        public static MapCodec<TrainStationFrogportTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                BlockPos.CODEC.fieldOf("relative_pos").forGetter(i -> i.relativePos))
+            .apply(instance, TrainStationFrogportTarget::new));
 
-        public static final StreamCodec<ByteBuf, TrainStationFrogportTarget> PACKET_CODEC = BlockPos.STREAM_CODEC.map(
-            TrainStationFrogportTarget::new,
+        public static final StreamCodec<ByteBuf, TrainStationFrogportTarget> PACKET_CODEC = BlockPos.STREAM_CODEC.map(TrainStationFrogportTarget::new,
             i -> i.relativePos
         );
 
@@ -239,14 +264,16 @@ public abstract class PackagePortTarget {
 
         @Override
         public void register(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
-            if (be(level, portPos) instanceof StationBlockEntity sbe)
+            if (be(level, portPos) instanceof StationBlockEntity sbe) {
                 sbe.attachPackagePort(ppbe);
+            }
         }
 
         @Override
         public void deregister(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
-            if (be(level, portPos) instanceof StationBlockEntity sbe)
+            if (be(level, portPos) instanceof StationBlockEntity sbe) {
                 sbe.removePackagePort(ppbe);
+            }
         }
 
         @Override

@@ -60,9 +60,7 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
     public CompoundTag trackerUpdateTag;
 
     public enum CasingType implements StringRepresentable {
-        NONE,
-        ANDESITE,
-        BRASS;
+        NONE, ANDESITE, BRASS;
 
         public static final Codec<CasingType> CODEC = StringRepresentable.fromEnum(CasingType::values);
 
@@ -83,39 +81,47 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
     @Override
     public void addBehaviours(List<BlockEntityBehaviour<?>> behaviours) {
         super.addBehaviours(behaviours);
-        behaviours.add(new DirectBeltInputBehaviour(this).onlyInsertWhen(this::canInsertFrom).setInsertionHandler(this::tryInsertingFromSide)
-            .considerOccupiedWhen(this::isOccupied));
-        behaviours.add(new TransportedItemStackHandlerBehaviour(this, this::applyToAllItems).withStackPlacement(this::getWorldPositionOf));
+        behaviours.add(new DirectBeltInputBehaviour(this).onlyInsertWhen(this::canInsertFrom)
+            .setInsertionHandler(this::tryInsertingFromSide).considerOccupiedWhen(this::isOccupied));
+        behaviours.add(new TransportedItemStackHandlerBehaviour(
+            this,
+            this::applyToAllItems
+        ).withStackPlacement(this::getWorldPositionOf));
         behaviours.add(invVersionTracker = new VersionedInventoryTrackerBehaviour(this));
     }
 
     @Override
     public void tick() {
         // Init belt
-        if (beltLength == 0)
+        if (beltLength == 0) {
             BeltBlock.initBelt(level, worldPosition);
+        }
 
         super.tick();
 
-        if (!level.getBlockState(worldPosition).is(AllBlocks.BELT))
+        if (!level.getBlockState(worldPosition).is(AllBlocks.BELT)) {
             return;
+        }
 
         initializeItemHandler();
 
         // Move Items
-        if (!isController())
+        if (!isController()) {
             return;
+        }
 
         invalidateRenderBoundingBox();
 
         getInventory().tick();
 
-        if (getSpeed() == 0)
+        if (getSpeed() == 0) {
             return;
+        }
 
         // Move Entities
-        if (passengers == null)
+        if (passengers == null) {
             passengers = new HashMap<>();
+        }
 
         List<Entity> toRemove = new ArrayList<>();
         passengers.forEach((entity, info) -> {
@@ -134,32 +140,39 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
 
     @Override
     public float calculateStressApplied() {
-        if (!isController())
+        if (!isController()) {
             return 0;
+        }
         return super.calculateStressApplied();
     }
 
     @Override
     public AABB createRenderBoundingBox() {
-        if (!isController())
+        if (!isController()) {
             return super.createRenderBoundingBox();
-        else
+        } else {
             return super.createRenderBoundingBox().inflate(beltLength + 1);
+        }
     }
 
     public void initializeItemHandler() {
-        if (level.isClientSide() || itemHandler != null)
+        if (level.isClientSide() || itemHandler != null) {
             return;
-        if (beltLength == 0 || controller == null)
+        }
+        if (beltLength == 0 || controller == null) {
             return;
-        if (!level.isLoaded(controller))
+        }
+        if (!level.isLoaded(controller)) {
             return;
+        }
         BlockEntity be = level.getBlockEntity(controller);
-        if (!(be instanceof BeltBlockEntity belt))
+        if (!(be instanceof BeltBlockEntity belt)) {
             return;
+        }
         BeltInventory inventory = belt.getInventory();
-        if (inventory == null)
+        if (inventory == null) {
             return;
+        }
         itemHandler = new ItemHandlerBeltSegment(inventory, index);
     }
 
@@ -173,8 +186,9 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
     @Override
     public void destroy() {
         super.destroy();
-        if (isController())
+        if (isController()) {
             getInventory().ejectAll();
+        }
     }
 
     @Override
@@ -184,8 +198,9 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
 
     @Override
     public void write(ValueOutput view, boolean clientPacket) {
-        if (controller != null)
+        if (controller != null) {
             view.store("Controller", BlockPos.CODEC, controller);
+        }
         view.putBoolean("IsController", isController());
         view.putInt("Length", beltLength);
         view.putInt("Index", index);
@@ -194,8 +209,9 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
 
         color.ifPresent(dyeColor -> view.store("Dye", DyeColor.CODEC, dyeColor));
 
-        if (isController())
+        if (isController()) {
             getInventory().write(view.child("Inventory"));
+        }
         super.write(view, clientPacket);
     }
 
@@ -203,33 +219,39 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
     protected void read(ValueInput view, boolean clientPacket) {
         super.read(view, clientPacket);
 
-        if (view.getBooleanOr("IsController", false))
+        if (view.getBooleanOr("IsController", false)) {
             controller = worldPosition;
+        }
 
         color = view.read("Dye", DyeColor.CODEC);
 
         if (!wasMoved) {
-            if (!isController())
+            if (!isController()) {
                 controller = view.read("Controller", BlockPos.CODEC).orElse(null);
+            }
             index = view.getIntOr("Index", 0);
             beltLength = view.getIntOr("Length", 0);
         }
 
-        if (isController())
+        if (isController()) {
             getInventory().read(view.childOrEmpty("Inventory"));
+        }
 
         CasingType casingBefore = casing;
         boolean coverBefore = covered;
         casing = view.read("Casing", CasingType.CODEC).orElse(CasingType.NONE);
         covered = view.getBooleanOr("Covered", false);
 
-        if (!clientPacket)
+        if (!clientPacket) {
             return;
+        }
 
-        if (casingBefore == casing && coverBefore == covered)
+        if (casingBefore == casing && coverBefore == covered) {
             return;
-        if (hasLevel())
+        }
+        if (hasLevel()) {
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
+        }
     }
 
     @Override
@@ -243,17 +265,21 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
 
     public boolean applyColor(@Nullable DyeColor colorIn) {
         if (colorIn == null) {
-            if (!color.isPresent())
+            if (!color.isPresent()) {
                 return false;
-        } else if (color.isPresent() && color.get() == colorIn)
+            }
+        } else if (color.isPresent() && color.get() == colorIn) {
             return false;
-        if (level.isClientSide())
+        }
+        if (level.isClientSide()) {
             return true;
+        }
 
         for (BlockPos blockPos : BeltBlock.getBeltChain(level, getController())) {
             BeltBlockEntity belt = BeltHelper.getSegmentBE(level, blockPos);
-            if (belt == null)
+            if (belt == null) {
                 continue;
+            }
             belt.color = Optional.ofNullable(colorIn);
             belt.setChanged();
             belt.sendData();
@@ -264,13 +290,16 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
 
     @Nullable
     public BeltBlockEntity getControllerBE() {
-        if (controller == null)
+        if (controller == null) {
             return null;
-        if (!level.isLoaded(controller))
+        }
+        if (!level.isLoaded(controller)) {
             return null;
+        }
         BlockEntity be = level.getBlockEntity(controller);
-        if (!(be instanceof BeltBlockEntity belt))
+        if (!(be instanceof BeltBlockEntity belt)) {
             return null;
+        }
         return belt;
     }
 
@@ -292,30 +321,36 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
 
     public float getDirectionAwareBeltMovementSpeed() {
         int offset = getBeltFacing().getAxisDirection().getStep();
-        if (getBeltFacing().getAxis() == Axis.X)
+        if (getBeltFacing().getAxis() == Axis.X) {
             offset *= -1;
+        }
         return getBeltMovementSpeed() * offset;
     }
 
     public boolean hasPulley() {
-        if (!getBlockState().is(AllBlocks.BELT))
+        if (!getBlockState().is(AllBlocks.BELT)) {
             return false;
+        }
         return getBlockState().getValue(BeltBlock.PART) != MIDDLE;
     }
 
     protected boolean isLastBelt() {
-        if (getSpeed() == 0)
+        if (getSpeed() == 0) {
             return false;
+        }
 
         Direction direction = getBeltFacing();
-        if (getBlockState().getValue(BeltBlock.SLOPE) == BeltSlope.VERTICAL)
+        if (getBlockState().getValue(BeltBlock.SLOPE) == BeltSlope.VERTICAL) {
             return false;
+        }
 
         BeltPart part = getBlockState().getValue(BeltBlock.PART);
-        if (part == MIDDLE)
+        if (part == MIDDLE) {
             return false;
+        }
 
-        boolean movingPositively = (getSpeed() > 0 == (direction.getAxisDirection().getStep() == 1)) ^ direction.getAxis() == Axis.X;
+        boolean movingPositively = (getSpeed() > 0 == (direction.getAxisDirection()
+            .getStep() == 1)) ^ direction.getAxis() == Axis.X;
         return part == BeltPart.START ^ movingPositively;
     }
 
@@ -328,8 +363,9 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
     }
 
     protected Vec3i getMovementDirection(boolean firstHalf, boolean ignoreHalves) {
-        if (getSpeed() == 0)
+        if (getSpeed() == 0) {
             return BlockPos.ZERO;
+        }
 
         final BlockState blockState = getBlockState();
         final Direction beltFacing = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING);
@@ -339,16 +375,18 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
 
         Direction movementFacing = Direction.get(axis == Axis.X ? NEGATIVE : POSITIVE, axis);
         boolean notHorizontal = blockState.getValue(BeltBlock.SLOPE) != HORIZONTAL;
-        if (getSpeed() < 0)
+        if (getSpeed() < 0) {
             movementFacing = movementFacing.getOpposite();
+        }
         Vec3i movement = movementFacing.getUnitVec3i();
 
         boolean slopeBeforeHalf = (part == BeltPart.END) == (beltFacing.getAxisDirection() == POSITIVE);
         boolean onSlope = notHorizontal && (part == MIDDLE || slopeBeforeHalf == firstHalf || ignoreHalves);
         boolean movingUp = onSlope && slope == (movementFacing == beltFacing ? BeltSlope.UPWARD : BeltSlope.DOWNWARD);
 
-        if (!onSlope)
+        if (!onSlope) {
             return movement;
+        }
 
         return new Vec3i(movement.getX(), movingUp ? 1 : -1, movement.getZ());
     }
@@ -366,8 +404,9 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
     public BeltInventory getInventory() {
         if (!isController()) {
             BeltBlockEntity controllerBE = getControllerBE();
-            if (controllerBE != null)
+            if (controllerBE != null) {
                 return controllerBE.getInventory();
+            }
             return null;
         }
         if (inventory == null) {
@@ -376,25 +415,32 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
         return inventory;
     }
 
-    private void applyToAllItems(float maxDistanceFromCenter, Function<TransportedItemStack, TransportedResult> processFunction) {
+    private void applyToAllItems(
+        float maxDistanceFromCenter,
+        Function<TransportedItemStack, TransportedResult> processFunction
+    ) {
         BeltBlockEntity controller = getControllerBE();
-        if (controller == null)
+        if (controller == null) {
             return;
+        }
         BeltInventory inventory = controller.getInventory();
-        if (inventory != null)
+        if (inventory != null) {
             inventory.applyToEachWithin(index + .5f, maxDistanceFromCenter, processFunction);
+        }
     }
 
     private Vec3 getWorldPositionOf(TransportedItemStack transported) {
         BeltBlockEntity controllerBE = getControllerBE();
-        if (controllerBE == null)
+        if (controllerBE == null) {
             return Vec3.ZERO;
+        }
         return BeltHelper.getVectorForOffset(controllerBE, transported.beltPosition);
     }
 
     public void setCasingType(CasingType type) {
-        if (casing == type)
+        if (casing == type) {
             return;
+        }
 
         BlockState blockState = getBlockState();
         boolean shouldBlockHaveCasing = type != CasingType.NONE;
@@ -407,41 +453,55 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
             return;
         }
 
-        if (casing != CasingType.NONE)
+        if (casing != CasingType.NONE) {
             level.levelEvent(
                 LevelEvent.PARTICLES_DESTROY_BLOCK,
                 worldPosition,
                 Block.getId(casing == CasingType.ANDESITE ? AllBlocks.ANDESITE_CASING.defaultBlockState() : AllBlocks.BRASS_CASING.defaultBlockState())
             );
-        if (blockState.getValue(BeltBlock.CASING) != shouldBlockHaveCasing)
-            KineticBlockEntity.switchToBlockState(level, worldPosition, blockState.setValue(BeltBlock.CASING, shouldBlockHaveCasing));
+        }
+        if (blockState.getValue(BeltBlock.CASING) != shouldBlockHaveCasing) {
+            KineticBlockEntity.switchToBlockState(
+                level,
+                worldPosition,
+                blockState.setValue(BeltBlock.CASING, shouldBlockHaveCasing)
+            );
+        }
         casing = type;
         setChanged();
         sendData();
     }
 
     private boolean canInsertFrom(Direction side) {
-        if (getSpeed() == 0)
+        if (getSpeed() == 0) {
             return false;
+        }
         BlockState state = getBlockState();
-        if (state.hasProperty(BeltBlock.SLOPE) && (state.getValue(BeltBlock.SLOPE) == BeltSlope.SIDEWAYS || state.getValue(BeltBlock.SLOPE) == BeltSlope.VERTICAL))
+        if (state.hasProperty(BeltBlock.SLOPE) && (state.getValue(BeltBlock.SLOPE) == BeltSlope.SIDEWAYS || state.getValue(
+            BeltBlock.SLOPE) == BeltSlope.VERTICAL)) {
             return false;
+        }
         return getMovementFacing() != side.getOpposite();
     }
 
     private boolean isOccupied(Direction side) {
         BeltBlockEntity nextBeltController = getControllerBE();
-        if (nextBeltController == null)
+        if (nextBeltController == null) {
             return true;
+        }
         BeltInventory nextInventory = nextBeltController.getInventory();
-        if (nextInventory == null)
+        if (nextInventory == null) {
             return true;
-        if (getSpeed() == 0)
+        }
+        if (getSpeed() == 0) {
             return true;
-        if (getMovementFacing() == side.getOpposite())
+        }
+        if (getMovementFacing() == side.getOpposite()) {
             return true;
-        if (!nextInventory.canInsertAtFromSide(index, side))
+        }
+        if (!nextInventory.canInsertAtFromSide(index, side)) {
             return true;
+        }
         return false;
     }
 
@@ -450,21 +510,26 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
         ItemStack inserted = transportedStack.stack;
         ItemStack empty = ItemStack.EMPTY;
 
-        if (!BeltBlock.canTransportObjects(getBlockState()))
+        if (!BeltBlock.canTransportObjects(getBlockState())) {
             return inserted;
-        if (nextBeltController == null)
+        }
+        if (nextBeltController == null) {
             return inserted;
+        }
         BeltInventory nextInventory = nextBeltController.getInventory();
-        if (nextInventory == null)
+        if (nextInventory == null) {
             return inserted;
+        }
 
         BlockEntity teAbove = level.getBlockEntity(worldPosition.above());
         if (teAbove instanceof BrassTunnelBlockEntity tunnelBE) {
             if (tunnelBE.hasDistributionBehaviour()) {
-                if (!tunnelBE.getStackToDistribute().isEmpty())
+                if (!tunnelBE.getStackToDistribute().isEmpty()) {
                     return inserted;
-                if (!tunnelBE.testFlapFilter(side.getOpposite(), inserted))
+                }
+                if (!tunnelBE.testFlapFilter(side.getOpposite(), inserted)) {
                     return inserted;
+                }
                 if (!simulate) {
                     BeltTunnelInteractionHandler.flapTunnel(nextInventory, index, side.getOpposite(), true);
                     tunnelBE.setStackToDistribute(inserted, side.getOpposite());
@@ -473,10 +538,12 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
             }
         }
 
-        if (isOccupied(side))
+        if (isOccupied(side)) {
             return inserted;
-        if (simulate)
+        }
+        if (simulate) {
             return empty;
+        }
 
         transportedStack = transportedStack.copy();
         transportedStack.beltPosition = index + .5f - Math.signum(getDirectionAwareBeltMovementSpeed()) / 16f;
@@ -485,8 +552,9 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
         if (!side.getAxis().isVertical()) {
             if (movementFacing != side) {
                 transportedStack.sideOffset = side.getAxisDirection().getStep() * .675f;
-                if (side.getAxis() == Axis.X)
+                if (side.getAxis() == Axis.X) {
                     transportedStack.sideOffset *= -1;
+                }
             } else {
                 // This creates a smoother transition from belt to belt
                 float extraOffset = transportedStack.prevBeltPosition != 0 && BeltHelper.getSegmentBE(
@@ -512,7 +580,8 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
 
     @Override
     protected boolean canPropagateDiagonally(IRotate block, BlockState state) {
-        return state.hasProperty(BeltBlock.SLOPE) && (state.getValue(BeltBlock.SLOPE) == BeltSlope.UPWARD || state.getValue(BeltBlock.SLOPE) == BeltSlope.DOWNWARD);
+        return state.hasProperty(BeltBlock.SLOPE) && (state.getValue(BeltBlock.SLOPE) == BeltSlope.UPWARD || state.getValue(
+            BeltBlock.SLOPE) == BeltSlope.DOWNWARD);
     }
 
     @Override
@@ -524,8 +593,9 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
         boolean connectedViaAxes,
         boolean connectedViaCogs
     ) {
-        if (target instanceof BeltBlockEntity && !connectedViaAxes)
+        if (target instanceof BeltBlockEntity && !connectedViaAxes) {
             return getController().equals(((BeltBlockEntity) target).getController()) ? 1 : 0;
+        }
         return 0;
     }
 
@@ -534,15 +604,17 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
     }
 
     public boolean shouldSkipVanillaRender() {
-        if (level == null)
+        if (level == null) {
             return !isController();
+        }
         BlockState state = getBlockState();
         return state == null || !state.hasProperty(BeltBlock.PART) || state.getValue(BeltBlock.PART) != BeltPart.START;
     }
 
     public void setCovered(boolean blockCoveringBelt) {
-        if (blockCoveringBelt == covered)
+        if (blockCoveringBelt == covered) {
             return;
+        }
         covered = blockCoveringBelt;
         notifyUpdate();
     }

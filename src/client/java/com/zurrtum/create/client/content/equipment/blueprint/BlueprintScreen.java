@@ -42,7 +42,13 @@ public class BlueprintScreen extends AbstractSimiContainerScreen<BlueprintMenu> 
     private @Nullable ElementWidget renderedItem;
 
     public BlueprintScreen(BlueprintMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title, AllGuiTextures.BLUEPRINT.getWidth(), AllGuiTextures.BLUEPRINT.getHeight() + 4 + PLAYER_INVENTORY.getHeight());
+        super(
+            menu,
+            inv,
+            title,
+            AllGuiTextures.BLUEPRINT.getWidth(),
+            AllGuiTextures.BLUEPRINT.getHeight() + 4 + PLAYER_INVENTORY.getHeight()
+        );
         this.background = AllGuiTextures.BLUEPRINT;
     }
 
@@ -58,8 +64,9 @@ public class BlueprintScreen extends AbstractSimiContainerScreen<BlueprintMenu> 
         int entityID = extraData.readVarInt();
         int section = extraData.readVarInt();
         Entity entityByID = mc.level.getEntity(entityID);
-        if (!(entityByID instanceof BlueprintEntity blueprintEntity))
+        if (!(entityByID instanceof BlueprintEntity blueprintEntity)) {
             return null;
+        }
         return type.create(BlueprintScreen::new, syncId, inventory, title, blueprintEntity.getSection(section));
     }
 
@@ -74,7 +81,11 @@ public class BlueprintScreen extends AbstractSimiContainerScreen<BlueprintMenu> 
             contentsCleared();
             minecraft.player.connection.send(AllPackets.CLEAR_CONTAINER);
         });
-        confirmButton = new IconButton(leftPos + imageWidth - 33, topPos + background.getHeight() - 24, AllIcons.I_CONFIRM);
+        confirmButton = new IconButton(
+            leftPos + imageWidth - 33,
+            topPos + background.getHeight() - 24,
+            AllIcons.I_CONFIRM
+        );
         confirmButton.withCallback(() -> {
             minecraft.player.closeContainer();
         });
@@ -84,8 +95,9 @@ public class BlueprintScreen extends AbstractSimiContainerScreen<BlueprintMenu> 
 
         extraAreas = ImmutableList.of(new Rect2i(leftPos + imageWidth, topPos + background.getHeight() - 36, 56, 44));
 
-        renderedItem = new ElementWidget(leftPos + imageWidth + 1, topPos + background.getHeight() - 34).showingElement(GuiGameElement.of(
-            AllPartialModels.CRAFTING_BLUEPRINT_1x1).scale(2.5F).transform(this::transform).padding(13));
+        renderedItem = new ElementWidget(leftPos + imageWidth + 1, topPos + background.getHeight() - 34).showingElement(
+            GuiGameElement.of(AllPartialModels.CRAFTING_BLUEPRINT_1x1).scale(2.5F).transform(this::transform)
+                .padding(13));
         addRenderableWidget(renderedItem);
     }
 
@@ -121,23 +133,27 @@ public class BlueprintScreen extends AbstractSimiContainerScreen<BlueprintMenu> 
         }
 
         List<Component> list = new LinkedList<>();
-        if (hoveredSlot.hasItem())
+        if (hoveredSlot.hasItem()) {
             list = getTooltipFromContainerItem(hoveredSlot.getItem());
+        }
 
         graphics.setComponentTooltipForNextFrame(font, addToTooltip(list, hoveredSlot.getContainerSlot()), x, y);
     }
 
     private List<Component> addToTooltip(List<Component> list, int slot) {
-        if (slot < 0 || slot > 10)
+        if (slot < 0 || slot > 10) {
             return list;
+        }
 
         if (slot < 9) {
             list.add(CreateLang.translateDirect("crafting_blueprint.crafting_slot").withStyle(ChatFormatting.GOLD));
-            list.add(CreateLang.translateDirect("crafting_blueprint.filter_items_viable").withStyle(ChatFormatting.GRAY));
+            list.add(CreateLang.translateDirect("crafting_blueprint.filter_items_viable")
+                .withStyle(ChatFormatting.GRAY));
         } else if (slot == 9) {
             list.add(CreateLang.translateDirect("crafting_blueprint.display_slot").withStyle(ChatFormatting.GOLD));
         } else {
-            list.add(CreateLang.translateDirect("crafting_blueprint.secondary_display_slot").withStyle(ChatFormatting.GOLD));
+            list.add(CreateLang.translateDirect("crafting_blueprint.secondary_display_slot")
+                .withStyle(ChatFormatting.GOLD));
             list.add(CreateLang.translateDirect("crafting_blueprint.optional").withStyle(ChatFormatting.GRAY));
         }
 
@@ -146,8 +162,9 @@ public class BlueprintScreen extends AbstractSimiContainerScreen<BlueprintMenu> 
 
     @Override
     protected void containerTick() {
-        if (!menu.contentHolder.isEntityAlive())
+        if (!menu.contentHolder.isEntityAlive()) {
             minecraft.player.closeContainer();
+        }
 
         super.containerTick();
     }

@@ -35,7 +35,12 @@ public abstract class CapManipulationBehaviourBase<T, S extends CapManipulationB
     }
 
     @Nullable
-    protected abstract T getCapability(Level world, BlockPos pos, @Nullable BlockEntity blockEntity, @Nullable Direction side);
+    protected abstract T getCapability(
+        Level world,
+        BlockPos pos,
+        @Nullable BlockEntity blockEntity,
+        @Nullable Direction side
+    );
 
     @Override
     public void initialize() {
@@ -45,8 +50,9 @@ public abstract class CapManipulationBehaviourBase<T, S extends CapManipulationB
 
     @Override
     public void onNeighborChanged(BlockPos neighborPos) {
-        if (getTarget().getConnectedPos().equals(neighborPos))
+        if (getTarget().getConnectedPos().equals(neighborPos)) {
             onHandlerInvalidated();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -88,8 +94,9 @@ public abstract class CapManipulationBehaviourBase<T, S extends CapManipulationB
     }
 
     protected boolean onHandlerInvalidated() {
-        if (targetCapability == null)
+        if (targetCapability == null) {
             return false;
+        }
         findNewNextTick = true;
         targetCapability = null;
 
@@ -99,8 +106,9 @@ public abstract class CapManipulationBehaviourBase<T, S extends CapManipulationB
     @Override
     public void lazyTick() {
         super.lazyTick();
-        if (targetCapability == null)
+        if (targetCapability == null) {
             findNewCapability();
+        }
     }
 
     @Override
@@ -115,16 +123,18 @@ public abstract class CapManipulationBehaviourBase<T, S extends CapManipulationB
     public int getAmountFromFilter() {
         int amount = -1;
         ServerFilteringBehaviour filter = blockEntity.getBehaviour(ServerFilteringBehaviour.TYPE);
-        if (filter != null && !filter.anyAmount())
+        if (filter != null && !filter.anyAmount()) {
             amount = filter.getAmount();
+        }
         return amount;
     }
 
     public ExtractionCountMode getModeFromFilter() {
         ExtractionCountMode mode = ExtractionCountMode.UPTO;
         ServerFilteringBehaviour filter = blockEntity.getBehaviour(ServerFilteringBehaviour.TYPE);
-        if (filter != null && !filter.upTo)
+        if (filter != null && !filter.upTo) {
             mode = ExtractionCountMode.EXACTLY;
+        }
         return mode;
     }
 
@@ -135,11 +145,13 @@ public abstract class CapManipulationBehaviourBase<T, S extends CapManipulationB
 
         targetCapability = null;
 
-        if (!world.isLoaded(pos))
+        if (!world.isLoaded(pos)) {
             return;
+        }
         BlockEntity invBE = world.getBlockEntity(pos);
-        if (!filter.test(invBE))
+        if (!filter.test(invBE)) {
             return;
+        }
         targetCapability = getCapability(world, pos, invBE, bypassSided ? null : targetBlockFace.getFace());
     }
 
@@ -149,14 +161,16 @@ public abstract class CapManipulationBehaviourBase<T, S extends CapManipulationB
         static InterfaceProvider towardBlockFacing() {
             return (w, p, s) -> new BlockFace(
                 p,
-                s.hasProperty(BlockStateProperties.FACING) ? s.getValue(BlockStateProperties.FACING) : s.getValue(BlockStateProperties.HORIZONTAL_FACING)
+                s.hasProperty(BlockStateProperties.FACING) ? s.getValue(BlockStateProperties.FACING) : s.getValue(
+                    BlockStateProperties.HORIZONTAL_FACING)
             );
         }
 
         static InterfaceProvider oppositeOfBlockFacing() {
             return (w, p, s) -> new BlockFace(
                 p,
-                (s.hasProperty(BlockStateProperties.FACING) ? s.getValue(BlockStateProperties.FACING) : s.getValue(BlockStateProperties.HORIZONTAL_FACING)).getOpposite()
+                (s.hasProperty(BlockStateProperties.FACING) ? s.getValue(BlockStateProperties.FACING) : s.getValue(
+                    BlockStateProperties.HORIZONTAL_FACING)).getOpposite()
             );
         }
 

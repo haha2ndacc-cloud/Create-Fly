@@ -24,10 +24,12 @@ public class PackageFilterItem extends FilterItem {
     @Override
     public List<Component> makeSummary(ItemStack filter) {
         String address = PackageItem.getAddress(filter);
-        if (address.isBlank())
+        if (address.isBlank()) {
             return Collections.emptyList();
+        }
 
-        return List.of(Component.literal("-> ").withStyle(ChatFormatting.GRAY).append(Component.literal(address).withStyle(ChatFormatting.GOLD)));
+        return List.of(Component.literal("-> ").withStyle(ChatFormatting.GRAY)
+            .append(Component.literal(address).withStyle(ChatFormatting.GOLD)));
     }
 
     @Override

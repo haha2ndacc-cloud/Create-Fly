@@ -22,9 +22,8 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-public record DeployingDisplay(
-    EntryIngredient input, EntryIngredient target, EntryIngredient output, Optional<Identifier> location
-) implements Display {
+public record DeployingDisplay(EntryIngredient input, EntryIngredient target, EntryIngredient output,
+                               Optional<Identifier> location) implements Display {
     public static final DisplaySerializer<DeployingDisplay> SERIALIZER = DisplaySerializer.of(
         RecordCodecBuilder.mapCodec(instance -> instance.group(
             EntryIngredient.codec().fieldOf("input").forGetter(DeployingDisplay::input),

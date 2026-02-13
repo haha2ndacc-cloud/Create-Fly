@@ -44,13 +44,14 @@ public abstract class RotatedPillarKineticBlock extends KineticBlock {
                     context.getClickedPos().relative(side),
                     blockState,
                     side.getOpposite()
-                ))
+                )) {
                     if (prefferedAxis != null && prefferedAxis != side.getAxis()) {
                         prefferedAxis = null;
                         break;
                     } else {
                         prefferedAxis = side.getAxis();
                     }
+                }
             }
         }
         return prefferedAxis;
@@ -65,12 +66,13 @@ public abstract class RotatedPillarKineticBlock extends KineticBlock {
     @Nullable
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Axis preferredAxis = getPreferredAxis(context);
-        if (preferredAxis != null && (context.getPlayer() == null || !context.getPlayer().isShiftKeyDown()))
+        if (preferredAxis != null && (context.getPlayer() == null || !context.getPlayer().isShiftKeyDown())) {
             return this.defaultBlockState().setValue(AXIS, preferredAxis);
+        }
         return this.defaultBlockState().setValue(
             AXIS,
-            preferredAxis != null && context.getPlayer().isShiftKeyDown() ? context.getClickedFace().getAxis() : context.getNearestLookingDirection()
-                .getAxis()
+            preferredAxis != null && context.getPlayer().isShiftKeyDown() ? context.getClickedFace()
+                .getAxis() : context.getNearestLookingDirection().getAxis()
         );
     }
 }

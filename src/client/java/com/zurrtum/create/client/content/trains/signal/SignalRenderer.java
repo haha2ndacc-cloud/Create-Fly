@@ -64,7 +64,10 @@ public class SignalRenderer implements BlockEntityRenderer<SignalBlockEntity, Si
             state.lightCoords = LightCoordsUtil.MAX_SMOOTH_LIGHT_LEVEL;
         } else {
             state.model = CachedBuffers.partial(AllPartialModels.SIGNAL_OFF, state.blockState);
-            state.lightCoords = world != null ? LevelRenderer.getLightCoords(world, state.blockPos) : LightCoordsUtil.FULL_BRIGHT;
+            state.lightCoords = world != null ? LevelRenderer.getLightCoords(
+                world,
+                state.blockPos
+            ) : LightCoordsUtil.FULL_BRIGHT;
         }
         TrackTargetingBehaviour<SignalBoundary> target = be.edgePoint;
         BlockPos targetPosition = target.getGlobalPosition();
@@ -91,7 +94,12 @@ public class SignalRenderer implements BlockEntityRenderer<SignalBlockEntity, Si
     }
 
     @Override
-    public void submit(SignalRenderState state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
+    public void submit(
+        SignalRenderState state,
+        PoseStack matrices,
+        SubmitNodeCollector queue,
+        CameraRenderState cameraState
+    ) {
         queue.submitCustomGeometry(matrices, state.layer, state);
         if (state.block != null) {
             state.block.render(matrices, queue);

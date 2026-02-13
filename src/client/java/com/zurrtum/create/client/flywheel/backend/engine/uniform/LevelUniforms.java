@@ -58,7 +58,8 @@ public final class LevelUniforms extends UniformWriter {
         ptr = writeVec3(ptr, LIGHT_DIRECTION[0], LIGHT_DIRECTION[1], LIGHT_DIRECTION[2]);
         ptr = writeVec3(ptr, LIGHT_DIRECTION[3], LIGHT_DIRECTION[4], LIGHT_DIRECTION[5]);
 
-        int periodTicks = level.registryAccess().get(Timelines.OVERWORLD_DAY).flatMap(timeline -> timeline.value().periodTicks()).orElse(24000);
+        int periodTicks = level.registryAccess().get(Timelines.OVERWORLD_DAY)
+            .flatMap(timeline -> timeline.value().periodTicks()).orElse(24000);
         long dayTime = level.dimensionType().defaultClock().or(() -> level.registryAccess().get(WorldClocks.OVERWORLD))
             .map(clock -> level.clockManager().getTotalTicks(clock)).orElse(0L);
         long levelDay = dayTime / periodTicks;
@@ -68,7 +69,10 @@ public final class LevelUniforms extends UniformWriter {
 
         ptr = writeInt(ptr, level.dimensionType().hasSkyLight() ? 1 : 0);
 
-        ptr = writeFloat(ptr, attributeProbe.getValue(EnvironmentAttributes.SUN_ANGLE, partialTick) * (float) (Math.PI / 180.0));
+        ptr = writeFloat(
+            ptr,
+            attributeProbe.getValue(EnvironmentAttributes.SUN_ANGLE, partialTick) * (float) (Math.PI / 180.0)
+        );
 
         MoonPhase moonPhase = attributeProbe.getValue(EnvironmentAttributes.MOON_PHASE, partialTick);
         ptr = writeFloat(ptr, DimensionType.MOON_BRIGHTNESS_PER_PHASE[moonPhase.index()]);
@@ -81,7 +85,10 @@ public final class LevelUniforms extends UniformWriter {
 
         ptr = writeFloat(ptr, level.getSkyDarken());
 
-        ptr = writeInt(ptr, level.dimensionType().cardinalLightType() == DimensionType.CardinalLightType.NETHER ? 1 : 0);
+        ptr = writeInt(
+            ptr,
+            level.dimensionType().cardinalLightType() == DimensionType.CardinalLightType.NETHER ? 1 : 0
+        );
 
         // TODO: use defines for custom dimension ids
         int dimensionId;

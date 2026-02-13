@@ -26,9 +26,7 @@ public class BracketBlock extends WrenchableDirectionalBlock {
     public static final EnumProperty<BracketType> TYPE = EnumProperty.create("type", BracketType.class);
 
     public enum BracketType implements StringRepresentable {
-        PIPE,
-        COG,
-        SHAFT;
+        PIPE, COG, SHAFT;
 
         @Override
         public String getSerializedName() {
@@ -47,28 +45,36 @@ public class BracketBlock extends WrenchableDirectionalBlock {
     }
 
     public Optional<BlockState> getSuitableBracket(BlockState blockState, Direction direction) {
-        if (blockState.getBlock() instanceof AbstractSimpleShaftBlock)
+        if (blockState.getBlock() instanceof AbstractSimpleShaftBlock) {
             return getSuitableBracket(
                 blockState.getValue(RotatedPillarKineticBlock.AXIS),
                 direction,
                 blockState.getBlock() instanceof CogWheelBlock ? BracketType.COG : BracketType.SHAFT
             );
+        }
         return getSuitableBracket(FluidPropagator.getStraightPipeAxis(blockState), direction, BracketType.PIPE);
     }
 
-    private Optional<BlockState> getSuitableBracket(@Nullable Axis targetBlockAxis, Direction direction, BracketType type) {
+    private Optional<BlockState> getSuitableBracket(
+        @Nullable Axis targetBlockAxis,
+        Direction direction,
+        BracketType type
+    ) {
         Axis axis = direction.getAxis();
-        if (targetBlockAxis == null || targetBlockAxis == axis)
+        if (targetBlockAxis == null || targetBlockAxis == axis) {
             return Optional.empty();
+        }
 
         boolean alongFirst = axis != Axis.Z ? targetBlockAxis == Axis.Z : targetBlockAxis == Axis.Y;
-        return Optional.of(defaultBlockState().setValue(TYPE, type).setValue(FACING, direction).setValue(AXIS_ALONG_FIRST_COORDINATE, !alongFirst));
+        return Optional.of(defaultBlockState().setValue(TYPE, type).setValue(FACING, direction)
+            .setValue(AXIS_ALONG_FIRST_COORDINATE, !alongFirst));
     }
 
     @Override
     public BlockState rotate(BlockState state, Rotation rot) {
-        if (rot.ordinal() % 2 == 1)
+        if (rot.ordinal() % 2 == 1) {
             state = state.cycle(AXIS_ALONG_FIRST_COORDINATE);
+        }
         return super.rotate(state, rot);
     }
 

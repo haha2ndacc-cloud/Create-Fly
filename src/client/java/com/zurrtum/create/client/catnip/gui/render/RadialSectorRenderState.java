@@ -14,9 +14,8 @@ import java.util.List;
 
 import static com.zurrtum.create.client.catnip.render.PonderRenderPipelines.POSITION_COLOR_STRIP;
 
-public record RadialSectorRenderState(
-    Matrix3x2f pose, List<Vec2> innerPoints, List<Vec2> outerPoints, int outerColor, int innerColor, ScreenRectangle bounds
-) implements GuiElementRenderState {
+public record RadialSectorRenderState(Matrix3x2f pose, List<Vec2> innerPoints, List<Vec2> outerPoints, int outerColor,
+                                      int innerColor, ScreenRectangle bounds) implements GuiElementRenderState {
     public RadialSectorRenderState(
         Matrix3x2f pose,
         double minX,
@@ -34,7 +33,8 @@ public record RadialSectorRenderState(
             outerPoints,
             outerColor.getRGB(),
             innerColor.getRGB(),
-            new ScreenRectangle((int) minX, (int) minY, (int) (maxX - minX), (int) (maxY - minY)).transformMaxBounds(pose)
+            new ScreenRectangle((int) minX, (int) minY, (int) (maxX - minX), (int) (maxY - minY)).transformMaxBounds(
+                pose)
         );
     }
 

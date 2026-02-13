@@ -92,8 +92,9 @@ public class Instruction {
     }
 
     public static Vector<Instruction> deserializeAll(ListTag list) {
-        if (list.isEmpty())
+        if (list.isEmpty()) {
             return createDefault();
+        }
         Vector<Instruction> instructions = new Vector<>(5);
         list.forEach(inbt -> instructions.add(deserialize((CompoundTag) inbt)));
         return instructions;

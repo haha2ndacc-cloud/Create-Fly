@@ -67,7 +67,13 @@ public class SteamEngineBlock extends FaceAttachedHorizontalDirectionalBlock imp
     }
 
     @Override
-    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
+    public void setPlacedBy(
+        Level pLevel,
+        BlockPos pPos,
+        BlockState pState,
+        @Nullable LivingEntity pPlacer,
+        ItemStack pStack
+    ) {
         super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
         AdvancementBehaviour.setPlacedBy(pLevel, pPos, pPlacer);
     }
@@ -98,8 +104,10 @@ public class SteamEngineBlock extends FaceAttachedHorizontalDirectionalBlock imp
         BlockHitResult hitResult
     ) {
         IPlacementHelper placementHelper = PlacementHelpers.get(placementHelperId);
-        if (placementHelper.matchesItem(stack))
-            return placementHelper.getOffset(player, level, state, pos, hitResult).placeInWorld(level, (BlockItem) stack.getItem(), player, hand);
+        if (placementHelper.matchesItem(stack)) {
+            return placementHelper.getOffset(player, level, state, pos, hitResult)
+                .placeInWorld(level, (BlockItem) stack.getItem(), player, hand);
+        }
         return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
@@ -114,8 +122,9 @@ public class SteamEngineBlock extends FaceAttachedHorizontalDirectionalBlock imp
         BlockState neighbourState,
         RandomSource random
     ) {
-        if (state.getValue(BlockStateProperties.WATERLOGGED))
+        if (state.getValue(BlockStateProperties.WATERLOGGED)) {
             tickView.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+        }
         return state;
     }
 
@@ -124,19 +133,22 @@ public class SteamEngineBlock extends FaceAttachedHorizontalDirectionalBlock imp
         FluidTankBlock.updateBoilerState(pState, pLevel, pPos.relative(getFacing(pState).getOpposite()));
         BlockPos shaftPos = getShaftPos(pState, pPos);
         BlockState shaftState = pLevel.getBlockState(shaftPos);
-        if (isShaftValid(pState, shaftState))
+        if (isShaftValid(pState, shaftState)) {
             pLevel.setBlock(shaftPos, PoweredShaftBlock.getEquivalent(shaftState), Block.UPDATE_ALL);
+        }
     }
 
     @Override
     public void affectNeighborsAfterRemoval(BlockState pState, ServerLevel pLevel, BlockPos pPos, boolean pIsMoving) {
-        if (pState.hasBlockEntity())
+        if (pState.hasBlockEntity()) {
             pLevel.removeBlockEntity(pPos);
+        }
         FluidTankBlock.updateBoilerState(pState, pLevel, pPos.relative(getFacing(pState).getOpposite()));
         BlockPos shaftPos = getShaftPos(pState, pPos);
         BlockState shaftState = pLevel.getBlockState(shaftPos);
-        if (shaftState.is(AllBlocks.POWERED_SHAFT))
+        if (shaftState.is(AllBlocks.POWERED_SHAFT)) {
             pLevel.scheduleTick(shaftPos, shaftState.getBlock(), 1);
+        }
     }
 
     @Override
@@ -154,8 +166,9 @@ public class SteamEngineBlock extends FaceAttachedHorizontalDirectionalBlock imp
         BlockPos pos = context.getClickedPos();
         FluidState ifluidstate = level.getFluidState(pos);
         BlockState state = super.getStateForPlacement(context);
-        if (state == null)
+        if (state == null) {
             return null;
+        }
         return state.setValue(BlockStateProperties.WATERLOGGED, ifluidstate.getType() == Fluids.WATER);
     }
 
@@ -173,7 +186,8 @@ public class SteamEngineBlock extends FaceAttachedHorizontalDirectionalBlock imp
     }
 
     public static boolean isShaftValid(BlockState state, BlockState shaft) {
-        return (shaft.is(AllBlocks.SHAFT) || shaft.is(AllBlocks.POWERED_SHAFT)) && shaft.getValue(ShaftBlock.AXIS) != getFacing(state).getAxis();
+        return (shaft.is(AllBlocks.SHAFT) || shaft.is(AllBlocks.POWERED_SHAFT)) && shaft.getValue(ShaftBlock.AXIS) != getFacing(
+            state).getAxis();
     }
 
     @Override
@@ -198,24 +212,34 @@ public class SteamEngineBlock extends FaceAttachedHorizontalDirectionalBlock imp
         }
 
         @Override
-        public PlacementOffset getOffset(Player player, Level world, BlockState state, BlockPos pos, BlockHitResult ray) {
+        public PlacementOffset getOffset(
+            Player player,
+            Level world,
+            BlockState state,
+            BlockPos pos,
+            BlockHitResult ray
+        ) {
             BlockPos shaftPos = SteamEngineBlock.getShaftPos(state, pos);
             BlockState shaft = AllBlocks.SHAFT.defaultBlockState();
             for (Direction direction : Direction.orderedByNearest(player)) {
                 shaft = shaft.setValue(ShaftBlock.AXIS, direction.getAxis());
-                if (isShaftValid(state, shaft))
+                if (isShaftValid(state, shaft)) {
                     break;
+                }
             }
 
             BlockState newState = world.getBlockState(shaftPos);
-            if (!newState.canBeReplaced())
+            if (!newState.canBeReplaced()) {
                 return PlacementOffset.fail();
+            }
 
             Axis axis = shaft.getValue(ShaftBlock.AXIS);
             return PlacementOffset.success(
                 shaftPos,
-                s -> BlockHelper.copyProperties(s, (world.isClientSide() ? AllBlocks.SHAFT : AllBlocks.POWERED_SHAFT).defaultBlockState())
-                    .setValue(PoweredShaftBlock.AXIS, axis)
+                s -> BlockHelper.copyProperties(
+                    s,
+                    (world.isClientSide() ? AllBlocks.SHAFT : AllBlocks.POWERED_SHAFT).defaultBlockState()
+                ).setValue(PoweredShaftBlock.AXIS, axis)
             );
         }
     }

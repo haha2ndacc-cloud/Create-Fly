@@ -49,7 +49,13 @@ public class StationBlock extends Block implements IBE<StationBlockEntity>, Item
     }
 
     @Override
-    public Container getInventory(LevelAccessor world, BlockPos pos, BlockState state, StationBlockEntity blockEntity, @Nullable Direction context) {
+    public Container getInventory(
+        LevelAccessor world,
+        BlockPos pos,
+        BlockState state,
+        StationBlockEntity blockEntity,
+        @Nullable Direction context
+    ) {
         return blockEntity.depotBehaviour.itemHandler;
     }
 
@@ -80,7 +86,13 @@ public class StationBlock extends Block implements IBE<StationBlockEntity>, Item
     }
 
     @Override
-    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
+    public void setPlacedBy(
+        Level pLevel,
+        BlockPos pPos,
+        BlockState pState,
+        @Nullable LivingEntity pPlacer,
+        ItemStack pStack
+    ) {
         super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
         AdvancementBehaviour.setPlacedBy(pLevel, pPos, pPlacer);
     }
@@ -116,26 +128,32 @@ public class StationBlock extends Block implements IBE<StationBlockEntity>, Item
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-        if (player == null || player.isShiftKeyDown())
+        if (player == null || player.isShiftKeyDown()) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
-        if (stack.is(AllItems.WRENCH))
+        }
+        if (stack.is(AllItems.WRENCH)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
 
         if (stack.getItem() == Items.FILLED_MAP) {
             return onBlockEntityUseItemOn(
                 level, pos, station -> {
-                    if (level.isClientSide())
+                    if (level.isClientSide()) {
                         return InteractionResult.SUCCESS;
+                    }
 
-                    if (station.getStation() == null || station.getStation().getId() == null)
+                    if (station.getStation() == null || station.getStation().getId() == null) {
                         return InteractionResult.FAIL;
+                    }
 
                     MapItemSavedData savedData = MapItem.getSavedData(stack, level);
-                    if (!(savedData instanceof StationMapData stationMapData))
+                    if (!(savedData instanceof StationMapData stationMapData)) {
                         return InteractionResult.FAIL;
+                    }
 
-                    if (!stationMapData.create$toggleStation(level, pos, station))
+                    if (!stationMapData.create$toggleStation(level, pos, station)) {
                         return InteractionResult.FAIL;
+                    }
 
                     return InteractionResult.SUCCESS;
                 }
@@ -145,10 +163,12 @@ public class StationBlock extends Block implements IBE<StationBlockEntity>, Item
         InteractionResult result = onBlockEntityUse(
             level, pos, station -> {
                 ItemStack autoSchedule = station.getAutoSchedule();
-                if (autoSchedule.isEmpty())
+                if (autoSchedule.isEmpty()) {
                     return InteractionResult.PASS;
-                if (level.isClientSide())
+                }
+                if (level.isClientSide()) {
                     return InteractionResult.SUCCESS;
+                }
                 player.getInventory().placeItemBackInInventory(autoSchedule.copy());
                 station.depotBehaviour.removeHeldItem();
                 station.notifyUpdate();
@@ -164,8 +184,9 @@ public class StationBlock extends Block implements IBE<StationBlockEntity>, Item
             }
         );
 
-        if (result == InteractionResult.PASS)
+        if (result == InteractionResult.PASS) {
             AllClientHandle.INSTANCE.openStationScreen(level, pos, player);
+        }
         return InteractionResult.SUCCESS;
     }
 

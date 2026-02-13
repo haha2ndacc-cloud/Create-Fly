@@ -35,7 +35,10 @@ public class DisplayLinkPeripheral extends SyncedPeripheral<DisplayLinkBlockEnti
     @LuaFunction(mainThread = true)
     public final Object[] getSize() {
         blockEntity.updateGatheredData();
-        DisplayTargetStats stats = blockEntity.activeTarget.provideStats(new DisplayLinkContext(blockEntity.getLevel(), blockEntity));
+        DisplayTargetStats stats = blockEntity.activeTarget.provideStats(new DisplayLinkContext(
+            blockEntity.getLevel(),
+            blockEntity
+        ));
         return new Object[]{stats.maxRows(), stats.maxColumns()};
     }
 
@@ -100,8 +103,9 @@ public class DisplayLinkPeripheral extends SyncedPeripheral<DisplayLinkBlockEnti
     public final void clearLine() {
         ListTag tag = blockEntity.getSourceConfig().getList(TAG_KEY).orElseGet(ListTag::new);
 
-        if (tag.size() > cursorY.get())
+        if (tag.size() > cursorY.get()) {
             tag.set(cursorY.get(), StringTag.valueOf(""));
+        }
 
         synchronized (blockEntity) {
             blockEntity.getSourceConfig().put(TAG_KEY, tag);

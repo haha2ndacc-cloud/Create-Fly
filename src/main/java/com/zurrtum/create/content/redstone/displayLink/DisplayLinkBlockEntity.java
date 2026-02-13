@@ -47,7 +47,12 @@ public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity implements T
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour<?>> behaviours) {
-        behaviours.add(factoryPanelSupport = new FactoryPanelSupportBehaviour(this, () -> false, () -> false, this::updateGatheredData));
+        behaviours.add(factoryPanelSupport = new FactoryPanelSupportBehaviour(
+            this,
+            () -> false,
+            () -> false,
+            this::updateGatheredData
+        ));
     }
 
     @Override
@@ -59,30 +64,37 @@ public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity implements T
     public void tick() {
         super.tick();
 
-        if (isVirtual())
+        if (isVirtual()) {
             return;
-        if (activeSource == null)
+        }
+        if (activeSource == null) {
             return;
-        if (level.isClientSide())
+        }
+        if (level.isClientSide()) {
             return;
+        }
 
         refreshTicks++;
-        if (refreshTicks < activeSource.getPassiveRefreshTicks() || !activeSource.shouldPassiveReset())
+        if (refreshTicks < activeSource.getPassiveRefreshTicks() || !activeSource.shouldPassiveReset()) {
             return;
+        }
         tickSource();
     }
 
     public void tickSource() {
         refreshTicks = 0;
-        if (getBlockState().getValueOrElse(DisplayLinkBlock.POWERED, true))
+        if (getBlockState().getValueOrElse(DisplayLinkBlock.POWERED, true)) {
             return;
-        if (!level.isClientSide())
+        }
+        if (!level.isClientSide()) {
             updateGatheredData();
+        }
     }
 
     public void onNoLongerPowered() {
-        if (activeSource == null)
+        if (activeSource == null) {
             return;
+        }
         refreshTicks = 0;
         activeSource.onSignalReset(new DisplayLinkContext(level, this));
         updateGatheredData();
@@ -92,8 +104,9 @@ public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity implements T
         BlockPos sourcePosition = getSourcePosition();
         BlockPos targetPosition = getTargetPosition();
 
-        if (!level.isLoaded(targetPosition) || !level.isLoaded(sourcePosition))
+        if (!level.isLoaded(targetPosition) || !level.isLoaded(sourcePosition)) {
             return;
+        }
 
         DisplayTarget target = DisplayTarget.get(level, targetPosition);
         List<DisplaySource> sources = DisplaySource.getAll(level, sourcePosition);
@@ -110,10 +123,12 @@ public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity implements T
             notify = true;
         }
 
-        if (notify)
+        if (notify) {
             notifyUpdate();
-        if (activeSource == null || activeTarget == null)
+        }
+        if (activeSource == null || activeTarget == null) {
             return;
+        }
 
         DisplayLinkContext context = new DisplayLinkContext(level, this);
         activeSource.transferData(context, activeTarget, targetLine);
@@ -175,8 +190,9 @@ public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity implements T
     }
 
     public BlockPos getSourcePosition() {
-        for (FactoryPanelPosition position : factoryPanelSupport.getLinkedPanels())
+        for (FactoryPanelPosition position : factoryPanelSupport.getLinkedPanels()) {
             return position.pos();
+        }
         return worldPosition.relative(getDirection());
     }
 
@@ -201,8 +217,9 @@ public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity implements T
 
     @Override
     public Vec3 getBulbOffset(BlockState state) {
-        if (state.getValueOrElse(DisplayLinkBlock.FACING, Direction.UP).getAxis().isVertical())
+        if (state.getValueOrElse(DisplayLinkBlock.FACING, Direction.UP).getAxis().isVertical()) {
             return bulbOffsetVertical;
+        }
         return bulbOffset;
     }
 

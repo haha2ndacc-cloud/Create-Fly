@@ -33,8 +33,7 @@ public record ShulkerFillLevelAttribute(@Nullable ShulkerLevels levels) implemen
         ShulkerFillLevelAttribute::levels
     ).fieldOf("value");
 
-    public static final StreamCodec<ByteBuf, ShulkerFillLevelAttribute> PACKET_CODEC = ShulkerLevels.STREAM_CODEC.map(
-        ShulkerFillLevelAttribute::new,
+    public static final StreamCodec<ByteBuf, ShulkerFillLevelAttribute> PACKET_CODEC = ShulkerLevels.STREAM_CODEC.map(ShulkerFillLevelAttribute::new,
         ShulkerFillLevelAttribute::levels
     );
 
@@ -51,8 +50,10 @@ public record ShulkerFillLevelAttribute(@Nullable ShulkerLevels levels) implemen
     @Override
     public Object[] getTranslationParameters() {
         String parameter = "";
-        if (levels != null)
-            parameter = Component.translatable("create.item_attributes." + getTranslationKey() + "." + levels.key).getString();
+        if (levels != null) {
+            parameter = Component.translatable("create.item_attributes." + getTranslationKey() + "." + levels.key)
+                .getString();
+        }
         return new Object[]{parameter};
     }
 
@@ -62,12 +63,17 @@ public record ShulkerFillLevelAttribute(@Nullable ShulkerLevels levels) implemen
     }
 
     enum ShulkerLevels implements StringRepresentable {
-        EMPTY("empty", amount -> amount == 0),
-        PARTIAL("partial", amount -> amount > 0 && amount < ShulkerBoxBlockEntity.CONTAINER_SIZE),
-        FULL("full", amount -> amount == ShulkerBoxBlockEntity.CONTAINER_SIZE);
+        EMPTY("empty", amount -> amount == 0), PARTIAL(
+            "partial",
+            amount -> amount > 0 && amount < ShulkerBoxBlockEntity.CONTAINER_SIZE
+        ), FULL(
+            "full",
+            amount -> amount == ShulkerBoxBlockEntity.CONTAINER_SIZE
+        );
 
         public static final Codec<ShulkerLevels> CODEC = StringRepresentable.fromEnum(ShulkerLevels::values);
-        public static final StreamCodec<ByteBuf, ShulkerLevels> STREAM_CODEC = CatnipStreamCodecBuilders.ofEnum(ShulkerLevels.class);
+        public static final StreamCodec<ByteBuf, ShulkerLevels> STREAM_CODEC = CatnipStreamCodecBuilders.ofEnum(
+            ShulkerLevels.class);
 
         private final Predicate<Integer> requiredSize;
         private final String key;
@@ -79,7 +85,8 @@ public record ShulkerFillLevelAttribute(@Nullable ShulkerLevels levels) implemen
 
         @Nullable
         public static ShulkerLevels fromKey(String key) {
-            return Arrays.stream(values()).filter(shulkerLevels -> shulkerLevels.key.equals(key)).findFirst().orElse(null);
+            return Arrays.stream(values()).filter(shulkerLevels -> shulkerLevels.key.equals(key)).findFirst()
+                .orElse(null);
         }
 
         private static boolean isShulker(ItemStack stack) {
@@ -92,13 +99,19 @@ public record ShulkerFillLevelAttribute(@Nullable ShulkerLevels levels) implemen
         }
 
         public boolean canApply(ItemStack testStack) {
-            if (!isShulker(testStack))
+            if (!isShulker(testStack)) {
                 return false;
-            ItemContainerContents contents = testStack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-            if (contents == ItemContainerContents.EMPTY)
+            }
+            ItemContainerContents contents = testStack.getOrDefault(
+                DataComponents.CONTAINER,
+                ItemContainerContents.EMPTY
+            );
+            if (contents == ItemContainerContents.EMPTY) {
                 return requiredSize.test(0);
-            if (testStack.has(DataComponents.CONTAINER_LOOT))
+            }
+            if (testStack.has(DataComponents.CONTAINER_LOOT)) {
                 return false;
+            }
             int size = 0;
             for (ItemStackTemplate _ : contents.nonEmptyItems()) {
                 size++;

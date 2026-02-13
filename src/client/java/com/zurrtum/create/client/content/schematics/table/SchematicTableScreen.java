@@ -47,7 +47,8 @@ public class SchematicTableScreen extends AbstractSimiContainerScreen<SchematicT
     private final Component refresh = CreateLang.translateDirect("gui.schematicTable.refresh");
     private final Component folder = CreateLang.translateDirect("gui.schematicTable.open_folder");
     private final Component noSchematics = CreateLang.translateDirect("gui.schematicTable.noSchematics");
-    private final Component availableSchematicsTitle = CreateLang.translateDirect("gui.schematicTable.availableSchematics");
+    private final Component availableSchematicsTitle = CreateLang.translateDirect(
+        "gui.schematicTable.availableSchematics");
 
     protected AllGuiTextures background;
 
@@ -88,7 +89,10 @@ public class SchematicTableScreen extends AbstractSimiContainerScreen<SchematicT
         if (entity == null) {
             return null;
         }
-        try (ProblemReporter.ScopedCollector logging = new ProblemReporter.ScopedCollector(entity.problemPath(), LOGGER)) {
+        try (ProblemReporter.ScopedCollector logging = new ProblemReporter.ScopedCollector(
+            entity.problemPath(),
+            LOGGER
+        )) {
             ValueInput view = TagValueInput.create(logging, extraData.registryAccess(), extraData.readNbt());
             entity.readClient(view);
             return type.create(SchematicTableScreen::new, syncId, inventory, title, entity);
@@ -97,7 +101,12 @@ public class SchematicTableScreen extends AbstractSimiContainerScreen<SchematicT
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        return getChildAt(mouseX, mouseY).filter(element -> element.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)).isPresent();
+        return getChildAt(mouseX, mouseY).filter(element -> element.mouseScrolled(
+            mouseX,
+            mouseY,
+            horizontalAmount,
+            verticalAmount
+        )).isPresent();
     }
 
     @Override
@@ -143,8 +152,8 @@ public class SchematicTableScreen extends AbstractSimiContainerScreen<SchematicT
             removeWidget(schematicsArea);
 
             if (!availableSchematics1.isEmpty()) {
-                schematicsArea = new SelectionScrollInput(leftPos + 45, this.topPos + 21, 139, 18).forOptions(availableSchematics1)
-                    .titled(availableSchematicsTitle.plainCopy()).writingTo(schematicsLabel);
+                schematicsArea = new SelectionScrollInput(leftPos + 45, this.topPos + 21, 139, 18).forOptions(
+                    availableSchematics1).titled(availableSchematicsTitle.plainCopy()).writingTo(schematicsLabel);
                 schematicsArea.onChanged();
                 addRenderableWidget(schematicsArea);
             } else {
@@ -185,19 +194,32 @@ public class SchematicTableScreen extends AbstractSimiContainerScreen<SchematicT
         background.render(graphics, leftPos, topPos);
 
         Component titleText;
-        if (menu.contentHolder.isUploading)
+        if (menu.contentHolder.isUploading) {
             titleText = uploading;
-        else if (menu.getSlot(1).hasItem())
+        } else if (menu.getSlot(1).hasItem()) {
             titleText = finished;
-        else
+        } else {
             titleText = title;
+        }
 
-        graphics.drawString(font, titleText, leftPos + (imageWidth - 8 - font.width(titleText)) / 2, topPos + 4, 0xFF505050, false);
+        graphics.drawString(
+            font,
+            titleText,
+            leftPos + (imageWidth - 8 - font.width(titleText)) / 2,
+            topPos + 4,
+            0xFF505050,
+            false
+        );
 
-        if (schematicsArea == null)
+        if (schematicsArea == null) {
             graphics.drawString(font, noSchematics, leftPos + 54, topPos + 28, 0xFFD3D3D3, true);
+        }
 
-        int width = (int) (SCHEMATIC_TABLE_PROGRESS.getWidth() * Mth.lerp(partialTicks, lastChasingProgress, chasingProgress));
+        int width = (int) (SCHEMATIC_TABLE_PROGRESS.getWidth() * Mth.lerp(
+            partialTicks,
+            lastChasingProgress,
+            chasingProgress
+        ));
         int height = SCHEMATIC_TABLE_PROGRESS.getHeight();
         graphics.blit(
             RenderPipelines.GUI_TEXTURED,
@@ -238,16 +260,18 @@ public class SchematicTableScreen extends AbstractSimiContainerScreen<SchematicT
                     schematicsLabel.text = Component.literal(uploadingSchematic);
                 }
             }
-            if (schematicsArea != null)
+            if (schematicsArea != null) {
                 schematicsArea.visible = false;
+            }
 
         } else {
             progress = 0;
             chasingProgress = lastChasingProgress = 0;
             confirmButton.active = true;
 
-            if (schematicsLabel != null)
+            if (schematicsLabel != null) {
                 schematicsLabel.colored(0xFFFFFFFF);
+            }
             if (schematicsArea != null) {
                 schematicsArea.writingTo(schematicsLabel);
                 schematicsArea.visible = true;

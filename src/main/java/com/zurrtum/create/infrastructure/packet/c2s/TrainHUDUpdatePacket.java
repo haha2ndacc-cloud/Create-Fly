@@ -16,7 +16,8 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;
 
-public record TrainHUDUpdatePacket(UUID trainId, @Nullable Double throttle) implements Packet<ServerGamePacketListener> {
+public record TrainHUDUpdatePacket(UUID trainId,
+                                   @Nullable Double throttle) implements Packet<ServerGamePacketListener> {
     @SuppressWarnings("DataFlowIssue")
     public static final StreamCodec<RegistryFriendlyByteBuf, TrainHUDUpdatePacket> CODEC = StreamCodec.composite(
         UUIDUtil.STREAM_CODEC,

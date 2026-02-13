@@ -63,8 +63,13 @@ public final class MaterialRenderState {
         }
         GpuSampler textureSampler = texture.getSampler();
         FilterMode filterMode = material.blur() ? FilterMode.LINEAR : FilterMode.NEAREST;
-        GlSampler sampler = (GlSampler) RenderSystem.getSamplerCache()
-            .getSampler(textureSampler.getAddressModeU(), textureSampler.getAddressModeV(), filterMode, filterMode, material.mipmap());
+        GlSampler sampler = (GlSampler) RenderSystem.getSamplerCache().getSampler(
+            textureSampler.getAddressModeU(),
+            textureSampler.getAddressModeV(),
+            filterMode,
+            filterMode,
+            material.mipmap()
+        );
         GL33C.glBindSampler(Samplers.DIFFUSE.number, sampler.getId());
         GpuTextureView textureView = texture.getTextureView();
         int mipLevel = textureView.baseMipLevel();
@@ -177,7 +182,10 @@ public final class MaterialRenderState {
     public static void setupFrameBuffer() {
         RenderTarget target = Minecraft.getInstance().getMainRenderTarget();
         DirectStateAccess access = ((GlDevice) RenderSystem.getDevice().backend).directStateAccess();
-        int i = ((GlTexture) target.getColorTexture()).getFbo(access, target.useDepth ? target.getDepthTexture() : null);
+        int i = ((GlTexture) target.getColorTexture()).getFbo(
+            access,
+            target.useDepth ? target.getDepthTexture() : null
+        );
         GlStateManager._glBindFramebuffer(GlConst.GL_FRAMEBUFFER, i);
     }
 

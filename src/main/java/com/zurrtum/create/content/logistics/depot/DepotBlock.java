@@ -41,7 +41,13 @@ public class DepotBlock extends Block implements IBE<DepotBlockEntity>, IWrencha
     }
 
     @Override
-    public Container getInventory(LevelAccessor world, BlockPos pos, BlockState state, DepotBlockEntity blockEntity, @Nullable Direction context) {
+    public Container getInventory(
+        LevelAccessor world,
+        BlockPos pos,
+        BlockState state,
+        DepotBlockEntity blockEntity,
+        @Nullable Direction context
+    ) {
         return blockEntity.depotBehaviour.itemHandler;
     }
 
@@ -72,7 +78,12 @@ public class DepotBlock extends Block implements IBE<DepotBlockEntity>, IWrencha
     }
 
     @Override
-    public VoxelShape getShape(BlockState p_220053_1_, BlockGetter p_220053_2_, BlockPos p_220053_3_, CollisionContext p_220053_4_) {
+    public VoxelShape getShape(
+        BlockState p_220053_1_,
+        BlockGetter p_220053_2_,
+        BlockPos p_220053_3_,
+        CollisionContext p_220053_4_
+    ) {
         return AllShapes.CASING_13PX.get(Direction.UP);
     }
 

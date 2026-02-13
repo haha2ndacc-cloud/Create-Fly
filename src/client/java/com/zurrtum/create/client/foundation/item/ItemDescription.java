@@ -20,9 +20,8 @@ import java.util.function.Supplier;
 
 import static net.minecraft.ChatFormatting.*;
 
-public record ItemDescription(
-    ImmutableList<Component> lines, ImmutableList<Component> linesOnShift, ImmutableList<Component> linesOnCtrl
-) {
+public record ItemDescription(ImmutableList<Component> lines, ImmutableList<Component> linesOnShift,
+                              ImmutableList<Component> linesOnCtrl) {
     private static final Map<Item, Supplier<String>> CUSTOM_TOOLTIP_KEYS = new IdentityHashMap<>();
 
     @Nullable
@@ -56,8 +55,9 @@ public record ItemDescription(
         for (int i = 1; i < 100; i++) {
             String conditionKey = translationKey + ".condition" + i;
             String behaviourKey = translationKey + ".behaviour" + i;
-            if (!I18n.exists(conditionKey))
+            if (!I18n.exists(conditionKey)) {
                 break;
+            }
             builder.addBehaviour(I18n.get(conditionKey), I18n.get(behaviourKey));
         }
 
@@ -65,8 +65,9 @@ public record ItemDescription(
         for (int i = 1; i < 100; i++) {
             String controlKey = translationKey + ".control" + i;
             String actionKey = translationKey + ".action" + i;
-            if (!I18n.exists(controlKey))
+            if (!I18n.exists(controlKey)) {
                 break;
+            }
             builder.addAction(I18n.get(controlKey), I18n.get(actionKey));
         }
     }
@@ -142,21 +143,32 @@ public record ItemDescription(
                 String condition = behaviourPair.getLeft();
                 String behaviour = behaviourPair.getRight();
                 linesOnShift.add(Component.literal(condition).withStyle(GRAY));
-                linesOnShift.addAll(TooltipHelper.cutStringTextComponent(behaviour, palette.primary(), palette.highlight(), 1));
+                linesOnShift.addAll(TooltipHelper.cutStringTextComponent(
+                    behaviour,
+                    palette.primary(),
+                    palette.highlight(),
+                    1
+                ));
             }
 
             for (Pair<String, String> actionPair : actions) {
                 String condition = actionPair.getLeft();
                 String action = actionPair.getRight();
                 linesOnCtrl.add(Component.literal(condition).withStyle(GRAY));
-                linesOnCtrl.addAll(TooltipHelper.cutStringTextComponent(action, palette.primary(), palette.highlight(), 1));
+                linesOnCtrl.addAll(TooltipHelper.cutStringTextComponent(
+                    action,
+                    palette.primary(),
+                    palette.highlight(),
+                    1
+                ));
             }
 
             boolean hasDescription = !linesOnShift.isEmpty();
             boolean hasControls = !linesOnCtrl.isEmpty();
 
             if (hasDescription || hasControls) {
-                String[] holdDesc = CreateLang.translateDirect("tooltip.holdForDescription", "$").getString().split("\\$");
+                String[] holdDesc = CreateLang.translateDirect("tooltip.holdForDescription", "$").getString()
+                    .split("\\$");
                 String[] holdCtrl = CreateLang.translateDirect("tooltip.holdForControls", "$").getString().split("\\$");
                 MutableComponent keyShift = CreateLang.translateDirect("tooltip.keyShift");
                 MutableComponent keyCtrl = CreateLang.translateDirect("tooltip.keyCtrl");
@@ -185,8 +197,9 @@ public record ItemDescription(
                         list.add(0, tabBuilder);
                     }
 
-                    if (shift || ctrl)
+                    if (shift || ctrl) {
                         list.add(hasDescription && hasControls ? 2 : 1, CommonComponents.EMPTY);
+                    }
                 }
             }
 
@@ -199,7 +212,11 @@ public record ItemDescription(
                 linesOnCtrl.addAll(lines);
             }
 
-            return new ItemDescription(ImmutableList.copyOf(lines), ImmutableList.copyOf(linesOnShift), ImmutableList.copyOf(linesOnCtrl));
+            return new ItemDescription(
+                ImmutableList.copyOf(lines),
+                ImmutableList.copyOf(linesOnShift),
+                ImmutableList.copyOf(linesOnCtrl)
+            );
         }
     }
 

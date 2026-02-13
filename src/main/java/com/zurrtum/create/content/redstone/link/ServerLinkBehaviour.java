@@ -25,8 +25,7 @@ public class ServerLinkBehaviour extends BlockEntityBehaviour<SmartBlockEntity> 
     public static final BehaviourType<ServerLinkBehaviour> TYPE = new BehaviourType<>();
 
     enum Mode {
-        TRANSMIT,
-        RECEIVE
+        TRANSMIT, RECEIVE
     }
 
     public Frequency frequencyFirst;
@@ -66,8 +65,9 @@ public class ServerLinkBehaviour extends BlockEntityBehaviour<SmartBlockEntity> 
     }
 
     public void copyItemsFrom(@Nullable ServerLinkBehaviour behaviour) {
-        if (behaviour == null)
+        if (behaviour == null) {
             return;
+        }
         frequencyFirst = behaviour.frequencyFirst;
         frequencyLast = behaviour.frequencyLast;
     }
@@ -84,8 +84,9 @@ public class ServerLinkBehaviour extends BlockEntityBehaviour<SmartBlockEntity> 
 
     @Override
     public void setReceivedStrength(int networkPower) {
-        if (!newPosition)
+        if (!newPosition) {
             return;
+        }
         signalCallback.accept(networkPower);
     }
 
@@ -96,8 +97,9 @@ public class ServerLinkBehaviour extends BlockEntityBehaviour<SmartBlockEntity> 
     @Override
     public void initialize() {
         super.initialize();
-        if (getLevel().isClientSide())
+        if (getLevel().isClientSide()) {
             return;
+        }
         getHandler().addToNetwork(getLevel(), this);
         newPosition = true;
     }
@@ -110,8 +112,9 @@ public class ServerLinkBehaviour extends BlockEntityBehaviour<SmartBlockEntity> 
     @Override
     public void unload() {
         super.unload();
-        if (getLevel().isClientSide())
+        if (getLevel().isClientSide()) {
             return;
+        }
         getHandler().removeFromNetwork(getLevel(), this);
     }
 
@@ -130,7 +133,8 @@ public class ServerLinkBehaviour extends BlockEntityBehaviour<SmartBlockEntity> 
 
     @Override
     public void read(ValueInput view, boolean clientPacket) {
-        newPosition = view.read("LastKnownPosition", BlockPos.CODEC).map(pos -> !blockEntity.getBlockPos().equals(pos)).orElse(true);
+        newPosition = view.read("LastKnownPosition", BlockPos.CODEC).map(pos -> !blockEntity.getBlockPos().equals(pos))
+            .orElse(true);
 
         super.read(view, clientPacket);
         frequencyFirst = view.read("FrequencyFirst", Frequency.CODEC).orElse(Frequency.EMPTY);
@@ -143,16 +147,19 @@ public class ServerLinkBehaviour extends BlockEntityBehaviour<SmartBlockEntity> 
         ItemStack toCompare = first ? frequencyFirst.getStack() : frequencyLast.getStack();
         boolean changed = !ItemStack.isSameItemSameComponents(stack, toCompare);
 
-        if (changed)
+        if (changed) {
             getHandler().removeFromNetwork(getLevel(), this);
+        }
 
-        if (first)
+        if (first) {
             frequencyFirst = Frequency.of(stack);
-        else
+        } else {
             frequencyLast = Frequency.of(stack);
+        }
 
-        if (!changed)
+        if (!changed) {
             return;
+        }
 
         blockEntity.sendData();
         getHandler().addToNetwork(getLevel(), this);
@@ -171,12 +178,15 @@ public class ServerLinkBehaviour extends BlockEntityBehaviour<SmartBlockEntity> 
     public boolean isAlive() {
         Level level = getLevel();
         BlockPos pos = getPos();
-        if (blockEntity.isChunkUnloaded())
+        if (blockEntity.isChunkUnloaded()) {
             return false;
-        if (blockEntity.isRemoved())
+        }
+        if (blockEntity.isRemoved()) {
             return false;
-        if (!level.isLoaded(pos))
+        }
+        if (!level.isLoaded(pos)) {
             return false;
+        }
         return level.getBlockEntity(pos) == blockEntity;
     }
 
@@ -207,8 +217,9 @@ public class ServerLinkBehaviour extends BlockEntityBehaviour<SmartBlockEntity> 
         if (last.isEmpty()) {
             return false;
         }
-        if (simulate)
+        if (simulate) {
             return true;
+        }
         setFrequency(true, first.get());
         setFrequency(false, last.get());
         return true;

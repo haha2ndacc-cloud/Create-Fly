@@ -72,14 +72,22 @@ public class TableClothBlock extends Block implements IWrenchable, IBE<TableClot
     }
 
     @Override
-    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
+    public void setPlacedBy(
+        Level pLevel,
+        BlockPos pPos,
+        BlockState pState,
+        @Nullable LivingEntity pPlacer,
+        ItemStack pStack
+    ) {
         super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
-        if (!(pPlacer instanceof Player player))
+        if (!(pPlacer instanceof Player player)) {
             return;
+        }
 
         AutoRequestData requestData = AutoRequestData.readFromItem(pLevel, player, pPos, pStack);
-        if (requestData == null)
+        if (requestData == null) {
             return;
+        }
 
         pLevel.setBlockAndUpdate(pPos, pState.setValue(HAS_BE, true));
         withBlockEntityDo(
@@ -104,29 +112,36 @@ public class TableClothBlock extends Block implements IWrenchable, IBE<TableClot
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-        if (hitResult.getDirection() == Direction.DOWN)
+        if (hitResult.getDirection() == Direction.DOWN) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
-        if (level.isClientSide())
-            return InteractionResult.SUCCESS;
-
-        ItemStack heldItem = player.getItemInHand(hand);
-        boolean shiftKeyDown = player.isShiftKeyDown();
-        if (!player.mayBuild())
-            return InteractionResult.TRY_WITH_EMPTY_HAND;
-
-        IPlacementHelper placementHelper = PlacementHelpers.get(placementHelperId);
-        if (placementHelper.matchesItem(heldItem)) {
-            if (shiftKeyDown)
-                return InteractionResult.TRY_WITH_EMPTY_HAND;
-            placementHelper.getOffset(player, level, state, pos, hitResult).placeInWorld(level, (BlockItem) heldItem.getItem(), player, hand);
+        }
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
 
-        if ((shiftKeyDown || heldItem.isEmpty()) && !state.getValue(HAS_BE))
+        ItemStack heldItem = player.getItemInHand(hand);
+        boolean shiftKeyDown = player.isShiftKeyDown();
+        if (!player.mayBuild()) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
 
-        if (!level.isClientSide() && !state.getValue(HAS_BE))
+        IPlacementHelper placementHelper = PlacementHelpers.get(placementHelperId);
+        if (placementHelper.matchesItem(heldItem)) {
+            if (shiftKeyDown) {
+                return InteractionResult.TRY_WITH_EMPTY_HAND;
+            }
+            placementHelper.getOffset(player, level, state, pos, hitResult)
+                .placeInWorld(level, (BlockItem) heldItem.getItem(), player, hand);
+            return InteractionResult.SUCCESS;
+        }
+
+        if ((shiftKeyDown || heldItem.isEmpty()) && !state.getValue(HAS_BE)) {
+            return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
+
+        if (!level.isClientSide() && !state.getValue(HAS_BE)) {
             level.setBlockAndUpdate(pos, state.cycle(HAS_BE));
+        }
 
         return onBlockEntityUseItemOn(level, pos, dcbe -> dcbe.use(player, hitResult));
     }
@@ -135,10 +150,12 @@ public class TableClothBlock extends Block implements IWrenchable, IBE<TableClot
     protected List<ItemStack> getDrops(BlockState pState, LootParams.Builder pParams) {
         List<ItemStack> drops = super.getDrops(pState, pParams);
 
-        if (!(pParams.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof TableClothBlockEntity dcbe))
+        if (!(pParams.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof TableClothBlockEntity dcbe)) {
             return drops;
-        if (!dcbe.isShop())
+        }
+        if (!dcbe.isShop()) {
             return drops;
+        }
 
         for (ItemStack stack : drops) {
             if (stack.is(AllItemTags.TABLE_CLOTHS)) {
@@ -167,7 +184,12 @@ public class TableClothBlock extends Block implements IWrenchable, IBE<TableClot
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public VoxelShape getCollisionShape(
+        BlockState pState,
+        BlockGetter pLevel,
+        BlockPos pPos,
+        CollisionContext pContext
+    ) {
         return AllShapes.TABLE_CLOTH_OCCLUSION;
     }
 
@@ -205,7 +227,13 @@ public class TableClothBlock extends Block implements IWrenchable, IBE<TableClot
         }
 
         @Override
-        public PlacementOffset getOffset(Player player, Level world, BlockState state, BlockPos pos, BlockHitResult ray) {
+        public PlacementOffset getOffset(
+            Player player,
+            Level world,
+            BlockState state,
+            BlockPos pos,
+            BlockHitResult ray
+        ) {
             List<Direction> directions = IPlacementHelper.orderedByDistanceExceptAxis(
                 pos,
                 ray.getLocation(),
@@ -213,10 +241,11 @@ public class TableClothBlock extends Block implements IWrenchable, IBE<TableClot
                 dir -> world.getBlockState(pos.relative(dir)).canBeReplaced()
             );
 
-            if (directions.isEmpty())
+            if (directions.isEmpty()) {
                 return PlacementOffset.fail();
-            else
+            } else {
                 return PlacementOffset.success(pos.relative(directions.getFirst()), s -> s);
+            }
         }
     }
 }

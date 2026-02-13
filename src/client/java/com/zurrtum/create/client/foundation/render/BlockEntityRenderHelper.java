@@ -85,10 +85,11 @@ public class BlockEntityRenderHelper {
                 erroredBEsOut.set(i);
 
                 String message = "BlockEntity " + RegisteredObjectsHelper.getKeyOrThrow(blockEntity.getType()) + " could not be rendered virtually.";
-                if (AllConfigs.client().explainRenderErrors.get())
+                if (AllConfigs.client().explainRenderErrors.get()) {
                     Create.LOGGER.error(message, e);
-                else
+                } else {
                     Create.LOGGER.error(message);
+                }
             }
         }
 
@@ -116,9 +117,8 @@ public class BlockEntityRenderHelper {
         }
     }
 
-    public record BlockEntityListRenderState(
-        BlockEntityRenderDispatcher dispatcher, Vec3 camera, BlockPos cameraPos, List<BlockEntityRenderState> states
-    ) {
+    public record BlockEntityListRenderState(BlockEntityRenderDispatcher dispatcher, Vec3 camera, BlockPos cameraPos,
+                                             List<BlockEntityRenderState> states) {
         public void render(PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraRenderState) {
             Vec3 prevPos = cameraRenderState.pos;
             BlockPos prevBlockPos = cameraRenderState.blockPos;

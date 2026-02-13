@@ -77,10 +77,11 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
         String modelDomain = modelLocation.getNamespace();
         String modelPath = modelLocation.getPath();
         int lastSlash = modelPath.lastIndexOf('/');
-        if (lastSlash >= 0)
+        if (lastSlash >= 0) {
             modelPath = modelPath.substring(0, lastSlash + 1); // include the '/'
-        else
+        } else {
             modelPath = "";
+        }
 
         ObjMaterialLibrary mtllib = ObjMaterialLibrary.EMPTY;
         Material currentMat = null;
@@ -93,10 +94,14 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
 
         if (materialLibraryOverrideLocation != null) {
             String lib = materialLibraryOverrideLocation;
-            if (lib.contains(":"))
+            if (lib.contains(":")) {
                 mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(Identifier.parse(lib));
-            else
-                mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(Identifier.fromNamespaceAndPath(modelDomain, modelPath + lib));
+            } else {
+                mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(Identifier.fromNamespaceAndPath(
+                    modelDomain,
+                    modelPath + lib
+                ));
+            }
         }
 
         String[] line;
@@ -104,14 +109,19 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
             switch (line[0]) {
                 case "mtllib": // Loads material library
                 {
-                    if (materialLibraryOverrideLocation != null)
+                    if (materialLibraryOverrideLocation != null) {
                         break;
+                    }
 
                     String lib = line[1];
-                    if (lib.contains(":"))
+                    if (lib.contains(":")) {
                         mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(Identifier.parse(lib));
-                    else
-                        mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(Identifier.fromNamespaceAndPath(modelDomain, modelPath + lib));
+                    } else {
+                        mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(Identifier.fromNamespaceAndPath(
+                            modelDomain,
+                            modelPath + lib
+                        ));
+                    }
                     break;
                 }
 
@@ -163,26 +173,31 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
                     for (int i = 0; i < vertices.length; i++) {
                         String vertexData = line[i + 1];
                         String[] vertexParts = vertexData.split("/");
-                        int[] vertex = Arrays.stream(vertexParts).mapToInt(num -> Strings.isNullOrEmpty(num) ? 0 : Integer.parseInt(num)).toArray();
-                        if (vertex[0] < 0)
+                        int[] vertex = Arrays.stream(vertexParts)
+                            .mapToInt(num -> Strings.isNullOrEmpty(num) ? 0 : Integer.parseInt(num)).toArray();
+                        if (vertex[0] < 0) {
                             vertex[0] = model.positions.size() + vertex[0];
-                        else
+                        } else {
                             vertex[0]--;
+                        }
                         if (vertex.length > 1) {
-                            if (vertex[1] < 0)
+                            if (vertex[1] < 0) {
                                 vertex[1] = model.texCoords.size() + vertex[1];
-                            else
+                            } else {
                                 vertex[1]--;
+                            }
                             if (vertex.length > 2) {
-                                if (vertex[2] < 0)
+                                if (vertex[2] < 0) {
                                     vertex[2] = model.normals.size() + vertex[2];
-                                else
+                                } else {
                                     vertex[2]--;
+                                }
                                 if (vertex.length > 3) {
-                                    if (vertex[3] < 0)
+                                    if (vertex[3] < 0) {
                                         vertex[3] = model.colors.size() + vertex[3];
-                                    else
+                                    } else {
                                         vertex[3]--;
+                                    }
                                 }
                             }
                         }
@@ -273,12 +288,22 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
             case 2 -> new Vector4f(Float.parseFloat(line[1]), 0, 0, 1);
             case 3 -> new Vector4f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), 0, 1);
             case 4 -> new Vector4f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]), 1);
-            default -> new Vector4f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]), Float.parseFloat(line[4]));
+            default -> new Vector4f(
+                Float.parseFloat(line[1]),
+                Float.parseFloat(line[2]),
+                Float.parseFloat(line[3]),
+                Float.parseFloat(line[4])
+            );
         };
     }
 
     @Override
-    public QuadCollection bake(TextureSlots textureSlots, ModelBaker baker, ModelState state, ModelDebugName debugName) {
+    public QuadCollection bake(
+        TextureSlots textureSlots,
+        ModelBaker baker,
+        ModelState state,
+        ModelDebugName debugName
+    ) {
         ContextMap.Builder propertiesBuilder = new ContextMap.Builder();
         NeoForgeModelProperties.fillRootTransformProperty(propertiesBuilder, parameters.rootTransform());
         NeoForgeModelProperties.fillPartVisibilityProperty(propertiesBuilder, parameters.partVisibility());
@@ -293,7 +318,10 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
         ModelDebugName debugName,
         ContextMap additionalProperties
     ) {
-        Map<String, Boolean> partVisibility = additionalProperties.getOrDefault(NeoForgeModelProperties.PART_VISIBILITY, Map.of());
+        Map<String, Boolean> partVisibility = additionalProperties.getOrDefault(
+            NeoForgeModelProperties.PART_VISIBILITY,
+            Map.of()
+        );
         var builder = new QuadCollection.Builder();
         parts.values().stream().filter(part -> partVisibility.getOrDefault(part.name(), true))
             .forEach(part -> part.addQuads(builder, textureSlots, baker, state, debugName, additionalProperties));
@@ -301,8 +329,9 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
     }
 
     private Transformation blockCenterToCorner(Transformation transform) {
-        if (transform.equals(Transformation.identity()))
+        if (transform.equals(Transformation.identity())) {
             return Transformation.identity();
+        }
 
         Matrix4f ret = transform.getMatrixCopy();
         Vector3f origin = new Vector3f(.5f, .5f, .5f);
@@ -397,27 +426,45 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
         Direction cull = null;
         if (automaticCulling) {
             if (Mth.equal(pos[0].x(), 0) && // vertex.position.x
-                Mth.equal(pos[1].x(), 0) && Mth.equal(pos[2].x(), 0) && Mth.equal(pos[3].x(), 0) && norm[0].x() < 0) // vertex.normal.x
+                Mth.equal(pos[1].x(), 0) && Mth.equal(pos[2].x(), 0) && Mth.equal(
+                pos[3].x(),
+                0
+            ) && norm[0].x() < 0) // vertex.normal.x
             {
                 cull = Direction.WEST;
             } else if (Mth.equal(pos[0].x(), 1) && // vertex.position.x
-                Mth.equal(pos[1].x(), 1) && Mth.equal(pos[2].x(), 1) && Mth.equal(pos[3].x(), 1) && norm[0].x() > 0) // vertex.normal.x
+                Mth.equal(pos[1].x(), 1) && Mth.equal(pos[2].x(), 1) && Mth.equal(
+                pos[3].x(),
+                1
+            ) && norm[0].x() > 0) // vertex.normal.x
             {
                 cull = Direction.EAST;
             } else if (Mth.equal(pos[0].z(), 0) && // vertex.position.z
-                Mth.equal(pos[1].z(), 0) && Mth.equal(pos[2].z(), 0) && Mth.equal(pos[3].z(), 0) && norm[0].z() < 0) // vertex.normal.z
+                Mth.equal(pos[1].z(), 0) && Mth.equal(pos[2].z(), 0) && Mth.equal(
+                pos[3].z(),
+                0
+            ) && norm[0].z() < 0) // vertex.normal.z
             {
                 cull = Direction.NORTH; // can never remember
             } else if (Mth.equal(pos[0].z(), 1) && // vertex.position.z
-                Mth.equal(pos[1].z(), 1) && Mth.equal(pos[2].z(), 1) && Mth.equal(pos[3].z(), 1) && norm[0].z() > 0) // vertex.normal.z
+                Mth.equal(pos[1].z(), 1) && Mth.equal(pos[2].z(), 1) && Mth.equal(
+                pos[3].z(),
+                1
+            ) && norm[0].z() > 0) // vertex.normal.z
             {
                 cull = Direction.SOUTH;
             } else if (Mth.equal(pos[0].y(), 0) && // vertex.position.y
-                Mth.equal(pos[1].y(), 0) && Mth.equal(pos[2].y(), 0) && Mth.equal(pos[3].y(), 0) && norm[0].y() < 0) // vertex.normal.z
+                Mth.equal(pos[1].y(), 0) && Mth.equal(pos[2].y(), 0) && Mth.equal(
+                pos[3].y(),
+                0
+            ) && norm[0].y() < 0) // vertex.normal.z
             {
                 cull = Direction.DOWN; // can never remember
             } else if (Mth.equal(pos[0].y(), 1) && // vertex.position.y
-                Mth.equal(pos[1].y(), 1) && Mth.equal(pos[2].y(), 1) && Mth.equal(pos[3].y(), 1) && norm[0].y() > 0) // vertex.normal.y
+                Mth.equal(pos[1].y(), 1) && Mth.equal(pos[2].y(), 1) && Mth.equal(
+                pos[3].y(),
+                1
+            ) && norm[0].y() > 0) // vertex.normal.y
             {
                 cull = Direction.UP;
             }
@@ -475,16 +522,21 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
         ) {
             super.addQuads(builder, slots, baker, state, debugName, additionalProperties);
 
-            Map<String, Boolean> partVisibility = additionalProperties.getOrDefault(NeoForgeModelProperties.PART_VISIBILITY, Map.of());
-            parts.values().stream().filter(part -> partVisibility.getOrDefault("%s.%s".formatted(name(), part.name()), true))
+            Map<String, Boolean> partVisibility = additionalProperties.getOrDefault(
+                NeoForgeModelProperties.PART_VISIBILITY,
+                Map.of()
+            );
+            parts.values().stream()
+                .filter(part -> partVisibility.getOrDefault("%s.%s".formatted(name(), part.name()), true))
                 .forEach(part -> part.addQuads(builder, slots, baker, state, debugName, additionalProperties));
         }
 
         @Override
         protected void addNamesRecursively(Set<String> names) {
             super.addNamesRecursively(names);
-            for (ModelObject object : parts.values())
+            for (ModelObject object : parts.values()) {
                 object.addNamesRecursively(names);
+            }
         }
     }
 
@@ -508,27 +560,38 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
             ModelDebugName debugName,
             ContextMap additionalProperties
         ) {
-            if (mat == null)
+            if (mat == null) {
                 return;
+            }
             TextureAtlasSprite texture = baker.sprites().resolveSlot(slots, mat.diffuseColorMap, debugName);
             int tintIndex = mat.diffuseTintIndex;
             Vector4f colorTint = mat.diffuseColor;
 
-            var rootTransform = additionalProperties.getOrDefault(NeoForgeModelProperties.TRANSFORM, Transformation.identity());
-            var transform = rootTransform.equals(Transformation.identity()) ? state.transformation() : state.transformation().compose(rootTransform);
+            var rootTransform = additionalProperties.getOrDefault(
+                NeoForgeModelProperties.TRANSFORM,
+                Transformation.identity()
+            );
+            var transform = rootTransform.equals(Transformation.identity()) ? state.transformation() : state.transformation()
+                .compose(rootTransform);
             for (int[][] face : faces) {
-                Pair<BakedQuad, @Nullable Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, transform);
-                if (quad.getRight() == null)
+                Pair<BakedQuad, @Nullable Direction> quad = makeQuad(
+                    face,
+                    tintIndex,
+                    colorTint,
+                    mat.ambientColor,
+                    texture,
+                    transform
+                );
+                if (quad.getRight() == null) {
                     builder.addUnculledFace(quad.getLeft());
-                else
+                } else {
                     builder.addCulledFace(quad.getRight(), quad.getLeft());
+                }
             }
         }
     }
 
-    public record Settings(
-        Identifier modelLocation, boolean automaticCulling, boolean shadeQuads, boolean flipV, boolean emissiveAmbient, @Nullable String mtlOverride,
-        StandardModelParameters parameters
-    ) {
+    public record Settings(Identifier modelLocation, boolean automaticCulling, boolean shadeQuads, boolean flipV,
+                           boolean emissiveAmbient, @Nullable String mtlOverride, StandardModelParameters parameters) {
     }
 }

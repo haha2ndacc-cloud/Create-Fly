@@ -17,8 +17,9 @@ public abstract class TranslatingContraption extends Contraption {
     protected @Nullable Direction cachedColliderDirection;
 
     public Set<BlockPos> getOrCreateColliders(Level world, Direction movementDirection) {
-        if (getBlocks() == null)
+        if (getBlocks() == null) {
             return Collections.emptySet();
+        }
         if (cachedColliders == null || cachedColliderDirection != movementDirection) {
             cachedColliderDirection = movementDirection;
             cachedColliders = createColliders(world, movementDirection);
@@ -30,10 +31,13 @@ public abstract class TranslatingContraption extends Contraption {
         Set<BlockPos> colliders = new HashSet<>();
         for (StructureBlockInfo info : getBlocks().values()) {
             BlockPos offsetPos = info.pos().relative(movementDirection);
-            if (info.state().getCollisionShape(world, offsetPos).isEmpty())
+            if (info.state().getCollisionShape(world, offsetPos).isEmpty()) {
                 continue;
-            if (getBlocks().containsKey(offsetPos) && !getBlocks().get(offsetPos).state().getCollisionShape(world, offsetPos).isEmpty())
+            }
+            if (getBlocks().containsKey(offsetPos) && !getBlocks().get(offsetPos).state()
+                .getCollisionShape(world, offsetPos).isEmpty()) {
                 continue;
+            }
             colliders.add(info.pos());
         }
         return colliders;

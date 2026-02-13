@@ -14,7 +14,16 @@ public class DualVertexConsumer extends VertexMultiConsumer.Double {
     }
 
     @Override
-    public void putBulkData(PoseStack.Pose matrixEntry, BakedQuad quad, float red, float green, float blue, float f, int i, int j) {
+    public void putBulkData(
+        PoseStack.Pose matrixEntry,
+        BakedQuad quad,
+        float red,
+        float green,
+        float blue,
+        float f,
+        int i,
+        int j
+    ) {
         first.putBulkData(matrixEntry, quad, red, green, blue, f, i, j);
         second.putBulkData(matrixEntry, quad, red, green, blue, f, i, j);
     }
@@ -35,7 +44,14 @@ public class DualVertexConsumer extends VertexMultiConsumer.Double {
         second.putBulkData(matrixEntry, quad, brightnesses, red, green, blue, f, is, i);
     }
 
-    public void emit(ModelPart part, PoseStack matrices, @Nullable TextureAtlasSprite sprite, int light, int overlay, int color) {
+    public void emit(
+        ModelPart part,
+        PoseStack matrices,
+        @Nullable TextureAtlasSprite sprite,
+        int light,
+        int overlay,
+        int color
+    ) {
         ((ItemMeshEmitter) second).emit(part, matrices, sprite, (ItemMeshEmitter) first, light, overlay, color);
     }
 }

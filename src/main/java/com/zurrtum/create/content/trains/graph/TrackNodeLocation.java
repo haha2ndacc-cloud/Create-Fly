@@ -79,7 +79,10 @@ public class TrackNodeLocation extends Vec3i {
 
     @Override
     public boolean equals(Object pOther) {
-        return equalsIgnoreDim(pOther) && pOther instanceof TrackNodeLocation tnl && Objects.equals(tnl.dimension, dimension);
+        return equalsIgnoreDim(pOther) && pOther instanceof TrackNodeLocation tnl && Objects.equals(
+            tnl.dimension,
+            dimension
+        );
     }
 
     public boolean equalsIgnoreDim(Object pOther) {
@@ -93,10 +96,12 @@ public class TrackNodeLocation extends Vec3i {
 
     public void write(ValueOutput view, @Nullable DimensionPalette dimensions) {
         view.store("Pos", POS_CODEC, this);
-        if (dimensions != null)
+        if (dimensions != null) {
             view.store("D", dimensions, dimension);
-        if (yOffsetPixels != 0)
+        }
+        if (yOffsetPixels != 0) {
             view.putInt("YO", yOffsetPixels);
+        }
     }
 
     public static <T> DataResult<T> encode(
@@ -107,27 +112,36 @@ public class TrackNodeLocation extends Vec3i {
     ) {
         RecordBuilder<T> builder = ops.mapBuilder();
         builder.add("Pos", input, POS_CODEC);
-        if (dimensions != null)
+        if (dimensions != null) {
             builder.add("D", input.dimension, dimensions);
-        if (input.yOffsetPixels != 0)
+        }
+        if (input.yOffsetPixels != 0) {
             builder.add("YO", ops.createInt(input.yOffsetPixels));
+        }
         return builder.build(empty);
     }
 
     public static TrackNodeLocation read(ValueInput view, @Nullable DimensionPalette dimensions) {
         TrackNodeLocation location = view.read("Pos", POS_CODEC).orElseThrow();
-        if (dimensions != null)
+        if (dimensions != null) {
             location.dimension = view.read("D", dimensions).orElse(Level.OVERWORLD);
+        }
         location.yOffsetPixels = view.getIntOr("YO", 0);
         return location;
     }
 
-    public static <T> TrackNodeLocation decode(final DynamicOps<T> ops, final T input, @Nullable DimensionPalette dimensions) {
+    public static <T> TrackNodeLocation decode(
+        final DynamicOps<T> ops,
+        final T input,
+        @Nullable DimensionPalette dimensions
+    ) {
         MapLike<T> map = ops.getMap(input).getOrThrow();
         TrackNodeLocation location = POS_CODEC.decode(ops, map.get("Pos")).getOrThrow().getFirst();
-        if (dimensions != null)
+        if (dimensions != null) {
             location.dimension = dimensions.parse(ops, map.get("D")).result().orElse(Level.OVERWORLD);
-        location.yOffsetPixels = Optional.ofNullable(map.get("YO")).map(value -> ops.getNumberValue(value).getOrThrow().intValue()).orElse(0);
+        }
+        location.yOffsetPixels = Optional.ofNullable(map.get("YO"))
+            .map(value -> ops.getNumberValue(value).getOrThrow().intValue()).orElse(0);
         return location;
     }
 
@@ -140,7 +154,11 @@ public class TrackNodeLocation extends Vec3i {
     }
 
     public static TrackNodeLocation receive(FriendlyByteBuf buffer, DimensionPalette dimensions) {
-        TrackNodeLocation location = new TrackNodeLocation(buffer.readVarInt(), buffer.readShort(), buffer.readVarInt());
+        TrackNodeLocation location = new TrackNodeLocation(
+            buffer.readVarInt(),
+            buffer.readShort(),
+            buffer.readVarInt()
+        );
         location.yOffsetPixels = buffer.readVarInt();
         location.dimension = dimensions.decode(buffer.readVarInt());
         return location;
@@ -150,10 +168,13 @@ public class TrackNodeLocation extends Vec3i {
         Set<BlockPos> set = new HashSet<>();
         Vec3 vec3 = getLocation().subtract(0, yOffsetPixels / 16.0, 0);
         double step = 1 / 8f;
-        for (int x : Iterate.positiveAndNegative)
-            for (int y : Iterate.positiveAndNegative)
-                for (int z : Iterate.positiveAndNegative)
+        for (int x : Iterate.positiveAndNegative) {
+            for (int y : Iterate.positiveAndNegative) {
+                for (int z : Iterate.positiveAndNegative) {
                     set.add(BlockPos.containing(vec3.add(x * step, y * step, z * step)));
+                }
+            }
+        }
         return set;
     }
 
@@ -198,8 +219,9 @@ public class TrackNodeLocation extends Vec3i {
 
         public DiscoveredLocation viaTurn(@Nullable BezierConnection turn) {
             this.turn = turn;
-            if (turn != null)
+            if (turn != null) {
                 forceNode();
+            }
             return this;
         }
 
@@ -241,7 +263,10 @@ public class TrackNodeLocation extends Vec3i {
         }
 
         public boolean notInLineWith(Vec3 direction) {
-            return this.direction != null && Math.max(direction.dot(this.direction), direction.dot(this.direction.scale(-1))) < 7 / 8f;
+            return this.direction != null && Math.max(
+                direction.dot(this.direction),
+                direction.dot(this.direction.scale(-1))
+            ) < 7 / 8f;
         }
 
         @Nullable

@@ -18,10 +18,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
 
-public record ValueSettingsPacket(
-    BlockPos pos, int row, int value, @Nullable InteractionHand interactHand, @Nullable BlockHitResult hitResult, Direction side, boolean ctrlDown,
-    int behaviourIndex
-) implements Packet<ServerGamePacketListener> {
+public record ValueSettingsPacket(BlockPos pos, int row, int value, @Nullable InteractionHand interactHand,
+                                  @Nullable BlockHitResult hitResult, Direction side, boolean ctrlDown,
+                                  int behaviourIndex) implements Packet<ServerGamePacketListener> {
     @SuppressWarnings("DataFlowIssue")
     public static final StreamCodec<RegistryFriendlyByteBuf, ValueSettingsPacket> CODEC = CatnipLargerStreamCodecs.composite(
         BlockPos.STREAM_CODEC,

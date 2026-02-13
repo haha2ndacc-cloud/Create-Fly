@@ -14,7 +14,8 @@ import net.minecraft.network.protocol.game.ServerGamePacketListener;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.jspecify.annotations.Nullable;
 
-public record FilterScreenPacket(Option option, @Nullable CompoundTag data) implements Packet<ServerGamePacketListener> {
+public record FilterScreenPacket(Option option,
+                                 @Nullable CompoundTag data) implements Packet<ServerGamePacketListener> {
     @SuppressWarnings("DataFlowIssue")
     public static final StreamCodec<RegistryFriendlyByteBuf, FilterScreenPacket> CODEC = StreamCodec.composite(
         Option.STREAM_CODEC,
@@ -39,15 +40,7 @@ public record FilterScreenPacket(Option option, @Nullable CompoundTag data) impl
     }
 
     public enum Option {
-        WHITELIST,
-        WHITELIST2,
-        BLACKLIST,
-        RESPECT_DATA,
-        IGNORE_DATA,
-        UPDATE_FILTER_ITEM,
-        ADD_TAG,
-        ADD_INVERTED_TAG,
-        UPDATE_ADDRESS;
+        WHITELIST, WHITELIST2, BLACKLIST, RESPECT_DATA, IGNORE_DATA, UPDATE_FILTER_ITEM, ADD_TAG, ADD_INVERTED_TAG, UPDATE_ADDRESS;
 
         public static final StreamCodec<ByteBuf, Option> STREAM_CODEC = CatnipStreamCodecBuilders.ofEnum(Option.class);
     }

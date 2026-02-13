@@ -27,8 +27,7 @@ public class MysteriousItemConversionCategory extends CreateCategory<MysteriousI
                 Identifier.fromNamespaceAndPath(MOD_ID, "to_blaze_burner"),
                 AllItems.EMPTY_BLAZE_BURNER,
                 AllItems.BLAZE_BURNER
-            ),
-            new MysteriousItemConversionDisplay(
+            ), new MysteriousItemConversionDisplay(
                 Identifier.fromNamespaceAndPath(MOD_ID, "to_haunted_bell"),
                 AllItems.PECULIAR_BELL,
                 AllItems.HAUNTED_BELL
@@ -68,7 +67,13 @@ public class MysteriousItemConversionCategory extends CreateCategory<MysteriousI
     }
 
     @Override
-    public void draw(MysteriousItemConversionDisplay recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
+    public void draw(
+        MysteriousItemConversionDisplay recipe,
+        IRecipeSlotsView recipeSlotsView,
+        GuiGraphics graphics,
+        double mouseX,
+        double mouseY
+    ) {
         AllGuiTextures.JEI_LONG_ARROW.render(graphics, 52, 20);
         AllGuiTextures.JEI_QUESTION_MARK.render(graphics, 77, 5);
     }

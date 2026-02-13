@@ -38,7 +38,8 @@ import java.util.*;
 
 import static com.zurrtum.create.Create.MOD_ID;
 
-public record PotionRecipe(FluidStack result, FluidIngredient fluidIngredient, Ingredient ingredient) implements BasinRecipe {
+public record PotionRecipe(FluidStack result, FluidIngredient fluidIngredient,
+                           Ingredient ingredient) implements BasinRecipe {
     public static final MapCodec<PotionRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec((RecordCodecBuilder.Instance<PotionRecipe> instance) -> instance.group(
         FluidStack.CODEC.fieldOf("result").forGetter(PotionRecipe::result),
         FluidIngredient.CODEC.fieldOf("fluid_ingredient").forGetter(PotionRecipe::fluidIngredient),
@@ -74,8 +75,16 @@ public record PotionRecipe(FluidStack result, FluidIngredient fluidIngredient, I
         for (Item container : allowedSupportedContainers) {
             BottleType bottleType = PotionFluidHandler.bottleTypeFromItem(container);
             for (PotionBrewing.Mix<Potion> mix : potionBrewing.potionMixes) {
-                FluidIngredient fromFluid = PotionFluidHandler.getFluidIngredientFromPotion(new PotionContents(mix.from()), bottleType, 81000);
-                FluidStack toFluid = PotionFluidHandler.getFluidFromPotion(new PotionContents(mix.to()), bottleType, 81000);
+                FluidIngredient fromFluid = PotionFluidHandler.getFluidIngredientFromPotion(
+                    new PotionContents(mix.from()),
+                    bottleType,
+                    81000
+                );
+                FluidStack toFluid = PotionFluidHandler.getFluidFromPotion(
+                    new PotionContents(mix.to()),
+                    bottleType,
+                    81000
+                );
                 Identifier id = Identifier.fromNamespaceAndPath(MOD_ID, "potion_mixing_vanilla_" + recipeIndex++);
                 map.put(id, new PotionRecipe(toFluid, fromFluid, mix.ingredient()));
             }
@@ -96,8 +105,16 @@ public record PotionRecipe(FluidStack result, FluidIngredient fluidIngredient, I
             List<Reference<Potion>> potions = data.registries.lookupOrThrow(Registries.POTION).listElements().toList();
 
             for (Reference<Potion> potion : potions) {
-                FluidIngredient fromFluid = PotionFluidHandler.getFluidIngredientFromPotion(new PotionContents(potion), fromBottleType, 81000);
-                FluidStack toFluid = PotionFluidHandler.getFluidFromPotion(new PotionContents(potion), toBottleType, 81000);
+                FluidIngredient fromFluid = PotionFluidHandler.getFluidIngredientFromPotion(
+                    new PotionContents(potion),
+                    fromBottleType,
+                    81000
+                );
+                FluidStack toFluid = PotionFluidHandler.getFluidFromPotion(
+                    new PotionContents(potion),
+                    toBottleType,
+                    81000
+                );
                 Identifier id = Identifier.fromNamespaceAndPath(MOD_ID, "potion_mixing_vanilla_" + recipeIndex++);
                 map.put(id, new PotionRecipe(toFluid, fromFluid, ingredient));
             }
@@ -178,8 +195,6 @@ public record PotionRecipe(FluidStack result, FluidIngredient fluidIngredient, I
         return AllRecipeTypes.POTION;
     }
 
-    public record ReloadData(
-        HolderLookup.Provider registries, FeatureFlagSet enabledFeatures
-    ) {
+    public record ReloadData(HolderLookup.Provider registries, FeatureFlagSet enabledFeatures) {
     }
 }

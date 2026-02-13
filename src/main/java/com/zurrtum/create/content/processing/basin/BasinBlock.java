@@ -52,7 +52,11 @@ import java.util.Optional;
 
 public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrenchable, ItemInventoryProvider<BasinBlockEntity>, FluidInventoryProvider<BasinBlockEntity> {
 
-    public static final EnumProperty<Direction> FACING = EnumProperty.create("facing", Direction.class, side -> side != Direction.UP);
+    public static final EnumProperty<Direction> FACING = EnumProperty.create(
+        "facing",
+        Direction.class,
+        side -> side != Direction.UP
+    );
 
     public BasinBlock(Properties p_i48440_1_) {
         super(p_i48440_1_);
@@ -60,7 +64,13 @@ public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrencha
     }
 
     @Override
-    public Container getInventory(LevelAccessor world, BlockPos pos, BlockState state, BasinBlockEntity blockEntity, @Nullable Direction context) {
+    public Container getInventory(
+        LevelAccessor world,
+        BlockPos pos,
+        BlockState state,
+        BasinBlockEntity blockEntity,
+        @Nullable Direction context
+    ) {
         return blockEntity.itemCapability;
     }
 
@@ -91,8 +101,13 @@ public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrencha
 
     @Override
     public InteractionResult onWrenched(BlockState state, UseOnContext context) {
-        if (!context.getLevel().isClientSide())
-            withBlockEntityDo(context.getLevel(), context.getClickedPos(), bte -> bte.onWrenched(context.getClickedFace()));
+        if (!context.getLevel().isClientSide()) {
+            withBlockEntityDo(
+                context.getLevel(),
+                context.getClickedPos(),
+                bte -> bte.onWrenched(context.getClickedFace())
+            );
+        }
         return InteractionResult.SUCCESS;
     }
 
@@ -109,13 +124,19 @@ public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrencha
         return onBlockEntityUseItemOn(
             level, pos, be -> {
                 if (!stack.isEmpty()) {
-                    if (FluidHelper.tryEmptyItemIntoBE(level, player, hand, stack, be))
+                    if (FluidHelper.tryEmptyItemIntoBE(level, player, hand, stack, be)) {
                         return InteractionResult.SUCCESS;
-                    if (FluidHelper.tryFillItemFromBE(level, player, hand, stack, be))
+                    }
+                    if (FluidHelper.tryFillItemFromBE(level, player, hand, stack, be)) {
                         return InteractionResult.SUCCESS;
+                    }
 
-                    if (GenericItemEmptying.canItemBeEmptied(level, stack) || GenericItemFilling.canItemBeFilled(level, stack))
+                    if (GenericItemEmptying.canItemBeEmptied(level, stack) || GenericItemFilling.canItemBeFilled(
+                        level,
+                        stack
+                    )) {
                         return InteractionResult.SUCCESS;
+                    }
                     if (stack.getItem().equals(Items.SPONGE)) {
                         FluidInventory fluidHandler = be.fluidCapability;
                         if (fluidHandler != null) {
@@ -137,19 +158,29 @@ public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrencha
                 }
 
                 Container inv = be.itemCapability;
-                if (inv == null)
+                if (inv == null) {
                     inv = new ItemStackHandler(1);
+                }
                 boolean success = false;
                 for (int slot = 0, size = inv.getContainerSize(); slot < size; slot++) {
                     ItemStack stackInSlot = inv.getItem(slot);
-                    if (stackInSlot.isEmpty())
+                    if (stackInSlot.isEmpty()) {
                         continue;
+                    }
                     player.getInventory().placeItemBackInInventory(stackInSlot);
                     inv.setItem(slot, ItemStack.EMPTY);
                     success = true;
                 }
-                if (success)
-                    level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, .2f, 1f + level.getRandom().nextFloat());
+                if (success) {
+                    level.playSound(
+                        null,
+                        pos,
+                        SoundEvents.ITEM_PICKUP,
+                        SoundSource.PLAYERS,
+                        .2f,
+                        1f + level.getRandom().nextFloat()
+                    );
+                }
                 be.onEmptied();
                 return InteractionResult.SUCCESS;
             }
@@ -159,12 +190,15 @@ public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrencha
     @Override
     public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
         super.updateEntityMovementAfterFallOn(worldIn, entityIn);
-        if (!worldIn.getBlockState(entityIn.blockPosition()).is(this))
+        if (!worldIn.getBlockState(entityIn.blockPosition()).is(this)) {
             return;
-        if (!(entityIn instanceof ItemEntity itemEntity))
+        }
+        if (!(entityIn instanceof ItemEntity itemEntity)) {
             return;
-        if (!entityIn.isAlive())
+        }
+        if (!entityIn.isAlive()) {
             return;
+        }
         withBlockEntityDo(
             worldIn, entityIn.blockPosition(), be -> {
                 ItemStack stack = itemEntity.getItem();
@@ -192,8 +226,9 @@ public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrencha
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter reader, BlockPos pos, CollisionContext ctx) {
-        if (ctx instanceof EntityCollisionContext entityShapeContext && entityShapeContext.getEntity() instanceof ItemEntity)
+        if (ctx instanceof EntityCollisionContext entityShapeContext && entityShapeContext.getEntity() instanceof ItemEntity) {
             return AllShapes.BASIN_COLLISION_SHAPE;
+        }
         return getShape(state, reader, pos, ctx);
     }
 
@@ -215,7 +250,10 @@ public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrencha
             int slotLimit = inv.getMaxStackSize();
             ItemStack itemstack = inv.getItem(j);
             if (!itemstack.isEmpty()) {
-                f += (float) itemstack.getCount() / (float) Math.min(slotLimit, itemstack.getOrDefault(DataComponents.MAX_STACK_SIZE, 64));
+                f += (float) itemstack.getCount() / (float) Math.min(
+                    slotLimit,
+                    itemstack.getOrDefault(DataComponents.MAX_STACK_SIZE, 64)
+                );
                 ++i;
             }
         }
@@ -238,8 +276,9 @@ public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrencha
         BlockState blockState = world.getBlockState(neighbour);
 
         if (FunnelBlock.isFunnel(blockState)) {
-            if (FunnelBlock.getFunnelFacing(blockState) == direction)
+            if (FunnelBlock.getFunnelFacing(blockState) == direction) {
                 return false;
+            }
         } else if (!blockState.getCollisionShape(world, neighbour).isEmpty()) {
             return false;
         } else {
@@ -249,9 +288,14 @@ public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrencha
             }
         }
 
-        DirectBeltInputBehaviour directBeltInputBehaviour = BlockEntityBehaviour.get(world, output, DirectBeltInputBehaviour.TYPE);
-        if (directBeltInputBehaviour != null)
+        DirectBeltInputBehaviour directBeltInputBehaviour = BlockEntityBehaviour.get(
+            world,
+            output,
+            DirectBeltInputBehaviour.TYPE
+        );
+        if (directBeltInputBehaviour != null) {
             return directBeltInputBehaviour.canInsertFromSide(direction);
+        }
         return false;
     }
 

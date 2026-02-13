@@ -125,7 +125,13 @@ public class PortableStorageInterfaceBlock extends WrenchableDirectionalBlock im
     }
 
     @Override
-    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
+    public void setPlacedBy(
+        Level pLevel,
+        BlockPos pPos,
+        BlockState pState,
+        @Nullable LivingEntity pPlacer,
+        ItemStack pStack
+    ) {
         super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
         AdvancementBehaviour.setPlacedBy(pLevel, pPos, pPlacer);
     }
@@ -133,8 +139,9 @@ public class PortableStorageInterfaceBlock extends WrenchableDirectionalBlock im
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction direction = context.getNearestLookingDirection();
-        if (context.getPlayer() != null && context.getPlayer().isShiftKeyDown())
+        if (context.getPlayer() != null && context.getPlayer().isShiftKeyDown()) {
             direction = direction.getOpposite();
+        }
         return defaultBlockState().setValue(FACING, direction.getOpposite());
     }
 
