@@ -105,7 +105,7 @@ public final class FrameUniforms extends UniformWriter {
         ptr = writeFloat(ptr, (float) window.getWidth() / (float) window.getHeight());
         // default line width: net.minecraft.client.renderer.RenderStateShard.LineStateShard
         ptr = writeFloat(ptr, Math.max(2.5F, (float) window.getWidth() / 1920.0F * 2.5F));
-        ptr = writeFloat(ptr, Minecraft.getInstance().gameRenderer.getDepthFar());
+        ptr = writeFloat(ptr, Minecraft.getInstance().gameRenderer.getLevelRenderState().cameraRenderState.depthFar);
 
         ptr = writeTime(ptr, context);
 
@@ -196,7 +196,7 @@ public final class FrameUniforms extends UniformWriter {
         int pyramidDepth = DepthPyramid.getImageMipLevels(pyramidWidth, pyramidHeight);
 
         ptr = writeFloat(ptr, GameRenderer.PROJECTION_Z_NEAR); // zNear
-        ptr = writeFloat(ptr, mc.gameRenderer.getDepthFar()); // zFar
+        ptr = writeFloat(ptr, mc.gameRenderer.getLevelRenderState().cameraRenderState.depthFar); // zFar
         ptr = writeFloat(ptr, PROJECTION.m00()); // P00
         ptr = writeFloat(ptr, PROJECTION.m11()); // P11
         ptr = writeFloat(ptr, pyramidWidth); // pyramidWidth
