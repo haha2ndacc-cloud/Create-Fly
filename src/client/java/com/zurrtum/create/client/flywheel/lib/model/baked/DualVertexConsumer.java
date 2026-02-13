@@ -1,8 +1,6 @@
 package com.zurrtum.create.client.flywheel.lib.model.baked;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexMultiConsumer;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -15,33 +13,15 @@ public class DualVertexConsumer extends VertexMultiConsumer.Double {
 
     @Override
     public void putBulkData(
-        PoseStack.Pose matrixEntry,
+        PoseStack.Pose pose,
         BakedQuad quad,
-        float red,
-        float green,
-        float blue,
-        float f,
-        int i,
-        int j
+        QuadBrightness brightness,
+        int color,
+        QuadLightmapCoords lightmapCoord,
+        int overlayCoords
     ) {
-        first.putBulkData(matrixEntry, quad, red, green, blue, f, i, j);
-        second.putBulkData(matrixEntry, quad, red, green, blue, f, i, j);
-    }
-
-    @Override
-    public void putBulkData(
-        PoseStack.Pose matrixEntry,
-        BakedQuad quad,
-        float[] brightnesses,
-        float red,
-        float green,
-        float blue,
-        float f,
-        int[] is,
-        int i
-    ) {
-        first.putBulkData(matrixEntry, quad, brightnesses, red, green, blue, f, is, i);
-        second.putBulkData(matrixEntry, quad, brightnesses, red, green, blue, f, is, i);
+        first.putBulkData(pose, quad, brightness, color, lightmapCoord, overlayCoords);
+        second.putBulkData(pose, quad, brightness, color, lightmapCoord, overlayCoords);
     }
 
     public void emit(

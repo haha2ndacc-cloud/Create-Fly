@@ -182,31 +182,13 @@ public class ItemMeshEmitter implements VertexConsumer {
     public void putBulkData(
         PoseStack.Pose pose,
         BakedQuad quad,
-        float red,
-        float green,
-        float blue,
-        float alpha,
-        int packedLight,
-        int packedOverlay
+        QuadBrightness brightness,
+        int color,
+        QuadLightmapCoords lightmapCoord,
+        int overlayCoords
     ) {
         prepareForGeometry(quad);
-        bufferBuilder.putBulkData(pose, quad, red, green, blue, alpha, packedLight, packedOverlay);
-    }
-
-    @Override
-    public void putBulkData(
-        PoseStack.Pose pose,
-        BakedQuad quad,
-        float[] brightnesses,
-        float red,
-        float green,
-        float blue,
-        float alpha,
-        int[] lights,
-        int overlay
-    ) {
-        prepareForGeometry(quad);
-        bufferBuilder.putBulkData(pose, quad, brightnesses, red, green, blue, alpha, lights, overlay);
+        bufferBuilder.putBulkData(pose, quad, brightness, color, lightmapCoord, overlayCoords);
     }
 
     @Override
