@@ -10,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.math.Transformation;
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.util.GsonHelper;
@@ -56,14 +55,6 @@ public final class NeoForgeModelProperties {
         if (jsonObject.has("transform")) {
             JsonElement transform = jsonObject.get("transform");
             return context.deserialize(transform, Transformation.class);
-        }
-        return null;
-    }
-
-    @Nullable
-    public static ChunkSectionLayer deserializeRenderType(JsonObject jsonObject) {
-        if (jsonObject.has("render_type")) {
-            return NamedBlockRenderLayer.get(GsonHelper.getAsString(jsonObject, "render_type"));
         }
         return null;
     }

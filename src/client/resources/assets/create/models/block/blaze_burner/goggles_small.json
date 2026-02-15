@@ -4,7 +4,6 @@
 		"0": "create:block/hat_test",
 		"particle": "create:block/hat_test"
 	},
-  "render_type": "minecraft:cutout",
 	"elements": [
 		{
 			"from": [4.95, 0, 4.95],

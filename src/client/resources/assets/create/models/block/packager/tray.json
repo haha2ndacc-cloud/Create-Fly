@@ -1,6 +1,5 @@
 {
 	"credit": "Made with Blockbench",
-	"render_type": "cutout",
 	"textures": {
 		"1": "create:block/packager_details",
 		"particle": "#1"

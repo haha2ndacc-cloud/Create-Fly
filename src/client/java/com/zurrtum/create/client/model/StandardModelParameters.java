@@ -10,7 +10,6 @@ import com.google.gson.JsonObject;
 import com.mojang.math.Transformation;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.block.model.TextureSlots;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.resources.model.UnbakedModel.GuiLight;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
@@ -27,7 +26,7 @@ import java.util.Map;
 public record StandardModelParameters(@Nullable Identifier parent, TextureSlots.Data textures,
                                       @Nullable ItemTransforms itemTransforms, @Nullable Boolean ambientOcclusion,
                                       @Nullable GuiLight guiLight, @Nullable Transformation rootTransform,
-                                      @Nullable ChunkSectionLayer layer, Map<String, Boolean> partVisibility) {
+                                      Map<String, Boolean> partVisibility) {
     public static StandardModelParameters parse(JsonObject jsonObject, JsonDeserializationContext context) {
         String parentName = GsonHelper.getAsString(jsonObject, "parent", "");
         Identifier parent = parentName.isEmpty() ? null : Identifier.parse(parentName);
@@ -55,7 +54,6 @@ public record StandardModelParameters(@Nullable Identifier parent, TextureSlots.
         }
 
         Transformation rootTransform = NeoForgeModelProperties.deserializeRootTransform(jsonObject, context);
-        ChunkSectionLayer layer = NeoForgeModelProperties.deserializeRenderType(jsonObject);
         Map<String, Boolean> partVisibility = NeoForgeModelProperties.deserializePartVisibility(jsonObject);
 
         return new StandardModelParameters(
@@ -65,7 +63,6 @@ public record StandardModelParameters(@Nullable Identifier parent, TextureSlots.
             ambientOcclusion,
             guiLight,
             rootTransform,
-            layer,
             partVisibility
         );
     }

@@ -6,12 +6,9 @@
 package com.zurrtum.create.client.model.obj;
 
 import com.zurrtum.create.client.model.AbstractUnbakedModel;
-import com.zurrtum.create.client.model.LayerUnbakedModel;
 import com.zurrtum.create.client.model.StandardModelParameters;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.resources.model.UnbakedGeometry;
 import net.minecraft.resources.Identifier;
-import org.jspecify.annotations.Nullable;
 
 /**
  * A model loaded from an OBJ file.
@@ -19,7 +16,7 @@ import org.jspecify.annotations.Nullable;
  * Supports positions, texture coordinates, normals and colors. The {@link ObjMaterialLibrary material library}
  * has support for numerous features, including support for {@link Identifier} textures (non-standard).
  */
-public class ObjModel extends AbstractUnbakedModel implements LayerUnbakedModel {
+public class ObjModel extends AbstractUnbakedModel {
     private final ObjGeometry geometry;
 
     public ObjModel(StandardModelParameters parameters, ObjGeometry geometry) {
@@ -30,11 +27,5 @@ public class ObjModel extends AbstractUnbakedModel implements LayerUnbakedModel 
     @Override
     public UnbakedGeometry geometry() {
         return geometry;
-    }
-
-    @Override
-    @Nullable
-    public ChunkSectionLayer create$getBlockRenderLayer() {
-        return parameters.layer();
     }
 }

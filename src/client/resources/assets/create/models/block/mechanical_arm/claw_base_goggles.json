@@ -6,7 +6,6 @@
 		"5": "create:block/mechanical_arm",
 		"particle": "create:block/hat_test"
 	},
-  "render_type": "minecraft:cutout",
 	"elements": [
 		{
 			"name": "Joint 4",
