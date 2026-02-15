@@ -28,7 +28,7 @@ public class ShadedBlockSbbBuilder implements VertexConsumer, BakedQuadOutput {
 
     public void begin(ChunkSectionLayer layer) {
         filter = layer;
-        bufferBuilder = new BufferBuilder(BYTE_BUFFER_BUILDER, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+        bufferBuilder = new BufferBuilder(BYTE_BUFFER_BUILDER, VertexFormat.Mode.QUADS, DefaultVertexFormat.ENTITY);
         shadeSwapVertices.clear();
         currentShade = true;
     }

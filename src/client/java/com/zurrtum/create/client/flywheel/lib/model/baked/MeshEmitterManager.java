@@ -12,6 +12,7 @@ import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 class MeshEmitterManager<T extends MeshEmitter> {
     private static final ChunkSectionLayer[] CHUNK_LAYERS = ChunkSectionLayer.values();
@@ -22,9 +23,9 @@ class MeshEmitterManager<T extends MeshEmitter> {
     @UnknownNullability
     private BlockMaterialFunction blockMaterialFunction;
 
-    MeshEmitterManager(BiFunction<ByteBufferBuilderStack, ChunkSectionLayer, T> meshEmitterFactory) {
+    MeshEmitterManager(Function<ByteBufferBuilderStack, T> meshEmitterFactory) {
         for (ChunkSectionLayer renderType : CHUNK_LAYERS) {
-            emitterMap.put(renderType, meshEmitterFactory.apply(byteBufferBuilderStack, renderType));
+            emitterMap.put(renderType, meshEmitterFactory.apply(byteBufferBuilderStack));
         }
     }
 

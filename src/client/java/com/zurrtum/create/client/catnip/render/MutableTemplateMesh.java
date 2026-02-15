@@ -1,7 +1,6 @@
 package com.zurrtum.create.client.catnip.render;
 
 import com.mojang.blaze3d.vertex.MeshData;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 
 import java.nio.ByteBuffer;
 
@@ -74,9 +73,9 @@ public class MutableTemplateMesh extends TemplateMesh {
             color(dstIndex + i, vertexBuffer.getInt(srcIndex + i * stride + 12));
             u(dstIndex + i, vertexBuffer.getFloat(srcIndex + i * stride + 16));
             v(dstIndex + i, vertexBuffer.getFloat(srcIndex + i * stride + 20));
-            overlay(dstIndex + i, OverlayTexture.NO_OVERLAY);
-            light(dstIndex + i, vertexBuffer.getInt(srcIndex + i * stride + 24));
-            normal(dstIndex + i, vertexBuffer.getInt(srcIndex + i * stride + 28));
+            overlay(dstIndex + i, vertexBuffer.getInt(srcIndex + i * stride + 24));
+            light(dstIndex + i, vertexBuffer.getInt(srcIndex + i * stride + 28));
+            normal(dstIndex + i, vertexBuffer.getInt(srcIndex + i * stride + 32));
         }
     }
 

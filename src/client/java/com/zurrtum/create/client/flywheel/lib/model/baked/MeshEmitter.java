@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.zurrtum.create.client.flywheel.api.material.Material;
 import com.zurrtum.create.client.flywheel.api.model.Mesh;
 import com.zurrtum.create.client.flywheel.api.model.Model;
@@ -16,7 +18,6 @@ class MeshEmitter {
     private static final int INITIAL_CAPACITY = 1;
 
     private final ByteBufferBuilderStack byteBufferBuilderStack;
-    private final ChunkSectionLayer renderType;
 
     private Material @UnknownNullability [] materials = new Material[INITIAL_CAPACITY];
     private BufferBuilder @UnknownNullability [] bufferBuilders = new BufferBuilder[INITIAL_CAPACITY];
@@ -26,9 +27,8 @@ class MeshEmitter {
 
     private int currentIndex = 0;
 
-    MeshEmitter(ByteBufferBuilderStack byteBufferBuilderStack, ChunkSectionLayer renderType) {
+    MeshEmitter(ByteBufferBuilderStack byteBufferBuilderStack) {
         this.byteBufferBuilderStack = byteBufferBuilderStack;
-        this.renderType = renderType;
     }
 
     public void prepareForBlock() {
@@ -84,11 +84,10 @@ class MeshEmitter {
         ByteBufferBuilder byteBufferBuilder = byteBufferBuilderStack.nextOrCreate();
 
         // Trust that the RenderType mode/format don't change out from underneath us.
-        RenderPipeline pipeline = renderType.pipeline();
         BufferBuilder bufferBuilder = new BufferBuilder(
             byteBufferBuilder,
-            pipeline.getVertexFormatMode(),
-            pipeline.getVertexFormat()
+            VertexFormat.Mode.QUADS,
+            DefaultVertexFormat.ENTITY
         );
 
         // currentIndex == numBufferBuildersPopulated here.

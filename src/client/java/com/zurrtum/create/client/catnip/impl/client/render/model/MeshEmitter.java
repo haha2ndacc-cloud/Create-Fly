@@ -42,10 +42,10 @@ class MeshEmitter {
 
     private void prepareForGeometry(boolean shade) {
         if (bufferBuilder == null) {
-            bufferBuilder = new BufferBuilder(byteBufferBuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+            bufferBuilder = new BufferBuilder(byteBufferBuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.ENTITY);
         } else if (shade != currentShade) {
             emit();
-            bufferBuilder = new BufferBuilder(byteBufferBuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+            bufferBuilder = new BufferBuilder(byteBufferBuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.ENTITY);
         }
 
         currentShade = shade;
