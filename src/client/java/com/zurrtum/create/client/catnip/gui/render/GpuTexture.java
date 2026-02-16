@@ -12,17 +12,21 @@ public record GpuTexture(int width, int height, com.mojang.blaze3d.textures.GpuT
                          GpuTextureView textureView, com.mojang.blaze3d.textures.GpuTexture depthTexture,
                          GpuTextureView depthTextureView) {
     public static GpuTexture create(int size) {
-        return create(size, size);
+        return create(size, size, 1);
     }
 
     public static GpuTexture create(int width, int height) {
+        return create(width, height, 1);
+    }
+
+    public static GpuTexture create(int width, int height, int factor) {
         GpuDevice gpuDevice = RenderSystem.getDevice();
         com.mojang.blaze3d.textures.GpuTexture texture = gpuDevice.createTexture(
             () -> "UI Item Transform texture",
             13,
             TextureFormat.RGBA8,
-            width,
-            height,
+            width * factor,
+            height * factor,
             1,
             1
         );
@@ -31,8 +35,8 @@ public record GpuTexture(int width, int height, com.mojang.blaze3d.textures.GpuT
             () -> "UI Item Transform depth texture",
             9,
             TextureFormat.DEPTH32,
-            width,
-            height,
+            texture.getWidth(0),
+            texture.getHeight(0),
             1,
             1
         );

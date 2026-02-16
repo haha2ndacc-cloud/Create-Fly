@@ -48,17 +48,13 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
             TEXTURES.values().forEach(GpuTexture::close);
             TEXTURES.clear();
         }
-        int width = renderState.width() * windowScaleFactor;
-        int height = renderState.height() * windowScaleFactor;
         GpuTexture texture = TEXTURES.get(renderState.id());
         if (texture == null) {
-            texture = GpuTexture.create(width, height);
+            texture = GpuTexture.create(renderState.width(), renderState.height(), windowScaleFactor);
             TEXTURES.put(renderState.id(), texture);
         }
         texture.prepare(projection, projectionMatrixBuffer);
         matrices.pushPose();
-        matrices.scale(windowScaleFactor, windowScaleFactor, 1);
-
         Minecraft mc = Minecraft.getInstance();
         GameRenderer gameRenderer = mc.gameRenderer;
         boolean lightOption = gameRenderer.useUiLightmap;
