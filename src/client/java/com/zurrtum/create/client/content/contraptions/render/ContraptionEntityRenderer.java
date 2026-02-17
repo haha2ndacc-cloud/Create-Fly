@@ -21,6 +21,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
@@ -32,7 +33,6 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -267,20 +267,17 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
             if (buffer.isEmpty()) {
                 continue;
             }
-            layers.add(new ContraptionBlockLayer(getRenderLayer(blockLayer), buffer, world, lightTransform));
+            layers.add(new ContraptionBlockLayer(
+                ItemBlockRenderTypes.getMovingBlockRenderType(blockLayer),
+                buffer,
+                world,
+                lightTransform
+            ));
         }
         if (layers.isEmpty()) {
             return null;
         }
         return layers;
-    }
-
-    private static RenderType getRenderLayer(ChunkSectionLayer layer) {
-        return switch (layer) {
-            case SOLID -> RenderTypes.solidMovingBlock();
-            case CUTOUT -> RenderTypes.cutoutMovingBlock();
-            case TRANSLUCENT -> RenderTypes.translucentMovingBlock();
-        };
     }
 
     public record ContraptionBlockLayer(RenderType renderLayer, SuperByteBuffer buffer, Level world,

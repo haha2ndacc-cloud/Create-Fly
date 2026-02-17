@@ -4,10 +4,10 @@ import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.client.foundation.render.CreateRenderTypes;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.SectionBufferBuilderPack;
-import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.resources.model.ModelBakery;
@@ -67,9 +67,15 @@ public class DefaultSuperRenderTypeBuffer implements SuperRenderTypeBuffer {
         private final SectionBufferBuilderPack fixedBufferPack = new SectionBufferBuilderPack();
         private final SortedMap<RenderType, ByteBufferBuilder> fixedBuffers = Util.make(
             new Object2ObjectLinkedOpenHashMap<>(), map -> {
+                put(map, RenderTypes.solidMovingBlock());
+                put(map, Sheets.cutoutBlockSheet());
+                put(map, RenderTypes.cutoutMovingBlock());
                 map.put(Sheets.cutoutBlockItemSheet(), fixedBufferPack.buffer(ChunkSectionLayer.CUTOUT));
-                map.put(Sheets.translucentItemSheet(), fixedBufferPack.buffer(ChunkSectionLayer.TRANSLUCENT));
-                put(map, Sheets.translucentBlockItemSheet());
+                put(map, Sheets.cutoutItemSheet());
+                put(map, Sheets.translucentBlockSheet());
+                put(map, RenderTypes.translucentMovingBlock());
+                map.put(Sheets.translucentBlockItemSheet(), this.fixedBufferPack.buffer(ChunkSectionLayer.TRANSLUCENT));
+                put(map, Sheets.translucentItemSheet());
                 put(map, RenderTypes.armorEntityGlint());
                 put(map, RenderTypes.glint());
                 put(map, RenderTypes.glintTranslucent());
@@ -91,6 +97,41 @@ public class DefaultSuperRenderTypeBuffer implements SuperRenderTypeBuffer {
         private static void put(Object2ObjectLinkedOpenHashMap<RenderType, ByteBufferBuilder> map, RenderType type) {
             map.put(type, new ByteBufferBuilder(type.bufferSize()));
         }
+    }
 
+    public static class Dispatcher {
+        private final DefaultSuperRenderTypeBuffer buffer;
+        private final OutlineBufferSource outline;
+        private final FeatureRenderDispatcher renderDispatcher;
+
+        public Dispatcher() {
+            Minecraft mc = Minecraft.getInstance();
+            buffer = getInstance();
+            BufferSource bufferSource = buffer.defaultBuffer.bufferSource;
+            outline = new OutlineBufferSource();
+            renderDispatcher = new FeatureRenderDispatcher(
+                new SubmitNodeStorage(),
+                mc.getBlockRenderer(),
+                bufferSource,
+                mc.getAtlasManager(),
+                outline,
+                bufferSource,
+                mc.font
+            );
+        }
+
+        public DefaultSuperRenderTypeBuffer getBuffer() {
+            return buffer;
+        }
+
+        public SubmitNodeStorage getSubmitNodeStorage() {
+            return renderDispatcher.getSubmitNodeStorage();
+        }
+
+        public void draw() {
+            renderDispatcher.renderAllFeatures();
+            buffer.draw();
+            outline.endOutlineBatch();
+        }
     }
 }

@@ -8,8 +8,9 @@ import com.zurrtum.create.client.catnip.placement.PlacementClient;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.flywheel.lib.model.baked.EmptyVirtualBlockGetter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -57,7 +58,7 @@ public abstract class GhostBlockRenderer {
                 EmptyVirtualBlockGetter.FULL_BRIGHT,
                 state,
                 ms,
-                (layer, shade) -> buffer.getEarlyBuffer(layer)
+                (layer, shade) -> buffer.getEarlyBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(layer))
             );
             ms.popPose();
         }
@@ -77,7 +78,7 @@ public abstract class GhostBlockRenderer {
             BlockPos pos = params.pos;
             float alpha = params.alphaSupplier.get() * .75f * PlacementClient.getCurrentAlpha();
             VertexConsumer vb = new ColoringVertexConsumer(
-                buffer.getEarlyBuffer(ChunkSectionLayer.TRANSLUCENT),
+                buffer.getEarlyBuffer(RenderTypes.translucentMovingBlock()),
                 1,
                 1,
                 1,

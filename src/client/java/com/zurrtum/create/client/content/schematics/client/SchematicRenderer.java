@@ -12,6 +12,7 @@ import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper.Block
 import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
@@ -73,7 +74,7 @@ public class SchematicRenderer {
         changed = false;
 
         bufferCache.forEach((layer, buffer) -> {
-            buffer.renderInto(ms.last(), buffers.getBuffer(layer));
+            buffer.renderInto(ms.last(), buffers.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(layer)));
         });
         scratchErroredBlockEntities.clear();
         BlockEntityListRenderState renderState = BlockEntityRenderHelper.getBlockEntitiesRenderState(

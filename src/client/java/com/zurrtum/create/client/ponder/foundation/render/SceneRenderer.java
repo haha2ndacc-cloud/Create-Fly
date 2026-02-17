@@ -9,7 +9,7 @@ import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.catnip.gui.UIRenderHelper;
 import com.zurrtum.create.client.catnip.gui.render.GpuTexture;
-import com.zurrtum.create.client.catnip.render.DefaultSuperRenderTypeBuffer;
+import com.zurrtum.create.client.catnip.render.DefaultSuperRenderTypeBuffer.Dispatcher;
 import com.zurrtum.create.client.catnip.render.PonderRenderTypes;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.ponder.foundation.PonderScene;
@@ -22,11 +22,8 @@ import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.gui.render.state.BlitRenderState;
 import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.SubmitNodeStorage;
-import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -35,10 +32,13 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
     private static final Vector3f DIFFUSE_LIGHT_1 = new Vector3f(-0.4F, -0.5F, 0.7F).normalize();
     private static final Int2ObjectMap<GpuTexture> TEXTURES = new Int2ObjectArrayMap<>();
     private final PoseStack matrices = new PoseStack();
+    private final Dispatcher dispatcher;
     private int windowScaleFactor;
 
-    public SceneRenderer(BufferSource vertexConsumers) {
-        super(vertexConsumers);
+    @SuppressWarnings("DataFlowIssue")
+    public SceneRenderer(Dispatcher dispatcher) {
+        super(null);
+        this.dispatcher = dispatcher;
     }
 
     @Override
@@ -62,17 +62,15 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
         Lighting lighting = gameRenderer.getLighting();
         lighting.updateBuffer(Lighting.Entry.LEVEL, DIFFUSE_LIGHT_0, DIFFUSE_LIGHT_1);
         lighting.setupFor(Lighting.Entry.LEVEL);
-        FeatureRenderDispatcher renderDispatcher = gameRenderer.getFeatureRenderDispatcher();
-        renderScene(mc, renderState, matrices, renderDispatcher.getSubmitNodeStorage());
-        renderDispatcher.renderAllFeatures();
-        bufferSource.endBatch();
+        renderScene(mc, dispatcher, renderState, matrices);
         lighting.updateLevel(mc.level.dimensionType().cardinalLightType());
         gameRenderer.useUiLightmap = lightOption;
         matrices.popPose();
         texture.clear();
         state.submitBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-            TextureSetup.singleTexture(texture.textureView(),
+            TextureSetup.singleTexture(
+                texture.textureView(),
                 RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)
             ),
             renderState.pose(),
@@ -90,15 +88,17 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
         ));
     }
 
-    private void renderScene(Minecraft mc, SceneRenderState state, PoseStack poseStack, SubmitNodeStorage queue) {
+    private static void renderScene(Minecraft mc, Dispatcher dispatcher, SceneRenderState state, PoseStack poseStack) {
         float partialTicks = state.partialTicks();
-        SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBuffer.getInstance();
+        SuperRenderTypeBuffer buffer = dispatcher.getBuffer();
         PonderScene scene = state.scene();
         poseStack.translate(0, 0, -800);
         SceneTransform transform = scene.getTransform();
         transform.updateScreenParams(state.width(), state.height(), state.slide());
         transform.apply(poseStack, partialTicks);
         transform.updateSceneRVE(partialTicks);
+        scene.renderScene(mc, buffer, dispatcher.getSubmitNodeStorage(), poseStack, partialTicks);
+        dispatcher.draw();
 
         // kool shadow fx
         if (!scene.shouldHidePlatformShadow()) {
@@ -113,6 +113,8 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
             flash *= flash;
             flash = 1 - flash;
 
+            RenderType layer = PonderRenderTypes.getGui();
+            VertexConsumer consumer = buffer.getBuffer(layer);
             for (int f = 0; f < 4; f++) {
                 poseStack.translate(scene.getBasePlateSize(), 0, 0);
                 poseStack.pushPose();
@@ -121,8 +123,8 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
                     poseStack.pushPose();
                     poseStack.scale(1, .5f + flash * .75f, 1);
                     fillGradient(
-                        bufferSource,
-                        matrices,
+                        consumer,
+                        poseStack,
                         0,
                         -1,
                         -scene.getBasePlateSize(),
@@ -135,8 +137,8 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
                 }
                 poseStack.translate(0, 0, 2 / 1024f);
                 fillGradient(
-                    bufferSource,
-                    matrices,
+                    consumer,
+                    poseStack,
                     0,
                     0,
                     -scene.getBasePlateSize(),
@@ -149,10 +151,8 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
                 poseStack.mulPose(Axis.YP.rotationDegrees(-90));
             }
             poseStack.popPose();
+            buffer.draw();
         }
-        bufferSource.endBatch();
-        scene.renderScene(mc, buffer, queue, poseStack, partialTicks);
-        buffer.draw();
 
         //TODO
         // coords for debug
@@ -207,7 +207,7 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
     }
 
     public static void fillGradient(
-        MultiBufferSource vertexConsumers,
+        VertexConsumer buffer,
         PoseStack matrices,
         int x1,
         int y1,
@@ -217,7 +217,6 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
         int colorFrom,
         int colorTo
     ) {
-        VertexConsumer buffer = vertexConsumers.getBuffer(PonderRenderTypes.getGui());
         Matrix4f matrix4f = matrices.last().pose();
         buffer.addVertex(matrix4f, (float) x1, (float) y1, (float) z).setColor(colorFrom);
         buffer.addVertex(matrix4f, (float) x1, (float) y2, (float) z).setColor(colorTo);

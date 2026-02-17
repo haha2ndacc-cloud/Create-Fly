@@ -249,3 +249,5 @@ mutable field net/minecraft/world/item/CreativeModeTab row Lnet/minecraft/world/
 mutable field net/minecraft/world/item/context/BlockPlaceContext relativePos Lnet/minecraft/core/BlockPos;
 mutable field net/minecraft/world/level/biome/BiomeGenerationSettings features Ljava/util/List;
 accessible field net/minecraft/client/renderer/GameRenderer useUiLightmap Z
+accessible field net/minecraft/client/renderer/RenderPipelines PIPELINES_BY_LOCATION Ljava/util/Map;
+accessible field net/minecraft/client/renderer/RenderPipelines GUI_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
