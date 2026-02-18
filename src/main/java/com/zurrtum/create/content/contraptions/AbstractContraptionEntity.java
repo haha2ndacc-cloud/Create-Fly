@@ -935,7 +935,7 @@ public abstract class AbstractContraptionEntity extends Entity {
     }
 
     @Override
-    protected boolean updateInWaterStateAndDoFluidPushing() {
+    protected boolean updateFluidInteraction() {
         /*
          * Override this with an empty method to reduce enormous calculation time when
          * contraptions are in water WARNING: THIS HAS A BUNCH OF SIDE EFFECTS! - Fluids
