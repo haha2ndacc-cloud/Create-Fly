@@ -2,7 +2,6 @@ package com.zurrtum.create.client.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Local;
 import com.zurrtum.create.AllSynchedDatas;
 import com.zurrtum.create.client.content.contraptions.ContraptionHandlerClient;
 import com.zurrtum.create.client.content.trains.CameraDistanceModifier;
@@ -11,21 +10,19 @@ import com.zurrtum.create.content.contraptions.AbstractContraptionEntity;
 import com.zurrtum.create.content.contraptions.Contraption;
 import com.zurrtum.create.content.contraptions.ContraptionCollider;
 import com.zurrtum.create.content.contraptions.ContraptionHandler;
-import com.zurrtum.create.infrastructure.fluids.FlowableFluid;
+import com.zurrtum.create.infrastructure.fluids.FluidInteractionPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityFluidInteraction;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -56,8 +53,9 @@ public abstract class EntityMixin {
     protected RandomSource random;
     @Shadow
     private EntityDimensions dimensions;
-    @Unique
-    private boolean inModFluid;
+    @Shadow
+    @Final
+    private EntityFluidInteraction fluidInteraction;
 
     @Shadow
     protected abstract void playStepSound(BlockPos pos, BlockState state);
@@ -65,26 +63,9 @@ public abstract class EntityMixin {
     @Shadow
     protected abstract float nextStep();
 
-    @Inject(method = "updateFluidHeightAndDoFluidPushing(Lnet/minecraft/tags/TagKey;D)Z", at = @At("HEAD"))
-    private void clear(TagKey<Fluid> tag, double speed, CallbackInfoReturnable<Boolean> cir) {
-        inModFluid = false;
-    }
-
-    @Inject(method = "updateFluidHeightAndDoFluidPushing(Lnet/minecraft/tags/TagKey;D)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FluidState;getHeight(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)F"))
-    private void checkFluid(
-        TagKey<Fluid> tag,
-        double speed,
-        CallbackInfoReturnable<Boolean> cir,
-        @Local FluidState state
-    ) {
-        if (!inModFluid) {
-            inModFluid = state.getType() instanceof FlowableFluid;
-        }
-    }
-
-    @Inject(method = "doWaterSplashEffect()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addParticle(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)V"), cancellable = true)
+    @Inject(method = "doWaterSplashEffect()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;floor(D)I"), cancellable = true)
     private void cancelEffect(CallbackInfo ci) {
-        if (inModFluid) {
+        if (((FluidInteractionPredicate) fluidInteraction).create$inModFluid()) {
             ci.cancel();
         }
     }

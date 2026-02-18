@@ -23,6 +23,7 @@
     "ClientPacketListenerMixin",
     "ClientPackSourceMixin",
     "EntityCallbacksMixin",
+    "EntityFluidInteractionMixin",
     "EntityMixin",
     "EntityTypeMixin",
     "FlywheelLevelRendererMixin",

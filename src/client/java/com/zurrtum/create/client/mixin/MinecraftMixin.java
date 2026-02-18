@@ -204,8 +204,8 @@ public abstract class MinecraftMixin {
         SymmetryHandlerClient.onClientTick(mc);
     }
 
-    @Inject(method = "renderFrame(ZZ)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;render(Lnet/minecraft/client/DeltaTracker;Z)V"))
-    private void render(boolean recordGpuUtilization, boolean renderLevel, CallbackInfo ci) {
+    @Inject(method = "renderFrame(Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;render(Lnet/minecraft/client/DeltaTracker;Z)V"))
+    private void render(boolean renderLevel, CallbackInfo ci) {
         TurntableHandler.gameRenderFrame((Minecraft) (Object) this);
     }
 
@@ -288,7 +288,7 @@ public abstract class MinecraftMixin {
         Ponder.invalidateRenderers();
     }
 
-    @Inject(method = "pickBlock()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;hasControlDown()Z"), cancellable = true)
+    @Inject(method = "pickBlockOrEntity()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;hasControlDown()Z"), cancellable = true)
     private void doItemPick(CallbackInfo ci) {
         if (ToolboxHandlerClient.onPickItem((Minecraft) (Object) this)) {
             ci.cancel();
