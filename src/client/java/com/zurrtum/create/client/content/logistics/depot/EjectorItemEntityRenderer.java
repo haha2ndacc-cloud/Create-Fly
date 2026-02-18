@@ -111,7 +111,7 @@ public class EjectorItemEntityRenderer extends ItemEntityRenderer {
                     }
                 }
 
-                submitNameTag(state, matrixStack, queue, cameraRenderState);
+                submitNameDisplay(state, matrixStack, queue, cameraRenderState);
             }
         }
     }
