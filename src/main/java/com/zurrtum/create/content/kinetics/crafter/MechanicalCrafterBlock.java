@@ -94,6 +94,7 @@ public class MechanicalCrafterBlock extends HorizontalKineticBlock implements IB
 
     @Override
     public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+        super.onPlace(state, worldIn, pos, oldState, isMoving);
         if (oldState.is(this) && getTargetDirection(state) != getTargetDirection(oldState)) {
             MechanicalCrafterBlockEntity crafter = CrafterHelper.getCrafter(worldIn, pos);
             if (crafter != null) {
