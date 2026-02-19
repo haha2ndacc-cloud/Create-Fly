@@ -320,8 +320,7 @@ public class PonderScene {
         return pointOfInterest;
     }
 
-    public void tick() {
-        Minecraft mc = Minecraft.getInstance();
+    public void tick(Minecraft mc, boolean sound) {
         renderViewEntity.swap(mc);
         if (chasingPointOfInterest != null) {
             pointOfInterest = VecHelper.lerp(.25f, pointOfInterest, chasingPointOfInterest);
@@ -354,6 +353,9 @@ public class PonderScene {
         if (activeSchedule.isEmpty()) {
             finished = true;
         }
+        if (sound) {
+            mc.getSoundManager().tick(false);
+        }
         renderViewEntity.swap(mc);
     }
 
@@ -363,14 +365,14 @@ public class PonderScene {
         }
     }
 
-    public void seekToTime(int time) {
+    public void seekToTime(Minecraft mc, int time) {
         if (time < currentTime) {
             throw new IllegalStateException("Cannot seek backwards. Rewind first.");
         }
 
         while (currentTime < time && !finished) {
             forEach(e -> e.whileSkipping(this));
-            tick();
+            tick(mc, false);
         }
 
         forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);

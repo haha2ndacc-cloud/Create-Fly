@@ -449,14 +449,14 @@ public class PonderUI extends AbstractPonderScreen {
             if (!identifyMode) {
                 ponderTicks++;
                 if (skipCooling == 0) {
-                    activeScene.tick();
+                    activeScene.tick(minecraft, true);
                 }
             }
 
             if (!identifyMode) {
                 float lazyIndexValue = lazyIndex.getValue();
                 if (Math.abs(lazyIndexValue - index) > 1 / 512f) {
-                    scenes.get(lazyIndexValue < index ? index - 1 : index + 1).tick();
+                    scenes.get(lazyIndexValue < index ? index - 1 : index + 1).tick(minecraft, false);
                 }
             }
             extendedTickTimer = extendedTickLength;
@@ -496,7 +496,7 @@ public class PonderUI extends AbstractPonderScreen {
             replay();
         }
 
-        getActiveScene().seekToTime(time);
+        getActiveScene().seekToTime(minecraft, time);
         if (time != 0) {
             coolDownAfterSkip();
         }
@@ -1138,6 +1138,7 @@ public class PonderUI extends AbstractPonderScreen {
     public void removed() {
         super.removed();
         SoundScapes.setInstance(null);
+        minecraft.getSoundManager().tick(false);
         hoveredTooltipItem = ItemStack.EMPTY;
         itemRender.clear();
         for (PonderTag tag : tags) {
