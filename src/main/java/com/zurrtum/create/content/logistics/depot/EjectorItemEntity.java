@@ -174,11 +174,18 @@ public class EjectorItemEntity extends ItemEntity {
         progress++;
     }
 
+    private boolean isVirtual() {
+        if (level().getBlockEntity(blockPosition()) instanceof EjectorBlockEntity entity) {
+            return entity.isVirtual();
+        }
+        return false;
+    }
+
     private void placeItemAtTarget(boolean isClient, float maxTime) {
         DirectBeltInputBehaviour targetOpenInv = getTargetOpenInv();
         ItemStack stack = getItem();
         if (targetOpenInv != null) {
-            ItemStack remainder = targetOpenInv.handleInsertion(stack, Direction.UP, isClient);
+            ItemStack remainder = targetOpenInv.handleInsertion(stack, Direction.UP, isClient && !isVirtual());
             if (remainder.isEmpty()) {
                 discard();
                 return;
