@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -27,6 +28,7 @@ public class ManualBlockRenderer extends PictureInPictureRenderer<ManualBlockRen
     public static int MAX = 6;
     private int allocate = MAX;
     private static final Deque<GpuTexture> TEXTURES = new ArrayDeque<>(MAX);
+    private static final RandomSource random = RandomSource.create();
     private final PoseStack matrices = new PoseStack();
     private final BlockBakedQuadOutput output;
     private int windowScaleFactor;
@@ -69,7 +71,8 @@ public class ManualBlockRenderer extends PictureInPictureRenderer<ManualBlockRen
         BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         world.blockState(block.state());
-        List<BlockModelPart> parts = blockRenderManager.getBlockModel(block.state()).collectParts(mc.level.getRandom());
+        random.setSeed(42L);
+        List<BlockModelPart> parts = blockRenderManager.getBlockModel(block.state()).collectParts(random);
         blockRenderManager.renderBatched(block.state(), BlockPos.ZERO, world, matrices, output, false, parts);
 
         bufferSource.endBatch();
