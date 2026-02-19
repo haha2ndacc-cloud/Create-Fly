@@ -25,7 +25,7 @@ public class ElevatorContactBlockEntity extends SmartBlockEntity {
     public String shortName;
     public String longName;
 
-    public @Nullable String lastReportedCurrentFloor = "";
+    public String lastReportedCurrentFloor = "";
 
     private int yTargetFromNBT = Integer.MIN_VALUE;
     private boolean deferNameGenerator;
@@ -49,9 +49,7 @@ public class ElevatorContactBlockEntity extends SmartBlockEntity {
         view.putString("ShortName", shortName);
         view.putString("LongName", longName);
 
-        if (lastReportedCurrentFloor != null) {
-            view.putString("LastReportedCurrentFloor", lastReportedCurrentFloor);
-        }
+        view.putString("LastReportedCurrentFloor", lastReportedCurrentFloor);
 
         if (clientPacket) {
             return;
@@ -78,7 +76,7 @@ public class ElevatorContactBlockEntity extends SmartBlockEntity {
         shortName = view.getStringOr("ShortName", "");
         longName = view.getStringOr("LongName", "");
 
-        lastReportedCurrentFloor = view.getStringOr("LastReportedCurrentFloor", null);
+        view.getString("LastReportedCurrentFloor").ifPresent(string -> lastReportedCurrentFloor = string);
 
         if (clientPacket) {
             return;
