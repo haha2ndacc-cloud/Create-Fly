@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -16,7 +17,19 @@ public class SoundScapes {
     static final int MAX_AMBIENT_SOURCE_DISTANCE = 16;
     static final int UPDATE_INTERVAL = 5;
     static final int SOUND_VOLUME_ARG_MAX = 15;
-    public static SoundScapes INSTANCE = new SoundScapes();
+    public static SoundScapes DEFAULT = new SoundScapes(false);
+    public static SoundScapes current = DEFAULT;
+    private final boolean includePaused;
+
+    public SoundScapes(boolean includePaused) {
+        this.includePaused = includePaused;
+    }
+
+    public static void setInstance(@Nullable SoundScapes instance) {
+        current.callInvalidateAll();
+        current = instance != null ? instance : DEFAULT;
+    }
+
     private final Map<AmbienceGroup, Map<PitchGroup, Set<BlockPos>>> counter = new IdentityHashMap<>();
     private final Map<Pair<AmbienceGroup, PitchGroup>, SoundScape> activeSounds = new HashMap<>();
 
@@ -40,10 +53,10 @@ public class SoundScapes {
     }
 
     public static void play(AmbienceGroup group, BlockPos pos, float pitch) {
-        INSTANCE.callPlay(group, pos, pitch);
+        current.callPlay(group, pos, pitch);
     }
 
-    public void callPlay(AmbienceGroup group, BlockPos pos, float pitch) {
+    private void callPlay(AmbienceGroup group, BlockPos pos, float pitch) {
         if (!AllConfigs.client().enableAmbientSounds.get()) {
             return;
         }
@@ -53,13 +66,13 @@ public class SoundScapes {
     }
 
     public static void tick() {
-        INSTANCE.callTick();
+        current.callTick();
     }
 
-    public void callTick() {
+    private void callTick() {
         activeSounds.values().forEach(SoundScape::tick);
 
-        if (AnimationTickHolder.getTicks() % UPDATE_INTERVAL != 0) {
+        if (AnimationTickHolder.getTicks(includePaused) % UPDATE_INTERVAL != 0) {
             return;
         }
 
@@ -97,10 +110,10 @@ public class SoundScapes {
     }
 
     public static void invalidateAll() {
-        INSTANCE.callInvalidateAll();
+        current.callInvalidateAll();
     }
 
-    public void callInvalidateAll() {
+    private void callInvalidateAll() {
         counter.clear();
         activeSounds.forEach(($, sound) -> sound.remove());
         activeSounds.clear();
@@ -119,18 +132,18 @@ public class SoundScapes {
     }
 
     public static int getSoundCount(AmbienceGroup group, PitchGroup pitchGroup) {
-        return INSTANCE.callGetSoundCount(group, pitchGroup);
+        return current.callGetSoundCount(group, pitchGroup);
     }
 
-    public int callGetSoundCount(AmbienceGroup group, PitchGroup pitchGroup) {
-        return getAllLocations(group, pitchGroup).size();
+    private int callGetSoundCount(AmbienceGroup group, PitchGroup pitchGroup) {
+        return callGetAllLocations(group, pitchGroup).size();
     }
 
     public static Set<BlockPos> getAllLocations(AmbienceGroup group, PitchGroup pitchGroup) {
-        return INSTANCE.callGetAllLocations(group, pitchGroup);
+        return current.callGetAllLocations(group, pitchGroup);
     }
 
-    public Set<BlockPos> callGetAllLocations(AmbienceGroup group, PitchGroup pitchGroup) {
+    private Set<BlockPos> callGetAllLocations(AmbienceGroup group, PitchGroup pitchGroup) {
         return counter.getOrDefault(group, Collections.emptyMap()).getOrDefault(pitchGroup, Collections.emptySet());
     }
 

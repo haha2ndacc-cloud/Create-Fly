@@ -46,6 +46,12 @@ public abstract class AbstractPonderScreen extends NavigatableSimiScreen {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        minecraft.getSoundManager().tick(false);
+    }
+
+    @Override
     protected Component backTrackingComponent() {
         if (ScreenOpener.getBackStepScreen() instanceof NavigatableSimiScreen) {
             return Ponder.lang().translate(AbstractPonderScreen.THINK_BACK).component();
