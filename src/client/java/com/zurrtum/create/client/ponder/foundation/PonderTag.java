@@ -26,8 +26,7 @@ public class PonderTag implements ScreenElement {
     }
 
     private final Identifier id;
-    @Nullable
-    private final Identifier textureIconLocation;
+    private final @Nullable TextureIconRenderer textureIcon;
     private final @Nullable Supplier<ItemStack> mainItem;
     private final @Nullable Supplier<GuiItemRenderBuilder> itemIcon;
 
@@ -38,12 +37,31 @@ public class PonderTag implements ScreenElement {
         @Nullable ItemStackTemplate mainItem
     ) {
         this.id = id;
-        this.textureIconLocation = textureIconLocation;
+        this.textureIcon = textureIconLocation == null ? null : (graphics, poseStack, x, y) -> {
+            poseStack.translate(x, y);
+            poseStack.scale(0.25f, 0.25f);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, textureIconLocation, 0, 0, 0, 0, 0, 64, 64, 64, 64);
+        };
         this.mainItem = mainItem != null ? Suppliers.memoize(mainItem::create) : null;
         if (textureIconLocation == null && itemIcon != null) {
             this.itemIcon = Suppliers.memoize(() -> GuiGameElement.of(itemIcon.create()).scale(1.25f).at(-2, -2));
         } else {
             this.itemIcon = null;
+        }
+    }
+
+    public PonderTag(PonderTag tag, float scale) {
+        id = tag.id;
+        TextureIconRenderer prevTextureIcon = tag.textureIcon;
+        textureIcon = prevTextureIcon == null ? null : (graphics, poseStack, x, y) -> {
+            poseStack.scale(scale);
+            prevTextureIcon.render(graphics, poseStack, x, y);
+        };
+        mainItem = tag.mainItem;
+        if (prevTextureIcon == null && tag.itemIcon != null) {
+            itemIcon = Suppliers.memoize(() -> tag.itemIcon.get().copy().scale(1.25f * scale));
+        } else {
+            itemIcon = null;
         }
     }
 
@@ -66,12 +84,10 @@ public class PonderTag implements ScreenElement {
     public void render(GuiGraphics graphics, int x, int y) {
         Matrix3x2fStack poseStack = graphics.pose();
         poseStack.pushMatrix();
-        poseStack.translate(x, y);
-        if (textureIconLocation != null) {
-            //RenderSystem.setShaderTexture(0, icon);
-            poseStack.scale(0.25f, 0.25f);
-            graphics.blit(RenderPipelines.GUI_TEXTURED, textureIconLocation, 0, 0, 0, 0, 0, 64, 64, 64, 64);
+        if (textureIcon != null) {
+            textureIcon.render(graphics, poseStack, x, y);
         } else if (itemIcon != null) {
+            poseStack.translate(x, y);
             itemIcon.get().render(graphics);
         }
         poseStack.popMatrix();
@@ -94,5 +110,9 @@ public class PonderTag implements ScreenElement {
         }
 
         return getId().equals(otherTag.getId());
+    }
+
+    private interface TextureIconRenderer {
+        void render(GuiGraphics graphics, Matrix3x2fStack poseStack, int x, int y);
     }
 }

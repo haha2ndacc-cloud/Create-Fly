@@ -13,12 +13,12 @@ import java.util.*;
 import java.util.function.BiFunction;
 
 public class SoundScapes {
-
-    private static final Map<AmbienceGroup, Map<PitchGroup, Set<BlockPos>>> counter = new IdentityHashMap<>();
-    private static final Map<Pair<AmbienceGroup, PitchGroup>, SoundScape> activeSounds = new HashMap<>();
     static final int MAX_AMBIENT_SOURCE_DISTANCE = 16;
     static final int UPDATE_INTERVAL = 5;
     static final int SOUND_VOLUME_ARG_MAX = 15;
+    public static SoundScapes INSTANCE = new SoundScapes();
+    private final Map<AmbienceGroup, Map<PitchGroup, Set<BlockPos>>> counter = new IdentityHashMap<>();
+    private final Map<Pair<AmbienceGroup, PitchGroup>, SoundScape> activeSounds = new HashMap<>();
 
     private static SoundScape kinetic(float pitch, AmbienceGroup group) {
         return new SoundScape(pitch, group).continuous(SoundEvents.MINECART_INSIDE, .25f, 1);
@@ -40,6 +40,10 @@ public class SoundScapes {
     }
 
     public static void play(AmbienceGroup group, BlockPos pos, float pitch) {
+        INSTANCE.callPlay(group, pos, pitch);
+    }
+
+    public void callPlay(AmbienceGroup group, BlockPos pos, float pitch) {
         if (!AllConfigs.client().enableAmbientSounds.get()) {
             return;
         }
@@ -49,6 +53,10 @@ public class SoundScapes {
     }
 
     public static void tick() {
+        INSTANCE.callTick();
+    }
+
+    public void callTick() {
         activeSounds.values().forEach(SoundScape::tick);
 
         if (AnimationTickHolder.getTicks() % UPDATE_INTERVAL != 0) {
@@ -72,7 +80,7 @@ public class SoundScapes {
         counter.values().forEach(m -> m.values().forEach(Set::clear));
     }
 
-    private static void addSound(AmbienceGroup group, BlockPos pos, float pitch) {
+    private void addSound(AmbienceGroup group, BlockPos pos, float pitch) {
         PitchGroup groupFromPitch = getGroupFromPitch(pitch);
         Set<BlockPos> set = counter.computeIfAbsent(group, ag -> new IdentityHashMap<>())
             .computeIfAbsent(groupFromPitch, pg -> new HashSet<>());
@@ -89,6 +97,10 @@ public class SoundScapes {
     }
 
     public static void invalidateAll() {
+        INSTANCE.callInvalidateAll();
+    }
+
+    public void callInvalidateAll() {
         counter.clear();
         activeSounds.forEach(($, sound) -> sound.remove());
         activeSounds.clear();
@@ -107,10 +119,18 @@ public class SoundScapes {
     }
 
     public static int getSoundCount(AmbienceGroup group, PitchGroup pitchGroup) {
+        return INSTANCE.callGetSoundCount(group, pitchGroup);
+    }
+
+    public int callGetSoundCount(AmbienceGroup group, PitchGroup pitchGroup) {
         return getAllLocations(group, pitchGroup).size();
     }
 
     public static Set<BlockPos> getAllLocations(AmbienceGroup group, PitchGroup pitchGroup) {
+        return INSTANCE.callGetAllLocations(group, pitchGroup);
+    }
+
+    public Set<BlockPos> callGetAllLocations(AmbienceGroup group, PitchGroup pitchGroup) {
         return counter.getOrDefault(group, Collections.emptyMap()).getOrDefault(pitchGroup, Collections.emptySet());
     }
 

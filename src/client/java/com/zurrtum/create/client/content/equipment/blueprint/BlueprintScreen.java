@@ -110,8 +110,8 @@ public class BlueprintScreen extends AbstractSimiContainerScreen<BlueprintMenu> 
     }
 
     @Override
-    public void onClose() {
-        super.onClose();
+    public void removed() {
+        super.removed();
         renderedItem.getRenderElement().clear();
     }
 

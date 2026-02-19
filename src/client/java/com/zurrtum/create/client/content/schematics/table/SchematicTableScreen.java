@@ -180,8 +180,8 @@ public class SchematicTableScreen extends AbstractSimiContainerScreen<SchematicT
     }
 
     @Override
-    public void onClose() {
-        super.onClose();
+    public void removed() {
+        super.removed();
         renderedItem.getRenderElement().clear();
     }
 

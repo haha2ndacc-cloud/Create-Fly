@@ -157,12 +157,6 @@ public class SchematicEditScreen extends AbstractSimiScreen {
     }
 
     @Override
-    public void onClose() {
-        super.onClose();
-        renderedItem.getRenderElement().clear();
-    }
-
-    @Override
     public boolean keyPressed(KeyEvent input) {
         if (input.isPaste()) {
             String coords = minecraft.keyboardHandler.getClipboard();
@@ -237,6 +231,7 @@ public class SchematicEditScreen extends AbstractSimiScreen {
             handler.markDirty();
             handler.deploy(minecraft);
         }
+        renderedItem.getRenderElement().clear();
     }
 
 }

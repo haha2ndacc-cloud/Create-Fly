@@ -266,7 +266,10 @@ public class DisplayLinkScreen extends AbstractSimiScreen {
             sourceData,
             targetLineSelector == null ? 0 : targetLineSelector.getState()
         ));
+    }
 
+    @Override
+    public void removed() {
         renderedItem.getRenderElement().clear();
     }
 

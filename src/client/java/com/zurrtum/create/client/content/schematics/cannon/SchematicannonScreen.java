@@ -173,8 +173,8 @@ public class SchematicannonScreen extends AbstractSimiContainerScreen<Schematica
     }
 
     @Override
-    public void onClose() {
-        super.onClose();
+    public void removed() {
+        super.removed();
         renderedItem.getRenderElement().clear();
     }
 

@@ -151,14 +151,6 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
     }
 
     @Override
-    public void onClose() {
-        super.onClose();
-        renderedItem.getRenderElement().clear();
-        torchPower.getRenderElement().clear();
-        torchOff.getRenderElement().clear();
-    }
-
-    @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         int itemX = guiLeft + 13;
         int itemY = guiTop + 80;
@@ -391,6 +383,9 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
     @Override
     public void removed() {
         send(blockEntity.isInverted());
+        renderedItem.getRenderElement().clear();
+        torchPower.getRenderElement().clear();
+        torchOff.getRenderElement().clear();
     }
 
     protected void send(boolean invert) {
