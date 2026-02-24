@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.OutlineBufferSource;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
@@ -25,7 +26,6 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 
 import java.util.*;
 
@@ -102,7 +102,7 @@ public class BakedItemModelBufferer {
                     builder.useOverlay(false);
                 }
                 RenderPipeline pipeline = renderLayer.pipeline();
-                Optional<BlendFunction> blendFunction = pipeline.getBlendFunction();
+                Optional<BlendFunction> blendFunction = pipeline.getColorTargetState().blendFunction();
                 if (blendFunction.isPresent()) {
                     Transparency transparency = TRANSPARENCY.get(blendFunction.get());
                     if (transparency != null) {

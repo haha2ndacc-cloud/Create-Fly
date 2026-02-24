@@ -64,6 +64,7 @@
     "PoseStackMixin",
     "RemotePlayerMixin",
     "RenderBuffersMixin",
+    "RenderPipelineMixin",
     "RenderSystemMixin",
     "SectionCompilerMixin",
     "SimpleUnbakedGeometryMixin",

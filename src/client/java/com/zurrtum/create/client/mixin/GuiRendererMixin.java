@@ -6,11 +6,10 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.systems.RenderPass;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.systems.RenderSystem.AutoStorageIndexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.zurrtum.create.client.catnip.gui.IndexRenderPipeline;
 import com.zurrtum.create.client.catnip.gui.render.*;
+import com.zurrtum.create.client.catnip.render.CustomRenderPipeline;
 import com.zurrtum.create.client.catnip.render.DefaultSuperRenderTypeBuffer;
 import com.zurrtum.create.client.foundation.gui.render.*;
 import com.zurrtum.create.client.ponder.foundation.render.SceneRenderState;
@@ -64,8 +63,8 @@ public class GuiRendererMixin {
         Operation<Void> original,
         @Local(argsOnly = true) GuiRenderer.Draw draw
     ) {
-        if (draw.pipeline() instanceof IndexRenderPipeline pipeline) {
-            AutoStorageIndexBuffer sequentialBuffer = RenderSystem.getSequentialBuffer(pipeline.getVertexFormatMode());
+        AutoStorageIndexBuffer sequentialBuffer = ((CustomRenderPipeline) draw.pipeline()).create$getSequentialBuffer();
+        if (sequentialBuffer != null) {
             original.call(instance, sequentialBuffer.getBuffer(draw.indexCount()), sequentialBuffer.type());
         } else {
             original.call(instance, gpuBuffer, indexType);

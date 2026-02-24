@@ -1,11 +1,14 @@
 package com.zurrtum.create.client.foundation.render;
 
 import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
+import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.DestFactor;
 import com.mojang.blaze3d.platform.SourceFactor;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.zurrtum.create.client.catnip.render.PonderRenderPipelines;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
@@ -15,36 +18,40 @@ public class AllRenderPipelines {
     public static final Identifier GLOWING_ID = Identifier.fromNamespaceAndPath(MOD_ID, "core/glowing_shader");
     public static final RenderPipeline.Snippet GLOWING_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
         .withVertexShader(GLOWING_ID).withFragmentShader(GLOWING_ID).withSampler("Sampler0").withSampler("Sampler2")
-        .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.QUADS).buildSnippet();
+        .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.QUADS)
+        .withDepthStencilState(DepthStencilState.DEFAULT).buildSnippet();
     public static final RenderPipeline ADDITIVE = register(
         "additive",
-        RenderPipeline.builder(RenderPipelines.BLOCK_SNIPPET).withBlend(BlendFunction.ADDITIVE).withCull(false)
+        RenderPipeline.builder(RenderPipelines.BLOCK_SNIPPET)
+            .withColorTargetState(new ColorTargetState(BlendFunction.ADDITIVE)).withCull(false)
     );
     public static final RenderPipeline ADDITIVE2 = register(
         "additive2",
-        RenderPipeline.builder(RenderPipelines.BLOCK_SNIPPET).withBlend(BlendFunction.ADDITIVE).withCull(false)
-            .withDepthWrite(false)
+        RenderPipeline.builder(RenderPipelines.BLOCK_SNIPPET)
+            .withColorTargetState(new ColorTargetState(BlendFunction.ADDITIVE)).withCull(false)
+            .withDepthStencilState(PonderRenderPipelines.DEFAULT_TEST_NOT_WRITE)
     );
     public static final RenderPipeline GLOWING = register(
-        "glowing", RenderPipeline.builder(GLOWING_SNIPPET).withBlend(new BlendFunction(
+        "glowing", RenderPipeline.builder(GLOWING_SNIPPET).withColorTargetState(new ColorTargetState(new BlendFunction(
             SourceFactor.SRC_ALPHA,
             DestFactor.ONE_MINUS_SRC_ALPHA,
             SourceFactor.SRC_ALPHA,
             DestFactor.ONE_MINUS_SRC_ALPHA
-        ))
+        )))
     );
     public static final RenderPipeline GLOWING_TRANSLUCENT = register(
         "glowing_translucent",
-        RenderPipeline.builder(GLOWING_SNIPPET).withBlend(BlendFunction.TRANSLUCENT)
+        RenderPipeline.builder(GLOWING_SNIPPET).withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
     );
     public static final RenderPipeline CUBE = register(
         "cube",
-        RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET).withBlend(new BlendFunction(
-            SourceFactor.SRC_ALPHA,
-            DestFactor.ONE_MINUS_SRC_ALPHA,
-            SourceFactor.SRC_ALPHA,
-            DestFactor.ONE_MINUS_SRC_ALPHA
-        )).withDepthWrite(false)
+        RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET)
+            .withColorTargetState(new ColorTargetState(new BlendFunction(
+                SourceFactor.SRC_ALPHA,
+                DestFactor.ONE_MINUS_SRC_ALPHA,
+                SourceFactor.SRC_ALPHA,
+                DestFactor.ONE_MINUS_SRC_ALPHA
+            ))).withDepthStencilState(PonderRenderPipelines.DEFAULT_TEST_NOT_WRITE)
     );
 
     private static RenderPipeline register(String id, RenderPipeline.Builder builder) {
