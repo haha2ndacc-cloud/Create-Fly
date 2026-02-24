@@ -8,8 +8,9 @@ import com.zurrtum.create.client.infrastructure.model.CopycatModel;
 import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.LiquidBlockRenderer;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
@@ -17,7 +18,6 @@ import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -137,6 +137,7 @@ public final class BakedModelBuffererImpl {
         TransformingVertexConsumer transformingWrapper = objects.transformingWrapper;
 
         BlockRenderDispatcher renderDispatcher = Minecraft.getInstance().getBlockRenderer();
+        LiquidBlockRenderer liquidRenderer = renderDispatcher.getLiquidRenderer();
 
         ModelBlockRenderer blockRenderer = renderDispatcher.getModelRenderer();
         ModelBlockRenderer.enableCaching();
@@ -149,7 +150,7 @@ public final class BakedModelBuffererImpl {
                 FluidState fluidState = state.getFluidState();
 
                 if (!fluidState.isEmpty()) {
-                    ChunkSectionLayer renderType = ItemBlockRenderTypes.getRenderLayer(fluidState);
+                    ChunkSectionLayer renderType = liquidRenderer.getRenderLayer(fluidState);
 
                     transformingWrapper.prepare(bufferSource.getBuffer(renderType, true), poseStack);
 

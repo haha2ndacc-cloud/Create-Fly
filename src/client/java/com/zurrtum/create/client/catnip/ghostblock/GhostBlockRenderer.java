@@ -8,7 +8,6 @@ import com.zurrtum.create.client.catnip.placement.PlacementClient;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.flywheel.lib.model.baked.EmptyVirtualBlockGetter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
@@ -58,7 +57,11 @@ public abstract class GhostBlockRenderer {
                 EmptyVirtualBlockGetter.FULL_BRIGHT,
                 state,
                 ms,
-                (layer, shade) -> buffer.getEarlyBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(layer))
+                (layer, shade) -> buffer.getEarlyBuffer(switch (layer) {
+                    case SOLID -> RenderTypes.solidMovingBlock();
+                    case CUTOUT -> RenderTypes.cutoutMovingBlock();
+                    case TRANSLUCENT -> RenderTypes.translucentMovingBlock();
+                })
             );
             ms.popPose();
         }

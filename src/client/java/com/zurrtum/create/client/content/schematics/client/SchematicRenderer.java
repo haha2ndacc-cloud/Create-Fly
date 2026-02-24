@@ -12,13 +12,13 @@ import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper.Block
 import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -74,7 +74,13 @@ public class SchematicRenderer {
         changed = false;
 
         bufferCache.forEach((layer, buffer) -> {
-            buffer.renderInto(ms.last(), buffers.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(layer)));
+            buffer.renderInto(
+                ms.last(), buffers.getBuffer(switch (layer) {
+                    case SOLID -> RenderTypes.solidMovingBlock();
+                    case CUTOUT -> RenderTypes.cutoutMovingBlock();
+                    case TRANSLUCENT -> RenderTypes.translucentMovingBlock();
+                })
+            );
         });
         scratchErroredBlockEntities.clear();
         BlockEntityListRenderState renderState = BlockEntityRenderHelper.getBlockEntitiesRenderState(

@@ -7,8 +7,9 @@ import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
 import com.zurrtum.create.foundation.block.LightControlBlock;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.LiquidBlockRenderer;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
@@ -17,7 +18,6 @@ import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -123,6 +123,7 @@ final class BakedModelBufferer {
         emitters.prepare(blockMaterialFunction);
 
         BlockRenderDispatcher renderDispatcher = Minecraft.getInstance().getBlockRenderer();
+        LiquidBlockRenderer liquidRenderer = renderDispatcher.getLiquidRenderer();
 
         ModelBlockRenderer blockRenderer = renderDispatcher.getModelRenderer();
         ModelBlockRenderer.enableCaching();
@@ -138,7 +139,7 @@ final class BakedModelBufferer {
             if (renderFluids) {
                 FluidState fluidState = state.getFluidState();
                 if (!fluidState.isEmpty()) {
-                    ChunkSectionLayer renderType = ItemBlockRenderTypes.getRenderLayer(fluidState);
+                    ChunkSectionLayer renderType = liquidRenderer.getRenderLayer(fluidState);
 
                     BufferBuilder bufferBuilder = emitters.getBuffer(renderType, true, false);
 

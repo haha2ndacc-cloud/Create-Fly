@@ -24,7 +24,6 @@ import com.zurrtum.create.client.ponder.api.scene.Selection;
 import com.zurrtum.create.client.ponder.foundation.PonderScene;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -34,6 +33,7 @@ import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
@@ -416,8 +416,12 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
         transformMS(structureBuffer.getTransforms(), pt);
 
         int light = lightCoordsFromFade(fade);
-        structureBuffer.light(light)
-            .renderInto(poseStack.last(), buffer.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(type)));
+        VertexConsumer consumer = buffer.getBuffer(switch (type) {
+            case SOLID -> RenderTypes.solidMovingBlock();
+            case CUTOUT -> RenderTypes.cutoutMovingBlock();
+            case TRANSLUCENT -> RenderTypes.translucentMovingBlock();
+        });
+        structureBuffer.light(light).renderInto(poseStack.last(), consumer);
     }
 
     @Override
