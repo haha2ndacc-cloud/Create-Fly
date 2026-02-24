@@ -125,7 +125,19 @@ public class AllSpriteShifts {
     }
 
     private static void populateMaps() {
-        WoodType[] supportedWoodTypes = new WoodType[]{WoodType.OAK, WoodType.SPRUCE, WoodType.BIRCH, WoodType.ACACIA, WoodType.JUNGLE, WoodType.DARK_OAK, WoodType.MANGROVE, WoodType.CRIMSON, WoodType.WARPED, WoodType.CHERRY, WoodType.BAMBOO};
+        WoodType[] supportedWoodTypes = new WoodType[]{
+            WoodType.OAK,
+            WoodType.SPRUCE,
+            WoodType.BIRCH,
+            WoodType.ACACIA,
+            WoodType.JUNGLE,
+            WoodType.DARK_OAK,
+            WoodType.MANGROVE,
+            WoodType.CRIMSON,
+            WoodType.WARPED,
+            WoodType.CHERRY,
+            WoodType.BAMBOO
+        };
         Arrays.stream(supportedWoodTypes)
             .forEach(woodType -> WOODEN_WINDOWS.put(woodType, vertical("palettes/" + woodType.name() + "_window")));
 

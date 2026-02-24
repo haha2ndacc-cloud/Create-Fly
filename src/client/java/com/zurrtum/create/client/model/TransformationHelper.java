@@ -253,7 +253,7 @@ public class TransformationHelper {
     public enum TransformOrigin implements StringRepresentable {
         CENTER(new Vector3f(.5f, .5f, .5f), "center"), CORNER(new Vector3f(), "corner"), OPPOSING_CORNER(
             new Vector3f(
-            1,
+                1,
             1,
             1
         ), "opposing-corner"

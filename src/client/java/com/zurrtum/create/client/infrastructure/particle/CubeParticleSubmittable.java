@@ -40,7 +40,8 @@ public class CubeParticleSubmittable implements SubmitNodeCollector.ParticleGrou
         new Vector3f(1, 1, 1), new Vector3f(1, -1, 1), new Vector3f(1, -1, -1), new Vector3f(1, 1, -1),
 
         // RIGHT
-        new Vector3f(-1, 1, -1), new Vector3f(-1, -1, -1), new Vector3f(-1, -1, 1), new Vector3f(-1, 1, 1)};
+        new Vector3f(-1, 1, -1), new Vector3f(-1, -1, -1), new Vector3f(-1, -1, 1), new Vector3f(-1, 1, 1)
+    };
 
     private final Vertices vertices = new Vertices();
     private int particles;

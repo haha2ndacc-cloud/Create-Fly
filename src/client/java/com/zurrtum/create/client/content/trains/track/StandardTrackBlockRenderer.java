@@ -201,10 +201,9 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
             index = location;
             for (; i < index; i++) {
                 if (be.isValidBogeyOffset(i)) {
-                    data[i] = new int[]{colorWhenValid, LevelRenderer.getLightCoords(
-                        world,
-                        currentPos.move(direction, 1)
-                    )};
+                    data[i] = new int[]{
+                        colorWhenValid, LevelRenderer.getLightCoords(world, currentPos.move(direction, 1))
+                    };
                 }
             }
             data[i] = new int[]{colorWhenCarriage, LevelRenderer.getLightCoords(world, currentPos.move(direction, 1))};
@@ -212,10 +211,9 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
         }
         for (; index < length; index++) {
             if (be.isValidBogeyOffset(index)) {
-                data[index] = new int[]{colorWhenValid, LevelRenderer.getLightCoords(
-                    world,
-                    currentPos.move(direction, 1)
-                )};
+                data[index] = new int[]{
+                    colorWhenValid, LevelRenderer.getLightCoords(world, currentPos.move(direction, 1))
+                };
             }
         }
         return state;

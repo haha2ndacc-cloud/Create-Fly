@@ -22,7 +22,9 @@ import static com.mojang.blaze3d.opengl.GlConst.*;
 public class OitFramebuffer {
     public static final float[] CLEAR_TO_ZERO = {0, 0, 0, 0};
     public static final int[] DEPTH_RANGE_DRAW_BUFFERS = {GL46.GL_COLOR_ATTACHMENT0};
-    public static final int[] RENDER_TRANSMITTANCE_DRAW_BUFFERS = {GL46.GL_COLOR_ATTACHMENT1, GL46.GL_COLOR_ATTACHMENT2, GL46.GL_COLOR_ATTACHMENT3, GL46.GL_COLOR_ATTACHMENT4};
+    public static final int[] RENDER_TRANSMITTANCE_DRAW_BUFFERS = {
+        GL46.GL_COLOR_ATTACHMENT1, GL46.GL_COLOR_ATTACHMENT2, GL46.GL_COLOR_ATTACHMENT3, GL46.GL_COLOR_ATTACHMENT4
+    };
     public static final int[] ACCUMULATE_DRAW_BUFFERS = {GL46.GL_COLOR_ATTACHMENT5};
     public static final int[] DEPTH_ONLY_DRAW_BUFFERS = {};
 

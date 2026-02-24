@@ -33,7 +33,9 @@ public class ControllerRailBlock extends BaseRailBlock implements IWrenchable, M
     public static final EnumProperty<RailShape> SHAPE = BlockStateProperties.RAIL_SHAPE_STRAIGHT;
     public static final BooleanProperty BACKWARDS = BooleanProperty.create("backwards");
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
-    private static final Rotation[] WRENCH_ROTATION = new Rotation[]{Rotation.CLOCKWISE_90, Rotation.CLOCKWISE_180, Rotation.COUNTERCLOCKWISE_90};
+    private static final Rotation[] WRENCH_ROTATION = new Rotation[]{
+        Rotation.CLOCKWISE_90, Rotation.CLOCKWISE_180, Rotation.COUNTERCLOCKWISE_90
+    };
 
     public static final MapCodec<ControllerRailBlock> CODEC = simpleCodec(ControllerRailBlock::new);
 

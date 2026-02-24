@@ -25,7 +25,9 @@ import java.util.List;
 
 public class TableClothModel extends WrapperBlockStateModel {
     private static final List<WeakReference<TableClothModel>> MODELS = new ArrayList<>(19);
-    private static final Direction[] DIRECTIONS = new Direction[]{Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.EAST};
+    private static final Direction[] DIRECTIONS = new Direction[]{
+        Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.EAST
+    };
     private static final int SOUTH_WEST = 0b0011;
     private static final int NORTH_WEST = 0b0110;
     private static final int NORTH_EAST = 0b1100;

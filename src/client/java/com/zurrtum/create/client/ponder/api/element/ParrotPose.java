@@ -14,7 +14,9 @@ import net.minecraft.world.phys.Vec3;
 
 public abstract class ParrotPose {
 
-    private static final Parrot.Variant[] VARIANTS = new Parrot.Variant[]{Parrot.Variant.RED_BLUE, Parrot.Variant.GREEN, Parrot.Variant.YELLOW_BLUE, Parrot.Variant.GRAY,}; // blue parrots are kinda hard to see
+    private static final Parrot.Variant[] VARIANTS = new Parrot.Variant[]{
+        Parrot.Variant.RED_BLUE, Parrot.Variant.GREEN, Parrot.Variant.YELLOW_BLUE, Parrot.Variant.GRAY,
+    }; // blue parrots are kinda hard to see
 
     public abstract void tick(PonderScene scene, Parrot entity, Vec3 location);
 

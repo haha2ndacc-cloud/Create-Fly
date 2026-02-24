@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.Nullable;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 class MeshEmitterManager<T extends MeshEmitter> {

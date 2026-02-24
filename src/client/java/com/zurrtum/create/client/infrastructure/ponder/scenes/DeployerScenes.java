@@ -78,7 +78,9 @@ public class DeployerScenes {
         scene.world().hideSection(util.select().fromTo(2, 1, 3, 2, 1, 1), Direction.UP);
         scene.idle(20);
 
-        String[] actions = new String[]{"Place Blocks,", "Use Items,", "Activate Blocks,", "Harvest blocks", "and Attack Mobs"};
+        String[] actions = new String[]{
+            "Place Blocks,", "Use Items,", "Activate Blocks,", "Harvest blocks", "and Attack Mobs"
+        };
 
         scene.overlay().showText(80).attachKeyFrame().independent(40).placeNearTarget().text("Deployers can:");
 

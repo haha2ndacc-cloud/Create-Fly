@@ -30,7 +30,9 @@ public final class ModelUtil {
     private static final Map<RenderType, Material> ITEM_CHUNK_MATERIALS = new IdentityHashMap<>();
 
     static {
-        Material[] baseChunkMaterials = new Material[]{Materials.SOLID_BLOCK, Materials.CUTOUT_BLOCK, Materials.TRANSLUCENT_BLOCK};
+        Material[] baseChunkMaterials = new Material[]{
+            Materials.SOLID_BLOCK, Materials.CUTOUT_BLOCK, Materials.TRANSLUCENT_BLOCK
+        };
         for (int chunkLayerIdx = 0, size = baseChunkMaterials.length; chunkLayerIdx < size; chunkLayerIdx++) {
             int baseMaterialIdx = chunkLayerIdx * 4;
             Material baseChunkMaterial = baseChunkMaterials[chunkLayerIdx];

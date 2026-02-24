@@ -88,7 +88,8 @@ public class TranslucentModel implements ItemModel {
 
     public record Unbaked(Identifier model, List<ItemTintSource> tints) implements ItemModel.Unbaked {
         public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Identifier.CODEC.fieldOf("model").forGetter(Unbaked::model),
+            Identifier.CODEC.fieldOf(
+                "model").forGetter(Unbaked::model),
             ItemTintSources.CODEC.listOf().optionalFieldOf("tints", List.of()).forGetter(Unbaked::tints)
         ).apply(instance, Unbaked::new));
 

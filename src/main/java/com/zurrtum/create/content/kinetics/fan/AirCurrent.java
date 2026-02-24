@@ -258,7 +258,9 @@ public class AirCurrent {
         return max;
     }
 
-    private static final double[][] DEPTH_TEST_COORDINATES = {{0.25, 0.25}, {0.25, 0.75}, {0.5, 0.5}, {0.75, 0.25}, {0.75, 0.75}};
+    private static final double[][] DEPTH_TEST_COORDINATES = {
+        {0.25, 0.25}, {0.25, 0.75}, {0.5, 0.5}, {0.75, 0.25}, {0.75, 0.75}
+    };
 
     // Finds the maximum depth of the shape when traveling in the given direction.
     // The result is always positive.

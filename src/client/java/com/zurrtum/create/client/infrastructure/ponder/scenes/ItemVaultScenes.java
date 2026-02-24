@@ -72,10 +72,9 @@ public class ItemVaultScenes {
         scene.overlay().showText(80).text("Any components for item transfer can both insert...").attachKeyFrame()
             .colored(PonderPalette.GREEN).placeNearTarget().pointAt(util.vector().topOf(2, 2, 3));
 
-        ItemStack[] junk = {new ItemStack(Items.APPLE), new ItemStack(Items.GOLD_INGOT, 8), new ItemStack(
-            Items.TUFF,
-            32
-        )};
+        ItemStack[] junk = {
+            new ItemStack(Items.APPLE), new ItemStack(Items.GOLD_INGOT, 8), new ItemStack(Items.TUFF, 32)
+        };
         for (int i = 0; i < junk.length + 2; i++) {
             scene.idle(4);
 

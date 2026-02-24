@@ -155,19 +155,45 @@ public class CClient extends ConfigBase {
         static String enableOverstressedTooltip = "Display a tooltip when looking at overstressed components.";
         static String explainRenderErrors = "Log a stack-trace when rendering issues happen within a moving contraption.";
         static String fanParticleDensity = "Higher density means more spawned particles.";
-        static String[] filterItemRenderDistance = new String[]{"[in Blocks]", "Maximum Distance to the player at which items in Blocks' filter slots will be displayed"};
-        static String[] mainMenuConfigButtonRow = new String[]{"Choose the menu row that the Create config button appears on in the main menu", "Set to 0 to disable the button altogether"};
-        static String[] mainMenuConfigButtonOffsetX = new String[]{"Offset the Create config button in the main menu by this many pixels on the X axis", "The sign (-/+) of this value determines what side of the row the button appears on (left/right)"};
-        static String[] ingameMenuConfigButtonRow = new String[]{"Choose the menu row that the Create config button appears on in the in-game menu", "Set to 0 to disable the button altogether"};
-        static String[] ingameMenuConfigButtonOffsetX = new String[]{"Offset the Create config button in the in-game menu by this many pixels on the X axis", "The sign (-/+) of this value determines what side of the row the button appears on (left/right)"};
+        static String[] filterItemRenderDistance = new String[]{
+            "[in Blocks]", "Maximum Distance to the player at which items in Blocks' filter slots will be displayed"
+        };
+        static String[] mainMenuConfigButtonRow = new String[]{
+            "Choose the menu row that the Create config button appears on in the main menu",
+            "Set to 0 to disable the button altogether"
+        };
+        static String[] mainMenuConfigButtonOffsetX = new String[]{
+            "Offset the Create config button in the main menu by this many pixels on the X axis",
+            "The sign (-/+) of this value determines what side of the row the button appears on (left/right)"
+        };
+        static String[] ingameMenuConfigButtonRow = new String[]{
+            "Choose the menu row that the Create config button appears on in the in-game menu",
+            "Set to 0 to disable the button altogether"
+        };
+        static String[] ingameMenuConfigButtonOffsetX = new String[]{
+            "Offset the Create config button in the in-game menu by this many pixels on the X axis",
+            "The sign (-/+) of this value determines what side of the row the button appears on (left/right)"
+        };
         static String ignoreFabulousWarning = "Setting this to true will prevent Create from sending you a warning when playing with Fabulous graphics enabled";
         static String rotatewhenSeated = "Disable to prevent being rotated while seated on a Moving Contraption";
         static String overlay = "Settings for the Goggle Overlay";
         static String overlayOffset = "Offset the overlay from goggle- and hover- information by this many pixels on the respective axis; Use /create overlay";
         static String overlayCustomColor = "Enable this to use your custom colors for the Goggle- and Hover- Overlay";
-        static String[] overlayBackgroundColor = new String[]{"The custom background color to use for the Goggle- and Hover- Overlays, if enabled", "[in Hex: #AaRrGgBb]", ConfigAnnotations.IntDisplay.HEX.asComment()};
-        static String[] overlayBorderColorTop = new String[]{"The custom top color of the border gradient to use for the Goggle- and Hover- Overlays, if enabled", "[in Hex: #AaRrGgBb]", ConfigAnnotations.IntDisplay.HEX.asComment()};
-        static String[] overlayBorderColorBot = new String[]{"The custom bot color of the border gradient to use for the Goggle- and Hover- Overlays, if enabled", "[in Hex: #AaRrGgBb]", ConfigAnnotations.IntDisplay.HEX.asComment()};
+        static String[] overlayBackgroundColor = new String[]{
+            "The custom background color to use for the Goggle- and Hover- Overlays, if enabled",
+            "[in Hex: #AaRrGgBb]",
+            ConfigAnnotations.IntDisplay.HEX.asComment()
+        };
+        static String[] overlayBorderColorTop = new String[]{
+            "The custom top color of the border gradient to use for the Goggle- and Hover- Overlays, if enabled",
+            "[in Hex: #AaRrGgBb]",
+            ConfigAnnotations.IntDisplay.HEX.asComment()
+        };
+        static String[] overlayBorderColorBot = new String[]{
+            "The custom bot color of the border gradient to use for the Goggle- and Hover- Overlays, if enabled",
+            "[in Hex: #AaRrGgBb]",
+            ConfigAnnotations.IntDisplay.HEX.asComment()
+        };
         static String sound = "Sound settings";
         static String enableAmbientSounds = "Make cogs rumble and machines clatter.";
         static String ambientVolumeCap = "Maximum volume modifier of Ambient noise";

@@ -64,11 +64,9 @@ public class CrafterScenes {
             .placeNearTarget();
         scene.idle(60);
 
-        BlockPos[] positions = new BlockPos[]{util.grid().at(3, 1, 2), util.grid().at(2, 1, 2), util.grid().at(
-            1,
-            1,
-            2
-        )};
+        BlockPos[] positions = new BlockPos[]{
+            util.grid().at(3, 1, 2), util.grid().at(2, 1, 2), util.grid().at(1, 1, 2)
+        };
 
         for (BlockPos pos : positions) {
             scene.overlay().showControls(util.vector().blockSurface(pos, Direction.NORTH), Pointing.RIGHT, 10)
@@ -286,11 +284,13 @@ public class CrafterScenes {
         scene.idle(22);
 
         scene.world().removeItemsFromBelt(util.grid().at(3, 1, 2));
-        BlockPos[] positions = new BlockPos[]{util.grid().at(2, 3, 2), util.grid().at(1, 3, 2), util.grid().at(
-            1,
-            2,
-            2
-        ), util.grid().at(2, 1, 2), util.grid().at(1, 1, 2)};
+        BlockPos[] positions = new BlockPos[]{
+            util.grid().at(2, 3, 2),
+            util.grid().at(1, 3, 2),
+            util.grid().at(1, 2, 2),
+            util.grid().at(2, 1, 2),
+            util.grid().at(1, 1, 2)
+        };
 
         scene.world().setCraftingResult(util.grid().at(1, 1, 2), new ItemStack(Items.OAK_DOOR, 3));
         for (BlockPos pos : positions) {

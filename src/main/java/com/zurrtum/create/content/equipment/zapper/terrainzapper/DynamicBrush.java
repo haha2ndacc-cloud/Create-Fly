@@ -23,7 +23,9 @@ public class DynamicBrush extends Brush {
 
     @Override
     public TerrainTools[] getSupportedTools() {
-        return surface ? new TerrainTools[]{TerrainTools.Overlay, TerrainTools.Replace, TerrainTools.Clear} : new TerrainTools[]{TerrainTools.Replace, TerrainTools.Clear};
+        return surface ? new TerrainTools[]{
+            TerrainTools.Overlay, TerrainTools.Replace, TerrainTools.Clear
+        } : new TerrainTools[]{TerrainTools.Replace, TerrainTools.Clear};
     }
 
     @Override

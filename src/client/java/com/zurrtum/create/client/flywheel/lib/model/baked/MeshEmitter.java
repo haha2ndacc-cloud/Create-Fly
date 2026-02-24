@@ -1,7 +1,6 @@
 package com.zurrtum.create.client.flywheel.lib.model.baked;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -9,7 +8,6 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.zurrtum.create.client.flywheel.api.material.Material;
 import com.zurrtum.create.client.flywheel.api.model.Mesh;
 import com.zurrtum.create.client.flywheel.api.model.Model;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.Arrays;

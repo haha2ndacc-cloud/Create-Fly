@@ -450,23 +450,23 @@ public class RedstoneScenes {
         scene.title("analog_lever", "Controlling signals using the Analog Lever");
         scene.configureBasePlate(0, 0, 5);
 
-        BlockPos[] wireLocations = new BlockPos[]{util.grid().at(2, 1, 1), util.grid().at(2, 1, 0), util.grid().at(
-            1,
-            1,
-            0
-        ), util.grid().at(0, 1, 0), util.grid().at(0, 1, 1), util.grid().at(0, 1, 2), util.grid().at(
-            0,
-            1,
-            3
-        ), util.grid().at(0, 1, 4), util.grid().at(1, 1, 4), util.grid().at(2, 1, 4), util.grid().at(
-            3,
-            1,
-            4
-        ), util.grid().at(4, 1, 4), util.grid().at(4, 1, 3), util.grid().at(4, 1, 2), util.grid().at(
-            4,
-            1,
-            1
-        )};
+        BlockPos[] wireLocations = new BlockPos[]{
+            util.grid().at(2, 1, 1),
+            util.grid().at(2, 1, 0),
+            util.grid().at(1, 1, 0),
+            util.grid().at(0, 1, 0),
+            util.grid().at(0, 1, 1),
+            util.grid().at(0, 1, 2),
+            util.grid().at(0, 1, 3),
+            util.grid().at(0, 1, 4),
+            util.grid().at(1, 1, 4),
+            util.grid().at(2, 1, 4),
+            util.grid().at(3, 1, 4),
+            util.grid().at(4, 1, 4),
+            util.grid().at(4, 1, 3),
+            util.grid().at(4, 1, 2),
+            util.grid().at(4, 1, 1)
+        };
 
         Selection leverSelection = util.select().fromTo(2, 1, 2, 2, 2, 2);
         Selection lamp = util.select().position(4, 1, 0);
