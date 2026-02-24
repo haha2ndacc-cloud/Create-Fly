@@ -18,7 +18,7 @@ import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.minecart.MinecartFurnace;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -47,7 +47,7 @@ public class ControllerRailBlock extends BaseRailBlock implements IWrenchable, M
 
     public static int getWireColor(
         BlockState state,
-        @Nullable BlockAndTintGetter world,
+        @Nullable BlockAndLightGetter world,
         @Nullable BlockPos pos,
         int tintIndex
     ) {

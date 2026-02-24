@@ -10,7 +10,7 @@ import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import org.joml.*;
 import org.jspecify.annotations.Nullable;
 
@@ -42,7 +42,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
     private int packedLight;
     private boolean useLevelLight;
     @Nullable
-    private BlockAndTintGetter levelWithLight;
+    private BlockAndLightGetter levelWithLight;
     @Nullable
     private Matrix4f lightTransform;
     private final boolean invertFakeDiffuseNormal;
@@ -356,7 +356,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 
     @SuppressWarnings("unchecked")
     @Override
-    public SuperByteBuffer useLevelLight(BlockAndTintGetter level) {
+    public SuperByteBuffer useLevelLight(BlockAndLightGetter level) {
         useLevelLight = true;
         levelWithLight = level;
         return this;
@@ -364,7 +364,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 
     @SuppressWarnings("unchecked")
     @Override
-    public SuperByteBuffer useLevelLight(BlockAndTintGetter level, Matrix4f lightTransform) {
+    public SuperByteBuffer useLevelLight(BlockAndLightGetter level, Matrix4f lightTransform) {
         useLevelLight = true;
         levelWithLight = level;
         this.lightTransform = lightTransform;
@@ -378,7 +378,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
         return Math.min(1.0f, (light0 + light1) * 0.6f + 0.4f);
     }
 
-    private static int getLight(BlockAndTintGetter world, Vector4f lightPos) {
+    private static int getLight(BlockAndLightGetter world, Vector4f lightPos) {
         BlockPos pos = BlockPos.containing(lightPos.x(), lightPos.y(), lightPos.z());
         return WORLD_LIGHT_CACHE.computeIfAbsent(pos.asLong(), $ -> LevelRenderer.getLightCoords(world, pos));
     }

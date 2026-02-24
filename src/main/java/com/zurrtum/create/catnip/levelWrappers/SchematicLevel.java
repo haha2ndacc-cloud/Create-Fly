@@ -4,7 +4,6 @@ import com.zurrtum.create.Create;
 import com.zurrtum.create.catnip.components.ComponentProcessors;
 import com.zurrtum.create.catnip.math.BBHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
@@ -179,11 +178,6 @@ public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor,
     @Override
     public int getBrightness(LightLayer lightLayer, BlockPos pos) {
         return 15;
-    }
-
-    @Override
-    public float getShade(Direction face, boolean hasShade) {
-        return 1f;
     }
 
     @Override

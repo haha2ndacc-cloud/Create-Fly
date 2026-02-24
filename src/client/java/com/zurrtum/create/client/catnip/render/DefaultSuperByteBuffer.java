@@ -9,7 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.Level;
 import org.joml.*;
 import org.jspecify.annotations.Nullable;
@@ -323,12 +323,12 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
     }
 
     @Override
-    public DefaultSuperByteBuffer useLevelLight(BlockAndTintGetter level) {
+    public DefaultSuperByteBuffer useLevelLight(BlockAndLightGetter level) {
         return this;
     }
 
     @Override
-    public DefaultSuperByteBuffer useLevelLight(BlockAndTintGetter level, Matrix4f lightTransform) {
+    public DefaultSuperByteBuffer useLevelLight(BlockAndLightGetter level, Matrix4f lightTransform) {
         return this;
     }
 

@@ -18,7 +18,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -118,7 +118,10 @@ public class CopycatPanelModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
+                        direction,
+                        quad
+                    )
                 );
             }
             parts.add(new SimpleModelWrapper(
@@ -207,7 +210,10 @@ public class CopycatPanelModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
+                        direction,
+                        quad
+                    )
                 );
             }
             parts.add(new SimpleModelWrapper(

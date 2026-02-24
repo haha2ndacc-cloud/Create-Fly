@@ -12,7 +12,7 @@ import com.zurrtum.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -248,7 +248,7 @@ public abstract class FluidTransportBehaviour extends BlockEntityBehaviour<Smart
     }
 
     public AttachmentTypes getRenderedRimAttachment(
-        BlockAndTintGetter world,
+        BlockAndLightGetter world,
         BlockPos pos,
         BlockState state,
         Direction direction

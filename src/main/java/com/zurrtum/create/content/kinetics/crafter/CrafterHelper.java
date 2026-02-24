@@ -2,13 +2,13 @@ package com.zurrtum.create.content.kinetics.crafter;
 
 import com.zurrtum.create.content.kinetics.crafter.ConnectedInputHandler.ConnectedInput;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jspecify.annotations.Nullable;
 
 public class CrafterHelper {
     @Nullable
-    public static MechanicalCrafterBlockEntity getCrafter(BlockAndTintGetter reader, BlockPos pos) {
+    public static MechanicalCrafterBlockEntity getCrafter(BlockAndLightGetter reader, BlockPos pos) {
         BlockEntity blockEntity = reader.getBlockEntity(pos);
         if (blockEntity instanceof MechanicalCrafterBlockEntity mechanicalCrafterBlockEntity) {
             return mechanicalCrafterBlockEntity;
@@ -17,12 +17,12 @@ public class CrafterHelper {
     }
 
     @Nullable
-    public static ConnectedInput getInput(BlockAndTintGetter reader, BlockPos pos) {
+    public static ConnectedInput getInput(BlockAndLightGetter reader, BlockPos pos) {
         MechanicalCrafterBlockEntity crafter = getCrafter(reader, pos);
         return crafter == null ? null : crafter.input;
     }
 
-    public static boolean areCraftersConnected(BlockAndTintGetter reader, BlockPos pos, BlockPos otherPos) {
+    public static boolean areCraftersConnected(BlockAndLightGetter reader, BlockPos pos, BlockPos otherPos) {
         ConnectedInput input1 = getInput(reader, pos);
         ConnectedInput input2 = getInput(reader, otherPos);
 

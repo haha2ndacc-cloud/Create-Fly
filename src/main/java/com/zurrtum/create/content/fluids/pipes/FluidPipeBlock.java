@@ -217,7 +217,7 @@ public class FluidPipeBlock extends PipeBlock implements SimpleWaterloggedBlock,
     }
 
     public static boolean canConnectTo(
-        BlockAndTintGetter world,
+        BlockAndLightGetter world,
         BlockPos neighbourPos,
         BlockState neighbour,
         Direction direction
@@ -243,7 +243,12 @@ public class FluidPipeBlock extends PipeBlock implements SimpleWaterloggedBlock,
         return transport.canHaveFlowToward(neighbour, direction.getOpposite());
     }
 
-    public static boolean shouldDrawRim(BlockAndTintGetter world, BlockPos pos, BlockState state, Direction direction) {
+    public static boolean shouldDrawRim(
+        BlockAndLightGetter world,
+        BlockPos pos,
+        BlockState state,
+        Direction direction
+    ) {
         BlockPos offsetPos = pos.relative(direction);
         BlockState facingState = world.getBlockState(offsetPos);
         if (facingState.getBlock() instanceof EncasedPipeBlock) {
@@ -259,7 +264,7 @@ public class FluidPipeBlock extends PipeBlock implements SimpleWaterloggedBlock,
         return state.getValue(PROPERTY_BY_DIRECTION.get(direction));
     }
 
-    public static boolean isCornerOrEndPipe(BlockAndTintGetter world, BlockPos pos, BlockState state) {
+    public static boolean isCornerOrEndPipe(BlockAndLightGetter world, BlockPos pos, BlockState state) {
         return isPipe(state) && FluidPropagator.getStraightPipeAxis(state) == null && !shouldDrawCasing(
             world,
             pos,
@@ -267,7 +272,7 @@ public class FluidPipeBlock extends PipeBlock implements SimpleWaterloggedBlock,
         );
     }
 
-    public static boolean shouldDrawCasing(BlockAndTintGetter world, BlockPos pos, BlockState state) {
+    public static boolean shouldDrawCasing(BlockAndLightGetter world, BlockPos pos, BlockState state) {
         if (!isPipe(state)) {
             return false;
         }
@@ -327,7 +332,7 @@ public class FluidPipeBlock extends PipeBlock implements SimpleWaterloggedBlock,
         BlockState state,
         Direction preferredDirection,
         @Nullable Direction ignore,
-        BlockAndTintGetter world,
+        BlockAndLightGetter world,
         BlockPos pos
     ) {
 

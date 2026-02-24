@@ -6,7 +6,7 @@ import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
 import net.minecraft.core.Direction;
 import net.minecraft.util.LightCoordsUtil;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import org.joml.Matrix4f;
 
 @SuppressWarnings({"UnusedReturnValue", "unused", "unchecked"})
@@ -52,13 +52,13 @@ public interface SuperByteBuffer extends TransformStack<SuperByteBuffer> {
     /**
      * Indicate that this buffer should look up the light coordinates in the level.
      */
-    <Self extends SuperByteBuffer> Self useLevelLight(BlockAndTintGetter level);
+    <Self extends SuperByteBuffer> Self useLevelLight(BlockAndLightGetter level);
 
     /**
      * Indicate that this buffer should look up the light coordinates in the level.
      * Light Positions will be transformed by the passed Matrix before the lookup.
      */
-    <Self extends SuperByteBuffer> Self useLevelLight(BlockAndTintGetter level, Matrix4f lightTransform);
+    <Self extends SuperByteBuffer> Self useLevelLight(BlockAndLightGetter level, Matrix4f lightTransform);
 
     //
 

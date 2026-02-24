@@ -1,6 +1,9 @@
 package com.zurrtum.create.catnip.levelWrappers;
 
-import net.minecraft.core.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.ExplosionParticleInfo;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.sounds.SoundEvent;
@@ -309,11 +312,6 @@ public class WrappedLevel extends Level {
     @Override
     public FuelValues fuelValues() {
         return level.fuelValues();
-    }
-
-    @Override
-    public float getShade(Direction p_230487_1_, boolean p_230487_2_) {
-        return level.getShade(p_230487_1_, p_230487_2_);
     }
 
     @Override

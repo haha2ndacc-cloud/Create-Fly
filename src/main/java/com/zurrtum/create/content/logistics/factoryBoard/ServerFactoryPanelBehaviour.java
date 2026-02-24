@@ -47,7 +47,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackLinkedSet;
 import net.minecraft.world.item.crafting.*;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -128,7 +128,7 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
     }
 
     @Nullable
-    public static ServerFactoryPanelBehaviour at(BlockAndTintGetter world, FactoryPanelConnection connection) {
+    public static ServerFactoryPanelBehaviour at(BlockAndLightGetter world, FactoryPanelConnection connection) {
         Object cached = connection.cachedSource.get();
         if (cached instanceof ServerFactoryPanelBehaviour fbe && !fbe.blockEntity.isRemoved()) {
             return fbe;
@@ -139,7 +139,7 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
     }
 
     @Nullable
-    public static ServerFactoryPanelBehaviour at(BlockAndTintGetter world, FactoryPanelPosition pos) {
+    public static ServerFactoryPanelBehaviour at(BlockAndLightGetter world, FactoryPanelPosition pos) {
         if (world instanceof Level l && !l.isLoaded(pos.pos())) {
             return null;
         }
@@ -154,7 +154,7 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
     }
 
     @Nullable
-    public static FactoryPanelSupportBehaviour linkAt(BlockAndTintGetter world, FactoryPanelConnection connection) {
+    public static FactoryPanelSupportBehaviour linkAt(BlockAndLightGetter world, FactoryPanelConnection connection) {
         Object cached = connection.cachedSource.get();
         if (cached instanceof FactoryPanelSupportBehaviour fpsb && !fpsb.blockEntity.isRemoved()) {
             return fpsb;
@@ -165,7 +165,7 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
     }
 
     @Nullable
-    public static FactoryPanelSupportBehaviour linkAt(BlockAndTintGetter world, FactoryPanelPosition pos) {
+    public static FactoryPanelSupportBehaviour linkAt(BlockAndLightGetter world, FactoryPanelPosition pos) {
         if (world instanceof Level l && !l.isLoaded(pos.pos())) {
             return null;
         }

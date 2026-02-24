@@ -1,7 +1,6 @@
 package com.zurrtum.create.catnip.levelWrappers;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.ExplosionParticleInfo;
@@ -218,11 +217,6 @@ public class SchematicChunkSource extends ChunkSource {
             @Override
             public int getSeaLevel() {
                 return 63;
-            }
-
-            @Override
-            public float getShade(Direction pDirection, boolean pShade) {
-                return 0;
             }
 
             @Override

@@ -11,7 +11,7 @@ import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public class StraightPipeBlockEntity extends SmartBlockEntity {
 
         @Override
         public AttachmentTypes getRenderedRimAttachment(
-            BlockAndTintGetter world,
+            BlockAndLightGetter world,
             BlockPos pos,
             BlockState state,
             Direction direction

@@ -9,6 +9,7 @@ import com.zurrtum.create.Create;
 import com.zurrtum.create.catnip.levelWrappers.SchematicLevel;
 import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
+import com.zurrtum.create.client.catnip.levelWrappers.SchematicRenderLevel;
 import com.zurrtum.create.client.catnip.outliner.AABBOutline;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.content.schematics.client.tools.ToolType;
@@ -148,9 +149,9 @@ public class SchematicHandler {
             return;
         }
 
-        SchematicLevel w = new SchematicLevel(clientWorld);
-        SchematicLevel wMirroredFB = new SchematicLevel(clientWorld);
-        SchematicLevel wMirroredLR = new SchematicLevel(clientWorld);
+        SchematicRenderLevel w = new SchematicRenderLevel(clientWorld);
+        SchematicRenderLevel wMirroredFB = new SchematicRenderLevel(clientWorld);
+        SchematicRenderLevel wMirroredLR = new SchematicRenderLevel(clientWorld);
         StructurePlaceSettings placementSettings = new StructurePlaceSettings();
         StructureTransform transform;
         BlockPos pos;

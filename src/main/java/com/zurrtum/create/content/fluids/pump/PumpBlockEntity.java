@@ -16,7 +16,7 @@ import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
 import com.zurrtum.create.foundation.fluid.FluidHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -392,7 +392,7 @@ public class PumpBlockEntity extends KineticBlockEntity {
 
         @Override
         public AttachmentTypes getRenderedRimAttachment(
-            BlockAndTintGetter world,
+            BlockAndLightGetter world,
             BlockPos pos,
             BlockState state,
             Direction direction

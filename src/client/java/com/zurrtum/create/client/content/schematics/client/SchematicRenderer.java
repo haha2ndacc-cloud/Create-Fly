@@ -1,8 +1,8 @@
 package com.zurrtum.create.client.content.schematics.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.zurrtum.create.catnip.levelWrappers.SchematicLevel;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
+import com.zurrtum.create.client.catnip.levelWrappers.SchematicRenderLevel;
 import com.zurrtum.create.client.catnip.render.ShadedBlockSbbBuilder;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
@@ -37,13 +37,13 @@ public class SchematicRenderer {
 
     private final Map<ChunkSectionLayer, SuperByteBuffer> bufferCache = new LinkedHashMap<>(ChunkSectionLayer.values().length);
     private boolean changed;
-    protected final SchematicLevel schematic;
+    protected final SchematicRenderLevel schematic;
     private final BlockPos anchor;
     private final List<BlockEntity> renderedBlockEntities = new ArrayList<>();
     private final BitSet shouldRenderBlockEntities = new BitSet();
     private final BitSet scratchErroredBlockEntities = new BitSet();
 
-    public SchematicRenderer(SchematicLevel world) {
+    public SchematicRenderer(SchematicRenderLevel world) {
         this.anchor = world.anchor;
         this.schematic = world;
         this.changed = true;
@@ -121,7 +121,7 @@ public class SchematicRenderer {
         PoseStack poseStack = objects.poseStack;
         RandomSource random = objects.random;
         BlockPos.MutableBlockPos mutableBlockPos = objects.mutableBlockPos;
-        SchematicLevel renderWorld = schematic;
+        SchematicRenderLevel renderWorld = schematic;
         BoundingBox bounds = renderWorld.getBounds();
 
         ShadedBlockSbbBuilder sbbBuilder = objects.sbbBuilder;

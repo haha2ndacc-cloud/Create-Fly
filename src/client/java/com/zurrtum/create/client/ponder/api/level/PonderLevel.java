@@ -1,7 +1,7 @@
 package com.zurrtum.create.client.ponder.api.level;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.zurrtum.create.catnip.levelWrappers.SchematicLevel;
+import com.zurrtum.create.client.catnip.levelWrappers.SchematicRenderLevel;
 import com.zurrtum.create.client.ponder.Ponder;
 import com.zurrtum.create.client.ponder.api.element.WorldSectionElement;
 import com.zurrtum.create.client.ponder.api.scene.Selection;
@@ -52,7 +52,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public class PonderLevel extends SchematicLevel {
+public class PonderLevel extends SchematicRenderLevel {
 
     @Nullable
     public PonderScene scene;

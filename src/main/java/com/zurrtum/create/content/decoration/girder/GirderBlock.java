@@ -248,7 +248,7 @@ public class GirderBlock extends Block implements SimpleWaterloggedBlock, IWrenc
         return state;
     }
 
-    public static boolean isFacingBracket(BlockAndTintGetter level, BlockPos pos, Direction d) {
+    public static boolean isFacingBracket(BlockAndLightGetter level, BlockPos pos, Direction d) {
         BlockEntity blockEntity = level.getBlockEntity(pos.relative(d));
         if (!(blockEntity instanceof SmartBlockEntity sbe)) {
             return false;
@@ -336,7 +336,7 @@ public class GirderBlock extends Block implements SimpleWaterloggedBlock, IWrenc
         return false;
     }
 
-    public static boolean isConnected(BlockAndTintGetter world, BlockPos pos, BlockState state, Direction side) {
+    public static boolean isConnected(BlockAndLightGetter world, BlockPos pos, BlockState state, Direction side) {
         Axis axis = side.getAxis();
         if (state.getBlock() instanceof GirderBlock && !state.getValue(axis == Axis.X ? X : Z)) {
             return false;

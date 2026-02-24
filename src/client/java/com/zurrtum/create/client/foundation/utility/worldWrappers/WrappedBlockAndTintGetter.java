@@ -1,8 +1,8 @@
 package com.zurrtum.create.client.foundation.utility.worldWrappers;
 
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,8 +44,8 @@ public class WrappedBlockAndTintGetter implements BlockAndTintGetter {
     }
 
     @Override
-    public float getShade(Direction pDirection, boolean pShade) {
-        return wrapped.getShade(pDirection, pShade);
+    public CardinalLighting cardinalLighting() {
+        return wrapped.cardinalLighting();
     }
 
     @Override
