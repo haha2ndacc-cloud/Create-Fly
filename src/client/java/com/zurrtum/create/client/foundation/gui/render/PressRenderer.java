@@ -21,23 +21,26 @@ import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-import java.util.List;
-
 public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
     private static final Int2ObjectMap<GpuTexture> TEXTURES = new Int2ObjectArrayMap<>();
     private final PoseStack matrices = new PoseStack();
     private final BlockBakedQuadOutput output;
+    private final ModelBlockRenderer blockRenderer;
     private int windowScaleFactor;
 
     public PressRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
-        output = new BlockBakedQuadOutput(vertexConsumers);
+        output = new BlockBakedQuadOutput(vertexConsumers, matrices);
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -68,34 +71,38 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
         matrices.scale(1, -1, 1);
 
         BlockState blockState;
-        List<BlockModelPart> parts;
+        BlockStateModel model;
         BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float time = AnimationTickHolder.getRenderTime();
 
         blockState = AllBlocks.MECHANICAL_PRESS.defaultBlockState();
         world.blockState(blockState);
-        parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        model = blockRenderManager.getBlockModel(blockState);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
         matrices.pushPose();
         blockState = AllBlocks.SHAFT.defaultBlockState()
             .setValue(BlockStateProperties.AXIS, net.minecraft.core.Direction.Axis.Z);
         world.blockState(blockState);
-        parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
+        model = blockRenderManager.getBlockModel(blockState);
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.ZP.rotationDegrees(getShaftAngle(time)));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
         matrices.pushPose();
         blockState = Blocks.AIR.defaultBlockState();
         world.blockState(blockState);
-        parts = List.of(AllPartialModels.MECHANICAL_PRESS_HEAD.get());
+        model = AllPartialModels.MECHANICAL_PRESS_HEAD.get();
         matrices.translate(0, getAnimatedHeadOffset(time, item.offset()), 0);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
+        output.clearBuffer();
 
         bufferSource.endBatch();
         matrices.popPose();

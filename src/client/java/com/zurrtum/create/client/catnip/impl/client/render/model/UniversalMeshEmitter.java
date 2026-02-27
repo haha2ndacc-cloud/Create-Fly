@@ -1,50 +1,50 @@
 package com.zurrtum.create.client.catnip.impl.client.render.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.QuadBrightness;
-import com.mojang.blaze3d.vertex.QuadLightmapCoords;
+import com.mojang.blaze3d.vertex.QuadInstance;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.client.catnip.client.render.model.ShadeSeparatedBufferSource;
-import net.minecraft.client.renderer.block.BakedQuadOutput;
+import net.minecraft.client.renderer.block.BlockQuadOutput;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import org.jetbrains.annotations.UnknownNullability;
 
 // Modified from https://github.com/Engine-Room/Flywheel/blob/2f67f54c8898d91a48126c3c753eefa6cd224f84/forge/src/lib/java/dev/engine_room/flywheel/lib/model/baked/MeshEmitter.java
-public class UniversalMeshEmitter implements VertexConsumer, BakedQuadOutput {
+public class UniversalMeshEmitter implements VertexConsumer, BlockQuadOutput {
     @UnknownNullability
     private ShadeSeparatedBufferSource bufferSource;
+    @UnknownNullability
+    private PoseStack poseStack;
 
-    public void prepare(ShadeSeparatedBufferSource bufferSource) {
+    public void prepare(ShadeSeparatedBufferSource bufferSource, PoseStack poseStack) {
         this.bufferSource = bufferSource;
+        this.poseStack = poseStack;
     }
 
     public void clear() {
         bufferSource = null;
+        poseStack = null;
     }
 
     @Override
-    public void putBulkData(
-        PoseStack.Pose pose,
-        BakedQuad quad,
-        QuadBrightness brightness,
-        int color,
-        QuadLightmapCoords lightmapCoord,
-        int overlayCoords
-    ) {
-        bufferSource.getBuffer(quad.spriteInfo().layer(), quad.shade())
-            .putBulkData(pose, quad, brightness, color, lightmapCoord, overlayCoords);
+    public void putBlockBakedQuad(float x, float y, float z, BakedQuad quad, QuadInstance instance) {
+        bufferSource.getBuffer(quad.spriteInfo().layer(), quad.shade()).putBlockBakedQuad(x, y, z, quad, instance);
     }
 
     @Override
-    public void put(
-        PoseStack.Pose pose,
-        BakedQuad quad,
-        QuadBrightness brightness,
-        int color,
-        QuadLightmapCoords lightmapCoord,
-        int overlayCoords
-    ) {
-        putBulkData(pose, quad, brightness, color, lightmapCoord, overlayCoords);
+    public void putBakedQuad(PoseStack.Pose pose, BakedQuad quad, QuadInstance instance) {
+        bufferSource.getBuffer(quad.spriteInfo().layer(), quad.shade()).putBakedQuad(pose, quad, instance);
+    }
+
+    @Override
+    public void put(float x, float y, float z, BakedQuad quad, QuadInstance instance) {
+        if (x != 0F || y != 0F || z != 0F) {
+            poseStack.pushPose();
+            poseStack.translate(x, y, z);
+            putBakedQuad(poseStack.last(), quad, instance);
+            poseStack.popPose();
+        } else {
+            putBakedQuad(poseStack.last(), quad, instance);
+        }
     }
 
     @Override

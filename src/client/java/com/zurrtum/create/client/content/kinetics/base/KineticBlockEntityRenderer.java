@@ -97,7 +97,7 @@ public class KineticBlockEntityRenderer<T extends KineticBlockEntity, S extends 
     }
 
     protected RenderType getRenderType(T be, BlockState state) {
-        return RenderTypes.translucentMovingBlock();
+        return RenderTypes.cutoutMovingBlock();
     }
 
     protected SuperByteBuffer getRotatedModel(T be, S state) {

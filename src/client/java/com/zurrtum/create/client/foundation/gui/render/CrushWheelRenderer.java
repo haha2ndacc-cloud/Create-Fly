@@ -10,22 +10,25 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-import java.util.List;
-
 public class CrushWheelRenderer extends PictureInPictureRenderer<CrushWheelRenderState> {
     private final BlockState blockState = AllBlocks.CRUSHING_WHEEL.defaultBlockState()
         .setValue(BlockStateProperties.AXIS, Axis.X);
     private final BlockBakedQuadOutput output;
+    private final ModelBlockRenderer blockRenderer;
 
     public CrushWheelRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
         output = new BlockBakedQuadOutput(vertexConsumers);
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -37,9 +40,11 @@ public class CrushWheelRenderer extends PictureInPictureRenderer<CrushWheelRende
         matrices.translate(-1.5f, -0.6f, -0.5f);
         matrices.scale(1, -1, 1);
 
+        output.setPoseStack(matrices);
         BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
-        List<BlockModelPart> parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
+        BlockStateModel model = blockRenderManager.getBlockModel(blockState);
+        output.updateBuffer(model);
         world.blockState(blockState);
 
         float angle = getCurrentAngle();
@@ -48,7 +53,7 @@ public class CrushWheelRenderer extends PictureInPictureRenderer<CrushWheelRende
         matrices.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(-angle));
         matrices.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
         matrices.translate(0.5f, 0.5f, 0.5f);
@@ -56,7 +61,8 @@ public class CrushWheelRenderer extends PictureInPictureRenderer<CrushWheelRende
         matrices.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(angle));
         matrices.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        output.clear();
     }
 
     public static float getCurrentAngle() {

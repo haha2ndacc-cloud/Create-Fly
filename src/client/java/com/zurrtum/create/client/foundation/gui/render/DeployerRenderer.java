@@ -22,24 +22,27 @@ import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-import java.util.List;
-
 public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderState> {
     private static final Int2ObjectMap<GpuTexture> TEXTURES = new Int2ObjectArrayMap<>();
     private final PoseStack matrices = new PoseStack();
     private final BlockBakedQuadOutput output;
+    private final ModelBlockRenderer blockRenderer;
     private int windowScaleFactor;
 
     public DeployerRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
-        output = new BlockBakedQuadOutput(vertexConsumers);
+        output = new BlockBakedQuadOutput(vertexConsumers, matrices);
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -70,7 +73,7 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         matrices.scale(1, -1, 1);
 
         BlockState blockState;
-        List<BlockModelPart> parts;
+        BlockStateModel model;
         BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float time = AnimationTickHolder.getRenderTime();
@@ -80,35 +83,43 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         matrices.pushPose();
         blockState = AllBlocks.SHAFT.defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.Z);
         world.blockState(blockState);
-        parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
+        model = blockRenderManager.getBlockModel(blockState);
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.ZP.rotationDegrees(getCurrentAngle(time)));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
         blockState = AllBlocks.DEPLOYER.defaultBlockState().setValue(DeployerBlock.FACING, Direction.DOWN)
             .setValue(DeployerBlock.AXIS_ALONG_FIRST_COORDINATE, false);
         world.blockState(blockState);
-        parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        model = blockRenderManager.getBlockModel(blockState);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
         matrices.pushPose();
         blockState = Blocks.AIR.defaultBlockState();
         world.blockState(blockState);
-        parts = List.of(AllPartialModels.DEPLOYER_POLE.get(), AllPartialModels.DEPLOYER_HAND_HOLDING.get());
         matrices.translate(0, -offset, 0);
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.XP.rotationDegrees(90));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        model = AllPartialModels.DEPLOYER_POLE.get();
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        model = AllPartialModels.DEPLOYER_HAND_HOLDING.get();
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
         matrices.translate(0, -2.06f, 0);
         blockState = AllBlocks.DEPOT.defaultBlockState();
         world.blockState(blockState);
-        parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        model = blockRenderManager.getBlockModel(blockState);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        output.clearBuffer();
 
         bufferSource.endBatch();
         matrices.popPose();

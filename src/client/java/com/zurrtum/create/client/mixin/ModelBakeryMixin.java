@@ -3,7 +3,9 @@ package com.zurrtum.create.client.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModelEventHandler;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
+import net.minecraft.client.renderer.block.model.SingleVariant;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.util.thread.ParallelMapTransform;
@@ -23,13 +25,13 @@ public class ModelBakeryMixin {
     ) {
         return ParallelMapTransform.schedule(
             PartialModelEventHandler.getRegisterAdditional(), (id, model) -> {
-                SimpleModelWrapper bakedModel = (SimpleModelWrapper) SimpleModelWrapper.bake(
+                BlockStateModel blockStateModel = new SingleVariant(SimpleModelWrapper.bake(
                     baker,
                     id,
                     BlockModelRotation.IDENTITY
-                );
-                PartialModelEventHandler.onBakingCompleted(model, bakedModel);
-                return bakedModel;
+                ));
+                PartialModelEventHandler.onBakingCompleted(model, blockStateModel);
+                return blockStateModel;
             }, taskExecutor
         ).thenAccept(PartialModelEventHandler::onBakingCompleted).thenCompose(v -> bakedModelFuture);
     }

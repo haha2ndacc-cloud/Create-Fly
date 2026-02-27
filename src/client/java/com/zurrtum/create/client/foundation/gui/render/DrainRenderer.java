@@ -18,14 +18,14 @@ import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
 
 public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
     public static int MAX = 6;
@@ -33,11 +33,15 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
     private static final Deque<GpuTexture> TEXTURES = new ArrayDeque<>(MAX);
     private final PoseStack matrices = new PoseStack();
     private final BlockBakedQuadOutput output;
+    private final ModelBlockRenderer blockRenderer;
     private int windowScaleFactor;
 
     public DrainRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
-        output = new BlockBakedQuadOutput(vertexConsumers);
+        output = new BlockBakedQuadOutput(vertexConsumers, matrices);
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -76,8 +80,10 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
 
         BlockState blockState = AllBlocks.ITEM_DRAIN.defaultBlockState();
         world.blockState(blockState);
-        List<BlockModelPart> parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        BlockStateModel model = blockRenderManager.getBlockModel(blockState);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        output.clearBuffer();
 
         float from = 2 / 16f;
         float to = 1f - from;

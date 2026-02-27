@@ -11,22 +11,26 @@ import net.minecraft.client.gui.render.state.BlitRenderState;
 import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 
 public class PartialElementRenderer extends PictureInPictureRenderer<PartialRenderState> {
     private static final Map<PartialRenderState, GpuTexture> TEXTURES = new IdentityHashMap<>();
     private final PoseStack matrices = new PoseStack();
     private final BlockBakedQuadOutput output;
+    private final ModelBlockRenderer blockRenderer;
     private int windowScaleFactor;
 
     public PartialElementRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
-        output = new BlockBakedQuadOutput(vertexConsumers);
+        output = new BlockBakedQuadOutput(vertexConsumers, matrices);
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     public static void clear(PartialRenderState block) {
@@ -68,17 +72,20 @@ public class PartialElementRenderer extends PictureInPictureRenderer<PartialRend
             }
             matrices.scale(size, size, size);
             partial.transform(matrices);
-            Minecraft mc = Minecraft.getInstance();
             SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullDark();
-            mc.getBlockRenderer().renderBatched(
-                Blocks.AIR.defaultBlockState(),
-                BlockPos.ZERO,
-                world,
-                matrices,
+            output.updateBuffer(partial.model);
+            blockRenderer.tesselateBlock(
                 output,
-                false,
-                List.of(partial.model)
+                0,
+                0,
+                0,
+                world,
+                BlockPos.ZERO,
+                Blocks.AIR.defaultBlockState(),
+                partial.model,
+                42L
             );
+            output.clearBuffer();
             bufferSource.endBatch();
             matrices.popPose();
             texture.clear();

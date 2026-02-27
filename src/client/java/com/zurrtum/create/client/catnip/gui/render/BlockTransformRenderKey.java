@@ -1,14 +1,12 @@
 package com.zurrtum.create.client.catnip.gui.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.List;
 
 public class BlockTransformRenderKey {
     public BlockState state;
-    public List<BlockModelPart> parts;
+    public BlockStateModel model;
     public boolean dirty;
     public int padding;
     public float size, xRot, yRot, zRot;
@@ -16,7 +14,7 @@ public class BlockTransformRenderKey {
     public BlockTransformRenderKey(BlockState state) {
         this.state = state;
         Minecraft mc = Minecraft.getInstance();
-        parts = mc.getBlockRenderer().getBlockModel(state).collectParts(mc.level.getRandom());
+        model = mc.getBlockRenderer().getBlockModel(state);
     }
 
     public void update(float scale, int padding, float xRot, float yRot, float zRot) {

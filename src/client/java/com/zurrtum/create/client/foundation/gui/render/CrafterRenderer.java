@@ -12,19 +12,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.List;
-
 public class CrafterRenderer extends PictureInPictureRenderer<CrafterRenderState> {
     private final BlockBakedQuadOutput output;
+    private final ModelBlockRenderer blockRenderer;
 
     public CrafterRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
         output = new BlockBakedQuadOutput(vertexConsumers);
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -38,30 +41,34 @@ public class CrafterRenderer extends PictureInPictureRenderer<CrafterRenderState
         matrices.scale(1, -1, 1);
 
         BlockState blockState;
-        List<BlockModelPart> parts;
+        BlockStateModel model;
+        output.setPoseStack(matrices);
         BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
 
         blockState = Blocks.AIR.defaultBlockState();
         world.blockState(blockState);
         matrices.pushPose();
-        parts = List.of(AllPartialModels.SHAFTLESS_COGWHEEL.get());
+        model = AllPartialModels.SHAFTLESS_COGWHEEL.get();
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.ZP.rotationDegrees(getCurrentAngle()));
         matrices.mulPose(Axis.XP.rotationDegrees(90));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
         blockState = AllBlocks.MECHANICAL_CRAFTER.defaultBlockState();
         world.blockState(blockState);
         matrices.pushPose();
-        parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
+        model = blockRenderManager.getBlockModel(blockState);
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.YP.rotationDegrees(180));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
+        output.clear();
     }
 
     public static float getCurrentAngle() {

@@ -12,20 +12,23 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-import java.util.List;
-
 public class PressBasinRenderer extends PictureInPictureRenderer<PressBasinRenderState> {
     private final BlockBakedQuadOutput output;
+    private final ModelBlockRenderer blockRenderer;
 
     public PressBasinRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
         output = new BlockBakedQuadOutput(vertexConsumers);
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -39,40 +42,46 @@ public class PressBasinRenderer extends PictureInPictureRenderer<PressBasinRende
         matrices.scale(1, -1, 1);
 
         BlockState blockState;
-        List<BlockModelPart> parts;
+        BlockStateModel model;
+        output.setPoseStack(matrices);
         BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float time = AnimationTickHolder.getRenderTime();
 
         blockState = AllBlocks.MECHANICAL_PRESS.defaultBlockState();
         world.blockState(blockState);
-        parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        model = blockRenderManager.getBlockModel(blockState);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
         matrices.pushPose();
         blockState = AllBlocks.SHAFT.defaultBlockState()
             .setValue(BlockStateProperties.AXIS, net.minecraft.core.Direction.Axis.Z);
         world.blockState(blockState);
-        parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
+        model = blockRenderManager.getBlockModel(blockState);
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.ZP.rotationDegrees(getShaftAngle(time)));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
         matrices.pushPose();
         blockState = Blocks.AIR.defaultBlockState();
         world.blockState(blockState);
-        parts = List.of(AllPartialModels.MECHANICAL_PRESS_HEAD.get());
+        model = AllPartialModels.MECHANICAL_PRESS_HEAD.get();
         matrices.translate(0, getAnimatedHeadOffset(time), 0);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
         matrices.translate(0, -1.65f, 0);
         blockState = AllBlocks.BASIN.defaultBlockState();
         world.blockState(blockState);
-        parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        model = blockRenderManager.getBlockModel(blockState);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        output.clear();
     }
 
     private static float getShaftAngle(float time) {

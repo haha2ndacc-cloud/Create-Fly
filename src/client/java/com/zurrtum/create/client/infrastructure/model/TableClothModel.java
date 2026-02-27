@@ -5,6 +5,7 @@ import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import com.zurrtum.create.client.model.NormalsBakedQuad;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.Material;
@@ -13,7 +14,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
@@ -85,47 +85,54 @@ public class TableClothModel extends WrapperBlockStateModel {
         Material.Baked material = model.particleMaterial();
         TextureAtlasSprite sprite = material.sprite();
         parts.add(corner[index] = new BakedCorner(
-            (index & SOUTH_WEST) == SOUTH_WEST ? getSouth(sprite) : List.of(),
-            (index & NORTH_WEST) == NORTH_WEST ? getWest(sprite) : List.of(),
-            (index & NORTH_EAST) == NORTH_EAST ? getNorth(sprite) : List.of(),
-            (index & SOUTH_EAST) == SOUTH_EAST ? getEast(sprite) : List.of(),
+            (index & SOUTH_WEST) == SOUTH_WEST ? getSouth(random, sprite) : List.of(),
+            (index & NORTH_WEST) == NORTH_WEST ? getWest(random, sprite) : List.of(),
+            (index & NORTH_EAST) == NORTH_EAST ? getNorth(random, sprite) : List.of(),
+            (index & SOUTH_EAST) == SOUTH_EAST ? getEast(random, sprite) : List.of(),
             material,
             model.hasTranslucency()
         ));
     }
 
-    private List<BakedQuad> getSouth(TextureAtlasSprite sprite) {
+    private List<BakedQuad> getSouth(RandomSource random, TextureAtlasSprite sprite) {
         if (south != null) {
             return south;
         }
-        return south = replaceQuads(sprite, AllPartialModels.TABLE_CLOTH_SW);
+        return south = replaceQuads(random, sprite, AllPartialModels.TABLE_CLOTH_SW);
     }
 
-    private List<BakedQuad> getWest(TextureAtlasSprite sprite) {
+    private List<BakedQuad> getWest(RandomSource random, TextureAtlasSprite sprite) {
         if (west != null) {
             return west;
         }
-        return west = replaceQuads(sprite, AllPartialModels.TABLE_CLOTH_NW);
+        return west = replaceQuads(random, sprite, AllPartialModels.TABLE_CLOTH_NW);
     }
 
-    private List<BakedQuad> getNorth(TextureAtlasSprite sprite) {
+    private List<BakedQuad> getNorth(RandomSource random, TextureAtlasSprite sprite) {
         if (north != null) {
             return north;
         }
-        return north = replaceQuads(sprite, AllPartialModels.TABLE_CLOTH_NE);
+        return north = replaceQuads(random, sprite, AllPartialModels.TABLE_CLOTH_NE);
     }
 
-    private List<BakedQuad> getEast(TextureAtlasSprite sprite) {
+    private List<BakedQuad> getEast(RandomSource random, TextureAtlasSprite sprite) {
         if (east != null) {
             return east;
         }
-        return east = replaceQuads(sprite, AllPartialModels.TABLE_CLOTH_SE);
+        return east = replaceQuads(random, sprite, AllPartialModels.TABLE_CLOTH_SE);
     }
 
-    private static List<BakedQuad> replaceQuads(TextureAtlasSprite replace, PartialModel model) {
+    private static List<BakedQuad> replaceQuads(RandomSource random, TextureAtlasSprite replace, PartialModel model) {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-        for (BakedQuad quad : model.get().quads().getAll()) {
-            builder.add(replaceQuad(replace, quad));
+        for (BlockModelPart part : model.get().collectParts(random)) {
+            for (Direction direction : DIRECTIONS) {
+                for (BakedQuad quad : part.getQuads(direction)) {
+                    builder.add(replaceQuad(replace, quad));
+                }
+            }
+            for (BakedQuad quad : part.getQuads(null)) {
+                builder.add(replaceQuad(replace, quad));
+            }
         }
         return builder.build();
     }

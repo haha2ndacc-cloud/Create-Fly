@@ -1,7 +1,7 @@
 package com.zurrtum.create.client.flywheel.lib.model.baked;
 
 import com.google.common.collect.MapMaker;
-import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.UnknownNullability;
 
@@ -20,7 +20,7 @@ public final class PartialModel {
 
     private final Identifier modelLocation;
     @UnknownNullability
-    SimpleModelWrapper bakedModel;
+    BlockStateModel blockStateModel;
 
     private PartialModel(Identifier modelLocation) {
         this.modelLocation = modelLocation;
@@ -34,8 +34,8 @@ public final class PartialModel {
     }
 
     @UnknownNullability
-    public SimpleModelWrapper get() {
-        return bakedModel;
+    public BlockStateModel get() {
+        return blockStateModel;
     }
 
     public Identifier modelLocation() {

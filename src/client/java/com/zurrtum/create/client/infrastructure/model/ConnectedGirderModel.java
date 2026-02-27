@@ -4,11 +4,11 @@ import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.client.AllCTBehaviours;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.content.decoration.girder.GirderBlock;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class ConnectedGirderModel extends CTModel {
         super.addPartsWithInfo(world, pos, state, random, parts);
         for (Direction direction : Iterate.horizontalDirections) {
             if (GirderBlock.isConnected(world, pos, state, direction)) {
-                parts.add(AllPartialModels.METAL_GIRDER_BRACKETS.get(direction).get());
+                AllPartialModels.METAL_GIRDER_BRACKETS.get(direction).get().collectParts(random, parts);
             }
         }
     }

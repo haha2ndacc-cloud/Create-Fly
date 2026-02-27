@@ -4,9 +4,7 @@ import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.model.NormalsBakedQuad;
 import net.minecraft.client.model.geom.builders.UVPair;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.Material;
-import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
+import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -16,6 +14,7 @@ import net.minecraft.client.resources.model.QuadCollection;
 import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
@@ -120,30 +119,40 @@ public class BakedModelHelper {
         return newQuad;
     }
 
-    public static SimpleModelWrapper generateModel(
-        SimpleModelWrapper template,
+    public static BlockStateModel generateModel(
+        BlockStateModel template,
         UnaryOperator<@Nullable TextureAtlasSprite> spriteSwapper
     ) {
-        QuadCollection.Builder builder = new QuadCollection.Builder();
-        for (Direction cullFace : Iterate.directions) {
-            List<BakedQuad> quads = template.getQuads(cullFace);
-            swapSprites(quads, spriteSwapper).forEach(quad -> builder.addCulledFace(cullFace, quad));
-        }
-
-        List<BakedQuad> quads = template.getQuads(null);
-        swapSprites(quads, spriteSwapper).forEach(builder::addUnculledFace);
-
+        RandomSource random = RandomSource.create(42L);
         Material.Baked material = template.particleMaterial();
         TextureAtlasSprite swappedParticleSprite = spriteSwapper.apply(material.sprite());
         if (swappedParticleSprite != null) {
             material = new Material.Baked(swappedParticleSprite, material.forceTranslucent());
         }
-        return new SimpleModelWrapper(
-            builder.build(),
-            template.useAmbientOcclusion(),
-            material,
-            template.hasTranslucency()
-        );
+        List<BlockModelPart> parts = template.collectParts(random);
+        int size = parts.size();
+        List<BlockModelPart> replace = new ArrayList<>(parts.size());
+        for (int i = 0; i < size; i++) {
+            BlockModelPart part = parts.get(i);
+            QuadCollection.Builder builder = new QuadCollection.Builder();
+            List<BakedQuad> quads;
+            for (Direction cullFace : Iterate.directions) {
+                quads = part.getQuads(cullFace);
+                swapSprites(quads, spriteSwapper).forEach(quad -> builder.addCulledFace(cullFace, quad));
+            }
+            quads = part.getQuads(null);
+            swapSprites(quads, spriteSwapper).forEach(builder::addUnculledFace);
+            replace.add(new SimpleModelWrapper(
+                builder.build(),
+                part.useAmbientOcclusion(),
+                material,
+                part.hasTranslucency()
+            ));
+        }
+        if (size == 1) {
+            return new SingleVariant(replace.getFirst());
+        }
+        return new MultiVariant(replace, material, template.hasTranslucency());
     }
 
     public static long calcSpriteUv(long packedUv, TextureAtlasSprite sprite, TextureAtlasSprite newSprite) {

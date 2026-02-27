@@ -1,6 +1,6 @@
 package com.zurrtum.create.client.flywheel.lib.model.baked;
 
-import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.resources.Identifier;
 
 import java.util.Map;
@@ -13,11 +13,11 @@ public final class PartialModelEventHandler {
         return PartialModel.ALL;
     }
 
-    public static void onBakingCompleted(PartialModel partial, SimpleModelWrapper bakedModel) {
-        partial.bakedModel = bakedModel;
+    public static void onBakingCompleted(PartialModel partial, BlockStateModel bakedModel) {
+        partial.blockStateModel = bakedModel;
     }
 
-    public static void onBakingCompleted(Map<Identifier, SimpleModelWrapper> models) {
+    public static void onBakingCompleted(Map<Identifier, BlockStateModel> models) {
         PartialModel.populateOnInit = true;
     }
 }

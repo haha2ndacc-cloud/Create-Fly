@@ -16,7 +16,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
@@ -63,7 +62,7 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
         ModelKey key = new ModelKey(large, state.blockState, be.material);
         return SuperByteBufferCache.getInstance().get(
             WATER_WHEEL, key, () -> {
-                SimpleModelWrapper model = generateModel(key);
+                BlockStateModel model = generateModel(key);
                 BlockState state1 = key.state();
                 Direction dir;
                 if (key.large()) {
@@ -81,15 +80,15 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
         );
     }
 
-    public static SimpleModelWrapper generateModel(ModelKey key) {
+    public static BlockStateModel generateModel(ModelKey key) {
         return generateModel(Variant.of(key.large(), key.state()), key.material());
     }
 
-    public static SimpleModelWrapper generateModel(Variant variant, BlockState material) {
+    public static BlockStateModel generateModel(Variant variant, BlockState material) {
         return generateModel(variant.model(), material);
     }
 
-    public static SimpleModelWrapper generateModel(SimpleModelWrapper template, BlockState planksBlockState) {
+    public static BlockStateModel generateModel(BlockStateModel template, BlockState planksBlockState) {
         Block planksBlock = planksBlockState.getBlock();
         Identifier id = RegisteredObjectsHelper.getKeyOrThrow(planksBlock);
         String wood = plankStateToWoodName(planksBlockState);
@@ -174,8 +173,7 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
     }
 
     public enum Variant {
-        SMALL(AllPartialModels.WATER_WHEEL), LARGE(AllPartialModels.LARGE_WATER_WHEEL), LARGE_EXTENSION(AllPartialModels.LARGE_WATER_WHEEL_EXTENSION),
-        ;
+        SMALL(AllPartialModels.WATER_WHEEL), LARGE(AllPartialModels.LARGE_WATER_WHEEL), LARGE_EXTENSION(AllPartialModels.LARGE_WATER_WHEEL_EXTENSION);
 
         private final PartialModel partial;
 
@@ -183,7 +181,7 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
             this.partial = partial;
         }
 
-        public SimpleModelWrapper model() {
+        public BlockStateModel model() {
             return partial.get();
         }
 

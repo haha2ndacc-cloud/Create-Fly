@@ -13,19 +13,16 @@ import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper;
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper.BlockEntityListRenderState;
 import com.zurrtum.create.client.foundation.virtualWorld.VirtualRenderWorld;
-import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
 import com.zurrtum.create.content.contraptions.AbstractContraptionEntity;
 import com.zurrtum.create.content.contraptions.Contraption;
 import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockModelLighter;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -34,10 +31,8 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -103,46 +98,35 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
         VirtualRenderWorld renderWorld,
         ChunkSectionLayer layer
     ) {
-        BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
-        ModelBlockRenderer renderer = dispatcher.getModelRenderer();
+        Minecraft minecraft = Minecraft.getInstance();
+        BlockRenderDispatcher dispatcher = minecraft.getBlockRenderer();
         ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 
-        PoseStack poseStack = objects.poseStack;
-        RandomSource random = objects.random;
         RenderedBlocks blocks = clientContraption.getRenderedBlocks();
 
         ShadedBlockSbbBuilder sbbBuilder = objects.sbbBuilder;
         sbbBuilder.begin(layer);
 
-        ModelBlockRenderer.enableCaching();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        ModelBlockRenderer renderer = new ModelBlockRenderer(ambientOcclusion, true, minecraft.getBlockColors());
+        BlockModelLighter.enableCaching();
         for (BlockPos pos : blocks.positions()) {
             BlockState state = blocks.lookup().apply(pos);
             if (state.getRenderShape() == RenderShape.MODEL) {
-                BlockStateModel model = dispatcher.getBlockModel(state);
-                long randomSeed = state.getSeed(pos);
-                random.setSeed(randomSeed);
-                poseStack.pushPose();
-                poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
-                List<BlockModelPart> parts = new ObjectArrayList<>();
-                if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
-                    wrapper.addPartsWithInfo(renderWorld, pos, state, random, parts);
-                } else {
-                    model.collectParts(random, parts);
-                }
                 renderer.tesselateBlock(
-                    renderWorld,
-                    parts,
-                    state,
-                    pos,
-                    poseStack,
                     sbbBuilder,
-                    true,
-                    OverlayTexture.NO_OVERLAY
+                    pos.getX(),
+                    pos.getY(),
+                    pos.getZ(),
+                    renderWorld,
+                    pos,
+                    state,
+                    dispatcher.getBlockModel(state),
+                    state.getSeed(pos)
                 );
-                poseStack.popPose();
             }
         }
-        ModelBlockRenderer.clearCache();
+        BlockModelLighter.clearCache();
 
         return sbbBuilder.end();
     }
@@ -333,8 +317,6 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
 
     @SuppressWarnings("removal")
     private static class ThreadLocalObjects {
-        public final PoseStack poseStack = new PoseStack();
-        public final RandomSource random = RandomSource.createNewThreadLocalInstance();
-        public final ShadedBlockSbbBuilder sbbBuilder = ShadedBlockSbbBuilder.create();
+        public final ShadedBlockSbbBuilder sbbBuilder = new ShadedBlockSbbBuilder(new PoseStack());
     }
 }

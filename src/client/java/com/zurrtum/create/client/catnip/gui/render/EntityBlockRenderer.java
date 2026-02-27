@@ -6,10 +6,8 @@ import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
-import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
@@ -19,30 +17,31 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.List;
 
 public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRenderState> {
     private static final Int2ObjectMap<GpuTexture> TEXTURES = new Int2ObjectArrayMap<>();
     private static final CameraRenderState CAMERA = new CameraRenderState();
     private final PoseStack matrices = new PoseStack();
     private final BlockBakedQuadOutput output;
+    private final ModelBlockRenderer blockRenderer;
     private int windowScaleFactor;
 
     public EntityBlockRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
-        output = new BlockBakedQuadOutput(vertexConsumers);
+        output = new BlockBakedQuadOutput(vertexConsumers, matrices);
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     public static void clear(int key) {
@@ -94,14 +93,9 @@ public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRen
         lightWorld.blockState(blockState);
         lightWorld.blockEntity(blockEntity);
         BlockStateModel model = blockRenderManager.getBlockModel(blockState);
-        List<BlockModelPart> parts = new ObjectArrayList<>();
-        RandomSource random = world.getRandom();
-        if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
-            wrapper.addPartsWithInfo(world, block.pos(), blockState, random, parts);
-        } else {
-            model.collectParts(random, parts);
-        }
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, lightWorld, matrices, output, false, parts);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, lightWorld, BlockPos.ZERO, blockState, model, 42L);
+        output.clearBuffer();
         if (blockEntity != null) {
             BlockEntityRenderer<BlockEntity, BlockEntityRenderState> renderer = mc.getBlockEntityRenderDispatcher()
                 .getRenderer(blockEntity);

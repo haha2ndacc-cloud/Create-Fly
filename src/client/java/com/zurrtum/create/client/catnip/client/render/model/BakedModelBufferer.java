@@ -2,15 +2,13 @@ package com.zurrtum.create.client.catnip.client.render.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.catnip.impl.client.render.model.BakedModelBuffererImpl;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Iterator;
-import java.util.List;
 
 public class BakedModelBufferer {
     private BakedModelBufferer() {
@@ -25,17 +23,6 @@ public class BakedModelBufferer {
         ShadeSeparatedBufferSource bufferSource
     ) {
         BakedModelBuffererImpl.bufferModel(model, pos, level, state, poseStack, bufferSource);
-    }
-
-    public static void bufferModel(
-        List<BlockModelPart> parts,
-        BlockPos pos,
-        BlockAndTintGetter level,
-        BlockState state,
-        @Nullable PoseStack poseStack,
-        ShadeSeparatedResultConsumer resultConsumer
-    ) {
-        BakedModelBuffererImpl.bufferModel(parts, pos, level, state, poseStack, resultConsumer);
     }
 
     public static void bufferModel(

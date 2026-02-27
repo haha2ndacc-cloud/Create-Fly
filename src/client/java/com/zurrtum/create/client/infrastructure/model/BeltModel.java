@@ -9,17 +9,14 @@ import com.zurrtum.create.content.kinetics.belt.BeltBlock;
 import com.zurrtum.create.content.kinetics.belt.BeltBlockEntity;
 import com.zurrtum.create.content.kinetics.belt.BeltBlockEntity.CasingType;
 import net.minecraft.client.model.geom.builders.UVPair;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.Material;
-import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.QuadCollection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.RandomSource;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,17 +60,19 @@ public class BeltModel extends WrapperBlockStateModel {
             model.collectParts(random, parts);
             if (blockentity.covered) {
                 boolean alongX = state.getValue(BeltBlock.HORIZONTAL_FACING).getAxis() == Axis.X;
-                parts.add(alongX ? AllPartialModels.BRASS_BELT_COVER_X.get() : AllPartialModels.BRASS_BELT_COVER_Z.get());
+                (alongX ? AllPartialModels.BRASS_BELT_COVER_X.get() : AllPartialModels.BRASS_BELT_COVER_Z.get()).collectParts(random,
+                    parts
+                );
             }
             return;
         }
         TextureAtlasSprite original = SPRITE_SHIFT.getOriginal();
         if (blockentity.covered) {
             boolean alongX = state.getValue(BeltBlock.HORIZONTAL_FACING).getAxis() == Axis.X;
-            parts.add(replaceQuads(
-                original,
-                alongX ? AllPartialModels.ANDESITE_BELT_COVER_X.get() : AllPartialModels.ANDESITE_BELT_COVER_Z.get()
-            ));
+            BlockStateModel cover = alongX ? AllPartialModels.ANDESITE_BELT_COVER_X.get() : AllPartialModels.ANDESITE_BELT_COVER_Z.get();
+            for (BlockModelPart part : cover.collectParts(random)) {
+                parts.add(replaceQuads(original, part));
+            }
         }
         for (BlockModelPart part : model.collectParts(random)) {
             parts.add(replaceQuads(original, part));

@@ -5,14 +5,14 @@ import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
-import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import org.joml.Matrix3x2f;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.BiConsumer;
 
 public class PartialRenderState implements PictureInPictureRenderState {
-    public @Nullable SimpleModelWrapper model;
+    public @Nullable BlockStateModel model;
     public boolean dirty;
     public Matrix3x2f pose = IDENTITY_POSE;
     public @Nullable ScreenRectangle bounds;

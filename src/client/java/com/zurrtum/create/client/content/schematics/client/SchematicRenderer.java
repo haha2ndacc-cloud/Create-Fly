@@ -9,19 +9,14 @@ import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper;
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper.BlockEntityListRenderState;
-import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.BlockModelLighter;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -121,20 +116,18 @@ public class SchematicRenderer {
     @SuppressWarnings("removal")
     protected SuperByteBuffer drawLayer(Minecraft mc, ChunkSectionLayer layer) {
         BlockRenderDispatcher dispatcher = mc.getBlockRenderer();
-        ModelBlockRenderer renderer = dispatcher.getModelRenderer();
         ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 
-        PoseStack poseStack = objects.poseStack;
-        RandomSource random = objects.random;
         BlockPos.MutableBlockPos mutableBlockPos = objects.mutableBlockPos;
-        SchematicRenderLevel renderWorld = schematic;
-        BoundingBox bounds = renderWorld.getBounds();
+        BoundingBox bounds = schematic.getBounds();
 
         ShadedBlockSbbBuilder sbbBuilder = objects.sbbBuilder;
         sbbBuilder.begin(layer);
 
-        renderWorld.renderMode = true;
-        ModelBlockRenderer.enableCaching();
+        schematic.renderMode = true;
+        boolean ambientOcclusion = mc.options.ambientOcclusion().get();
+        ModelBlockRenderer renderer = new ModelBlockRenderer(ambientOcclusion, true, mc.getBlockColors());
+        BlockModelLighter.enableCaching();
         for (BlockPos localPos : BlockPos.betweenClosed(
             bounds.minX(),
             bounds.minY(),
@@ -144,44 +137,31 @@ public class SchematicRenderer {
             bounds.maxZ()
         )) {
             BlockPos pos = mutableBlockPos.setWithOffset(localPos, anchor);
-            BlockState state = renderWorld.getBlockState(pos);
-
+            BlockState state = schematic.getBlockState(pos);
             if (state.getRenderShape() == RenderShape.MODEL) {
-                BlockStateModel model = dispatcher.getBlockModel(state);
-                random.setSeed(state.getSeed(pos));
-                poseStack.pushPose();
-                poseStack.translate(localPos.getX(), localPos.getY(), localPos.getZ());
-                List<BlockModelPart> parts = new ObjectArrayList<>();
-                if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
-                    wrapper.addPartsWithInfo(renderWorld, pos, state, random, parts);
-                } else {
-                    model.collectParts(random, parts);
-                }
                 renderer.tesselateBlock(
-                    renderWorld,
-                    parts,
-                    state,
-                    pos,
-                    poseStack,
                     sbbBuilder,
-                    true,
-                    OverlayTexture.NO_OVERLAY
+                    pos.getX(),
+                    pos.getY(),
+                    pos.getZ(),
+                    schematic,
+                    pos,
+                    state,
+                    dispatcher.getBlockModel(state),
+                    state.getSeed(pos)
                 );
-                poseStack.popPose();
             }
         }
-        ModelBlockRenderer.clearCache();
-        renderWorld.renderMode = false;
+        BlockModelLighter.clearCache();
+        schematic.renderMode = false;
 
         return sbbBuilder.end();
     }
 
+    @SuppressWarnings("removal")
     private static class ThreadLocalObjects {
-        public final PoseStack poseStack = new PoseStack();
-        public final RandomSource random = RandomSource.createNewThreadLocalInstance();
         public final BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
-        @SuppressWarnings("removal")
-        public final ShadedBlockSbbBuilder sbbBuilder = ShadedBlockSbbBuilder.create();
+        public final ShadedBlockSbbBuilder sbbBuilder = new ShadedBlockSbbBuilder(new PoseStack());
     }
 
 }

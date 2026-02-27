@@ -1,5 +1,6 @@
 package com.zurrtum.create.client.infrastructure.model;
 
+import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
@@ -9,6 +10,7 @@ import com.zurrtum.create.content.logistics.factoryBoard.FactoryPanelBlock;
 import com.zurrtum.create.content.logistics.factoryBoard.FactoryPanelPosition;
 import com.zurrtum.create.content.logistics.factoryBoard.PanelSlot;
 import com.zurrtum.create.content.logistics.factoryBoard.ServerFactoryPanelBehaviour;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
@@ -18,7 +20,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3fc;
@@ -48,7 +49,7 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
             if (behaviour == null) {
                 continue;
             }
-            addPanel(parts, state, slot, behaviour, ponder);
+            addPanel(random, parts, state, slot, behaviour, ponder);
         }
     }
 
@@ -62,6 +63,7 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
     }
 
     public void addPanel(
+        RandomSource random,
         List<BlockModelPart> parts,
         BlockState state,
         PanelSlot slot,
@@ -82,42 +84,72 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
         int normal = 127 << 16;
         int[] normals = new int[]{normal, normal, normal, normal};
 
-        SimpleModelWrapper model = factoryPanel.get();
-        QuadCollection.Builder builder = new QuadCollection.Builder();
-        for (BakedQuad bakedQuad : model.quads().getAll()) {
-            Vec3 quadNormal = Vec3.atLowerCornerOf(bakedQuad.direction().getUnitVec3i());
-            quadNormal = VecHelper.rotate(quadNormal, 180, Axis.Y);
-            quadNormal = VecHelper.rotate(quadNormal, xRot, Axis.X);
-            quadNormal = VecHelper.rotate(quadNormal, yRot, Axis.Y);
-            Direction newNormal = Direction.getNearest(
-                (int) Math.round(quadNormal.x),
-                (int) Math.round(quadNormal.y),
-                (int) Math.round(quadNormal.z),
-                null
-            );
-            BakedQuad quad = new BakedQuad(
-                calcXYZ(bakedQuad.position0(), xOffset, yOffset, xRot, yRot),
-                calcXYZ(bakedQuad.position1(), xOffset, yOffset, xRot, yRot),
-                calcXYZ(bakedQuad.position2(), xOffset, yOffset, xRot, yRot),
-                calcXYZ(bakedQuad.position3(), xOffset, yOffset, xRot, yRot),
-                bakedQuad.packedUV0(),
-                bakedQuad.packedUV1(),
-                bakedQuad.packedUV2(),
-                bakedQuad.packedUV3(),
-                bakedQuad.tintIndex(),
-                newNormal,
-                bakedQuad.spriteInfo(),
-                !ponder && bakedQuad.shade(),
-                bakedQuad.lightEmission()
-            );
-            NormalsBakedQuad.setNormals(quad, normals);
-            builder.addUnculledFace(quad);
+        for (BlockModelPart part : factoryPanel.get().collectParts(random)) {
+            parts.add(replacePart(part, xRot, yRot, xOffset, yOffset, normals, ponder));
         }
-        parts.add(new SimpleModelWrapper(
+    }
+
+    private static BlockModelPart replacePart(
+        BlockModelPart part,
+        float xRot,
+        float yRot,
+        double xOffset,
+        double yOffset,
+        int[] normals,
+        boolean ponder
+    ) {
+        QuadCollection.Builder builder = new QuadCollection.Builder();
+        for (Direction direction : Iterate.directions) {
+            for (BakedQuad bakedQuad : part.getQuads(direction)) {
+                builder.addCulledFace(direction, replaceQuad(bakedQuad, xRot, yRot, xOffset, yOffset, normals, ponder));
+            }
+        }
+        for (BakedQuad bakedQuad : part.getQuads(null)) {
+            builder.addUnculledFace(replaceQuad(bakedQuad, xRot, yRot, xOffset, yOffset, normals, ponder));
+        }
+        return new SimpleModelWrapper(
             builder.build(),
-            model.useAmbientOcclusion(),
-            model.particleMaterial(),
-            model.hasTranslucency()
-        ));
+            part.useAmbientOcclusion(),
+            part.particleMaterial(),
+            part.hasTranslucency()
+        );
+    }
+
+    private static BakedQuad replaceQuad(
+        BakedQuad bakedQuad,
+        float xRot,
+        float yRot,
+        double xOffset,
+        double yOffset,
+        int[] normals,
+        boolean ponder
+    ) {
+        Vec3 quadNormal = Vec3.atLowerCornerOf(bakedQuad.direction().getUnitVec3i());
+        quadNormal = VecHelper.rotate(quadNormal, 180, Axis.Y);
+        quadNormal = VecHelper.rotate(quadNormal, xRot, Axis.X);
+        quadNormal = VecHelper.rotate(quadNormal, yRot, Axis.Y);
+        Direction newNormal = Direction.getNearest(
+            (int) Math.round(quadNormal.x),
+            (int) Math.round(quadNormal.y),
+            (int) Math.round(quadNormal.z),
+            null
+        );
+        BakedQuad quad = new BakedQuad(
+            calcXYZ(bakedQuad.position0(), xOffset, yOffset, xRot, yRot),
+            calcXYZ(bakedQuad.position1(), xOffset, yOffset, xRot, yRot),
+            calcXYZ(bakedQuad.position2(), xOffset, yOffset, xRot, yRot),
+            calcXYZ(bakedQuad.position3(), xOffset, yOffset, xRot, yRot),
+            bakedQuad.packedUV0(),
+            bakedQuad.packedUV1(),
+            bakedQuad.packedUV2(),
+            bakedQuad.packedUV3(),
+            bakedQuad.tintIndex(),
+            newNormal,
+            bakedQuad.spriteInfo(),
+            !ponder && bakedQuad.shade(),
+            bakedQuad.lightEmission()
+        );
+        NormalsBakedQuad.setNormals(quad, normals);
+        return quad;
     }
 }

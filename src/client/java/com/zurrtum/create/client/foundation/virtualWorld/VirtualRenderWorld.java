@@ -4,7 +4,11 @@ import com.zurrtum.create.client.flywheel.api.visualization.VisualizationLevel;
 import it.unimi.dsi.fastutil.objects.Object2ShortMap;
 import it.unimi.dsi.fastutil.objects.Object2ShortOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.core.*;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.SectionPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ExplosionParticleInfo;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.sounds.SoundEvent;
@@ -21,10 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.crafting.RecipeAccess;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.ExplosionDamageCalculator;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.block.Block;
@@ -55,7 +56,8 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public class VirtualRenderWorld extends Level implements VisualizationLevel {
+public class VirtualRenderWorld extends Level implements VisualizationLevel, BlockAndTintGetter {
+    private static final CardinalLighting FULL_LIGHTING = new CardinalLighting(1F, 1F, 1F, 1F, 1F, 1F);
     protected final Level level;
     protected final int minBuildHeight;
     protected final int height;
@@ -357,8 +359,13 @@ public class VirtualRenderWorld extends Level implements VisualizationLevel {
     }
 
     @Override
-    public float getShade(Direction direction, boolean shade) {
-        return 1f;
+    public CardinalLighting cardinalLighting() {
+        return FULL_LIGHTING;
+    }
+
+    @Override
+    public int getBlockTint(BlockPos pos, ColorResolver resolver) {
+        return resolver.getColor(getBiome(pos).value(), pos.getX(), pos.getZ());
     }
 
     // THIN WRAPPERS

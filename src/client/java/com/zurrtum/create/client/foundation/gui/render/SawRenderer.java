@@ -13,21 +13,24 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-import java.util.List;
-
 public class SawRenderer extends PictureInPictureRenderer<SawRenderState> {
     private final BlockBakedQuadOutput output;
+    private final ModelBlockRenderer blockRenderer;
 
     public SawRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
         output = new BlockBakedQuadOutput(vertexConsumers);
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -41,7 +44,8 @@ public class SawRenderer extends PictureInPictureRenderer<SawRenderState> {
         matrices.scale(1, -1, 1);
 
         BlockState blockState;
-        List<BlockModelPart> parts;
+        BlockStateModel model;
+        output.setPoseStack(matrices);
         BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
 
@@ -49,26 +53,30 @@ public class SawRenderer extends PictureInPictureRenderer<SawRenderState> {
         blockState = AllBlocks.SHAFT.defaultBlockState()
             .setValue(BlockStateProperties.AXIS, net.minecraft.core.Direction.Axis.X);
         world.blockState(blockState);
-        parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
+        model = blockRenderManager.getBlockModel(blockState);
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.XP.rotationDegrees(getCurrentAngle()));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
         blockState = AllBlocks.MECHANICAL_SAW.defaultBlockState().setValue(SawBlock.FACING, Direction.UP);
         world.blockState(blockState);
-        parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        model = blockRenderManager.getBlockModel(blockState);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
         blockState = Blocks.AIR.defaultBlockState();
         world.blockState(blockState);
-        parts = List.of(AllPartialModels.SAW_BLADE_VERTICAL_ACTIVE.get());
+        model = AllPartialModels.SAW_BLADE_VERTICAL_ACTIVE.get();
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.ZP.rotationDegrees(-90));
         matrices.mulPose(Axis.YP.rotationDegrees(-90));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        output.clear();
     }
 
     public static float getCurrentAngle() {

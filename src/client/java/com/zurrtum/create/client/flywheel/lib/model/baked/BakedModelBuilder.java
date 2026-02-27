@@ -5,33 +5,23 @@ import com.zurrtum.create.client.flywheel.api.material.Material;
 import com.zurrtum.create.client.flywheel.lib.internal.FlwLibXplat;
 import com.zurrtum.create.client.flywheel.lib.model.ModelUtil;
 import com.zurrtum.create.client.flywheel.lib.model.SimpleModel;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.BiFunction;
 
 public final class BakedModelBuilder {
-    @Nullable
     final BlockStateModel model;
-    @Nullable
-    final SimpleModelWrapper bakedModel;
     @Nullable BlockAndTintGetter level;
     @Nullable BlockPos pos;
     @Nullable PoseStack poseStack;
     @Nullable BlockMaterialFunction materialFunc;
 
-    public BakedModelBuilder(SimpleModelWrapper bakedModel) {
-        this.bakedModel = bakedModel;
-        this.model = null;
-    }
-
     public BakedModelBuilder(BlockStateModel model) {
         this.model = model;
-        this.bakedModel = null;
     }
 
     public BakedModelBuilder level(@Nullable BlockAndTintGetter level) {

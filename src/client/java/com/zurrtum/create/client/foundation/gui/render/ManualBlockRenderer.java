@@ -16,26 +16,28 @@ import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
 
 public class ManualBlockRenderer extends PictureInPictureRenderer<ManualBlockRenderState> {
     public static int MAX = 6;
     private int allocate = MAX;
     private static final Deque<GpuTexture> TEXTURES = new ArrayDeque<>(MAX);
-    private static final RandomSource random = RandomSource.create();
     private final PoseStack matrices = new PoseStack();
     private final BlockBakedQuadOutput output;
+    private final ModelBlockRenderer blockRenderer;
     private int windowScaleFactor;
 
     public ManualBlockRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
-        output = new BlockBakedQuadOutput(vertexConsumers);
+        output = new BlockBakedQuadOutput(vertexConsumers, matrices);
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -71,9 +73,10 @@ public class ManualBlockRenderer extends PictureInPictureRenderer<ManualBlockRen
         BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         world.blockState(block.state());
-        random.setSeed(42L);
-        List<BlockModelPart> parts = blockRenderManager.getBlockModel(block.state()).collectParts(random);
-        blockRenderManager.renderBatched(block.state(), BlockPos.ZERO, world, matrices, output, false, parts);
+        BlockStateModel model = blockRenderManager.getBlockModel(block.state());
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, block.state(), model, 42L);
+        output.clearBuffer();
 
         bufferSource.endBatch();
         matrices.popPose();

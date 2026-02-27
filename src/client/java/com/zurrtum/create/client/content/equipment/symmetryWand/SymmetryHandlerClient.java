@@ -17,8 +17,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
-import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -30,15 +30,14 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
-
 public class SymmetryHandlerClient {
     private static int tickCounter = 0;
 
     public static void onRenderWorld(Minecraft mc, PoseStack ms, MultiBufferSource buffer, Vec3 cameraPos) {
         LocalPlayer player = mc.player;
         Inventory inventory = player.getInventory();
-        BlockBakedQuadOutput output = new BlockBakedQuadOutput(buffer);
+        BlockBakedQuadOutput output = null;
+        ModelBlockRenderer blockRenderer = null;
         for (int i = 0, size = Inventory.getSelectionSize(); i < size; i++) {
             ItemStack stackInSlot = inventory.getItem(i);
             if (!stackInSlot.is(AllItems.WAND_OF_SYMMETRY)) {
@@ -61,19 +60,24 @@ public class SymmetryHandlerClient {
             ms.translate(pos.getX() - cameraPos.x(), pos.getY() - cameraPos.y(), pos.getZ() - cameraPos.z());
             ms.translate(0, yShift + .2f, 0);
             applyModelTransform(mirror, ms);
-            SimpleModelWrapper model = getModel(mirror).get();
-
-            mc.getBlockRenderer().getModelRenderer().tesselateBlock(
-                mc.level,
-                List.of(model),
-                Blocks.AIR.defaultBlockState(),
-                pos,
-                ms,
+            BlockStateModel model = getModel(mirror).get();
+            if (output == null) {
+                output = new BlockBakedQuadOutput(buffer, ms);
+                boolean ambientOcclusion = mc.options.ambientOcclusion().get();
+                blockRenderer = new ModelBlockRenderer(ambientOcclusion, true, mc.getBlockColors());
+            }
+            output.updateBuffer(model);
+            blockRenderer.tesselateBlock(
                 output,
-                true,
-                OverlayTexture.NO_OVERLAY
+                0,
+                0,
+                0,
+                mc.level,
+                pos,
+                Blocks.AIR.defaultBlockState(),
+                model,
+                Mth.getSeed(pos)
             );
-
             ms.popPose();
         }
     }

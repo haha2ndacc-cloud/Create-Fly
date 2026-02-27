@@ -1,13 +1,14 @@
 package com.zurrtum.create.client.infrastructure.model;
 
 import com.zurrtum.create.api.behaviour.BlockEntityBehaviour;
+import com.zurrtum.create.client.flywheel.lib.model.baked.VirtualBlockGetter;
 import com.zurrtum.create.content.decoration.bracket.BracketedBlockEntityBehaviour;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
@@ -31,16 +32,24 @@ public class BracketedKineticBlockModel extends WrapperBlockStateModel {
             BracketedBlockEntityBehaviour.TYPE
         );
         if (attachmentBehaviour == null) {
+            addVirtualParts(world, random, parts);
             return;
         }
         BlockState bracket = attachmentBehaviour.getBracket();
         if (bracket == null) {
+            addVirtualParts(world, random, parts);
             return;
         }
         BlockStateModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(bracket);
         if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
             wrapper.addPartsWithInfo(world, pos, state, random, parts);
         } else {
+            model.collectParts(random, parts);
+        }
+    }
+
+    private void addVirtualParts(BlockAndTintGetter world, RandomSource random, List<BlockModelPart> parts) {
+        if (world instanceof VirtualBlockGetter) {
             model.collectParts(random, parts);
         }
     }

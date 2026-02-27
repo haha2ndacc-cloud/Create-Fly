@@ -12,7 +12,7 @@ import net.minecraft.client.gui.render.state.BlitRenderState;
 import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.block.BakedQuadOutput;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RedstoneTorchBlock;
@@ -25,12 +25,16 @@ public class BlockTransformElementRenderer extends PictureInPictureRenderer<Bloc
     private final PoseStack matrices = new PoseStack();
     private final BlockBakedQuadOutput output;
     private final TerrainBakedQuadOutput terrainOutput;
+    private final ModelBlockRenderer blockRenderer;
     private int windowScaleFactor;
 
     public BlockTransformElementRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
-        output = new BlockBakedQuadOutput(vertexConsumers);
-        terrainOutput = new TerrainBakedQuadOutput(vertexConsumers);
+        output = new BlockBakedQuadOutput(vertexConsumers, matrices);
+        terrainOutput = new TerrainBakedQuadOutput(vertexConsumers, matrices);
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     public static void clear(Object key) {
@@ -80,17 +84,15 @@ public class BlockTransformElementRenderer extends PictureInPictureRenderer<Bloc
             }
             matrices.scale(1, -1, 1);
             matrices.translate(-0.5F, -0.5F, -0.5F);
-            Minecraft mc = Minecraft.getInstance();
             SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullDark();
             world.blockState(key.state);
-            BakedQuadOutput quadOutput;
             if (key.state.is(Blocks.REDSTONE_TORCH) && key.state.getValue(RedstoneTorchBlock.LIT)) {
-                quadOutput = terrainOutput;
+                blockRenderer.tesselateBlock(terrainOutput, 0, 0, 0, world, BlockPos.ZERO, key.state, key.model, 42L);
             } else {
-                quadOutput = output;
+                output.updateBuffer(key.model);
+                blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, key.state, key.model, 42L);
+                output.clearBuffer();
             }
-            mc.getBlockRenderer()
-                .renderBatched(key.state, BlockPos.ZERO, world, matrices, quadOutput, false, key.parts);
             bufferSource.endBatch();
             matrices.popPose();
             texture.clear();

@@ -10,11 +10,11 @@ import com.zurrtum.create.content.fluids.FluidTransportBehaviour.AttachmentTypes
 import com.zurrtum.create.content.fluids.FluidTransportBehaviour.AttachmentTypes.ComponentPartials;
 import com.zurrtum.create.content.fluids.pipes.FluidPipeBlock;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
@@ -51,12 +51,12 @@ public class PipeAttachmentModel extends WrapperBlockStateModel {
             for (Direction direction : Iterate.directions) {
                 AttachmentTypes type = transport.getRenderedRimAttachment(world, pos, state, direction);
                 for (ComponentPartials partial : type.partials) {
-                    parts.add(AllPartialModels.PIPE_ATTACHMENTS.get(partial).get(direction).get());
+                    AllPartialModels.PIPE_ATTACHMENTS.get(partial).get(direction).get().collectParts(random, parts);
                 }
             }
         }
         if (FluidPipeBlock.shouldDrawCasing(world, pos, state)) {
-            parts.add(AllPartialModels.FLUID_PIPE_CASING.get());
+            AllPartialModels.FLUID_PIPE_CASING.get().collectParts(random, parts);
         }
     }
 }

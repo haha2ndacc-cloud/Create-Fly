@@ -85,8 +85,8 @@ public class WrappedClientLevel extends ClientLevel {
     }
 
     @Override
-    public int getBlockTint(BlockPos p_225525_1_, ColorResolver p_225525_2_) {
-        return level.getBlockTint(p_225525_1_, p_225525_2_);
+    public int getBlockTint(BlockPos pos, ColorResolver resolver) {
+        return resolver.getColor(level.getBiome(pos).value(), pos.getX(), pos.getZ());
     }
 
     // FIXME: Emissive Lighting might not light stuff properly

@@ -13,30 +13,30 @@ import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockG
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.block.BakedQuadOutput;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.util.LightCoordsUtil;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 
-import java.util.List;
-
 public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
-    private static final RandomSource RANDOM = RandomSource.create();
     private final BlockBakedQuadOutput output;
     private final TerrainBakedQuadOutput terrainOutput;
+    private final ModelBlockRenderer blockRenderer;
 
     public FanRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
         output = new BlockBakedQuadOutput(vertexConsumers);
         terrainOutput = new TerrainBakedQuadOutput(vertexConsumers);
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -50,28 +50,31 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
         matrices.scale(1, -1, 1);
 
         BlockState blockState;
-        List<BlockModelPart> parts;
+        BlockStateModel model;
+        output.setPoseStack(matrices);
         BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
 
         matrices.pushPose();
         blockState = Blocks.AIR.defaultBlockState();
-        parts = List.of(AllPartialModels.ENCASED_FAN_INNER.get());
+        model = AllPartialModels.ENCASED_FAN_INNER.get();
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.ZP.rotationDegrees(getCurrentAngle() * 16));
         matrices.mulPose(Axis.XP.rotationDegrees(180));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
         matrices.pushPose();
         blockState = AllBlocks.ENCASED_FAN.defaultBlockState();
         world.blockState(blockState);
-        parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
+        model = blockRenderManager.getBlockModel(blockState);
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.YP.rotationDegrees(180));
         matrices.translate(-0.5f, -0.5f, -0.5f);
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
         matrices.translate(0, 0, 2);
@@ -98,15 +101,16 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
             return;
         }
         world.blockState(blockState);
-        RANDOM.setSeed(blockState.getSeed(BlockPos.ZERO));
-        parts = blockRenderManager.getBlockModel(blockState).collectParts(RANDOM);
-        BakedQuadOutput quadOutput;
+        model = blockRenderManager.getBlockModel(blockState);
         if (blockState.getBlock() instanceof BaseFireBlock) {
-            quadOutput = terrainOutput;
+            terrainOutput.setPoseStack(matrices);
+            blockRenderer.tesselateBlock(terrainOutput, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+            terrainOutput.clear();
         } else {
-            quadOutput = output;
+            output.updateBuffer(model);
+            blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         }
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        output.clear();
     }
 
     public static float getCurrentAngle() {

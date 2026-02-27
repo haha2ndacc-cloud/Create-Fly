@@ -15,8 +15,8 @@ import com.zurrtum.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.LightCoordsUtil;
@@ -24,14 +24,16 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.List;
-
 public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlazeBurnerRenderState> {
     private final BlockBakedQuadOutput output;
+    private final ModelBlockRenderer blockRenderer;
 
     public BasinBlazeBurnerRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
         output = new BlockBakedQuadOutput(vertexConsumers);
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -45,15 +47,16 @@ public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlaz
         matrices.scale(1, -1, 1);
 
         BlockState blockState;
-        List<BlockModelPart> parts;
-        BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
+        BlockStateModel model;
+        output.setPoseStack(matrices);
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float offset = -(Mth.sin(AnimationTickHolder.getRenderTime() / 16f) + 0.5f) / 16f;
 
         blockState = AllBlocks.BLAZE_BURNER.defaultBlockState();
         world.blockState(blockState);
-        parts = blockRenderManager.getBlockModel(blockState).collectParts(mc.level.getRandom());
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        model = mc.getBlockRenderer().getBlockModel(blockState);
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
         matrices.pushPose();
         blockState = Blocks.AIR.defaultBlockState();
@@ -62,12 +65,15 @@ public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlaz
         matrices.mulPose(Axis.YP.rotationDegrees(180));
         matrices.translate(-0.5f, -0.5f, -0.5f);
         boolean seething = state.heat() == HeatLevel.SEETHING;
-        parts = List.of((seething ? AllPartialModels.BLAZE_SUPER : AllPartialModels.BLAZE_ACTIVE).get());
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        model = (seething ? AllPartialModels.BLAZE_SUPER : AllPartialModels.BLAZE_ACTIVE).get();
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.translate(0, offset, 0);
-        parts = List.of((seething ? AllPartialModels.BLAZE_BURNER_SUPER_RODS_2 : AllPartialModels.BLAZE_BURNER_RODS_2).get());
-        blockRenderManager.renderBatched(blockState, BlockPos.ZERO, world, matrices, output, false, parts);
+        model = (seething ? AllPartialModels.BLAZE_BURNER_SUPER_RODS_2 : AllPartialModels.BLAZE_BURNER_RODS_2).get();
+        output.updateBuffer(model);
+        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
+        output.clear();
 
 
         SpriteShiftEntry spriteShift = seething ? AllSpriteShifts.SUPER_BURNER_FLAME : AllSpriteShifts.BURNER_FLAME;

@@ -3,27 +3,25 @@ package com.zurrtum.create.client.catnip.render;
 import com.mojang.blaze3d.vertex.*;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.client.renderer.block.BakedQuadOutput;
+import net.minecraft.client.renderer.block.BlockQuadOutput;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import org.jetbrains.annotations.UnknownNullability;
 
 @Deprecated(forRemoval = true)
-public class ShadedBlockSbbBuilder implements VertexConsumer, BakedQuadOutput {
+public class ShadedBlockSbbBuilder implements VertexConsumer, BlockQuadOutput {
     protected static final ByteBufferBuilder BYTE_BUFFER_BUILDER = new ByteBufferBuilder(512);
+    @UnknownNullability
     protected BufferBuilder bufferBuilder;
     protected final IntList shadeSwapVertices = new IntArrayList();
     protected boolean currentShade;
     protected boolean invertFakeNormal;
+    @UnknownNullability
     protected ChunkSectionLayer filter;
+    protected PoseStack poseStack;
 
-    public static ShadedBlockSbbBuilder create() {
-        return new ShadedBlockSbbBuilder();
-    }
-
-    public static ShadedBlockSbbBuilder createForPonder() {
-        ShadedBlockSbbBuilder builder = new ShadedBlockSbbBuilder();
-        builder.invertFakeNormal = true;
-        return builder;
+    public ShadedBlockSbbBuilder(PoseStack poseStack) {
+        this.poseStack = poseStack;
     }
 
     public void begin(ChunkSectionLayer layer) {
@@ -64,30 +62,31 @@ public class ShadedBlockSbbBuilder implements VertexConsumer, BakedQuadOutput {
     }
 
     @Override
-    public void putBulkData(
-        PoseStack.Pose pose,
-        BakedQuad quad,
-        QuadBrightness brightness,
-        int color,
-        QuadLightmapCoords lightmapCoord,
-        int overlayCoords
-    ) {
+    public void putBlockBakedQuad(float x, float y, float z, BakedQuad quad, QuadInstance instance) {
         if (quad.spriteInfo().layer() == filter) {
             prepareForGeometry(quad);
-            bufferBuilder.putBulkData(pose, quad, brightness, color, lightmapCoord, overlayCoords);
+            bufferBuilder.putBlockBakedQuad(x, y, z, quad, instance);
         }
     }
 
     @Override
-    public void put(
-        PoseStack.Pose pose,
-        BakedQuad quad,
-        QuadBrightness brightness,
-        int color,
-        QuadLightmapCoords lightmapCoord,
-        int overlayCoords
-    ) {
-        putBulkData(pose, quad, brightness, color, lightmapCoord, overlayCoords);
+    public void putBakedQuad(PoseStack.Pose pose, BakedQuad quad, QuadInstance instance) {
+        if (quad.spriteInfo().layer() == filter) {
+            prepareForGeometry(quad);
+            bufferBuilder.putBakedQuad(pose, quad, instance);
+        }
+    }
+
+    @Override
+    public void put(float x, float y, float z, BakedQuad quad, QuadInstance instance) {
+        if (x != 0F || y != 0F || z != 0F) {
+            poseStack.pushPose();
+            poseStack.translate(x, y, z);
+            putBakedQuad(poseStack.last(), quad, instance);
+            poseStack.popPose();
+        } else {
+            putBakedQuad(poseStack.last(), quad, instance);
+        }
     }
 
     @Override
