@@ -4,6 +4,7 @@ import com.mojang.blaze3d.opengl.DirectStateAccess;
 import com.mojang.blaze3d.opengl.GlDevice;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.opengl.GlTexture;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.zurrtum.create.client.flywheel.backend.NoiseTextures;
@@ -90,7 +91,7 @@ public class OitFramebuffer {
     public void depthRange() {
         // No depth writes, but we'll still use the depth test.
         GlStateManager._depthMask(false);
-        GlStateManager._colorMask(true, true, true, true);
+        GlStateManager._colorMask(ColorTargetState.WRITE_ALL);
         GlStateManager._enableBlend();
         GlStateManager._blendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
         GL14.glBlendEquation(GL32.GL_MAX);
@@ -113,7 +114,7 @@ public class OitFramebuffer {
     public void renderTransmittance() {
         // No depth writes, but we'll still use the depth test
         GlStateManager._depthMask(false);
-        GlStateManager._colorMask(true, true, true, true);
+        GlStateManager._colorMask(ColorTargetState.WRITE_ALL);
         GlStateManager._enableBlend();
         GlStateManager._blendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
         GL14.glBlendEquation(GL32.GL_FUNC_ADD);
@@ -139,7 +140,7 @@ public class OitFramebuffer {
     public void renderDepthFromTransmittance() {
         // Only write to depth, not color.
         GlStateManager._depthMask(true);
-        GlStateManager._colorMask(false, false, false, false);
+        GlStateManager._colorMask(ColorTargetState.WRITE_NONE);
         GlStateManager._disableBlend();
         GlStateManager._depthFunc(GL32.GL_ALWAYS);
 
@@ -160,7 +161,7 @@ public class OitFramebuffer {
     public void accumulate() {
         // No depth writes, but we'll still use the depth test
         GlStateManager._depthMask(false);
-        GlStateManager._colorMask(true, true, true, true);
+        GlStateManager._colorMask(ColorTargetState.WRITE_ALL);
         GlStateManager._enableBlend();
         GlStateManager._blendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
         GL14.glBlendEquation(GL32.GL_FUNC_ADD);
@@ -194,7 +195,7 @@ public class OitFramebuffer {
         // depthMask = false: other transparent stuff renders on top of OIT stuff.
         // If Neo gets wavelet OIT we can use their hooks to be correct with everything.
         GlStateManager._depthMask(true);
-        GlStateManager._colorMask(true, true, true, true);
+        GlStateManager._colorMask(ColorTargetState.WRITE_ALL);
         GlStateManager._enableBlend();
 
         // We rely on the blend func to achieve:

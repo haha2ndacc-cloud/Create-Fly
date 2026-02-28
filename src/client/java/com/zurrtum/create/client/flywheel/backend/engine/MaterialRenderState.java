@@ -1,6 +1,7 @@
 package com.zurrtum.create.client.flywheel.backend.engine;
 
 import com.mojang.blaze3d.opengl.*;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
@@ -43,10 +44,7 @@ public final class MaterialRenderState {
         setupBackfaceCulling(material.backfaceCulling());
         setupPolygonOffset(material.polygonOffset());
         setupDepthTest(material.depthTest());
-
-        WriteMask mask = material.writeMask();
-        boolean writeColor = mask.color();
-        GlStateManager._colorMask(writeColor, writeColor, writeColor, writeColor);
+        GlStateManager._colorMask(material.writeMask().color());
     }
 
     private static void setupTexture(Material material) {
@@ -165,8 +163,7 @@ public final class MaterialRenderState {
 
     private static void setupWriteMask(WriteMask mask) {
         GlStateManager._depthMask(mask.depth());
-        boolean writeColor = mask.color();
-        GlStateManager._colorMask(writeColor, writeColor, writeColor, writeColor);
+        GlStateManager._colorMask(mask.color());
     }
 
     public static void reset() {
@@ -218,7 +215,7 @@ public final class MaterialRenderState {
 
     private static void resetWriteMask() {
         GlStateManager._depthMask(true);
-        GlStateManager._colorMask(true, true, true, true);
+        GlStateManager._colorMask(ColorTargetState.WRITE_ALL);
     }
 
     public static boolean materialEquals(Material lhs, Material rhs) {
