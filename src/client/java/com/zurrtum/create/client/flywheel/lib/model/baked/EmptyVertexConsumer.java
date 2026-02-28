@@ -1,8 +1,7 @@
 package com.zurrtum.create.client.flywheel.lib.model.baked;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.QuadBrightness;
-import com.mojang.blaze3d.vertex.QuadLightmapCoords;
+import com.mojang.blaze3d.vertex.QuadInstance;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import org.joml.Matrix3x2fc;
@@ -85,14 +84,11 @@ class EmptyVertexConsumer implements VertexConsumer {
     }
 
     @Override
-    public void putBulkData(
-        PoseStack.Pose pose,
-        BakedQuad quad,
-        QuadBrightness brightness,
-        int color,
-        QuadLightmapCoords lightmapCoord,
-        int overlayCoords
-    ) {
+    public void putBlockBakedQuad(float x, float y, float z, BakedQuad quad, QuadInstance instance) {
+    }
+
+    @Override
+    public void putBakedQuad(PoseStack.Pose pose, BakedQuad quad, QuadInstance instance) {
     }
 
     @Override
