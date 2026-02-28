@@ -68,12 +68,7 @@ public class RotationPropagator {
             from.getBlockPos(),
             stateFrom,
             direction
-        ) && definitionTo.hasShaftTowards(
-            world,
-            to.getBlockPos(),
-            stateTo,
-            direction.getOpposite()
-        );
+        ) && definitionTo.hasShaftTowards(world, to.getBlockPos(), stateTo, direction.getOpposite());
 
         boolean connectedByGears = ICogWheel.isSmallCog(stateFrom) && ICogWheel.isSmallCog(stateTo);
 
@@ -323,7 +318,7 @@ public class RotationPropagator {
                 }
             }
 
-            if (Math.abs(neighbourTE.getTheoreticalSpeed() - newSpeed) <= 1e-5f) {
+            if (Math.abs(neighbourTE.getTheoreticalSpeed() - newSpeed) <= 1e-4f) {
                 continue;
             }
 
@@ -456,10 +451,7 @@ public class RotationPropagator {
             stateFrom,
             stateTo,
             to.getBlockPos().subtract(from.getBlockPos())
-        ) || getRotationSpeedModifier(
-            from,
-            to
-        ) != 0 || from.isCustomConnection(to, stateFrom, stateTo);
+        ) || getRotationSpeedModifier(from, to) != 0 || from.isCustomConnection(to, stateFrom, stateTo);
     }
 
     private static List<KineticBlockEntity> getConnectedNeighbours(KineticBlockEntity be) {

@@ -3,6 +3,7 @@ package com.zurrtum.create.content.contraptions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.serialization.Codec;
+import com.zurrtum.create.AllBlockTags;
 import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.AllClientHandle;
 import com.zurrtum.create.AllContraptionTypeTags;
@@ -416,7 +417,7 @@ public abstract class Contraption {
         }
 
         // Seats transfer their passenger to the contraption
-        if (state.getBlock() instanceof SeatBlock) {
+        if (state.is(AllBlockTags.SEATS)) {
             moveSeat(world, pos);
         }
 
