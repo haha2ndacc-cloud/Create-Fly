@@ -28,7 +28,7 @@ import net.minecraft.world.phys.AABB;
 
 public class ItemVisual extends AbstractEntityVisual<ItemEntity> implements SimpleDynamicVisual {
 
-    private static final ThreadLocal<RandomSource> RANDOM = ThreadLocal.withInitial(RandomSource::createNewThreadLocalInstance);
+    private static final ThreadLocal<RandomSource> RANDOM = ThreadLocal.withInitial(RandomSource::createThreadLocalInstance);
 
     private final PoseStack pPoseStack = new PoseStack();
     private final ItemStackRenderState itemRenderState = new ItemStackRenderState();
