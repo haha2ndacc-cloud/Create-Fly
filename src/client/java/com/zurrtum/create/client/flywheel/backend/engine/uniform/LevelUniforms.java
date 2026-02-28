@@ -9,6 +9,7 @@ import net.minecraft.util.ARGB;
 import net.minecraft.world.attribute.EnvironmentAttributeProbe;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.clock.WorldClocks;
+import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.MoonPhase;
 import net.minecraft.world.level.dimension.DimensionType;
@@ -85,10 +86,7 @@ public final class LevelUniforms extends UniformWriter {
 
         ptr = writeFloat(ptr, level.getSkyDarken());
 
-        ptr = writeInt(
-            ptr,
-            level.dimensionType().cardinalLightType() == DimensionType.CardinalLightType.NETHER ? 1 : 0
-        );
+        ptr = writeInt(ptr, level.dimensionType().cardinalLightType() == CardinalLighting.Type.NETHER ? 1 : 0);
 
         // TODO: use defines for custom dimension ids
         int dimensionId;
