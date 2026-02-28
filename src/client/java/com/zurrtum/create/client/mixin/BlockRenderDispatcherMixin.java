@@ -1,69 +1,52 @@
 package com.zurrtum.create.client.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
-import net.minecraft.client.renderer.block.BakedQuadOutput;
+import com.zurrtum.create.client.infrastructure.render.BreakingRenderInfo;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import org.spongepowered.asm.mixin.Final;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-@Mixin(value = BlockRenderDispatcher.class, priority = 999)
-public class BlockRenderDispatcherMixin {
+@Mixin(BlockRenderDispatcher.class)
+public class BlockRenderDispatcherMixin implements BreakingRenderInfo {
+    @Unique
+    private BlockAndTintGetter level;
 
-    @Shadow
-    @Final
-    private RandomSource singleThreadRandom;
+    @Override
+    public void create$setRenderLevel(@NotNull BlockAndTintGetter level) {
+        this.level = level;
+    }
 
-    @Shadow
-    @Final
-    private List<BlockModelPart> singleThreadPartList;
+    @Override
+    public void create$clearRenderLevel() {
+        level = null;
+    }
 
-    @Shadow
-    @Final
-    private ModelBlockRenderer modelRenderer;
-
-    @Inject(method = "renderBreakingTexture(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/block/BakedQuadOutput;)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/block/BlockModelShaper;getBlockModel(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/renderer/block/model/BlockStateModel;", shift = At.Shift.AFTER), cancellable = true)
-    private void renderDamage(
-        BlockState state,
-        BlockPos pos,
-        BlockAndTintGetter level,
-        PoseStack poseStack,
-        BakedQuadOutput output,
-        CallbackInfo ci,
-        @Local BlockStateModel model
+    @WrapOperation(method = "renderBreakingTexture(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/model/BlockStateModel;collectParts(Lnet/minecraft/util/RandomSource;Ljava/util/List;)V"))
+    private void collectParts(
+        BlockStateModel model,
+        RandomSource random,
+        List<BlockModelPart> output,
+        Operation<Void> original,
+        @Local(argsOnly = true) BlockState state,
+        @Local(argsOnly = true) BlockPos pos
     ) {
-        if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
-            singleThreadRandom.setSeed(state.getSeed(pos));
-            singleThreadPartList.clear();
-            wrapper.addPartsWithInfo(level, pos, state, singleThreadRandom, singleThreadPartList);
-            if (!singleThreadPartList.isEmpty()) {
-                modelRenderer.tesselateBlock(
-                    level,
-                    singleThreadPartList,
-                    state,
-                    pos,
-                    poseStack,
-                    output,
-                    true,
-                    OverlayTexture.NO_OVERLAY
-                );
-            }
-            ci.cancel();
+        if (level != null && WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
+            wrapper.addPartsWithInfo(level, pos, state, random, output);
+        } else {
+            original.call(model, random, output);
         }
     }
 }

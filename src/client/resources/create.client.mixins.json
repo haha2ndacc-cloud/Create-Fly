@@ -7,6 +7,7 @@
     "AvatarRendererMixin",
     "AvatarRenderStateMixin",
     "BakedQuadMixin",
+    "BlockBreakingRenderStateMixin",
     "BlockColorsMixin",
     "BlockDestructionProgressMixin",
     "BlockElementDeserializerMixin",

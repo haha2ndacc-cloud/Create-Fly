@@ -2,7 +2,6 @@ package com.zurrtum.create.client.ponder.foundation.element;
 
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.catnip.data.Pair;
 import com.zurrtum.create.catnip.math.VecHelper;
@@ -17,6 +16,7 @@ import com.zurrtum.create.client.catnip.render.SuperByteBufferCache;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferCache.Compartment;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
+import com.zurrtum.create.client.infrastructure.render.BreakingRenderInfo;
 import com.zurrtum.create.client.ponder.Ponder;
 import com.zurrtum.create.client.ponder.api.element.WorldSectionElement;
 import com.zurrtum.create.client.ponder.api.level.PonderLevel;
@@ -35,7 +35,6 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
@@ -365,20 +364,18 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
                 overlayMS.last().normal().set(matrixEntry.normal());
             }
 
-            VertexConsumer builder = new SheetedDecalTextureGenerator(
-                buffer.getBuffer(ModelBakery.DESTROY_TYPES.get(
-                    entry.getValue())), overlayMS.last(), 1
-            );
-
             poseStack.pushPose();
             poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
+            BreakingRenderInfo renderInfo = (BreakingRenderInfo) blockRenderManager;
+            renderInfo.create$setRenderLevel(world);
             blockRenderManager.renderBreakingTexture(
                 world.getBlockState(pos),
                 pos,
-                world,
                 poseStack,
-                builder::putBulkData
+                buffer,
+                entry.getValue()
             );
+            renderInfo.create$clearRenderLevel();
             poseStack.popPose();
         }
 
