@@ -14,6 +14,8 @@ import com.zurrtum.create.content.schematics.cannon.LaunchedItem.ForBlockState;
 import com.zurrtum.create.content.schematics.cannon.LaunchedItem.ForEntity;
 import com.zurrtum.create.content.schematics.cannon.SchematicannonBlockEntity;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockModelRenderState;
+import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -40,9 +42,11 @@ import java.util.List;
 
 public class SchematicannonRenderer implements BlockEntityRenderer<SchematicannonBlockEntity, SchematicannonRenderer.SchematicannonRenderState> {
     protected final ItemModelResolver itemModelManager;
+    protected final BlockModelResolver blockModelResolver;
 
     public SchematicannonRenderer(BlockEntityRendererProvider.Context context) {
         itemModelManager = context.itemModelResolver();
+        blockModelResolver = context.blockModelResolver();
     }
 
     @Override
@@ -136,7 +140,9 @@ public class SchematicannonRenderer implements BlockEntityRenderer<Schematicanno
                 } else {
                     state = forBlockState.state;
                 }
-                blocks.add(new LaunchedBlockRenderState(blockLocation, angle, 0.3f, state));
+                BlockModelRenderState model = new BlockModelRenderState();
+                blockModelResolver.update(model, state);
+                blocks.add(new LaunchedBlockRenderState(blockLocation, angle, 0.3f, model));
             } else if (launched instanceof ForEntity) {
                 ItemStackRenderState item = new ItemStackRenderState();
                 item.displayContext = ItemDisplayContext.GROUND;
@@ -277,16 +283,16 @@ public class SchematicannonRenderer implements BlockEntityRenderer<Schematicanno
     }
 
     public static class LaunchedBlockRenderState extends LaunchedRenderState {
-        public BlockState state;
+        public BlockModelRenderState model;
 
-        public LaunchedBlockRenderState(Vec3 offset, float angle, float scale, BlockState state) {
+        public LaunchedBlockRenderState(Vec3 offset, float angle, float scale, BlockModelRenderState model) {
             super(offset, angle, scale);
-            this.state = state;
+            this.model = model;
         }
 
         @Override
         public void submit(SubmitNodeCollector queue, PoseStack matrices, int light) {
-            queue.submitBlock(matrices, state, light, OverlayTexture.NO_OVERLAY, 0);
+            model.submit(matrices, queue, light, OverlayTexture.NO_OVERLAY, 0);
         }
     }
 

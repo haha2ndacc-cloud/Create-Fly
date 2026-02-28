@@ -16,6 +16,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockModelRenderState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.TextureSlots;
@@ -324,7 +325,9 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
             if (state.getBlock() instanceof CrossCollisionBlock block) {
                 return UsedItemRenderState.create(mc, block, displayContext, world, user, seed);
             }
-            return new UsedBlockRenderState(state);
+            BlockModelRenderState model = new BlockModelRenderState();
+            mc.blockModelResolver.update(model, state);
+            return new UsedBlockRenderState(model);
         }
 
         void render(PoseStack matrices, SubmitNodeCollector queue, int light, int overlay);
@@ -371,13 +374,13 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
         }
     }
 
-    public record UsedBlockRenderState(BlockState state) implements UsedRenderState {
+    public record UsedBlockRenderState(BlockModelRenderState model) implements UsedRenderState {
         public void render(PoseStack matrices, SubmitNodeCollector queue, int light, int overlay) {
             matrices.translate(-0.42f, -0.385f, 0);
             matrices.scale(0.25f, 0.25f, 0.25f);
             matrices.mulPose(Axis.XP.rotationDegrees(30));
             matrices.mulPose(Axis.YP.rotationDegrees(45));
-            queue.submitBlock(matrices, state, light, overlay, 0);
+            model.submit(matrices, queue, light, overlay, 0);
         }
     }
 }
