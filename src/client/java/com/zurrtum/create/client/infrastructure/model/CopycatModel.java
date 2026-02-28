@@ -6,13 +6,13 @@ import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlockEntity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,6 +60,11 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
 
     protected static BlockStateModel getModelOf(BlockState material) {
         return Minecraft.getInstance().getBlockRenderer().getBlockModel(material);
+    }
+
+    @Override
+    public boolean needUpdateTerrainParticle() {
+        return true;
     }
 
     @Override

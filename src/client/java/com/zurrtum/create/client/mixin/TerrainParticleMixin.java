@@ -9,10 +9,9 @@ import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.TerrainParticle;
-import net.minecraft.client.renderer.block.BlockModelShaper;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.block.model.Material;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,17 +59,17 @@ public abstract class TerrainParticleMixin {
         return pos;
     }
 
-    @WrapOperation(method = "<init>(Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDDLnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockModelShaper;getParticleMaterial(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/renderer/block/model/Material$Baked;"))
+    @WrapOperation(method = "<init>(Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDDLnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockStateModelSet;getParticleMaterial(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/renderer/block/model/Material$Baked;"))
     private static Material.Baked onParticle(
-        BlockModelShaper models,
+        BlockStateModelSet models,
         BlockState state,
-        Operation<TextureAtlasSprite> original,
+        Operation<Material.Baked> original,
         @Local(argsOnly = true) ClientLevel world,
         @Local(argsOnly = true) BlockPos pos,
         @Share("pos") LocalRef<BlockPos> blockPos
     ) {
-        BlockStateModel model = models.getBlockModel(state);
-        if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
+        BlockStateModel model = models.get(state);
+        if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper && wrapper.needUpdateTerrainParticle()) {
             blockPos.set(findPos(world, pos, state));
             return wrapper.particleMaterialWithInfo(world, blockPos.get(), state);
         } else {

@@ -2,13 +2,13 @@ package com.zurrtum.create.client.infrastructure.model;
 
 import com.zurrtum.create.client.compat.fabric.WrapperModel;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
@@ -39,6 +39,10 @@ public abstract class WrapperBlockStateModel implements BlockStateModel, BlockSt
     @Override
     public void collectParts(RandomSource random, List<BlockModelPart> parts) {
         model.collectParts(random, parts);
+    }
+
+    public boolean needUpdateTerrainParticle() {
+        return false;
     }
 
     public Material.Baked particleMaterialWithInfo(BlockAndTintGetter world, BlockPos pos, BlockState state) {

@@ -32,6 +32,11 @@ public class BeltModel extends WrapperBlockStateModel {
     private static final SpriteShiftEntry SPRITE_SHIFT = AllSpriteShifts.ANDESIDE_BELT_CASING;
 
     @Override
+    public boolean needUpdateTerrainParticle() {
+        return true;
+    }
+
+    @Override
     public Material.Baked particleMaterialWithInfo(BlockAndTintGetter world, BlockPos pos, BlockState state) {
         if (world.getBlockEntity(pos) instanceof BeltBlockEntity blockEntity && blockEntity.casing == CasingType.ANDESITE) {
             if (ANDESITE_MATERIAL != null) {
