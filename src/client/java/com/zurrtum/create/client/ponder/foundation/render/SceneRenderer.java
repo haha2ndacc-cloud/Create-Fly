@@ -9,6 +9,7 @@ import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.catnip.gui.UIRenderHelper;
 import com.zurrtum.create.client.catnip.gui.render.GpuTexture;
+import com.zurrtum.create.client.catnip.render.DefaultSuperRenderTypeBuffer;
 import com.zurrtum.create.client.catnip.render.DefaultSuperRenderTypeBuffer.Dispatcher;
 import com.zurrtum.create.client.catnip.render.PonderRenderTypes;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
@@ -36,9 +37,9 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
     private int windowScaleFactor;
 
     @SuppressWarnings("DataFlowIssue")
-    public SceneRenderer(Dispatcher dispatcher) {
+    public SceneRenderer() {
         super(null);
-        this.dispatcher = dispatcher;
+        this.dispatcher = DefaultSuperRenderTypeBuffer.Dispatcher.getInstance();
     }
 
     @Override
@@ -98,7 +99,8 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
         transform.apply(poseStack, partialTicks);
         transform.updateSceneRVE(partialTicks);
         scene.renderScene(mc, buffer, dispatcher.getSubmitNodeStorage(), poseStack, partialTicks);
-        dispatcher.draw();
+        dispatcher.draw(poseStack);
+        scene.resetParticles();
 
         // kool shadow fx
         if (!scene.shouldHidePlatformShadow()) {

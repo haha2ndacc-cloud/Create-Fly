@@ -10,7 +10,6 @@ import com.mojang.blaze3d.systems.RenderSystem.AutoStorageIndexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.zurrtum.create.client.catnip.gui.render.*;
 import com.zurrtum.create.client.catnip.render.CustomRenderPipeline;
-import com.zurrtum.create.client.catnip.render.DefaultSuperRenderTypeBuffer;
 import com.zurrtum.create.client.foundation.gui.render.*;
 import com.zurrtum.create.client.ponder.foundation.render.SceneRenderState;
 import com.zurrtum.create.client.ponder.foundation.render.SceneRenderer;
@@ -50,7 +49,7 @@ public class GuiRendererMixin {
         builder.put(DrainRenderState.class, new DrainRenderer(vertexConsumers));
         builder.put(SandPaperRenderState.class, new SandPaperRenderer(vertexConsumers));
         builder.put(TitleTextRenderState.class, new TitleTextRenderer(vertexConsumers));
-        builder.put(SceneRenderState.class, new SceneRenderer(new DefaultSuperRenderTypeBuffer.Dispatcher()));
+        builder.put(SceneRenderState.class, new SceneRenderer());
         builder.put(FanRenderState.class, new FanRenderer(vertexConsumers));
         return builder;
     }

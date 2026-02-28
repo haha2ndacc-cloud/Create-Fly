@@ -26,6 +26,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Vec3i;
@@ -235,7 +236,7 @@ public class SchematicHandler {
         }
     }
 
-    public void render(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer, Vec3 camera) {
+    public void render(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer, SubmitNodeStorage queue, Vec3 camera) {
         if (!active) {
             return;
         }
@@ -256,11 +257,11 @@ public class SchematicHandler {
             boolean lr = transformation.getScaleLR().getValue(pt) < 0;
             boolean fb = transformation.getScaleFB().getValue(pt) < 0;
             if (lr && !fb && renderers[2] != null) {
-                renderers[2].render(mc, ms, buffer, transformation, camera);
+                renderers[2].render(mc, ms, buffer, queue, transformation, camera);
             } else if (fb && !lr && renderers[1] != null) {
-                renderers[1].render(mc, ms, buffer, transformation, camera);
+                renderers[1].render(mc, ms, buffer, queue, transformation, camera);
             } else if (renderers[0] != null) {
-                renderers[0].render(mc, ms, buffer, transformation, camera);
+                renderers[0].render(mc, ms, buffer, queue, transformation, camera);
             }
         }
 

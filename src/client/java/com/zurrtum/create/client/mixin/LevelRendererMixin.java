@@ -37,7 +37,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LevelTargetBundle;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.chunk.ChunkSectionsToRender;
 import net.minecraft.client.renderer.state.BlockBreakingRenderState;
@@ -123,17 +123,18 @@ public class LevelRendererMixin {
         framePass.executes(() -> {
             PoseStack ms = new PoseStack();
             Vec3 cameraPos = cameraState.pos;
-            SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBuffer.getInstance();
+            DefaultSuperRenderTypeBuffer.Dispatcher dispatcher = DefaultSuperRenderTypeBuffer.Dispatcher.getInstance();
+            SuperRenderTypeBuffer buffer = dispatcher.getBuffer();
             GhostBlocks.getInstance().renderAll(minecraft, ms, buffer, cameraPos);
             Outliner.getInstance().renderOutlines(minecraft, ms, buffer, cameraPos, tickProgress);
             TrackBlockOutline.drawCurveSelection(minecraft, ms, buffer, cameraPos);
             TrackTargetingClient.render(minecraft, ms, buffer, cameraPos);
             CouplingRenderer.renderAll(minecraft, ms, buffer, cameraPos);
             CarriageCouplingRenderer.renderAll(minecraft, ms, buffer, cameraPos);
-            Create.SCHEMATIC_HANDLER.render(minecraft, ms, buffer, cameraPos);
+            Create.SCHEMATIC_HANDLER.render(minecraft, ms, buffer, dispatcher.getSubmitNodeStorage(), cameraPos);
             ChainConveyorInteractionHandler.drawCustomBlockSelection(ms, buffer, cameraPos);
             SymmetryHandlerClient.onRenderWorld(minecraft, ms, buffer, cameraPos);
-            buffer.draw();
+            dispatcher.draw(ms);
             ContraptionPlayerPassengerRotation.frame(minecraft);
         });
     }
@@ -179,7 +180,7 @@ public class LevelRendererMixin {
 
     @Inject(method = "renderBlockOutline(Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lcom/mojang/blaze3d/vertex/PoseStack;ZLnet/minecraft/client/renderer/state/LevelRenderState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/state/BlockOutlineRenderState;highContrast()Z", ordinal = 0), cancellable = true)
     private void onRenderBlockOutline(
-        MultiBufferSource.BufferSource vertexConsumers,
+        BufferSource vertexConsumers,
         PoseStack matrices,
         boolean renderBlockOutline,
         LevelRenderState renderStates,
@@ -218,7 +219,7 @@ public class LevelRendererMixin {
     @Inject(method = "renderBlockDestroyAnimation(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/state/LevelRenderState;)V", at = @At("HEAD"))
     private void initBreakingRenderInfo(
         PoseStack poseStack,
-        MultiBufferSource.BufferSource bufferSource,
+        BufferSource bufferSource,
         LevelRenderState levelRenderState,
         CallbackInfo ci,
         @Share("info") LocalRef<BreakingRenderInfo> info
@@ -229,7 +230,7 @@ public class LevelRendererMixin {
     @Inject(method = "renderBlockDestroyAnimation(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/state/LevelRenderState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockRenderDispatcher;renderBreakingTexture(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"))
     private void renderBreakingTexture(
         PoseStack poseStack,
-        MultiBufferSource.BufferSource bufferSource,
+        BufferSource bufferSource,
         LevelRenderState levelRenderState,
         CallbackInfo ci,
         @Local BlockBreakingRenderState state,
@@ -241,7 +242,7 @@ public class LevelRendererMixin {
     @Inject(method = "renderBlockDestroyAnimation(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/state/LevelRenderState;)V", at = @At("RETURN"))
     private void clearRenderLevel(
         PoseStack poseStack,
-        MultiBufferSource.BufferSource bufferSource,
+        BufferSource bufferSource,
         LevelRenderState levelRenderState,
         CallbackInfo ci,
         @Share("info") LocalRef<BreakingRenderInfo> info

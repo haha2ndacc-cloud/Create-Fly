@@ -10,11 +10,11 @@ import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper;
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper.BlockEntityListRenderState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.block.BlockModelLighter;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.RenderShape;
@@ -57,6 +57,7 @@ public class SchematicRenderer {
         Minecraft mc,
         PoseStack ms,
         SuperRenderTypeBuffer buffers,
+        SubmitNodeStorage queue,
         SchematicTransformation transformation,
         Vec3 camera
     ) {
@@ -90,12 +91,7 @@ public class SchematicRenderer {
             AnimationTickHolder.getPartialTicks()
         );
         if (renderState != null) {
-            FeatureRenderDispatcher renderDispatcher = Minecraft.getInstance().gameRenderer.getFeatureRenderDispatcher();
-            renderState.render(
-                ms,
-                renderDispatcher.getSubmitNodeStorage(),
-                mc.gameRenderer.getLevelRenderState().cameraRenderState
-            );
+            renderState.render(ms, queue, mc.gameRenderer.getLevelRenderState().cameraRenderState);
         }
 
         // Don't bother looping over errored BEs again.

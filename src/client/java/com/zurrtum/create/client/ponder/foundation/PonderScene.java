@@ -296,10 +296,14 @@ public class PonderScene {
             )
         );
         world.renderEntities(ms, queue, camera, cameraRenderState, pt);
-        world.renderParticles(ms, queue, camera, cameraRenderState, pt);
+        world.renderParticles(queue, camera, cameraRenderState, pt);
         outliner.renderOutlines(mc, ms, buffer, Vec3.ZERO, pt);
 
         ms.popPose();
+    }
+
+    public void resetParticles() {
+        world.resetParticles();
     }
 
     public void renderOverlay(PonderUI screen, GuiGraphics graphics, float partialTicks) {
