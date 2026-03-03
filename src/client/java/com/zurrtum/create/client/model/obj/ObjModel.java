@@ -7,7 +7,7 @@ package com.zurrtum.create.client.model.obj;
 
 import com.zurrtum.create.client.model.AbstractUnbakedModel;
 import com.zurrtum.create.client.model.StandardModelParameters;
-import net.minecraft.client.resources.model.UnbakedGeometry;
+import net.minecraft.client.resources.model.geometry.UnbakedGeometry;
 import net.minecraft.resources.Identifier;
 
 /**
