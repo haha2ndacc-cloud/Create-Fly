@@ -8,7 +8,7 @@ package com.zurrtum.create.client.model.obj;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.client.model.NormalsBakedQuad;
 import net.minecraft.client.model.geom.builders.UVPair;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.Direction;
 import net.minecraft.util.ARGB;
 import org.jetbrains.annotations.Nullable;

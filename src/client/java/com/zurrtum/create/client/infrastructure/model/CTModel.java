@@ -8,7 +8,7 @@ import com.zurrtum.create.client.foundation.block.connected.ConnectedTextureBeha
 import com.zurrtum.create.client.model.NormalsBakedQuad;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
 import net.minecraft.client.model.geom.builders.UVPair;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

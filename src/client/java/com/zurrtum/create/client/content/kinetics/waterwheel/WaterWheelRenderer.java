@@ -13,7 +13,7 @@ import com.zurrtum.create.content.kinetics.waterwheel.WaterWheelBlock;
 import com.zurrtum.create.content.kinetics.waterwheel.WaterWheelBlockEntity;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;

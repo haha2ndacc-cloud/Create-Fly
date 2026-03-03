@@ -8,7 +8,7 @@ import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
 import com.zurrtum.create.content.decoration.copycat.CopycatPanelBlock;
 import com.zurrtum.create.content.decoration.copycat.CopycatSpecialCases;
 import com.zurrtum.create.foundation.block.WrenchableDirectionalBlock;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
@@ -118,7 +118,10 @@ public class CopycatPanelModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
+                        direction,
+                        quad
+                    )
                 );
             }
             parts.add(new SimpleModelWrapper(
@@ -207,7 +210,10 @@ public class CopycatPanelModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
+                        direction,
+                        quad
+                    )
                 );
             }
             parts.add(new SimpleModelWrapper(

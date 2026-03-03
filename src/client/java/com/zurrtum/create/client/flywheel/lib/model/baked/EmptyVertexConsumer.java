@@ -3,7 +3,7 @@ package com.zurrtum.create.client.flywheel.lib.model.baked;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.QuadInstance;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import org.joml.Matrix3x2fc;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;

@@ -8,6 +8,7 @@ import com.zurrtum.create.client.model.NormalsModelElement;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.Direction;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;

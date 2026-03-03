@@ -1,7 +1,7 @@
 package com.zurrtum.create.client.mixin;
 
 import com.zurrtum.create.client.model.NormalsBakedQuad;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.QuadInstance;
 import com.zurrtum.create.client.flywheel.lib.model.SimpleModel;
 import net.minecraft.client.renderer.block.BlockQuadOutput;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class VanillinMeshEmitterManager extends MeshEmitterManager<MeshEmitter> implements BlockQuadOutput {
