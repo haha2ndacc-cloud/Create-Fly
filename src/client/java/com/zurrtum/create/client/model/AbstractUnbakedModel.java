@@ -7,10 +7,10 @@ package com.zurrtum.create.client.model;
 
 import net.minecraft.client.renderer.block.dispatch.ModelState;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.block.model.SimpleUnbakedGeometry;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelDebugName;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.resources.model.cuboid.UnbakedCuboidGeometry;
 import net.minecraft.client.resources.model.sprite.TextureSlots;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.Nullable;
@@ -23,7 +23,7 @@ import org.jspecify.annotations.Nullable;
 public abstract class AbstractUnbakedModel implements UnbakedModel {
     /**
      * Holds the standard top-level model parameters except elements.
-     * {@link SimpleUnbakedGeometry#bake(TextureSlots, ModelBaker, ModelState, ModelDebugName)}
+     * {@link UnbakedCuboidGeometry#bake(TextureSlots, ModelBaker, ModelState, ModelDebugName)}
      * must always use the values given as parameters instead of accessing this parameter directly in order to
      * take values collected along the model's parent chain into account.
      */
