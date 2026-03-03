@@ -15,7 +15,7 @@ import com.zurrtum.create.client.model.NeoForgeModelProperties;
 import com.zurrtum.create.client.model.StandardModelParameters;
 import com.zurrtum.create.client.model.obj.ObjMaterialLibrary.Material;
 import joptsimple.internal.Strings;
-import net.minecraft.client.renderer.block.model.Material.Baked;
+import net.minecraft.client.resources.model.sprite.Material.Baked;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelDebugName;
