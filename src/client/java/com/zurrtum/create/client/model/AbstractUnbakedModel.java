@@ -7,11 +7,11 @@ package com.zurrtum.create.client.model;
 
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.block.model.SimpleUnbakedGeometry;
-import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelDebugName;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.resources.model.sprite.TextureSlots;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.Nullable;
 
