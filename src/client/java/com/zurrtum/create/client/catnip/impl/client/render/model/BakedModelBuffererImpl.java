@@ -6,7 +6,7 @@ import com.zurrtum.create.client.catnip.client.render.model.ShadeSeparatedResult
 import com.zurrtum.create.client.catnip.impl.client.render.TransformingVertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.*;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.RenderShape;

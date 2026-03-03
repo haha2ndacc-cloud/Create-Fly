@@ -1,7 +1,7 @@
 package com.zurrtum.create.client.catnip.gui.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockTransformRenderKey {

@@ -1,7 +1,7 @@
 package com.zurrtum.create.client.foundation.model;
 
 import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.util.RandomSource;
 

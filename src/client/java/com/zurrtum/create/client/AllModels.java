@@ -3,7 +3,7 @@ package com.zurrtum.create.client;
 import com.mojang.serialization.MapCodec;
 import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.client.infrastructure.model.*;
-import net.minecraft.client.renderer.block.model.BlockStateModel.UnbakedRoot;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel.UnbakedRoot;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.ItemModels;
 import net.minecraft.resources.Identifier;

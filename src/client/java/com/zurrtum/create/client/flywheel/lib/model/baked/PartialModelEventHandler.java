@@ -1,6 +1,6 @@
 package com.zurrtum.create.client.flywheel.lib.model.baked;
 
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.resources.Identifier;
 
 import java.util.Map;

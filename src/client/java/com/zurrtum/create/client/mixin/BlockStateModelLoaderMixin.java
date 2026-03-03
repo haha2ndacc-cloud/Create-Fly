@@ -2,7 +2,7 @@ package com.zurrtum.create.client.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.zurrtum.create.client.AllModels;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.resources.model.BlockStateModelLoader;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;

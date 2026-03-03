@@ -6,7 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
 import net.caffeinemc.mods.sodium.fabric.model.FabricModelAccess;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
