@@ -23,7 +23,7 @@ public class BlockStateModelLoaderMixin {
     private static void replace(
         Identifier identifier,
         StateDefinition<Block, BlockState> stateDefinition,
-        List<BlockStateModelLoader.LoadedBlockModelDefinition> list,
+        List<BlockStateModelLoader.LoadedBlockStateModelDispatcher> list,
         CallbackInfoReturnable<BlockStateModelLoader.LoadedModels> cir,
         @Local Map<BlockState, BlockStateModel.UnbakedRoot> models
     ) {
