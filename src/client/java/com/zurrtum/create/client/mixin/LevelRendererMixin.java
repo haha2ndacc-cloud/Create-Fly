@@ -39,10 +39,10 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.chunk.ChunkSectionsToRender;
-import net.minecraft.client.renderer.state.BlockBreakingRenderState;
 import net.minecraft.client.renderer.state.BlockOutlineRenderState;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.state.LevelRenderState;
+import net.minecraft.client.renderer.state.level.BlockBreakingRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.BlockDestructionProgress;
 import net.minecraft.world.level.BlockAndLightGetter;
@@ -193,13 +193,7 @@ public class LevelRendererMixin {
             vertexConsumers,
             cameraPos,
             matrices
-        ) || TrackBlockOutline.drawCustomBlockSelection(
-            minecraft,
-            state.pos(),
-            vertexConsumers,
-            cameraPos,
-            matrices
-        )) {
+        ) || TrackBlockOutline.drawCustomBlockSelection(minecraft, state.pos(), vertexConsumers, cameraPos, matrices)) {
             ci.cancel();
         }
     }

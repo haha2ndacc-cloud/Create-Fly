@@ -3,7 +3,7 @@ package com.zurrtum.create.client.mixin;
 import com.zurrtum.create.client.infrastructure.render.BreakingRenderStateInfo;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
-import net.minecraft.client.renderer.state.BlockBreakingRenderState;
+import net.minecraft.client.renderer.state.level.BlockBreakingRenderState;
 import net.minecraft.core.BlockPos;
 import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Mixin;
