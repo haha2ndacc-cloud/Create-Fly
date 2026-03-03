@@ -2,7 +2,7 @@ package com.zurrtum.create.client.foundation.gui.render;
 
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlock;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
+import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix3x2f;
