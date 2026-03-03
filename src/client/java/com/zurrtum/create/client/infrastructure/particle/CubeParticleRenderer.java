@@ -12,7 +12,7 @@ import net.minecraft.client.particle.ParticleGroup;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SingleQuadParticle.Layer;
 import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.client.renderer.state.ParticleGroupRenderState;
+import net.minecraft.client.renderer.state.level.ParticleGroupRenderState;
 
 public class CubeParticleRenderer extends ParticleGroup<CubeParticle> {
     public static final ParticleRenderType SHEET = new ParticleRenderType("create:cube");
