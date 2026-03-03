@@ -5,6 +5,7 @@
 
 package com.zurrtum.create.client.model;
 
+import net.minecraft.client.renderer.block.dispatch.ModelState;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelDebugName;
 import net.minecraft.client.resources.model.geometry.QuadCollection;
