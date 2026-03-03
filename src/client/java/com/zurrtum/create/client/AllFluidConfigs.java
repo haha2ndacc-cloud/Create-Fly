@@ -13,7 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.fog.FogRenderer;
-import net.minecraft.client.resources.model.SpriteId;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;

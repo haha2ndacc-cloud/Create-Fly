@@ -9,7 +9,7 @@ import com.zurrtum.create.client.flywheel.lib.util.RendererReloadCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.SpriteId;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
