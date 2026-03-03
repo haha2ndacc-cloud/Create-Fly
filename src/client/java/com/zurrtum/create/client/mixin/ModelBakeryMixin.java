@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModelEventHandler;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
-import net.minecraft.client.renderer.block.model.SingleVariant;
+import net.minecraft.client.renderer.block.dispatch.SingleVariant;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.SimpleModelWrapper;
 import net.minecraft.util.thread.ParallelMapTransform;
