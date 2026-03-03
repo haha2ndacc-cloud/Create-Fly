@@ -7,7 +7,7 @@ import com.zurrtum.create.content.decoration.copycat.CopycatStepBlock;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
-import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
+import net.minecraft.client.resources.model.SimpleModelWrapper;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.core.BlockPos;
@@ -75,10 +75,7 @@ public class CopycatStepModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
-                        direction,
-                        quad
-                    )
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
                 );
             }
             parts.add(new SimpleModelWrapper(

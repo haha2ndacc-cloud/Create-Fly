@@ -6,7 +6,7 @@ import com.zurrtum.create.client.AllCTBehaviours;
 import com.zurrtum.create.client.foundation.block.connected.ConnectedTextureBehaviour;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
-import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
+import net.minecraft.client.resources.model.SimpleModelWrapper;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.core.BlockPos;
