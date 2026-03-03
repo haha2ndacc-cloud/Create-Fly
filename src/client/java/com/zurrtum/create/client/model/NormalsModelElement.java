@@ -1,13 +1,13 @@
 package com.zurrtum.create.client.model;
 
-import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.client.resources.model.cuboid.CuboidModelElement;
 
 public interface NormalsModelElement {
-    static boolean calcNormals(BlockElement element) {
+    static boolean calcNormals(CuboidModelElement element) {
         return ((NormalsModelElement) (Object) element).create$calcNormals();
     }
 
-    static void markNormals(BlockElement element) {
+    static void markNormals(CuboidModelElement element) {
         ((NormalsModelElement) (Object) element).create$markNormals();
     }
 

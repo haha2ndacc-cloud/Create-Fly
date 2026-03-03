@@ -5,9 +5,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.zurrtum.create.client.model.NormalsBakedQuad;
 import com.zurrtum.create.client.model.NormalsModelElement;
-import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.cuboid.CuboidModelElement;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.Direction;
 import org.joml.Vector3f;
@@ -30,7 +30,7 @@ public class SimpleUnbakedGeometryMixin {
         boolean shade,
         int lightEmission,
         Operation<BakedQuad> original,
-        @Local BlockElement element
+        @Local CuboidModelElement element
     ) {
         BakedQuad quad = original.call(
             modelBaker,
