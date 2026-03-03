@@ -14,7 +14,7 @@ import com.zurrtum.create.content.kinetics.waterwheel.WaterWheelBlockEntity;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -151,15 +151,15 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
         BlockStateModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
         RandomSource random = RandomSource.create();
         random.setSeed(42L);
-        List<BlockModelPart> parts = model.collectParts(random);
-        for (BlockModelPart part : parts) {
+        List<BlockStateModelPart> parts = model.collectParts(random);
+        for (BlockStateModelPart part : parts) {
             List<BakedQuad> quads = part.getQuads(side);
             if (!quads.isEmpty()) {
                 return quads.getFirst().spriteInfo().sprite();
             }
         }
         random.setSeed(42L);
-        for (BlockModelPart part : parts) {
+        for (BlockStateModelPart part : parts) {
             List<BakedQuad> quads = part.getQuads(null);
             if (!quads.isEmpty()) {
                 for (BakedQuad quad : quads) {

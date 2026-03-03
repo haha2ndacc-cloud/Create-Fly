@@ -4,6 +4,7 @@ import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.model.NormalsBakedQuad;
 import net.minecraft.client.model.geom.builders.UVPair;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
@@ -131,11 +132,11 @@ public class BakedModelHelper {
         if (swappedParticleSprite != null) {
             material = new Material.Baked(swappedParticleSprite, material.forceTranslucent());
         }
-        List<BlockModelPart> parts = template.collectParts(random);
+        List<BlockStateModelPart> parts = template.collectParts(random);
         int size = parts.size();
-        List<BlockModelPart> replace = new ArrayList<>(parts.size());
+        List<BlockStateModelPart> replace = new ArrayList<>(parts.size());
         for (int i = 0; i < size; i++) {
-            BlockModelPart part = parts.get(i);
+            BlockStateModelPart part = parts.get(i);
             QuadCollection.Builder builder = new QuadCollection.Builder();
             List<BakedQuad> quads;
             for (Direction cullFace : Iterate.directions) {

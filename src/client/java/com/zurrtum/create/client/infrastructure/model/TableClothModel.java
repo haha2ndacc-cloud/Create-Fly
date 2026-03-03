@@ -7,7 +7,7 @@ import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import com.zurrtum.create.client.model.NormalsBakedQuad;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
@@ -66,7 +66,7 @@ public class TableClothModel extends WrapperBlockStateModel {
         BlockPos pos,
         BlockState state,
         RandomSource random,
-        List<BlockModelPart> parts
+        List<BlockStateModelPart> parts
     ) {
         model.collectParts(random, parts);
         int index = 0;
@@ -124,7 +124,7 @@ public class TableClothModel extends WrapperBlockStateModel {
 
     private static List<BakedQuad> replaceQuads(RandomSource random, TextureAtlasSprite replace, PartialModel model) {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-        for (BlockModelPart part : model.get().collectParts(random)) {
+        for (BlockStateModelPart part : model.get().collectParts(random)) {
             for (Direction direction : DIRECTIONS) {
                 for (BakedQuad quad : part.getQuads(direction)) {
                     builder.add(replaceQuad(replace, quad));
@@ -163,7 +163,8 @@ public class TableClothModel extends WrapperBlockStateModel {
     }
 
     private record BakedCorner(List<BakedQuad> south, List<BakedQuad> west, List<BakedQuad> north, List<BakedQuad> east,
-                               Material.Baked particleMaterial, boolean hasTranslucency) implements BlockModelPart {
+                               Material.Baked particleMaterial,
+                               boolean hasTranslucency) implements BlockStateModelPart {
         @Override
         public List<BakedQuad> getQuads(@Nullable Direction side) {
             return switch (side) {

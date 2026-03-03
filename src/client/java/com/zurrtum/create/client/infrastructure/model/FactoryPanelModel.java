@@ -12,7 +12,7 @@ import com.zurrtum.create.content.logistics.factoryBoard.PanelSlot;
 import com.zurrtum.create.content.logistics.factoryBoard.ServerFactoryPanelBehaviour;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
 import net.minecraft.client.resources.model.QuadCollection;
 import net.minecraft.core.BlockPos;
@@ -37,7 +37,7 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
         BlockPos pos,
         BlockState state,
         RandomSource random,
-        List<BlockModelPart> parts
+        List<BlockStateModelPart> parts
     ) {
         model.collectParts(random, parts);
         boolean ponder = world instanceof PonderLevel;
@@ -64,7 +64,7 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
 
     public void addPanel(
         RandomSource random,
-        List<BlockModelPart> parts,
+        List<BlockStateModelPart> parts,
         BlockState state,
         PanelSlot slot,
         ServerFactoryPanelBehaviour behaviour,
@@ -84,13 +84,13 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
         int normal = 127 << 16;
         int[] normals = new int[]{normal, normal, normal, normal};
 
-        for (BlockModelPart part : factoryPanel.get().collectParts(random)) {
+        for (BlockStateModelPart part : factoryPanel.get().collectParts(random)) {
             parts.add(replacePart(part, xRot, yRot, xOffset, yOffset, normals, ponder));
         }
     }
 
-    private static BlockModelPart replacePart(
-        BlockModelPart part,
+    private static BlockStateModelPart replacePart(
+        BlockStateModelPart part,
         float xRot,
         float yRot,
         double xOffset,

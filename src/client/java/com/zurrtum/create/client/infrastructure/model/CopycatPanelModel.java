@@ -9,7 +9,7 @@ import com.zurrtum.create.content.decoration.copycat.CopycatPanelBlock;
 import com.zurrtum.create.content.decoration.copycat.CopycatSpecialCases;
 import com.zurrtum.create.foundation.block.WrenchableDirectionalBlock;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -42,7 +42,7 @@ public class CopycatPanelModel extends CopycatModel {
         CopycatBlock block,
         BlockState material,
         RandomSource random,
-        List<BlockModelPart> parts
+        List<BlockStateModelPart> parts
     ) {
         if (CopycatSpecialCases.isTrapdoorMaterial(material)) {
             addModelParts(world, pos, material, random, getModelOf(material), parts);
@@ -79,13 +79,13 @@ public class CopycatPanelModel extends CopycatModel {
         BlockState state,
         CopycatBlock block,
         TextureAtlasSprite particle,
-        List<BlockModelPart> material,
-        List<BlockModelPart> original,
-        List<BlockModelPart> parts
+        List<BlockStateModelPart> material,
+        List<BlockStateModelPart> original,
+        List<BlockStateModelPart> parts
     ) {
         boolean vertical = state.getValue(CopycatPanelBlock.FACING).getAxis() == Axis.Y;
         TextureAtlasSprite findSprite = null;
-        for (BlockModelPart part : original) {
+        for (BlockStateModelPart part : original) {
             QuadCollection.Builder builder = new QuadCollection.Builder();
             addBarsCroppedQuads(particle, part.getQuads(null), builder::addUnculledFace);
             for (Direction direction : Iterate.directions) {
@@ -98,7 +98,7 @@ public class CopycatPanelModel extends CopycatModel {
                     if (findSprite != null) {
                         targetSprite = findSprite;
                     } else {
-                        for (BlockModelPart materialPart : material) {
+                        for (BlockStateModelPart materialPart : material) {
                             for (BakedQuad quad : materialPart.getQuads(null)) {
                                 if (quad.direction() != Direction.UP) {
                                     continue;
@@ -118,10 +118,7 @@ public class CopycatPanelModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
-                        direction,
-                        quad
-                    )
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
                 );
             }
             parts.add(new SimpleModelWrapper(
@@ -169,8 +166,8 @@ public class CopycatPanelModel extends CopycatModel {
         OcclusionData occlusionData,
         BlockState state,
         CopycatBlock block,
-        List<BlockModelPart> original,
-        List<BlockModelPart> parts
+        List<BlockStateModelPart> original,
+        List<BlockStateModelPart> parts
     ) {
         if (original.isEmpty()) {
             return;
@@ -185,7 +182,7 @@ public class CopycatPanelModel extends CopycatModel {
         AABB frontBB = CUBE_AABB.contract(normal.x * frontContract, normal.y * frontContract, normal.z * frontContract);
         AABB bb = CUBE_AABB.contract(normal.x * contract, normal.y * contract, normal.z * contract)
             .move(normalScaled14);
-        for (BlockModelPart part : original) {
+        for (BlockStateModelPart part : original) {
             QuadCollection.Builder builder = new QuadCollection.Builder();
             addPanelCroppedQuads(
                 facing,
@@ -210,10 +207,7 @@ public class CopycatPanelModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
-                        direction,
-                        quad
-                    )
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
                 );
             }
             parts.add(new SimpleModelWrapper(

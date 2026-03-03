@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
 import net.caffeinemc.mods.sodium.fabric.model.FabricModelAccess;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -22,7 +22,7 @@ public class FabricModelAccessMixin {
     private void addParts(
         BlockStateModel model,
         RandomSource random,
-        List<BlockModelPart> parts,
+        List<BlockStateModelPart> parts,
         Operation<Void> original,
         @Local(argsOnly = true) BlockAndTintGetter world,
         @Local(argsOnly = true) BlockPos pos,

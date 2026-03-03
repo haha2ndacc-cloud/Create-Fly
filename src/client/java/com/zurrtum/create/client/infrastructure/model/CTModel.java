@@ -9,7 +9,7 @@ import com.zurrtum.create.client.model.NormalsBakedQuad;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.QuadCollection;
@@ -41,10 +41,10 @@ public class CTModel extends WrapperBlockStateModel {
         BlockPos pos,
         BlockState state,
         RandomSource random,
-        List<BlockModelPart> parts
+        List<BlockStateModelPart> parts
     ) {
         int[] indices = createCTData(world, pos, state);
-        for (BlockModelPart part : model.collectParts(random)) {
+        for (BlockStateModelPart part : model.collectParts(random)) {
             QuadCollection.Builder builder = new QuadCollection.Builder();
             for (BakedQuad quad : part.getQuads(null)) {
                 builder.addUnculledFace(replaceQuad(state, random, indices[quad.direction().get3DDataValue()], quad));
@@ -63,7 +63,7 @@ public class CTModel extends WrapperBlockStateModel {
 
     protected void addQuads(
         QuadCollection.Builder builder,
-        BlockModelPart part,
+        BlockStateModelPart part,
         Direction direction,
         BlockState state,
         RandomSource random,

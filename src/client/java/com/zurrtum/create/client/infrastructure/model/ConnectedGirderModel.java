@@ -5,7 +5,7 @@ import com.zurrtum.create.client.AllCTBehaviours;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.content.decoration.girder.GirderBlock;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -24,7 +24,7 @@ public class ConnectedGirderModel extends CTModel {
         BlockPos pos,
         BlockState state,
         RandomSource random,
-        List<BlockModelPart> parts
+        List<BlockStateModelPart> parts
     ) {
         super.addPartsWithInfo(world, pos, state, random, parts);
         for (Direction direction : Iterate.horizontalDirections) {

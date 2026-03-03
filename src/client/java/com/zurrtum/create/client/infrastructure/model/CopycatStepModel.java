@@ -5,7 +5,7 @@ import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
 import com.zurrtum.create.content.decoration.copycat.CopycatStepBlock;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.model.SimpleModelWrapper;
 import net.minecraft.client.resources.model.QuadCollection;
@@ -39,7 +39,7 @@ public class CopycatStepModel extends CopycatModel {
         CopycatBlock block,
         BlockState material,
         RandomSource random,
-        List<BlockModelPart> parts
+        List<BlockStateModelPart> parts
     ) {
         Direction facing = state.getValueOrElse(CopycatStepBlock.FACING, Direction.SOUTH);
         boolean upperHalf = state.getValueOrElse(CopycatStepBlock.HALF, Half.BOTTOM) == Half.TOP;
@@ -50,7 +50,7 @@ public class CopycatStepModel extends CopycatModel {
 
         OcclusionData occlusionData = gatherOcclusionData(world, pos, state, material, block);
         BlockStateModel model = getModelOf(material);
-        for (BlockModelPart part : getMaterialParts(world, pos, material, random, model)) {
+        for (BlockStateModelPart part : getMaterialParts(world, pos, material, random, model)) {
             QuadCollection.Builder builder = new QuadCollection.Builder();
             addCroppedQuads(
                 facing,
@@ -75,10 +75,7 @@ public class CopycatStepModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
-                        direction,
-                        quad
-                    )
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
                 );
             }
             parts.add(new SimpleModelWrapper(

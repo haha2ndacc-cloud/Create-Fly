@@ -5,7 +5,7 @@ import com.zurrtum.create.client.flywheel.lib.model.baked.VirtualBlockGetter;
 import com.zurrtum.create.content.decoration.bracket.BracketedBlockEntityBehaviour;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -24,7 +24,7 @@ public class BracketedKineticBlockModel extends WrapperBlockStateModel {
         BlockPos pos,
         BlockState state,
         RandomSource random,
-        List<BlockModelPart> parts
+        List<BlockStateModelPart> parts
     ) {
         BracketedBlockEntityBehaviour attachmentBehaviour = BlockEntityBehaviour.get(
             world,
@@ -48,7 +48,7 @@ public class BracketedKineticBlockModel extends WrapperBlockStateModel {
         }
     }
 
-    private void addVirtualParts(BlockAndTintGetter world, RandomSource random, List<BlockModelPart> parts) {
+    private void addVirtualParts(BlockAndTintGetter world, RandomSource random, List<BlockStateModelPart> parts) {
         if (world instanceof VirtualBlockGetter) {
             model.collectParts(random, parts);
         }

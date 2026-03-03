@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.BlockModelLighter;
 import net.minecraft.client.renderer.block.BlockQuadOutput;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -93,7 +93,7 @@ public class ModelBlockRendererMixin {
     private void collectParts(
         BlockStateModel model,
         RandomSource random,
-        List<BlockModelPart> output,
+        List<BlockStateModelPart> output,
         Operation<Void> original,
         @Local(argsOnly = true) BlockAndTintGetter level,
         @Local(argsOnly = true) BlockPos pos,

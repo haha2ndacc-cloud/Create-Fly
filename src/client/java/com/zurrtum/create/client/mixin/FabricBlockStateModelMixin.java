@@ -6,7 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.fabric.api.client.renderer.v1.model.FabricBlockStateModel;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -20,16 +20,16 @@ import java.util.List;
 @Mixin(FabricBlockStateModel.class)
 public interface FabricBlockStateModelMixin {
     @WrapOperation(method = "emitQuads(Lnet/fabricmc/fabric/api/client/renderer/v1/mesh/QuadEmitter;Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Ljava/util/function/Predicate;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/model/BlockStateModel;collectParts(Lnet/minecraft/util/RandomSource;)Ljava/util/List;"))
-    private List<BlockModelPart> getParts(
+    private List<BlockStateModelPart> getParts(
         BlockStateModel instance,
         RandomSource random,
-        Operation<List<BlockModelPart>> original,
+        Operation<List<BlockStateModelPart>> original,
         @Local(argsOnly = true) BlockAndTintGetter world,
         @Local(argsOnly = true) BlockPos pos,
         @Local(argsOnly = true) BlockState state
     ) {
         if (WrapperBlockStateModel.unwrapCompat(instance) instanceof WrapperBlockStateModel wrapper) {
-            List<BlockModelPart> list = new ObjectArrayList<>();
+            List<BlockStateModelPart> list = new ObjectArrayList<>();
             wrapper.addPartsWithInfo(world, pos, state, random, list);
             return list;
         }

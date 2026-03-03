@@ -7,7 +7,7 @@ import com.zurrtum.create.content.decoration.copycat.CopycatBlockEntity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.core.BlockPos;
@@ -38,7 +38,7 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
         BlockPos pos,
         BlockState state,
         RandomSource random,
-        List<BlockModelPart> parts
+        List<BlockStateModelPart> parts
     ) {
         if (!(state.getBlock() instanceof CopycatBlock block)) {
             return;
@@ -55,7 +55,7 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
         CopycatBlock block,
         BlockState material,
         RandomSource random,
-        List<BlockModelPart> parts
+        List<BlockStateModelPart> parts
     );
 
     protected static BlockStateModel getModelOf(BlockState material) {
@@ -82,7 +82,7 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
         BlockState material,
         RandomSource random,
         BlockStateModel model,
-        List<BlockModelPart> parts
+        List<BlockStateModelPart> parts
     ) {
         if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
             wrapper.addPartsWithInfo(world, pos, material, random, parts);
@@ -91,14 +91,14 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
         }
     }
 
-    protected List<BlockModelPart> getMaterialParts(
+    protected List<BlockStateModelPart> getMaterialParts(
         BlockAndTintGetter world,
         BlockPos pos,
         BlockState material,
         RandomSource random,
         BlockStateModel model
     ) {
-        List<BlockModelPart> parts = new ObjectArrayList<>();
+        List<BlockStateModelPart> parts = new ObjectArrayList<>();
         addModelParts(world, pos, material, random, model, parts);
         return parts;
     }

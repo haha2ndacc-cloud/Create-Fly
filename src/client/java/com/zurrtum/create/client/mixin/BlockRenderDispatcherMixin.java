@@ -7,7 +7,7 @@ import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
 import com.zurrtum.create.client.infrastructure.render.BreakingRenderInfo;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -38,7 +38,7 @@ public class BlockRenderDispatcherMixin implements BreakingRenderInfo {
     private void collectParts(
         BlockStateModel model,
         RandomSource random,
-        List<BlockModelPart> output,
+        List<BlockStateModelPart> output,
         Operation<Void> original,
         @Local(argsOnly = true) BlockState state,
         @Local(argsOnly = true) BlockPos pos

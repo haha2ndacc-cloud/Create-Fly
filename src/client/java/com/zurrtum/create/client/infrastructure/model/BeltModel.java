@@ -10,7 +10,7 @@ import com.zurrtum.create.content.kinetics.belt.BeltBlockEntity;
 import com.zurrtum.create.content.kinetics.belt.BeltBlockEntity.CasingType;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
-import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
@@ -56,7 +56,7 @@ public class BeltModel extends WrapperBlockStateModel {
         BlockPos pos,
         BlockState state,
         RandomSource random,
-        List<BlockModelPart> parts
+        List<BlockStateModelPart> parts
     ) {
         BeltBlockEntity blockentity = (BeltBlockEntity) world.getBlockEntity(pos);
         if (blockentity == null || blockentity.casing == CasingType.NONE) {
@@ -77,16 +77,16 @@ public class BeltModel extends WrapperBlockStateModel {
         if (blockentity.covered) {
             boolean alongX = state.getValue(BeltBlock.HORIZONTAL_FACING).getAxis() == Axis.X;
             BlockStateModel cover = alongX ? AllPartialModels.ANDESITE_BELT_COVER_X.get() : AllPartialModels.ANDESITE_BELT_COVER_Z.get();
-            for (BlockModelPart part : cover.collectParts(random)) {
+            for (BlockStateModelPart part : cover.collectParts(random)) {
                 parts.add(replaceQuads(original, part));
             }
         }
-        for (BlockModelPart part : model.collectParts(random)) {
+        for (BlockStateModelPart part : model.collectParts(random)) {
             parts.add(replaceQuads(original, part));
         }
     }
 
-    private BlockModelPart replaceQuads(TextureAtlasSprite replace, BlockModelPart part) {
+    private BlockStateModelPart replaceQuads(TextureAtlasSprite replace, BlockStateModelPart part) {
         QuadCollection.Builder builder = new QuadCollection.Builder();
         for (BakedQuad quad : part.getQuads(null)) {
             builder.addUnculledFace(replaceQuad(replace, quad));

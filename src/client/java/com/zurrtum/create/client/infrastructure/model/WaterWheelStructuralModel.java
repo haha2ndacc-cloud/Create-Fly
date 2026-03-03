@@ -4,7 +4,7 @@ import com.zurrtum.create.content.kinetics.waterwheel.LargeWaterWheelBlockEntity
 import com.zurrtum.create.content.kinetics.waterwheel.WaterWheelStructuralBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -44,6 +44,6 @@ public class WaterWheelStructuralModel extends WrapperBlockStateModel {
     }
 
     @Override
-    public void collectParts(RandomSource random, List<BlockModelPart> parts) {
+    public void collectParts(RandomSource random, List<BlockStateModelPart> parts) {
     }
 }
