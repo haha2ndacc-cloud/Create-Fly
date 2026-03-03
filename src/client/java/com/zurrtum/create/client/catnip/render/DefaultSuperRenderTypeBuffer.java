@@ -20,7 +20,7 @@ import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.feature.ParticleFeatureRenderer.ParticleBufferCache;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.QuadParticleRenderState.PreparedBuffers;
+import net.minecraft.client.renderer.state.level.QuadParticleRenderState.PreparedBuffers;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.util.Util;
