@@ -133,7 +133,7 @@ public class SandPaperModel implements ItemModel, SpecialModelRenderer<SandPaper
             light,
             overlay,
             0,
-            state.tintLayers,
+            LayerRenderState.EMPTY_TINTS,
             state.prepareQuadList(),
             state.foilType
         );

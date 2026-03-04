@@ -114,7 +114,7 @@ public class WrenchModel implements ItemModel, SpecialModelRenderer<LayerRenderS
             light,
             overlay,
             0,
-            layer.tintLayers,
+            LayerRenderState.EMPTY_TINTS,
             layer.prepareQuadList(),
             layer.foilType
         );

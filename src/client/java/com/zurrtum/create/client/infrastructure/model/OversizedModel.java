@@ -5,6 +5,7 @@ import com.mojang.math.Transformation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -83,14 +84,18 @@ public class OversizedModel implements ItemModel {
             state.appendModelIdentityElement(ItemStackRenderState.FoilType.STANDARD);
         }
 
-        int i = tints.size();
-        int[] is = layerRenderState.prepareTintLayers(i);
+        if (!this.tints.isEmpty()) {
+            IntList tintLayers = layerRenderState.tintLayers();
 
-        for (int j = 0; j < i; j++) {
-            int k = tints.get(j)
-                .calculate(stack, world, heldItemContext == null ? null : heldItemContext.asLivingEntity());
-            is[j] = k;
-            state.appendModelIdentityElement(k);
+            for (ItemTintSource tintSource : this.tints) {
+                int tint = tintSource.calculate(
+                    stack,
+                    world,
+                    heldItemContext == null ? null : heldItemContext.asLivingEntity()
+                );
+                tintLayers.add(tint);
+                state.appendModelIdentityElement(tint);
+            }
         }
 
         layerRenderState.setExtents(vector);

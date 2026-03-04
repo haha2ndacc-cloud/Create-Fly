@@ -75,7 +75,6 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
 
     private final RenderType itemLayer = Sheets.translucentItemSheet();
     private final RenderType blockLayer = Sheets.translucentBlockItemSheet();
-    private final int[] tints = new int[0];
     private final ModelRenderProperties settings;
     private final Matrix4fc transformation;
     private final Supplier<Vector3fc[]> vector;
@@ -217,7 +216,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
             light,
             overlay,
             0,
-            grip.tintLayers,
+            LayerRenderState.EMPTY_TINTS,
             grip.prepareQuadList(),
             grip.foilType
         );
@@ -281,7 +280,16 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
         List<BakedQuad> quads,
         RenderType layer
     ) {
-        queue.submitItem(matrices, displayContext, light, overlay, 0, tints, quads, ItemStackRenderState.FoilType.NONE);
+        queue.submitItem(
+            matrices,
+            displayContext,
+            light,
+            overlay,
+            0,
+            LayerRenderState.EMPTY_TINTS,
+            quads,
+            ItemStackRenderState.FoilType.NONE
+        );
     }
 
     public static class RenderData {
