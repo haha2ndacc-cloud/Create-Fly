@@ -14,11 +14,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
-import net.minecraft.client.renderer.item.ItemModel;
-import net.minecraft.client.renderer.item.ItemModelResolver;
-import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.item.*;
 import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
-import net.minecraft.client.renderer.item.ModelRenderProperties;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvedModel;
@@ -59,10 +56,10 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
     ) {
         itemQuads = item.getA();
         itemSettings = item.getB();
-        itemVector = Suppliers.memoize(() -> BlockModelWrapper.computeExtents(itemQuads));
+        itemVector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(itemQuads));
         cogQuads = cog.getA();
         cogSettings = cog.getB();
-        cogVector = Suppliers.memoize(() -> BlockModelWrapper.computeExtents(cogQuads));
+        cogVector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(cogQuads));
     }
 
     @Override

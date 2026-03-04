@@ -5,10 +5,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
-import net.minecraft.client.renderer.item.ItemModel;
-import net.minecraft.client.renderer.item.ItemModelResolver;
-import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.renderer.item.ModelRenderProperties;
+import net.minecraft.client.renderer.item.*;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvedModel;
@@ -47,10 +44,10 @@ public class GogglesModel implements ItemModel {
     ) {
         itemQuads = item.getA();
         itemSettings = item.getB();
-        itemVector = Suppliers.memoize(() -> BlockModelWrapper.computeExtents(itemQuads));
+        itemVector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(itemQuads));
         blockQuads = block.getA();
         blockSettings = block.getB();
-        blockVector = Suppliers.memoize(() -> BlockModelWrapper.computeExtents(blockQuads));
+        blockVector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(blockQuads));
     }
 
     @Override

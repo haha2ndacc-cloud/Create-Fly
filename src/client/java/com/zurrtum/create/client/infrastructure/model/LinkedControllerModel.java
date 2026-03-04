@@ -18,11 +18,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.item.ItemModel;
-import net.minecraft.client.renderer.item.ItemModelResolver;
-import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.item.*;
 import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
-import net.minecraft.client.renderer.item.ModelRenderProperties;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.ModelBaker;
@@ -114,7 +111,7 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Li
     ) {
         this.settings = settings;
         this.item = item;
-        this.vector = Suppliers.memoize(() -> BlockModelWrapper.computeExtents(item));
+        this.vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(item));
         this.powered = powered;
         this.torch = torch;
         this.torchOff = torchOff;

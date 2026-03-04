@@ -7,10 +7,7 @@ import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
-import net.minecraft.client.renderer.item.ItemModel;
-import net.minecraft.client.renderer.item.ItemModelResolver;
-import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.renderer.item.ModelRenderProperties;
+import net.minecraft.client.renderer.item.*;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvableModel;
 import net.minecraft.client.resources.model.ResolvedModel;
@@ -40,7 +37,7 @@ public class TranslucentModel implements ItemModel {
         this.tints = tints;
         this.quads = quads;
         this.settings = settings;
-        this.vector = Suppliers.memoize(() -> BlockModelWrapper.computeExtents(quads));
+        this.vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(quads));
         boolean bl = false;
 
         for (BakedQuad bakedQuad : quads) {

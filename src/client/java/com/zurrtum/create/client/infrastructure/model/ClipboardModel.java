@@ -6,10 +6,7 @@ import com.zurrtum.create.AllDataComponents;
 import com.zurrtum.create.infrastructure.component.ClipboardContent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
-import net.minecraft.client.renderer.item.ItemModel;
-import net.minecraft.client.renderer.item.ItemModelResolver;
-import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.renderer.item.ModelRenderProperties;
+import net.minecraft.client.renderer.item.*;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
@@ -85,7 +82,11 @@ public class ClipboardModel implements ItemModel {
             TextureSlots textures = model.getTopTextureSlots();
             List<BakedQuad> quads = model.bakeTopGeometry(textures, baker, BlockModelRotation.IDENTITY).getAll();
             ModelRenderProperties settings = ModelRenderProperties.fromResolvedModel(baker, model, textures);
-            return new ModelData(quads, settings, Suppliers.memoize(() -> BlockModelWrapper.computeExtents(quads)));
+            return new ModelData(
+                quads,
+                settings,
+                Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(quads))
+            );
         }
 
         public void update(ItemStackRenderState state, ItemDisplayContext displayContext) {

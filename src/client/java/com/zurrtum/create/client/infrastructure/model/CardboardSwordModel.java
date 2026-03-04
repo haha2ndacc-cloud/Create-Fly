@@ -4,11 +4,8 @@ import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
-import net.minecraft.client.renderer.item.ItemModel;
-import net.minecraft.client.renderer.item.ItemModelResolver;
-import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.item.*;
 import net.minecraft.client.renderer.item.ItemStackRenderState.FoilType;
-import net.minecraft.client.renderer.item.ModelRenderProperties;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
@@ -41,9 +38,9 @@ public class CardboardSwordModel implements ItemModel {
 
     public CardboardSwordModel(List<BakedQuad> item, List<BakedQuad> block, ModelRenderProperties settings) {
         itemQuads = item;
-        itemVector = Suppliers.memoize(() -> BlockModelWrapper.computeExtents(itemQuads));
+        itemVector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(itemQuads));
         blockQuads = block;
-        blockVector = Suppliers.memoize(() -> BlockModelWrapper.computeExtents(blockQuads));
+        blockVector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(blockQuads));
         this.settings = settings;
     }
 
