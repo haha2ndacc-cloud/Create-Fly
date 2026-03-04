@@ -48,6 +48,7 @@ import com.zurrtum.create.client.content.trains.TrainHUD;
 import com.zurrtum.create.client.content.trains.entity.TrainRelocatorClient;
 import com.zurrtum.create.client.content.trains.schedule.hat.TrainHatInfoReloadListener;
 import com.zurrtum.create.client.content.trains.track.CurvedTrackInteraction;
+import com.zurrtum.create.client.content.trains.track.TrackBlockOutline;
 import com.zurrtum.create.client.content.trains.track.TrackPlacementClient;
 import com.zurrtum.create.client.content.trains.track.TrackTargetingClient;
 import com.zurrtum.create.client.flywheel.backend.compile.FlwProgramsReloader;
@@ -56,6 +57,7 @@ import com.zurrtum.create.client.flywheel.impl.FlwImpl;
 import com.zurrtum.create.client.flywheel.impl.visualization.VisualizationEventHandler;
 import com.zurrtum.create.client.flywheel.lib.util.LevelAttached;
 import com.zurrtum.create.client.flywheel.lib.util.RendererReloadCache;
+import com.zurrtum.create.client.foundation.block.BigOutlines;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.edgeInteraction.EdgeInteractionRenderer;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.filtering.FilteringRenderer;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.scrollValue.ScrollValueHandler;
@@ -109,6 +111,13 @@ public abstract class MinecraftMixin {
 
     @Shadow
     private int rightClickDelay;
+
+    @Inject(method = "pick(F)V", at = @At("TAIL"))
+    private void bigShapePick(CallbackInfo ci) {
+        Minecraft mc = (Minecraft) (Object) this;
+        BigOutlines.pick(mc);
+        TrackBlockOutline.pickCurves(mc);
+    }
 
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/ReloadableResourceManager;createReload(Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Ljava/util/List;)Lnet/minecraft/server/packs/resources/ReloadInstance;"))
     private void flywheel$onBeginInitialResourceReload(GameConfig args, CallbackInfo ci) {

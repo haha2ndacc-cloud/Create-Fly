@@ -29,7 +29,7 @@ public interface FluidVariantRenderHandlerMixin {
         return null;
     }
 
-    @ModifyReturnValue(method = "getColor(Lnet/fabricmc/fabric/api/transfer/v1/fluid/FluidVariant;Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;)I", at = @At(value = "RETURN", ordinal = 1))
+    @ModifyReturnValue(method = "getColor(Lnet/fabricmc/fabric/api/transfer/v1/fluid/FluidVariant;Lnet/minecraft/client/renderer/block/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;)I", at = @At(value = "RETURN", ordinal = 1))
     private int getColor(int original, @Local(argsOnly = true) FluidVariant variant) {
         if (original != -1) {
             return original;

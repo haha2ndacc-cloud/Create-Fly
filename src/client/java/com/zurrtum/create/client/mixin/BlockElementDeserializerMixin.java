@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(CuboidModelElement.Deserializer.class)
 public class BlockElementDeserializerMixin {
-    @ModifyReturnValue(method = "deserialize(Lcom/google/gson/JsonElement;Ljava/lang/reflect/Type;Lcom/google/gson/JsonDeserializationContext;)Lnet/minecraft/client/renderer/block/model/BlockElement;", at = @At("RETURN"))
+    @ModifyReturnValue(method = "deserialize(Lcom/google/gson/JsonElement;Ljava/lang/reflect/Type;Lcom/google/gson/JsonDeserializationContext;)Lnet/minecraft/client/resources/model/cuboid/CuboidModelElement;", at = @At("RETURN"))
     private CuboidModelElement checkNormals(CuboidModelElement element, @Local JsonObject jsonObject) {
         JsonElement data = jsonObject.get("neoforge_data");
         if (data != null) {

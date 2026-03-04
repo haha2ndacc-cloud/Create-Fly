@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(VertexConsumer.class)
 public interface VertexConsumerMixin {
-    @Inject(method = "putBlockBakedQuad(FFFLnet/minecraft/client/renderer/block/model/BakedQuad;Lcom/mojang/blaze3d/vertex/QuadInstance;)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/QuadInstance;getLightCoordsWithEmission(II)I"))
+    @Inject(method = "putBlockBakedQuad(FFFLnet/minecraft/client/resources/model/geometry/BakedQuad;Lcom/mojang/blaze3d/vertex/QuadInstance;)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/QuadInstance;getLightCoordsWithEmission(II)I"))
     private void applyBakedNormals(
         float x,
         float y,
@@ -39,7 +39,7 @@ public interface VertexConsumerMixin {
         }
     }
 
-    @Inject(method = "putBakedQuad(Lcom/mojang/blaze3d/vertex/PoseStack$Pose;Lnet/minecraft/client/renderer/block/model/BakedQuad;Lcom/mojang/blaze3d/vertex/QuadInstance;)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/QuadInstance;getLightCoordsWithEmission(II)I"))
+    @Inject(method = "putBakedQuad(Lcom/mojang/blaze3d/vertex/PoseStack$Pose;Lnet/minecraft/client/resources/model/geometry/BakedQuad;Lcom/mojang/blaze3d/vertex/QuadInstance;)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/QuadInstance;getLightCoordsWithEmission(II)I"))
     private void applyBakedNormals(
         PoseStack.Pose pose,
         BakedQuad quad,

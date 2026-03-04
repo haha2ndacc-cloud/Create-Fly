@@ -3,10 +3,7 @@ package com.zurrtum.create.client.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
-import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.TerrainParticle;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
@@ -59,38 +56,19 @@ public abstract class TerrainParticleMixin {
         return pos;
     }
 
-    @WrapOperation(method = "<init>(Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDDLnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockStateModelSet;getParticleMaterial(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/renderer/block/model/Material$Baked;"))
+    @WrapOperation(method = "<init>(Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDDLnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockStateModelSet;getParticleMaterial(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/resources/model/sprite/Material$Baked;"))
     private static Material.Baked onParticle(
         BlockStateModelSet models,
         BlockState state,
         Operation<Material.Baked> original,
         @Local(argsOnly = true) ClientLevel world,
-        @Local(argsOnly = true) BlockPos pos,
-        @Share("pos") LocalRef<BlockPos> blockPos
+        @Local(argsOnly = true) BlockPos pos
     ) {
         BlockStateModel model = models.get(state);
         if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper && wrapper.needUpdateTerrainParticle()) {
-            blockPos.set(findPos(world, pos, state));
-            return wrapper.particleMaterialWithInfo(world, blockPos.get(), state);
+            return wrapper.particleMaterialWithInfo(world, findPos(world, pos, state), state);
         } else {
             return model.particleMaterial();
         }
-    }
-
-    @WrapOperation(method = "<init>(Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDDLnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Ljava/lang/Object;)Z"))
-    private boolean isGrass(
-        BlockState state,
-        Object block,
-        Operation<Boolean> original,
-        @Local(argsOnly = true) ClientLevel world,
-        @Share("pos") LocalRef<BlockPos> blockPos
-    ) {
-        if (state.getBlock() instanceof CopycatBlock) {
-            BlockPos pos = blockPos.get();
-            if (pos != null) {
-                state = CopycatBlock.getMaterial(world, pos);
-            }
-        }
-        return original.call(state, block);
     }
 }

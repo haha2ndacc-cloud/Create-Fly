@@ -7,12 +7,12 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
-import com.mojang.blaze3d.framegraph.FrameGraphBuilder;
-import com.mojang.blaze3d.framegraph.FramePass;
-import com.mojang.blaze3d.resource.GraphicsResourceAllocator;
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.resource.ResourceHandle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.AllExtensions;
 import com.zurrtum.create.client.Create;
+import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.ghostblock.GhostBlocks;
 import com.zurrtum.create.client.catnip.outliner.Outliner;
 import com.zurrtum.create.client.catnip.render.DefaultSuperRenderTypeBuffer;
@@ -32,7 +32,6 @@ import com.zurrtum.create.client.infrastructure.render.BreakingRenderInfo;
 import com.zurrtum.create.client.infrastructure.render.BreakingRenderStateInfo;
 import com.zurrtum.create.foundation.block.LightControlBlock;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -41,16 +40,15 @@ import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.chunk.ChunkSectionsToRender;
 import net.minecraft.client.renderer.state.level.BlockBreakingRenderState;
 import net.minecraft.client.renderer.state.level.BlockOutlineRenderState;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.BlockDestructionProgress;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
-import org.joml.Vector4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -62,7 +60,7 @@ import java.util.Set;
 import java.util.SortedSet;
 
 @Mixin(LevelRenderer.class)
-public class LevelRendererMixin {
+public abstract class LevelRendererMixin {
     @Shadow
     private ClientLevel level;
 
@@ -77,6 +75,9 @@ public class LevelRendererMixin {
     @Shadow
     @Final
     private Minecraft minecraft;
+
+    @Shadow
+    protected abstract void checkPoseStack(PoseStack poseStack);
 
     /**
      * This gets called when a block is marked for rerender by vanilla.
@@ -103,40 +104,37 @@ public class LevelRendererMixin {
         }
     }
 
-    @Inject(method = "renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/renderer/state/CameraRenderState;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;ZLnet/minecraft/client/renderer/chunk/ChunkSectionsToRender;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Options;getCloudsType()Lnet/minecraft/client/CloudStatus;"))
+    @Inject(method = "lambda$addMainPass$0(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lnet/minecraft/client/renderer/state/level/LevelRenderState;Lnet/minecraft/util/profiling/ProfilerFiller;Lnet/minecraft/client/renderer/chunk/ChunkSectionsToRender;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;ZLorg/joml/Matrix4f;)V", at = @At("TAIL"))
     private void renderAfterParticles(
-        GraphicsResourceAllocator resourceAllocator,
-        DeltaTracker deltaTracker,
-        boolean renderOutline,
-        CameraRenderState cameraState,
-        Matrix4f modelViewMatrix,
         GpuBufferSlice terrainFog,
-        Vector4f fogColor,
-        boolean shouldRenderSky,
+        LevelRenderState levelRenderState,
+        ProfilerFiller profiler,
         ChunkSectionsToRender chunkSectionsToRender,
+        ResourceHandle<RenderTarget> entityOutlineTarget,
+        ResourceHandle<RenderTarget> translucentTarget,
+        ResourceHandle<RenderTarget> mainTarget,
+        ResourceHandle<RenderTarget> itemEntityTarget,
+        ResourceHandle<RenderTarget> particleTarget,
+        boolean renderOutline,
+        Matrix4f modelViewMatrix,
         CallbackInfo ci,
-        @Local FrameGraphBuilder frameGraphBuilder,
-        @Local float tickProgress
+        @Local Vec3 cameraPos,
+        @Local PoseStack ms
     ) {
-        FramePass framePass = frameGraphBuilder.addPass("after_particles");
-        this.targets.main = framePass.readsAndWrites(this.targets.main);
-        framePass.executes(() -> {
-            PoseStack ms = new PoseStack();
-            Vec3 cameraPos = cameraState.pos;
-            DefaultSuperRenderTypeBuffer.Dispatcher dispatcher = DefaultSuperRenderTypeBuffer.Dispatcher.getInstance();
-            SuperRenderTypeBuffer buffer = dispatcher.getBuffer();
-            GhostBlocks.getInstance().renderAll(minecraft, ms, buffer, cameraPos);
-            Outliner.getInstance().renderOutlines(minecraft, ms, buffer, cameraPos, tickProgress);
-            TrackBlockOutline.drawCurveSelection(minecraft, ms, buffer, cameraPos);
-            TrackTargetingClient.render(minecraft, ms, buffer, cameraPos);
-            CouplingRenderer.renderAll(minecraft, ms, buffer, cameraPos);
-            CarriageCouplingRenderer.renderAll(minecraft, ms, buffer, cameraPos);
-            Create.SCHEMATIC_HANDLER.render(minecraft, ms, buffer, dispatcher.getSubmitNodeStorage(), cameraPos);
-            ChainConveyorInteractionHandler.drawCustomBlockSelection(ms, buffer, cameraPos);
-            SymmetryHandlerClient.onRenderWorld(minecraft, ms, buffer, cameraPos);
-            dispatcher.draw(ms);
-            ContraptionPlayerPassengerRotation.frame(minecraft);
-        });
+        DefaultSuperRenderTypeBuffer.Dispatcher dispatcher = DefaultSuperRenderTypeBuffer.Dispatcher.getInstance();
+        SuperRenderTypeBuffer buffer = dispatcher.getBuffer();
+        GhostBlocks.getInstance().renderAll(minecraft, ms, buffer, cameraPos);
+        Outliner.getInstance().renderOutlines(minecraft, ms, buffer, cameraPos, AnimationTickHolder.getPartialTicks());
+        TrackBlockOutline.drawCurveSelection(minecraft, ms, buffer, cameraPos);
+        TrackTargetingClient.render(minecraft, ms, buffer, cameraPos);
+        CouplingRenderer.renderAll(minecraft, ms, buffer, cameraPos);
+        CarriageCouplingRenderer.renderAll(minecraft, ms, buffer, cameraPos);
+        Create.SCHEMATIC_HANDLER.render(minecraft, ms, buffer, dispatcher.getSubmitNodeStorage(), cameraPos);
+        ChainConveyorInteractionHandler.drawCustomBlockSelection(ms, buffer, cameraPos);
+        SymmetryHandlerClient.onRenderWorld(minecraft, ms, buffer, cameraPos);
+        dispatcher.draw(ms);
+        checkPoseStack(ms);
+        ContraptionPlayerPassengerRotation.frame(minecraft);
     }
 
     @Inject(method = "destroyBlockProgress(ILnet/minecraft/core/BlockPos;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/BlockDestructionProgress;updateTick(I)V"))
@@ -178,7 +176,7 @@ public class LevelRendererMixin {
         }
     }
 
-    @Inject(method = "renderBlockOutline(Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lcom/mojang/blaze3d/vertex/PoseStack;ZLnet/minecraft/client/renderer/state/LevelRenderState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/state/BlockOutlineRenderState;highContrast()Z", ordinal = 0), cancellable = true)
+    @Inject(method = "renderBlockOutline(Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lcom/mojang/blaze3d/vertex/PoseStack;ZLnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/state/level/BlockOutlineRenderState;highContrast()Z", ordinal = 0), cancellable = true)
     private void onRenderBlockOutline(
         BufferSource vertexConsumers,
         PoseStack matrices,
@@ -211,12 +209,12 @@ public class LevelRendererMixin {
         return original.call(state);
     }
 
-    @Inject(method = "submitBlockEntities(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/state/LevelRenderState;Lnet/minecraft/client/renderer/SubmitNodeStorage;)V", at = @At("HEAD"))
+    @Inject(method = "submitBlockEntities(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/state/level/LevelRenderState;Lnet/minecraft/client/renderer/SubmitNodeStorage;)V", at = @At("HEAD"))
     private void markSpriteActive(CallbackInfo ci) {
         //        SodiumCompat.markSpriteActive(minecraft);
     }
 
-    @Inject(method = "renderBlockDestroyAnimation(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/state/LevelRenderState;)V", at = @At("HEAD"))
+    @Inject(method = "renderBlockDestroyAnimation(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At("HEAD"))
     private void initBreakingRenderInfo(
         PoseStack poseStack,
         BufferSource bufferSource,
@@ -227,7 +225,7 @@ public class LevelRendererMixin {
         info.set((BreakingRenderInfo) minecraft.getBlockRenderer());
     }
 
-    @Inject(method = "renderBlockDestroyAnimation(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/state/LevelRenderState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockRenderDispatcher;renderBreakingTexture(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"))
+    @Inject(method = "renderBlockDestroyAnimation(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockRenderDispatcher;renderBreakingTexture(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"))
     private void renderBreakingTexture(
         PoseStack poseStack,
         BufferSource bufferSource,
@@ -239,7 +237,7 @@ public class LevelRendererMixin {
         info.get().create$setRenderLevel(((BreakingRenderStateInfo) state).create$getRenderLevel());
     }
 
-    @Inject(method = "renderBlockDestroyAnimation(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/state/LevelRenderState;)V", at = @At("RETURN"))
+    @Inject(method = "renderBlockDestroyAnimation(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At("RETURN"))
     private void clearRenderLevel(
         PoseStack poseStack,
         BufferSource bufferSource,
