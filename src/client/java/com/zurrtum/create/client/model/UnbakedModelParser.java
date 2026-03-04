@@ -12,8 +12,8 @@ import com.google.gson.reflect.TypeToken;
 import com.mojang.math.Transformation;
 import com.zurrtum.create.client.model.obj.ObjLoader;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.resources.model.cuboid.CuboidModel;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
@@ -26,7 +26,7 @@ public class UnbakedModelParser {
 
     public static class Deserializer implements JsonDeserializer<UnbakedModel>, TypeAdapterFactory {
         private static final TypeToken<? extends UnbakedModel> NEXT_TYPE = FabricLoader.getInstance()
-            .isModLoaded("fabric-model-loading-api-v1") ? TypeToken.get(UnbakedModel.class) : TypeToken.get(BlockModel.class);
+            .isModLoaded("fabric-model-loading-api-v1") ? TypeToken.get(UnbakedModel.class) : TypeToken.get(CuboidModel.class);
         private final Gson gson;
         private @Nullable TypeAdapter<?> cached;
 
