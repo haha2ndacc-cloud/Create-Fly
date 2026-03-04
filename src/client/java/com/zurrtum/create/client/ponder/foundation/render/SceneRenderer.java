@@ -33,13 +33,11 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
     private static final Vector3f DIFFUSE_LIGHT_1 = new Vector3f(-0.4F, -0.5F, 0.7F).normalize();
     private static final Int2ObjectMap<GpuTexture> TEXTURES = new Int2ObjectArrayMap<>();
     private final PoseStack matrices = new PoseStack();
-    private final Dispatcher dispatcher;
     private int windowScaleFactor;
 
     @SuppressWarnings("DataFlowIssue")
     public SceneRenderer() {
         super(null);
-        this.dispatcher = DefaultSuperRenderTypeBuffer.Dispatcher.getInstance();
     }
 
     @Override
@@ -63,7 +61,7 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
         Lighting lighting = gameRenderer.getLighting();
         lighting.updateBuffer(Lighting.Entry.LEVEL, DIFFUSE_LIGHT_0, DIFFUSE_LIGHT_1);
         lighting.setupFor(Lighting.Entry.LEVEL);
-        renderScene(mc, dispatcher, renderState, matrices);
+        renderScene(mc, DefaultSuperRenderTypeBuffer.Dispatcher.getInstance(), renderState, matrices);
         lighting.updateLevel(mc.level.dimensionType().cardinalLightType());
         gameRenderer.useUiLightmap = lightOption;
         matrices.popPose();
