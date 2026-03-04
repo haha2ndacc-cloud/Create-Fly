@@ -189,7 +189,8 @@ public class BakedItemModelBufferer {
                 mc.getAtlasManager(),
                 EmptyOutlineBufferSource.INSTANCE,
                 EmptyBufferSource.INSTANCE,
-                mc.font
+                mc.font,
+                mc.gameRenderer.getGameRenderState()
             );
             for (int i = 0, size = CHUNK_LAYERS.size(); i < size; i++) {
                 RenderType renderType = CHUNK_LAYERS.get(i);

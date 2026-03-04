@@ -178,7 +178,8 @@ public class DefaultSuperRenderTypeBuffer implements SuperRenderTypeBuffer {
                 mc.getAtlasManager(),
                 outline,
                 bufferSource,
-                mc.font
+                mc.font,
+                mc.gameRenderer.getGameRenderState()
             );
         }
 
