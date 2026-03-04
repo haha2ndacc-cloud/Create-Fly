@@ -14,6 +14,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
@@ -35,13 +36,20 @@ public class CardboardSwordModel implements ItemModel {
     private final List<BakedQuad> blockQuads;
     private final Supplier<Vector3fc[]> blockVector;
     private final ModelRenderProperties settings;
+    private final Matrix4fc transformation;
 
-    public CardboardSwordModel(List<BakedQuad> item, List<BakedQuad> block, ModelRenderProperties settings) {
+    public CardboardSwordModel(
+        List<BakedQuad> item,
+        List<BakedQuad> block,
+        ModelRenderProperties settings,
+        Matrix4fc transformation
+    ) {
         itemQuads = item;
         itemVector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(itemQuads));
         blockQuads = block;
         blockVector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(blockQuads));
         this.settings = settings;
+        this.transformation = transformation;
     }
 
     @Override
@@ -62,6 +70,7 @@ public class CardboardSwordModel implements ItemModel {
             state.setAnimated();
             state.appendModelIdentityElement(FoilType.STANDARD);
         }
+        layerRenderState.setLocalTransform(transformation);
         if (displayContext == ItemDisplayContext.GUI) {
             layerRenderState.setExtents(itemVector);
             layerRenderState.prepareQuadList().addAll(itemQuads);
@@ -86,7 +95,7 @@ public class CardboardSwordModel implements ItemModel {
         }
 
         @Override
-        public ItemModel bake(BakingContext context) {
+        public ItemModel bake(BakingContext context, Matrix4fc transformation) {
             ModelBaker baker = context.blockModelBaker();
             ResolvedModel itemModel = baker.getModel(ITEM_ID);
             TextureSlots itemTextures = itemModel.getTopTextureSlots();
@@ -99,7 +108,7 @@ public class CardboardSwordModel implements ItemModel {
                 baker,
                 BlockModelRotation.IDENTITY
             ).getAll();
-            return new CardboardSwordModel(itemQuads, blockQuads, settings);
+            return new CardboardSwordModel(itemQuads, blockQuads, settings, transformation);
         }
     }
 }

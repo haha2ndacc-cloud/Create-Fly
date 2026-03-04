@@ -27,6 +27,7 @@ import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
@@ -41,10 +42,12 @@ public class SandPaperModel implements ItemModel, SpecialModelRenderer<SandPaper
     private final List<BakedQuad> quads;
     private final ModelRenderProperties settings;
     private final Supplier<Vector3fc[]> vector;
+    private final Matrix4fc transformation;
 
-    public SandPaperModel(List<BakedQuad> quads, ModelRenderProperties settings) {
+    public SandPaperModel(List<BakedQuad> quads, ModelRenderProperties settings, Matrix4fc transformation) {
         this.quads = quads;
         this.settings = settings;
+        this.transformation = transformation;
         this.vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(this.quads));
     }
 
@@ -62,6 +65,7 @@ public class SandPaperModel implements ItemModel, SpecialModelRenderer<SandPaper
         state.setAnimated();
         ItemStackRenderState.LayerRenderState layerRenderState = state.newLayer();
         layerRenderState.setExtents(vector);
+        layerRenderState.setLocalTransform(transformation);
         settings.applyToLayer(layerRenderState, displayContext);
         layerRenderState.prepareQuadList().addAll(quads);
 
@@ -192,13 +196,13 @@ public class SandPaperModel implements ItemModel, SpecialModelRenderer<SandPaper
         }
 
         @Override
-        public ItemModel bake(ItemModel.BakingContext context) {
+        public ItemModel bake(ItemModel.BakingContext context, Matrix4fc transformation) {
             ModelBaker baker = context.blockModelBaker();
             ResolvedModel model = baker.getModel(this.model);
             TextureSlots textures = model.getTopTextureSlots();
             List<BakedQuad> quads = model.bakeTopGeometry(textures, baker, BlockModelRotation.IDENTITY).getAll();
             ModelRenderProperties settings = ModelRenderProperties.fromResolvedModel(baker, model, textures);
-            return new SandPaperModel(quads, settings);
+            return new SandPaperModel(quads, settings, transformation);
         }
     }
 }

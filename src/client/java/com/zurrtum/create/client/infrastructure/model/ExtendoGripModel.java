@@ -30,6 +30,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
@@ -76,6 +77,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
     private final RenderType blockLayer = Sheets.translucentBlockItemSheet();
     private final int[] tints = new int[0];
     private final ModelRenderProperties settings;
+    private final Matrix4fc transformation;
     private final Supplier<Vector3fc[]> vector;
     private final List<BakedQuad> item;
     private final List<BakedQuad> pole;
@@ -90,6 +92,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
 
     public ExtendoGripModel(
         ModelRenderProperties settings,
+        Matrix4fc transformation,
         List<BakedQuad> item,
         List<BakedQuad> pole,
         List<BakedQuad> cog,
@@ -102,6 +105,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
         List<BakedQuad> holding
     ) {
         this.settings = settings;
+        this.transformation = transformation;
         this.item = item;
         this.pole = pole;
         this.vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(item));
@@ -143,6 +147,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
         float extensionAngle = Mth.lerp(data.animation, 24f, 156f);
         data.state = state.newLayer();
         data.state.setExtents(vector);
+        data.state.setLocalTransform(transformation);
         settings.applyToLayer(data.state, displayContext);
         data.state.prepareQuadList().addAll(item);
         data.halfAngle = extensionAngle / 2;
@@ -324,7 +329,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
         }
 
         @Override
-        public ItemModel bake(ItemModel.BakingContext context) {
+        public ItemModel bake(ItemModel.BakingContext context, Matrix4fc transformation) {
             ModelBaker baker = context.blockModelBaker();
             ResolvedModel model = baker.getModel(ITEM_ID);
             TextureSlots textures = model.getTopTextureSlots();
@@ -332,6 +337,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
             ModelRenderProperties settings = ModelRenderProperties.fromResolvedModel(baker, model, textures);
             return new ExtendoGripModel(
                 settings,
+                transformation,
                 quads,
                 BakedModelHelper.bakeQuads(baker, POLE_ID),
                 BakedModelHelper.bakeQuads(baker, COG_ID),

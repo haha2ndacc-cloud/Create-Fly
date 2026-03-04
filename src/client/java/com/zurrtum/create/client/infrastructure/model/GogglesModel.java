@@ -3,10 +3,8 @@ package com.zurrtum.create.client.infrastructure.model;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.item.*;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
@@ -16,6 +14,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
@@ -29,8 +28,7 @@ public class GogglesModel implements ItemModel {
     public static final Identifier ITEM_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/goggles");
     public static final Identifier BLOCK_ID = Identifier.fromNamespaceAndPath(MOD_ID, "block/goggles");
 
-    private final RenderType itemLayer = Sheets.translucentItemSheet();
-    private final RenderType blockLayer = Sheets.translucentBlockItemSheet();
+    private final Matrix4fc transformation;
     private final List<BakedQuad> itemQuads;
     private final ModelRenderProperties itemSettings;
     private final Supplier<Vector3fc[]> itemVector;
@@ -39,9 +37,11 @@ public class GogglesModel implements ItemModel {
     private final Supplier<Vector3fc[]> blockVector;
 
     public GogglesModel(
+        Matrix4fc transformation,
         Tuple<List<BakedQuad>, ModelRenderProperties> item,
         Tuple<List<BakedQuad>, ModelRenderProperties> block
     ) {
+        this.transformation = transformation;
         itemQuads = item.getA();
         itemSettings = item.getB();
         itemVector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(itemQuads));
@@ -77,6 +77,7 @@ public class GogglesModel implements ItemModel {
     ) {
         ItemStackRenderState.LayerRenderState layerRenderState = state.newLayer();
         layerRenderState.setExtents(vector);
+        layerRenderState.setLocalTransform(transformation);
         settings.applyToLayer(layerRenderState, displayContext);
         layerRenderState.prepareQuadList().addAll(quads);
     }
@@ -96,9 +97,9 @@ public class GogglesModel implements ItemModel {
         }
 
         @Override
-        public ItemModel bake(BakingContext context) {
+        public ItemModel bake(BakingContext context, Matrix4fc transformation) {
             ModelBaker baker = context.blockModelBaker();
-            return new GogglesModel(bake(baker, ITEM_ID), bake(baker, BLOCK_ID));
+            return new GogglesModel(transformation, bake(baker, ITEM_ID), bake(baker, BLOCK_ID));
         }
 
         private static Tuple<List<BakedQuad>, ModelRenderProperties> bake(ModelBaker baker, Identifier id) {

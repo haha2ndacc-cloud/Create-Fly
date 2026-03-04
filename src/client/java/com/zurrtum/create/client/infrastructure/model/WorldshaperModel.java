@@ -39,6 +39,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.CrossCollisionBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
@@ -84,6 +85,7 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
     };
 
     private final ModelRenderProperties settings;
+    private final Matrix4fc transformation;
     private final List<BakedQuad> item;
     private final List<BakedQuad> core;
     private final List<BakedQuad> coreGlow;
@@ -92,12 +94,14 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
 
     public WorldshaperModel(
         ModelRenderProperties settings,
+        Matrix4fc transformation,
         List<BakedQuad> item,
         List<BakedQuad> core,
         List<BakedQuad> coreGlow,
         List<BakedQuad> accelerator
     ) {
         this.settings = settings;
+        this.transformation = transformation;
         this.item = item;
         this.core = core;
         this.coreGlow = coreGlow;
@@ -135,6 +139,7 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
         state.setAnimated();
         ItemStackRenderState.LayerRenderState renderState = state.newLayer();
         renderState.setExtents(vector);
+        renderState.setLocalTransform(transformation);
         renderState.setUsesBlockLight(settings.usesBlockLight());
         renderState.setParticleMaterial(settings.particleMaterial());
         RenderData data = new RenderData();
@@ -280,7 +285,7 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
         }
 
         @Override
-        public ItemModel bake(ItemModel.BakingContext context) {
+        public ItemModel bake(ItemModel.BakingContext context, Matrix4fc transformation) {
             ModelBaker baker = context.blockModelBaker();
             ResolvedModel model = baker.getModel(ITEM_ID);
             TextureSlots textures = model.getTopTextureSlots();
@@ -301,6 +306,7 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
             );
             return new WorldshaperModel(
                 settings,
+                transformation,
                 quads,
                 core,
                 coreGlow,

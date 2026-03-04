@@ -28,6 +28,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
@@ -51,6 +52,7 @@ public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<Object
     private static final int[] TINTS = new int[0];
 
     private final ModelRenderProperties settings;
+    private final Matrix4fc transformation;
     private final List<BakedQuad> item;
     private final List<BakedQuad> core;
     private final List<BakedQuad> coreGlow;
@@ -59,12 +61,14 @@ public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<Object
 
     public SymmetryWandModel(
         ModelRenderProperties settings,
+        Matrix4fc transformation,
         List<BakedQuad> item,
         List<BakedQuad> core,
         List<BakedQuad> coreGlow,
         List<BakedQuad> bits
     ) {
         this.settings = settings;
+        this.transformation = transformation;
         this.item = item;
         this.core = core;
         this.coreGlow = coreGlow;
@@ -102,6 +106,7 @@ public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<Object
         state.setAnimated();
         LayerRenderState renderState = state.newLayer();
         renderState.setExtents(vector);
+        renderState.setLocalTransform(transformation);
         renderState.setupSpecialModel(this, null);
         settings.applyToLayer(renderState, displayContext);
     }
@@ -172,7 +177,7 @@ public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<Object
         }
 
         @Override
-        public ItemModel bake(ItemModel.BakingContext context) {
+        public ItemModel bake(ItemModel.BakingContext context, Matrix4fc transformation) {
             ModelBaker baker = context.blockModelBaker();
             ResolvedModel model = baker.getModel(ITEM_ID);
             TextureSlots textures = model.getTopTextureSlots();
@@ -196,7 +201,7 @@ public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<Object
                 ChunkSectionLayer.TRANSLUCENT,
                 CreateRenderTypes.itemGlowingTranslucent()
             );
-            return new SymmetryWandModel(settings, quads, core, coreGlow, bits);
+            return new SymmetryWandModel(settings, transformation, quads, core, coreGlow, bits);
         }
     }
 }

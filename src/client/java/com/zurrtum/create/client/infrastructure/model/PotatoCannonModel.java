@@ -29,6 +29,7 @@ import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix3x2fStack;
+import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
@@ -43,6 +44,7 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
     public static final Identifier ITEM_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/potato_cannon/item");
     public static final Identifier COG_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/potato_cannon/cog");
 
+    private final Matrix4fc transformation;
     private final List<BakedQuad> itemQuads;
     private final ModelRenderProperties itemSettings;
     private final Supplier<Vector3fc[]> itemVector;
@@ -51,9 +53,11 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
     private final Supplier<Vector3fc[]> cogVector;
 
     public PotatoCannonModel(
+        Matrix4fc transformation,
         Tuple<List<BakedQuad>, ModelRenderProperties> item,
         Tuple<List<BakedQuad>, ModelRenderProperties> cog
     ) {
+        this.transformation = transformation;
         itemQuads = item.getA();
         itemSettings = item.getB();
         itemVector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(itemQuads));
@@ -85,7 +89,7 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
 
         CogRenderData cog = new CogRenderData();
         cog.state = update(state, displayContext, cogQuads, cogSettings, cogVector, glint);
-        cog.state.setTransform(itemSettings.transforms().getTransform(displayContext));
+        cog.state.setItemTransform(itemSettings.transforms().getTransform(displayContext));
         cog.rotation = AnimationTickHolder.getRenderTime() * -2.5f;
         boolean inMainHand = displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND || displayContext == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
         if (inMainHand || displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || displayContext == ItemDisplayContext.THIRD_PERSON_LEFT_HAND) {
@@ -113,6 +117,7 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
     ) {
         LayerRenderState layerRenderState = state.newLayer();
         layerRenderState.setExtents(vector);
+        layerRenderState.setLocalTransform(transformation);
         settings.applyToLayer(layerRenderState, displayContext);
         layerRenderState.prepareQuadList().addAll(quads);
         layerRenderState.setFoilType(glint);
@@ -191,9 +196,9 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
         }
 
         @Override
-        public ItemModel bake(ItemModel.BakingContext context) {
+        public ItemModel bake(ItemModel.BakingContext context, Matrix4fc transformation) {
             ModelBaker baker = context.blockModelBaker();
-            return new PotatoCannonModel(bake(baker, ITEM_ID), bake(baker, COG_ID));
+            return new PotatoCannonModel(transformation, bake(baker, ITEM_ID), bake(baker, COG_ID));
         }
 
         private static Tuple<List<BakedQuad>, ModelRenderProperties> bake(ModelBaker baker, Identifier id) {

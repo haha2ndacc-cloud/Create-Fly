@@ -1,6 +1,7 @@
 package com.zurrtum.create.client.infrastructure.model;
 
 import com.google.common.base.Suppliers;
+import com.mojang.math.Transformation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -19,10 +20,12 @@ import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
+import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import static com.zurrtum.create.Create.MOD_ID;
@@ -33,13 +36,21 @@ public class OversizedModel implements ItemModel {
     private final List<BakedQuad> quads;
     private final Supplier<Vector3fc[]> vector;
     private final ModelRenderProperties settings;
+    private final Matrix4fc transformation;
     private final AABB box;
     private final boolean animated;
 
-    public OversizedModel(List<ItemTintSource> tints, List<BakedQuad> quads, ModelRenderProperties settings, AABB box) {
+    public OversizedModel(
+        List<ItemTintSource> tints,
+        List<BakedQuad> quads,
+        ModelRenderProperties settings,
+        Matrix4fc transformation,
+        AABB box
+    ) {
         this.tints = tints;
         this.quads = quads;
         this.settings = settings;
+        this.transformation = transformation;
         this.vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(this.quads));
         this.box = box;
         boolean animated = false;
@@ -83,6 +94,7 @@ public class OversizedModel implements ItemModel {
         }
 
         layerRenderState.setExtents(vector);
+        layerRenderState.setLocalTransform(this.transformation);
         settings.applyToLayer(layerRenderState, displayContext);
         layerRenderState.prepareQuadList().addAll(quads);
         if (animated) {
@@ -94,10 +106,11 @@ public class OversizedModel implements ItemModel {
         }
     }
 
-    public record Unbaked(Identifier model, List<ItemTintSource> tints, List<Double> min,
-                          List<Double> max) implements ItemModel.Unbaked {
+    public record Unbaked(Identifier model, Optional<Transformation> transformation, List<ItemTintSource> tints,
+                          List<Double> min, List<Double> max) implements ItemModel.Unbaked {
         public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Identifier.CODEC.fieldOf("model").forGetter(Unbaked::model),
+            Transformation.EXTENDED_CODEC.optionalFieldOf("transformation").forGetter(Unbaked::transformation),
             ItemTintSources.CODEC.listOf().optionalFieldOf("tints", List.of()).forGetter(Unbaked::tints),
             Codec.DOUBLE.listOf(3, 3).fieldOf("min").forGetter(Unbaked::min),
             Codec.DOUBLE.listOf(3, 3).fieldOf("max").forGetter(Unbaked::max)
@@ -109,7 +122,7 @@ public class OversizedModel implements ItemModel {
         }
 
         @Override
-        public ItemModel bake(ItemModel.BakingContext context) {
+        public ItemModel bake(ItemModel.BakingContext context, Matrix4fc transformation) {
             ModelBaker baker = context.blockModelBaker();
             ResolvedModel bakedSimpleModel = baker.getModel(this.model);
             TextureSlots modelTextures = bakedSimpleModel.getTopTextureSlots();
@@ -120,10 +133,12 @@ public class OversizedModel implements ItemModel {
                 bakedSimpleModel,
                 modelTextures
             );
+            Matrix4fc modelTransform = Transformation.compose(transformation, this.transformation);
             return new OversizedModel(
                 tints,
                 quads,
                 modelSettings,
+                modelTransform,
                 new AABB(min.get(0), min.get(1), min.get(2), max.get(0), max.get(1), max.get(2))
             );
         }

@@ -21,6 +21,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
@@ -41,11 +42,14 @@ public class WrenchModel implements ItemModel, SpecialModelRenderer<LayerRenderS
     private final List<BakedQuad> gearQuads;
     private final ModelRenderProperties gearSettings;
     private final Supplier<Vector3fc[]> gearVector;
+    private final Matrix4fc transformation;
 
     public WrenchModel(
+        Matrix4fc transformation,
         Tuple<List<BakedQuad>, ModelRenderProperties> item,
         Tuple<List<BakedQuad>, ModelRenderProperties> gear
     ) {
+        this.transformation = transformation;
         itemQuads = item.getA();
         itemSettings = item.getB();
         itemVector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(itemQuads));
@@ -80,6 +84,7 @@ public class WrenchModel implements ItemModel, SpecialModelRenderer<LayerRenderS
     ) {
         LayerRenderState layerRenderState = state.newLayer();
         layerRenderState.setExtents(vector);
+        layerRenderState.setLocalTransform(transformation);
         settings.applyToLayer(layerRenderState, displayContext);
         layerRenderState.prepareQuadList().addAll(quads);
         if (rotation) {
@@ -141,9 +146,9 @@ public class WrenchModel implements ItemModel, SpecialModelRenderer<LayerRenderS
         }
 
         @Override
-        public ItemModel bake(ItemModel.BakingContext context) {
+        public ItemModel bake(ItemModel.BakingContext context, Matrix4fc transformation) {
             ModelBaker baker = context.blockModelBaker();
-            return new WrenchModel(bake(baker, ITEM_ID), bake(baker, GEAR_ID));
+            return new WrenchModel(transformation, bake(baker, ITEM_ID), bake(baker, GEAR_ID));
         }
 
         private static Tuple<List<BakedQuad>, ModelRenderProperties> bake(ModelBaker baker, Identifier id) {

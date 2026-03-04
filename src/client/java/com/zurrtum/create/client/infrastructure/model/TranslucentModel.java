@@ -1,6 +1,7 @@
 package com.zurrtum.create.client.infrastructure.model;
 
 import com.google.common.base.Suppliers;
+import com.mojang.math.Transformation;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.color.item.ItemTintSource;
@@ -17,10 +18,12 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import static com.zurrtum.create.Create.MOD_ID;
@@ -31,12 +34,19 @@ public class TranslucentModel implements ItemModel {
     private final List<BakedQuad> quads;
     private final Supplier<Vector3fc[]> vector;
     private final ModelRenderProperties settings;
+    private final Matrix4fc transformation;
     private final boolean animated;
 
-    public TranslucentModel(List<ItemTintSource> tints, List<BakedQuad> quads, ModelRenderProperties settings) {
+    public TranslucentModel(
+        List<ItemTintSource> tints,
+        List<BakedQuad> quads,
+        ModelRenderProperties settings,
+        Matrix4fc transformation
+    ) {
         this.tints = tints;
         this.quads = quads;
         this.settings = settings;
+        this.transformation = transformation;
         this.vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(quads));
         boolean bl = false;
 
@@ -79,6 +89,7 @@ public class TranslucentModel implements ItemModel {
         }
 
         layerRenderState.setExtents(vector);
+        layerRenderState.setLocalTransform(transformation);
         settings.applyToLayer(layerRenderState, displayContext);
         layerRenderState.prepareQuadList().addAll(quads);
         if (animated) {
@@ -86,10 +97,11 @@ public class TranslucentModel implements ItemModel {
         }
     }
 
-    public record Unbaked(Identifier model, List<ItemTintSource> tints) implements ItemModel.Unbaked {
+    public record Unbaked(Identifier model, Optional<Transformation> transformation,
+                          List<ItemTintSource> tints) implements ItemModel.Unbaked {
         public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Identifier.CODEC.fieldOf(
-                "model").forGetter(Unbaked::model),
+            Identifier.CODEC.fieldOf("model").forGetter(Unbaked::model),
+            Transformation.EXTENDED_CODEC.optionalFieldOf("transformation").forGetter(Unbaked::transformation),
             ItemTintSources.CODEC.listOf().optionalFieldOf("tints", List.of()).forGetter(Unbaked::tints)
         ).apply(instance, Unbaked::new));
 
@@ -99,7 +111,7 @@ public class TranslucentModel implements ItemModel {
         }
 
         @Override
-        public ItemModel bake(ItemModel.BakingContext context) {
+        public ItemModel bake(ItemModel.BakingContext context, Matrix4fc transformation) {
             ModelBaker baker = context.blockModelBaker();
             ResolvedModel bakedSimpleModel = baker.getModel(model);
             TextureSlots modelTextures = bakedSimpleModel.getTopTextureSlots();
@@ -110,7 +122,8 @@ public class TranslucentModel implements ItemModel {
                 bakedSimpleModel,
                 modelTextures
             );
-            return new TranslucentModel(tints, list, modelSettings);
+            Matrix4fc modelTransform = Transformation.compose(transformation, this.transformation);
+            return new TranslucentModel(tints, list, modelSettings, modelTransform);
         }
 
         @Override

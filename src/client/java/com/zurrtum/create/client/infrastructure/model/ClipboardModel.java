@@ -15,6 +15,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
@@ -66,18 +67,19 @@ public class ClipboardModel implements ItemModel {
         }
 
         @Override
-        public ItemModel bake(ItemModel.BakingContext context) {
+        public ItemModel bake(ItemModel.BakingContext context, Matrix4fc transformation) {
             ModelBaker baker = context.blockModelBaker();
             ModelData[] models = new ModelData[3];
-            models[0] = ModelData.bake(baker, EMPTY_ID);
-            models[1] = ModelData.bake(baker, WRITTEN_ID);
-            models[2] = ModelData.bake(baker, EDITING_ID);
+            models[0] = ModelData.bake(baker, EMPTY_ID, transformation);
+            models[1] = ModelData.bake(baker, WRITTEN_ID, transformation);
+            models[2] = ModelData.bake(baker, EDITING_ID, transformation);
             return new ClipboardModel(models);
         }
     }
 
-    public record ModelData(List<BakedQuad> quads, ModelRenderProperties settings, Supplier<Vector3fc[]> vector) {
-        public static ModelData bake(ModelBaker baker, Identifier id) {
+    public record ModelData(List<BakedQuad> quads, ModelRenderProperties settings, Matrix4fc transformation,
+                            Supplier<Vector3fc[]> vector) {
+        public static ModelData bake(ModelBaker baker, Identifier id, Matrix4fc transformation) {
             ResolvedModel model = baker.getModel(id);
             TextureSlots textures = model.getTopTextureSlots();
             List<BakedQuad> quads = model.bakeTopGeometry(textures, baker, BlockModelRotation.IDENTITY).getAll();
@@ -85,6 +87,7 @@ public class ClipboardModel implements ItemModel {
             return new ModelData(
                 quads,
                 settings,
+                transformation,
                 Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(quads))
             );
         }
@@ -92,6 +95,7 @@ public class ClipboardModel implements ItemModel {
         public void update(ItemStackRenderState state, ItemDisplayContext displayContext) {
             ItemStackRenderState.LayerRenderState layerRenderState = state.newLayer();
             layerRenderState.setExtents(vector);
+            layerRenderState.setLocalTransform(transformation);
             settings.applyToLayer(layerRenderState, displayContext);
             layerRenderState.prepareQuadList().addAll(quads);
         }
