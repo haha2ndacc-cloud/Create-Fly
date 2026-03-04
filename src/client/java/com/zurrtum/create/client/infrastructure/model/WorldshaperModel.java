@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockModelRenderState;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
+import net.minecraft.client.renderer.block.model.BlockDisplayContext;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemModel;
@@ -64,6 +65,7 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
         MOD_ID,
         "item/handheld_worldshaper/accelerator"
     );
+    public static final BlockDisplayContext BLOCK_DISPLAY_CONTEXT = BlockDisplayContext.create();
     private static final int[] TINTS = new int[]{-1};
     private static final int[][] LIGHT_TINTS = new int[][]{
         {0xff313138},
@@ -332,7 +334,7 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
                 return UsedItemRenderState.create(mc, block, displayContext, world, user, seed);
             }
             BlockModelRenderState model = new BlockModelRenderState();
-            mc.blockModelResolver.update(model, state);
+            mc.blockModelResolver.update(model, state, BLOCK_DISPLAY_CONTEXT);
             return new UsedBlockRenderState(model);
         }
 

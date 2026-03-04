@@ -16,6 +16,7 @@ import com.zurrtum.create.content.schematics.cannon.SchematicannonBlockEntity;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockModelRenderState;
 import net.minecraft.client.renderer.block.BlockModelResolver;
+import net.minecraft.client.renderer.block.model.BlockDisplayContext;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SchematicannonRenderer implements BlockEntityRenderer<SchematicannonBlockEntity, SchematicannonRenderer.SchematicannonRenderState> {
+    public static final BlockDisplayContext BLOCK_DISPLAY_CONTEXT = BlockDisplayContext.create();
     protected final ItemModelResolver itemModelManager;
     protected final BlockModelResolver blockModelResolver;
 
@@ -141,7 +143,7 @@ public class SchematicannonRenderer implements BlockEntityRenderer<Schematicanno
                     state = forBlockState.state;
                 }
                 BlockModelRenderState model = new BlockModelRenderState();
-                blockModelResolver.update(model, state);
+                blockModelResolver.update(model, state, BLOCK_DISPLAY_CONTEXT);
                 blocks.add(new LaunchedBlockRenderState(blockLocation, angle, 0.3f, model));
             } else if (launched instanceof ForEntity) {
                 ItemStackRenderState item = new ItemStackRenderState();
