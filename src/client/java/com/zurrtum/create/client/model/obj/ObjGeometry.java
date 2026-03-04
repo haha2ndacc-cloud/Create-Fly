@@ -331,8 +331,8 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
     }
 
     private Transformation blockCenterToCorner(Transformation transform) {
-        if (transform.equals(Transformation.identity())) {
-            return Transformation.identity();
+        if (transform.equals(Transformation.IDENTITY)) {
+            return Transformation.IDENTITY;
         }
 
         Matrix4f ret = transform.getMatrixCopy();
@@ -383,7 +383,7 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
             quadBaker.setShade(shadeQuads);
         }
 
-        boolean hasTransform = !transform.equals(Transformation.identity());
+        boolean hasTransform = !transform.equals(Transformation.IDENTITY);
         // The incoming transform is referenced on the center of the block, but our coords are referenced on the corner
         Transformation transformation = hasTransform ? blockCenterToCorner(transform) : transform;
 
@@ -573,9 +573,9 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
 
             var rootTransform = additionalProperties.getOrDefault(
                 NeoForgeModelProperties.TRANSFORM,
-                Transformation.identity()
+                Transformation.IDENTITY
             );
-            var transform = rootTransform.equals(Transformation.identity()) ? state.transformation() : state.transformation()
+            var transform = rootTransform.equals(Transformation.IDENTITY) ? state.transformation() : state.transformation()
                 .compose(rootTransform);
             for (int[][] face : faces) {
                 Pair<BakedQuad, @Nullable Direction> quad = makeQuad(

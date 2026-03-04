@@ -42,7 +42,7 @@ public class TransformationHelper {
             if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
                 String transform = json.getAsString();
                 if (transform.equals("identity")) {
-                    return Transformation.identity();
+                    return Transformation.IDENTITY;
                 } else {
                     throw new JsonParseException("TRSR: unknown default string: " + transform);
                 }
@@ -115,8 +115,8 @@ public class TransformationHelper {
             }
 
             Transformation matrix = new Transformation(translation, leftRot, scale, rightRot);
-            if (matrix.equals(Transformation.identity())) {
-                return Transformation.identity();
+            if (matrix.equals(Transformation.IDENTITY)) {
+                return Transformation.IDENTITY;
             }
 
             Matrix4f ret = new Matrix4f(matrix.getMatrix());
@@ -253,7 +253,7 @@ public class TransformationHelper {
     public enum TransformOrigin implements StringRepresentable {
         CENTER(new Vector3f(.5f, .5f, .5f), "center"), CORNER(new Vector3f(), "corner"), OPPOSING_CORNER(
             new Vector3f(
-                1,
+            1,
             1,
             1
         ), "opposing-corner"
