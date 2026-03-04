@@ -8,6 +8,7 @@ import com.zurrtum.create.client.model.NormalsBakedQuad;
 import com.zurrtum.create.content.kinetics.belt.BeltBlock;
 import com.zurrtum.create.content.kinetics.belt.BeltBlockEntity;
 import com.zurrtum.create.content.kinetics.belt.BeltBlockEntity.CasingType;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
@@ -79,11 +80,15 @@ public class BeltModel extends WrapperBlockStateModel {
         if (blockentity.covered) {
             boolean alongX = state.getValue(BeltBlock.HORIZONTAL_FACING).getAxis() == Axis.X;
             BlockStateModel cover = alongX ? AllPartialModels.ANDESITE_BELT_COVER_X.get() : AllPartialModels.ANDESITE_BELT_COVER_Z.get();
-            for (BlockStateModelPart part : cover.collectParts(random)) {
+            List<BlockStateModelPart> coverParts = new ObjectArrayList<>();
+            cover.collectParts(random, coverParts);
+            for (BlockStateModelPart part : coverParts) {
                 parts.add(replaceQuads(original, part));
             }
         }
-        for (BlockStateModelPart part : model.collectParts(random)) {
+        List<BlockStateModelPart> modelParts = new ObjectArrayList<>();
+        model.collectParts(random, modelParts);
+        for (BlockStateModelPart part : modelParts) {
             parts.add(replaceQuads(original, part));
         }
     }

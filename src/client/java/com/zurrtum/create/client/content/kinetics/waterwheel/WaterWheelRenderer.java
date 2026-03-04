@@ -11,13 +11,14 @@ import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import com.zurrtum.create.content.kinetics.waterwheel.LargeWaterWheelBlock;
 import com.zurrtum.create.content.kinetics.waterwheel.WaterWheelBlock;
 import com.zurrtum.create.content.kinetics.waterwheel.WaterWheelBlockEntity;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.core.Holder;
@@ -151,7 +152,8 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
         BlockStateModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
         RandomSource random = RandomSource.create();
         random.setSeed(42L);
-        List<BlockStateModelPart> parts = model.collectParts(random);
+        List<BlockStateModelPart> parts = new ObjectArrayList<>();
+        model.collectParts(random, parts);
         for (BlockStateModelPart part : parts) {
             List<BakedQuad> quads = part.getQuads(side);
             if (!quads.isEmpty()) {

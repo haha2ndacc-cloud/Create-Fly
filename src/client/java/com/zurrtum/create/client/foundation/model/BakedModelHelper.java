@@ -3,6 +3,7 @@ package com.zurrtum.create.client.foundation.model;
 import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.model.NormalsBakedQuad;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
@@ -134,9 +135,9 @@ public class BakedModelHelper {
         if (swappedParticleSprite != null) {
             material = new Material.Baked(swappedParticleSprite, material.forceTranslucent());
         }
-        List<BlockStateModelPart> parts = template.collectParts(random);
+        List<BlockStateModelPart> parts = new ObjectArrayList<>();
+        template.collectParts(random, parts);
         int size = parts.size();
-        List<BlockStateModelPart> replace = new ArrayList<>(parts.size());
         for (int i = 0; i < size; i++) {
             BlockStateModelPart part = parts.get(i);
             QuadCollection.Builder builder = new QuadCollection.Builder();
@@ -147,17 +148,15 @@ public class BakedModelHelper {
             }
             quads = part.getQuads(null);
             swapSprites(quads, spriteSwapper).forEach(builder::addUnculledFace);
-            replace.add(new SimpleModelWrapper(
-                builder.build(),
-                part.useAmbientOcclusion(),
-                material,
-                part.hasTranslucency()
-            ));
+            parts.set(
+                i,
+                new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), material, part.hasTranslucency())
+            );
         }
         if (size == 1) {
-            return new SingleVariant(replace.getFirst());
+            return new SingleVariant(parts.getFirst());
         }
-        return new MultiVariant(replace, material, template.hasTranslucency());
+        return new MultiVariant(parts, material, template.hasTranslucency());
     }
 
     public static long calcSpriteUv(long packedUv, TextureAtlasSprite sprite, TextureAtlasSprite newSprite) {

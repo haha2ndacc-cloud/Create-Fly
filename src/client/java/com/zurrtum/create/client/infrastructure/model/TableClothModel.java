@@ -5,6 +5,7 @@ import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import com.zurrtum.create.client.model.NormalsBakedQuad;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -124,7 +125,9 @@ public class TableClothModel extends WrapperBlockStateModel {
 
     private static List<BakedQuad> replaceQuads(RandomSource random, TextureAtlasSprite replace, PartialModel model) {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-        for (BlockStateModelPart part : model.get().collectParts(random)) {
+        List<BlockStateModelPart> parts = new ObjectArrayList<>();
+        model.get().collectParts(random, parts);
+        for (BlockStateModelPart part : parts) {
             for (Direction direction : DIRECTIONS) {
                 for (BakedQuad quad : part.getQuads(direction)) {
                     builder.add(replaceQuad(replace, quad));

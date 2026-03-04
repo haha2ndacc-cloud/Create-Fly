@@ -10,6 +10,7 @@ import com.zurrtum.create.content.logistics.factoryBoard.FactoryPanelBlock;
 import com.zurrtum.create.content.logistics.factoryBoard.FactoryPanelPosition;
 import com.zurrtum.create.content.logistics.factoryBoard.PanelSlot;
 import com.zurrtum.create.content.logistics.factoryBoard.ServerFactoryPanelBehaviour;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.resources.model.SimpleModelWrapper;
@@ -84,7 +85,9 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
         int normal = 127 << 16;
         int[] normals = new int[]{normal, normal, normal, normal};
 
-        for (BlockStateModelPart part : factoryPanel.get().collectParts(random)) {
+        List<BlockStateModelPart> modelParts = new ObjectArrayList<>();
+        factoryPanel.get().collectParts(random, modelParts);
+        for (BlockStateModelPart part : modelParts) {
             parts.add(replacePart(part, xRot, yRot, xOffset, yOffset, normals, ponder));
         }
     }
