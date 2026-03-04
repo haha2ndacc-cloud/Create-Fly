@@ -35,7 +35,7 @@ public class WaterWheelStructuralModel extends WrapperBlockStateModel {
 
     @Override
     public Material.Baked particleMaterial() {
-        return Minecraft.getInstance().getModelManager().getBlockModelSet().missingModel().particleMaterial();
+        return Minecraft.getInstance().getModelManager().getBlockStateModelSet().missingModel().particleMaterial();
     }
 
     @Override
