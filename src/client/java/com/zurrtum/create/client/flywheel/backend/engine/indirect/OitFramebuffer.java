@@ -96,7 +96,7 @@ public class OitFramebuffer {
         GlStateManager._blendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
         GL14.glBlendEquation(GL32.GL_MAX);
 
-        var far = Minecraft.getInstance().gameRenderer.getLevelRenderState().cameraRenderState.depthFar;
+        var far = Minecraft.getInstance().gameRenderer.getGameRenderState().levelRenderState.cameraRenderState.depthFar;
 
         if (GlCompat.SUPPORTS_DSA) {
             GL46.glNamedFramebufferDrawBuffers(fbo, DEPTH_RANGE_DRAW_BUFFERS);

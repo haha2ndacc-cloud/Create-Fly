@@ -91,7 +91,7 @@ public class SchematicRenderer {
             AnimationTickHolder.getPartialTicks()
         );
         if (renderState != null) {
-            renderState.render(ms, queue, mc.gameRenderer.getLevelRenderState().cameraRenderState);
+            renderState.render(ms, queue, mc.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState);
         }
 
         // Don't bother looping over errored BEs again.
