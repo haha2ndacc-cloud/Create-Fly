@@ -9,6 +9,7 @@ import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ItemFrame;
@@ -101,7 +102,7 @@ public class VanillaVisuals {
         return new ConfiguredElementImpl.ConfiguredElementBuilder<>(element);
     }
 
-    public static void onReloadModel(EntityModelSet models) {
+    public static void onReloadModel(EntityModelSet models, BlockModelResolver blockModelResolver) {
         boolean supportChest = models.bakeLayer(ModelLayers.CHEST).getClass() == ModelPart.class;
         Map<BlockEntityType<?>, Configurator.ConfiguredBlockEntity<?>> configurator = CONFIGURATOR.blockEntities;
         Map<String, ConfigBase.ConfigEnum<VisualConfigValue>> blockEntities = VanillinConfig.client().blockEntities;
@@ -109,6 +110,7 @@ public class VanillaVisuals {
         reloadType(BlockEntityType.CHEST, configurator, blockEntities, blockEntityOverrides, supportChest);
         reloadType(BlockEntityType.ENDER_CHEST, configurator, blockEntities, blockEntityOverrides, supportChest);
         reloadType(BlockEntityType.TRAPPED_CHEST, configurator, blockEntities, blockEntityOverrides, supportChest);
+        MinecartVisual.onReload(blockModelResolver);
     }
 
     private static void reloadType(

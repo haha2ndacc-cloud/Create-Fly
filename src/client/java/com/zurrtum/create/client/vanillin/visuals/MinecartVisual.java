@@ -14,15 +14,14 @@ import com.zurrtum.create.client.flywheel.lib.model.part.ModelTrees;
 import com.zurrtum.create.client.flywheel.lib.visual.AbstractEntityVisual;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleTickableVisual;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.client.renderer.entity.AbstractMinecartRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.minecart.MinecartBehavior;
 import net.minecraft.world.entity.vehicle.minecart.NewMinecartBehavior;
 import net.minecraft.world.entity.vehicle.minecart.OldMinecartBehavior;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -31,8 +30,10 @@ import org.joml.Matrix4fStack;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Set;
 
 public class MinecartVisual<T extends AbstractMinecart> extends AbstractEntityVisual<T> implements SimpleTickableVisual, SimpleDynamicVisual {
+    private static Set<BlockState> SPECIAL_BLOCKS = Set.of();
     private static final Material MATERIAL = SimpleMaterial.builder()
         .texture(AbstractMinecartRenderer.MINECART_LOCATION).mipmap(false).build();
 
@@ -63,8 +64,7 @@ public class MinecartVisual<T extends AbstractMinecart> extends AbstractEntityVi
             return null;
         }
 
-        Block block = blockState.getBlock();
-        if (Minecraft.getInstance().getModelManager().specialBlockModelRenderer().renderers.containsKey(block)) {
+        if (SPECIAL_BLOCKS.contains(blockState)) {
             instances.visible(false);
             return null;
         }
@@ -219,7 +219,10 @@ public class MinecartVisual<T extends AbstractMinecart> extends AbstractEntityVi
     }
 
     public static boolean shouldSkipRender(AbstractMinecart minecart) {
-        Block block = minecart.getDisplayBlockState().getBlock();
-        return !Minecraft.getInstance().getModelManager().specialBlockModelRenderer().renderers.containsKey(block);
+        return !SPECIAL_BLOCKS.contains(minecart.getDisplayBlockState());
+    }
+
+    public static void onReload(BlockModelResolver blockModelResolver) {
+        SPECIAL_BLOCKS = blockModelResolver.modelManager.getBlockModelSet().blockModelByStateCache.keySet();
     }
 }

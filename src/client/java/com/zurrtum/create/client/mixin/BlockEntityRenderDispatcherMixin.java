@@ -18,6 +18,6 @@ public class BlockEntityRenderDispatcherMixin {
         CallbackInfo ci,
         @Local BlockEntityRendererProvider.Context context
     ) {
-        VanillaVisuals.onReloadModel(context.entityModelSet());
+        VanillaVisuals.onReloadModel(context.entityModelSet(), context.blockModelResolver());
     }
 }
