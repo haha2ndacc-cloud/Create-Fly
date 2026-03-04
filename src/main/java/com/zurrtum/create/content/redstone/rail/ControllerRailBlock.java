@@ -18,7 +18,6 @@ import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.minecart.MinecartFurnace;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -43,15 +42,6 @@ public class ControllerRailBlock extends BaseRailBlock implements IWrenchable, M
         super(true, properties);
         registerDefaultState(defaultBlockState().setValue(POWER, 0).setValue(BACKWARDS, false)
             .setValue(SHAPE, RailShape.NORTH_SOUTH).setValue(WATERLOGGED, false));
-    }
-
-    public static int getWireColor(
-        BlockState state,
-        @Nullable BlockAndLightGetter world,
-        @Nullable BlockPos pos,
-        int tintIndex
-    ) {
-        return RedStoneWireBlock.getColorForPower(pos != null && world != null ? state.getValue(BlockStateProperties.POWER) : 0);
     }
 
     public static Vec3i getAccelerationVector(BlockState state) {

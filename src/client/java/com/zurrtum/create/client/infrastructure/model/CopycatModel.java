@@ -6,6 +6,8 @@ import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlockEntity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
@@ -23,13 +25,6 @@ import java.util.List;
 public abstract class CopycatModel extends WrapperBlockStateModel {
     public CopycatModel(BlockState state, UnbakedRoot unbaked) {
         super(state, unbaked);
-    }
-
-    public static int getColor(BlockState state, BlockAndTintGetter world, BlockPos pos, int i) {
-        if (world == null || pos == null) {
-            return GrassColor.getDefaultColor();
-        }
-        return Minecraft.getInstance().getBlockColors().getColor(CopycatBlock.getMaterial(world, pos), world, pos, i);
     }
 
     @Override
@@ -136,6 +131,31 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
 
         public boolean isOccluded(@Nullable Direction face) {
             return face != null && occluded[face.get3DDataValue()];
+        }
+    }
+
+    public record WrappedBlockColor(BlockColors blockColors, int tintIndex) implements BlockTintSource {
+        @Override
+        public int color(BlockState state) {
+            return GrassColor.getDefaultColor();
+        }
+
+        @Override
+        public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+            List<BlockTintSource> tintSources = blockColors.getTintSources(CopycatBlock.getMaterial(level, pos));
+            if (tintSources.size() <= tintIndex) {
+                return -1;
+            }
+            return tintSources.get(tintIndex).colorInWorld(state, level, pos);
+        }
+
+        @Override
+        public int colorAsTerrainParticle(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+            List<BlockTintSource> tintSources = blockColors.getTintSources(CopycatBlock.getMaterial(level, pos));
+            if (tintSources.size() <= tintIndex) {
+                return -1;
+            }
+            return tintSources.get(tintIndex).colorAsTerrainParticle(state, level, pos);
         }
     }
 }
