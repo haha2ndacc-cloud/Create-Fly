@@ -7,7 +7,6 @@ import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
 import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
-import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.content.kinetics.crank.HandCrankBlock;
 import com.zurrtum.create.content.kinetics.crank.HandCrankBlockEntity;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -15,8 +14,8 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverl
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
@@ -38,21 +37,9 @@ public class HandCrankRenderer extends KineticBlockEntityRenderer<HandCrankBlock
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        if (shouldRenderShaft()) {
-            super.extractRenderState(be, state, tickProgress, cameraPos, crumblingOverlay);
-            if (state.support) {
-                return;
-            }
-        } else {
-            Level world = be.getLevel();
-            state.support = VisualizationManager.supportsVisualization(world);
-            if (state.support) {
-                return;
-            }
-            updateBaseRenderState(be, state, world, crumblingOverlay);
-        }
+        super.extractRenderState(be, state, tickProgress, cameraPos, crumblingOverlay);
         state.handle = getRenderedHandle(state.blockState);
-        state.handleAngle = AngleHelper.rad(getIndependentAngle(be, tickProgress));
+        state.handleAngle = AngleHelper.rad(getHandCrankIndependentAngle(be, tickProgress));
     }
 
     @Override
@@ -60,24 +47,23 @@ public class HandCrankRenderer extends KineticBlockEntityRenderer<HandCrankBlock
         return RenderTypes.solidMovingBlock();
     }
 
-    /**
-     * In degrees
-     */
-    public float getIndependentAngle(HandCrankBlockEntity be, float partialTicks) {
-        return getHandCrankIndependentAngle(be, partialTicks);
-    }
-
     public static float getHandCrankIndependentAngle(HandCrankBlockEntity be, float partialTicks) {
         return be.independentAngle + partialTicks * be.chasingAngularVelocity;
+    }
+
+    @Override
+    protected SuperByteBuffer getRotatedModel(HandCrankBlockEntity be, HandCrankRenderState state) {
+        BlockState blockState = state.blockState;
+        return CachedBuffers.partialFacingVertical(
+            AllPartialModels.HAND_CRANK_BASE,
+            blockState,
+            blockState.getValue(BlockStateProperties.FACING)
+        );
     }
 
     public SuperByteBuffer getRenderedHandle(BlockState blockState) {
         Direction facing = blockState.getOptionalValue(HandCrankBlock.FACING).orElse(Direction.UP);
         return CachedBuffers.partialFacing(AllPartialModels.HAND_CRANK_HANDLE, blockState, facing.getOpposite());
-    }
-
-    public boolean shouldRenderShaft() {
-        return true;
     }
 
     public static class HandCrankRenderState extends KineticRenderState {
@@ -86,9 +72,7 @@ public class HandCrankRenderer extends KineticBlockEntityRenderer<HandCrankBlock
 
         @Override
         public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            if (model != null) {
-                super.render(matricesEntry, vertexConsumer);
-            }
+            super.render(matricesEntry, vertexConsumer);
             handle.light(lightCoords);
             handle.rotateCentered(handleAngle, direction);
             handle.color(color);

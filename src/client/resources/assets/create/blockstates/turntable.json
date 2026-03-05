@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "create:block/turntable"
+      "model": "create:block/turntable_particle"
     }
   }
 }

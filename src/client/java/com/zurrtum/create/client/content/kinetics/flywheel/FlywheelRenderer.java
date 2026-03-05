@@ -3,6 +3,7 @@ package com.zurrtum.create.client.content.kinetics.flywheel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.catnip.math.AngleHelper;
+import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
 import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
@@ -35,7 +36,7 @@ public class FlywheelRenderer extends KineticBlockEntityRenderer<FlywheelBlockEn
     ) {
         super.extractRenderState(be, state, tickProgress, cameraPos, crumblingOverlay);
         BlockState blockState = be.getBlockState();
-        state.wheel = CachedBuffers.block(blockState);
+        state.wheel = CachedBuffers.partialFacingVertical(AllPartialModels.FLYWHEEL, blockState, state.direction);
         float speed = be.visualSpeed.getValue(tickProgress) * 3 / 10f;
         state.wheelAngle = AngleHelper.rad(be.angle + speed * tickProgress);
     }

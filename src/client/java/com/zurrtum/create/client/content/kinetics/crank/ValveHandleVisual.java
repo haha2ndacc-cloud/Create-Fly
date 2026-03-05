@@ -27,7 +27,7 @@ public class ValveHandleVisual extends KineticBlockEntityVisual<ValveHandleBlock
 
         BlockState state = blockEntity.getBlockState();
         DyeColor color = null;
-        if (state != null && state.getBlock() instanceof ValveHandleBlock vhb) {
+        if (state.getBlock() instanceof ValveHandleBlock vhb) {
             color = vhb.color;
         }
 

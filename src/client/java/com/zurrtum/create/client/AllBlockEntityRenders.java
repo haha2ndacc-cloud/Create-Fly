@@ -34,10 +34,7 @@ import com.zurrtum.create.client.content.fluids.pipes.valve.FluidValveRenderer;
 import com.zurrtum.create.client.content.fluids.pipes.valve.FluidValveVisual;
 import com.zurrtum.create.client.content.fluids.spout.SpoutRenderer;
 import com.zurrtum.create.client.content.fluids.tank.FluidTankRenderer;
-import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
-import com.zurrtum.create.client.content.kinetics.base.OrientedRotatingVisual;
-import com.zurrtum.create.client.content.kinetics.base.ShaftRenderer;
-import com.zurrtum.create.client.content.kinetics.base.SingleAxisRotatingVisual;
+import com.zurrtum.create.client.content.kinetics.base.*;
 import com.zurrtum.create.client.content.kinetics.belt.BeltRenderer;
 import com.zurrtum.create.client.content.kinetics.belt.BeltVisual;
 import com.zurrtum.create.client.content.kinetics.chainConveyor.ChainConveyorRenderer;
@@ -194,8 +191,8 @@ public class AllBlockEntityRenders {
         normal(AllBlockEntityTypes.CHAIN_CONVEYOR, ChainConveyorRenderer::new, ChainConveyorVisual::new);
         visual(AllBlockEntityTypes.ENCASED_COGWHEEL, EncasedCogRenderer::small, EncasedCogVisual::small);
         visual(AllBlockEntityTypes.ENCASED_LARGE_COGWHEEL, EncasedCogRenderer::large, EncasedCogVisual::large);
-        normal(AllBlockEntityTypes.HAND_CRANK, HandCrankRenderer::new, HandCrankVisual::new);
-        normal(AllBlockEntityTypes.VALVE_HANDLE, ValveHandleRenderer::new, ValveHandleVisual::new);
+        visual(AllBlockEntityTypes.HAND_CRANK, HandCrankRenderer::new, HandCrankVisual::new);
+        visual(AllBlockEntityTypes.VALVE_HANDLE, ValveHandleRenderer::new, ValveHandleVisual::new);
         normal(AllBlockEntityTypes.WINDMILL_BEARING, BearingRenderer::new, BearingVisual::new);
         normal(
             AllBlockEntityTypes.MECHANICAL_PUMP,
@@ -208,7 +205,7 @@ public class AllBlockEntityRenders {
         visual(AllBlockEntityTypes.STEAM_ENGINE, SteamEngineRenderer::new, SteamEngineVisual::new);
         visual(
             AllBlockEntityTypes.POWERED_SHAFT,
-            KineticBlockEntityRenderer::new,
+            SingleAxisRotatingRenderer.of(AllPartialModels.POWERED_SHAFT),
             SingleAxisRotatingVisual.of(AllPartialModels.POWERED_SHAFT)
         );
         visual(AllBlockEntityTypes.HEATER, BlazeBurnerRenderer::new, BlazeBurnerVisual::new);
@@ -251,7 +248,7 @@ public class AllBlockEntityRenders {
         normal(AllBlockEntityTypes.DEPLOYER, DeployerRenderer::new, DeployerVisual::new);
         visual(
             AllBlockEntityTypes.TURNTABLE,
-            KineticBlockEntityRenderer::new,
+            SingleAxisRotatingRenderer.of(AllPartialModels.TURNTABLE),
             SingleAxisRotatingVisual.of(AllPartialModels.TURNTABLE)
         );
         visual(AllBlockEntityTypes.DRILL, DrillRenderer::new, OrientedRotatingVisual.of(AllPartialModels.DRILL_HEAD));
@@ -260,7 +257,7 @@ public class AllBlockEntityRenders {
         normal(AllBlockEntityTypes.CLOCKWORK_BEARING, BearingRenderer::new, BearingVisual::new);
         visual(
             AllBlockEntityTypes.CRUSHING_WHEEL,
-            KineticBlockEntityRenderer::new,
+            SingleAxisRotatingRenderer.of(AllPartialModels.CRUSHING_WHEEL),
             SingleAxisRotatingVisual.of(AllPartialModels.CRUSHING_WHEEL)
         );
         normal(

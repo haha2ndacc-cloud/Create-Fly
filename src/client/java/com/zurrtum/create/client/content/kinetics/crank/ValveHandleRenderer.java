@@ -1,25 +1,46 @@
 package com.zurrtum.create.client.content.kinetics.crank;
 
 import com.zurrtum.create.catnip.math.AngleHelper;
+import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
 import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
-import com.zurrtum.create.content.kinetics.crank.HandCrankBlockEntity;
+import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.KineticRenderState;
+import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.content.kinetics.crank.ValveHandleBlock;
 import com.zurrtum.create.content.kinetics.crank.ValveHandleBlockEntity;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
-public class ValveHandleRenderer extends HandCrankRenderer {
+public class ValveHandleRenderer extends KineticBlockEntityRenderer<ValveHandleBlockEntity, KineticRenderState> {
     public ValveHandleRenderer(BlockEntityRendererProvider.Context context) {
         super(context);
     }
 
     @Override
-    public float getIndependentAngle(HandCrankBlockEntity be, float partialTicks) {
-        return getValveHandleIndependentAngle((ValveHandleBlockEntity) be, partialTicks);
+    public void extractRenderState(
+        ValveHandleBlockEntity be,
+        KineticRenderState state,
+        float tickProgress,
+        Vec3 cameraPos,
+        @Nullable CrumblingOverlay crumblingOverlay
+    ) {
+        updateBaseRenderState(be, state, be.getLevel(), crumblingOverlay);
+        state.model = getRenderedHandle(state.blockState);
+        state.angle = AngleHelper.rad(getValveHandleIndependentAngle(be, tickProgress));
+    }
+
+    @Override
+    protected RenderType getRenderType(ValveHandleBlockEntity be, BlockState state) {
+        return RenderTypes.solidMovingBlock();
     }
 
     public static float getValveHandleIndependentAngle(ValveHandleBlockEntity be, float partialTicks) {
@@ -41,13 +62,13 @@ public class ValveHandleRenderer extends HandCrankRenderer {
         ) : be.targetAngle) * (be.backwards ? -1 : 1) * step;
     }
 
-    @Override
     public SuperByteBuffer getRenderedHandle(BlockState blockState) {
-        return CachedBuffers.block(blockState);
-    }
-
-    @Override
-    public boolean shouldRenderShaft() {
-        return false;
+        PartialModel model;
+        if (blockState.getBlock() instanceof ValveHandleBlock vhb && vhb.color != null) {
+            model = AllPartialModels.DYED_VALVE_HANDLES.get(vhb.color);
+        } else {
+            model = AllPartialModels.VALVE_HANDLE;
+        }
+        return CachedBuffers.partialFacingVertical(model, blockState, blockState.getValue(BlockStateProperties.FACING));
     }
 }

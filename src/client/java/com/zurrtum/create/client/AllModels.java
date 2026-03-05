@@ -188,6 +188,7 @@ public class AllModels {
         register(AllBlocks.SHAFT, BracketedKineticBlockModel::new);
         register(AllBlocks.COGWHEEL, BracketedKineticBlockModel::new);
         register(AllBlocks.LARGE_COGWHEEL, BracketedKineticBlockModel::new);
+        register(AllBlocks.GANTRY_SHAFT, GantryShaftModel::new);
         register(AllBlocks.BELT, BeltModel::new);
         register(AllBlocks.LARGE_WATER_WHEEL, LargeWaterWheelModel::new);
         register(AllBlocks.WATER_WHEEL_STRUCTURAL, WaterWheelStructuralModel::single);
@@ -223,30 +224,5 @@ public class AllModels {
         register(AllBlocks.FACTORY_GAUGE, FactoryPanelModel::new);
         register(AllBlocks.COPYCAT_STEP, CopycatStepModel::new);
         register(AllBlocks.COPYCAT_PANEL, CopycatPanelModel::new);
-
-        register(AllBlocks.HAND_CRANK, EmptyModel::new);
-        register(AllBlocks.COPPER_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.WHITE_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.ORANGE_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.MAGENTA_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.LIGHT_BLUE_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.YELLOW_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.LIME_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.PINK_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.GRAY_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.LIGHT_GRAY_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.CYAN_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.PURPLE_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.BLUE_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.BROWN_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.GREEN_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.RED_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.BLACK_VALVE_HANDLE, EmptyModel::new);
-        register(AllBlocks.POWERED_SHAFT, EmptyModel::new);
-        register(AllBlocks.GANTRY_SHAFT, EmptyModel::new);
-        register(AllBlocks.TURNTABLE, EmptyModel::new);
-        register(AllBlocks.CRUSHING_WHEEL, EmptyModel::new);
-        register(AllBlocks.FAKE_TRACK, EmptyModel::new);
-        register(AllBlocks.FLYWHEEL, EmptyModel::new);
     }
 }
