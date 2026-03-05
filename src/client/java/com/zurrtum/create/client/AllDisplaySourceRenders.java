@@ -18,7 +18,6 @@ public class AllDisplaySourceRenders {
         register(AllDisplaySources.STOPWATCH, SingleLineDisplaySourceRender::new);
         register(AllDisplaySources.KINETIC_SPEED, KineticSpeedDisplaySourceRender::new);
         register(AllDisplaySources.KINETIC_STRESS, KineticStressDisplaySourceRender::new);
-        register(AllDisplaySources.BOILER, SingleLineDisplaySourceRender::new);
         register(AllDisplaySources.CURRENT_FLOOR, SingleLineDisplaySourceRender::new);
         register(AllDisplaySources.STATION_SUMMARY, StationSummaryDisplaySourceRender::new);
         register(AllDisplaySources.TRAIN_STATUS, SingleLineDisplaySourceRender::new);
