@@ -184,7 +184,7 @@ public class StationBlock extends Block implements IBE<StationBlockEntity>, Item
             }
         );
 
-        if (result == InteractionResult.PASS) {
+        if (result == InteractionResult.PASS && level.isClientSide()) {
             AllClientHandle.INSTANCE.openStationScreen(level, pos, player);
         }
         return InteractionResult.SUCCESS;
