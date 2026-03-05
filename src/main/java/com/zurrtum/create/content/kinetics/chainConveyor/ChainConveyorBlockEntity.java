@@ -57,7 +57,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements Tran
     public record ConnectedPort(float chainPosition, @Nullable BlockPos connection, String filter) {
     }
 
-    public @Nullable Set<BlockPos> connections = new HashSet<>();
+    public Set<BlockPos> connections = new HashSet<>();
     public @Nullable Map<BlockPos, ConnectionStats> connectionStats;
 
     public Map<BlockPos, ConnectedPort> loopPorts = new HashMap<>();

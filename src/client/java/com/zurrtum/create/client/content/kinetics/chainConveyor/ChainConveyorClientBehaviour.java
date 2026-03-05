@@ -110,14 +110,19 @@ public class ChainConveyorClientBehaviour extends ChainConveyorBehaviour {
         List<ChainConveyorShape> shapes = new ArrayList<>();
         shapes.add(new ChainConveyorShape.ChainConveyorBB(Vec3.atBottomCenterOf(BlockPos.ZERO)));
         BlockPos pos = blockEntity.getBlockPos();
-        for (BlockPos target : blockEntity.connections) {
-            ChainConveyorBlockEntity.ConnectionStats stats = blockEntity.connectionStats.get(target);
-            if (stats == null) {
-                continue;
+        if (!blockEntity.connections.isEmpty()) {
+            if (blockEntity.connectionStats == null) {
+                blockEntity.prepareStats();
             }
-            Vec3 localStart = stats.start().subtract(Vec3.atLowerCornerOf(pos));
-            Vec3 localEnd = stats.end().subtract(Vec3.atLowerCornerOf(pos));
-            shapes.add(new ChainConveyorShape.ChainConveyorOBB(target, localStart, localEnd));
+            for (BlockPos target : blockEntity.connections) {
+                ChainConveyorBlockEntity.ConnectionStats stats = blockEntity.connectionStats.get(target);
+                if (stats == null) {
+                    continue;
+                }
+                Vec3 localStart = stats.start().subtract(Vec3.atLowerCornerOf(pos));
+                Vec3 localEnd = stats.end().subtract(Vec3.atLowerCornerOf(pos));
+                shapes.add(new ChainConveyorShape.ChainConveyorOBB(target, localStart, localEnd));
+            }
         }
         ChainConveyorInteractionHandler.loadedChains.get(blockEntity.getLevel()).put(pos, shapes);
     }
