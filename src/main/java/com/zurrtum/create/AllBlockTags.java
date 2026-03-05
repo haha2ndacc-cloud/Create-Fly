@@ -39,6 +39,8 @@ public class AllBlockTags {
     public static final TagKey<Block> SUGAR_CANE_VARIANTS = register("sugar_cane_variants");
     public static final TagKey<Block> NON_HARVESTABLE = register("non_harvestable");
     public static final TagKey<Block> SINGLE_BLOCK_INVENTORIES = register("single_block_inventories");
+    public static final TagKey<Block> PLOUGH_WHITELIST = register("plough_whitelist");
+    public static final TagKey<Block> PLOUGH_BLACKLIST = register("plough_blacklist");
 
     public static final TagKey<Block> CORALS = register("corals");
 

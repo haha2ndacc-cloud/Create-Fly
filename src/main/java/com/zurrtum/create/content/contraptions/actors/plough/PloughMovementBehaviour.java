@@ -1,6 +1,7 @@
 package com.zurrtum.create.content.contraptions.actors.plough;
 
 import com.zurrtum.create.AllAdvancements;
+import com.zurrtum.create.AllBlockTags;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
 import com.zurrtum.create.content.kinetics.base.BlockBreakingMovementBehaviour;
@@ -118,14 +119,17 @@ public class PloughMovementBehaviour extends BlockBreakingMovementBehaviour {
         if (state.getBlock() instanceof BubbleColumnBlock) {
             return false;
         }
-        if (state.getBlock() instanceof NetherPortalBlock) {
-            return false;
-        }
         if (state.getBlock() instanceof ITrackBlock) {
             return true;
         }
         if (state.getBlock() instanceof FakeTrackBlock) {
             return false;
+        }
+        if (state.is(AllBlockTags.PLOUGH_BLACKLIST)) {
+            return false;
+        }
+        if (state.is(AllBlockTags.PLOUGH_WHITELIST)) {
+            return true;
         }
         return state.getCollisionShape(world, breakingPos).isEmpty();
     }

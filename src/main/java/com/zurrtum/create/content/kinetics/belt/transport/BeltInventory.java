@@ -467,24 +467,20 @@ public class BeltInventory {
 
     public void read(ValueInput view) {
         items.clear();
-        toInsert.clear();
-        toRemove.clear();
         view.listOrEmpty("Items", TransportedItemStack.CODEC).forEach(items::add);
-        view.listOrEmpty("ToInsert", TransportedItemStack.CODEC).forEach(toInsert::add);
-        view.listOrEmpty("ToRemove", TransportedItemStack.CODEC).forEach(toRemove::add);
         lazyClientItem = view.read("LazyItem", TransportedItemStack.CODEC).orElse(null);
         beltMovementPositive = view.getBooleanOr("PositiveOrder", false);
     }
 
     public void write(ValueOutput view) {
+        if (!toInsert.isEmpty() || !toRemove.isEmpty()) {
+            toInsert.forEach(this::insert);
+            toInsert.clear();
+            items.removeAll(toRemove);
+            toRemove.clear();
+        }
         if (!items.isEmpty()) {
             items.forEach(view.list("Items", TransportedItemStack.CODEC)::add);
-        }
-        if (!toInsert.isEmpty()) {
-            toInsert.forEach(view.list("ToInsert", TransportedItemStack.CODEC)::add);
-        }
-        if (!toRemove.isEmpty()) {
-            toRemove.forEach(view.list("ToRemove", TransportedItemStack.CODEC)::add);
         }
         if (lazyClientItem != null) {
             view.store("LazyItem", TransportedItemStack.CODEC, lazyClientItem);
