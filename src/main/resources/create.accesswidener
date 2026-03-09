@@ -240,3 +240,5 @@ mutable field net/minecraft/world/item/context/BlockPlaceContext relativePos Lne
 mutable field net/minecraft/world/item/CreativeModeTab column I
 mutable field net/minecraft/world/item/CreativeModeTab row Lnet/minecraft/world/item/CreativeModeTab$Row;
 mutable field net/minecraft/world/level/biome/BiomeGenerationSettings features Ljava/util/List;
+accessible field net/minecraft/client/multiplayer/ClientSuggestionProvider minecraft Lnet/minecraft/client/Minecraft;
+accessible field net/minecraft/client/gui/components/debug/DebugScreenEntries ENTRIES_BY_ID Ljava/util/Map;

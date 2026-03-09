@@ -7,13 +7,15 @@ import com.zurrtum.create.client.flywheel.backend.BackendConfig;
 import com.zurrtum.create.client.flywheel.impl.config.CClient;
 import net.minecraft.IdentifierException;
 import net.minecraft.resources.Identifier;
+import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.Nullable;
 
 import static com.zurrtum.create.client.flywheel.impl.Flywheel.MOD_ID;
 
 public class FabricFlwConfig implements FlwConfig {
     public static final FabricFlwConfig INSTANCE = new FabricFlwConfig();
-    private CClient client;
+    @UnknownNullability
+    public CClient client;
 
     public void register() {
         client = Builder.create(CClient::new, MOD_ID, "client", true);

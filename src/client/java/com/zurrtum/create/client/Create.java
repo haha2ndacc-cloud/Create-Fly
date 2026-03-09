@@ -12,6 +12,7 @@ import com.zurrtum.create.client.flywheel.impl.Flywheel;
 import com.zurrtum.create.client.foundation.ClientResourceReloadListener;
 import com.zurrtum.create.client.foundation.blockEntity.ValueSettingsClient;
 import com.zurrtum.create.client.foundation.ponder.CreatePonderPlugin;
+import com.zurrtum.create.client.foundation.utility.CameraAngleAnimationService;
 import com.zurrtum.create.client.infrastructure.config.AllConfigs;
 import com.zurrtum.create.client.ponder.Ponder;
 import com.zurrtum.create.client.ponder.foundation.PonderIndex;
@@ -73,6 +74,7 @@ public class Create implements ClientModInitializer {
         AllScheduleRenders.register();
         AllMenuScreens.register();
         AllPotatoProjectileTransforms.register();
+        CameraAngleAnimationService.register();
         PonderIndex.addPlugin(new CreatePonderPlugin());
         //        CompatMod.register();
     }

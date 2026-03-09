@@ -13,6 +13,7 @@ public final class Flywheel {
     public void onInitializeClient() {
         setupImpl();
         FlwImpl.init();
+        DebugEntryFlw.register();
     }
 
     private static void setupImpl() {

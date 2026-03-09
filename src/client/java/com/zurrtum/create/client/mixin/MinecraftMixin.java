@@ -63,6 +63,7 @@ import com.zurrtum.create.client.foundation.blockEntity.behaviour.filtering.Filt
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.scrollValue.ScrollValueHandler;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.scrollValue.ScrollValueRenderer;
 import com.zurrtum.create.client.foundation.sound.SoundScapes;
+import com.zurrtum.create.client.foundation.utility.CameraAngleAnimationService;
 import com.zurrtum.create.client.foundation.utility.ServerSpeedProvider;
 import com.zurrtum.create.client.model.obj.ObjLoader;
 import com.zurrtum.create.client.ponder.Ponder;
@@ -196,6 +197,7 @@ public abstract class MinecraftMixin {
         ClickToLinkHandler.clientTick(mc);
         CurvedTrackInteraction.clientTick(mc);
         CameraDistanceModifier.tick();
+        CameraAngleAnimationService.tick(mc);
         TrainHUD.tick(mc);
         ClipboardValueSettingsClientHandler.clientTick(mc);
         Create.VALUE_SETTINGS_HANDLER.tick(mc);
