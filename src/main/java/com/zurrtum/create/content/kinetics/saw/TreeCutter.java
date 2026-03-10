@@ -201,12 +201,9 @@ public class TreeCutter {
     }
 
     private static int getLeafDistance(BlockState state) {
-        IntegerProperty distanceProperty = LeavesBlock.DISTANCE;
-        for (Property<?> property : state.getValues().keySet()) {
-            if (property instanceof IntegerProperty ip && property.getName().equals("distance")) {
-                distanceProperty = ip;
-            }
-        }
+        IntegerProperty distanceProperty = state.getValues().map(Property.Value::property)
+            .map(property -> property instanceof IntegerProperty ip && property.getName()
+                .equals("distance") ? ip : null).filter(Objects::nonNull).findFirst().orElse(LeavesBlock.DISTANCE);
         return state.getValue(distanceProperty);
     }
 
@@ -326,13 +323,9 @@ public class TreeCutter {
     }
 
     private static boolean isLeaf(BlockState state) {
-        for (Property<?> property : state.getValues().keySet()) {
-            if (property instanceof IntegerProperty && property.getName()
-                .equals("distance") && property != BlockStateProperties.STABILITY_DISTANCE) {
-                return true;
-            }
-        }
-        return false;
+        return state.getValues().map(Property.Value::property)
+            .anyMatch(property -> property instanceof IntegerProperty && property.getName()
+                .equals("distance") && property != BlockStateProperties.STABILITY_DISTANCE);
     }
 
     public static class Tree extends AbstractBlockBreakQueue {
