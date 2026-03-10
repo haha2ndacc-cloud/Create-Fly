@@ -10,7 +10,7 @@ import com.zurrtum.create.content.equipment.toolbox.ToolboxHandler;
 import com.zurrtum.create.content.equipment.toolbox.ToolboxInventory;
 import com.zurrtum.create.infrastructure.packet.c2s.ToolboxEquipPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -170,7 +170,7 @@ public class ToolboxHandlerClient {
         return true;
     }
 
-    public static void renderOverlay(Minecraft mc, GuiGraphics guiGraphics) {
+    public static void renderOverlay(Minecraft mc, GuiGraphicsExtractor guiGraphics) {
         int width = guiGraphics.guiWidth();
         int height = guiGraphics.guiHeight();
         int x = width / 2 - 90;

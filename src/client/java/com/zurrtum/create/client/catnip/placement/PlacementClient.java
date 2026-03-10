@@ -14,7 +14,7 @@ import com.zurrtum.create.client.ponder.config.CClient;
 import com.zurrtum.create.client.ponder.enums.PonderConfig;
 import com.zurrtum.create.client.ponder.enums.PonderGuiTextures;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -151,7 +151,7 @@ public class PlacementClient {
         }
     }
 
-    public static void onRenderCrosshairOverlay(Minecraft mc, GuiGraphics graphics, float partialTicks) {
+    public static void onRenderCrosshairOverlay(Minecraft mc, GuiGraphicsExtractor graphics, float partialTicks) {
         Player player = mc.player;
 
         if (player != null && animationTick > 0) {
@@ -168,7 +168,7 @@ public class PlacementClient {
     }
 
     private static void drawDirectionIndicator(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         float partialTicks,
         float centerX,
         float centerY,
@@ -218,7 +218,7 @@ public class PlacementClient {
     }
 
     private static void fadedArrow(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         float centerX,
         float centerY,
         float r,
@@ -239,7 +239,13 @@ public class PlacementClient {
         ms.popMatrix();
     }
 
-    public static void textured(GuiGraphics graphics, float centerX, float centerY, float alpha, float snappedAngle) {
+    public static void textured(
+        GuiGraphicsExtractor graphics,
+        float centerX,
+        float centerY,
+        float alpha,
+        float snappedAngle
+    ) {
         Matrix3x2fStack ms = graphics.pose();
         ms.pushMatrix();
         ms.translate(centerX, centerY);

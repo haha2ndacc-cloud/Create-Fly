@@ -28,7 +28,7 @@ import com.zurrtum.create.content.redstone.displayLink.source.SingleLineDisplayS
 import com.zurrtum.create.content.redstone.displayLink.target.DisplayTargetStats;
 import com.zurrtum.create.infrastructure.packet.c2s.DisplayLinkConfigurationPacket;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
@@ -274,7 +274,7 @@ public class DisplayLinkScreen extends AbstractSimiScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         int x = guiLeft;
         int y = guiTop;
 

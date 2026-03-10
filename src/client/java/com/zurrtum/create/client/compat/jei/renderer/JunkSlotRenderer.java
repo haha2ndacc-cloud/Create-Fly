@@ -9,7 +9,7 @@ import mezz.jei.api.ingredients.IIngredientRenderer;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -33,7 +33,7 @@ public class JunkSlotRenderer implements IIngredientRenderer<ItemStack> {
     }
 
     @Override
-    public void render(GuiGraphics graphics, ItemStack temp) {
+    public void render(GuiGraphicsExtractor graphics, ItemStack temp) {
         AllGuiTextures.JEI_CHANCE_SLOT.render(graphics, -1, -1);
         Component text = Component.literal("?").withStyle(ChatFormatting.BOLD);
         Font textRenderer = graphics.minecraft.font;

@@ -29,7 +29,7 @@ import com.zurrtum.create.content.equipment.goggles.GogglesItem;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -56,7 +56,7 @@ public class GoggleOverlayRenderer {
     public static int hoverTicks = 0;
     public static @Nullable BlockPos lastHovered = null;
 
-    public static void renderOverlay(Minecraft mc, GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public static void renderOverlay(Minecraft mc, GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
         HitResult objectMouseOver = mc.hitResult;
         if (!(objectMouseOver instanceof BlockHitResult result)) {
             lastHovered = null;

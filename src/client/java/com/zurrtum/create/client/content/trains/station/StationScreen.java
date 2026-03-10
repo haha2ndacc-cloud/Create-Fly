@@ -25,7 +25,7 @@ import com.zurrtum.create.content.trains.station.StationBlockEntity;
 import com.zurrtum.create.infrastructure.packet.c2s.StationEditPacket;
 import com.zurrtum.create.infrastructure.packet.c2s.TrainEditPacket;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -288,7 +288,7 @@ public class StationScreen extends AbstractStationScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.renderWindow(graphics, mouseX, mouseY, partialTicks);
         int x = guiLeft;
         int y = guiTop;

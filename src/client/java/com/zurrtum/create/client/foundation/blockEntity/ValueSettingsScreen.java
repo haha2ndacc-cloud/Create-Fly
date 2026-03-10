@@ -12,7 +12,7 @@ import com.zurrtum.create.client.foundation.gui.AllIcons;
 import com.zurrtum.create.client.foundation.utility.CreateLang;
 import com.zurrtum.create.foundation.blockEntity.behaviour.ValueSettings;
 import com.zurrtum.create.infrastructure.packet.c2s.ValueSettingsPacket;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -143,7 +143,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         int x = guiLeft;
         int y = guiTop;
         int milestoneCount = board.maxValue() / board.milestoneInterval() + 1;
@@ -314,7 +314,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
         graphics.drawString(font, cursorText, cursorX + 2, cursorY + 3, 0xFF442000, false);
     }
 
-    protected void renderBrassFrame(GuiGraphics graphics, int x, int y, int w, int h) {
+    protected void renderBrassFrame(GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         AllGuiTextures.BRASS_FRAME_TL.render(graphics, x, y);
         AllGuiTextures.BRASS_FRAME_TR.render(graphics, x + w - 4, y);
         AllGuiTextures.BRASS_FRAME_BL.render(graphics, x, y + h - 4);
@@ -333,7 +333,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
+    public void renderBackground(GuiGraphicsExtractor graphics, int pMouseX, int pMouseY, float pPartialTick) {
         int a = ((int) (0x50 * Math.min(1, (ticksOpen + pPartialTick) / 20f))) << 24;
         graphics.fillGradient(0, 0, this.width, this.height, 0x101010 | a, 0x101010 | a);
     }

@@ -9,7 +9,7 @@ import com.zurrtum.create.foundation.gui.menu.MenuType;
 import com.zurrtum.create.infrastructure.packet.c2s.FilterScreenPacket;
 import com.zurrtum.create.infrastructure.packet.c2s.FilterScreenPacket.Option;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -65,7 +65,7 @@ public class PackageFilterScreen extends AbstractFilterScreen<PackageFilterMenu>
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.render(graphics, mouseX, mouseY, partialTicks);
 
         graphics.renderItem(PackageStyles.getDefaultBox(), leftPos + 16, topPos + 23);

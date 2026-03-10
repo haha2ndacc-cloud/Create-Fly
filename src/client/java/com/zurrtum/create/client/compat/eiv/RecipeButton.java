@@ -5,7 +5,7 @@ import de.crafty.eiv.common.api.recipe.IEivViewRecipe;
 import de.crafty.eiv.common.recipe.inventory.RecipeViewMenu;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
@@ -54,7 +54,7 @@ public class RecipeButton extends Button.Plain {
         setTooltip((Tooltip) null);
     }
 
-    public void renderInvalidSlots(GuiGraphics context, int displayId) {
+    public void renderInvalidSlots(GuiGraphicsExtractor context, int displayId) {
         if (missingIndices == null) {
             return;
         }

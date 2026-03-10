@@ -17,7 +17,7 @@ import com.zurrtum.create.infrastructure.packet.c2s.TrainHUDUpdatePacket;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -107,7 +107,7 @@ public class TrainHUD {
         return cce.getCarriage();
     }
 
-    public static boolean renderOverlay(Minecraft mc, GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public static boolean renderOverlay(Minecraft mc, GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
         float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(false);
         if (!(ControlsHandler.getContraption() instanceof CarriageContraptionEntity cce)) {
             return false;

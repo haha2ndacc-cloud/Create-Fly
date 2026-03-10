@@ -3,7 +3,7 @@ package com.zurrtum.create.client.catnip.lang;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.LightCoordsUtil;
 import org.joml.Matrix4f;
@@ -56,7 +56,7 @@ public class ClientFontHelper {
     }
 
     public static void drawSplitString(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         Font font,
         String text,
         int x,
@@ -79,7 +79,7 @@ public class ClientFontHelper {
         }
     }
 
-    private static void draw(GuiGraphics graphics, Font font, @Nullable String text, int x, int y, int color) {
+    private static void draw(GuiGraphicsExtractor graphics, Font font, @Nullable String text, int x, int y, int color) {
         if (text != null) {
             graphics.drawString(font, text, x, y, color, false);
         }

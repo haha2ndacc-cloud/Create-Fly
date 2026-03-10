@@ -13,7 +13,7 @@ import de.crafty.eiv.common.recipe.inventory.SlotContent;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.joml.Matrix3x2f;
 
 import java.util.List;
@@ -88,7 +88,7 @@ public class MechanicalCraftingView extends CreateView {
     public void renderRecipe(
         RecipeViewScreen screen,
         RecipePosition position,
-        GuiGraphics context,
+        GuiGraphicsExtractor context,
         int mouseX,
         int mouseY,
         float partialTicks

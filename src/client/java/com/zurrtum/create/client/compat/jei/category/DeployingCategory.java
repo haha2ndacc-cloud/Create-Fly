@@ -17,7 +17,7 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.types.IRecipeType;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -46,7 +46,10 @@ public class DeployingCategory extends CreateCategory<RecipeHolder<? extends Ite
         for (RecipeHolder<SandPaperPolishingRecipe> entry : preparedRecipes.byType(AllRecipeTypes.SANDPAPER_POLISHING)) {
             SandPaperPolishingRecipe recipe = entry.value();
             recipes.add(new RecipeHolder<>(
-                ResourceKey.create(Registries.RECIPE, entry.id().identifier().withSuffix("_using_deployer")),
+                ResourceKey.create(
+                    Registries.RECIPE,
+                    entry.id().identifier().withSuffix("_using_deployer")
+                ),
                 new DeployerApplicationRecipe(recipe.result(), true, recipe.ingredient(), ingredient)
             ));
         }
@@ -89,7 +92,7 @@ public class DeployingCategory extends CreateCategory<RecipeHolder<? extends Ite
     public void draw(
         RecipeHolder<? extends ItemApplicationRecipe> entry,
         IRecipeSlotsView recipeSlotsView,
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         double mouseX,
         double mouseY
     ) {

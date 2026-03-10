@@ -1,13 +1,13 @@
 package com.zurrtum.create.client.catnip.gui.element;
 
 import com.mojang.blaze3d.opengl.GlStateManager;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.lwjgl.opengl.GL11;
 
 public interface StencilElement extends RenderElement {
 
     @Override
-    default void render(GuiGraphics graphics) {
+    default void render(GuiGraphicsExtractor graphics) {
         graphics.pose().pushMatrix();
         transform(graphics);
         prepareStencil(graphics);
@@ -18,15 +18,15 @@ public interface StencilElement extends RenderElement {
         graphics.pose().popMatrix();
     }
 
-    void renderStencil(GuiGraphics graphics);
+    void renderStencil(GuiGraphicsExtractor graphics);
 
-    void renderElement(GuiGraphics graphics);
+    void renderElement(GuiGraphicsExtractor graphics);
 
-    default void transform(GuiGraphics graphics) {
+    default void transform(GuiGraphicsExtractor graphics) {
         graphics.pose().translate(getX(), getY());
     }
 
-    default void prepareStencil(GuiGraphics graphics) {
+    default void prepareStencil(GuiGraphicsExtractor graphics) {
         //        graphics.draw();
         GL11.glDisable(GL11.GL_STENCIL_TEST);
         GL11.glStencilMask(~0);
@@ -37,13 +37,13 @@ public interface StencilElement extends RenderElement {
         GL11.glStencilFunc(GL11.GL_NEVER, 1, 0xFF);
     }
 
-    default void prepareElement(GuiGraphics graphics) {
+    default void prepareElement(GuiGraphicsExtractor graphics) {
         GL11.glEnable(GL11.GL_STENCIL_TEST);
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
         GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
     }
 
-    default void cleanUp(GuiGraphics graphics) {
+    default void cleanUp(GuiGraphicsExtractor graphics) {
         GL11.glDisable(GL11.GL_STENCIL_TEST);
         //        graphics.draw();
 

@@ -5,7 +5,7 @@ import com.zurrtum.create.client.catnip.gui.element.GuiGameElement;
 import com.zurrtum.create.client.catnip.gui.element.GuiGameElement.GuiItemRenderBuilder;
 import com.zurrtum.create.client.catnip.gui.element.ScreenElement;
 import com.zurrtum.create.client.ponder.Ponder;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
@@ -81,7 +81,7 @@ public class PonderTag implements ScreenElement {
         return PonderIndex.getLangAccess().getTagDescription(id);
     }
 
-    public void render(GuiGraphics graphics, int x, int y) {
+    public void render(GuiGraphicsExtractor graphics, int x, int y) {
         Matrix3x2fStack poseStack = graphics.pose();
         poseStack.pushMatrix();
         if (textureIcon != null) {
@@ -113,6 +113,6 @@ public class PonderTag implements ScreenElement {
     }
 
     private interface TextureIconRenderer {
-        void render(GuiGraphics graphics, Matrix3x2fStack poseStack, int x, int y);
+        void render(GuiGraphicsExtractor graphics, Matrix3x2fStack poseStack, int x, int y);
     }
 }

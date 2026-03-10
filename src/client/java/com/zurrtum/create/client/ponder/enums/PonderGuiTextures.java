@@ -7,7 +7,7 @@ import com.zurrtum.create.client.catnip.gui.element.DelegatedStencilElement;
 import com.zurrtum.create.client.catnip.gui.element.ScreenElement;
 import com.zurrtum.create.client.catnip.render.ColoredRenderable;
 import com.zurrtum.create.client.ponder.Ponder;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
@@ -24,11 +24,11 @@ public enum PonderGuiTextures implements TextureSheetSegment, ScreenElement, Col
         "widgets",
         2,
         2
-    ), ICON_PONDER_IDENTIFY("widgets", 3, 2), ICON_PONDER_REPLAY(
+    ), ICON_PONDER_IDENTIFY("widgets", 3, 2), ICON_PONDER_REPLAY("widgets", 4, 2), ICON_PONDER_USER_MODE(
         "widgets",
-        4,
+        5,
         2
-    ), ICON_PONDER_USER_MODE("widgets", 5, 2), ICON_PONDER_SLOW_MODE("widgets", 6, 2),
+    ), ICON_PONDER_SLOW_MODE("widgets", 6, 2),
 
     ICON_CONFIG_UNLOCKED("widgets", 0, 3), ICON_CONFIG_LOCKED("widgets", 1, 3), ICON_CONFIG_DISCARD(
         "widgets",
@@ -91,7 +91,7 @@ public enum PonderGuiTextures implements TextureSheetSegment, ScreenElement, Col
     }
 
     @Override
-    public void render(GuiGraphics graphics, int x, int y) {
+    public void render(GuiGraphicsExtractor graphics, int x, int y) {
         graphics.blit(
             RenderPipelines.GUI_TEXTURED,
             getLocation(),
@@ -107,7 +107,7 @@ public enum PonderGuiTextures implements TextureSheetSegment, ScreenElement, Col
     }
 
     @Override
-    public void render(GuiGraphics graphics, int x, int y, Color c) {
+    public void render(GuiGraphicsExtractor graphics, int x, int y, Color c) {
         UIRenderHelper.drawColoredTexture(graphics, bind(), c, x, y, startX, startY, width, height);
     }
 

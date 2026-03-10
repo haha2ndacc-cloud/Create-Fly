@@ -43,7 +43,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.input.CharacterEvent;
@@ -493,7 +493,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphicsExtractor graphics, float partialTicks, int mouseX, int mouseY) {
         if (this != minecraft.screen) {
             return; // stencil buffer does not cooperate with ponders gui fade out
         }
@@ -858,7 +858,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
     }
 
     @Override
-    protected void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.renderForeground(graphics, mouseX, mouseY, partialTicks);
         float currentScroll = itemScroll.getValue(partialTicks);
         Couple<Integer> hoveredSlot = getHoveredSlot(mouseX, mouseY);
@@ -914,7 +914,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
     }
 
     private void renderItemEntry(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         BigItemStack entry,
         boolean isStackHovered,
         boolean isRenderingOrders
@@ -964,7 +964,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         ms.popMatrix();
     }
 
-    private void drawItemCount(GuiGraphics graphics, int customCount) {
+    private void drawItemCount(GuiGraphicsExtractor graphics, int customCount) {
         String text = customCount >= 1000000 ? (customCount / 1000000) + "m" : customCount >= 10000 ? (customCount / 1000) + "k" : customCount >= 1000 ? ((customCount * 10) / 1000) / 10f + "k" : customCount >= 100 ? customCount + "" : " " + customCount;
 
         if (customCount >= BigItemStack.INF) {
@@ -1529,7 +1529,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
     }
 
     @Override
-    public void renderContents(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    public void renderContents(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
         super.renderContents(context, mouseX, mouseY, deltaTicks);
         if (cursorSlot != null) {
             ItemStack stack = getHoveredItemStack(mouseX, mouseY);

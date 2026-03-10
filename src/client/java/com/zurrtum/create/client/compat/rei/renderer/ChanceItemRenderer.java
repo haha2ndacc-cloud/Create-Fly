@@ -7,7 +7,7 @@ import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
 import me.shedaniel.rei.api.client.gui.widgets.TooltipContext;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
@@ -15,7 +15,7 @@ public record ChanceItemRenderer(float chance, EntryRenderer<ItemStack> origin) 
     @Override
     public void render(
         EntryStack<ItemStack> entry,
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         Rectangle bounds,
         int mouseX,
         int mouseY,

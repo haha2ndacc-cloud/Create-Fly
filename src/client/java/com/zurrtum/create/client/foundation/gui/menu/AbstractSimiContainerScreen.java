@@ -5,7 +5,7 @@ import com.zurrtum.create.client.catnip.gui.TickableGuiEventListener;
 import com.zurrtum.create.client.catnip.gui.widget.AbstractSimiWidget;
 import com.zurrtum.create.client.foundation.gui.AllGuiTextures;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
@@ -121,7 +121,7 @@ public abstract class AbstractSimiContainerScreen<T extends AbstractContainerMen
 	}*/
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         partialTicks = AnimationTickHolder.getPartialTicksUI(minecraft.getDeltaTracker());
 
         super.render(graphics, mouseX, mouseY, partialTicks);
@@ -130,14 +130,14 @@ public abstract class AbstractSimiContainerScreen<T extends AbstractContainerMen
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         // no-op to prevent screen- and inventory-title from being rendered at incorrect
         // location
         // could also set this.titleX/Y and this.playerInventoryTitleX/Y to the proper
         // values instead
     }
 
-    protected void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         renderTooltip(graphics, mouseX, mouseY);
         for (Renderable widget : renderables) {
             if (widget instanceof AbstractSimiWidget simiWidget && simiWidget.isMouseOver(mouseX, mouseY)) {
@@ -156,7 +156,7 @@ public abstract class AbstractSimiContainerScreen<T extends AbstractContainerMen
         return leftPos - windowXOffset + (imageWidth - textureWidth) / 2;
     }
 
-    public void renderPlayerInventory(GuiGraphics graphics, int x, int y) {
+    public void renderPlayerInventory(GuiGraphicsExtractor graphics, int x, int y) {
         AllGuiTextures.PLAYER_INVENTORY.render(graphics, x, y);
         graphics.drawString(font, playerInventoryTitle, x + 8, y + 6, 0xFF404040, false);
     }
@@ -199,12 +199,12 @@ public abstract class AbstractSimiContainerScreen<T extends AbstractContainerMen
     }
 
     @Deprecated
-    protected void debugWindowArea(GuiGraphics graphics) {
+    protected void debugWindowArea(GuiGraphicsExtractor graphics) {
         graphics.fill(leftPos + imageWidth, topPos + imageHeight, leftPos, topPos, 0xD3D3D3D3);
     }
 
     @Deprecated
-    protected void debugExtraAreas(GuiGraphics graphics) {
+    protected void debugExtraAreas(GuiGraphicsExtractor graphics) {
         for (Rect2i area : getExtraAreas()) {
             graphics.fill(
                 area.getX() + area.getWidth(),

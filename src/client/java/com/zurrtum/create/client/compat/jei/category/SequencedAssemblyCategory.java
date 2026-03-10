@@ -34,7 +34,7 @@ import mezz.jei.api.recipe.types.IRecipeType;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
@@ -146,7 +146,7 @@ public class SequencedAssemblyCategory extends CreateCategory<RecipeHolder<Seque
     public void draw(
         RecipeHolder<SequencedAssemblyRecipe> entry,
         IRecipeSlotsView recipeSlotsView,
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         double mouseX,
         double mouseY
     ) {
@@ -225,7 +225,7 @@ public class SequencedAssemblyCategory extends CreateCategory<RecipeHolder<Seque
 
     public interface SequencedRenderer<T extends Recipe<?>> {
         @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-        void render(GuiGraphics graphics, int i, int x, int y, Optional<IRecipeSlotView> slot);
+        void render(GuiGraphicsExtractor graphics, int i, int x, int y, Optional<IRecipeSlotView> slot);
 
         @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
         default Component getSequenceName(T recipe, Optional<IRecipeSlotView> slot) {
@@ -251,7 +251,7 @@ public class SequencedAssemblyCategory extends CreateCategory<RecipeHolder<Seque
 
     public static class PressingRenderer implements SequencedRenderer<PressingRecipe> {
         @Override
-        public void render(GuiGraphics graphics, int i, int x, int y, Optional<IRecipeSlotView> slot) {
+        public void render(GuiGraphicsExtractor graphics, int i, int x, int y, Optional<IRecipeSlotView> slot) {
             float scale = 19 / 30f;
             Matrix3x2fStack matrices = graphics.pose();
             matrices.pushMatrix();
@@ -271,7 +271,7 @@ public class SequencedAssemblyCategory extends CreateCategory<RecipeHolder<Seque
 
     public static class DeployingRenderer implements SequencedRenderer<DeployerApplicationRecipe> {
         @Override
-        public void render(GuiGraphics graphics, int i, int x, int y, Optional<IRecipeSlotView> slot) {
+        public void render(GuiGraphicsExtractor graphics, int i, int x, int y, Optional<IRecipeSlotView> slot) {
             float scale = 59 / 78f;
             Matrix3x2fStack matrices = graphics.pose();
             matrices.pushMatrix();
@@ -308,7 +308,7 @@ public class SequencedAssemblyCategory extends CreateCategory<RecipeHolder<Seque
 
     public static class FillingRenderer implements SequencedRenderer<FillingRecipe> {
         @Override
-        public void render(GuiGraphics graphics, int i, int x, int y, Optional<IRecipeSlotView> slot) {
+        public void render(GuiGraphicsExtractor graphics, int i, int x, int y, Optional<IRecipeSlotView> slot) {
             slot.flatMap(s -> s.getDisplayedIngredient(FabricTypes.FLUID_STACK)).ifPresent(ingredient -> {
                 float scale = 35 / 46f;
                 Matrix3x2fStack matrices = graphics.pose();

@@ -22,7 +22,7 @@ import com.zurrtum.create.infrastructure.packet.c2s.StockKeeperCategoryEditPacke
 import com.zurrtum.create.infrastructure.packet.c2s.StockKeeperCategoryRefundPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.input.InputWithModifiers;
@@ -190,7 +190,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         partialTicks = AnimationTickHolder.getPartialTicksUI(minecraft.getDeltaTracker());
 
         if (menu.slotsActive) {
@@ -203,7 +203,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
         }
     }
 
-    protected void renderCategories(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderCategories(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         Matrix3x2fStack matrixStack = graphics.pose();
         int yOffset = 25;
         List<ItemStack> entries = schedule;
@@ -236,7 +236,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
     }
 
     public int renderScheduleEntry(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         Matrix3x2fStack matrixStack,
         int i,
         ItemStack entry,
@@ -278,7 +278,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 
     public boolean action(
         @Nullable InputWithModifiers input,
-        @Nullable GuiGraphics graphics,
+        @Nullable GuiGraphicsExtractor graphics,
         double mouseX,
         double mouseY,
         int click
@@ -413,7 +413,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
         return false;
     }
 
-    private void renderActionTooltip(@Nullable GuiGraphics graphics, List<Component> tooltip, int mx, int my) {
+    private void renderActionTooltip(@Nullable GuiGraphicsExtractor graphics, List<Component> tooltip, int mx, int my) {
         if (graphics != null) {
             graphics.setTooltipForNextFrame(font, tooltip, Optional.empty(), mx, my);
         }
@@ -482,7 +482,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
     }
 
     @Override
-    protected void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.renderForeground(graphics, mouseX, mouseY, partialTicks);
 
         action(null, graphics, mouseX, mouseY, -1);
@@ -514,7 +514,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float pPartialTick, int pMouseX, int pMouseY) {
+    protected void renderBg(GuiGraphicsExtractor graphics, float pPartialTick, int pMouseX, int pMouseY) {
         pPartialTick = AnimationTickHolder.getPartialTicksUI(minecraft.getDeltaTracker());
         int y = this.topPos;
         AllGuiTextures.STOCK_KEEPER_CATEGORY_HEADER.render(graphics, leftPos, y);

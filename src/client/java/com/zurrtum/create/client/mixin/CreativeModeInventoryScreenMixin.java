@@ -19,7 +19,7 @@ package com.zurrtum.create.client.mixin;
 import com.zurrtum.create.client.infrastructure.itemGroup.FabricCreativeGuiComponents;
 import com.zurrtum.create.client.infrastructure.itemGroup.FabricCreativeInventoryScreen;
 import com.zurrtum.create.infrastructure.itemGroup.FabricItemGroupImpl;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.input.KeyEvent;
@@ -88,7 +88,7 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
 
     @Inject(method = "checkTabHovering", at = @At("HEAD"), cancellable = true)
     private void renderTabTooltipIfHovered(
-        GuiGraphics drawContext,
+        GuiGraphicsExtractor drawContext,
         CreativeModeTab itemGroup,
         int mx,
         int my,
@@ -108,7 +108,7 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
 
     @Inject(method = "renderTabButton", at = @At("HEAD"), cancellable = true)
     private void renderTabIcon(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         int mouseX,
         int mouseY,
         CreativeModeTab itemGroup,

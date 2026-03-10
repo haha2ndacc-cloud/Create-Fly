@@ -23,7 +23,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
@@ -306,7 +306,7 @@ public class PonderScene {
         world.resetParticles();
     }
 
-    public void renderOverlay(PonderUI screen, GuiGraphics graphics, float partialTicks) {
+    public void renderOverlay(PonderUI screen, GuiGraphicsExtractor graphics, float partialTicks) {
         Matrix3x2fStack matrices = graphics.pose();
         matrices.pushMatrix();
         forEachVisible(PonderOverlayElement.class, e -> e.render(this, screen, graphics, partialTicks));

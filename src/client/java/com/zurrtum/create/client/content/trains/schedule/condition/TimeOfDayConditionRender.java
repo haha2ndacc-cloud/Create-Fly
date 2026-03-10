@@ -9,7 +9,7 @@ import com.zurrtum.create.client.foundation.gui.widget.ScrollInput;
 import com.zurrtum.create.client.foundation.utility.CreateLang;
 import com.zurrtum.create.content.trains.schedule.condition.TimeOfDayCondition;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -68,7 +68,7 @@ public class TimeOfDayConditionRender implements IScheduleInput<TimeOfDayConditi
     }
 
     @Override
-    public boolean renderSpecialIcon(TimeOfDayCondition input, GuiGraphics graphics, int x, int y) {
+    public boolean renderSpecialIcon(TimeOfDayCondition input, GuiGraphicsExtractor graphics, int x, int y) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, getClockTextureId(input), x, y, 0, 0, 16, 16, 16, 16);
         return true;
     }

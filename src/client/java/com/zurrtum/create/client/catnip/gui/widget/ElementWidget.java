@@ -4,7 +4,7 @@ import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.client.catnip.gui.element.AbstractRenderElement;
 import com.zurrtum.create.client.catnip.gui.element.RenderElement;
 import com.zurrtum.create.client.catnip.gui.element.ScreenElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.joml.Matrix3x2fStack;
 import org.joml.Vector4i;
 import org.jspecify.annotations.Nullable;
@@ -125,7 +125,7 @@ public class ElementWidget extends AbstractSimiWidget {
     }
 
     @Override
-    protected void beforeRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void beforeRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.beforeRender(graphics, mouseX, mouseY, partialTicks);
         isHovered = isMouseOver(mouseX, mouseY);
 
@@ -137,7 +137,7 @@ public class ElementWidget extends AbstractSimiWidget {
     }
 
     @Override
-    public void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void doRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         Matrix3x2fStack poseStack = graphics.pose();
         poseStack.pushMatrix();
         poseStack.translate(getX() + paddingX, getY() + paddingY);

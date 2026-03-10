@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.zurrtum.create.catnip.data.Pair;
 import com.zurrtum.create.client.foundation.gui.ModularGuiLineBuilder;
 import com.zurrtum.create.content.trains.schedule.ScheduleDataEntry;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
@@ -43,7 +43,7 @@ public interface IScheduleInput<T extends ScheduleDataEntry> {
     default void initConfigurationWidgets(T input, ModularGuiLineBuilder builder) {
     }
 
-    default boolean renderSpecialIcon(T input, GuiGraphics graphics, int x, int y) {
+    default boolean renderSpecialIcon(T input, GuiGraphicsExtractor graphics, int x, int y) {
         return false;
     }
 }

@@ -2,7 +2,7 @@ package com.zurrtum.create.client.ponder.api.element;
 
 import com.zurrtum.create.client.ponder.foundation.PonderScene;
 import com.zurrtum.create.client.ponder.foundation.ui.PonderUI;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public interface AnimatedOverlayElement extends PonderOverlayElement {
 
@@ -11,9 +11,9 @@ public interface AnimatedOverlayElement extends PonderOverlayElement {
     float getFade(float partialTicks);
 
     @Override
-    default void render(PonderScene scene, PonderUI screen, GuiGraphics graphics, float partialTicks) {
+    default void render(PonderScene scene, PonderUI screen, GuiGraphicsExtractor graphics, float partialTicks) {
         render(scene, screen, graphics, partialTicks, getFade(partialTicks));
     }
 
-    void render(PonderScene scene, PonderUI screen, GuiGraphics graphics, float partialTicks, float fade);
+    void render(PonderScene scene, PonderUI screen, GuiGraphicsExtractor graphics, float partialTicks, float fade);
 }

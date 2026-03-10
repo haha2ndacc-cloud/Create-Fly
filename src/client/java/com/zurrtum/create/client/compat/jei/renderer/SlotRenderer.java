@@ -2,7 +2,7 @@ package com.zurrtum.create.client.compat.jei.renderer;
 
 import com.zurrtum.create.client.foundation.gui.AllGuiTextures;
 import mezz.jei.api.gui.drawable.IDrawable;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jspecify.annotations.Nullable;
 
 public class SlotRenderer implements IDrawable {
@@ -32,7 +32,7 @@ public class SlotRenderer implements IDrawable {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, int x, int y) {
+    public void draw(GuiGraphicsExtractor graphics, int x, int y) {
         if (texture != null) {
             texture.render(graphics, x, y);
         }

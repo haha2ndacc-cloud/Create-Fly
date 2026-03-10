@@ -9,7 +9,7 @@ import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.content.equipment.potatoCannon.PotatoCannonItem;
 import com.zurrtum.create.content.equipment.potatoCannon.PotatoCannonItem.Ammo;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -152,7 +152,13 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
         );
     }
 
-    public static void renderDecorator(Minecraft client, GuiGraphics drawContext, ItemStack stack, int x, int y) {
+    public static void renderDecorator(
+        Minecraft client,
+        GuiGraphicsExtractor drawContext,
+        ItemStack stack,
+        int x,
+        int y
+    ) {
         if (client.player == null) {
             return;
         }

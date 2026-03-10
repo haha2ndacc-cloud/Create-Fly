@@ -16,7 +16,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -88,7 +88,7 @@ public class MechanicalCraftingCategory extends CreateCategory<RecipeHolder<Mech
     public void draw(
         RecipeHolder<MechanicalCraftingRecipe> entry,
         IRecipeSlotsView recipeSlotsView,
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         double mouseX,
         double mouseY
     ) {

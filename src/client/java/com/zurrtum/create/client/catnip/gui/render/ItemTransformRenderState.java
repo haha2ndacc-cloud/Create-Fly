@@ -1,6 +1,6 @@
 package com.zurrtum.create.client.catnip.gui.render;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import org.joml.Matrix3x2f;
@@ -9,7 +9,12 @@ import org.jspecify.annotations.Nullable;
 public record ItemTransformRenderState(ItemTransformRenderKey key, Matrix3x2f pose, @Nullable ScreenRectangle bounds,
                                        int x0, int y0, int x1, int y1,
                                        @Nullable ScreenRectangle scissorArea) implements PictureInPictureRenderState {
-    public static ItemTransformRenderState create(GuiGraphics graphics, ItemTransformRenderKey key, float x, float y) {
+    public static ItemTransformRenderState create(
+        GuiGraphicsExtractor graphics,
+        ItemTransformRenderKey key,
+        float x,
+        float y
+    ) {
         Matrix3x2f pose = new Matrix3x2f(graphics.pose());
         float size = key.size;
         int x0 = (int) x;

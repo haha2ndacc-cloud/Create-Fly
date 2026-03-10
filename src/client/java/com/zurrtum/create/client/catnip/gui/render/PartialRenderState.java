@@ -2,7 +2,7 @@ package com.zurrtum.create.client.catnip.gui.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
@@ -29,7 +29,7 @@ public class PartialRenderState implements PictureInPictureRenderState {
     }
 
     public void update(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         PartialModel partial,
         float x,
         float y,

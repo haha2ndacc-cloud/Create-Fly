@@ -6,7 +6,7 @@ import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.content.equipment.armor.BacktankUtil;
 import com.zurrtum.create.content.equipment.armor.DivingHelmetItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -22,7 +22,7 @@ import org.joml.Matrix3x2fStack;
 import java.util.List;
 
 public class RemainingAirOverlay {
-    public static void render(Minecraft mc, GuiGraphics guiGraphics) {
+    public static void render(Minecraft mc, GuiGraphicsExtractor guiGraphics) {
         LocalPlayer player = mc.player;
         if (player == null) {
             return;

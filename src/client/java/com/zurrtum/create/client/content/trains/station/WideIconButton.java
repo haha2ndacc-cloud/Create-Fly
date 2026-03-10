@@ -3,7 +3,7 @@ package com.zurrtum.create.client.content.trains.station;
 import com.zurrtum.create.client.catnip.gui.element.ScreenElement;
 import com.zurrtum.create.client.foundation.gui.AllGuiTextures;
 import com.zurrtum.create.client.foundation.gui.widget.IconButton;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 
 public class WideIconButton extends IconButton {
@@ -13,7 +13,7 @@ public class WideIconButton extends IconButton {
     }
 
     @Override
-    protected void drawBg(GuiGraphics graphics, AllGuiTextures button) {
+    protected void drawBg(GuiGraphicsExtractor graphics, AllGuiTextures button) {
         super.drawBg(graphics, button);
         graphics.blit(
             RenderPipelines.GUI_TEXTURED,

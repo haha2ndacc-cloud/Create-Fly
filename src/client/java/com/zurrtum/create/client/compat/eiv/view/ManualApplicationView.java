@@ -10,7 +10,7 @@ import de.crafty.eiv.common.recipe.inventory.RecipeViewMenu.SlotDefinition;
 import de.crafty.eiv.common.recipe.inventory.RecipeViewMenu.SlotFillContext;
 import de.crafty.eiv.common.recipe.inventory.RecipeViewScreen;
 import de.crafty.eiv.common.recipe.inventory.SlotContent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -67,7 +67,7 @@ public class ManualApplicationView extends CreateView {
     public void renderRecipe(
         RecipeViewScreen screen,
         RecipePosition position,
-        GuiGraphics context,
+        GuiGraphicsExtractor context,
         int mouseX,
         int mouseY,
         float partialTicks

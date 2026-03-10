@@ -19,7 +19,7 @@ import com.zurrtum.create.foundation.gui.menu.MenuType;
 import com.zurrtum.create.infrastructure.packet.c2s.RedstoneRequesterConfigurationPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -137,7 +137,7 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
     }
 
     @Override
-    protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
+    protected void renderBg(GuiGraphicsExtractor pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
         AllGuiTextures.REDSTONE_REQUESTER.render(pGuiGraphics, leftPos + 3, topPos);
         renderPlayerInventory(pGuiGraphics, leftPos - 3, topPos + 124);
 
@@ -147,7 +147,7 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
     }
 
     @Override
-    protected void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.renderForeground(graphics, mouseX, mouseY, partialTicks);
 
         for (int i = 0; i < amounts.size(); i++) {

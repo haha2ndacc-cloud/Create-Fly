@@ -12,7 +12,7 @@ import com.zurrtum.create.client.ponder.foundation.PonderIndex;
 import com.zurrtum.create.client.ponder.foundation.PonderScene;
 import com.zurrtum.create.client.ponder.foundation.ui.PonderUI;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec2;
@@ -84,7 +84,13 @@ public class InputWindowElement extends AnimatedOverlayElementBase {
     }
 
     @Override
-    public void render(PonderScene scene, PonderUI screen, GuiGraphics graphics, float partialTicks, float fade) {
+    public void render(
+        PonderScene scene,
+        PonderUI screen,
+        GuiGraphicsExtractor graphics,
+        float partialTicks,
+        float fade
+    ) {
         Font font = screen.getFontRenderer();
         int width = 0;
         int height = 0;

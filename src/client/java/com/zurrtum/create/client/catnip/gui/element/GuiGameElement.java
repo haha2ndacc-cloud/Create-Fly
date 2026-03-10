@@ -3,7 +3,7 @@ package com.zurrtum.create.client.catnip.gui.element;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.catnip.gui.render.*;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -72,7 +72,7 @@ public class GuiGameElement {
         }
 
         @Override
-        public void render(GuiGraphics graphics) {
+        public void render(GuiGraphicsExtractor graphics) {
             if (scale <= 1 && xRot == 0 && yRot == 0 && zRot == 0) {
                 if (scale == 1) {
                     graphics.renderItem(key.stack, (int) x, (int) y);
@@ -120,7 +120,7 @@ public class GuiGameElement {
         }
 
         @Override
-        public void render(GuiGraphics graphics) {
+        public void render(GuiGraphicsExtractor graphics) {
             key.update(scale, padding, xRot, yRot, zRot);
             graphics.guiRenderState.submitPicturesInPictureState(BlockTransformRenderState.create(graphics, key, x, y));
         }
@@ -148,7 +148,7 @@ public class GuiGameElement {
         }
 
         @Override
-        public void render(GuiGraphics graphics) {
+        public void render(GuiGraphicsExtractor graphics) {
             if (model == null) {
                 return;
             }

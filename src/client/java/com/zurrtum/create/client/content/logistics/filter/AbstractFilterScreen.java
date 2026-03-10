@@ -14,7 +14,7 @@ import com.zurrtum.create.client.foundation.item.TooltipHelper;
 import com.zurrtum.create.content.logistics.filter.AbstractFilterMenu;
 import com.zurrtum.create.infrastructure.packet.c2s.FilterScreenPacket;
 import com.zurrtum.create.infrastructure.packet.c2s.FilterScreenPacket.Option;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -93,7 +93,7 @@ public abstract class AbstractFilterScreen<F extends AbstractFilterMenu> extends
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphicsExtractor graphics, float partialTicks, int mouseX, int mouseY) {
         int invX = getLeftOfCentered(PLAYER_INVENTORY.getWidth());
         int invY = topPos + background.getHeight() + 4;
         renderPlayerInventory(graphics, invX, invY);

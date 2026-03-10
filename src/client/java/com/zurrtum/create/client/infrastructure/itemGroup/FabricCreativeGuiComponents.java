@@ -18,7 +18,7 @@ package com.zurrtum.create.client.infrastructure.itemGroup;
 
 import com.zurrtum.create.infrastructure.itemGroup.FabricItemGroupImpl;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -61,7 +61,7 @@ public class FabricCreativeGuiComponents {
         }
 
         @Override
-        protected void renderContents(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
+        protected void renderContents(GuiGraphicsExtractor drawContext, int mouseX, int mouseY, float delta) {
             this.active = type.isEnabled.test(screen);
             this.visible = screen.fabric_hasAdditionalPages();
 

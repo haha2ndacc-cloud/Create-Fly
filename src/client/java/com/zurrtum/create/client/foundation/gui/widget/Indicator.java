@@ -3,7 +3,7 @@ package com.zurrtum.create.client.foundation.gui.widget;
 import com.google.common.collect.ImmutableList;
 import com.zurrtum.create.client.catnip.gui.widget.AbstractSimiWidget;
 import com.zurrtum.create.client.foundation.gui.AllGuiTextures;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class Indicator extends AbstractSimiWidget {
@@ -17,7 +17,7 @@ public class Indicator extends AbstractSimiWidget {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         if (!visible) {
             return;
         }

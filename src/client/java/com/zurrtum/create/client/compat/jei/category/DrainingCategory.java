@@ -20,7 +20,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.types.IRecipeType;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.DefaultCustomIngredients;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -120,7 +120,7 @@ public class DrainingCategory extends CreateCategory<RecipeHolder<EmptyingRecipe
     public void draw(
         RecipeHolder<EmptyingRecipe> entry,
         IRecipeSlotsView recipeSlotsView,
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         double mouseX,
         double mouseY
     ) {

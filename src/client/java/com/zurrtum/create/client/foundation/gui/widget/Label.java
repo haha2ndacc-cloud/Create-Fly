@@ -3,7 +3,7 @@ package com.zurrtum.create.client.foundation.gui.widget;
 import com.zurrtum.create.client.catnip.gui.widget.AbstractSimiWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jspecify.annotations.Nullable;
@@ -68,7 +68,7 @@ public class Label extends AbstractSimiWidget {
     }
 
     @Override
-    protected void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void doRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         if (text == null || text.getString().isEmpty()) {
             return;
         }

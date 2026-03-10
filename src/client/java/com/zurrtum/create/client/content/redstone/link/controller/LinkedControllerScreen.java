@@ -14,7 +14,7 @@ import com.zurrtum.create.content.redstone.link.controller.LinkedControllerMenu;
 import com.zurrtum.create.foundation.gui.menu.MenuType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -102,7 +102,7 @@ public class LinkedControllerScreen extends AbstractSimiContainerScreen<LinkedCo
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphicsExtractor graphics, float partialTicks, int mouseX, int mouseY) {
         int invX = getLeftOfCentered(PLAYER_INVENTORY.getWidth());
         int invY = topPos + background.getHeight() + 4;
         renderPlayerInventory(graphics, invX, invY);
@@ -121,7 +121,7 @@ public class LinkedControllerScreen extends AbstractSimiContainerScreen<LinkedCo
     }
 
     @Override
-    protected void renderTooltip(GuiGraphics graphics, int x, int y) {
+    protected void renderTooltip(GuiGraphicsExtractor graphics, int x, int y) {
         if (!menu.getCarried().isEmpty() || hoveredSlot == null || hoveredSlot.container == menu.playerInventory) {
             super.renderTooltip(graphics, x, y);
             return;

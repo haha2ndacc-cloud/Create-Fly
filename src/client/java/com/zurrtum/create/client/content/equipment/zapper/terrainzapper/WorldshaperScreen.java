@@ -16,7 +16,7 @@ import com.zurrtum.create.infrastructure.component.PlacementOptions;
 import com.zurrtum.create.infrastructure.component.TerrainBrushes;
 import com.zurrtum.create.infrastructure.component.TerrainTools;
 import com.zurrtum.create.infrastructure.packet.c2s.ConfigureWorldshaperPacket;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -148,13 +148,16 @@ public class WorldshaperScreen extends ZapperScreen {
             Label label = new Label(x + 65 + 20 * index, y + 45, CommonComponents.EMPTY).withShadow();
 
             final int finalIndex = index;
-            ScrollInput input = new ScrollInput(x + 56 + 20 * index, y + 40, 18, 18).withRange(
-                currentBrush.getMin(index),
-                currentBrush.getMax(index) + 1
-            ).writingTo(label).titled(getParamLabel(currentBrush, index).plainCopy()).calling(state -> {
-                currentBrushParams[finalIndex] = state;
-                label.setX(x + 65 + 20 * finalIndex - font.width(label.text) / 2);
-            });
+            ScrollInput input = new ScrollInput(
+                x + 56 + 20 * index,
+                y + 40,
+                18,
+                18
+            ).withRange(currentBrush.getMin(index), currentBrush.getMax(index) + 1).writingTo(label)
+                .titled(getParamLabel(currentBrush, index).plainCopy()).calling(state -> {
+                    currentBrushParams[finalIndex] = state;
+                    label.setX(x + 65 + 20 * finalIndex - font.width(label.text) / 2);
+                });
             input.setState(currentBrushParams[index]);
             input.onChanged();
 
@@ -277,7 +280,7 @@ public class WorldshaperScreen extends ZapperScreen {
     }
 
     @Override
-    protected void drawOnBackground(GuiGraphics graphics, int x, int y) {
+    protected void drawOnBackground(GuiGraphicsExtractor graphics, int x, int y) {
         super.drawOnBackground(graphics, x, y);
 
         Brush currentBrush = this.currentBrush.get();

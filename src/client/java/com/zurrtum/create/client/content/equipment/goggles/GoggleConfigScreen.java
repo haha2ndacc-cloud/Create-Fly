@@ -6,7 +6,7 @@ import com.zurrtum.create.client.foundation.utility.CreateLang;
 import com.zurrtum.create.client.infrastructure.config.AllConfigs;
 import com.zurrtum.create.client.infrastructure.config.CClient;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -99,7 +99,7 @@ public class GoggleConfigScreen extends AbstractSimiScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         int posX = this.width / 2 + offsetX;
         int posY = this.height / 2 + offsetY;
         graphics.renderTooltip(

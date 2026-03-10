@@ -1,7 +1,7 @@
 package com.zurrtum.create.client.content.trains.entity;
 
 import com.zurrtum.create.content.trains.entity.TrainIconType;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
@@ -12,7 +12,7 @@ public record TrainIcon(TrainIconType type, Identifier sheet, int x, int y) {
     public static final int ENGINE = -1;
     public static final int FLIPPED_ENGINE = -2;
 
-    public int render(int lengthOrEngine, GuiGraphics graphics, int x, int y) {
+    public int render(int lengthOrEngine, GuiGraphicsExtractor graphics, int x, int y) {
         int offset = getIconOffset(lengthOrEngine);
         int width = getIconWidth(lengthOrEngine);
         graphics.blit(RenderPipelines.GUI_TEXTURED, sheet, x, y, this.x + offset, this.y, width, 10, 256, 256);

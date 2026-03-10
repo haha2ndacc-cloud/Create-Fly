@@ -19,7 +19,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.Gui.ContextualInfo;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -37,7 +37,7 @@ public class GuiMixin {
     private Minecraft minecraft;
 
     @Inject(method = "renderCrosshair(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V", at = @At("TAIL"))
-    private void renderCrosshair(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+    private void renderCrosshair(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
         PlacementClient.onRenderCrosshairOverlay(
             minecraft,
             context,
@@ -46,7 +46,7 @@ public class GuiMixin {
     }
 
     @Inject(method = "renderItemHotbar(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V", at = @At("TAIL"))
-    private void renderHotbar(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+    private void renderHotbar(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
         Create.VALUE_SETTINGS_HANDLER.render(minecraft, context);
         TrackPlacementOverlay.render(minecraft, context);
         GoggleOverlayRenderer.renderOverlay(minecraft, context, tickCounter);
@@ -58,7 +58,7 @@ public class GuiMixin {
 
     @Inject(method = "renderAirBubbles(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/entity/player/Player;III)V", at = @At("TAIL"))
     private void renderAirBubbles(
-        GuiGraphics context,
+        GuiGraphicsExtractor context,
         Player player,
         int heartCount,
         int top,
@@ -72,7 +72,7 @@ public class GuiMixin {
     private ContextualInfo renderMainHud(
         Gui instance,
         Operation<ContextualInfo> original,
-        @Local(argsOnly = true) GuiGraphics context,
+        @Local(argsOnly = true) GuiGraphicsExtractor context,
         @Local(argsOnly = true) DeltaTracker tickCounter
     ) {
         if (TrainHUD.renderOverlay(minecraft, context, tickCounter)) {
@@ -84,7 +84,7 @@ public class GuiMixin {
     @WrapOperation(method = "renderCameraOverlays(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;renderTextureOverlay(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/resources/Identifier;F)V", ordinal = 0))
     private void renderMiscOverlays(
         Gui instance,
-        GuiGraphics context,
+        GuiGraphicsExtractor context,
         Identifier texture,
         float opacity,
         Operation<Void> original,

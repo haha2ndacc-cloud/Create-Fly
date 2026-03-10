@@ -14,7 +14,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -112,7 +112,7 @@ public class FanBlastingCategory extends CreateCategory<RecipeHolder<? extends S
     public void draw(
         RecipeHolder<? extends SingleItemRecipe> entry,
         IRecipeSlotsView recipeSlotsView,
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         double mouseX,
         double mouseY
     ) {

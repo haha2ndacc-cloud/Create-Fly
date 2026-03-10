@@ -18,7 +18,7 @@ import com.zurrtum.create.infrastructure.packet.c2s.LinkedControllerStopLecternP
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -241,7 +241,7 @@ public class LinkedControllerClientHandler {
         controls.forEach(kb -> kb.setDown(false));
     }
 
-    public static void renderOverlay(Minecraft mc, GuiGraphics guiGraphics) {
+    public static void renderOverlay(Minecraft mc, GuiGraphicsExtractor guiGraphics) {
         if (MODE != Mode.BIND) {
             return;
         }

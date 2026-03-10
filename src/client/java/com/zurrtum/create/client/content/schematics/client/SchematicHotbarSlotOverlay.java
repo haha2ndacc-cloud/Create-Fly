@@ -3,13 +3,13 @@ package com.zurrtum.create.client.content.schematics.client;
 import com.mojang.blaze3d.platform.Window;
 import com.zurrtum.create.client.foundation.gui.AllGuiTextures;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix3x2fStack;
 
 public class SchematicHotbarSlotOverlay {
 
-    public void renderOn(Minecraft mc, GuiGraphics graphics, int slot, float tickProgress) {
+    public void renderOn(Minecraft mc, GuiGraphicsExtractor graphics, int slot, float tickProgress) {
         Window mainWindow = mc.getWindow();
         int x = (mainWindow.getGuiScaledWidth() / 2 - 88) + 20 * slot;
         int y = mainWindow.getGuiScaledHeight() - 19;

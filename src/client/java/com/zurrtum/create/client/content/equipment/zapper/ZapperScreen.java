@@ -10,7 +10,7 @@ import com.zurrtum.create.client.foundation.gui.widget.IconButton;
 import com.zurrtum.create.client.foundation.utility.CreateLang;
 import com.zurrtum.create.content.equipment.zapper.ConfigureZapperPacket;
 import com.zurrtum.create.infrastructure.component.PlacementPatterns;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -115,7 +115,7 @@ public abstract class ZapperScreen extends AbstractSimiScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         int x = guiLeft;
         int y = guiTop;
 
@@ -123,7 +123,7 @@ public abstract class ZapperScreen extends AbstractSimiScreen {
         drawOnBackground(graphics, x, y);
     }
 
-    protected void drawOnBackground(GuiGraphics graphics, int x, int y) {
+    protected void drawOnBackground(GuiGraphicsExtractor graphics, int x, int y) {
         graphics.drawString(font, title, x + (background.getWidth() - font.width(title)) / 2, y + 4, 0xFF54214F, false);
     }
 

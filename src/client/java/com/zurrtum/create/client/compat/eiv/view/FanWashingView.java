@@ -9,7 +9,7 @@ import de.crafty.eiv.common.api.recipe.IEivRecipeViewType;
 import de.crafty.eiv.common.recipe.inventory.RecipeViewMenu;
 import de.crafty.eiv.common.recipe.inventory.RecipeViewScreen;
 import de.crafty.eiv.common.recipe.inventory.SlotContent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.level.material.Fluids;
 import org.joml.Matrix3x2f;
 
@@ -77,7 +77,7 @@ public class FanWashingView extends CreateView {
     public void renderRecipe(
         RecipeViewScreen screen,
         RecipePosition position,
-        GuiGraphics context,
+        GuiGraphicsExtractor context,
         int mouseX,
         int mouseY,
         float partialTicks

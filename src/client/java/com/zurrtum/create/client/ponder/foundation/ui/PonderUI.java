@@ -39,7 +39,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.core.BlockPos;
@@ -572,7 +572,7 @@ public class PonderUI extends AbstractPonderScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.renderWindow(graphics, mouseX, mouseY, partialTicks);
         partialTicks = getPartialTicks();
         renderVisibleScenes(
@@ -584,7 +584,7 @@ public class PonderUI extends AbstractPonderScreen {
         renderWidgets(graphics, mouseX, mouseY, identifyMode ? ponderPartialTicksPaused : partialTicks);
     }
 
-    protected void renderVisibleScenes(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderVisibleScenes(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         Window window = graphics.minecraft.getWindow();
         float uiTicks = lazyIndex.getValue(AnimationTickHolder.getPartialTicksUI(minecraft.getDeltaTracker()));// TODO - Checkover
         renderScene(graphics, 0, window, index, partialTicks, uiTicks);
@@ -595,7 +595,14 @@ public class PonderUI extends AbstractPonderScreen {
         }
     }
 
-    protected void renderScene(GuiGraphics graphics, int id, Window window, int i, float partialTicks, float uiTicks) {
+    protected void renderScene(
+        GuiGraphicsExtractor graphics,
+        int id,
+        Window window,
+        int i,
+        float partialTicks,
+        float uiTicks
+    ) {
         double diff = i - uiTicks;
         double slide = Mth.lerp(diff * diff, 200, 600) * diff;
         PonderScene scene = scenes.get(i);
@@ -613,7 +620,7 @@ public class PonderUI extends AbstractPonderScreen {
         ));
     }
 
-    protected void renderWidgets(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWidgets(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         float fade = fadeIn.getValue(partialTicks);
         float lazyIndexValue = lazyIndex.getValue(partialTicks);
         float indexDiff = lazyIndexValue - index;
@@ -747,7 +754,7 @@ public class PonderUI extends AbstractPonderScreen {
         renderHoverTooltips(graphics, tooltipColor);
     }
 
-    private void renderHoverTooltips(GuiGraphics graphics, int tooltipColor) {
+    private void renderHoverTooltips(GuiGraphicsExtractor graphics, int tooltipColor) {
         int tooltipY = height - 16;
         if (scan.isHoveredOrFocused()) {
             graphics.drawCenteredString(
@@ -808,7 +815,7 @@ public class PonderUI extends AbstractPonderScreen {
         }
     }
 
-    private void renderNextUp(GuiGraphics graphics, float partialTicks, @Nullable PonderScene nextScene) {
+    private void renderNextUp(GuiGraphicsExtractor graphics, float partialTicks, @Nullable PonderScene nextScene) {
         if (!getActiveScene().isFinished()) {
             return;
         }
@@ -833,7 +840,12 @@ public class PonderUI extends AbstractPonderScreen {
         poseStack.popMatrix();
     }
 
-    private void renderSceneOverlay(GuiGraphics graphics, float partialTicks, float lazyIndexValue, float indexDiff) {
+    private void renderSceneOverlay(
+        GuiGraphicsExtractor graphics,
+        float partialTicks,
+        float lazyIndexValue,
+        float indexDiff
+    ) {
         // Scene overlay
         float scenePT = skipCooling > 0 ? 0 : partialTicks;
         renderOverlay(graphics, index, scenePT);
@@ -843,7 +855,7 @@ public class PonderUI extends AbstractPonderScreen {
     }
 
     private void renderSceneInformation(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         float fade,
         float indexDiff,
         PonderScene activeScene,
@@ -939,7 +951,7 @@ public class PonderUI extends AbstractPonderScreen {
         poseStack.popMatrix();
     }
 
-    private void renderOverlay(GuiGraphics graphics, int i, float partialTicks) {
+    private void renderOverlay(GuiGraphicsExtractor graphics, int i, float partialTicks) {
         if (identifyMode) {
             return;
         }
@@ -1006,7 +1018,7 @@ public class PonderUI extends AbstractPonderScreen {
 
     @SuppressWarnings("DefaultNotLastCaseInSwitch")
     public static void renderSpeechBox(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         int x,
         int y,
         int w,

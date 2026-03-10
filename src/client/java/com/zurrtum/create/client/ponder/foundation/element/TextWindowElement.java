@@ -10,7 +10,7 @@ import com.zurrtum.create.client.ponder.foundation.PonderScene;
 import com.zurrtum.create.client.ponder.foundation.PonderScene.SceneTransform;
 import com.zurrtum.create.client.ponder.foundation.ui.PonderUI;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
@@ -120,7 +120,13 @@ public class TextWindowElement extends AnimatedOverlayElementBase {
     }
 
     @Override
-    public void render(PonderScene scene, PonderUI screen, GuiGraphics graphics, float partialTicks, float fade) {
+    public void render(
+        PonderScene scene,
+        PonderUI screen,
+        GuiGraphicsExtractor graphics,
+        float partialTicks,
+        float fade
+    ) {
         if (bakedText == null) {
             bakedText = textGetter.get();
         }

@@ -7,7 +7,7 @@ import com.zurrtum.create.client.catnip.gui.render.BreadcrumbArrowRenderState;
 import com.zurrtum.create.client.catnip.gui.render.GradientRectRenderState;
 import com.zurrtum.create.client.catnip.gui.render.RadialSectorRenderState;
 import com.zurrtum.create.client.catnip.gui.render.TexturedQuadRenderState;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
@@ -39,11 +39,19 @@ public class UIRenderHelper {
      * @param breadth total width of the streak
      * @param length  total length of the streak
      */
-    public static void streak(GuiGraphics graphics, float angle, int x, int y, int breadth, int length) {
+    public static void streak(GuiGraphicsExtractor graphics, float angle, int x, int y, int breadth, int length) {
         streak(graphics, angle, x, y, breadth, length, COLOR_STREAK);
     }
 
-    public static void streak(GuiGraphics graphics, float angle, int x, int y, int breadth, int length, Color c) {
+    public static void streak(
+        GuiGraphicsExtractor graphics,
+        float angle,
+        int x,
+        int y,
+        int breadth,
+        int length,
+        Color c
+    ) {
         Color color = c.copy().setImmutable();
         Color c1 = color.scaleAlpha(0.625f);
         Color c2 = color.scaleAlpha(0.5f);
@@ -60,7 +68,15 @@ public class UIRenderHelper {
         poseStack.popMatrix();
     }
 
-    private static void streak(GuiGraphics graphics, int width, int height, Color c1, Color c2, Color c3, Color c4) {
+    private static void streak(
+        GuiGraphicsExtractor graphics,
+        int width,
+        int height,
+        Color c1,
+        Color c2,
+        Color c3,
+        Color c4
+    ) {
         if (NavigatableSimiScreen.isCurrentlyRenderingPreviousScreen()) {
             return;
         }
@@ -80,10 +96,10 @@ public class UIRenderHelper {
     }
 
     /**
-     * @see #angledGradient(GuiGraphics, float, int, int, float, float, Color, Color)
+     * @see #angledGradient(GuiGraphicsExtractor, float, int, int, float, float, Color, Color)
      */
     public static void angledGradient(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         float angle,
         int x,
         int y,
@@ -103,7 +119,7 @@ public class UIRenderHelper {
      * @param breadth    the total width of the gradient
      */
     public static void angledGradient(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         float angle,
         int x,
         int y,
@@ -125,7 +141,7 @@ public class UIRenderHelper {
     }
 
     public static void drawGradientRect(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         float left,
         float top,
         float right,
@@ -145,7 +161,7 @@ public class UIRenderHelper {
     }
 
     public static void breadcrumbArrow(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         int x,
         int y,
         int width,
@@ -158,7 +174,7 @@ public class UIRenderHelper {
 
     // draws a wide chevron-style breadcrumb arrow pointing left
     public static void breadcrumbArrow(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         int x,
         int y,
         int width,
@@ -176,7 +192,14 @@ public class UIRenderHelper {
         poseStack.popMatrix();
     }
 
-    private static void breadcrumbArrow(GuiGraphics graphics, int width, int height, int indent, Color c1, Color c2) {
+    private static void breadcrumbArrow(
+        GuiGraphicsExtractor graphics,
+        int width,
+        int height,
+        int indent,
+        Color c1,
+        Color c2
+    ) {
 
         /*
          * 0,0       x1,y0 ********************* x2,y0 ***** x3,y0
@@ -229,7 +252,7 @@ public class UIRenderHelper {
      * @param arcAngle length of the sector arc
      */
     public static void drawRadialSector(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         float innerRadius,
         float outerRadius,
         float startAngle,
@@ -289,7 +312,7 @@ public class UIRenderHelper {
 
     //just like AbstractGui#drawTexture, but with a color at every vertex
     public static void drawColoredTexture(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         TextureSetup texture,
         Color c,
         int x,
@@ -303,7 +326,7 @@ public class UIRenderHelper {
     }
 
     public static void drawColoredTexture(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         TextureSetup texture,
         Color c,
         int x,
@@ -332,7 +355,14 @@ public class UIRenderHelper {
         );
     }
 
-    public static void drawStretched(GuiGraphics graphics, int left, int top, int w, int h, TextureSheetSegment tex) {
+    public static void drawStretched(
+        GuiGraphicsExtractor graphics,
+        int left,
+        int top,
+        int w,
+        int h,
+        TextureSheetSegment tex
+    ) {
         drawTexturedQuad(
             graphics,
             tex.bind(),
@@ -348,7 +378,14 @@ public class UIRenderHelper {
         );
     }
 
-    public static void drawCropped(GuiGraphics graphics, int left, int top, int w, int h, TextureSheetSegment tex) {
+    public static void drawCropped(
+        GuiGraphicsExtractor graphics,
+        int left,
+        int top,
+        int w,
+        int h,
+        TextureSheetSegment tex
+    ) {
         drawTexturedQuad(
             graphics,
             tex.bind(),
@@ -365,7 +402,7 @@ public class UIRenderHelper {
     }
 
     private static void drawColoredTexture(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         TextureSetup texture,
         Color c,
         int left,
@@ -395,7 +432,7 @@ public class UIRenderHelper {
     }
 
     private static void drawTexturedQuad(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         TextureSetup texture,
         Color c,
         int left,

@@ -41,7 +41,7 @@ import com.zurrtum.create.infrastructure.packet.c2s.GhostItemSubmitPacket;
 import com.zurrtum.create.infrastructure.packet.c2s.ScheduleEditPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.input.KeyEvent;
@@ -437,7 +437,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         partialTicks = minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false);
 
         if (menu.slotsActive) {
@@ -450,7 +450,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
         }
     }
 
-    protected void renderSchedule(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderSchedule(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         Matrix3x2fStack matrixStack = graphics.pose();
         UIRenderHelper.drawStretched(graphics, leftPos + 33, topPos + 16, 3, 173, AllGuiTextures.SCHEDULE_STRIP_DARK);
 
@@ -565,7 +565,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
     }
 
     public int renderScheduleEntry(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         ScheduleEntry entry,
         int yOffset,
         int mouseX,
@@ -629,7 +629,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
     }
 
     public void renderScheduleConditions(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         ScheduleEntry entry,
         int yOffset,
         int mouseX,
@@ -725,7 +725,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
     }
 
     protected int renderInput(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         Pair<ItemStack, @Nullable Component> pair,
         int x,
         int y,
@@ -775,7 +775,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
     private Component rClickToDelete = CreateLang.translateDirect("gui.schedule.rmb_remove")
         .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
 
-    public boolean action(@Nullable GuiGraphics graphics, double mouseX, double mouseY, int click) {
+    public boolean action(@Nullable GuiGraphicsExtractor graphics, double mouseX, double mouseY, int click) {
         if (editingCondition != null || editingDestination != null) {
             return false;
         }
@@ -1047,7 +1047,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
         return true;
     }
 
-    private void renderActionTooltip(@Nullable GuiGraphics graphics, List<Component> tooltip, int mx, int my) {
+    private void renderActionTooltip(@Nullable GuiGraphicsExtractor graphics, List<Component> tooltip, int mx, int my) {
         if (graphics != null) {
             graphics.setTooltipForNextFrame(font, tooltip, Optional.empty(), mx, my);
         }
@@ -1184,7 +1184,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
     }
 
     @Override
-    protected void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         Matrix3x2fStack matrixStack = graphics.pose();
         if (destinationSuggestions != null) {
             matrixStack.pushMatrix();
@@ -1229,7 +1229,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float pPartialTick, int pMouseX, int pMouseY) {
+    protected void renderBg(GuiGraphicsExtractor graphics, float pPartialTick, int pMouseX, int pMouseY) {
         pPartialTick = AnimationTickHolder.getPartialTicksUI(minecraft.getDeltaTracker());
         AllGuiTextures.SCHEDULE.render(graphics, leftPos, topPos);
         FormattedCharSequence formattedcharsequence = title.getVisualOrderText();

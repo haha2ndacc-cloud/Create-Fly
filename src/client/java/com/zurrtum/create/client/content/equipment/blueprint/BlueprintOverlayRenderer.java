@@ -19,7 +19,7 @@ import com.zurrtum.create.infrastructure.component.ShoppingList;
 import com.zurrtum.create.infrastructure.packet.c2s.BlueprintPreviewRequestPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
@@ -227,7 +227,7 @@ public class BlueprintOverlayRenderer {
         }
     }
 
-    public static void renderOverlay(Minecraft mc, GuiGraphics guiGraphics) {
+    public static void renderOverlay(Minecraft mc, GuiGraphicsExtractor guiGraphics) {
         if (mc.screen != null) {
             return;
         }
@@ -342,7 +342,7 @@ public class BlueprintOverlayRenderer {
     }
 
     public static void drawItemStack(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         Minecraft mc,
         int x,
         int y,

@@ -21,7 +21,7 @@ import com.zurrtum.create.content.kinetics.base.RotatedPillarKineticBlock;
 import com.zurrtum.create.content.kinetics.transmission.sequencer.SequencedGearshiftBlock;
 import com.zurrtum.create.content.redstone.DirectedDirectionalBlock;
 import com.zurrtum.create.infrastructure.packet.c2s.RadialWrenchMenuSubmitPacket;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.player.LocalPlayer;
@@ -179,7 +179,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         int x = this.width / 2;
         int y = this.height / 2;
 
@@ -241,7 +241,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 
     }
 
-    private void renderRadialSectors(GuiGraphics graphics) {
+    private void renderRadialSectors(GuiGraphicsExtractor graphics) {
         int sectors = allStates.size();
         if (sectors < 2) {
             return;
@@ -367,7 +367,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 
     }
 
-    private void renderDirectionIndicator(GuiGraphics graphics, double theta) {
+    private void renderDirectionIndicator(GuiGraphicsExtractor graphics, double theta) {
         Matrix3x2fStack poseStack = graphics.pose();
         poseStack.pushMatrix();
         poseStack.rotate((float) -theta);
@@ -390,7 +390,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         Color color = BACKGROUND_COLOR.scaleAlpha(Math.min(
             1,
             (ticksOpen + AnimationTickHolder.getPartialTicks()) / 20f

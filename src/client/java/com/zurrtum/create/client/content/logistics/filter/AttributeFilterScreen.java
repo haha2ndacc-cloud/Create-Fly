@@ -18,7 +18,7 @@ import com.zurrtum.create.infrastructure.packet.c2s.FilterScreenPacket;
 import com.zurrtum.create.infrastructure.packet.c2s.FilterScreenPacket.Option;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -201,7 +201,7 @@ public class AttributeFilterScreen extends AbstractFilterScreen<AttributeFilterM
     }
 
     @Override
-    public void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         ItemStack stack = menu.ghostInventory.getItem(1);
         graphics.renderItemDecorations(
             font,
@@ -224,7 +224,7 @@ public class AttributeFilterScreen extends AbstractFilterScreen<AttributeFilterM
     }
 
     @Override
-    protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+    protected void renderTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         if (menu.getCarried().isEmpty() && hoveredSlot != null && hoveredSlot.hasItem()) {
             if (hoveredSlot.index == 37) {
                 graphics.setComponentTooltipForNextFrame(font, selectedAttributes, mouseX, mouseY);

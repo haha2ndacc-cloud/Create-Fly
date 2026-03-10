@@ -2,7 +2,7 @@ package com.zurrtum.create.client.foundation.gui;
 
 import com.mojang.blaze3d.opengl.GlStateManager;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -29,7 +29,7 @@ public class RemovedGuiUtils {
     }
 
     public static void drawHoveringText(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         List<? extends FormattedText> textLines,
         int mouseX,
         int mouseY,
@@ -54,7 +54,7 @@ public class RemovedGuiUtils {
     }
 
     public static void drawHoveringText(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         List<? extends FormattedText> textLines,
         int mouseX,
         int mouseY,
@@ -84,7 +84,7 @@ public class RemovedGuiUtils {
 
     public static void drawHoveringText(
         final ItemStack stack,
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         List<? extends FormattedText> textLines,
         int mouseX,
         int mouseY,
@@ -111,7 +111,7 @@ public class RemovedGuiUtils {
 
     public static void drawHoveringText(
         final ItemStack stack,
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         List<? extends FormattedText> textLines,
         int mouseX,
         int mouseY,

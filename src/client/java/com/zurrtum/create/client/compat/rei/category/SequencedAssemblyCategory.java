@@ -25,7 +25,7 @@ import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -151,7 +151,7 @@ public class SequencedAssemblyCategory extends CreateCategory<SequencedAssemblyD
                 noBackground[i] = true;
             }
         }
-        widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
+        widgets.add(Widgets.createDrawableWidget((GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) -> {
             for (int i = 0; i < size; i++) {
                 if (noBackground[i]) {
                     continue;
@@ -193,7 +193,7 @@ public class SequencedAssemblyCategory extends CreateCategory<SequencedAssemblyD
                 slots.add(slot);
             }
         }
-        widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
+        widgets.add(Widgets.createDrawableWidget((GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) -> {
             Font textRenderer = graphics.minecraft.font;
             for (int i = 0; i < size; i++) {
                 Point point = points.get(i);
@@ -251,6 +251,6 @@ public class SequencedAssemblyCategory extends CreateCategory<SequencedAssemblyD
     }
 
     public interface SequencedRenderer {
-        void render(GuiGraphics graphics, int i, Point point, @Nullable EntryStack<?> stack);
+        void render(GuiGraphicsExtractor graphics, int i, Point point, @Nullable EntryStack<?> stack);
     }
 }

@@ -20,7 +20,7 @@ import com.zurrtum.create.content.equipment.symmetryWand.mirror.PlaneMirror;
 import com.zurrtum.create.content.equipment.symmetryWand.mirror.TriplePlaneMirror;
 import com.zurrtum.create.infrastructure.component.SymmetryMirror;
 import com.zurrtum.create.infrastructure.packet.c2s.ConfigureSymmetryWandPacket;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -161,7 +161,7 @@ public class SymmetryWandScreen extends AbstractSimiScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         int x = guiLeft;
         int y = guiTop;
 

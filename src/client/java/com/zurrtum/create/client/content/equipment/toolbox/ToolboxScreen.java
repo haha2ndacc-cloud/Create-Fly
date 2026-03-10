@@ -20,7 +20,7 @@ import com.zurrtum.create.content.equipment.toolbox.ToolboxMenu;
 import com.zurrtum.create.foundation.gui.menu.MenuType;
 import com.zurrtum.create.infrastructure.packet.c2s.ToolboxDisposeAllPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -181,14 +181,14 @@ public class ToolboxScreen extends AbstractSimiContainerScreen<ToolboxMenu> {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         menu.renderPass = true;
         super.render(graphics, mouseX, mouseY, partialTicks);
         menu.renderPass = false;
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphicsExtractor graphics, float partialTicks, int mouseX, int mouseY) {
         partialTicks = AnimationTickHolder.getPartialTicksUI(minecraft.getDeltaTracker());
         int x = this.leftPos + imageWidth - BG.getWidth();
 
@@ -234,7 +234,7 @@ public class ToolboxScreen extends AbstractSimiContainerScreen<ToolboxMenu> {
     }
 
     @Override
-    protected void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         if (hoveredToolboxSlot != null) {
             hoveredSlot = hoveredToolboxSlot;
         }

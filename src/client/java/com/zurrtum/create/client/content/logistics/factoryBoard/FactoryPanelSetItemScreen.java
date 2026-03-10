@@ -13,7 +13,7 @@ import com.zurrtum.create.content.logistics.factoryBoard.FactoryPanelSetItemMenu
 import com.zurrtum.create.content.logistics.factoryBoard.ServerFactoryPanelBehaviour;
 import com.zurrtum.create.foundation.gui.menu.MenuType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -79,7 +79,7 @@ public class FactoryPanelSetItemScreen extends AbstractSimiContainerScreen<Facto
     }
 
     @Override
-    protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
+    protected void renderBg(GuiGraphicsExtractor pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
         AllGuiTextures.FACTORY_GAUGE_SET_ITEM.render(pGuiGraphics, leftPos - 5, topPos);
         renderPlayerInventory(pGuiGraphics, leftPos + 5, topPos + 94);
 

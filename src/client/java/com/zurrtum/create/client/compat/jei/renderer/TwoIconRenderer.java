@@ -1,7 +1,7 @@
 package com.zurrtum.create.client.compat.jei.renderer;
 
 import mezz.jei.api.gui.drawable.IDrawable;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix3x2fStack;
@@ -22,7 +22,7 @@ public record TwoIconRenderer(ItemStack icon, ItemStack subIcon) implements IDra
     }
 
     @Override
-    public void draw(GuiGraphics graphics, int x, int y) {
+    public void draw(GuiGraphicsExtractor graphics, int x, int y) {
         Matrix3x2fStack matrices = graphics.pose();
         matrices.pushMatrix();
         matrices.translate(x, y);

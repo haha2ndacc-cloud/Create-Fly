@@ -11,7 +11,7 @@ import de.crafty.eiv.common.api.recipe.IEivRecipeViewType;
 import de.crafty.eiv.common.api.recipe.IEivViewRecipe;
 import de.crafty.eiv.common.recipe.inventory.RecipeViewMenu;
 import de.crafty.eiv.common.recipe.inventory.RecipeViewScreen;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -105,7 +105,12 @@ public abstract class RecipeViewScreenMixin extends AbstractContainerScreen<Reci
     }
 
     @Inject(method = "renderInvalidSlots(Lnet/minecraft/client/gui/GuiGraphics;I)V", at = @At(value = "INVOKE", target = "Lde/crafty/eiv/common/recipe/inventory/RecipeViewScreen;getMenu()Lnet/minecraft/world/inventory/AbstractContainerMenu;", ordinal = 0), cancellable = true)
-    private void renderInvalidSlots(GuiGraphics guiGraphics, int displayId, CallbackInfo ci, @Local Button button) {
+    private void renderInvalidSlots(
+        GuiGraphicsExtractor guiGraphics,
+        int displayId,
+        CallbackInfo ci,
+        @Local Button button
+    ) {
         if (button instanceof RecipeButton recipeButton) {
             recipeButton.renderInvalidSlots(guiGraphics, displayId);
             ci.cancel();

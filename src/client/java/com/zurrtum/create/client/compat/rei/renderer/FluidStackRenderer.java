@@ -12,7 +12,7 @@ import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer;
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
 import me.shedaniel.rei.api.client.gui.widgets.TooltipContext;
 import me.shedaniel.rei.api.common.entry.EntryStack;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
@@ -29,7 +29,7 @@ public record FluidStackRenderer(EntryRenderer<FluidStack> origin) implements En
     @Override
     public void render(
         EntryStack<FluidStack> entry,
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         Rectangle bounds,
         int mouseX,
         int mouseY,

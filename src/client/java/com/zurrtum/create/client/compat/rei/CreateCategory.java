@@ -17,7 +17,7 @@ import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -26,26 +26,26 @@ import java.util.List;
 public abstract class CreateCategory<T extends Display> implements DisplayCategory<T> {
     public abstract void addWidgets(List<Widget> widgets, T display, Rectangle bounds);
 
-    public static void drawSlotBackground(GuiGraphics graphics, List<Point> points1, Point... points2) {
+    public static void drawSlotBackground(GuiGraphicsExtractor graphics, List<Point> points1, Point... points2) {
         for (Point point : points1) {
             AllGuiTextures.JEI_SLOT.render(graphics, point.x - 1, point.y - 1);
         }
         drawSlotBackground(graphics, points2);
     }
 
-    public static void drawSlotBackground(GuiGraphics graphics, Point... points) {
+    public static void drawSlotBackground(GuiGraphicsExtractor graphics, Point... points) {
         for (Point point : points) {
             AllGuiTextures.JEI_SLOT.render(graphics, point.x - 1, point.y - 1);
         }
     }
 
-    public static void drawChanceSlotBackground(GuiGraphics graphics, List<Point> points) {
+    public static void drawChanceSlotBackground(GuiGraphicsExtractor graphics, List<Point> points) {
         for (Point point : points) {
             AllGuiTextures.JEI_CHANCE_SLOT.render(graphics, point.x - 1, point.y - 1);
         }
     }
 
-    public static void drawChanceSlotBackground(GuiGraphics graphics, Point... points) {
+    public static void drawChanceSlotBackground(GuiGraphicsExtractor graphics, Point... points) {
         for (Point point : points) {
             AllGuiTextures.JEI_CHANCE_SLOT.render(graphics, point.x - 1, point.y - 1);
         }

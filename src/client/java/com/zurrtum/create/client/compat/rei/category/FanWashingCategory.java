@@ -16,7 +16,7 @@ import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluids;
@@ -78,7 +78,7 @@ public class FanWashingCategory extends CreateCategory<FanWashingDisplay> {
                 );
             }
         }
-        widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
+        widgets.add(Widgets.createDrawableWidget((GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) -> {
             drawSlotBackground(graphics, outputs, input);
             drawChanceSlotBackground(graphics, chances);
             AllGuiTextures.JEI_SHADOW.render(graphics, bounds.x + 51, bounds.y + 32);

@@ -2,7 +2,7 @@ package com.zurrtum.create.client.compat.eiv;
 
 import de.crafty.eiv.common.api.recipe.IEivRecipeViewType;
 import de.crafty.eiv.common.recipe.inventory.RecipeViewMenu.SlotDefinition;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +17,7 @@ public abstract class CreateCategory implements IEivRecipeViewType {
         button.setY(button.getY() - (getDisplayHeight() / 2));
     }
 
-    public void renderSubIcon(GuiGraphics context, int x, int y) {
+    public void renderSubIcon(GuiGraphicsExtractor context, int x, int y) {
         ItemStack subIcon = getSubIcon();
         if (subIcon != null) {
             Matrix3x2fStack matrices = context.pose();

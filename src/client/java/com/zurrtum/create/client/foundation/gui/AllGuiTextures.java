@@ -4,7 +4,7 @@ import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.catnip.gui.TextureSheetSegment;
 import com.zurrtum.create.client.catnip.gui.UIRenderHelper;
 import com.zurrtum.create.client.catnip.gui.element.ScreenElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
@@ -19,13 +19,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         99,
         214,
         97
-    ), TERRAINZAPPER("curiosities", 234, 103), TERRAINZAPPER_INACTIVE_PARAM(
-        "curiosities",
-        238,
-        0,
-        18,
-        18
-    ),
+    ), TERRAINZAPPER("curiosities", 234, 103), TERRAINZAPPER_INACTIVE_PARAM("curiosities", 238, 0, 18, 18),
 
     LOGO("logo", 256, 256), CURSEFORGE_LOGO("platform_icons/curseforge", 256, 256), MODRINTH_LOGO(
         "platform_icons/modrinth",
@@ -49,25 +43,19 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         119,
         213,
         99
-    ), SCHEMATICANNON_PROGRESS(
+    ), SCHEMATICANNON_PROGRESS("schematics_2", 76, 239, 114, 16), SCHEMATICANNON_CHECKLIST_PROGRESS(
         "schematics_2",
-        76,
-        239,
-        114,
-        16
-    ), SCHEMATICANNON_CHECKLIST_PROGRESS("schematics_2", 191, 240, 16, 14), SCHEMATICANNON_HIGHLIGHT(
-        "schematics_2",
-        1,
-        229,
-        26,
-        26
-    ), SCHEMATICANNON_FUEL("schematics_2", 28, 222, 47, 16), SCHEMATICANNON_FUEL_CREATIVE(
+        191,
+        240,
+        16,
+        14
+    ), SCHEMATICANNON_HIGHLIGHT("schematics_2", 1, 229, 26, 26), SCHEMATICANNON_FUEL(
         "schematics_2",
         28,
-        239,
+        222,
         47,
         16
-    ),
+    ), SCHEMATICANNON_FUEL_CREATIVE("schematics_2", 28, 239, 47, 16),
 
     THRESHOLD_SWITCH("threshold_switch", 182, 103), THRESHOLD_SWITCH_ITEMCOUNT_INPUTS(
         "threshold_switch",
@@ -75,13 +63,13 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         105,
         115,
         22
-    ), THRESHOLD_SWITCH_MISC_INPUTS(
+    ), THRESHOLD_SWITCH_MISC_INPUTS("threshold_switch", 0, 129, 115, 22), THRESHOLD_SWITCH_CURRENT_STATE(
         "threshold_switch",
         0,
-        129,
-        115,
-        22
-    ), THRESHOLD_SWITCH_CURRENT_STATE("threshold_switch", 0, 153, 24, 24),
+        153,
+        24,
+        24
+    ),
 
     FILTER("filters", 214, 99), ATTRIBUTE_FILTER("filters", 0, 99, 241, 85), PACKAGE_FILTER("filters_2", 0, 0, 218, 79),
 
@@ -91,13 +79,13 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         0,
         214,
         17
-    ), FROGPORT_SLOT(
+    ), FROGPORT_SLOT("frogport_and_mailbox", 26, 55, 18, 18), FROGPORT_EDIT_NAME(
         "frogport_and_mailbox",
-        26,
-        55,
-        18,
-        18
-    ), FROGPORT_EDIT_NAME("frogport_and_mailbox", 230, 3, 13, 13), FROGPORT_BG("frogport_and_mailbox", 0, 47, 220, 82),
+        230,
+        3,
+        13,
+        13
+    ), FROGPORT_BG("frogport_and_mailbox", 0, 47, 220, 82),
 
     TOOLBOX("toolbox", 188, 171), TOOLBELT_SLOT("widgets", 0, 68, 22, 22), TOOLBELT_SLOT_HIGHLIGHT(
         "widgets",
@@ -119,13 +107,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         130,
         20,
         24
-    ), TOOLBELT_SELECTED_OFF("widgets", 0, 155, 22, 22), TOOLBELT_SELECTED_ON(
-        "widgets",
-        22,
-        155,
-        22,
-        22
-    ),
+    ), TOOLBELT_SELECTED_OFF("widgets", 0, 155, 22, 22), TOOLBELT_SELECTED_ON("widgets", 22, 155, 22, 22),
 
     SEQUENCER("sequencer", 173, 161), SEQUENCER_INSTRUCTION("sequencer", 0, 16, 162, 22), SEQUENCER_DELAY(
         "sequencer",
@@ -133,13 +115,13 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         60,
         162,
         22
-    ), SEQUENCER_END("sequencer", 0, 82, 162, 22), SEQUENCER_EMPTY(
+    ), SEQUENCER_END("sequencer", 0, 82, 162, 22), SEQUENCER_EMPTY("sequencer", 0, 104, 162, 22), SEQUENCER_AWAIT(
         "sequencer",
         0,
-        104,
+        162,
         162,
         22
-    ), SEQUENCER_AWAIT("sequencer", 0, 162, 162, 22),
+    ),
 
     LINKED_CONTROLLER("curiosities_2", 179, 109), BLUEPRINT("curiosities_2", 0, 109, 179, 109),
 
@@ -157,13 +139,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         163,
         5,
         18
-    ), DATA_AREA("display_link", 3, 163, 1, 18), DATA_AREA_END(
-        "display_link",
-        5,
-        163,
-        2,
-        18
-    ),
+    ), DATA_AREA("display_link", 3, 163, 1, 18), DATA_AREA_END("display_link", 5, 163, 2, 18),
 
     SCHEDULE("schedule", 256, 226), SCHEDULE_CARD_DARK("schedule", 5, 233, 1, 1), SCHEDULE_CARD_MEDIUM(
         "schedule",
@@ -195,59 +171,67 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         239,
         6,
         16
-    ), SCHEDULE_CONDITION_LEFT_CLEAN(
+    ), SCHEDULE_CONDITION_LEFT_CLEAN("schedule", 147, 239, 2, 16), SCHEDULE_CONDITION_MIDDLE(
         "schedule",
-        147,
+        123,
+        239,
+        1,
+        16
+    ), SCHEDULE_CONDITION_ITEM("schedule", 125, 239, 18, 16), SCHEDULE_CONDITION_RIGHT(
+        "schedule",
+        144,
         239,
         2,
         16
-    ), SCHEDULE_CONDITION_MIDDLE("schedule", 123, 239, 1, 16), SCHEDULE_CONDITION_ITEM(
+    ), SCHEDULE_CONDITION_APPEND("schedule", 150, 245, 10, 10), SCHEDULE_SCROLL_LEFT(
         "schedule",
-        125,
-        239,
-        18,
-        16
-    ), SCHEDULE_CONDITION_RIGHT("schedule", 144, 239, 2, 16), SCHEDULE_CONDITION_APPEND(
-        "schedule",
-        150,
-        245,
-        10,
-        10
-    ), SCHEDULE_SCROLL_LEFT("schedule", 161, 247, 4, 8), SCHEDULE_SCROLL_RIGHT(
-        "schedule",
-        166,
+        161,
         247,
         4,
         8
-    ), SCHEDULE_STRIP_DARK("schedule", 5, 235, 3, 1), SCHEDULE_STRIP_LIGHT(
+    ), SCHEDULE_SCROLL_RIGHT("schedule", 166, 247, 4, 8), SCHEDULE_STRIP_DARK(
         "schedule",
         5,
-        237,
+        235,
         3,
         1
-    ), SCHEDULE_STRIP_WAIT("schedule", 1, 239, 11, 16), SCHEDULE_STRIP_TRAVEL(
+    ), SCHEDULE_STRIP_LIGHT("schedule", 5, 237, 3, 1), SCHEDULE_STRIP_WAIT(
         "schedule",
-        12,
+        1,
         239,
         11,
         16
-    ), SCHEDULE_STRIP_DOTTED("schedule", 23, 239, 11, 16), SCHEDULE_STRIP_END(
+    ), SCHEDULE_STRIP_TRAVEL("schedule", 12, 239, 11, 16), SCHEDULE_STRIP_DOTTED(
         "schedule",
-        34,
+        23,
         239,
         11,
         16
-    ), SCHEDULE_STRIP_ACTION("schedule", 209, 239, 11, 16), SCHEDULE_EDITOR(
+    ), SCHEDULE_STRIP_END("schedule", 34, 239, 11, 16), SCHEDULE_STRIP_ACTION(
+        "schedule",
+        209,
+        239,
+        11,
+        16
+    ), SCHEDULE_EDITOR("schedule_2", 256, 89), SCHEDULE_EDITOR_ADDITIONAL_SLOT(
         "schedule_2",
-        256,
-        89
-    ), SCHEDULE_EDITOR_ADDITIONAL_SLOT("schedule_2", 55, 47, 32, 18), SCHEDULE_EDITOR_INACTIVE_SLOT(
-        "schedule_2",
-        0,
-        91,
-        18,
+        55,
+        47,
+        32,
         18
-    ), SCHEDULE_POINTER("schedule", 185, 239, 21, 16), SCHEDULE_POINTER_OFFSCREEN("schedule", 171, 239, 13, 16),
+    ), SCHEDULE_EDITOR_INACTIVE_SLOT("schedule_2", 0, 91, 18, 18), SCHEDULE_POINTER(
+        "schedule",
+        185,
+        239,
+        21,
+        16
+    ), SCHEDULE_POINTER_OFFSCREEN(
+        "schedule",
+        171,
+        239,
+        13,
+        16
+    ),
 
     STATION("schedule_2", 0, 111, 200, 127), STATION_ASSEMBLING("assemble", 200, 178), STATION_TEXTBOX_TOP(
         "assemble",
@@ -273,13 +257,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         239,
         24,
         16
-    ), I_DISASSEMBLE_TRAIN("schedule_2", 39, 239, 24, 16), I_ASSEMBLE_TRAIN(
-        "schedule_2",
-        64,
-        239,
-        24,
-        16
-    ),
+    ), I_DISASSEMBLE_TRAIN("schedule_2", 39, 239, 24, 16), I_ASSEMBLE_TRAIN("schedule_2", 64, 239, 24, 16),
 
     ELEVATOR_CONTACT("display_link", 20, 172, 233, 82),
 
@@ -315,25 +293,25 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         9,
         1,
         1
-    ), VALUE_SETTINGS_OUTER_BG(
-        "value_settings",
-        80,
-        9,
-        1,
-        1
-    ), VALUE_SETTINGS_CURSOR_LEFT("value_settings", 0, 9, 3, 14), VALUE_SETTINGS_CURSOR(
-        "value_settings",
-        4,
-        9,
-        56,
-        14
-    ), VALUE_SETTINGS_CURSOR_RIGHT("value_settings", 61, 9, 3, 14), VALUE_SETTINGS_CURSOR_ICON(
+    ), VALUE_SETTINGS_OUTER_BG("value_settings", 80, 9, 1, 1), VALUE_SETTINGS_CURSOR_LEFT(
         "value_settings",
         0,
-        44,
-        22,
-        20
-    ), VALUE_SETTINGS_LABEL_BG("value_settings", 0, 31, 161, 11),
+        9,
+        3,
+        14
+    ), VALUE_SETTINGS_CURSOR("value_settings", 4, 9, 56, 14), VALUE_SETTINGS_CURSOR_RIGHT(
+        "value_settings",
+        61,
+        9,
+        3,
+        14
+    ), VALUE_SETTINGS_CURSOR_ICON("value_settings", 0, 44, 22, 20), VALUE_SETTINGS_LABEL_BG(
+        "value_settings",
+        0,
+        31,
+        161,
+        11
+    ),
 
     // HILO
     FACTORY_GAUGE_RECIPE("factory_gauge", 32, 0, 192, 96), FACTORY_GAUGE_RESTOCK(
@@ -342,13 +320,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         112,
         192,
         40
-    ), FACTORY_GAUGE_BOTTOM(
-        "factory_gauge",
-        32,
-        176,
-        200,
-        64
-    ), FACTORY_GAUGE_SET_ITEM("requester", 16, 160, 184, 88),
+    ), FACTORY_GAUGE_BOTTOM("factory_gauge", 32, 176, 200, 64), FACTORY_GAUGE_SET_ITEM("requester", 16, 160, 184, 88),
 
     STOCK_KEEPER_REQUEST_HEADER("stock_keeper", 0, 0, 256, 36), STOCK_KEEPER_REQUEST_BODY(
         "stock_keeper",
@@ -356,67 +328,73 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         48,
         256,
         20
-    ), STOCK_KEEPER_REQUEST_FOOTER(
+    ), STOCK_KEEPER_REQUEST_FOOTER("stock_keeper", 0, 80, 256, 80), STOCK_KEEPER_REQUEST_SEARCH(
         "stock_keeper",
-        0,
-        80,
-        256,
-        80
-    ), STOCK_KEEPER_REQUEST_SEARCH("stock_keeper", 57, 17, 142, 18), STOCK_KEEPER_REQUEST_SAYS(
+        57,
+        17,
+        142,
+        18
+    ), STOCK_KEEPER_REQUEST_SAYS("stock_keeper", 4, 163, 8, 16), STOCK_KEEPER_REQUEST_LOCKED(
         "stock_keeper",
-        4,
-        163,
-        8,
-        16
-    ), STOCK_KEEPER_REQUEST_LOCKED("stock_keeper", 16, 176, 15, 16), STOCK_KEEPER_REQUEST_UNLOCKED(
-        "stock_keeper",
-        32,
+        16,
         176,
         15,
         16
-    ), STOCK_KEEPER_REQUEST_SLOT("stock_keeper", 32, 200, 18, 18), STOCK_KEEPER_REQUEST_BLUEPRINT_LEFT(
+    ), STOCK_KEEPER_REQUEST_UNLOCKED("stock_keeper", 32, 176, 15, 16), STOCK_KEEPER_REQUEST_SLOT(
         "stock_keeper",
-        28,
-        220,
-        10,
-        25
-    ), STOCK_KEEPER_REQUEST_BLUEPRINT_MIDDLE("stock_keeper", 38, 220, 4, 25), STOCK_KEEPER_REQUEST_BLUEPRINT_RIGHT(
+        32,
+        200,
+        18,
+        18
+    ), STOCK_KEEPER_REQUEST_BLUEPRINT_LEFT("stock_keeper", 28, 220, 10, 25), STOCK_KEEPER_REQUEST_BLUEPRINT_MIDDLE(
         "stock_keeper",
-        42,
+        38,
         220,
-        10,
+        4,
         25
-    ), STOCK_KEEPER_REQUEST_SEND_HOVER("stock_keeper", 55, 200, 80, 20), STOCK_KEEPER_REQUEST_SCROLL_TOP(
+    ), STOCK_KEEPER_REQUEST_BLUEPRINT_RIGHT("stock_keeper", 42, 220, 10, 25), STOCK_KEEPER_REQUEST_SEND_HOVER(
+        "stock_keeper",
+        55,
+        200,
+        80,
+        20
+    ), STOCK_KEEPER_REQUEST_SCROLL_TOP("stock_keeper", 219, 192, 5, 4), STOCK_KEEPER_REQUEST_SCROLL_PAD(
         "stock_keeper",
         219,
-        192,
+        196,
         5,
-        4
-    ), STOCK_KEEPER_REQUEST_SCROLL_PAD("stock_keeper", 219, 196, 5, 1), STOCK_KEEPER_REQUEST_SCROLL_MID(
+        1
+    ), STOCK_KEEPER_REQUEST_SCROLL_MID("stock_keeper", 219, 197, 5, 9), STOCK_KEEPER_REQUEST_SCROLL_BOT(
         "stock_keeper",
         219,
-        197,
+        207,
         5,
-        9
-    ), STOCK_KEEPER_REQUEST_SCROLL_BOT("stock_keeper", 219, 207, 5, 5), STOCK_KEEPER_REQUEST_BANNER_L(
+        5
+    ), STOCK_KEEPER_REQUEST_BANNER_L("stock_keeper", 64, 228, 8, 16), STOCK_KEEPER_REQUEST_BANNER_M(
         "stock_keeper",
-        64,
+        73,
         228,
-        8,
+        1,
         16
-    ), STOCK_KEEPER_REQUEST_BANNER_M("stock_keeper", 73, 228, 1, 16), STOCK_KEEPER_REQUEST_BANNER_R(
+    ), STOCK_KEEPER_REQUEST_BANNER_R("stock_keeper", 75, 228, 8, 16), STOCK_KEEPER_REQUEST_BG(
         "stock_keeper",
-        75,
-        228,
-        8,
-        16
-    ), STOCK_KEEPER_REQUEST_BG("stock_keeper", 37, 48, 182, 20), STOCK_KEEPER_CATEGORY_HIDDEN(
+        37,
+        48,
+        182,
+        20
+    ), STOCK_KEEPER_CATEGORY_HIDDEN("stock_keeper", 143, 176, 8, 8), STOCK_KEEPER_CATEGORY_SHOWN(
         "stock_keeper",
-        143,
+        151,
         176,
         8,
         8
-    ), STOCK_KEEPER_CATEGORY_SHOWN("stock_keeper", 151, 176, 8, 8), NUMBERS("stock_keeper", 48, 176, 5, 8),
+    ), NUMBERS(
+        "stock_keeper",
+        48,
+        176,
+        5,
+        8
+    ),
 
     STOCK_KEEPER_CATEGORY("stock_keeper_categories", 32, 32, 192, 20), STOCK_KEEPER_CATEGORY_SAYS(
         "stock_keeper_categories",
@@ -424,31 +402,25 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         86,
         14,
         20
-    ), STOCK_KEEPER_CATEGORY_HEADER(
+    ), STOCK_KEEPER_CATEGORY_HEADER("stock_keeper_categories", 32, 0, 192, 18), STOCK_KEEPER_CATEGORY_EDIT(
         "stock_keeper_categories",
         32,
-        0,
+        208,
         192,
-        18
-    ), STOCK_KEEPER_CATEGORY_EDIT("stock_keeper_categories", 32, 208, 192, 38), STOCK_KEEPER_CATEGORY_FOOTER(
-        "stock_keeper_categories",
-        32,
-        79,
-        200,
-        33
-    ), STOCK_KEEPER_CATEGORY_NEW("stock_keeper_categories", 38, 127, 27, 18), STOCK_KEEPER_CATEGORY_ENTRY(
+        38
+    ), STOCK_KEEPER_CATEGORY_FOOTER("stock_keeper_categories", 32, 79, 200, 33), STOCK_KEEPER_CATEGORY_NEW(
         "stock_keeper_categories",
         38,
-        159,
-        171,
+        127,
+        27,
         18
-    ), STOCK_KEEPER_CATEGORY_UP("stock_keeper_categories", 211, 160, 8, 8), STOCK_KEEPER_CATEGORY_DOWN(
+    ), STOCK_KEEPER_CATEGORY_ENTRY("stock_keeper_categories", 38, 159, 171, 18), STOCK_KEEPER_CATEGORY_UP(
         "stock_keeper_categories",
         211,
-        169,
+        160,
         8,
         8
-    ),
+    ), STOCK_KEEPER_CATEGORY_DOWN("stock_keeper_categories", 211, 169, 8, 8),
 
     REDSTONE_REQUESTER("requester", 16, 16, 232, 120), // JEI
     JEI_SLOT("jei/widgets", 18, 18), JEI_CHANCE_SLOT("jei/widgets", 20, 156, 18, 18), JEI_CATALYST_SLOT(
@@ -457,25 +429,37 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         156,
         18,
         18
-    ), JEI_ARROW("jei/widgets", 19, 10, 42, 10), JEI_LONG_ARROW(
-        "jei/widgets",
-        19,
-        0,
-        71,
-        10
-    ), JEI_DOWN_ARROW("jei/widgets", 0, 21, 18, 14), JEI_LIGHT("jei/widgets", 0, 42, 52, 11), JEI_QUESTION_MARK(
+    ), JEI_ARROW("jei/widgets", 19, 10, 42, 10), JEI_LONG_ARROW("jei/widgets", 19, 0, 71, 10), JEI_DOWN_ARROW(
         "jei/widgets",
         0,
-        178,
-        12,
-        16
-    ), JEI_SHADOW("jei/widgets", 0, 56, 52, 11), BLOCKZAPPER_UPGRADE_RECIPE(
+        21,
+        18,
+        14
+    ), JEI_LIGHT(
         "jei/widgets",
         0,
-        75,
-        144,
-        66
-    ), JEI_HEAT_BAR("jei/widgets", 0, 201, 169, 19), JEI_NO_HEAT_BAR("jei/widgets", 0, 221, 169, 19),
+        42,
+        52,
+        11
+    ), JEI_QUESTION_MARK("jei/widgets", 0, 178, 12, 16), JEI_SHADOW(
+        "jei/widgets",
+        0,
+        56,
+        52,
+        11
+    ), BLOCKZAPPER_UPGRADE_RECIPE("jei/widgets", 0, 75, 144, 66), JEI_HEAT_BAR(
+        "jei/widgets",
+        0,
+        201,
+        169,
+        19
+    ), JEI_NO_HEAT_BAR(
+        "jei/widgets",
+        0,
+        221,
+        169,
+        19
+    ),
 
     // Widgets
     BUTTON("widgets", 18, 18), BUTTON_HOVER("widgets", 18, 0, 18, 18), BUTTON_DOWN(
@@ -484,25 +468,25 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         0,
         18,
         18
-    ), BUTTON_GREEN("widgets", 72, 0, 18, 18), BUTTON_DISABLED(
+    ), BUTTON_GREEN("widgets", 72, 0, 18, 18), BUTTON_DISABLED("widgets", 90, 0, 18, 18), INDICATOR(
         "widgets",
-        90,
         0,
         18,
-        18
-    ), INDICATOR("widgets", 0, 18, 18, 6), INDICATOR_WHITE("widgets", 18, 18, 18, 6), INDICATOR_GREEN(
+        18,
+        6
+    ), INDICATOR_WHITE(
         "widgets",
-        36,
+        18,
         18,
         18,
         6
-    ), INDICATOR_YELLOW(
+    ), INDICATOR_GREEN("widgets", 36, 18, 18, 6), INDICATOR_YELLOW("widgets", 54, 18, 18, 6), INDICATOR_RED(
         "widgets",
-        54,
+        72,
         18,
         18,
         6
-    ), INDICATOR_RED("widgets", 72, 18, 18, 6),
+    ),
 
     HOTSLOT_ARROW("widgets", 24, 51, 20, 12), HOTSLOT_ARROW_BAD("widgets", 52, 51, 20, 15), HOTSLOT(
         "widgets",
@@ -510,13 +494,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         68,
         22,
         22
-    ), HOTSLOT_ACTIVE("widgets", 0, 46, 22, 22), HOTSLOT_SUPER_ACTIVE(
-        "widgets",
-        27,
-        67,
-        24,
-        24
-    ),
+    ), HOTSLOT_ACTIVE("widgets", 0, 46, 22, 22), HOTSLOT_SUPER_ACTIVE("widgets", 27, 67, 24, 24),
 
     SPEECH_TOOLTIP_BACKGROUND("widgets", 0, 24, 8, 8), SPEECH_TOOLTIP_COLOR("widgets", 8, 24, 8, 8),
 
@@ -532,13 +510,13 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         200,
         186,
         7
-    ), TRAIN_HUD_DIRECTION("widgets", 77, 165, 28, 20), TRAIN_PROMPT_L(
+    ), TRAIN_HUD_DIRECTION("widgets", 77, 165, 28, 20), TRAIN_PROMPT_L("widgets", 8, 209, 3, 16), TRAIN_PROMPT_R(
         "widgets",
-        8,
+        11,
         209,
         3,
         16
-    ), TRAIN_PROMPT_R("widgets", 11, 209, 3, 16), TRAIN_PROMPT("widgets", 0, 230, 256, 16),
+    ), TRAIN_PROMPT("widgets", 0, 230, 256, 16),
 
     TRADE_OVERLAY("widgets", 128, 98, 96, 46),
 
@@ -558,13 +536,13 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         156,
         5,
         5
-    ), TRAINMAP_STATION_ORTHO_HIGHLIGHT(
+    ), TRAINMAP_STATION_ORTHO_HIGHLIGHT("widgets", 63, 156, 7, 7), TRAINMAP_STATION_DIAGO_HIGHLIGHT(
         "widgets",
-        63,
+        72,
         156,
         7,
         7
-    ), TRAINMAP_STATION_DIAGO_HIGHLIGHT("widgets", 72, 156, 7, 7),
+    ),
 
     TRAINMAP_TOGGLE_PANEL("widgets", 219, 4, 33, 14), TRAINMAP_TOGGLE_ON(
         "widgets",
@@ -606,11 +584,11 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
         return location;
     }
 
-    public void render(GuiGraphics graphics, int x, int y) {
+    public void render(GuiGraphicsExtractor graphics, int x, int y) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, location, x, y, startX, startY, width, height, 256, 256);
     }
 
-    public void render(GuiGraphics graphics, int x, int y, Color c) {
+    public void render(GuiGraphicsExtractor graphics, int x, int y, Color c) {
         UIRenderHelper.drawColoredTexture(graphics, bind(), c, x, y, startX, startY, width, height);
     }
 

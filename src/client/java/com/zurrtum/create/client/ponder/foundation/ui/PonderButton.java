@@ -9,7 +9,7 @@ import com.zurrtum.create.client.catnip.gui.element.GuiGameElement;
 import com.zurrtum.create.client.catnip.gui.widget.BoxWidget;
 import com.zurrtum.create.client.ponder.foundation.PonderTag;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.util.Mth;
@@ -91,7 +91,7 @@ public class PonderButton extends BoxWidget {
     }
 
     @Override
-    protected void beforeRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void beforeRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.beforeRender(graphics, mouseX, mouseY, partialTicks);
 
         float flashValue = flash.getValue(partialTicks);
@@ -107,7 +107,7 @@ public class PonderButton extends BoxWidget {
     }
 
     @Override
-    public void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void doRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.doRender(graphics, mouseX, mouseY, partialTicks);
 
         if (!isVisible()) {

@@ -29,7 +29,7 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -164,7 +164,7 @@ public class SequencedAssemblyView extends CreateView {
     public void renderRecipe(
         RecipeViewScreen screen,
         RecipePosition position,
-        GuiGraphics context,
+        GuiGraphicsExtractor context,
         int mouseX,
         int mouseY,
         float partialTicks
@@ -247,7 +247,7 @@ public class SequencedAssemblyView extends CreateView {
     }
 
     public interface SequencedRenderer<T extends Recipe<?>> {
-        void render(GuiGraphics graphics, int i, int x, int y, @Nullable ItemStack stack);
+        void render(GuiGraphicsExtractor graphics, int i, int x, int y, @Nullable ItemStack stack);
 
         static Component getSequenceName(Recipe<?> recipe) {
             Identifier id = BuiltInRegistries.RECIPE_TYPE.getKey(recipe.getType());
@@ -281,7 +281,7 @@ public class SequencedAssemblyView extends CreateView {
 
     public static class PressingRenderer implements SequencedRenderer<PressingRecipe> {
         @Override
-        public void render(GuiGraphics graphics, int i, int x, int y, @Nullable ItemStack stack) {
+        public void render(GuiGraphicsExtractor graphics, int i, int x, int y, @Nullable ItemStack stack) {
             float scale = 19 / 30f;
             Matrix3x2fStack matrices = graphics.pose();
             matrices.pushMatrix();
@@ -301,7 +301,7 @@ public class SequencedAssemblyView extends CreateView {
 
     public static class DeployingRenderer implements SequencedRenderer<DeployerApplicationRecipe> {
         @Override
-        public void render(GuiGraphics graphics, int i, int x, int y, @Nullable ItemStack stack) {
+        public void render(GuiGraphicsExtractor graphics, int i, int x, int y, @Nullable ItemStack stack) {
             float scale = 59 / 78f;
             Matrix3x2fStack matrices = graphics.pose();
             matrices.pushMatrix();
@@ -331,7 +331,7 @@ public class SequencedAssemblyView extends CreateView {
 
     public static class FillingRenderer implements SequencedRenderer<FillingRecipe> {
         @Override
-        public void render(GuiGraphics graphics, int i, int x, int y, @Nullable ItemStack stack) {
+        public void render(GuiGraphicsExtractor graphics, int i, int x, int y, @Nullable ItemStack stack) {
             if (stack != null && stack.getItem() instanceof FluidItem item) {
                 float scale = 35 / 46f;
                 Matrix3x2fStack matrices = graphics.pose();

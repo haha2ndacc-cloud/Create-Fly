@@ -1,7 +1,7 @@
 package com.zurrtum.create.client.ponder.foundation;
 
 import com.zurrtum.create.client.catnip.gui.element.ScreenElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import org.joml.Matrix3x2fStack;
@@ -25,7 +25,7 @@ public class PonderChapter implements ScreenElement {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int x, int y) {
+    public void render(GuiGraphicsExtractor graphics, int x, int y) {
         Matrix3x2fStack ms = graphics.pose();
         ms.pushMatrix();
         ms.scale(0.25f, 0.25f);

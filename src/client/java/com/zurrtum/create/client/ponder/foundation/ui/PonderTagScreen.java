@@ -14,7 +14,7 @@ import com.zurrtum.create.client.ponder.Ponder;
 import com.zurrtum.create.client.ponder.foundation.PonderChapter;
 import com.zurrtum.create.client.ponder.foundation.PonderIndex;
 import com.zurrtum.create.client.ponder.foundation.PonderTag;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
@@ -145,7 +145,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.renderWindow(graphics, mouseX, mouseY, partialTicks);
         renderItems(graphics, mouseX, mouseY, partialTicks);
 
@@ -205,7 +205,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
         poseStack.popMatrix();
     }
 
-    protected void renderItems(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderItems(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         if (items.isEmpty()) {
             return;
         }
@@ -243,7 +243,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
         return (int) (mainYmult * height + 85);
     }
 
-    protected void renderChapters(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderChapters(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         if (chapters.isEmpty()) {
             return;
         }
@@ -269,7 +269,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
     }
 
     @Override
-    protected void renderWindowForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindowForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         if (!hoveredItem.isEmpty()) {
             graphics.setTooltipForNextFrame(font, hoveredItem, mouseX, mouseY);
         }

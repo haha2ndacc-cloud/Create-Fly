@@ -18,7 +18,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.StringSplitter;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.inventory.PageButton;
 import net.minecraft.client.input.CharacterEvent;
@@ -276,7 +276,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         int x = guiLeft;
         int y = guiTop - 8;
 
@@ -553,7 +553,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
         editContext.setCursorPos(j, input.hasShiftDown());
     }
 
-    private void renderCursor(GuiGraphics graphics, Pos2i pCursorPos, boolean pIsEndOfText) {
+    private void renderCursor(GuiGraphicsExtractor graphics, Pos2i pCursorPos, boolean pIsEndOfText) {
         if (frameTick / 6 % 2 != 0) {
             return;
         }
@@ -565,7 +565,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
         }
     }
 
-    private void renderHighlight(GuiGraphics graphics, Rect2i[] pSelected) {
+    private void renderHighlight(GuiGraphicsExtractor graphics, Rect2i[] pSelected) {
         for (Rect2i rect2i : pSelected) {
             int i = rect2i.getX();
             int j = rect2i.getY();

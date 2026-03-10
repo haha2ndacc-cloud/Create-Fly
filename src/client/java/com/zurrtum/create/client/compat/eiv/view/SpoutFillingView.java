@@ -11,7 +11,7 @@ import de.crafty.eiv.common.recipe.inventory.RecipeViewMenu.SlotFillContext;
 import de.crafty.eiv.common.recipe.inventory.RecipeViewScreen;
 import de.crafty.eiv.common.recipe.inventory.SlotContent;
 import de.crafty.eiv.common.recipe.item.FluidItem;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix3x2f;
 
@@ -64,7 +64,7 @@ public class SpoutFillingView extends CreateView {
     public void renderRecipe(
         RecipeViewScreen screen,
         RecipePosition position,
-        GuiGraphics context,
+        GuiGraphicsExtractor context,
         int mouseX,
         int mouseY,
         float partialTicks

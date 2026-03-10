@@ -1,7 +1,7 @@
 package com.zurrtum.create.client.compat.jei.renderer;
 
 import mezz.jei.api.gui.drawable.IDrawable;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -21,7 +21,7 @@ public record IconRenderer(ItemStack icon) implements IDrawable {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, int x, int y) {
+    public void draw(GuiGraphicsExtractor graphics, int x, int y) {
         graphics.renderItem(icon, x, y);
     }
 }

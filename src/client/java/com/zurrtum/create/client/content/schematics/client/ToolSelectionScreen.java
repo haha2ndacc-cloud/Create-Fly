@@ -6,7 +6,7 @@ import com.zurrtum.create.client.content.schematics.client.tools.ToolType;
 import com.zurrtum.create.client.foundation.gui.AllGuiTextures;
 import com.zurrtum.create.client.foundation.utility.CreateLang;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -57,7 +57,7 @@ public class ToolSelectionScreen extends Screen {
         selection = (selection + tools.size()) % tools.size();
     }
 
-    private void draw(GuiGraphics graphics, float partialTicks) {
+    private void draw(GuiGraphicsExtractor graphics, float partialTicks) {
         Matrix3x2fStack matrixStack = graphics.pose();
         Window mainWindow = minecraft.getWindow();
         int scaledWidth = mainWindow.getGuiScaledWidth();
@@ -172,7 +172,7 @@ public class ToolSelectionScreen extends Screen {
         }
     }
 
-    public void renderPassive(GuiGraphics graphics, float partialTicks) {
+    public void renderPassive(GuiGraphicsExtractor graphics, float partialTicks) {
         draw(graphics, partialTicks);
     }
 

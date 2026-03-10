@@ -9,7 +9,7 @@ import com.zurrtum.create.client.catnip.gui.widget.BoxWidget;
 import com.zurrtum.create.client.catnip.lang.Lang;
 import com.zurrtum.create.client.ponder.enums.PonderGuiTextures;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
@@ -106,7 +106,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         //		renderZeloBreadcrumbs(ms, mouseX, mouseY, partialTicks);
         if (backTrack == null) {
             return;
@@ -149,14 +149,14 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (!isCurrentlyRenderingPreviousScreen()) {
             super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         }
     }
 
     @Override
-    protected void renderWindowBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindowBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         if (transition.getChaseTarget() == 0 || transition.settled()) {
             return;
         }
@@ -208,7 +208,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
     public void shareContextWith(NavigatableSimiScreen other) {
     }
 
-    protected void renderZeloBreadcrumbs(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderZeloBreadcrumbs(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         List<Screen> history = ScreenOpener.getScreenHistory();
         if (history.isEmpty()) {
             return;

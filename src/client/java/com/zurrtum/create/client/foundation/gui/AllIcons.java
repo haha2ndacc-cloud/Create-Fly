@@ -6,7 +6,7 @@ import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.Create;
 import com.zurrtum.create.client.catnip.gui.element.DelegatedStencilElement;
 import com.zurrtum.create.client.catnip.gui.element.ScreenElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -76,11 +76,11 @@ public class AllIcons implements ScreenElement {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int x, int y) {
+    public void render(GuiGraphicsExtractor graphics, int x, int y) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, ICON_ATLAS, x, y, iconX, iconY, 16, 16, 256, 256);
     }
 
-    public void render(GuiGraphics graphics, int x, int y, int color) {
+    public void render(GuiGraphicsExtractor graphics, int x, int y, int color) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, ICON_ATLAS, x, y, iconX, iconY, 16, 16, 16, 16, 256, 256, color);
     }
 

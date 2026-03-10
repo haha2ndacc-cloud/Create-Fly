@@ -3,7 +3,7 @@ package com.zurrtum.create.client.catnip.gui.element;
 import com.zurrtum.create.catnip.data.Couple;
 import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.catnip.gui.render.BoxRenderState;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.joml.Matrix3x2f;
 
 public class BoxElement extends AbstractRenderElement {
@@ -67,14 +67,14 @@ public class BoxElement extends AbstractRenderElement {
     }
 
     @Override
-    public void render(GuiGraphics graphics) {
+    public void render(GuiGraphicsExtractor graphics) {
         renderBox(graphics);
     }
 
     //total box width = 1 * 2 (outer border) + 1 * 2 (inner color border) + 2 * borderOffset + width
     //defaults to 2 + 2 + 4 + 16 = 24px
     //batch everything together to save a bunch of gl calls over ScreenUtils
-    protected void renderBox(GuiGraphics graphics) {
+    protected void renderBox(GuiGraphicsExtractor graphics) {
         /*
          *          _____________
          *        _|_____________|_

@@ -20,7 +20,7 @@ import com.zurrtum.create.content.logistics.factoryBoard.ServerFactoryPanelBehav
 import com.zurrtum.create.infrastructure.packet.c2s.FactoryPanelConfigurationPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -208,7 +208,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         int x = guiLeft;
         int y = guiTop;
 
@@ -361,7 +361,13 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
     //
 
-    private void renderInputItem(GuiGraphics graphics, int slot, BigItemStack itemStack, int mouseX, int mouseY) {
+    private void renderInputItem(
+        GuiGraphicsExtractor graphics,
+        int slot,
+        BigItemStack itemStack,
+        int mouseX,
+        int mouseY
+    ) {
         int inputX = guiLeft + (restocker ? 88 : 68 + (slot % 3 * 20));
         int inputY = guiTop + (restocker ? 12 : 28) + (slot / 3 * 20);
 
@@ -425,7 +431,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
         );
     }
 
-    private void showAddressBoxTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+    private void showAddressBoxTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         if (addressBox.getValue().isBlank()) {
             if (restocker) {
                 graphics.setComponentTooltipForNextFrame(

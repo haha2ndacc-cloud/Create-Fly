@@ -1,6 +1,6 @@
 package com.zurrtum.create.client.catnip.gui.render;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import org.joml.Matrix3x2f;
@@ -10,7 +10,7 @@ public record BlockTransformRenderState(BlockTransformRenderKey key, Matrix3x2f 
                                         int x0, int y0, int x1, int y1,
                                         @Nullable ScreenRectangle scissorArea) implements PictureInPictureRenderState {
     public static BlockTransformRenderState create(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         BlockTransformRenderKey key,
         float x,
         float y

@@ -11,7 +11,7 @@ import com.zurrtum.create.client.catnip.layout.PaginationState;
 import com.zurrtum.create.client.ponder.enums.PonderGuiTextures;
 import com.zurrtum.create.client.ponder.foundation.PonderIndex;
 import com.zurrtum.create.client.ponder.foundation.registration.PonderIndexExclusionHelper;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.Identifier;
@@ -174,7 +174,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.renderWindow(graphics, mouseX, mouseY, partialTicks);
         int centerX = width / 2;
         int centerY = height / 2;
@@ -222,7 +222,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
     }
 
     @Override
-    protected void renderWindowForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindowForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         if (hoveredItem.isEmpty()) {
             return;
         }

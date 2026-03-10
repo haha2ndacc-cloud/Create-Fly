@@ -3,7 +3,7 @@ package com.zurrtum.create.client.catnip.gui;
 import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.gui.widget.AbstractSimiWidget;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -98,7 +98,7 @@ public abstract class AbstractSimiScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         partialTicks = NavigatableSimiScreen.currentlyRenderingPreviousScreen ? 0 : AnimationTickHolder.getPartialTicksUI(
             minecraft.getDeltaTracker());
         Matrix3x2fStack poseStack = graphics.pose();
@@ -149,20 +149,20 @@ public abstract class AbstractSimiScreen extends Screen {
     protected void prepareFrame() {
     }
 
-    protected void renderWindowBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindowBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         renderMenuBackground(graphics);
     }
 
-    protected abstract void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks);
+    protected abstract void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks);
 
-    protected void renderWindowForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindowForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
     }
 
     protected void endFrame() {
     }
 
     @Deprecated
-    protected void debugWindowArea(GuiGraphics graphics) {
+    protected void debugWindowArea(GuiGraphicsExtractor graphics) {
         graphics.fill(guiLeft + windowWidth, guiTop + windowHeight, guiLeft, guiTop, 0xD3D3D3D3);
     }
 

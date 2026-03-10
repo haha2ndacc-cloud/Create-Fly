@@ -4,7 +4,7 @@ import com.zurrtum.create.AllItems;
 import com.zurrtum.create.client.infrastructure.model.PotatoCannonModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(GuiGraphics.class)
+@Mixin(GuiGraphicsExtractor.class)
 public class GuiGraphicsMixin {
     @Shadow
     @Final
@@ -29,7 +29,7 @@ public class GuiGraphicsMixin {
         CallbackInfo ci
     ) {
         if (stack.is(AllItems.POTATO_CANNON)) {
-            PotatoCannonModel.renderDecorator(minecraft, (GuiGraphics) (Object) this, stack, x, y);
+            PotatoCannonModel.renderDecorator(minecraft, (GuiGraphicsExtractor) (Object) this, stack, x, y);
         }
     }
 }

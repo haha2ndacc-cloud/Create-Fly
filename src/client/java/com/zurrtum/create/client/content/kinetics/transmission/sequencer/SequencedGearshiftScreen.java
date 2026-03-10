@@ -21,7 +21,7 @@ import com.zurrtum.create.content.kinetics.transmission.sequencer.SequencedGears
 import com.zurrtum.create.content.kinetics.transmission.sequencer.SequencerInstructions;
 import com.zurrtum.create.infrastructure.packet.c2s.ConfigureSequencedGearshiftPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -265,7 +265,7 @@ public class SequencedGearshiftScreen extends AbstractSimiScreen implements Addi
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         int x = guiLeft;
         int y = guiTop;
 
@@ -311,7 +311,7 @@ public class SequencedGearshiftScreen extends AbstractSimiScreen implements Addi
         );
     }
 
-    private void label(GuiGraphics graphics, int x, int y, Component text) {
+    private void label(GuiGraphicsExtractor graphics, int x, int y, Component text) {
         graphics.drawString(font, text, guiLeft + x, guiTop + 26 + y, 0xFFFFFFEE, true);
     }
 

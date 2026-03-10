@@ -3,7 +3,7 @@ package com.zurrtum.create.client.catnip.gui.widget;
 import com.zurrtum.create.catnip.data.Couple;
 import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.catnip.gui.TickableGuiEventListener;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -96,7 +96,7 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         if (visible) {
             isHovered = isMouseOver(mouseX, mouseY);
             renderWidget(graphics, mouseX, mouseY, partialTicks);
@@ -106,13 +106,13 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWidget(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         beforeRender(graphics, mouseX, mouseY, partialTicks);
         doRender(graphics, mouseX, mouseY, partialTicks);
         afterRender(graphics, mouseX, mouseY, partialTicks);
     }
 
-    protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         if (this.isHovered()) {
             List<Component> tooltip = this.getToolTip();
             if (tooltip.isEmpty()) {
@@ -125,14 +125,14 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
         }
     }
 
-    protected void beforeRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void beforeRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         graphics.pose().pushMatrix();
     }
 
-    protected void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void doRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
     }
 
-    protected void afterRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void afterRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         graphics.pose().popMatrix();
     }
 

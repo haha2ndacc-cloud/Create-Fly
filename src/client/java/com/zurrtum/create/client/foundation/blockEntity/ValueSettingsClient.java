@@ -9,7 +9,7 @@ import com.zurrtum.create.client.foundation.blockEntity.behaviour.ValueSettingsI
 import com.zurrtum.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.zurrtum.create.infrastructure.packet.c2s.ValueSettingsPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -127,7 +127,7 @@ public class ValueSettingsClient {
         lastHoverTip = tip;
     }
 
-    public void render(Minecraft mc, GuiGraphics guiGraphics) {
+    public void render(Minecraft mc, GuiGraphicsExtractor guiGraphics) {
         if (!ValueSettingsInputHandler.canInteract(mc.player)) {
             return;
         }

@@ -1,7 +1,7 @@
 package com.zurrtum.create.client.foundation.gui.widget;
 
 import com.zurrtum.create.client.catnip.gui.widget.AbstractSimiWidget;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class TooltipArea extends AbstractSimiWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         if (visible) {
             isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
         }
