@@ -2,7 +2,6 @@ accessWidener v2 official
 accessible class com/mojang/blaze3d/opengl/GlDevice
 accessible class com/mojang/blaze3d/vertex/VertexMultiConsumer$Double
 accessible class net/minecraft/client/gui/Gui$ContextualInfo
-accessible class net/minecraft/client/gui/GuiGraphics$ScissorStack
 accessible class net/minecraft/client/gui/render/GuiRenderer$Draw
 accessible class net/minecraft/client/Minecraft$GameLoadCookie
 accessible class net/minecraft/client/particle/ParticleResources$SpriteParticleRegistration
@@ -35,9 +34,6 @@ accessible field net/minecraft/client/gui/Font provider Lnet/minecraft/client/gu
 accessible field net/minecraft/client/gui/Font random Lnet/minecraft/util/RandomSource;
 accessible field net/minecraft/client/gui/Gui subtitleOverlay Lnet/minecraft/client/gui/components/SubtitleOverlay;
 accessible field net/minecraft/client/gui/Gui toolHighlightTimer I
-accessible field net/minecraft/client/gui/GuiGraphics guiRenderState Lnet/minecraft/client/renderer/state/gui/GuiRenderState;
-accessible field net/minecraft/client/gui/GuiGraphics minecraft Lnet/minecraft/client/Minecraft;
-accessible field net/minecraft/client/gui/GuiGraphics scissorStack Lnet/minecraft/client/gui/GuiGraphics$ScissorStack;
 accessible field net/minecraft/client/gui/render/pip/PictureInPictureRenderer projection Lnet/minecraft/client/renderer/Projection;
 accessible field net/minecraft/client/gui/render/pip/PictureInPictureRenderer projectionMatrixBuffer Lnet/minecraft/client/renderer/ProjectionMatrixBuffer;
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen hoveredSlot Lnet/minecraft/world/inventory/Slot;
@@ -58,11 +54,6 @@ accessible field net/minecraft/client/particle/ParticleEngine resourceManager Ln
 accessible field net/minecraft/client/particle/QuadParticleGroup particleTypeRenderState Lnet/minecraft/client/renderer/state/level/QuadParticleRenderState;
 accessible field net/minecraft/client/renderer/block/BlockModelResolver modelManager Lnet/minecraft/client/resources/model/ModelManager;
 accessible field net/minecraft/client/renderer/block/BlockModelSet blockModelByStateCache Ljava/util/Map;
-accessible field net/minecraft/client/renderer/block/BlockRenderDispatcher liquidBlockRenderer Lnet/minecraft/client/renderer/block/LiquidBlockRenderer;
-accessible field net/minecraft/client/renderer/block/LiquidBlockRenderer lavaFlowing Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;
-accessible field net/minecraft/client/renderer/block/LiquidBlockRenderer lavaStill Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;
-accessible field net/minecraft/client/renderer/block/LiquidBlockRenderer waterFlowing Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;
-accessible field net/minecraft/client/renderer/block/LiquidBlockRenderer waterStill Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;
 accessible field net/minecraft/client/renderer/blockentity/state/BlockEntityRenderState blockState Lnet/minecraft/world/level/block/state/BlockState;
 accessible field net/minecraft/client/renderer/entity/AbstractMinecartRenderer MINECART_LOCATION Lnet/minecraft/resources/Identifier;
 accessible field net/minecraft/client/renderer/entity/ItemEntityRenderer random Lnet/minecraft/util/RandomSource;
@@ -228,7 +219,6 @@ accessible method net/minecraft/world/level/material/FlowingFluid getNewLiquid (
 accessible method net/minecraft/world/level/storage/TagValueInput <init> (Lnet/minecraft/util/ProblemReporter;Lnet/minecraft/world/level/storage/ValueInputContextHelper;Lnet/minecraft/nbt/CompoundTag;)V
 accessible method net/minecraft/world/level/storage/TagValueOutput <init> (Lnet/minecraft/util/ProblemReporter;Lcom/mojang/serialization/DynamicOps;Lnet/minecraft/nbt/CompoundTag;)V
 extendable class net/minecraft/world/item/crafting/Ingredient
-extendable method net/minecraft/client/gui/components/AbstractWidget render (Lnet/minecraft/client/gui/GuiGraphics;IIF)V
 extendable method net/minecraft/client/gui/screens/Screen init (II)V
 extendable method net/minecraft/network/protocol/game/ClientboundAddEntityPacket write (Lnet/minecraft/network/RegistryFriendlyByteBuf;)V
 extendable method net/minecraft/world/entity/Entity isLocalInstanceAuthoritative ()Z
@@ -242,3 +232,13 @@ mutable field net/minecraft/world/item/CreativeModeTab row Lnet/minecraft/world/
 mutable field net/minecraft/world/level/biome/BiomeGenerationSettings features Ljava/util/List;
 accessible field net/minecraft/client/multiplayer/ClientSuggestionProvider minecraft Lnet/minecraft/client/Minecraft;
 accessible field net/minecraft/client/gui/components/debug/DebugScreenEntries ENTRIES_BY_ID Ljava/util/Map;
+accessible method net/minecraft/client/renderer/feature/ItemFeatureRenderer hasTranslucency (Lnet/minecraft/client/renderer/SubmitNodeStorage$ItemSubmit;)Z
+accessible method net/minecraft/client/renderer/feature/ItemFeatureRenderer computeFoilDecalPose (Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack$Pose;)Lcom/mojang/blaze3d/vertex/PoseStack$Pose;
+accessible method net/minecraft/client/renderer/feature/ItemFeatureRenderer getLayerColorSafe ([ILnet/minecraft/client/resources/model/geometry/BakedQuad$MaterialInfo;)I
+accessible method net/minecraft/client/renderer/feature/ItemFeatureRenderer getFoilBuffer (Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/client/renderer/rendertype/RenderType;Lcom/mojang/blaze3d/vertex/PoseStack$Pose;)Lcom/mojang/blaze3d/vertex/VertexConsumer;
+extendable method net/minecraft/client/gui/components/AbstractWidget extractRenderState (Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V
+accessible field net/minecraft/client/gui/GuiGraphicsExtractor minecraft Lnet/minecraft/client/Minecraft;
+accessible field net/minecraft/client/gui/GuiGraphicsExtractor guiRenderState Lnet/minecraft/client/renderer/state/gui/GuiRenderState;
+accessible field net/minecraft/client/gui/GuiGraphicsExtractor scissorStack Lnet/minecraft/client/gui/GuiGraphicsExtractor$ScissorStack;
+accessible class net/minecraft/client/gui/GuiGraphicsExtractor$ScissorStack
+accessible field net/minecraft/client/multiplayer/ClientLevel minecraft Lnet/minecraft/client/Minecraft;
