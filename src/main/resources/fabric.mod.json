@@ -8,8 +8,9 @@
     "ZurrTum"
   ],
   "contact": {
-    "homepage": "https://github.com/ZurrTum/Create-Fly",
-    "sources": "https://github.com/ZurrTum/Create-Fly"
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/create-fly",
+    "sources": "https://github.com/ZurrTum/Create-Fly",
+    "issues": "https://github.com/ZurrTum/Create-Fly/issues"
   },
   "license": "CC0-1.0",
   "icon": "assets/pack.png",
@@ -20,18 +21,6 @@
     ],
     "client": [
       "com.zurrtum.create.client.Create"
-    ],
-    "rei_client": [
-      "com.zurrtum.create.client.compat.rei.ReiClientPlugin"
-    ],
-    "rei_common": [
-      "com.zurrtum.create.compat.rei.ReiCommonPlugin"
-    ],
-    "jei_mod_plugin": [
-      "com.zurrtum.create.client.compat.jei.JeiClientPlugin"
-    ],
-    "eiv": [
-      "com.zurrtum.create.compat.eiv.EivCommonPlugin"
     ],
     "create_plugin": [
       "com.zurrtum.create.AllEarlyRegistries"
