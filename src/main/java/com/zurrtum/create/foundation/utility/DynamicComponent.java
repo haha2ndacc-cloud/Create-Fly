@@ -7,6 +7,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.chat.ResolutionContext;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.permissions.LevelBasedPermissionSet;
 import net.minecraft.world.level.Level;
@@ -23,7 +24,7 @@ public class DynamicComponent {
             return null;
         }
         try {
-            return ComponentUtils.updateForEntity(getCommandSource(serverLevel, pos), customText, null, 0);
+            return ComponentUtils.resolve(ResolutionContext.create(getCommandSource(serverLevel, pos)), customText, 0);
         } catch (JsonParseException | CommandSyntaxException e) {
             return null;
         }
