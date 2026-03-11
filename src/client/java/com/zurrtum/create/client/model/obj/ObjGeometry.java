@@ -20,7 +20,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelDebugName;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraft.client.resources.model.geometry.BakedQuad.SpriteInfo;
 import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.client.resources.model.sprite.Material.Baked;
 import net.minecraft.client.resources.model.sprite.TextureSlots;
@@ -345,11 +344,13 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
     }
 
     private Pair<BakedQuad, Direction> makeQuad(
+        ModelBaker baker,
         int[][] indices,
         int tintIndex,
         Vector4f colorTint,
         Vector4f ambientColor,
-        SpriteInfo spriteInfo,
+        Baked material,
+        Transparency transparency,
         Transformation transform
     ) {
         boolean needsNormalRecalculation = false;
@@ -372,7 +373,8 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
 
         var quadBaker = new QuadBakingVertexConsumer();
 
-        quadBaker.setSpriteInfo(spriteInfo);
+        TextureAtlasSprite texture = material.sprite();
+        quadBaker.setSprite(texture, transparency);
         quadBaker.setTintIndex(tintIndex);
 
         if (emissiveAmbient) {
@@ -390,7 +392,6 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
         Vector4f[] pos = new Vector4f[4];
         Vector3f[] norm = new Vector3f[4];
 
-        TextureAtlasSprite texture = spriteInfo.sprite();
         for (int i = 0; i < 4; i++) {
             int[] index = indices[Math.min(i, indices.length - 1)];
             Vector4f position = new Vector4f(positions.get(index[0]), 1);
@@ -471,7 +472,7 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
             }
         }
 
-        return Pair.of(quadBaker.bakeQuad(), cull);
+        return Pair.of(quadBaker.bakeQuad(baker.interner()), cull);
     }
 
     public class ModelObject {
@@ -567,7 +568,6 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
             Baked texture = baker.materials().resolveSlot(slots, mat.diffuseColorMap, debugName);
             Transparency transparency = texture.forceTranslucent() ? Transparency.TRANSLUCENT : texture.sprite()
                 .transparency();
-            SpriteInfo spriteInfo = baker.interner().spriteInfo(SpriteInfo.of(texture, transparency));
             int tintIndex = mat.diffuseTintIndex;
             Vector4f colorTint = mat.diffuseColor;
 
@@ -579,11 +579,13 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
                 .compose(rootTransform);
             for (int[][] face : faces) {
                 Pair<BakedQuad, @Nullable Direction> quad = makeQuad(
+                    baker,
                     face,
                     tintIndex,
                     colorTint,
                     mat.ambientColor,
-                    spriteInfo,
+                    texture,
+                    transparency,
                     transform
                 );
                 if (quad.getRight() == null) {
