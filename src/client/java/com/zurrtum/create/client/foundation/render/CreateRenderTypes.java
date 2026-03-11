@@ -22,10 +22,18 @@ import static com.zurrtum.create.Create.MOD_ID;
 @SuppressWarnings("deprecation")
 public class CreateRenderTypes {
     private static final RenderType TRANSLUCENT = RenderType.create(
-        createLayerName("translucent"),
-        RenderSetup.builder(RenderPipelines.TRANSLUCENT_MOVING_BLOCK).bufferSize(256).affectsCrumbling().sortOnUpload()
-            .useLightmap().withTexture("Sampler0", TextureAtlas.LOCATION_BLOCKS, RenderTypes.MOVING_BLOCK_SAMPLER)
-            .setOutline(OutlineProperty.AFFECTS_OUTLINE).createRenderSetup()
+        createLayerName("translucent"), RenderSetup.builder(RenderPipelines.TRANSLUCENT_BLOCK).withTexture(
+                "Sampler0",
+                TextureAtlas.LOCATION_BLOCKS,
+                () -> RenderSystem.getSamplerCache().getSampler(
+                    AddressMode.CLAMP_TO_EDGE,
+                    AddressMode.CLAMP_TO_EDGE,
+                    FilterMode.LINEAR,
+                    FilterMode.NEAREST,
+                    true
+                )
+            ).useLightmap().affectsCrumbling().setOutline(OutlineProperty.AFFECTS_OUTLINE).sortOnUpload().bufferSize(256)
+            .createRenderSetup()
     );
 
     private static final RenderType ADDITIVE = RenderType.create(
