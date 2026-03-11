@@ -1,6 +1,6 @@
 {
   "model": {
-    "type": "create:model/translucent",
+    "type": "minecraft:model",
     "model": "create:block/display_link/item"
   }
 }
