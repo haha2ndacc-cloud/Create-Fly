@@ -75,7 +75,7 @@ public class ManualApplicationCategory extends CreateCategory<RecipeHolder<Manua
         recipeSlotsView.findSlotByName("target").flatMap(IRecipeSlotView::getDisplayedItemStack).ifPresent(stack -> {
             if (stack.getItem() instanceof BlockItem blockItem) {
                 BlockState block = blockItem.getBlock().defaultBlockState();
-                graphics.guiRenderState.submitPicturesInPictureState(new ManualBlockRenderState(
+                graphics.guiRenderState.addPicturesInPictureState(new ManualBlockRenderState(
                     new Matrix3x2f(graphics.pose()),
                     block,
                     79,

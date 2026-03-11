@@ -62,10 +62,6 @@ public class PressingView extends CreateView {
     ) {
         AllGuiTextures.JEI_SHADOW.render(context, 61, 45);
         AllGuiTextures.JEI_LONG_ARROW.render(context, 52, 58);
-        context.guiRenderState.submitPicturesInPictureState(new PressRenderState(
-            new Matrix3x2f(context.pose()),
-            73,
-            -12
-        ));
+        context.guiRenderState.addPicturesInPictureState(new PressRenderState(new Matrix3x2f(context.pose()), 73, -12));
     }
 }

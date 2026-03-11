@@ -72,7 +72,7 @@ public class MechanicalCraftingCategory extends CreateCategory<MechanicalCraftin
             drawSlotBackground(graphics, inputs, output);
             AllGuiTextures.JEI_DOWN_ARROW.render(graphics, bounds.x + 133, bounds.y + 64);
             AllGuiTextures.JEI_SHADOW.render(graphics, bounds.x + 118, bounds.y + 43);
-            graphics.guiRenderState.submitPicturesInPictureState(new CrafterRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new CrafterRenderState(
                 new Matrix3x2f(graphics.pose()),
                 bounds.x + 129,
                 bounds.y + 23

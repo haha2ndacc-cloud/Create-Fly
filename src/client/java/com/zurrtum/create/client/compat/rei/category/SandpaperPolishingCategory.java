@@ -46,7 +46,7 @@ public class SandpaperPolishingCategory extends CreateCategory<SandpaperPolishin
             drawSlotBackground(graphics, input, output);
             AllGuiTextures.JEI_SHADOW.render(graphics, bounds.x + 66, bounds.y + 26);
             AllGuiTextures.JEI_LONG_ARROW.render(graphics, bounds.x + 57, bounds.y + 37);
-            graphics.guiRenderState.submitPicturesInPictureState(new SandPaperRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new SandPaperRenderState(
                 new Matrix3x2f(graphics.pose()),
                 inputSlot.getCurrentEntry().castValue(),
                 bounds.x + 79,

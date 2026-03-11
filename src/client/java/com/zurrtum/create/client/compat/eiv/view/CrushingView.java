@@ -75,7 +75,7 @@ public class CrushingView extends CreateView {
         float partialTicks
     ) {
         AllGuiTextures.JEI_DOWN_ARROW.render(context, 72, 5);
-        context.guiRenderState.submitPicturesInPictureState(new CrushWheelRenderState(
+        context.guiRenderState.addPicturesInPictureState(new CrushWheelRenderState(
             new Matrix3x2f(context.pose()),
             42,
             22

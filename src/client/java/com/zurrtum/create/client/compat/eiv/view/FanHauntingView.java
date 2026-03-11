@@ -87,7 +87,7 @@ public class FanHauntingView extends CreateView {
         AllGuiTextures.JEI_SHADOW.render(context, 42, 23);
         AllGuiTextures.JEI_LIGHT.render(context, 61, 35);
         AllGuiTextures.JEI_LONG_ARROW.render(context, 50 + 7 * xOffsetAmount, 47);
-        context.guiRenderState.submitPicturesInPictureState(new FanRenderState(
+        context.guiRenderState.addPicturesInPictureState(new FanRenderState(
             new Matrix3x2f(context.pose()),
             52,
             0,

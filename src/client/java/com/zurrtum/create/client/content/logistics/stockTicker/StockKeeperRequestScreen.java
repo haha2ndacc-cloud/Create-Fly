@@ -563,7 +563,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             float animation = keeperBE.headAnimation.getValue(partialTicks) * .175f;
             boolean drawGoggles = keeperBE.goggles;
             int hashCode = keeperBE.hashCode();
-            graphics.guiRenderState.submitPicturesInPictureState(new BlazeBurnerRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new BlazeBurnerRenderState(
                 new Matrix3x2f(ms),
                 entityX,
                 entityY,

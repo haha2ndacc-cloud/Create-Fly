@@ -62,6 +62,6 @@ public class SawingView extends CreateView {
     ) {
         AllGuiTextures.JEI_DOWN_ARROW.render(context, 70, 2);
         AllGuiTextures.JEI_SHADOW.render(context, 55, 51);
-        context.guiRenderState.submitPicturesInPictureState(new SawRenderState(new Matrix3x2f(context.pose()), 64, 27));
+        context.guiRenderState.addPicturesInPictureState(new SawRenderState(new Matrix3x2f(context.pose()), 64, 27));
     }
 }

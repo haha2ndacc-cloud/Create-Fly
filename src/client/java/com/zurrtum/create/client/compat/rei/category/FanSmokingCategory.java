@@ -47,7 +47,7 @@ public class FanSmokingCategory extends CreateCategory<FanSmokingDisplay> {
             AllGuiTextures.JEI_SHADOW.render(graphics, bounds.x + 51, bounds.y + 32);
             AllGuiTextures.JEI_LIGHT.render(graphics, bounds.x + 70, bounds.y + 44);
             AllGuiTextures.JEI_LONG_ARROW.render(graphics, bounds.x + 59, bounds.y + 56);
-            graphics.guiRenderState.submitPicturesInPictureState(new FanRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new FanRenderState(
                 new Matrix3x2f(graphics.pose()),
                 bounds.x + 61,
                 bounds.y + 9,

@@ -76,7 +76,7 @@ public class AutoCompactingView extends CreateView {
     ) {
         AllGuiTextures.JEI_DOWN_ARROW.render(context, 136, 30);
         AllGuiTextures.JEI_SHADOW.render(context, 81, 66);
-        context.guiRenderState.submitPicturesInPictureState(new PressBasinRenderState(
+        context.guiRenderState.addPicturesInPictureState(new PressBasinRenderState(
             new Matrix3x2f(context.pose()),
             91,
             -7

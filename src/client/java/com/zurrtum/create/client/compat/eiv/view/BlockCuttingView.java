@@ -70,6 +70,6 @@ public class BlockCuttingView extends CreateView {
     ) {
         AllGuiTextures.JEI_DOWN_ARROW.render(context, 29, 2);
         AllGuiTextures.JEI_SHADOW.render(context, 14, 46);
-        context.guiRenderState.submitPicturesInPictureState(new SawRenderState(new Matrix3x2f(context.pose()), 23, 22));
+        context.guiRenderState.addPicturesInPictureState(new SawRenderState(new Matrix3x2f(context.pose()), 23, 22));
     }
 }

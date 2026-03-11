@@ -64,7 +64,7 @@ public class SandPaperPolishingView extends CreateView {
         AllGuiTextures.JEI_SHADOW.render(context, 61, 23);
         AllGuiTextures.JEI_LONG_ARROW.render(context, 52, 34);
         ItemStack stack = ingredient.getByIndex(ingredient.index());
-        context.guiRenderState.submitPicturesInPictureState(new SandPaperRenderState(
+        context.guiRenderState.addPicturesInPictureState(new SandPaperRenderState(
             new Matrix3x2f(context.pose()),
             stack,
             74,

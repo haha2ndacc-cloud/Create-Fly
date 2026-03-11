@@ -54,7 +54,7 @@ public class SequencedAssemblyCategory extends CreateCategory<SequencedAssemblyD
                 matrices.translate(point.x, point.y);
                 matrices.scale(scale, scale);
                 matrices.translate(-point.x, -point.y);
-                graphics.guiRenderState.submitPicturesInPictureState(new PressRenderState(
+                graphics.guiRenderState.addPicturesInPictureState(new PressRenderState(
                     i,
                     new Matrix3x2f(matrices),
                     point.x - 3,
@@ -72,7 +72,7 @@ public class SequencedAssemblyCategory extends CreateCategory<SequencedAssemblyD
                 matrices.translate(point.x, point.y);
                 matrices.scale(scale, scale);
                 matrices.translate(-point.x, -point.y);
-                graphics.guiRenderState.submitPicturesInPictureState(new DeployerRenderState(
+                graphics.guiRenderState.addPicturesInPictureState(new DeployerRenderState(
                     i,
                     new Matrix3x2f(matrices),
                     point.x - 3,
@@ -97,7 +97,7 @@ public class SequencedAssemblyCategory extends CreateCategory<SequencedAssemblyD
                     fluid = fluidStack.getFluid();
                     components = fluidStack.getComponents().asPatch();
                 }
-                graphics.guiRenderState.submitPicturesInPictureState(new SpoutRenderState(
+                graphics.guiRenderState.addPicturesInPictureState(new SpoutRenderState(
                     i,
                     new Matrix3x2f(matrices),
                     fluid,

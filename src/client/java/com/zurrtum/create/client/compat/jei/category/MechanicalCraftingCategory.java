@@ -94,7 +94,7 @@ public class MechanicalCraftingCategory extends CreateCategory<RecipeHolder<Mech
     ) {
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 128, 59);
         AllGuiTextures.JEI_SHADOW.render(graphics, 113, 38);
-        graphics.guiRenderState.submitPicturesInPictureState(new CrafterRenderState(
+        graphics.guiRenderState.addPicturesInPictureState(new CrafterRenderState(
             new Matrix3x2f(graphics.pose()),
             124,
             18

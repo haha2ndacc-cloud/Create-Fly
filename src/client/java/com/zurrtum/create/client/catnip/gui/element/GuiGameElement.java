@@ -86,7 +86,7 @@ public class GuiGameElement {
                 return;
             }
             key.update(scale, padding, xRot, yRot, zRot);
-            graphics.guiRenderState.submitPicturesInPictureState(ItemTransformRenderState.create(graphics, key, x, y));
+            graphics.guiRenderState.addPicturesInPictureState(ItemTransformRenderState.create(graphics, key, x, y));
         }
 
         @Override
@@ -122,7 +122,7 @@ public class GuiGameElement {
         @Override
         public void render(GuiGraphicsExtractor graphics) {
             key.update(scale, padding, xRot, yRot, zRot);
-            graphics.guiRenderState.submitPicturesInPictureState(BlockTransformRenderState.create(graphics, key, x, y));
+            graphics.guiRenderState.addPicturesInPictureState(BlockTransformRenderState.create(graphics, key, x, y));
         }
 
         @Override
@@ -153,7 +153,7 @@ public class GuiGameElement {
                 return;
             }
             state.update(graphics, model, x, y, xLocal, yLocal, scale, padding, partialTicks, transform);
-            graphics.guiRenderState.submitPicturesInPictureState(state);
+            graphics.guiRenderState.addPicturesInPictureState(state);
         }
 
         public GuiPartialRenderBuilder scale(float scale) {

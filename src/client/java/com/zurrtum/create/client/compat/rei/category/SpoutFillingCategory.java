@@ -60,7 +60,7 @@ public class SpoutFillingCategory extends CreateCategory<SpoutFillingDisplay> {
                 idGenerator.set(0);
             }
             FluidStack stack = slot.getValue();
-            graphics.guiRenderState.submitPicturesInPictureState(new SpoutRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new SpoutRenderState(
                 i,
                 new Matrix3x2f(graphics.pose()),
                 stack.getFluid(),

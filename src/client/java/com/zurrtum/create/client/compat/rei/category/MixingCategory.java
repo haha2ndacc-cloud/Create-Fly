@@ -62,14 +62,14 @@ public class MixingCategory extends CreateCategory<MixingDisplay> {
             } else {
                 AllGuiTextures.JEI_HEAT_BAR.render(graphics, bounds.x + 9, bounds.y + 85);
                 AllGuiTextures.JEI_LIGHT.render(graphics, bounds.x + 86, bounds.y + 93);
-                graphics.guiRenderState.submitPicturesInPictureState(new BasinBlazeBurnerRenderState(
+                graphics.guiRenderState.addPicturesInPictureState(new BasinBlazeBurnerRenderState(
                     pose,
                     bounds.x + 96,
                     bounds.y + 74,
                     requiredHeat.visualizeAsBlazeBurner()
                 ));
             }
-            graphics.guiRenderState.submitPicturesInPictureState(new MixingBasinRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new MixingBasinRenderState(
                 pose,
                 bounds.x + 96,
                 bounds.y

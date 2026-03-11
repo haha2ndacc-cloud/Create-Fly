@@ -171,7 +171,7 @@ public class SpoutFillingCategory extends CreateCategory<RecipeHolder<FillingRec
                 if (i >= MAX) {
                     idGenerator.set(0);
                 }
-                graphics.guiRenderState.submitPicturesInPictureState(new SpoutRenderState(
+                graphics.guiRenderState.addPicturesInPictureState(new SpoutRenderState(
                     i,
                     new Matrix3x2f(graphics.pose()),
                     fluidVariant.getFluid(),

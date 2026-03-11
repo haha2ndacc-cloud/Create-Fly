@@ -70,7 +70,7 @@ public class DrainingView extends CreateView {
         AllGuiTextures.JEI_DOWN_ARROW.render(context, 73, 0);
         ItemStack stack = fluidResult.getByIndex(fluidResult.index());
         if (stack.getItem() instanceof FluidItem item) {
-            context.guiRenderState.submitPicturesInPictureState(new DrainRenderState(
+            context.guiRenderState.addPicturesInPictureState(new DrainRenderState(
                 new Matrix3x2f(context.pose()),
                 item.getFluid(),
                 stack.getComponentsPatch(),

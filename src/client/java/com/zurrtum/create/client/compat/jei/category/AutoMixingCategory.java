@@ -80,7 +80,7 @@ public class AutoMixingCategory extends CreateCategory<RecipeHolder<ShapelessRec
     ) {
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 136, 32);
         AllGuiTextures.JEI_SHADOW.render(graphics, 81, 68);
-        graphics.guiRenderState.submitPicturesInPictureState(new MixingBasinRenderState(
+        graphics.guiRenderState.addPicturesInPictureState(new MixingBasinRenderState(
             new Matrix3x2f(graphics.pose()),
             91,
             -5

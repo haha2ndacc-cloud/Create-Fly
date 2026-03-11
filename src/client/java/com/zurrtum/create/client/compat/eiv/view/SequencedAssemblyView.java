@@ -288,7 +288,7 @@ public class SequencedAssemblyView extends CreateView {
             matrices.translate(x, y);
             matrices.scale(scale, scale);
             matrices.translate(-x, -y);
-            graphics.guiRenderState.submitPicturesInPictureState(new PressRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new PressRenderState(
                 i,
                 new Matrix3x2f(matrices),
                 x - 3,
@@ -308,7 +308,7 @@ public class SequencedAssemblyView extends CreateView {
             matrices.translate(x, y);
             matrices.scale(scale, scale);
             matrices.translate(-x, -y);
-            graphics.guiRenderState.submitPicturesInPictureState(new DeployerRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new DeployerRenderState(
                 i,
                 new Matrix3x2f(matrices),
                 x - 3,
@@ -341,7 +341,7 @@ public class SequencedAssemblyView extends CreateView {
                 matrices.translate(-x, -y);
                 Fluid fluid = item.getFluid();
                 DataComponentPatch components = stack.getComponentsPatch();
-                graphics.guiRenderState.submitPicturesInPictureState(new SpoutRenderState(
+                graphics.guiRenderState.addPicturesInPictureState(new SpoutRenderState(
                     i,
                     new Matrix3x2f(matrices),
                     fluid,

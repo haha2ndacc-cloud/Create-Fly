@@ -79,7 +79,7 @@ public class MillingCategory extends CreateCategory<MillingDisplay> {
             AllGuiTextures.JEI_ARROW.render(graphics, bounds.x + 90, bounds.y + 37);
             AllGuiTextures.JEI_DOWN_ARROW.render(graphics, bounds.x + 48, bounds.y + 9);
             AllGuiTextures.JEI_SHADOW.render(graphics, bounds.x + 37, bounds.y + 45);
-            graphics.guiRenderState.submitPicturesInPictureState(new MillstoneRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new MillstoneRenderState(
                 new Matrix3x2f(graphics.pose()),
                 bounds.x + 47,
                 bounds.y + 24

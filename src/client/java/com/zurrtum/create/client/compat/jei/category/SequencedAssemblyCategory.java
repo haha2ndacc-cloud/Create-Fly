@@ -258,7 +258,7 @@ public class SequencedAssemblyCategory extends CreateCategory<RecipeHolder<Seque
             matrices.translate(x, y);
             matrices.scale(scale, scale);
             matrices.translate(-x, -y);
-            graphics.guiRenderState.submitPicturesInPictureState(new PressRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new PressRenderState(
                 i,
                 new Matrix3x2f(matrices),
                 x - 3,
@@ -278,7 +278,7 @@ public class SequencedAssemblyCategory extends CreateCategory<RecipeHolder<Seque
             matrices.translate(x, y);
             matrices.scale(scale, scale);
             matrices.translate(-x, -y);
-            graphics.guiRenderState.submitPicturesInPictureState(new DeployerRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new DeployerRenderState(
                 i,
                 new Matrix3x2f(matrices),
                 x - 3,
@@ -319,7 +319,7 @@ public class SequencedAssemblyCategory extends CreateCategory<RecipeHolder<Seque
                 FluidVariant fluidVariant = ingredient.getFluidVariant();
                 Fluid fluid = fluidVariant.getFluid();
                 DataComponentPatch components = fluidVariant.getComponentsPatch();
-                graphics.guiRenderState.submitPicturesInPictureState(new SpoutRenderState(
+                graphics.guiRenderState.addPicturesInPictureState(new SpoutRenderState(
                     i,
                     new Matrix3x2f(matrices),
                     fluid,

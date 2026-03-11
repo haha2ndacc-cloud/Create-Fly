@@ -606,7 +606,7 @@ public class PonderUI extends AbstractPonderScreen {
         double diff = i - uiTicks;
         double slide = Mth.lerp(diff * diff, 200, 600) * diff;
         PonderScene scene = scenes.get(i);
-        graphics.guiRenderState.submitPicturesInPictureState(new SceneRenderState(
+        graphics.guiRenderState.addPicturesInPictureState(new SceneRenderState(
             id,
             scene,
             width,
@@ -940,7 +940,7 @@ public class PonderUI extends AbstractPonderScreen {
             return;
         }
 
-        graphics.guiRenderState.submitPicturesInPictureState(new TitleTextRenderState(
+        graphics.guiRenderState.addPicturesInPictureState(new TitleTextRenderState(
             new Matrix3x2f(poseStack),
             0,
             0,

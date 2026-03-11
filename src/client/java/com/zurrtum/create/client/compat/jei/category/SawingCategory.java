@@ -65,10 +65,6 @@ public class SawingCategory extends CreateCategory<RecipeHolder<CuttingRecipe>> 
     ) {
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 70, 6);
         AllGuiTextures.JEI_SHADOW.render(graphics, 55, 55);
-        graphics.guiRenderState.submitPicturesInPictureState(new SawRenderState(
-            new Matrix3x2f(graphics.pose()),
-            64,
-            31
-        ));
+        graphics.guiRenderState.addPicturesInPictureState(new SawRenderState(new Matrix3x2f(graphics.pose()), 64, 31));
     }
 }

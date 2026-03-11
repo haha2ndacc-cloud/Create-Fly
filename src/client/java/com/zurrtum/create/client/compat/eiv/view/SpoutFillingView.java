@@ -77,7 +77,7 @@ public class SpoutFillingView extends CreateView {
             if (i >= MAX) {
                 idGenerator.set(0);
             }
-            context.guiRenderState.submitPicturesInPictureState(new SpoutRenderState(
+            context.guiRenderState.addPicturesInPictureState(new SpoutRenderState(
                 i,
                 new Matrix3x2f(context.pose()),
                 item.getFluid(),

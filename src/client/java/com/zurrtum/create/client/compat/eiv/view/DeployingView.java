@@ -71,7 +71,7 @@ public class DeployingView extends CreateView {
     ) {
         AllGuiTextures.JEI_SHADOW.render(context, 62, 59);
         AllGuiTextures.JEI_DOWN_ARROW.render(context, 126, 31);
-        context.guiRenderState.submitPicturesInPictureState(new DeployerRenderState(
+        context.guiRenderState.addPicturesInPictureState(new DeployerRenderState(
             new Matrix3x2f(context.pose()),
             75,
             -8

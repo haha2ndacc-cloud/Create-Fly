@@ -111,14 +111,14 @@ public class MixingView extends CreateView {
         } else {
             AllGuiTextures.JEI_HEAT_BAR.render(context, 0, 80);
             AllGuiTextures.JEI_LIGHT.render(context, 77, 88);
-            context.guiRenderState.submitPicturesInPictureState(new BasinBlazeBurnerRenderState(
+            context.guiRenderState.addPicturesInPictureState(new BasinBlazeBurnerRenderState(
                 pose,
                 87,
                 69,
                 heat.visualizeAsBlazeBurner()
             ));
         }
-        context.guiRenderState.submitPicturesInPictureState(new MixingBasinRenderState(pose, 87, -5));
+        context.guiRenderState.addPicturesInPictureState(new MixingBasinRenderState(pose, 87, -5));
         context.text(
             Minecraft.getInstance().font,
             CreateLang.translateDirect(heat.getTranslationKey()),

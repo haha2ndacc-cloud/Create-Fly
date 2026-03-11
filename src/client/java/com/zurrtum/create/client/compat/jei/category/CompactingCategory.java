@@ -86,7 +86,7 @@ public class CompactingCategory extends CreateCategory<RecipeHolder<CompactingRe
     ) {
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 136, 32);
         AllGuiTextures.JEI_SHADOW.render(graphics, 81, 68);
-        graphics.guiRenderState.submitPicturesInPictureState(new PressBasinRenderState(
+        graphics.guiRenderState.addPicturesInPictureState(new PressBasinRenderState(
             new Matrix3x2f(graphics.pose()),
             91,
             -5

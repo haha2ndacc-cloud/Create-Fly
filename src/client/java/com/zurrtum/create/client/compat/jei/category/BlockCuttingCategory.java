@@ -129,10 +129,6 @@ public class BlockCuttingCategory extends CreateCategory<BlockCuttingDisplay> {
     ) {
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 31, 6);
         AllGuiTextures.JEI_SHADOW.render(graphics, 16, 50);
-        graphics.guiRenderState.submitPicturesInPictureState(new SawRenderState(
-            new Matrix3x2f(graphics.pose()),
-            25,
-            26
-        ));
+        graphics.guiRenderState.addPicturesInPictureState(new SawRenderState(new Matrix3x2f(graphics.pose()), 25, 26));
     }
 }

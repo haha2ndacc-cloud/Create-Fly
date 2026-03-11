@@ -235,7 +235,7 @@ public class PlacementClient {
         double scale = PonderConfig.client().indicatorScale.get();
         ms.scale((float) scale, (float) scale);
         int size = (int) ((10 + length) * scale);
-        graphics.guiRenderState.submitGuiElement(new ArrowRenderState(new Matrix3x2f(ms), size, r, g, b, a, length));
+        graphics.guiRenderState.addGuiElement(new ArrowRenderState(new Matrix3x2f(ms), size, r, g, b, a, length));
         ms.popMatrix();
     }
 
@@ -262,7 +262,7 @@ public class PlacementClient {
         float th = tex_size;
         int size = (int) (36 * scale);
         TextureSetup texture = PonderGuiTextures.PLACEMENT_INDICATOR_SHEET.bind();
-        graphics.guiRenderState.submitGuiElement(new TextureArrowRenderState(
+        graphics.guiRenderState.addGuiElement(new TextureArrowRenderState(
             new Matrix3x2f(ms),
             size,
             alpha,

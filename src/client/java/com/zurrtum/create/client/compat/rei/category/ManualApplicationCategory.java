@@ -55,7 +55,7 @@ public class ManualApplicationCategory extends CreateCategory<ManualApplicationD
             ItemStack stack = slot.getValue();
             if (stack.getItem() instanceof BlockItem blockItem) {
                 BlockState block = blockItem.getBlock().defaultBlockState();
-                graphics.guiRenderState.submitPicturesInPictureState(new ManualBlockRenderState(
+                graphics.guiRenderState.addPicturesInPictureState(new ManualBlockRenderState(
                     new Matrix3x2f(graphics.pose()),
                     block,
                     bounds.x + 79,

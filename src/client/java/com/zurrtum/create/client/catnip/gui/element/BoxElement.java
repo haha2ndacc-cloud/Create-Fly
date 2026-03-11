@@ -94,16 +94,6 @@ public class BoxElement extends AbstractRenderElement {
         Color c2 = borderTop.copy().scaleAlpha(alpha);
         Color c3 = borderBot.copy().scaleAlpha(alpha);
         Matrix3x2f model = new Matrix3x2f(graphics.pose());
-        graphics.guiRenderState.submitGuiElement(new BoxRenderState(
-            model,
-            x,
-            y,
-            width,
-            height,
-            borderOffset,
-            c1,
-            c2,
-            c3
-        ));
+        graphics.guiRenderState.addGuiElement(new BoxRenderState(model, x, y, width, height, borderOffset, c1, c2, c3));
     }
 }

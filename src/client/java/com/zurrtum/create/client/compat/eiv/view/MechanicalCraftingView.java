@@ -95,7 +95,7 @@ public class MechanicalCraftingView extends CreateView {
     ) {
         AllGuiTextures.JEI_DOWN_ARROW.render(context, 128, 53);
         AllGuiTextures.JEI_SHADOW.render(context, 113, 32);
-        context.guiRenderState.submitPicturesInPictureState(new CrafterRenderState(
+        context.guiRenderState.addPicturesInPictureState(new CrafterRenderState(
             new Matrix3x2f(context.pose()),
             124,
             12

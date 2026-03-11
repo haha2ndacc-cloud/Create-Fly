@@ -55,7 +55,7 @@ public class CrushingCategory extends CreateCategory<CrushingDisplay> {
             drawSlotBackground(graphics, outputs, input);
             drawChanceSlotBackground(graphics, chances);
             AllGuiTextures.JEI_DOWN_ARROW.render(graphics, bounds.x + 77, bounds.y + 12);
-            graphics.guiRenderState.submitPicturesInPictureState(new CrushWheelRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new CrushWheelRenderState(
                 new Matrix3x2f(graphics.pose()),
                 bounds.x + 47,
                 bounds.y + 29

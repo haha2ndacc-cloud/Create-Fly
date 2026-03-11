@@ -70,7 +70,7 @@ public class SandpaperPolishingCategory extends CreateCategory<RecipeHolder<Sand
         AllGuiTextures.JEI_SHADOW.render(graphics, 61, 21);
         AllGuiTextures.JEI_LONG_ARROW.render(graphics, 52, 32);
         recipeSlotsView.getSlotViews(RecipeIngredientRole.INPUT).getFirst().getDisplayedItemStack().ifPresent(stack -> {
-            graphics.guiRenderState.submitPicturesInPictureState(new SandPaperRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new SandPaperRenderState(
                 new Matrix3x2f(graphics.pose()),
                 stack,
                 74,

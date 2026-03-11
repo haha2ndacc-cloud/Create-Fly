@@ -75,7 +75,7 @@ public class CrushingCategory extends CreateCategory<RecipeHolder<? extends Abst
         double mouseY
     ) {
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 72, 7);
-        graphics.guiRenderState.submitPicturesInPictureState(new CrushWheelRenderState(
+        graphics.guiRenderState.addPicturesInPictureState(new CrushWheelRenderState(
             new Matrix3x2f(graphics.pose()),
             42,
             24

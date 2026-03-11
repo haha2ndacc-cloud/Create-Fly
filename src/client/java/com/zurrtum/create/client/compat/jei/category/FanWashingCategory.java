@@ -79,7 +79,7 @@ public class FanWashingCategory extends CreateCategory<RecipeHolder<SplashingRec
         AllGuiTextures.JEI_SHADOW.render(graphics, 46, 27);
         AllGuiTextures.JEI_SHADOW.render(graphics, 65, 39);
         AllGuiTextures.JEI_LONG_ARROW.render(graphics, 54 + 7 * xOffsetAmount, 51);
-        graphics.guiRenderState.submitPicturesInPictureState(new FanRenderState(
+        graphics.guiRenderState.addPicturesInPictureState(new FanRenderState(
             new Matrix3x2f(graphics.pose()),
             56,
             4,

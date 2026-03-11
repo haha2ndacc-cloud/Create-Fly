@@ -72,13 +72,13 @@ public class PotionView extends CreateView {
         Matrix3x2f pose = new Matrix3x2f(context.pose());
         AllGuiTextures.JEI_HEAT_BAR.render(context, 0, 80);
         AllGuiTextures.JEI_LIGHT.render(context, 77, 88);
-        context.guiRenderState.submitPicturesInPictureState(new BasinBlazeBurnerRenderState(
+        context.guiRenderState.addPicturesInPictureState(new BasinBlazeBurnerRenderState(
             pose,
             87,
             69,
             requiredHeat.visualizeAsBlazeBurner()
         ));
-        context.guiRenderState.submitPicturesInPictureState(new MixingBasinRenderState(pose, 87, -5));
+        context.guiRenderState.addPicturesInPictureState(new MixingBasinRenderState(pose, 87, -5));
         context.text(
             context.minecraft.font,
             CreateLang.translateDirect(requiredHeat.getTranslationKey()),

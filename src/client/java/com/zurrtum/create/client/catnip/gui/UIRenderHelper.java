@@ -149,7 +149,7 @@ public class UIRenderHelper {
         Color startColor,
         Color endColor
     ) {
-        graphics.guiRenderState.submitGuiElement(new GradientRectRenderState(
+        graphics.guiRenderState.addGuiElement(new GradientRectRenderState(
             new Matrix3x2f(graphics.pose()),
             left,
             top,
@@ -228,7 +228,7 @@ public class UIRenderHelper {
         Color fc3 = Color.mixColors(c1, c2, (indent + width) / (width + 2f * indent));
         Color fc4 = Color.mixColors(c1, c2, 1);
 
-        graphics.guiRenderState.submitGuiElement(new BreadcrumbArrowRenderState(
+        graphics.guiRenderState.addGuiElement(new BreadcrumbArrowRenderState(
             new Matrix3x2f(graphics.pose()),
             x0,
             x1,
@@ -279,7 +279,7 @@ public class UIRenderHelper {
             maxY = Math.max(maxY, point.y);
         }
 
-        graphics.guiRenderState.submitGuiElement(new RadialSectorRenderState(
+        graphics.guiRenderState.addGuiElement(new RadialSectorRenderState(
             new Matrix3x2f(graphics.pose()),
             minX,
             maxX,
@@ -444,7 +444,7 @@ public class UIRenderHelper {
         float v1,
         float v2
     ) {
-        graphics.guiRenderState.submitGuiElement(new TexturedQuadRenderState(
+        graphics.guiRenderState.addGuiElement(new TexturedQuadRenderState(
             new Matrix3x2f(graphics.pose()),
             texture,
             left,

@@ -72,13 +72,13 @@ public class PotionCategory extends CreateCategory<RecipeHolder<PotionRecipe>> {
         Matrix3x2f pose = new Matrix3x2f(graphics.pose());
         AllGuiTextures.JEI_HEAT_BAR.render(graphics, 4, 81);
         AllGuiTextures.JEI_LIGHT.render(graphics, 81, 88);
-        graphics.guiRenderState.submitPicturesInPictureState(new BasinBlazeBurnerRenderState(
+        graphics.guiRenderState.addPicturesInPictureState(new BasinBlazeBurnerRenderState(
             pose,
             91,
             69,
             requiredHeat.visualizeAsBlazeBurner()
         ));
-        graphics.guiRenderState.submitPicturesInPictureState(new MixingBasinRenderState(pose, 91, -5));
+        graphics.guiRenderState.addPicturesInPictureState(new MixingBasinRenderState(pose, 91, -5));
         graphics.text(
             Minecraft.getInstance().font,
             CreateLang.translateDirect(requiredHeat.getTranslationKey()),

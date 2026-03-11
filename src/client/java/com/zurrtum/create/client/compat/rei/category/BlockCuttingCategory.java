@@ -52,7 +52,7 @@ public class BlockCuttingCategory extends CreateCategory<BlockCuttingDisplay> {
             drawSlotBackground(graphics, outputs);
             AllGuiTextures.JEI_DOWN_ARROW.render(graphics, bounds.x + 36, bounds.y + 11);
             AllGuiTextures.JEI_SHADOW.render(graphics, bounds.x + 21, bounds.y + 55);
-            graphics.guiRenderState.submitPicturesInPictureState(new SawRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new SawRenderState(
                 new Matrix3x2f(graphics.pose()),
                 bounds.x + 30,
                 bounds.y + 31

@@ -51,7 +51,7 @@ public class CompactingCategory extends CreateCategory<CompactingDisplay> {
             AllGuiTextures.JEI_SLOT.render(graphics, output.x - 1, output.y - 1);
             AllGuiTextures.JEI_DOWN_ARROW.render(graphics, bounds.x + 141, bounds.y + 37);
             AllGuiTextures.JEI_SHADOW.render(graphics, bounds.x + 86, bounds.y + 73);
-            graphics.guiRenderState.submitPicturesInPictureState(new PressBasinRenderState(
+            graphics.guiRenderState.addPicturesInPictureState(new PressBasinRenderState(
                 new Matrix3x2f(graphics.pose()),
                 bounds.x + 96,
                 bounds.y

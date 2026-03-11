@@ -127,7 +127,7 @@ public class DrainingCategory extends CreateCategory<RecipeHolder<EmptyingRecipe
         AllGuiTextures.JEI_SHADOW.render(graphics, 62, 37);
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 73, 4);
         FluidStack stack = entry.value().fluidResult();
-        graphics.guiRenderState.submitPicturesInPictureState(new DrainRenderState(
+        graphics.guiRenderState.addPicturesInPictureState(new DrainRenderState(
             new Matrix3x2f(graphics.pose()),
             stack.getFluid(),
             stack.getComponentChanges(),

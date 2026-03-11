@@ -77,7 +77,7 @@ public class ManualApplicationView extends CreateView {
         ItemStack stack = target.getByIndex(target.index());
         if (stack.getItem() instanceof BlockItem blockItem) {
             BlockState block = blockItem.getBlock().defaultBlockState();
-            context.guiRenderState.submitPicturesInPictureState(new ManualBlockRenderState(
+            context.guiRenderState.addPicturesInPictureState(new ManualBlockRenderState(
                 new Matrix3x2f(context.pose()),
                 block,
                 79,

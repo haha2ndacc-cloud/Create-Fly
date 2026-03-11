@@ -304,7 +304,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
             poseStack.translate(0, -(sectorWidth / 2f + innerRadius));
             poseStack.rotate(Mth.DEG_TO_RAD * (-i * sectorAngle));
 
-            graphics.guiRenderState.submitPicturesInPictureState(EntityBlockRenderState.create(
+            graphics.guiRenderState.addPicturesInPictureState(EntityBlockRenderState.create(
                 i,
                 graphics,
                 nonVisualizationLevel,
@@ -372,7 +372,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
         poseStack.pushMatrix();
         poseStack.rotate((float) -theta);
         poseStack.translate(0, innerRadius + 3);
-        graphics.guiRenderState.submitGuiElement(new DirectionIndicatorRenderState(
+        graphics.guiRenderState.addGuiElement(new DirectionIndicatorRenderState(
             new Matrix3x2f(poseStack),
             0.8f,
             0.8f,

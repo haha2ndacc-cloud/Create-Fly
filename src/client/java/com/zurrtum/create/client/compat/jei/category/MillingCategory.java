@@ -74,7 +74,7 @@ public class MillingCategory extends CreateCategory<RecipeHolder<MillingRecipe>>
         AllGuiTextures.JEI_ARROW.render(graphics, 85, 32);
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 43, 4);
         AllGuiTextures.JEI_SHADOW.render(graphics, 32, 40);
-        graphics.guiRenderState.submitPicturesInPictureState(new MillstoneRenderState(
+        graphics.guiRenderState.addPicturesInPictureState(new MillstoneRenderState(
             new Matrix3x2f(graphics.pose()),
             42,
             19

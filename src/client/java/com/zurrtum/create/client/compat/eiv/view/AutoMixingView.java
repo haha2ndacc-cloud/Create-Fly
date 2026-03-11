@@ -70,7 +70,7 @@ public class AutoMixingView extends CreateView {
     ) {
         AllGuiTextures.JEI_DOWN_ARROW.render(context, 136, 29);
         AllGuiTextures.JEI_SHADOW.render(context, 81, 65);
-        context.guiRenderState.submitPicturesInPictureState(new MixingBasinRenderState(
+        context.guiRenderState.addPicturesInPictureState(new MixingBasinRenderState(
             new Matrix3x2f(context.pose()),
             91,
             -8

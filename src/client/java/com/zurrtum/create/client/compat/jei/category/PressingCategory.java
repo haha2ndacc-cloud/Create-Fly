@@ -64,7 +64,7 @@ public class PressingCategory extends CreateCategory<RecipeHolder<PressingRecipe
     ) {
         AllGuiTextures.JEI_SHADOW.render(graphics, 61, 41);
         AllGuiTextures.JEI_LONG_ARROW.render(graphics, 52, 54);
-        graphics.guiRenderState.submitPicturesInPictureState(new PressRenderState(
+        graphics.guiRenderState.addPicturesInPictureState(new PressRenderState(
             new Matrix3x2f(graphics.pose()),
             73,
             -16
