@@ -327,7 +327,7 @@ public class BlueprintOverlayRenderer {
                     }
                     Window window = mc.getWindow();
                     guiGraphics.setComponentTooltipForNextFrame(mc.font, tooltipLines, 0, 0);
-                    guiGraphics.renderTooltip(
+                    guiGraphics.tooltip(
                         mc.font,
                         tooltipLines.stream().map(Component::getVisualOrderText).map(ClientTooltipComponent::create)
                             .toList(),

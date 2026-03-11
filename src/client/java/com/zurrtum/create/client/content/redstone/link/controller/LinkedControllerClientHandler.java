@@ -274,7 +274,7 @@ public class LinkedControllerClientHandler {
         int y = height1 - height - 24;
 
         // TODO
-        guiGraphics.renderTooltip(
+        guiGraphics.tooltip(
             mc.font,
             list.stream().map(Component::getVisualOrderText).map(ClientTooltipComponent::create)
                 .collect(Collectors.toList()),
