@@ -40,7 +40,7 @@ import java.util.function.Supplier;
 
 import static com.zurrtum.create.Create.MOD_ID;
 
-public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<Object> {
+public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<ItemDisplayContext> {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/wand_of_symmetry");
     public static final Identifier ITEM_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/wand_of_symmetry/item");
     public static final Identifier CORE_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/wand_of_symmetry/core");
@@ -107,14 +107,13 @@ public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<Object
         LayerRenderState renderState = state.newLayer();
         renderState.setExtents(vector);
         renderState.setLocalTransform(transformation);
-        renderState.setupSpecialModel(this, null);
+        renderState.setupSpecialModel(this, displayContext);
         settings.applyToLayer(renderState, displayContext);
     }
 
     @Override
     public void submit(
-        @Nullable Object data,
-        ItemDisplayContext displayContext,
+        @Nullable ItemDisplayContext displayContext,
         PoseStack matrices,
         SubmitNodeCollector queue,
         int light,
@@ -122,6 +121,7 @@ public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<Object
         boolean glint,
         int i
     ) {
+        assert displayContext != null;
         int maxLight = displayContext == ItemDisplayContext.GUI ? 0 : LightCoordsUtil.FULL_BRIGHT;
 
         renderItem(displayContext, matrices, queue, light, overlay, item);
@@ -156,7 +156,7 @@ public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<Object
     }
 
     @Override
-    public Object extractArgument(ItemStack stack) {
+    public ItemDisplayContext extractArgument(ItemStack stack) {
         throw new UnsupportedOperationException();
     }
 

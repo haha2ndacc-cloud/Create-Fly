@@ -28,6 +28,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Matrix3x2fStack;
 import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
@@ -87,7 +88,7 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
         }
         update(state, displayContext, itemQuads, itemSettings, itemVector, glint);
 
-        CogRenderData cog = new CogRenderData();
+        CogRenderData cog = new CogRenderData(displayContext);
         cog.state = update(state, displayContext, cogQuads, cogSettings, cogVector, glint);
         cog.state.setItemTransform(itemSettings.transforms().getTransform(displayContext));
         cog.rotation = AnimationTickHolder.getRenderTime() * -2.5f;
@@ -127,7 +128,6 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
     @Override
     public void submit(
         @Nullable CogRenderData data,
-        ItemDisplayContext displayContext,
         PoseStack matrices,
         SubmitNodeCollector queue,
         int light,
@@ -142,7 +142,7 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
         LayerRenderState state = data.state;
         queue.submitItem(
             matrices,
-            displayContext,
+            data.displayContext,
             light,
             overlay,
             0,
@@ -173,8 +173,14 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
     }
 
     public static class CogRenderData {
+        ItemDisplayContext displayContext;
+        @UnknownNullability
         LayerRenderState state;
         float rotation;
+
+        public CogRenderData(ItemDisplayContext displayContext) {
+            this.displayContext = displayContext;
+        }
     }
 
     @Override

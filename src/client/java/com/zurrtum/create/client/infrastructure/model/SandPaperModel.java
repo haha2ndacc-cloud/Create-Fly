@@ -69,8 +69,7 @@ public class SandPaperModel implements ItemModel, SpecialModelRenderer<SandPaper
         settings.applyToLayer(layerRenderState, displayContext);
         layerRenderState.prepareQuadList().addAll(quads);
 
-        RenderData data = new RenderData();
-        data.state = layerRenderState;
+        RenderData data = new RenderData(displayContext, layerRenderState);
         Player entity;
         if (ctx instanceof Player player) {
             data.itemInUseCount = player.getUseItemRemainingTicks();
@@ -104,7 +103,6 @@ public class SandPaperModel implements ItemModel, SpecialModelRenderer<SandPaper
     @Override
     public void submit(
         @Nullable RenderData data,
-        ItemDisplayContext displayContext,
         PoseStack matrices,
         SubmitNodeCollector queue,
         int light,
@@ -114,6 +112,7 @@ public class SandPaperModel implements ItemModel, SpecialModelRenderer<SandPaper
     ) {
         assert data != null;
         LayerRenderState state = data.state;
+        ItemDisplayContext displayContext = data.displayContext;
         boolean leftHand = displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
         boolean firstPerson = leftHand || displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
 
@@ -174,11 +173,17 @@ public class SandPaperModel implements ItemModel, SpecialModelRenderer<SandPaper
     }
 
     public static class RenderData {
+        ItemDisplayContext displayContext;
         LayerRenderState state;
         @Nullable ItemStackRenderState item;
         int itemInUseCount;
         boolean reverseBobbing;
         float bobbing;
+
+        public RenderData(ItemDisplayContext displayContext, LayerRenderState state) {
+            this.displayContext = displayContext;
+            this.state = state;
+        }
     }
 
     public record Unbaked(Identifier model) implements ItemModel.Unbaked {

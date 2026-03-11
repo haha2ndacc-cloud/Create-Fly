@@ -31,7 +31,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.ItemOwner;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4fc;
@@ -139,57 +138,75 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Li
         layerRenderState.setLocalTransform(transformation);
         settings.applyToLayer(layerRenderState, displayContext);
 
-        RenderData data = RenderData.EMPTY;
-        Minecraft mc = Minecraft.getInstance();
+        RenderData data = new RenderData(displayContext);
         Mode mode = LinkedControllerClientHandler.MODE;
-        boolean bind = mode == Mode.BIND;
-        if (displayContext == ItemDisplayContext.GUI) {
-            if (bind || mode == Mode.ACTIVE) {
-                LocalPlayer player = mc.player;
-                if (player != null) {
-                    ItemStack mainStack = player.getMainHandItem();
-                    if (stack == mainStack || mainStack.getItem() != AllItems.LINKED_CONTROLLER && stack == player.getOffhandItem()) {
-                        data = new RenderData(true, false, bind);
-                    }
-                }
-            }
-        } else {
-            LocalPlayer player = mc.player;
-            HumanoidArm arm = mc.options.mainHand().get();
-            if (displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND) {
-                if ((bind || mode == Mode.ACTIVE) && (arm == HumanoidArm.RIGHT || canUse(player, arm))) {
-                    data = new RenderData(true, true, bind);
-                } else {
-                    data = RenderData.EQUIP;
-                }
-            } else if (displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND) {
-                if ((bind || mode == Mode.ACTIVE) && (arm == HumanoidArm.LEFT || canUse(player, arm))) {
-                    data = new RenderData(true, true, bind);
-                } else {
-                    data = RenderData.EQUIP;
-                }
-            } else if (displayContext == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
-                if ((bind || mode == Mode.ACTIVE) && (arm == HumanoidArm.RIGHT || canUse(player, arm))) {
-                    data = new RenderData(true, false, bind);
-                }
-            } else if (displayContext == ItemDisplayContext.THIRD_PERSON_LEFT_HAND) {
-                if ((bind || mode == Mode.ACTIVE) && (arm == HumanoidArm.LEFT || canUse(player, arm))) {
-                    data = new RenderData(true, false, bind);
-                }
-            }
+        switch (displayContext) {
+            case GUI -> updateGuiData(stack, data, mode);
+            case FIRST_PERSON_RIGHT_HAND -> updateFirstPersonData(HumanoidArm.RIGHT, data, mode);
+            case THIRD_PERSON_RIGHT_HAND -> updateThirdPersonData(HumanoidArm.RIGHT, data, mode);
+            case FIRST_PERSON_LEFT_HAND -> updateFirstPersonData(HumanoidArm.LEFT, data, mode);
+            case THIRD_PERSON_LEFT_HAND -> updateThirdPersonData(HumanoidArm.LEFT, data, mode);
         }
         layerRenderState.setupSpecialModel(this, data);
         state.appendModelIdentityElement(data.active);
     }
 
-    private static boolean canUse(@Nullable Player player, HumanoidArm arm) {
-        return player != null && player.getItemHeldByArm(arm).getItem() != AllItems.LINKED_CONTROLLER;
+    private static void updateGuiData(ItemStack current, RenderData data, Mode mode) {
+        boolean bind = mode == Mode.BIND;
+        if (bind || mode == Mode.ACTIVE) {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player != null) {
+                ItemStack mainStack = player.getMainHandItem();
+                if (current == mainStack || mainStack.getItem() != AllItems.LINKED_CONTROLLER && current == player.getOffhandItem()) {
+                    data.active = true;
+                    data.bind = bind;
+                }
+            }
+        }
+    }
+
+    private static void updateFirstPersonData(HumanoidArm current, RenderData data, Mode mode) {
+        Minecraft mc = Minecraft.getInstance();
+        if (current == mc.options.mainHand().get()) {
+            data.equip = true;
+            boolean bind = mode == Mode.BIND;
+            if (bind || mode == Mode.ACTIVE) {
+                data.active = true;
+                data.bind = bind;
+            }
+        } else {
+            LocalPlayer player = mc.player;
+            if (player != null && player.getMainHandItem().getItem() != AllItems.LINKED_CONTROLLER) {
+                data.equip = true;
+                boolean bind = mode == Mode.BIND;
+                if (bind || mode == Mode.ACTIVE) {
+                    data.active = true;
+                    data.bind = bind;
+                }
+            }
+        }
+    }
+
+    private static void updateThirdPersonData(HumanoidArm current, RenderData data, Mode mode) {
+        boolean bind = mode == Mode.BIND;
+        if (bind || mode == Mode.ACTIVE) {
+            Minecraft mc = Minecraft.getInstance();
+            if (current == mc.options.mainHand().get()) {
+                data.active = true;
+                data.bind = bind;
+            } else {
+                LocalPlayer player = mc.player;
+                if (player != null && player.getMainHandItem().getItem() != AllItems.LINKED_CONTROLLER) {
+                    data.active = true;
+                    data.bind = bind;
+                }
+            }
+        }
     }
 
     @Override
     public void submit(
         @Nullable RenderData data,
-        ItemDisplayContext displayContext,
         PoseStack matrices,
         SubmitNodeCollector queue,
         int light,
@@ -198,7 +215,7 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Li
         int i
     ) {
         assert data != null;
-        render(displayContext, matrices, queue, light, overlay, data.bind, data.equip, data.active, true);
+        render(data.displayContext, matrices, queue, light, overlay, data.bind, data.equip, data.active, true);
     }
 
     public void renderInLectern(
@@ -306,9 +323,15 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Li
         queue.submitItem(matrices, displayContext, light, overlay, 0, tints, quads, ItemStackRenderState.FoilType.NONE);
     }
 
-    public record RenderData(boolean active, boolean equip, boolean bind) {
-        public static RenderData EMPTY = new RenderData(false, false, false);
-        public static RenderData EQUIP = new RenderData(false, true, false);
+    public static class RenderData {
+        ItemDisplayContext displayContext;
+        boolean active;
+        boolean equip;
+        boolean bind;
+
+        public RenderData(ItemDisplayContext displayContext) {
+            this.displayContext = displayContext;
+        }
     }
 
     @Override

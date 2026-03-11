@@ -89,22 +89,24 @@ public class LinkedControllerItem extends Item implements MenuProvider {
 
     @Override
     public InteractionResult use(Level world, Player player, InteractionHand hand) {
-        ItemStack heldItem = player.getItemInHand(hand);
-
-        if (player.isShiftKeyDown() && hand == InteractionHand.MAIN_HAND) {
-            if (!world.isClientSide() && player instanceof ServerPlayer serverPlayer && player.mayBuild()) {
-                openHandledScreen(serverPlayer);
+        if (hand == InteractionHand.MAIN_HAND) {
+            if (player.isShiftKeyDown()) {
+                if (!world.isClientSide() && player instanceof ServerPlayer serverPlayer && player.mayBuild()) {
+                    openHandledScreen(serverPlayer);
+                }
+                return InteractionResult.SUCCESS;
+            } else {
+                if (world.isClientSide()) {
+                    AllClientHandle.INSTANCE.toggleLinkedControllerActive();
+                }
+                player.getCooldowns().addCooldown(player.getMainHandItem(), 2);
             }
-            return InteractionResult.SUCCESS;
-        }
-
-        if (!player.isShiftKeyDown()) {
+        } else if (player.getMainHandItem().getItem() != this) {
             if (world.isClientSide()) {
                 AllClientHandle.INSTANCE.toggleLinkedControllerActive();
             }
-            player.getCooldowns().addCooldown(heldItem, 2);
+            player.getCooldowns().addCooldown(player.getOffhandItem(), 2);
         }
-
         return InteractionResult.PASS;
     }
 

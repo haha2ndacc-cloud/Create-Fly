@@ -10,6 +10,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.item.*;
+import net.minecraft.client.renderer.item.ItemStackRenderState.FoilType;
 import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.ModelBaker;
@@ -22,6 +23,7 @@ import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4fc;
+import org.joml.Quaternionf;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
@@ -31,7 +33,7 @@ import java.util.function.Supplier;
 
 import static com.zurrtum.create.Create.MOD_ID;
 
-public class WrenchModel implements ItemModel, SpecialModelRenderer<LayerRenderState> {
+public class WrenchModel implements ItemModel, SpecialModelRenderer<WrenchModel.RenderData> {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/wrench");
     public static final Identifier ITEM_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/wrench/item");
     public static final Identifier GEAR_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/wrench/gear");
@@ -86,16 +88,21 @@ public class WrenchModel implements ItemModel, SpecialModelRenderer<LayerRenderS
         layerRenderState.setExtents(vector);
         layerRenderState.setLocalTransform(transformation);
         settings.applyToLayer(layerRenderState, displayContext);
-        layerRenderState.prepareQuadList().addAll(quads);
         if (rotation) {
-            layerRenderState.setupSpecialModel(this, layerRenderState);
+            RenderData data = new RenderData(
+                displayContext,
+                Axis.YP.rotationDegrees(ScrollValueHandler.getScroll(AnimationTickHolder.getPartialTicks())),
+                quads
+            );
+            layerRenderState.setupSpecialModel(this, data);
+        } else {
+            layerRenderState.prepareQuadList().addAll(quads);
         }
     }
 
     @Override
     public void submit(
-        @Nullable LayerRenderState layer,
-        ItemDisplayContext displayContext,
+        @Nullable RenderData data,
         PoseStack matrices,
         SubmitNodeCollector queue,
         int light,
@@ -103,22 +110,25 @@ public class WrenchModel implements ItemModel, SpecialModelRenderer<LayerRenderS
         boolean glint,
         int i
     ) {
-        assert layer != null;
+        assert data != null;
         matrices.pushPose();
         matrices.translate(0.5625f, 0.5f, 0.5f);
-        matrices.mulPose(Axis.YP.rotationDegrees(ScrollValueHandler.getScroll(AnimationTickHolder.getPartialTicks())));
+        matrices.mulPose(data.rotate);
         matrices.translate(-0.5625f, -0.5f, -0.5f);
         queue.submitItem(
             matrices,
-            displayContext,
+            data.displayContext,
             light,
             overlay,
             0,
             LayerRenderState.EMPTY_TINTS,
-            layer.prepareQuadList(),
-            layer.foilType
+            data.quads,
+            FoilType.NONE
         );
         matrices.popPose();
+    }
+
+    public record RenderData(ItemDisplayContext displayContext, Quaternionf rotate, List<BakedQuad> quads) {
     }
 
     @Override
@@ -127,7 +137,7 @@ public class WrenchModel implements ItemModel, SpecialModelRenderer<LayerRenderS
     }
 
     @Override
-    public LayerRenderState extractArgument(ItemStack stack) {
+    public RenderData extractArgument(ItemStack stack) {
         throw new UnsupportedOperationException();
     }
 

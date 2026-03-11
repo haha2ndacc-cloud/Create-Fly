@@ -40,6 +40,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.CrossCollisionBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
@@ -144,7 +145,7 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
         renderState.setLocalTransform(transformation);
         renderState.setUsesBlockLight(settings.usesBlockLight());
         renderState.setParticleMaterial(settings.particleMaterial());
-        RenderData data = new RenderData();
+        RenderData data = new RenderData(displayContext);
         data.transform = settings.transforms().getTransform(displayContext);
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
@@ -162,7 +163,6 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
     @Override
     public void submit(
         @Nullable RenderData data,
-        ItemDisplayContext displayContext,
         PoseStack matrices,
         SubmitNodeCollector queue,
         int light,
@@ -171,6 +171,7 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
         int i
     ) {
         assert data != null;
+        ItemDisplayContext displayContext = data.displayContext;
         matrices.pushPose();
         matrices.translate(0.5F, 0.5F, 0.5F);
         matrices.pushPose();
@@ -240,23 +241,29 @@ public class WorldshaperModel implements ItemModel, SpecialModelRenderer<Worldsh
     }
 
     public static class RenderData {
+        public ItemDisplayContext displayContext;
+        @UnknownNullability
         public ItemTransform transform;
         public @Nullable BlockState state;
         public boolean rightHand;
         public boolean inHand;
         public @Nullable UsedRenderState used;
 
+        public RenderData(ItemDisplayContext displayContext) {
+            this.displayContext = displayContext;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (!(o instanceof RenderData data)) {
                 return false;
             }
-            return transform == data.transform && state == data.state && rightHand == data.rightHand && inHand == data.inHand;
+            return displayContext == data.displayContext && transform == data.transform && state == data.state && rightHand == data.rightHand && inHand == data.inHand && used == data.used;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(rightHand, inHand);
+            return Objects.hash(displayContext, transform, state, rightHand, inHand, used);
         }
     }
 

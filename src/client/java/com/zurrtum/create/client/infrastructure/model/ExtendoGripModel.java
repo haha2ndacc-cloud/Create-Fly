@@ -174,13 +174,13 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
             }
             data.flip = rightHand ^ mainArm == HumanoidArm.LEFT ? 1 : -1;
         }
+        data.displayContext = displayContext;
         data.state.setupSpecialModel(this, data);
     }
 
     @Override
     public void submit(
         @Nullable RenderData data,
-        ItemDisplayContext displayContext,
         PoseStack matrices,
         SubmitNodeCollector queue,
         int light,
@@ -189,12 +189,13 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
         int i
     ) {
         assert data != null;
+        ItemDisplayContext displayContext = data.displayContext;
         if (data.self) {
             data.self = false;
             matrices.pushPose();
             matrices.translate(0.45f, 0.65f, -0.7f - (data.animation * 2.25f));
             settings.transforms().getTransform(displayContext).apply(displayContext.leftHand(), matrices.last());
-            submit(data, displayContext, matrices, queue, light, overlay, glint, i);
+            submit(data, matrices, queue, light, overlay, glint, i);
             matrices.popPose();
         } else if (data.item != null) {
             matrices.pushPose();
@@ -293,6 +294,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
     }
 
     public static class RenderData {
+        ItemDisplayContext displayContext;
         @Nullable ItemStackRenderState item;
         LayerRenderState state;
         List<BakedQuad> hand;
