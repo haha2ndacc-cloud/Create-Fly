@@ -147,15 +147,12 @@ public class BakedModelHelper {
             }
             quads = part.getQuads(null);
             swapSprites(quads, spriteSwapper).forEach(builder::addUnculledFace);
-            parts.set(
-                i,
-                new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), material, part.hasTranslucency())
-            );
+            parts.set(i, new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), material));
         }
         if (size == 1) {
             return new SingleVariant(parts.getFirst());
         }
-        return new MultiVariant(parts, material, template.hasTranslucency());
+        return new MultiVariant(parts, material, template.materialFlags());
     }
 
     public static long calcSpriteUv(long packedUv, TextureAtlasSprite sprite, TextureAtlasSprite newSprite) {

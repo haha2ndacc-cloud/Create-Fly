@@ -111,12 +111,7 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
         for (BakedQuad bakedQuad : part.getQuads(null)) {
             builder.addUnculledFace(replaceQuad(bakedQuad, xRot, yRot, xOffset, yOffset, normals, ponder));
         }
-        return new SimpleModelWrapper(
-            builder.build(),
-            part.useAmbientOcclusion(),
-            part.particleMaterial(),
-            part.hasTranslucency()
-        );
+        return new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleMaterial());
     }
 
     private static BakedQuad replaceQuad(

@@ -125,12 +125,7 @@ public class CopycatPanelModel extends CopycatModel {
                     )
                 );
             }
-            parts.add(new SimpleModelWrapper(
-                builder.build(),
-                part.useAmbientOcclusion(),
-                part.particleMaterial(),
-                part.hasTranslucency()
-            ));
+            parts.add(new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleMaterial()));
         }
     }
 
@@ -214,12 +209,7 @@ public class CopycatPanelModel extends CopycatModel {
                     )
                 );
             }
-            parts.add(new SimpleModelWrapper(
-                builder.build(),
-                part.useAmbientOcclusion(),
-                part.particleMaterial(),
-                part.hasTranslucency()
-            ));
+            parts.add(new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleMaterial()));
         }
     }
 

@@ -8,7 +8,7 @@ import net.minecraft.util.RandomSource;
 import java.util.List;
 
 public record MultiVariant(List<BlockStateModelPart> models, Material.Baked particleMaterial,
-                           boolean hasTranslucency) implements BlockStateModel {
+                           int materialFlags) implements BlockStateModel {
     @Override
     public void collectParts(RandomSource random, List<BlockStateModelPart> output) {
         output.addAll(models);

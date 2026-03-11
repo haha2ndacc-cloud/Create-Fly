@@ -104,12 +104,7 @@ public class BeltModel extends WrapperBlockStateModel {
                 builder.addCulledFace(direction, replaceQuad(replace, quad));
             }
         }
-        return new SimpleModelWrapper(
-            builder.build(),
-            part.useAmbientOcclusion(),
-            part.particleMaterial(),
-            part.hasTranslucency()
-        );
+        return new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleMaterial());
     }
 
     private static long calcSpriteUv(long packedUv) {

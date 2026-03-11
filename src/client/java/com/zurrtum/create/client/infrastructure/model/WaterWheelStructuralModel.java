@@ -40,8 +40,8 @@ public class WaterWheelStructuralModel extends WrapperBlockStateModel {
     }
 
     @Override
-    public boolean hasTranslucency() {
-        return false;
+    public int materialFlags() {
+        return 0;
     }
 
     @Override

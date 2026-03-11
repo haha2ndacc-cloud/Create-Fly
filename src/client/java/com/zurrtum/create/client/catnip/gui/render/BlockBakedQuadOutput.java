@@ -6,8 +6,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockQuadOutput;
-import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class BlockBakedQuadOutput implements BlockQuadOutput {
@@ -27,7 +27,7 @@ public class BlockBakedQuadOutput implements BlockQuadOutput {
     }
 
     public void updateBuffer(BlockStateModel model) {
-        buffer = bufferSource.getBuffer(model.hasTranslucency() ? Sheets.translucentBlockSheet() : Sheets.cutoutBlockSheet());
+        buffer = bufferSource.getBuffer(model.hasMaterialFlag(1) ? Sheets.translucentBlockSheet() : Sheets.cutoutBlockSheet());
     }
 
     public void clearBuffer() {

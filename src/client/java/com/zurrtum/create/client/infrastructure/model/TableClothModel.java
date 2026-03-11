@@ -92,7 +92,7 @@ public class TableClothModel extends WrapperBlockStateModel {
             (index & NORTH_EAST) == NORTH_EAST ? getNorth(random, sprite) : List.of(),
             (index & SOUTH_EAST) == SOUTH_EAST ? getEast(random, sprite) : List.of(),
             material,
-            model.hasTranslucency()
+            model.materialFlags()
         ));
     }
 
@@ -164,8 +164,7 @@ public class TableClothModel extends WrapperBlockStateModel {
     }
 
     private record BakedCorner(List<BakedQuad> south, List<BakedQuad> west, List<BakedQuad> north, List<BakedQuad> east,
-                               Material.Baked particleMaterial,
-                               boolean hasTranslucency) implements BlockStateModelPart {
+                               Material.Baked particleMaterial, int materialFlags) implements BlockStateModelPart {
         @Override
         public List<BakedQuad> getQuads(@Nullable Direction side) {
             return switch (side) {
