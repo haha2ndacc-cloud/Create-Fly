@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.FormattedCharSequence;
-import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class NoShadowFontWrapper extends Font {
         float y,
         int color,
         boolean shadow,
-        Matrix4f matrix,
+        Matrix4fc matrix,
         MultiBufferSource vertexConsumers,
         DisplayMode layerType,
         int backgroundColor,
@@ -41,7 +41,7 @@ public class NoShadowFontWrapper extends Font {
         float y,
         int color,
         boolean shadow,
-        Matrix4f matrix,
+        Matrix4fc matrix,
         MultiBufferSource vertexConsumers,
         DisplayMode layerType,
         int backgroundColor,
@@ -57,7 +57,7 @@ public class NoShadowFontWrapper extends Font {
         float y,
         int color,
         boolean shadow,
-        Matrix4f matrix,
+        Matrix4fc matrix,
         MultiBufferSource vertexConsumers,
         DisplayMode layerType,
         int backgroundColor,
@@ -83,7 +83,7 @@ public class NoShadowFontWrapper extends Font {
         float y,
         int color,
         int outlineColor,
-        Matrix4f matrix,
+        Matrix4fc matrix,
         MultiBufferSource vertexConsumers,
         int light
     ) {

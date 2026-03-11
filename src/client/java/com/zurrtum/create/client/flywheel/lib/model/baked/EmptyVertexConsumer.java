@@ -6,7 +6,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import org.joml.Matrix3x2fc;
 import org.joml.Matrix4fc;
-import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 class EmptyVertexConsumer implements VertexConsumer {
@@ -97,7 +96,7 @@ class EmptyVertexConsumer implements VertexConsumer {
     }
 
     @Override
-    public VertexConsumer addVertex(PoseStack.Pose pose, Vector3f position) {
+    public VertexConsumer addVertex(PoseStack.Pose pose, Vector3fc position) {
         return this;
     }
 
@@ -117,7 +116,7 @@ class EmptyVertexConsumer implements VertexConsumer {
     }
 
     @Override
-    public VertexConsumer setNormal(PoseStack.Pose pose, Vector3f normal) {
+    public VertexConsumer setNormal(PoseStack.Pose pose, Vector3fc normal) {
         return this;
     }
 
