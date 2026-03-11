@@ -196,8 +196,8 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 
         if (fadeInWidth > fattestLabel) {
             int textX = x - 11 - fatTipOffset + bgWidth / 2;
-            graphics.drawString(font, title, textX - font.width(title) / 2, y - 14, 0xffdddddd, false);
-            graphics.drawString(
+            graphics.text(font, title, textX - font.width(title) / 2, y - 14, 0xffdddddd, false);
+            graphics.text(
                 font,
                 tip,
                 textX - font.width(tip) / 2,
@@ -240,7 +240,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
                         AllGuiTextures.VALUE_SETTINGS_BAR
                     );
                 }
-                graphics.drawString(font, component, x, y + 1, 0xFF442000, false);
+                graphics.text(font, component, x, y + 1, 0xFF442000, false);
             }
 
             int milestoneX = valueBarX;
@@ -295,7 +295,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
             AllGuiTextures.VALUE_SETTINGS_CURSOR_ICON.render(graphics, cursorX - 2, cursorY - 3);
             cursorIcon.render(graphics, cursorX + 1, cursorY - 1, 0xFF431F00);
             if (fadeInWidth > fattestLabel) {
-                graphics.drawString(
+                graphics.text(
                     font,
                     cursorText,
                     x - 11 - fatTipOffset + (bgWidth - font.width(cursorText)) / 2,
@@ -311,7 +311,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
         UIRenderHelper.drawCropped(graphics, cursorX, cursorY, cursorWidth, 14, AllGuiTextures.VALUE_SETTINGS_CURSOR);
         AllGuiTextures.VALUE_SETTINGS_CURSOR_RIGHT.render(graphics, cursorX + cursorWidth, cursorY);
 
-        graphics.drawString(font, cursorText, cursorX + 2, cursorY + 3, 0xFF442000, false);
+        graphics.text(font, cursorText, cursorX + 2, cursorY + 3, 0xFF442000, false);
     }
 
     protected void renderBrassFrame(GuiGraphicsExtractor graphics, int x, int y, int w, int h) {

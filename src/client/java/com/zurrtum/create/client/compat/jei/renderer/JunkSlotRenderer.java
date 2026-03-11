@@ -37,7 +37,7 @@ public class JunkSlotRenderer implements IIngredientRenderer<ItemStack> {
         AllGuiTextures.JEI_CHANCE_SLOT.render(graphics, -1, -1);
         Component text = Component.literal("?").withStyle(ChatFormatting.BOLD);
         Font textRenderer = graphics.minecraft.font;
-        graphics.drawString(textRenderer, text, textRenderer.width(text) / -2 + 7, 4, 0xffefefef, true);
+        graphics.text(textRenderer, text, textRenderer.width(text) / -2 + 7, 4, 0xffefefef, true);
     }
 
     @Override

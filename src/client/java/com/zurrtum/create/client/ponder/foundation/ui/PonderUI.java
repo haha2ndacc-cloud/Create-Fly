@@ -744,7 +744,7 @@ public class PonderUI extends AbstractPonderScreen {
 
             graphics.enableScissor(0, 8, (int) fadedWidth, 8 + height);
             String tagName = tag.getTitle();
-            graphics.drawString(font, tagName, 3, 8, UIRenderHelper.COLOR_TEXT_ACCENT.getFirst().getRGB(), false);
+            graphics.text(font, tagName, 3, 8, UIRenderHelper.COLOR_TEXT_ACCENT.getFirst().getRGB(), false);
 
             graphics.disableScissor();
 
@@ -757,7 +757,7 @@ public class PonderUI extends AbstractPonderScreen {
     private void renderHoverTooltips(GuiGraphicsExtractor graphics, int tooltipColor) {
         int tooltipY = height - 16;
         if (scan.isHoveredOrFocused()) {
-            graphics.drawCenteredString(
+            graphics.centeredText(
                 font,
                 Ponder.lang().translate(AbstractPonderScreen.IDENTIFY).component(),
                 scan.getX() + 10,
@@ -766,7 +766,7 @@ public class PonderUI extends AbstractPonderScreen {
             );
         }
         if (index != 0 && left.isHoveredOrFocused()) {
-            graphics.drawCenteredString(
+            graphics.centeredText(
                 font,
                 Ponder.lang().translate(AbstractPonderScreen.PREVIOUS).component(),
                 left.getX() + 10,
@@ -775,7 +775,7 @@ public class PonderUI extends AbstractPonderScreen {
             );
         }
         if (close.isHoveredOrFocused()) {
-            graphics.drawCenteredString(
+            graphics.centeredText(
                 font,
                 Ponder.lang().translate(AbstractPonderScreen.CLOSE).component(),
                 close.getX() + 10,
@@ -784,7 +784,7 @@ public class PonderUI extends AbstractPonderScreen {
             );
         }
         if (index != scenes.size() - 1 && right.isHoveredOrFocused()) {
-            graphics.drawCenteredString(
+            graphics.centeredText(
                 font,
                 Ponder.lang().translate(AbstractPonderScreen.NEXT).component(),
                 right.getX() + 10,
@@ -793,7 +793,7 @@ public class PonderUI extends AbstractPonderScreen {
             );
         }
         if (replay.isHoveredOrFocused()) {
-            graphics.drawCenteredString(
+            graphics.centeredText(
                 font,
                 Ponder.lang().translate(AbstractPonderScreen.REPLAY).component(),
                 replay.getX() + 10,
@@ -802,7 +802,7 @@ public class PonderUI extends AbstractPonderScreen {
             );
         }
         if (slowMode.isHoveredOrFocused()) {
-            graphics.drawCenteredString(
+            graphics.centeredText(
                 font,
                 Ponder.lang().translate(AbstractPonderScreen.SLOW_TEXT).component(),
                 slowMode.getX() + 5,
@@ -811,7 +811,7 @@ public class PonderUI extends AbstractPonderScreen {
             );
         }
         if (PonderIndex.editingModeActive() && userMode.isHoveredOrFocused()) {
-            graphics.drawCenteredString(font, "Editor View", userMode.getX() + 10, tooltipY, tooltipColor);
+            graphics.centeredText(font, "Editor View", userMode.getX() + 10, tooltipY, tooltipColor);
         }
     }
 
@@ -835,8 +835,8 @@ public class PonderUI extends AbstractPonderScreen {
         int boxWidth = (Math.max(font.width(nextScene.getTitle()), font.width(nextUpComponent)) + 5);
         renderSpeechBox(graphics, 0, 0, boxWidth, 20, right.isHoveredOrFocused(), Pointing.DOWN, false);
         poseStack.translate(0, -29);
-        graphics.drawCenteredString(font, nextUpComponent, 0, 0, UIRenderHelper.COLOR_TEXT_DARKER.getFirst().getRGB());
-        graphics.drawCenteredString(font, nextScene.getTitle(), 0, 10, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
+        graphics.centeredText(font, nextUpComponent, 0, 0, UIRenderHelper.COLOR_TEXT_DARKER.getFirst().getRGB());
+        graphics.centeredText(font, nextScene.getTitle(), 0, 10, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
         poseStack.popMatrix();
     }
 
@@ -912,7 +912,7 @@ public class PonderUI extends AbstractPonderScreen {
 
         // pondering about text
         poseStack.translate(4, 6);
-        graphics.drawString(
+        graphics.text(
             font,
             Ponder.lang().translate(AbstractPonderScreen.PONDERING).component(),
             0,

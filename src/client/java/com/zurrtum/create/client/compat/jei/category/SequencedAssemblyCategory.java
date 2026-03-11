@@ -164,7 +164,7 @@ public class SequencedAssemblyCategory extends CreateCategory<RecipeHolder<Seque
             if (slot.isPresent()) {
                 AllGuiTextures.JEI_SLOT.render(graphics, x - 1, 14);
             }
-            graphics.drawString(textRenderer, text, x + 8 - textRenderer.width(text) / 2, 2, 0xff888888, false);
+            graphics.text(textRenderer, text, x + 8 - textRenderer.width(text) / 2, 2, 0xff888888, false);
             SequencedRenderer<?> draw = getRenderer(recipes.get(i));
             if (draw != null) {
                 draw.render(graphics, i, x, 15, slot);
@@ -174,7 +174,7 @@ public class SequencedAssemblyCategory extends CreateCategory<RecipeHolder<Seque
         if (recipe.loops() > 1) {
             AllIcons.I_SEQ_REPEAT.render(graphics, xOffset + 60, 99);
             Component repeat = Component.literal("x" + recipe.loops());
-            graphics.drawString(textRenderer, repeat, xOffset + 76, 104, 0xff888888, false);
+            graphics.text(textRenderer, repeat, xOffset + 76, 104, 0xff888888, false);
         }
     }
 

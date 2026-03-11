@@ -85,7 +85,7 @@ public class FactoryPanelSetItemScreen extends AbstractSimiContainerScreen<Facto
         renderPlayerInventory(pGuiGraphics, leftPos + 5, topPos + 94);
 
         Component title = CreateLang.translate("gui.factory_panel.place_item_to_monitor").component();
-        pGuiGraphics.drawString(
+        pGuiGraphics.text(
             font,
             title,
             leftPos + imageWidth / 2 - font.width(title) / 2 - 5,

@@ -40,7 +40,7 @@ public class JunkWidget extends Widget {
         darkHighlightedAlpha.update(delta);
         AllGuiTextures.JEI_CHANCE_SLOT.render(graphics, bounds.x - 1, bounds.y - 1);
         Component text = Component.literal("?").withStyle(ChatFormatting.BOLD);
-        graphics.drawString(font, text, bounds.x + font.width(text) / -2 + 7, bounds.y + 4, 0xffefefef, true);
+        graphics.text(font, text, bounds.x + font.width(text) / -2 + 7, bounds.y + 4, 0xffefefef, true);
         if (bounds.contains(mouseX, mouseY)) {
             graphics.fillGradient(bounds.x, bounds.y, bounds.getMaxX(), bounds.getMaxY(), 0x80ffffff, 0x80ffffff);
             int darkColor = 0x111111 | ((int) (90 * darkHighlightedAlpha.value()) << 24);

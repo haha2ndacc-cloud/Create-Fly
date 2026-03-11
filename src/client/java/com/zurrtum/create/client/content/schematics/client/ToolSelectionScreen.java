@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class ToolSelectionScreen extends Screen {
+    private static final int[] TOOLTIP_OFFSET = {38, 50, 60, 72};
+    private static final int[] COLORS = {0xEEEEEE, 0xCCDDFF, 0xCCDDFF, 0xCCCCDD};
 
     public final String scrollToCycle = CreateLang.translateDirect("gui.toolmenu.cycle").getString();
     public final String holdToFocus = "gui.toolmenu.focusKey";
@@ -106,25 +108,22 @@ public class ToolSelectionScreen extends Screen {
                 gray.getHeight(),
                 0xB2B2CC | stringAlphaComponent
             );
-
-            if (toolTip.size() > 0) {
-                graphics.drawString(font, toolTip.get(0), x - 10, y + 38, 0xEEEEEE | stringAlphaComponent, false);
-            }
-            if (toolTip.size() > 1) {
-                graphics.drawString(font, toolTip.get(1), x - 10, y + 50, 0xCCDDFF | stringAlphaComponent, false);
-            }
-            if (toolTip.size() > 2) {
-                graphics.drawString(font, toolTip.get(2), x - 10, y + 60, 0xCCDDFF | stringAlphaComponent, false);
-            }
-            if (toolTip.size() > 3) {
-                graphics.drawString(font, toolTip.get(3), x - 10, y + 72, 0xCCCCDD | stringAlphaComponent, false);
+            for (int i = 0, size = Math.min(toolTip.size(), 4); i < size; i++) {
+                graphics.text(
+                    font,
+                    toolTip.get(i),
+                    x - 10,
+                    y + TOOLTIP_OFFSET[i],
+                    COLORS[i] | stringAlphaComponent,
+                    false
+                );
             }
         }
 
         if (tools.size() > 1) {
             String keyName = AllKeys.TOOL_MENU.getTranslatedKeyMessage().getString().toUpperCase();
             if (!focused) {
-                graphics.drawCenteredString(
+                graphics.centeredText(
                     font,
                     CreateLang.translateDirect(holdToFocus, keyName),
                     scaledWidth / 2,
@@ -132,7 +131,7 @@ public class ToolSelectionScreen extends Screen {
                     0xFFCCDDFF
                 );
             } else {
-                graphics.drawCenteredString(font, scrollToCycle, scaledWidth / 2, y - 10, 0xFFCCDDFF);
+                graphics.centeredText(font, scrollToCycle, scaledWidth / 2, y - 10, 0xFFCCDDFF);
             }
         } else {
             x += 65;
@@ -145,7 +144,7 @@ public class ToolSelectionScreen extends Screen {
             float alpha = focused ? 1 : .2f;
             if (i == selection) {
                 matrixStack.translate(0, -10);
-                graphics.drawCenteredString(
+                graphics.centeredText(
                     font,
                     tools.get(i).getDisplayName().getString(),
                     x + i * 50 + 24,

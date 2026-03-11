@@ -81,7 +81,7 @@ public class ClientFontHelper {
 
     private static void draw(GuiGraphicsExtractor graphics, Font font, @Nullable String text, int x, int y, int color) {
         if (text != null) {
-            graphics.drawString(font, text, x, y, color, false);
+            graphics.text(font, text, x, y, color, false);
         }
     }
 

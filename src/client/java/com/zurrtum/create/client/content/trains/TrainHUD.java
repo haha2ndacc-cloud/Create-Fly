@@ -177,7 +177,7 @@ public class TrainHUD {
             if (currentPrompt != null && font.width(currentPrompt) < promptSize - 10) {
                 poseStack.pushMatrix();
                 poseStack.translate(font.width(currentPrompt) / -2f + 82, -27);
-                guiGraphics.drawString(font, currentPrompt, 9, 4, 0xFF544D45, currentPromptShadow);
+                guiGraphics.text(font, currentPrompt, 9, 4, 0xFF544D45, currentPromptShadow);
                 poseStack.popMatrix();
             }
         }

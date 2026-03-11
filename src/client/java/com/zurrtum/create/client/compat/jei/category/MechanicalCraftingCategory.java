@@ -100,6 +100,6 @@ public class MechanicalCraftingCategory extends CreateCategory<RecipeHolder<Mech
             18
         ));
         int size = recipeSlotsView.getSlotViews(RecipeIngredientRole.INPUT).size();
-        graphics.drawString(Minecraft.getInstance().font, String.valueOf(size), 142, 39, 0xFFFFFFFF, true);
+        graphics.text(Minecraft.getInstance().font, String.valueOf(size), 142, 39, 0xFFFFFFFF, true);
     }
 }

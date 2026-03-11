@@ -104,7 +104,7 @@ public class ComputerScreen extends AbstractSimiScreen {
 
         background.render(graphics, x, y);
 
-        graphics.drawString(
+        graphics.text(
             font,
             displayTitle.get(),
             Math.round(x + background.getWidth() / 2.0F - font.width(displayTitle.get()) / 2.0F),
@@ -112,7 +112,7 @@ public class ComputerScreen extends AbstractSimiScreen {
             0xFF442000,
             false
         );
-        graphics.drawWordWrap(
+        graphics.textWithWordWrap(
             font,
             CreateLang.translate("gui.attached_computer.controlled").component(),
             x + 55,

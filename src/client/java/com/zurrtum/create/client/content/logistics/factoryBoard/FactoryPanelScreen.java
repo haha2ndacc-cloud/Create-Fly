@@ -291,7 +291,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
         // TITLE
         Component title = CreateLang.translate(restocker ? "gui.factory_panel.title_as_restocker" : "gui.factory_panel.title_as_recipe")
             .component();
-        graphics.drawString(font, title, x + 97 - font.width(title) / 2, y + (restocker ? -12 : 4), 0xFF3D3C48, false);
+        graphics.text(font, title, x + 97 - font.width(title) / 2, y + (restocker ? -12 : 4), 0xFF3D3C48, false);
 
         // REDSTONE LINKS
         if (!behaviour.targetedByLinks.isEmpty()) {
@@ -314,7 +314,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
         // PROMISES
         int state = promiseExpiration.getState();
-        graphics.drawString(
+        graphics.text(
             font,
             CreateLang.text(state == -1 ? " /" : state == 0 ? "30s" : state + "m").component(),
             promiseExpiration.getX() + 3,

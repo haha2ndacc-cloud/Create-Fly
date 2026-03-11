@@ -118,7 +118,7 @@ public class MixingCategory extends CreateCategory<RecipeHolder<MixingRecipe>> {
             ));
         }
         graphics.guiRenderState.submitPicturesInPictureState(new MixingBasinRenderState(pose, 91, -5));
-        graphics.drawString(
+        graphics.text(
             Minecraft.getInstance().font,
             CreateLang.translateDirect(requiredHeat.getTranslationKey()),
             9,

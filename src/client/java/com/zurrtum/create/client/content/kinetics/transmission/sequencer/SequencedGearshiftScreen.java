@@ -301,7 +301,7 @@ public class SequencedGearshiftScreen extends AbstractSimiScreen implements Addi
             }
         }
 
-        graphics.drawString(
+        graphics.text(
             font,
             title,
             x + (background.getWidth() - 8) / 2 - font.width(title) / 2,
@@ -312,7 +312,7 @@ public class SequencedGearshiftScreen extends AbstractSimiScreen implements Addi
     }
 
     private void label(GuiGraphicsExtractor graphics, int x, int y, Component text) {
-        graphics.drawString(font, text, guiLeft + x, guiTop + 26 + y, 0xFFFFFFEE, true);
+        graphics.text(font, text, guiLeft + x, guiTop + 26 + y, 0xFFFFFFEE, true);
     }
 
     public void sendPacket() {

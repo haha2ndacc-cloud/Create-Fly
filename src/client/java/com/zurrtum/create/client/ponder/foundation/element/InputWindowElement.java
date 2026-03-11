@@ -132,7 +132,7 @@ public class InputWindowElement extends AnimatedOverlayElementBase {
         PonderUI.renderSpeechBox(graphics, 0, 0, width, height, false, direction, true);
 
         if (hasText) {
-            graphics.drawString(
+            graphics.text(
                 font,
                 text,
                 2,

@@ -64,7 +64,7 @@ public class PotionCategory extends CreateCategory<PotionDisplay> {
                 bounds.x + 96,
                 bounds.y
             ));
-            graphics.drawString(
+            graphics.text(
                 Minecraft.getInstance().font,
                 CreateLang.translateDirect(requiredHeat.getTranslationKey()),
                 bounds.x + 14,

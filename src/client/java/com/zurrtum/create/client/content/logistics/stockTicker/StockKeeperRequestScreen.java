@@ -519,7 +519,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         // Render text input hints
         if (addressBox.getValue().isBlank() && !addressBox.isFocused()) {
-            graphics.drawString(
+            graphics.text(
                 font,
                 CreateLang.translate("gui.stock_keeper.package_address").style(ChatFormatting.ITALIC).component(),
                 addressBox.getX(),
@@ -600,7 +600,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         }
 
         if (itemsToOrder.size() > 9) {
-            graphics.drawString(
+            graphics.text(
                 font,
                 Component.literal("[+" + (itemsToOrder.size() - 9) + "]"),
                 x + imageWidth - 40,
@@ -616,14 +616,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         }
 
         MutableComponent headerTitle = CreateLang.translate("gui.stock_keeper.title").component();
-        graphics.drawString(
-            font,
-            headerTitle,
-            x + imageWidth / 2 - font.width(headerTitle) / 2,
-            y + 4,
-            0xFF714A40,
-            false
-        );
+        graphics.text(font, headerTitle, x + imageWidth / 2 - font.width(headerTitle) / 2, y + 4, 0xFF714A40, false);
         MutableComponent component = CreateLang.translate(encodeRequester ? "gui.stock_keeper.configure" : "gui.stock_keeper.send")
             .component();
 
@@ -632,7 +625,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             ms.pushMatrix();
             ms.translate(alpha * alpha * 50, 0);
             if (successTicks < 10) {
-                graphics.drawString(
+                graphics.text(
                     font,
                     component,
                     x + imageWidth - 42 - font.width(component) / 2,
@@ -644,7 +637,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             ms.popMatrix();
 
         } else {
-            graphics.drawString(
+            graphics.text(
                 font,
                 component,
                 x + imageWidth - 42 - font.width(component) / 2,
@@ -673,7 +666,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                     AllGuiTextures.STOCK_KEEPER_REQUEST_BANNER_M
                 );
                 AllGuiTextures.STOCK_KEEPER_REQUEST_BANNER_R.render(graphics, msgX + font.width(msg) + 10, msgY - 4);
-                graphics.drawString(font, msg, msgX + 5, msgY, c3, false);
+                graphics.text(font, msg, msgX + 5, msgY, c3, false);
             }
         }
 
@@ -702,7 +695,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         AllGuiTextures.STOCK_KEEPER_REQUEST_SEARCH.render(graphics, x + 42, searchBox.getY() - 5);
         searchBox.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         if (searchBox.getValue().isBlank() && !searchBox.isFocused()) {
-            graphics.drawString(
+            graphics.text(
                 font,
                 searchBox.getMessage(),
                 x + imageWidth / 2 - font.width(searchBox.getMessage()) / 2,
@@ -725,7 +718,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                 for (int i = 0; i < split.size(); i++) {
                     FormattedCharSequence sequence = split.get(i);
                     int lineWidth = font.width(sequence);
-                    graphics.drawString(
+                    graphics.text(
                         font,
                         sequence,
                         x + imageWidth / 2 - lineWidth / 2 + 1,
@@ -733,7 +726,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                         new Color(0x4A2D31).setAlpha(alpha).getRGB(),
                         false
                     );
-                    graphics.drawString(
+                    graphics.text(
                         font,
                         sequence,
                         x + imageWidth / 2 - lineWidth / 2,
@@ -759,8 +752,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                     itemsX,
                     itemsY + categoryY + 6
                 );
-                graphics.drawString(font, categoryEntry.name, itemsX + 10, itemsY + categoryY + 8, 0xFF4A2D31, false);
-                graphics.drawString(font, categoryEntry.name, itemsX + 9, itemsY + categoryY + 7, 0xFFF8F8EC, false);
+                graphics.text(font, categoryEntry.name, itemsX + 10, itemsY + categoryY + 8, 0xFF4A2D31, false);
+                graphics.text(font, categoryEntry.name, itemsX + 9, itemsY + categoryY + 7, 0xFFF8F8EC, false);
                 if (categoryEntry.hidden) {
                     continue;
                 }

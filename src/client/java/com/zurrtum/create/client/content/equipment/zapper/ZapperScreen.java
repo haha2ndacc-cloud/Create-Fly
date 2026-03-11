@@ -124,7 +124,7 @@ public abstract class ZapperScreen extends AbstractSimiScreen {
     }
 
     protected void drawOnBackground(GuiGraphicsExtractor graphics, int x, int y) {
-        graphics.drawString(font, title, x + (background.getWidth() - font.width(title)) / 2, y + 4, 0xFF54214F, false);
+        graphics.text(font, title, x + (background.getWidth() - font.width(title)) / 2, y + 4, 0xFF54214F, false);
     }
 
     @Override

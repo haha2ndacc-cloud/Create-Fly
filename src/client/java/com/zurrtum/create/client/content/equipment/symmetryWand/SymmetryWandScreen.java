@@ -166,7 +166,7 @@ public class SymmetryWandScreen extends AbstractSimiScreen {
         int y = guiTop;
 
         background.render(graphics, x, y);
-        graphics.drawString(
+        graphics.text(
             font,
             wand.getHoverName(),
             x + (background.getWidth() - font.width(wand.getHoverName())) / 2,

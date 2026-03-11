@@ -144,7 +144,7 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 
         ItemStack stack = AllItems.REDSTONE_REQUESTER.getDefaultInstance();
         Component title = stack.getHoverName();
-        pGuiGraphics.drawString(font, title, leftPos + 117 - font.width(title) / 2, topPos + 4, 0xFF3D3C48, false);
+        pGuiGraphics.text(font, title, leftPos + 117 - font.width(title) / 2, topPos + 4, 0xFF3D3C48, false);
     }
 
     @Override

@@ -187,7 +187,7 @@ public class TextWindowElement extends AnimatedOverlayElementBase {
         }
 
         for (int i = 0; i < lines.size(); i++) {
-            graphics.drawString(
+            graphics.text(
                 fontRenderer,
                 lines.get(i).getString(),
                 (int) (targetX - 10),

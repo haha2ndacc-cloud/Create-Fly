@@ -140,7 +140,7 @@ public class ElevatorContactScreen extends AbstractSimiScreen {
         background.render(graphics, x, y);
 
         FormattedCharSequence formattedcharsequence = title.getVisualOrderText();
-        graphics.drawString(
+        graphics.text(
             font,
             formattedcharsequence,
             x + (background.getWidth() - 8) / 2 - font.width(formattedcharsequence) / 2,

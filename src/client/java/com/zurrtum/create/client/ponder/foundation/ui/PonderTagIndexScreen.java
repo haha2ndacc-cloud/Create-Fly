@@ -189,7 +189,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
         UIRenderHelper.streak(graphics, 0, 0, (streakHeight / 2), streakHeight, 280);
 
         poseStack.scale(2f, 2f);
-        graphics.drawString(font, title, 3, 5, UIRenderHelper.COLOR_TEXT.getFirst().getRGB(), false);
+        graphics.text(font, title, 3, 5, UIRenderHelper.COLOR_TEXT.getFirst().getRGB(), false);
 
         poseStack.popMatrix();
         poseStack.translate(0, 50);
@@ -231,7 +231,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
         new BoxElement().withBackground(PonderUI.BACKGROUND_FLAT).gradientBorder(PonderUI.COLOR_IDLE).at(-3, -1, 0)
             .withBounds(stringWidth + 6, 10).render(graphics);
 
-        graphics.drawString(font, categories, 0, 0, UIRenderHelper.COLOR_TEXT.getFirst().getRGB(), false);
+        graphics.text(font, categories, 0, 0, UIRenderHelper.COLOR_TEXT.getFirst().getRGB(), false);
 
         poseStack.popMatrix();
 

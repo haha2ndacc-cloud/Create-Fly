@@ -198,7 +198,7 @@ public class SequencedAssemblyCategory extends CreateCategory<SequencedAssemblyD
             for (int i = 0; i < size; i++) {
                 Point point = points.get(i);
                 String text = ROMANS[Math.min(i, ROMANS.length)];
-                graphics.drawString(
+                graphics.text(
                     textRenderer,
                     text,
                     point.x + 8 - textRenderer.width(text) / 2,
@@ -226,7 +226,7 @@ public class SequencedAssemblyCategory extends CreateCategory<SequencedAssemblyD
             if (willRepeat) {
                 AllIcons.I_SEQ_REPEAT.render(graphics, xOffset + 70, bounds.y + 104);
                 Component repeat = Component.literal("x" + display.loop());
-                graphics.drawString(textRenderer, repeat, xOffset + 86, bounds.y + 109, 0xff888888, false);
+                graphics.text(textRenderer, repeat, xOffset + 86, bounds.y + 109, 0xff888888, false);
             }
         }));
         widgets.add(createInputSlot(input).entries(display.input()));

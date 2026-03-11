@@ -132,7 +132,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
         poseStack.translate(0, 0);
         if (backTrack.isHoveredOrFocused()) {
             Component component = backTrackingComponent();
-            graphics.drawString(
+            graphics.text(
                 font,
                 component,
                 41 - font.width(component) / 2,
@@ -250,14 +250,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
                 new Color(0xdd101010),
                 new Color(0x44101010)
             );
-            graphics.drawString(
-                font,
-                s,
-                x.intValue() + 5,
-                y.intValue() + 3,
-                first.isTrue() ? 0xffeeffee : 0xffddeeff,
-                true
-            );
+            graphics.text(font, s, x.intValue() + 5, y.intValue() + 3, first.isTrue() ? 0xffeeffee : 0xffddeeff, true);
             first.setFalse();
 
             x.add(sWidth + spacing);

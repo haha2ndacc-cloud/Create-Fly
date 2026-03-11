@@ -281,7 +281,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
         int y = guiTop - 8;
 
         AllGuiTextures.CLIPBOARD.render(graphics, x, y);
-        graphics.drawString(
+        graphics.text(
             font,
             Component.translatable("book.pageIndicator", currentPage + 1, getNumPages()),
             x + 150,
@@ -307,9 +307,9 @@ public class ClipboardScreen extends AbstractSimiScreen {
                 );
                 text = Component.literal(string.substring(1).stripLeading());
             } else {
-                graphics.drawString(font, "\u25A1", x + 45, y + 51, checked ? 0x668D7F6B : 0xff8D7F6B, false);
+                graphics.text(font, "\u25A1", x + 45, y + 51, checked ? 0x668D7F6B : 0xff8D7F6B, false);
                 if (checked) {
-                    graphics.drawString(font, "\u2714", x + 45, y + 50, 0xff31B25D, false);
+                    graphics.text(font, "\u2714", x + 45, y + 50, 0xff31B25D, false);
                 }
             }
 
@@ -325,7 +325,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
 
             for (FormattedCharSequence sequence : split) {
                 if (i != editingIndex) {
-                    graphics.drawString(
+                    graphics.text(
                         font,
                         sequence,
                         x + 58 + iconOffset,
@@ -347,7 +347,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
         DisplayCache cache = getDisplayCache();
 
         for (LineInfo line : cache.lines) {
-            graphics.drawString(font, line.asComponent, line.x, line.y, 0xff311A00, false);
+            graphics.text(font, line.asComponent, line.x, line.y, 0xff311A00, false);
         }
 
         renderHighlight(graphics, cache.selection);
@@ -561,7 +561,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
         if (!pIsEndOfText) {
             graphics.fill(pCursorPos.x, pCursorPos.y - 1, pCursorPos.x + 1, pCursorPos.y + 9, -16777216);
         } else {
-            graphics.drawString(font, "_", pCursorPos.x, pCursorPos.y, 0xFF000000, false);
+            graphics.text(font, "_", pCursorPos.x, pCursorPos.y, 0xFF000000, false);
         }
     }
 

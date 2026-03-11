@@ -146,7 +146,7 @@ public class ValueSettingsClient {
 
         for (int i = 0; i < lastHoverTip.size(); i++) {
             MutableComponent mutableComponent = lastHoverTip.get(i);
-            guiGraphics.drawString(
+            guiGraphics.text(
                 mc.font,
                 mutableComponent,
                 x - mc.font.width(mutableComponent) / 2,

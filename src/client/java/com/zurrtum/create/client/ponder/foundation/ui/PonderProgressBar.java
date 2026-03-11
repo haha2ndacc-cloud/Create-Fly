@@ -199,7 +199,7 @@ public class PonderProgressBar extends AbstractSimiWidget {
                 text = "<";
                 offset = 4;
             }
-            graphics.drawString(
+            graphics.text(
                 font,
                 Component.literal(text).withStyle(ChatFormatting.BOLD),
                 keyframePos + offset,

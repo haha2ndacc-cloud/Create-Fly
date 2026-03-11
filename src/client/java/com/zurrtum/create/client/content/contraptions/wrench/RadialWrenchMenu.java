@@ -212,7 +212,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
         if (selectedPropertyIndex > 0) {
             iconScroll.at(-14, -46).render(graphics);
             iconUp.at(-1, -46).render(graphics);
-            graphics.drawCenteredString(
+            graphics.centeredText(
                 font,
                 propertiesForState.get(selectedPropertyIndex - 1).getValue(),
                 0,
@@ -224,7 +224,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
         if (selectedPropertyIndex < propertiesForState.size() - 1) {
             iconScroll.at(-14, 30).render(graphics);
             iconDown.at(-1, 30).render(graphics);
-            graphics.drawCenteredString(
+            graphics.centeredText(
                 font,
                 propertiesForState.get(selectedPropertyIndex + 1).getValue(),
                 0,
@@ -233,9 +233,9 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
             );
         }
 
-        graphics.drawCenteredString(font, "Currently", 0, -13, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
-        graphics.drawCenteredString(font, "Changing:", 0, -3, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
-        graphics.drawCenteredString(font, propertyLabel, 0, 7, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
+        graphics.centeredText(font, "Currently", 0, -13, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
+        graphics.centeredText(font, "Changing:", 0, -3, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
+        graphics.centeredText(font, propertyLabel, 0, 7, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 
         ms.popMatrix();
 
@@ -321,7 +321,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
             ));
 
             if (i == selectedStateIndex) {
-                graphics.drawCenteredString(
+                graphics.centeredText(
                     font,
                     blockState.getValue(property).toString(),
                     0,

@@ -101,6 +101,6 @@ public class MechanicalCraftingView extends CreateView {
             12
         ));
         String size = String.valueOf(ingredients.size());
-        context.drawString(Minecraft.getInstance().font, size, 142, 33, 0xFFFFFFFF, true);
+        context.text(Minecraft.getInstance().font, size, 142, 33, 0xFFFFFFFF, true);
     }
 }

@@ -203,7 +203,7 @@ public class SchematicTableScreen extends AbstractSimiContainerScreen<SchematicT
             titleText = title;
         }
 
-        graphics.drawString(
+        graphics.text(
             font,
             titleText,
             leftPos + (imageWidth - 8 - font.width(titleText)) / 2,
@@ -213,7 +213,7 @@ public class SchematicTableScreen extends AbstractSimiContainerScreen<SchematicT
         );
 
         if (schematicsArea == null) {
-            graphics.drawString(font, noSchematics, leftPos + 54, topPos + 28, 0xFFD3D3D3, true);
+            graphics.text(font, noSchematics, leftPos + 54, topPos + 28, 0xFFD3D3D3, true);
         }
 
         int width = (int) (SCHEMATIC_TABLE_PROGRESS.getWidth() * Mth.lerp(

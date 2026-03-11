@@ -192,14 +192,7 @@ public class SchematicEditScreen extends AbstractSimiScreen {
 
         background.render(graphics, x, y);
         String title = handler.getCurrentSchematicName();
-        graphics.drawString(
-            font,
-            title,
-            x + (background.getWidth() - 8 - font.width(title)) / 2,
-            y + 4,
-            0xFF505050,
-            false
-        );
+        graphics.text(font, title, x + (background.getWidth() - 8 - font.width(title)) / 2, y + 4, 0xFF505050, false);
     }
 
     @Override

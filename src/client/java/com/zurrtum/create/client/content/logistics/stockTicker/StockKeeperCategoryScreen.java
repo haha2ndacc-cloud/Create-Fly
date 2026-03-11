@@ -259,7 +259,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 
         graphics.renderItem(entry, 14, 1);
         Component name = entry.getHoverName();
-        graphics.drawString(
+        graphics.text(
             font,
             entry.isEmpty() ? CreateLang.translate("gui.stock_ticker.empty_category_name_placeholder")
                 .string() : name.getString(20).stripTrailing() + (name.getString().length() > 20 ? "..." : ""),
@@ -531,7 +531,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
             .getVisualOrderText();
 
         int center = leftPos + (AllGuiTextures.STOCK_KEEPER_CATEGORY.getWidth()) / 2;
-        graphics.drawString(
+        graphics.text(
             font,
             formattedcharsequence,
             (center - font.width(formattedcharsequence) / 2),
@@ -559,7 +559,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 
         formattedcharsequence = CreateLang.translate("gui.stock_ticker.category_editor").component()
             .getVisualOrderText();
-        graphics.drawString(
+        graphics.text(
             font,
             formattedcharsequence,
             (center - font.width(formattedcharsequence) / 2),

@@ -79,7 +79,7 @@ public class PotionView extends CreateView {
             requiredHeat.visualizeAsBlazeBurner()
         ));
         context.guiRenderState.submitPicturesInPictureState(new MixingBasinRenderState(pose, 87, -5));
-        context.drawString(
+        context.text(
             context.minecraft.font,
             CreateLang.translateDirect(requiredHeat.getTranslationKey()),
             5,

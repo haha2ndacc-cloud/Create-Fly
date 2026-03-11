@@ -109,7 +109,7 @@ public class LinkedControllerScreen extends AbstractSimiContainerScreen<LinkedCo
         renderPlayerInventory(graphics, invX, invY);
 
         background.render(graphics, leftPos, topPos);
-        graphics.drawString(font, title, leftPos + 15, topPos + 4, 0xff592424, false);
+        graphics.text(font, title, leftPos + 15, topPos + 4, 0xff592424, false);
     }
 
     @Override

@@ -158,7 +158,7 @@ public abstract class AbstractSimiContainerScreen<T extends AbstractContainerMen
 
     public void renderPlayerInventory(GuiGraphicsExtractor graphics, int x, int y) {
         AllGuiTextures.PLAYER_INVENTORY.render(graphics, x, y);
-        graphics.drawString(font, playerInventoryTitle, x + 8, y + 6, 0xFF404040, false);
+        graphics.text(font, playerInventoryTitle, x + 8, y + 6, 0xFF404040, false);
     }
 
     @Override

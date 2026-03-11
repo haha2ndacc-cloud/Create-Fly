@@ -256,7 +256,7 @@ public class BlueprintOverlayRenderer {
             AllGuiTextures.TRADE_OVERLAY.render(guiGraphics, width / 2 - 48, y - 19);
             if (shopContext.purchases() > 0) {
                 guiGraphics.renderItem(AllItems.SHOPPING_LIST.getDefaultInstance(), width / 2 + 20, y - 20);
-                guiGraphics.drawString(
+                guiGraphics.text(
                     mc.font,
                     Component.literal("x" + shopContext.purchases()),
                     width / 2 + 20 + 16,

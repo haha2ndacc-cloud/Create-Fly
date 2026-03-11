@@ -115,7 +115,7 @@ public class PonderButton extends BoxWidget {
         }
 
         if (shortcut != null) {
-            graphics.drawCenteredString(
+            graphics.centeredText(
                 graphics.minecraft.font,
                 shortcut.getTranslatedKeyMessage().getString().toLowerCase(Locale.ROOT),
                 getX() + width / 2 + 8,

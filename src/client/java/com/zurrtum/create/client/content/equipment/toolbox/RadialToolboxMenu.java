@@ -207,7 +207,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
                 int k1 = 16777215;
                 int k = i1 << 24 & -16777216;
                 int l = font.width(tip);
-                graphics.drawString(font, tip, Math.round(-l / 2f), -4, k1 | k, false);
+                graphics.text(font, tip, Math.round(-l / 2f), -4, k1 | k, false);
                 ms.popMatrix();
             }
         }

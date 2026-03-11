@@ -100,7 +100,7 @@ public abstract class AbstractFilterScreen<F extends AbstractFilterMenu> extends
         renderPlayerInventory(graphics, invX, invY);
 
         background.render(graphics, leftPos, topPos);
-        graphics.drawString(
+        graphics.text(
             font,
             title,
             leftPos + (background.getWidth() - 8) / 2 - font.width(title) / 2,

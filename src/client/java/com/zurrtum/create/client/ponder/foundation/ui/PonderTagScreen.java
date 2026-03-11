@@ -168,7 +168,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
         new BoxElement().withBackground(PonderUI.BACKGROUND_FLAT).gradientBorder(PonderUI.COLOR_IDLE).at(21, 21, 100)
             .withBounds(30, 30).render(graphics);
 
-        graphics.drawString(
+        graphics.text(
             font,
             Ponder.lang().translate(AbstractPonderScreen.PONDERING_TAG).component(),
             x,
@@ -179,7 +179,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
         y += 8;
         x += 0;
         poseStack.translate(x, y);
-        graphics.drawString(font, title, 0, 0, UIRenderHelper.COLOR_TEXT.getFirst().getRGB(), false);
+        graphics.text(font, title, 0, 0, UIRenderHelper.COLOR_TEXT.getFirst().getRGB(), false);
         poseStack.popMatrix();
 
         poseStack.pushMatrix();
@@ -224,7 +224,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
             .render(graphics);
 
         //		UIRenderHelper.streak(0, itemArea.getX() - 10, itemArea.getY() - 20, 20, 180, 0x101010);
-        graphics.drawCenteredString(
+        graphics.centeredText(
             font,
             relatedTitle,
             windowWidth / 2,
@@ -256,7 +256,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
         matrices.translate(chapterX, chapterY);
 
         UIRenderHelper.streak(graphics, 0, chapterArea.getX() - 10, chapterArea.getY() - 20, 20, 220);
-        graphics.drawString(
+        graphics.text(
             font,
             "More Topics to Ponder about",
             chapterArea.getX() - 5,

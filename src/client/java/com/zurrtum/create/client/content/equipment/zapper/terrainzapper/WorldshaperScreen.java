@@ -148,16 +148,13 @@ public class WorldshaperScreen extends ZapperScreen {
             Label label = new Label(x + 65 + 20 * index, y + 45, CommonComponents.EMPTY).withShadow();
 
             final int finalIndex = index;
-            ScrollInput input = new ScrollInput(
-                x + 56 + 20 * index,
-                y + 40,
-                18,
-                18
-            ).withRange(currentBrush.getMin(index), currentBrush.getMax(index) + 1).writingTo(label)
-                .titled(getParamLabel(currentBrush, index).plainCopy()).calling(state -> {
-                    currentBrushParams[finalIndex] = state;
-                    label.setX(x + 65 + 20 * finalIndex - font.width(label.text) / 2);
-                });
+            ScrollInput input = new ScrollInput(x + 56 + 20 * index, y + 40, 18, 18).withRange(
+                currentBrush.getMin(index),
+                currentBrush.getMax(index) + 1
+            ).writingTo(label).titled(getParamLabel(currentBrush, index).plainCopy()).calling(state -> {
+                currentBrushParams[finalIndex] = state;
+                label.setX(x + 65 + 20 * finalIndex - font.width(label.text) / 2);
+            });
             input.setState(currentBrushParams[index]);
             input.onChanged();
 
@@ -288,9 +285,9 @@ public class WorldshaperScreen extends ZapperScreen {
             AllGuiTextures.TERRAINZAPPER_INACTIVE_PARAM.render(graphics, x + 56 + 20 * index, y + 40);
         }
 
-        graphics.drawString(font, toolSection, x + 7, y + 69, fontColor, false);
+        graphics.text(font, toolSection, x + 7, y + 69, fontColor, false);
         if (currentBrush.hasPlacementOptions()) {
-            graphics.drawString(font, placementSection, x + 136, y + 69, fontColor, false);
+            graphics.text(font, placementSection, x + 136, y + 69, fontColor, false);
         }
     }
 

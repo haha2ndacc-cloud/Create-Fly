@@ -176,7 +176,7 @@ public class SequencedAssemblyView extends CreateView {
         for (int i = 0, size = sequence.size(), left = 91 - 14 * size; i < size; i++) {
             int x = left + i * 28;
             String n = ROMANS[Math.min(i, ROMANS.length)];
-            context.drawString(textRenderer, n, x + 8 - textRenderer.width(n) / 2, 4, 0xff888888, false);
+            context.text(textRenderer, n, x + 8 - textRenderer.width(n) / 2, 4, 0xff888888, false);
             Recipe<?> recipe = sequence.get(i);
             ItemStack stack;
             if (empty.contains(i)) {
@@ -191,7 +191,7 @@ public class SequencedAssemblyView extends CreateView {
             } else {
                 AllGuiTextures.JEI_CHANCE_SLOT.render(context, x - 1, 16);
                 Component text = Component.literal("?").withStyle(ChatFormatting.BOLD);
-                context.drawString(textRenderer, text, x + textRenderer.width(text) / -2 + 7, 21, 0xffefefef, true);
+                context.text(textRenderer, text, x + textRenderer.width(text) / -2 + 7, 21, 0xffefefef, true);
             }
             if (checkHover && checkStep && mouseX > x - 7 && mouseX < x + 22) {
                 checkHover = false;
@@ -217,7 +217,7 @@ public class SequencedAssemblyView extends CreateView {
             xOffset = -7;
             AllGuiTextures.JEI_CHANCE_SLOT.render(context, 138, 92);
             Component text = Component.literal("?").withStyle(ChatFormatting.BOLD);
-            context.drawString(textRenderer, text, 146 + textRenderer.width(text) / -2, 97, 0xffefefef, true);
+            context.text(textRenderer, text, 146 + textRenderer.width(text) / -2, 97, 0xffefefef, true);
             if (checkHover && mouseX >= 138 && mouseX <= 155 && mouseY >= 92 && mouseY <= 109) {
                 checkHover = false;
                 context.fill(139, 93, 155, 109, 0x80FFFFFF);
@@ -238,7 +238,7 @@ public class SequencedAssemblyView extends CreateView {
         AllGuiTextures.JEI_LONG_ARROW.render(context, xOffset + 47, 96);
         if (loops > 1) {
             AllIcons.I_SEQ_REPEAT.render(context, xOffset + 60, 101);
-            context.drawString(textRenderer, Component.literal("x" + loops), xOffset + 76, 106, 0xff888888, false);
+            context.text(textRenderer, Component.literal("x" + loops), xOffset + 76, 106, 0xff888888, false);
             if (checkHover && mouseX >= 43 && mouseX < 108 && mouseY >= 94 && mouseY < 118) {
                 Component text = CreateLang.translateDirect("recipe.assembly.repeat", loops);
                 context.setTooltipForNextFrame(textRenderer, text, mouseX + position.left(), mouseY + position.top());

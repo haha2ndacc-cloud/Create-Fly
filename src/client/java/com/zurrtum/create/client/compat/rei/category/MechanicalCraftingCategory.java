@@ -77,7 +77,7 @@ public class MechanicalCraftingCategory extends CreateCategory<MechanicalCraftin
                 bounds.x + 129,
                 bounds.y + 23
             ));
-            graphics.drawString(
+            graphics.text(
                 Minecraft.getInstance().font,
                 String.valueOf(ingredients.size()),
                 bounds.x + 147,

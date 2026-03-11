@@ -123,7 +123,7 @@ public class BlueprintScreen extends AbstractSimiContainerScreen<BlueprintMenu> 
         renderPlayerInventory(graphics, invX, invY);
 
         background.render(graphics, leftPos, topPos);
-        graphics.drawString(font, title, leftPos + 15, topPos + 4, 0xFFFFFFFF, false);
+        graphics.text(font, title, leftPos + 15, topPos + 4, 0xFFFFFFFF, false);
     }
 
     @Override

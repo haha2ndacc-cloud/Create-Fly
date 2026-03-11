@@ -141,22 +141,15 @@ public class AssemblyScreen extends AbstractStationScreen {
         int y = guiTop;
 
         MutableComponent header = CreateLang.translateDirect("station.assembly_title");
-        graphics.drawString(
-            font,
-            header,
-            x + background.getWidth() / 2 - font.width(header) / 2,
-            y + 4,
-            0xFF0E2233,
-            false
-        );
+        graphics.text(font, header, x + background.getWidth() / 2 - font.width(header) / 2, y + 4, 0xFF0E2233, false);
 
         AssemblyException lastAssemblyException = blockEntity.lastException;
         if (lastAssemblyException != null) {
             MutableComponent text = CreateLang.translateDirect("station.failed");
-            graphics.drawString(font, text, x + 97 - font.width(text) / 2, y + 47, 0xFF775B5B, false);
+            graphics.text(font, text, x + 97 - font.width(text) / 2, y + 47, 0xFF775B5B, false);
             int offset = 0;
             if (blockEntity.failedCarriageIndex != -1) {
-                graphics.drawString(
+                graphics.text(
                     font,
                     CreateLang.translateDirect("station.carriage_number", blockEntity.failedCarriageIndex),
                     x + 30,
@@ -166,7 +159,7 @@ public class AssemblyScreen extends AbstractStationScreen {
                 );
                 offset += 10;
             }
-            graphics.drawWordWrap(
+            graphics.textWithWordWrap(
                 font,
                 lastAssemblyException.component,
                 x + 30,
@@ -176,7 +169,7 @@ public class AssemblyScreen extends AbstractStationScreen {
                 false
             );
             offset += font.split(lastAssemblyException.component, 134).size() * 9 + 5;
-            graphics.drawWordWrap(
+            graphics.textWithWordWrap(
                 font,
                 CreateLang.translateDirect("station.retry"),
                 x + 30,
@@ -194,9 +187,9 @@ public class AssemblyScreen extends AbstractStationScreen {
             bogeyCount == 0 ? "station.no_bogeys" : bogeyCount == 1 ? "station.one_bogey" : "station.more_bogeys",
             bogeyCount
         );
-        graphics.drawString(font, text, x + 97 - font.width(text) / 2, y + 47, 0xFF7A7A7A, false);
+        graphics.text(font, text, x + 97 - font.width(text) / 2, y + 47, 0xFF7A7A7A, false);
 
-        graphics.drawWordWrap(
+        graphics.textWithWordWrap(
             font,
             CreateLang.translateDirect("station.how_to"),
             x + 28,
@@ -205,7 +198,7 @@ public class AssemblyScreen extends AbstractStationScreen {
             0xFF7A7A7A,
             false
         );
-        graphics.drawWordWrap(
+        graphics.textWithWordWrap(
             font,
             CreateLang.translateDirect("station.how_to_1"),
             x + 28,
@@ -214,7 +207,7 @@ public class AssemblyScreen extends AbstractStationScreen {
             0xFF7A7A7A,
             false
         );
-        graphics.drawWordWrap(
+        graphics.textWithWordWrap(
             font,
             CreateLang.translateDirect("station.how_to_2"),
             x + 28,

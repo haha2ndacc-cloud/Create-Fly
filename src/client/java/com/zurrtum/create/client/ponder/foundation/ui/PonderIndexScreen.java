@@ -185,7 +185,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
         poseStack.translate(centerX, centerY);
 
         UIRenderHelper.streak(graphics, 0, usedArea.getX() - 10, usedArea.getY() - 20, 20, 220);
-        graphics.drawString(
+        graphics.text(
             font,
             "Items to inspect",
             usedArea.getX() - 5,
@@ -209,7 +209,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 
         UIRenderHelper.streak(graphics, 0, 0, 4, 14, 85);
         UIRenderHelper.streak(graphics, 180, 0, 4, 14, 85);
-        graphics.drawString(
+        graphics.text(
             font,
             pageString,
             (int) (-stringWidth / 2f),

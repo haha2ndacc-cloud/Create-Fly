@@ -119,7 +119,7 @@ public class MixingView extends CreateView {
             ));
         }
         context.guiRenderState.submitPicturesInPictureState(new MixingBasinRenderState(pose, 87, -5));
-        context.drawString(
+        context.text(
             Minecraft.getInstance().font,
             CreateLang.translateDirect(heat.getTranslationKey()),
             5,
