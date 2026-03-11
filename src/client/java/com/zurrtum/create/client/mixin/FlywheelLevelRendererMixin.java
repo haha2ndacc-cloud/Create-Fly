@@ -83,7 +83,7 @@ public class FlywheelLevelRendererMixin implements RenderContextHolder {
         DeltaTracker deltaTracker,
         boolean renderOutline,
         CameraRenderState cameraState,
-        Matrix4f modelViewMatrix,
+        Matrix4fc modelViewMatrix,
         GpuBufferSlice terrainFog,
         Vector4f fogColor,
         boolean shouldRenderSky,
@@ -113,7 +113,7 @@ public class FlywheelLevelRendererMixin implements RenderContextHolder {
         }
     }
 
-    @Inject(method = "renderBlockDestroyAnimation", at = @At(value = "HEAD"))
+    @Inject(method = "submitBlockDestroyAnimation", at = @At(value = "HEAD"))
     private void flywheel$beforeRenderCrumbling(CallbackInfo ci) {
         if (flywheel$renderContext != null) {
             VisualizationManager manager = VisualizationManager.get(level);

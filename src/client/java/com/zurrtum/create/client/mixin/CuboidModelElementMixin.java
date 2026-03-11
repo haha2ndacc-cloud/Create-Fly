@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(CuboidModelElement.class)
-public class BlockElementMixin implements NormalsModelElement {
+public class CuboidModelElementMixin implements NormalsModelElement {
     @Unique
     private boolean normals;
 

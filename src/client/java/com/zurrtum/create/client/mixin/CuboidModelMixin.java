@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(CuboidModel.class)
-public class BlockModelMixin {
+public class CuboidModelMixin {
     @WrapOperation(method = "<clinit>()V", at = @At(value = "INVOKE", target = "Lcom/google/gson/GsonBuilder;create()Lcom/google/gson/Gson;"))
     private static Gson wrap(GsonBuilder instance, Operation<Gson> original) {
         return UnbakedModelParser.wrap(original.call(instance));

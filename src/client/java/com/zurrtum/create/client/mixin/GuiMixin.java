@@ -36,8 +36,8 @@ public class GuiMixin {
     @Final
     private Minecraft minecraft;
 
-    @Inject(method = "renderCrosshair(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V", at = @At("TAIL"))
-    private void renderCrosshair(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
+    @Inject(method = "extractCrosshair(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/DeltaTracker;)V", at = @At("TAIL"))
+    private void extractCrosshair(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
         PlacementClient.onRenderCrosshairOverlay(
             minecraft,
             context,
@@ -45,8 +45,8 @@ public class GuiMixin {
         );
     }
 
-    @Inject(method = "renderItemHotbar(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V", at = @At("TAIL"))
-    private void renderHotbar(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
+    @Inject(method = "extractItemHotbar(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/DeltaTracker;)V", at = @At("TAIL"))
+    private void extractItemHotbar(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
         Create.VALUE_SETTINGS_HANDLER.render(minecraft, context);
         TrackPlacementOverlay.render(minecraft, context);
         GoggleOverlayRenderer.renderOverlay(minecraft, context, tickCounter);
@@ -56,8 +56,8 @@ public class GuiMixin {
         ToolboxHandlerClient.renderOverlay(minecraft, context);
     }
 
-    @Inject(method = "renderAirBubbles(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/entity/player/Player;III)V", at = @At("TAIL"))
-    private void renderAirBubbles(
+    @Inject(method = "extractAirBubbles(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/world/entity/player/Player;III)V", at = @At("TAIL"))
+    private void extractAirBubbles(
         GuiGraphicsExtractor context,
         Player player,
         int heartCount,
@@ -68,7 +68,7 @@ public class GuiMixin {
         RemainingAirOverlay.render(minecraft, context);
     }
 
-    @WrapOperation(method = "renderHotbarAndDecorations(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;nextContextualInfoState()Lnet/minecraft/client/gui/Gui$ContextualInfo;"))
+    @WrapOperation(method = "extractHotbarAndDecorations(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/DeltaTracker;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;nextContextualInfoState()Lnet/minecraft/client/gui/Gui$ContextualInfo;"))
     private ContextualInfo renderMainHud(
         Gui instance,
         Operation<ContextualInfo> original,
@@ -81,7 +81,7 @@ public class GuiMixin {
         return original.call(instance);
     }
 
-    @WrapOperation(method = "renderCameraOverlays(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;renderTextureOverlay(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/resources/Identifier;F)V", ordinal = 0))
+    @WrapOperation(method = "extractCameraOverlays(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/DeltaTracker;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;extractTextureOverlay(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/resources/Identifier;F)V", ordinal = 0))
     private void renderMiscOverlays(
         Gui instance,
         GuiGraphicsExtractor context,

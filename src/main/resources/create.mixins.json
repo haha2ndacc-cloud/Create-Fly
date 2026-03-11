@@ -55,7 +55,7 @@
     "PlayerListMixin",
     "PlayerMixin",
     "RecipeManagerMixin",
-    "RedstoneWireBlockMixin",
+    "RedStoneWireBlockMixin",
     "RegistryDataLoaderMixin",
     "ReloadableServerResourcesMixin",
     "ServerConfigurationPacketListenerImplMixin",

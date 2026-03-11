@@ -106,7 +106,7 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
         }
     }
 
-    @Inject(method = "renderTabButton", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "extractTabButton", at = @At("HEAD"), cancellable = true)
     private void renderTabIcon(
         GuiGraphicsExtractor graphics,
         int mouseX,

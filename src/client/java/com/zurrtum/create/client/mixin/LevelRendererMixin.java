@@ -28,14 +28,18 @@ import com.zurrtum.create.client.content.trains.track.TrackTargetingClient;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.client.foundation.block.render.BlockDestructionProgressExtension;
 import com.zurrtum.create.client.foundation.block.render.MultiPosDestructionHandler;
+import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
 import com.zurrtum.create.client.infrastructure.render.BreakingRenderStateInfo;
 import com.zurrtum.create.foundation.block.LightControlBlock;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionsToRender;
 import net.minecraft.client.renderer.state.level.BlockBreakingRenderState;
 import net.minecraft.client.renderer.state.level.BlockOutlineRenderState;
@@ -47,12 +51,13 @@ import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Set;
@@ -103,7 +108,7 @@ public abstract class LevelRendererMixin {
         }
     }
 
-    @Inject(method = "lambda$addMainPass$0(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lnet/minecraft/client/renderer/state/level/LevelRenderState;Lnet/minecraft/util/profiling/ProfilerFiller;Lnet/minecraft/client/renderer/chunk/ChunkSectionsToRender;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;ZLorg/joml/Matrix4f;)V", at = @At("TAIL"))
+    @Inject(method = "lambda$addMainPass$0(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lnet/minecraft/client/renderer/state/level/LevelRenderState;Lnet/minecraft/util/profiling/ProfilerFiller;Lnet/minecraft/client/renderer/chunk/ChunkSectionsToRender;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;ZLorg/joml/Matrix4fc;)V", at = @At("TAIL"))
     private void renderAfterParticles(
         GpuBufferSlice terrainFog,
         LevelRenderState levelRenderState,
@@ -115,7 +120,7 @@ public abstract class LevelRendererMixin {
         ResourceHandle<RenderTarget> itemEntityTarget,
         ResourceHandle<RenderTarget> particleTarget,
         boolean renderOutline,
-        Matrix4f modelViewMatrix,
+        Matrix4fc modelViewMatrix,
         CallbackInfo ci,
         @Local Vec3 cameraPos,
         @Local PoseStack ms
@@ -190,13 +195,7 @@ public abstract class LevelRendererMixin {
             vertexConsumers,
             cameraPos,
             matrices
-        ) || TrackBlockOutline.drawCustomBlockSelection(
-            minecraft,
-            state.pos(),
-            vertexConsumers,
-            cameraPos,
-            matrices
-        )) {
+        ) || TrackBlockOutline.drawCustomBlockSelection(minecraft, state.pos(), vertexConsumers, cameraPos, matrices)) {
             ci.cancel();
         }
     }
@@ -214,42 +213,41 @@ public abstract class LevelRendererMixin {
         return original.call(state);
     }
 
-    @Inject(method = "submitBlockEntities(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/state/level/LevelRenderState;Lnet/minecraft/client/renderer/SubmitNodeStorage;)V", at = @At("HEAD"))
-    private void markSpriteActive(CallbackInfo ci) {
-        //        SodiumCompat.markSpriteActive(minecraft);
-    }
+//    @Inject(method = "submitBlockEntities(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/state/level/LevelRenderState;Lnet/minecraft/client/renderer/SubmitNodeStorage;)V", at = @At("HEAD"))
+//    private void markSpriteActive(CallbackInfo ci) {
+//        SodiumCompat.markSpriteActive(minecraft);
+//    }
 
-    @Inject(method = "renderBlockDestroyAnimation(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At("HEAD"))
-    private void initBreakingRenderInfo(
-        PoseStack poseStack,
-        BufferSource bufferSource,
+    @Inject(method = "extractBlockDestroyAnimation(Lnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At("HEAD"))
+    private void init(
+        Camera camera,
         LevelRenderState levelRenderState,
         CallbackInfo ci,
-        @Share("info") LocalRef<BreakingRenderInfo> info
+        @Share("models") LocalRef<BlockStateModelSet> ref
     ) {
-        info.set((BreakingRenderInfo) minecraft.getBlockRenderer());
+        ref.set(minecraft.getModelManager().getBlockStateModelSet());
     }
 
-    @Inject(method = "renderBlockDestroyAnimation(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockRenderDispatcher;renderBreakingTexture(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"))
-    private void renderBreakingTexture(
-        PoseStack poseStack,
-        BufferSource bufferSource,
-        LevelRenderState levelRenderState,
-        CallbackInfo ci,
-        @Local BlockBreakingRenderState state,
-        @Share("info") LocalRef<BreakingRenderInfo> info
-    ) {
-        info.get().create$setRenderLevel(((BreakingRenderStateInfo) state).create$getRenderLevel());
+    @ModifyArg(method = "extractBlockDestroyAnimation(Lnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
+    private <E> E addInfo(E e, @Share("models") LocalRef<BlockStateModelSet> ref) {
+        BlockBreakingRenderState state = (BlockBreakingRenderState) e;
+        BlockState blockState = state.blockState();
+        BlockStateModel model = ref.get().get(blockState);
+        if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
+            BlockPos pos = state.blockPos();
+            model = wrapper.extractRenderModel(level, pos, blockState, blockState.getSeed(pos));
+        }
+        ((BreakingRenderStateInfo) e).create$setRenderModel(model);
+        return e;
     }
 
-    @Inject(method = "renderBlockDestroyAnimation(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At("RETURN"))
-    private void clearRenderLevel(
-        PoseStack poseStack,
-        BufferSource bufferSource,
-        LevelRenderState levelRenderState,
-        CallbackInfo ci,
-        @Share("info") LocalRef<BreakingRenderInfo> info
+    @WrapOperation(method = "submitBlockDestroyAnimation(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockStateModelSet;get(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/renderer/block/dispatch/BlockStateModel;"))
+    private BlockStateModel getRenderModel(
+        BlockStateModelSet instance,
+        BlockState state,
+        Operation<BlockStateModel> original,
+        @Local BlockBreakingRenderState renderState
     ) {
-        info.get().create$clearRenderLevel();
+        return ((BreakingRenderStateInfo) (Object) renderState).create$getRenderModel();
     }
 }
