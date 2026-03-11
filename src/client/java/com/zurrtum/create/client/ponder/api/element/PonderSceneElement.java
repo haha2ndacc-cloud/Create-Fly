@@ -5,7 +5,7 @@ import com.zurrtum.create.client.ponder.api.level.PonderLevel;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -16,7 +16,7 @@ public interface PonderSceneElement extends PonderElement {
 
     void renderFirst(
         BlockEntityRenderDispatcher blockEntityRenderDispatcher,
-        BlockRenderDispatcher blockRenderManager,
+        BlockStateModelSet blockStateModelSet,
         PonderLevel world,
         MultiBufferSource buffer,
         SubmitNodeCollector queue,

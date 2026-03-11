@@ -173,7 +173,7 @@ public class DefaultSuperRenderTypeBuffer implements SuperRenderTypeBuffer {
             outline = new OutlineBufferSource();
             renderDispatcher = new FeatureRenderDispatcher(
                 new SubmitNodeStorage(),
-                mc.getBlockRenderer(),
+                mc.getModelManager(),
                 bufferSource,
                 mc.getAtlasManager(),
                 outline,

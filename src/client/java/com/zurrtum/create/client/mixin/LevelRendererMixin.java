@@ -28,7 +28,6 @@ import com.zurrtum.create.client.content.trains.track.TrackTargetingClient;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.client.foundation.block.render.BlockDestructionProgressExtension;
 import com.zurrtum.create.client.foundation.block.render.MultiPosDestructionHandler;
-import com.zurrtum.create.client.infrastructure.render.BreakingRenderInfo;
 import com.zurrtum.create.client.infrastructure.render.BreakingRenderStateInfo;
 import com.zurrtum.create.foundation.block.LightControlBlock;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -191,7 +190,13 @@ public abstract class LevelRendererMixin {
             vertexConsumers,
             cameraPos,
             matrices
-        ) || TrackBlockOutline.drawCustomBlockSelection(minecraft, state.pos(), vertexConsumers, cameraPos, matrices)) {
+        ) || TrackBlockOutline.drawCustomBlockSelection(
+            minecraft,
+            state.pos(),
+            vertexConsumers,
+            cameraPos,
+            matrices
+        )) {
             ci.cancel();
         }
     }

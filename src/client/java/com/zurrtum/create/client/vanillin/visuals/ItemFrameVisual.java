@@ -162,6 +162,6 @@ public class ItemFrameVisual extends AbstractVisual implements EntityVisual<Item
     public BlockStateModel getFrameModel() {
         boolean bl = entity.getType() == EntityType.GLOW_ITEM_FRAME;
         BlockState state = BlockStateDefinitions.getItemFrameFakeState(bl, false);
-        return Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
+        return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state);
     }
 }

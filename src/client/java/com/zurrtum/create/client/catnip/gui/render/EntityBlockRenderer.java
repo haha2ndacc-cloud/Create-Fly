@@ -14,7 +14,6 @@ import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -85,14 +84,13 @@ public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRen
             matrices.mulPose(Axis.YP.rotation(block.yRot()));
         }
         matrices.translate(-0.5F, -0.5F, -0.5F);
-        BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         Level world = block.world();
         BlockState blockState = block.state();
         BlockEntity blockEntity = block.entity();
         SinglePosVirtualBlockGetter lightWorld = SinglePosVirtualBlockGetter.createFullBright();
         lightWorld.blockState(blockState);
         lightWorld.blockEntity(blockEntity);
-        BlockStateModel model = blockRenderManager.getBlockModel(blockState);
+        BlockStateModel model = mc.getModelManager().getBlockStateModelSet().get(blockState);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, lightWorld, BlockPos.ZERO, blockState, model, 42L);
         output.clearBuffer();

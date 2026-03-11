@@ -18,7 +18,7 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
@@ -72,13 +72,13 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
 
         BlockState blockState;
         BlockStateModel model;
-        BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
+        BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float time = AnimationTickHolder.getRenderTime();
 
         blockState = AllBlocks.MECHANICAL_PRESS.defaultBlockState();
         world.blockState(blockState);
-        model = blockRenderManager.getBlockModel(blockState);
+        model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
@@ -86,7 +86,7 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
         blockState = AllBlocks.SHAFT.defaultBlockState()
             .setValue(BlockStateProperties.AXIS, net.minecraft.core.Direction.Axis.Z);
         world.blockState(blockState);
-        model = blockRenderManager.getBlockModel(blockState);
+        model = blockStateModelSet.get(blockState);
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.ZP.rotationDegrees(getShaftAngle(time)));
         matrices.translate(-0.5f, -0.5f, -0.5f);

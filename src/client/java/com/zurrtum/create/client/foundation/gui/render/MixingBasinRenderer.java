@@ -11,7 +11,7 @@ import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockG
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
@@ -44,14 +44,14 @@ public class MixingBasinRenderer extends PictureInPictureRenderer<MixingBasinRen
         BlockState blockState;
         BlockStateModel model;
         output.setPoseStack(matrices);
-        BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
+        BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float time = AnimationTickHolder.getRenderTime();
         float angle = getCurrentAngle(time);
 
         blockState = AllBlocks.MECHANICAL_MIXER.defaultBlockState();
         world.blockState(blockState);
-        model = blockRenderManager.getBlockModel(blockState);
+        model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
@@ -82,7 +82,7 @@ public class MixingBasinRenderer extends PictureInPictureRenderer<MixingBasinRen
         matrices.translate(0, -1.65f, 0);
         blockState = AllBlocks.BASIN.defaultBlockState();
         world.blockState(blockState);
-        model = blockRenderManager.getBlockModel(blockState);
+        model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         output.clear();

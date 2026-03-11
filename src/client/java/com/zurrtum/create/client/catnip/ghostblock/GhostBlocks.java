@@ -3,6 +3,7 @@ package com.zurrtum.create.client.catnip.ghostblock;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -69,10 +70,13 @@ public class GhostBlocks {
         if (mc.gameMode.getPlayerMode() == GameType.SPECTATOR) {
             return;
         }
-        ghosts.forEach((slot, entry) -> {
-            GhostBlockRenderer ghost = entry.ghost;
-            ghost.render(mc, ms, buffer, camera, entry.params);
-        });
+        if (ghosts.isEmpty()) {
+            return;
+        }
+        BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
+        for (Entry entry : ghosts.values()) {
+            entry.ghost.render(blockStateModelSet, ms, buffer, camera, entry.params);
+        }
     }
 
     static class Entry {

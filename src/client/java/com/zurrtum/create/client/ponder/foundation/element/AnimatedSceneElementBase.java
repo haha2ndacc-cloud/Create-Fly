@@ -7,7 +7,7 @@ import com.zurrtum.create.client.ponder.api.level.PonderLevel;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -45,7 +45,7 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
     @Override
     public final void renderFirst(
         BlockEntityRenderDispatcher blockEntityRenderDispatcher,
-        BlockRenderDispatcher blockRenderManager,
+        BlockStateModelSet blockStateModelSet,
         PonderLevel world,
         MultiBufferSource buffer,
         SubmitNodeCollector queue,
@@ -58,7 +58,7 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
         float currentFade = applyFade(poseStack, pt);
         renderFirst(
             blockEntityRenderDispatcher,
-            blockRenderManager,
+            blockStateModelSet,
             world,
             buffer,
             queue,
@@ -136,7 +136,7 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
 
     protected void renderFirst(
         BlockEntityRenderDispatcher blockEntityRenderDispatcher,
-        BlockRenderDispatcher blockRenderManager,
+        BlockStateModelSet blockStateModelSet,
         PonderLevel world,
         MultiBufferSource buffer,
         SubmitNodeCollector queue,

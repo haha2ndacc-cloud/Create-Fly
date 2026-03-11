@@ -7,8 +7,7 @@ import com.zurrtum.create.client.catnip.impl.client.render.ColoringVertexConsume
 import com.zurrtum.create.client.catnip.placement.PlacementClient;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.flywheel.lib.model.baked.EmptyVirtualBlockGetter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,7 +27,7 @@ public abstract class GhostBlockRenderer {
     }
 
     public abstract void render(
-        Minecraft mc,
+        BlockStateModelSet blockStateModelSet,
         PoseStack ms,
         SuperRenderTypeBuffer buffer,
         Vec3 camera,
@@ -38,21 +37,18 @@ public abstract class GhostBlockRenderer {
     private static class DefaultGhostBlockRenderer extends GhostBlockRenderer {
         @Override
         public void render(
-            Minecraft mc,
+            BlockStateModelSet blockStateModelSet,
             PoseStack ms,
             SuperRenderTypeBuffer buffer,
             Vec3 camera,
             GhostBlockParams params
         ) {
             BlockState state = params.state;
-            BlockStateModel model = mc.getBlockRenderer().getBlockModel(state);
             BlockPos pos = params.pos;
-
-            ms.translate(pos.getX() - camera.x, pos.getY() - camera.y, pos.getZ() - camera.z);
-
             ms.pushPose();
+            ms.translate(pos.getX() - camera.x, pos.getY() - camera.y, pos.getZ() - camera.z);
             BakedModelBufferer.bufferModel(
-                model,
+                blockStateModelSet.get(state),
                 pos,
                 EmptyVirtualBlockGetter.FULL_BRIGHT,
                 state,
@@ -70,14 +66,13 @@ public abstract class GhostBlockRenderer {
     private static class TransparentGhostBlockRenderer extends GhostBlockRenderer {
         @Override
         public void render(
-            Minecraft mc,
+            BlockStateModelSet blockStateModelSet,
             PoseStack ms,
             SuperRenderTypeBuffer buffer,
             Vec3 camera,
             GhostBlockParams params
         ) {
             BlockState state = params.state;
-            BlockStateModel model = mc.getBlockRenderer().getBlockModel(state);
             BlockPos pos = params.pos;
             float alpha = params.alphaSupplier.get() * .75f * PlacementClient.getCurrentAlpha();
             VertexConsumer vb = new ColoringVertexConsumer(
@@ -87,15 +82,13 @@ public abstract class GhostBlockRenderer {
                 1,
                 alpha
             );
-
             ms.pushPose();
             ms.translate(pos.getX() - camera.x, pos.getY() - camera.y, pos.getZ() - camera.z);
-
             ms.translate(.5, .5, .5);
             ms.scale(.85f, .85f, .85f);
             ms.translate(-.5, -.5, -.5);
             BakedModelBufferer.bufferModel(
-                model,
+                blockStateModelSet.get(state),
                 pos,
                 EmptyVirtualBlockGetter.FULL_BRIGHT,
                 state,

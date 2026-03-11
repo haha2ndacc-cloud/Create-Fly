@@ -9,13 +9,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
 public class SuperBufferFactory {
-
-    private static final RandomSource random = RandomSource.create();
     private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(
         ThreadLocalObjects::new);
     private static SuperBufferFactory instance = new SuperBufferFactory();
@@ -34,7 +31,7 @@ public class SuperBufferFactory {
 
     public SuperByteBuffer createForBlock(BlockState renderedState) {
         return createForBlock(
-            Minecraft.getInstance().getBlockRenderer().getBlockModel(renderedState),
+            Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(renderedState),
             renderedState,
             new PoseStack()
         );

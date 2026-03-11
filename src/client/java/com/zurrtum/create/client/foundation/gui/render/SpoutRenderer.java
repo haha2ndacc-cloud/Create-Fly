@@ -19,7 +19,7 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
@@ -77,13 +77,13 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
 
         BlockState blockState;
         BlockStateModel model;
-        BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
+        BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float time = AnimationTickHolder.getRenderTime();
 
         blockState = AllBlocks.SPOUT.defaultBlockState();
         world.blockState(blockState);
-        model = blockRenderManager.getBlockModel(blockState);
+        model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
@@ -110,7 +110,7 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
         matrices.pushPose();
         blockState = AllBlocks.DEPOT.defaultBlockState();
         world.blockState(blockState);
-        model = blockRenderManager.getBlockModel(blockState);
+        model = blockStateModelSet.get(blockState);
         matrices.translate(0.07f, -2, -0.14f);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);

@@ -13,8 +13,7 @@ public class BlockTransformRenderKey {
 
     public BlockTransformRenderKey(BlockState state) {
         this.state = state;
-        Minecraft mc = Minecraft.getInstance();
-        model = mc.getBlockRenderer().getBlockModel(state);
+        model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state);
     }
 
     public void update(float scale, int padding, float xRot, float yRot, float zRot) {

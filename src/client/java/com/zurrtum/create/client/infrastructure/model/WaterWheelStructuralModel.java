@@ -28,7 +28,8 @@ public class WaterWheelStructuralModel extends WrapperBlockStateModel {
     public Material.Baked particleMaterialWithInfo(BlockAndTintGetter world, BlockPos pos, BlockState state) {
         BlockPos master = WaterWheelStructuralBlock.getMaster(world, pos, state);
         if (world.getBlockEntity(master) instanceof LargeWaterWheelBlockEntity blockEntity) {
-            return Minecraft.getInstance().getBlockRenderer().getBlockModel(blockEntity.material).particleMaterial();
+            return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(blockEntity.material)
+                .particleMaterial();
         }
         return particleMaterial();
     }

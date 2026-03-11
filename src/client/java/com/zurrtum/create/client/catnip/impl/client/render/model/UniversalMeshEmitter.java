@@ -4,25 +4,35 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.QuadInstance;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.client.catnip.client.render.model.ShadeSeparatedBufferSource;
+import com.zurrtum.create.client.flywheel.lib.model.baked.TransformingVertexConsumer;
 import net.minecraft.client.renderer.block.BlockQuadOutput;
+import net.minecraft.client.renderer.block.FluidRenderer;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.UnknownNullability;
 
 // Modified from https://github.com/Engine-Room/Flywheel/blob/2f67f54c8898d91a48126c3c753eefa6cd224f84/forge/src/lib/java/dev/engine_room/flywheel/lib/model/baked/MeshEmitter.java
-public class UniversalMeshEmitter implements VertexConsumer, BlockQuadOutput {
+public class UniversalMeshEmitter implements VertexConsumer, BlockQuadOutput, FluidRenderer.Output {
+    private final TransformingVertexConsumer transformingWrapper = new TransformingVertexConsumer();
     @UnknownNullability
     private ShadeSeparatedBufferSource bufferSource;
     @UnknownNullability
     private PoseStack poseStack;
+    @UnknownNullability
+    private BlockPos pos;
 
     public void prepare(ShadeSeparatedBufferSource bufferSource, PoseStack poseStack) {
         this.bufferSource = bufferSource;
         this.poseStack = poseStack;
+        transformingWrapper.setPoseStack(poseStack);
     }
 
     public void clear() {
         bufferSource = null;
         poseStack = null;
+        pos = null;
+        transformingWrapper.clear();
     }
 
     @Override
@@ -45,6 +55,20 @@ public class UniversalMeshEmitter implements VertexConsumer, BlockQuadOutput {
         } else {
             putBakedQuad(poseStack.last(), quad, instance);
         }
+    }
+
+    public void prepareForFluid(BlockPos pos) {
+        this.pos = pos;
+    }
+
+    @Override
+    public VertexConsumer getBuilder(ChunkSectionLayer layer) {
+        poseStack.translate(
+            pos.getX() - (pos.getX() & 0xF),
+            pos.getY() - (pos.getY() & 0xF),
+            pos.getZ() - (pos.getZ() & 0xF)
+        );
+        return transformingWrapper.wrap(bufferSource.getBuffer(layer, true));
     }
 
     @Override

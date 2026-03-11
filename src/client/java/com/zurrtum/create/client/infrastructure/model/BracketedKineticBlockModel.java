@@ -5,8 +5,8 @@ import com.zurrtum.create.client.flywheel.lib.model.baked.VirtualBlockGetter;
 import com.zurrtum.create.content.decoration.bracket.BracketedBlockEntityBehaviour;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
@@ -40,7 +40,7 @@ public class BracketedKineticBlockModel extends WrapperBlockStateModel {
             addVirtualParts(world, random, parts);
             return;
         }
-        BlockStateModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(bracket);
+        BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(bracket);
         if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
             wrapper.addPartsWithInfo(world, pos, state, random, parts);
         } else {

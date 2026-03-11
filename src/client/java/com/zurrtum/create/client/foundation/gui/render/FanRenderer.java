@@ -13,7 +13,7 @@ import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockG
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
@@ -52,7 +52,7 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
         BlockState blockState;
         BlockStateModel model;
         output.setPoseStack(matrices);
-        BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
+        BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
 
         matrices.pushPose();
@@ -69,7 +69,7 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
         matrices.pushPose();
         blockState = AllBlocks.ENCASED_FAN.defaultBlockState();
         world.blockState(blockState);
-        model = blockRenderManager.getBlockModel(blockState);
+        model = blockStateModelSet.get(blockState);
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.YP.rotationDegrees(180));
         matrices.translate(-0.5f, -0.5f, -0.5f);
@@ -101,7 +101,7 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
             return;
         }
         world.blockState(blockState);
-        model = blockRenderManager.getBlockModel(blockState);
+        model = blockStateModelSet.get(blockState);
         if (blockState.getBlock() instanceof BaseFireBlock) {
             terrainOutput.setPoseStack(matrices);
             blockRenderer.tesselateBlock(terrainOutput, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);

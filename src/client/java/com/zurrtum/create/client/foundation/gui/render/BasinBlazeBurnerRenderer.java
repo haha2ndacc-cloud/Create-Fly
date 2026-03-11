@@ -54,7 +54,7 @@ public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlaz
 
         blockState = AllBlocks.BLAZE_BURNER.defaultBlockState();
         world.blockState(blockState);
-        model = mc.getBlockRenderer().getBlockModel(blockState);
+        model = mc.getModelManager().getBlockStateModelSet().get(blockState);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 

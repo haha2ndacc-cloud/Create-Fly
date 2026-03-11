@@ -54,7 +54,7 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
     );
 
     protected static BlockStateModel getModelOf(BlockState material) {
-        return Minecraft.getInstance().getBlockRenderer().getBlockModel(material);
+        return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(material);
     }
 
     @Override

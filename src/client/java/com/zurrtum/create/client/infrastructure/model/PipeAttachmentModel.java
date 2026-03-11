@@ -44,7 +44,7 @@ public class PipeAttachmentModel extends WrapperBlockStateModel {
         }
         Optional.ofNullable(BlockEntityBehaviour.get(world, pos, BracketedBlockEntityBehaviour.TYPE))
             .map(BracketedBlockEntityBehaviour::getBracket)
-            .map(bracket -> Minecraft.getInstance().getBlockRenderer().getBlockModel(bracket))
+            .map(bracket -> Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(bracket))
             .ifPresent(model -> model.collectParts(random, parts));
         FluidTransportBehaviour transport = BlockEntityBehaviour.get(world, pos, FluidTransportBehaviour.TYPE);
         if (transport != null) {

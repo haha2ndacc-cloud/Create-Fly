@@ -11,7 +11,6 @@ import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockG
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
@@ -39,7 +38,6 @@ public class MillstoneRenderer extends PictureInPictureRenderer<MillstoneRenderS
         BlockState blockState;
         BlockStateModel model;
         output.setPoseStack(matrices);
-        BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
 
         matrices.pushPose();
@@ -56,7 +54,7 @@ public class MillstoneRenderer extends PictureInPictureRenderer<MillstoneRenderS
 
         blockState = AllBlocks.MILLSTONE.defaultBlockState();
         world.blockState(blockState);
-        model = blockRenderManager.getBlockModel(blockState);
+        model = mc.getModelManager().getBlockStateModelSet().get(blockState);
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.XP.rotationDegrees(22.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(22.5f));

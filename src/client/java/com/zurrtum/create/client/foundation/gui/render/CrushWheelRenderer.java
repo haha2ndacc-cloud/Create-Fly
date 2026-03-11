@@ -9,7 +9,6 @@ import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockG
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
@@ -41,9 +40,8 @@ public class CrushWheelRenderer extends PictureInPictureRenderer<CrushWheelRende
         matrices.scale(1, -1, 1);
 
         output.setPoseStack(matrices);
-        BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
-        BlockStateModel model = blockRenderManager.getBlockModel(blockState);
+        BlockStateModel model = mc.getModelManager().getBlockStateModelSet().get(blockState);
         output.updateBuffer(model);
         world.blockState(blockState);
 

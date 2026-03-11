@@ -16,7 +16,7 @@ import com.zurrtum.create.client.catnip.render.SuperByteBufferCache;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferCache.Compartment;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
-import com.zurrtum.create.client.infrastructure.render.BreakingRenderInfo;
+import com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel;
 import com.zurrtum.create.client.ponder.Ponder;
 import com.zurrtum.create.client.ponder.api.element.WorldSectionElement;
 import com.zurrtum.create.client.ponder.api.level.PonderLevel;
@@ -26,7 +26,8 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -323,7 +324,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
     @Override
     public void renderFirst(
         BlockEntityRenderDispatcher blockEntityRenderDispatcher,
-        BlockRenderDispatcher blockRenderManager,
+        BlockStateModelSet blockStateModelSet,
         PonderLevel world,
         MultiBufferSource buffer,
         SubmitNodeCollector queue,
@@ -366,16 +367,13 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 
             poseStack.pushPose();
             poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
-            BreakingRenderInfo renderInfo = (BreakingRenderInfo) blockRenderManager;
-            renderInfo.create$setRenderLevel(world);
-            blockRenderManager.renderBreakingTexture(
-                world.getBlockState(pos),
-                pos,
-                poseStack,
-                buffer,
-                entry.getValue()
-            );
-            renderInfo.create$clearRenderLevel();
+            BlockState state = world.getBlockState(pos);
+            BlockStateModel model = blockStateModelSet.get(state);
+            long seed = state.getSeed(pos);
+            if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
+                model = wrapper.extractRenderModel(world, pos, state, seed);
+            }
+            queue.submitBreakingBlockModel(poseStack, model, seed, entry.getValue());
             poseStack.popPose();
         }
 

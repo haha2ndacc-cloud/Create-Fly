@@ -21,7 +21,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockModelLighter;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.culling.Frustum;
@@ -99,7 +99,7 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
         ChunkSectionLayer layer
     ) {
         Minecraft minecraft = Minecraft.getInstance();
-        BlockRenderDispatcher dispatcher = minecraft.getBlockRenderer();
+        BlockStateModelSet blockStateModelSet = minecraft.getModelManager().getBlockStateModelSet();
         ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 
         RenderedBlocks blocks = clientContraption.getRenderedBlocks();
@@ -121,7 +121,7 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
                     renderWorld,
                     pos,
                     state,
-                    dispatcher.getBlockModel(state),
+                    blockStateModelSet.get(state),
                     state.getSeed(pos)
                 );
             }

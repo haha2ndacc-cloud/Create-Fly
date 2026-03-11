@@ -184,7 +184,7 @@ public class BakedItemModelBufferer {
             Minecraft mc = Minecraft.getInstance();
             featureRenderDispatcher = new FeatureRenderDispatcher(
                 new SubmitNodeStorage(),
-                mc.getBlockRenderer(),
+                mc.getModelManager(),
                 provider,
                 mc.getAtlasManager(),
                 EmptyOutlineBufferSource.INSTANCE,

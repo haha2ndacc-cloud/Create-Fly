@@ -14,6 +14,7 @@ import com.zurrtum.create.content.kinetics.waterwheel.WaterWheelBlockEntity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -102,9 +103,10 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
         BlockState logBlockState = getLogBlockState(namespace, wood);
 
         Map<TextureAtlasSprite, TextureAtlasSprite> map = new Reference2ReferenceOpenHashMap<>();
-        map.put(OAK_PLANKS_TEMPLATE.get(), getSpriteOnSide(planksBlockState, Direction.UP));
-        map.put(OAK_LOG_TEMPLATE.get(), getSpriteOnSide(logBlockState, Direction.SOUTH));
-        map.put(OAK_LOG_TOP_TEMPLATE.get(), getSpriteOnSide(logBlockState, Direction.UP));
+        BlockStateModelSet blockStateModelSet = Minecraft.getInstance().getModelManager().getBlockStateModelSet();
+        map.put(OAK_PLANKS_TEMPLATE.get(), getSpriteOnSide(blockStateModelSet, planksBlockState, Direction.UP));
+        map.put(OAK_LOG_TEMPLATE.get(), getSpriteOnSide(blockStateModelSet, logBlockState, Direction.SOUTH));
+        map.put(OAK_LOG_TOP_TEMPLATE.get(), getSpriteOnSide(blockStateModelSet, logBlockState, Direction.UP));
 
         return BakedModelHelper.generateModel(template, map::get);
     }
@@ -148,8 +150,12 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
         return Blocks.OAK_LOG.defaultBlockState();
     }
 
-    private static TextureAtlasSprite getSpriteOnSide(BlockState state, Direction side) {
-        BlockStateModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
+    private static TextureAtlasSprite getSpriteOnSide(
+        BlockStateModelSet blockStateModelSet,
+        BlockState state,
+        Direction side
+    ) {
+        BlockStateModel model = blockStateModelSet.get(state);
         RandomSource random = RandomSource.create();
         random.setSeed(42L);
         List<BlockStateModelPart> parts = new ObjectArrayList<>();

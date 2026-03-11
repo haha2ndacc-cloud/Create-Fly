@@ -1,12 +1,11 @@
 package com.zurrtum.create.client.flywheel.lib.model.baked;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.flywheel.lib.model.SimpleModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.*;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -55,12 +54,11 @@ final class BakedModelBufferer {
             poseStack = objects.identityPoseStack;
         }
         VanillinMeshEmitterManager emitters = objects.emitters;
-        TransformingVertexConsumer transformingWrapper = objects.transformingWrapper;
-
         emitters.prepare(blockMaterialFunction, poseStack);
 
-        BlockRenderDispatcher renderDispatcher = Minecraft.getInstance().getBlockRenderer();
-        LiquidBlockRenderer liquidRenderer = renderDispatcher.getLiquidRenderer();
+        ModelManager modelManager = Minecraft.getInstance().getModelManager();
+        BlockStateModelSet blockStateModelSet = modelManager.getBlockStateModelSet();
+        FluidRenderer fluidRenderer = new FluidRenderer(modelManager.getFluidStateModelSet());
 
         Minecraft minecraft = Minecraft.getInstance();
         boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
@@ -76,22 +74,10 @@ final class BakedModelBufferer {
             if (renderFluids) {
                 FluidState fluidState = state.getFluidState();
                 if (!fluidState.isEmpty()) {
-                    ChunkSectionLayer renderType = liquidRenderer.getRenderLayer(fluidState);
-
-                    BufferBuilder bufferBuilder = emitters.getBuffer(renderType, true, false);
-
-                    if (bufferBuilder != null) {
-                        transformingWrapper.prepare(bufferBuilder, poseStack);
-
-                        poseStack.pushPose();
-                        poseStack.translate(
-                            pos.getX() - (pos.getX() & 0xF),
-                            pos.getY() - (pos.getY() & 0xF),
-                            pos.getZ() - (pos.getZ() & 0xF)
-                        );
-                        liquidRenderer.tesselate(level, pos, transformingWrapper, state, fluidState);
-                        poseStack.popPose();
-                    }
+                    poseStack.pushPose();
+                    emitters.prepareForFluid(pos);
+                    fluidRenderer.tesselate(level, pos, emitters, state, fluidState);
+                    poseStack.popPose();
                 }
             }
 
@@ -104,20 +90,18 @@ final class BakedModelBufferer {
                     level,
                     pos,
                     state,
-                    renderDispatcher.getBlockModel(state),
+                    blockStateModelSet.get(state),
                     state.getSeed(pos)
                 );
             }
         }
 
         BlockModelLighter.clearCache();
-        transformingWrapper.clear();
         return emitters.end();
     }
 
     private static class ThreadLocalObjects {
         public final PoseStack identityPoseStack = new PoseStack();
         public final VanillinMeshEmitterManager emitters = new VanillinMeshEmitterManager();
-        public final TransformingVertexConsumer transformingWrapper = new TransformingVertexConsumer();
     }
 }

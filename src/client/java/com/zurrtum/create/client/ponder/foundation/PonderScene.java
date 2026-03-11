@@ -25,7 +25,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.SubmitNodeStorage;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -258,14 +258,14 @@ public class PonderScene {
         cameraRenderState.orientation.set(camera.rotation());
         renderViewEntity.swap(mc);
         BlockEntityRenderDispatcher blockEntityRenderManager = mc.getBlockEntityRenderDispatcher();
-        BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
+        BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         EntityRenderDispatcher entityRenderDispatcher = mc.getEntityRenderDispatcher();
         ItemModelResolver itemModelManager = mc.getItemModelResolver();
         forEachVisible(
             PonderSceneElement.class,
             e -> e.renderFirst(
                 blockEntityRenderManager,
-                blockRenderManager,
+                blockStateModelSet,
                 world,
                 buffer,
                 queue,

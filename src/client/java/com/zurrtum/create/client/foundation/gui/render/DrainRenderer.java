@@ -15,7 +15,6 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
@@ -75,12 +74,11 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
         matrices.scale(1, -1, 1);
         matrices.translate(-0.5f, 0.2f, -0.5f);
 
-        BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
 
         BlockState blockState = AllBlocks.ITEM_DRAIN.defaultBlockState();
         world.blockState(blockState);
-        BlockStateModel model = blockRenderManager.getBlockModel(blockState);
+        BlockStateModel model = mc.getModelManager().getBlockStateModelSet().get(blockState);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         output.clearBuffer();

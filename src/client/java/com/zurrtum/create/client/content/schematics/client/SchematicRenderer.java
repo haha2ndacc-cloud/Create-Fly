@@ -12,7 +12,7 @@ import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper.Block
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.block.BlockModelLighter;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
@@ -111,7 +111,7 @@ public class SchematicRenderer {
 
     @SuppressWarnings("removal")
     protected SuperByteBuffer drawLayer(Minecraft mc, ChunkSectionLayer layer) {
-        BlockRenderDispatcher dispatcher = mc.getBlockRenderer();
+        BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 
         BlockPos.MutableBlockPos mutableBlockPos = objects.mutableBlockPos;
@@ -143,7 +143,7 @@ public class SchematicRenderer {
                     schematic,
                     pos,
                     state,
-                    dispatcher.getBlockModel(state),
+                    blockStateModelSet.get(state),
                     state.getSeed(pos)
                 );
             }

@@ -19,7 +19,7 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
@@ -74,7 +74,7 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
 
         BlockState blockState;
         BlockStateModel model;
-        BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
+        BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float time = AnimationTickHolder.getRenderTime();
         float cycle = (time - item.offset() * 8) % 30;
@@ -83,7 +83,7 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         matrices.pushPose();
         blockState = AllBlocks.SHAFT.defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.Z);
         world.blockState(blockState);
-        model = blockRenderManager.getBlockModel(blockState);
+        model = blockStateModelSet.get(blockState);
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.ZP.rotationDegrees(getCurrentAngle(time)));
         matrices.translate(-0.5f, -0.5f, -0.5f);
@@ -94,7 +94,7 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         blockState = AllBlocks.DEPLOYER.defaultBlockState().setValue(DeployerBlock.FACING, Direction.DOWN)
             .setValue(DeployerBlock.AXIS_ALONG_FIRST_COORDINATE, false);
         world.blockState(blockState);
-        model = blockRenderManager.getBlockModel(blockState);
+        model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
@@ -116,7 +116,7 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         matrices.translate(0, -2.06f, 0);
         blockState = AllBlocks.DEPOT.defaultBlockState();
         world.blockState(blockState);
-        model = blockRenderManager.getBlockModel(blockState);
+        model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         output.clearBuffer();

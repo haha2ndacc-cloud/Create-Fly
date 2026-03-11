@@ -12,7 +12,7 @@ import com.zurrtum.create.content.kinetics.saw.SawBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
@@ -46,14 +46,14 @@ public class SawRenderer extends PictureInPictureRenderer<SawRenderState> {
         BlockState blockState;
         BlockStateModel model;
         output.setPoseStack(matrices);
-        BlockRenderDispatcher blockRenderManager = mc.getBlockRenderer();
+        BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
 
         matrices.pushPose();
         blockState = AllBlocks.SHAFT.defaultBlockState()
             .setValue(BlockStateProperties.AXIS, net.minecraft.core.Direction.Axis.X);
         world.blockState(blockState);
-        model = blockRenderManager.getBlockModel(blockState);
+        model = blockStateModelSet.get(blockState);
         matrices.translate(0.5f, 0.5f, 0.5f);
         matrices.mulPose(Axis.XP.rotationDegrees(getCurrentAngle()));
         matrices.translate(-0.5f, -0.5f, -0.5f);
@@ -63,7 +63,7 @@ public class SawRenderer extends PictureInPictureRenderer<SawRenderState> {
 
         blockState = AllBlocks.MECHANICAL_SAW.defaultBlockState().setValue(SawBlock.FACING, Direction.UP);
         world.blockState(blockState);
-        model = blockRenderManager.getBlockModel(blockState);
+        model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 

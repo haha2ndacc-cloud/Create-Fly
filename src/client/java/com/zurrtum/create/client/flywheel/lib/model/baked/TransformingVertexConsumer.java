@@ -7,16 +7,17 @@ import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
-class TransformingVertexConsumer implements VertexConsumer {
+public class TransformingVertexConsumer implements VertexConsumer {
     private @UnknownNullability VertexConsumer delegate;
     private @UnknownNullability PoseStack poseStack;
 
-    TransformingVertexConsumer() {
+    public void setPoseStack(PoseStack poseStack) {
+        this.poseStack = poseStack;
     }
 
-    public void prepare(VertexConsumer delegate, PoseStack poseStack) {
+    public VertexConsumer wrap(VertexConsumer delegate) {
         this.delegate = delegate;
-        this.poseStack = poseStack;
+        return this;
     }
 
     public void clear() {
