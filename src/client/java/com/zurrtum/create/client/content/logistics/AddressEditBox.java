@@ -115,9 +115,14 @@ public class AddressEditBox extends EditBox {
     }
 
     @Override
-    public void renderWidget(GuiGraphicsExtractor pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-        destinationSuggestions.render(pGuiGraphics, pMouseX, pMouseY);
+    public void extractWidgetRenderState(
+        GuiGraphicsExtractor pGuiGraphics,
+        int pMouseX,
+        int pMouseY,
+        float pPartialTick
+    ) {
+        super.extractWidgetRenderState(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+        destinationSuggestions.extractRenderState(pGuiGraphics, pMouseX, pMouseY);
 
         if (!destinationSuggestions.isEmpty()) {
             return;

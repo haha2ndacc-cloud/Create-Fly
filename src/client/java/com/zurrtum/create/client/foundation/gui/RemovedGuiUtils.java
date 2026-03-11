@@ -288,7 +288,7 @@ public class RemovedGuiUtils {
             ClientTooltipComponent line = list.get(lineNumber);
 
             if (line != null) {
-                line.renderText(graphics, font, tooltipX, tooltipY);
+                line.extractText(graphics, font, tooltipX, tooltipY);
             }
 
             if (lineNumber + 1 == titleLinesCount) {

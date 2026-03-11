@@ -326,7 +326,8 @@ public class SchematicannonScreen extends AbstractSimiContainerScreen<Schematica
     }
 
     @Override
-    protected void renderBg(GuiGraphicsExtractor graphics, float partialTicks, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         int invX = getLeftOfCentered(AllGuiTextures.PLAYER_INVENTORY.getWidth());
         int invY = topPos + BG_TOP.getHeight() + BG_BOTTOM.getHeight() + 2;
         renderPlayerInventory(graphics, invX, invY);

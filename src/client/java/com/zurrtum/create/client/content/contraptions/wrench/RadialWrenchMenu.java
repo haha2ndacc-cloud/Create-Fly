@@ -390,7 +390,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
     }
 
     @Override
-    public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         Color color = BACKGROUND_COLOR.scaleAlpha(Math.min(
             1,
             (ticksOpen + AnimationTickHolder.getPartialTicks()) / 20f

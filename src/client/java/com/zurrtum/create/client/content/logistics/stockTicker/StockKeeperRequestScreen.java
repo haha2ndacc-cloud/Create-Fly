@@ -493,7 +493,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
     }
 
     @Override
-    protected void renderBg(GuiGraphicsExtractor graphics, float partialTicks, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         if (this != minecraft.screen) {
             return; // stencil buffer does not cooperate with ponders gui fade out
         }
@@ -537,7 +538,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             int entitySizeOffsetY = (int) (Math.max(0, keeper.getBoundingBox().getYsize() - 1) * 25);
             int entityX = x - 35 - entitySizeOffset;
             int entityY = y + imageHeight - 47 - entitySizeOffsetY;
-            InventoryScreen.renderEntityInInventoryFollowsMouse(
+            InventoryScreen.extractEntityInInventoryFollowsMouse(
                 graphics,
                 entityX - 100,
                 entityY - 100,
@@ -699,7 +700,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         // Search bar
         AllGuiTextures.STOCK_KEEPER_REQUEST_SEARCH.render(graphics, x + 42, searchBox.getY() - 5);
-        searchBox.render(graphics, mouseX, mouseY, partialTicks);
+        searchBox.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         if (searchBox.getValue().isBlank() && !searchBox.isFocused()) {
             graphics.drawString(
                 font,
@@ -1529,8 +1530,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
     }
 
     @Override
-    public void renderContents(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
-        super.renderContents(context, mouseX, mouseY, deltaTicks);
+    public void extractContents(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+        super.extractContents(context, mouseX, mouseY, deltaTicks);
         if (cursorSlot != null) {
             ItemStack stack = getHoveredItemStack(mouseX, mouseY);
             if (stack != null) {

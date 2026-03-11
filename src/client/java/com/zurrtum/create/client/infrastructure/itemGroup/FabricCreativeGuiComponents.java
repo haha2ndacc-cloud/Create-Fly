@@ -61,7 +61,7 @@ public class FabricCreativeGuiComponents {
         }
 
         @Override
-        protected void renderContents(GuiGraphicsExtractor drawContext, int mouseX, int mouseY, float delta) {
+        protected void extractContents(GuiGraphicsExtractor drawContext, int mouseX, int mouseY, float delta) {
             this.active = type.isEnabled.test(screen);
             this.visible = screen.fabric_hasAdditionalPages();
 

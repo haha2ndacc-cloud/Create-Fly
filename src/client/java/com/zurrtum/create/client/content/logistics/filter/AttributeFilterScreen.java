@@ -224,7 +224,7 @@ public class AttributeFilterScreen extends AbstractFilterScreen<AttributeFilterM
     }
 
     @Override
-    protected void renderTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    protected void extractTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         if (menu.getCarried().isEmpty() && hoveredSlot != null && hoveredSlot.hasItem()) {
             if (hoveredSlot.index == 37) {
                 graphics.setComponentTooltipForNextFrame(font, selectedAttributes, mouseX, mouseY);
@@ -232,7 +232,7 @@ public class AttributeFilterScreen extends AbstractFilterScreen<AttributeFilterM
             }
             graphics.setTooltipForNextFrame(font, hoveredSlot.getItem(), mouseX, mouseY);
         }
-        super.renderTooltip(graphics, mouseX, mouseY);
+        super.extractTooltip(graphics, mouseX, mouseY);
     }
 
     @Override

@@ -102,7 +102,8 @@ public class LinkedControllerScreen extends AbstractSimiContainerScreen<LinkedCo
     }
 
     @Override
-    protected void renderBg(GuiGraphicsExtractor graphics, float partialTicks, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         int invX = getLeftOfCentered(PLAYER_INVENTORY.getWidth());
         int invY = topPos + background.getHeight() + 4;
         renderPlayerInventory(graphics, invX, invY);
@@ -121,9 +122,9 @@ public class LinkedControllerScreen extends AbstractSimiContainerScreen<LinkedCo
     }
 
     @Override
-    protected void renderTooltip(GuiGraphicsExtractor graphics, int x, int y) {
+    protected void extractTooltip(GuiGraphicsExtractor graphics, int x, int y) {
         if (!menu.getCarried().isEmpty() || hoveredSlot == null || hoveredSlot.container == menu.playerInventory) {
-            super.renderTooltip(graphics, x, y);
+            super.extractTooltip(graphics, x, y);
             return;
         }
 

@@ -186,7 +186,8 @@ public class SchematicTableScreen extends AbstractSimiContainerScreen<SchematicT
     }
 
     @Override
-    protected void renderBg(GuiGraphicsExtractor graphics, float partialTicks, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         int invX = getLeftOfCentered(PLAYER_INVENTORY.getWidth());
         int invY = topPos + background.getHeight() + 4;
         renderPlayerInventory(graphics, invX, invY);

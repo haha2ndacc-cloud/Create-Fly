@@ -98,7 +98,7 @@ public abstract class AbstractSimiScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         partialTicks = NavigatableSimiScreen.currentlyRenderingPreviousScreen ? 0 : AnimationTickHolder.getPartialTicksUI(
             minecraft.getDeltaTracker());
         Matrix3x2fStack poseStack = graphics.pose();
@@ -111,7 +111,7 @@ public abstract class AbstractSimiScreen extends Screen {
         renderWindow(graphics, mouseX, mouseY, partialTicks);
 
         for (Renderable renderable : getRenderables()) {
-            renderable.render(graphics, mouseX, mouseY, partialTicks);
+            renderable.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         }
 
         renderWindowForeground(graphics, mouseX, mouseY, partialTicks);
@@ -150,7 +150,7 @@ public abstract class AbstractSimiScreen extends Screen {
     }
 
     protected void renderWindowBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
-        renderMenuBackground(graphics);
+        extractMenuBackground(graphics);
     }
 
     protected abstract void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks);

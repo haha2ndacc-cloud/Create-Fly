@@ -251,7 +251,7 @@ public class BlueprintOverlayRenderer {
         int y = guiGraphics.guiHeight() - 100;
 
         if (shopContext != null) {
-            TooltipRenderUtil.renderTooltipBackground(guiGraphics, x - 2, y + 1, w + 4, 19, null);
+            TooltipRenderUtil.extractTooltipBackground(guiGraphics, x - 2, y + 1, w + 4, 19, null);
 
             AllGuiTextures.TRADE_OVERLAY.render(guiGraphics, width / 2 - 48, y - 19);
             if (shopContext.purchases() > 0) {

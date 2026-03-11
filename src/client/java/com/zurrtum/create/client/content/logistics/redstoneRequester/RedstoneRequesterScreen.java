@@ -137,7 +137,8 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
     }
 
     @Override
-    protected void renderBg(GuiGraphicsExtractor pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
+    public void extractBackground(GuiGraphicsExtractor pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.extractBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         AllGuiTextures.REDSTONE_REQUESTER.render(pGuiGraphics, leftPos + 3, topPos);
         renderPlayerInventory(pGuiGraphics, leftPos - 3, topPos + 124);
 
