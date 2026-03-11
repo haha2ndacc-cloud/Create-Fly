@@ -6,9 +6,9 @@ import com.zurrtum.create.client.flywheel.lib.memory.MemoryBlock;
 import com.zurrtum.create.client.flywheel.lib.model.SimpleQuadMesh;
 import com.zurrtum.create.client.flywheel.lib.vertex.FullVertexView;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.util.ARGB;
 import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Matrix4f;
@@ -70,7 +70,7 @@ public class ItemMeshEmitter implements VertexConsumer {
     }
 
     private void prepareForGeometry(BakedQuad quad) {
-        prepareForGeometry(quad.shade());
+        prepareForGeometry(quad.materialInfo().shade());
     }
 
     private void emit() {

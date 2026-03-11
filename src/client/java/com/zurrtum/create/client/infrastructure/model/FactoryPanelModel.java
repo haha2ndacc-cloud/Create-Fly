@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.resources.model.SimpleModelWrapper;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad.MaterialInfo;
 import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -137,6 +138,17 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
             (int) Math.round(quadNormal.z),
             null
         );
+        MaterialInfo info = bakedQuad.materialInfo();
+        if (ponder && info.shade()) {
+            info = new MaterialInfo(
+                info.sprite(),
+                info.layer(),
+                info.itemRenderType(),
+                info.tintIndex(),
+                false,
+                info.lightEmission()
+            );
+        }
         BakedQuad quad = new BakedQuad(
             calcXYZ(bakedQuad.position0(), xOffset, yOffset, xRot, yRot),
             calcXYZ(bakedQuad.position1(), xOffset, yOffset, xRot, yRot),
@@ -146,11 +158,8 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
             bakedQuad.packedUV1(),
             bakedQuad.packedUV2(),
             bakedQuad.packedUV3(),
-            bakedQuad.tintIndex(),
             newNormal,
-            bakedQuad.spriteInfo(),
-            !ponder && bakedQuad.shade(),
-            bakedQuad.lightEmission()
+            info
         );
         NormalsBakedQuad.setNormals(quad, normals);
         return quad;

@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.block.BlockQuadOutput;
 import net.minecraft.client.renderer.block.FluidRenderer;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad.MaterialInfo;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.UnknownNullability;
 
@@ -36,7 +37,8 @@ public class VanillinMeshEmitterManager extends MeshEmitterManager<MeshEmitter> 
 
     @Override
     public void put(float x, float y, float z, BakedQuad quad, QuadInstance instance) {
-        BufferBuilder buffer = getBuffer(quad.spriteInfo().layer(), quad.shade(), useAo);
+        MaterialInfo info = quad.materialInfo();
+        BufferBuilder buffer = getBuffer(info.layer(), info.shade(), useAo);
         if (buffer != null) {
             if (x != 0F || y != 0F || z != 0F) {
                 poseStack.pushPose();

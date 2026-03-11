@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.SimpleModelWrapper;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad.MaterialInfo;
 import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -87,8 +88,8 @@ public class CTModel extends WrapperBlockStateModel {
         if (index == -1) {
             return quad;
         }
-        BakedQuad.SpriteInfo spriteInfo = quad.spriteInfo();
-        TextureAtlasSprite sprite = spriteInfo.sprite();
+        MaterialInfo info = quad.materialInfo();
+        TextureAtlasSprite sprite = info.sprite();
         CTSpriteShiftEntry spriteShift = behaviour.getShift(state, random, quad.direction(), sprite);
         if (spriteShift == null || sprite != spriteShift.getOriginal()) {
             return quad;
@@ -102,11 +103,8 @@ public class CTModel extends WrapperBlockStateModel {
             calcSpriteUv(quad.packedUV1(), spriteShift, index),
             calcSpriteUv(quad.packedUV2(), spriteShift, index),
             calcSpriteUv(quad.packedUV3(), spriteShift, index),
-            quad.tintIndex(),
             quad.direction(),
-            spriteInfo,
-            quad.shade(),
-            quad.lightEmission()
+            info
         );
         NormalsBakedQuad.setNormals(newQuad, NormalsBakedQuad.getNormals(quad));
         return newQuad;

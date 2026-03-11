@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.block.BlockQuadOutput;
 import net.minecraft.client.renderer.block.FluidRenderer;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad.MaterialInfo;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.UnknownNullability;
 
@@ -37,12 +38,14 @@ public class UniversalMeshEmitter implements VertexConsumer, BlockQuadOutput, Fl
 
     @Override
     public void putBlockBakedQuad(float x, float y, float z, BakedQuad quad, QuadInstance instance) {
-        bufferSource.getBuffer(quad.spriteInfo().layer(), quad.shade()).putBlockBakedQuad(x, y, z, quad, instance);
+        MaterialInfo info = quad.materialInfo();
+        bufferSource.getBuffer(info.layer(), info.shade()).putBlockBakedQuad(x, y, z, quad, instance);
     }
 
     @Override
     public void putBakedQuad(PoseStack.Pose pose, BakedQuad quad, QuadInstance instance) {
-        bufferSource.getBuffer(quad.spriteInfo().layer(), quad.shade()).putBakedQuad(pose, quad, instance);
+        MaterialInfo info = quad.materialInfo();
+        bufferSource.getBuffer(info.layer(), info.shade()).putBakedQuad(pose, quad, instance);
     }
 
     @Override

@@ -4,8 +4,9 @@ import com.mojang.blaze3d.vertex.*;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.renderer.block.BlockQuadOutput;
-import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad.MaterialInfo;
 import org.jetbrains.annotations.UnknownNullability;
 
 @Deprecated(forRemoval = true)
@@ -57,22 +58,20 @@ public class ShadedBlockSbbBuilder implements VertexConsumer, BlockQuadOutput {
         }
     }
 
-    protected void prepareForGeometry(BakedQuad quad) {
-        prepareForGeometry(quad.shade());
-    }
-
     @Override
     public void putBlockBakedQuad(float x, float y, float z, BakedQuad quad, QuadInstance instance) {
-        if (quad.spriteInfo().layer() == filter) {
-            prepareForGeometry(quad);
+        MaterialInfo info = quad.materialInfo();
+        if (info.layer() == filter) {
+            prepareForGeometry(info.shade());
             bufferBuilder.putBlockBakedQuad(x, y, z, quad, instance);
         }
     }
 
     @Override
     public void putBakedQuad(PoseStack.Pose pose, BakedQuad quad, QuadInstance instance) {
-        if (quad.spriteInfo().layer() == filter) {
-            prepareForGeometry(quad);
+        MaterialInfo info = quad.materialInfo();
+        if (info.layer() == filter) {
+            prepareForGeometry(info.shade());
             bufferBuilder.putBakedQuad(pose, quad, instance);
         }
     }

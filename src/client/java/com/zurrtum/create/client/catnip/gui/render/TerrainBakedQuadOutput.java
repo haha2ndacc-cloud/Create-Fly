@@ -4,9 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.QuadInstance;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockQuadOutput;
-import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class TerrainBakedQuadOutput implements BlockQuadOutput {
@@ -33,7 +33,7 @@ public class TerrainBakedQuadOutput implements BlockQuadOutput {
 
     @Override
     public void put(float x, float y, float z, BakedQuad quad, QuadInstance instance) {
-        RenderType renderType = switch (quad.spriteInfo().layer()) {
+        RenderType renderType = switch (quad.materialInfo().layer()) {
             case SOLID -> RenderTypes.solidMovingBlock();
             case CUTOUT -> RenderTypes.cutoutMovingBlock();
             case TRANSLUCENT -> RenderTypes.translucentMovingBlock();

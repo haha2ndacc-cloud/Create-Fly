@@ -104,9 +104,12 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
 
         Map<TextureAtlasSprite, TextureAtlasSprite> map = new Reference2ReferenceOpenHashMap<>();
         BlockStateModelSet blockStateModelSet = Minecraft.getInstance().getModelManager().getBlockStateModelSet();
-        map.put(OAK_PLANKS_TEMPLATE.get(), getSpriteOnSide(blockStateModelSet, planksBlockState, Direction.UP));
-        map.put(OAK_LOG_TEMPLATE.get(), getSpriteOnSide(blockStateModelSet, logBlockState, Direction.SOUTH));
-        map.put(OAK_LOG_TOP_TEMPLATE.get(), getSpriteOnSide(blockStateModelSet, logBlockState, Direction.UP));
+        List<BlockStateModelPart> parts = new ObjectArrayList<>();
+        map.put(OAK_PLANKS_TEMPLATE.get(), getSpriteOnSide(blockStateModelSet, planksBlockState, Direction.UP, parts));
+        parts.clear();
+        map.put(OAK_LOG_TEMPLATE.get(), getSpriteOnSide(blockStateModelSet, logBlockState, Direction.SOUTH, parts));
+        parts.clear();
+        map.put(OAK_LOG_TOP_TEMPLATE.get(), getSpriteOnSide(blockStateModelSet, logBlockState, Direction.UP, parts));
 
         return BakedModelHelper.generateModel(template, map::get);
     }
@@ -153,17 +156,17 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
     private static TextureAtlasSprite getSpriteOnSide(
         BlockStateModelSet blockStateModelSet,
         BlockState state,
-        Direction side
+        Direction side,
+        List<BlockStateModelPart> parts
     ) {
         BlockStateModel model = blockStateModelSet.get(state);
         RandomSource random = RandomSource.create();
         random.setSeed(42L);
-        List<BlockStateModelPart> parts = new ObjectArrayList<>();
         model.collectParts(random, parts);
         for (BlockStateModelPart part : parts) {
             List<BakedQuad> quads = part.getQuads(side);
             if (!quads.isEmpty()) {
-                return quads.getFirst().spriteInfo().sprite();
+                return quads.getFirst().materialInfo().sprite();
             }
         }
         random.setSeed(42L);
@@ -172,7 +175,7 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
             if (!quads.isEmpty()) {
                 for (BakedQuad quad : quads) {
                     if (quad.direction() == side) {
-                        return quad.spriteInfo().sprite();
+                        return quad.materialInfo().sprite();
                     }
                 }
             }

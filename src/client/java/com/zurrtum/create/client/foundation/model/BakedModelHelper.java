@@ -16,6 +16,7 @@ import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.client.resources.model.SimpleModelWrapper;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad.MaterialInfo;
 import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
@@ -53,7 +54,8 @@ public class BakedModelHelper {
     }
 
     public static BakedQuad cropAndMove(BakedQuad quad, AABB crop, Vec3 move) {
-        TextureAtlasSprite sprite = quad.spriteInfo().sprite();
+        MaterialInfo info = quad.materialInfo();
+        TextureAtlasSprite sprite = info.sprite();
 
         Vec3 xyz0 = new Vec3(quad.position0());
         Vec3 xyz1 = new Vec3(quad.position1());
@@ -115,11 +117,8 @@ public class BakedModelHelper {
             calcSpriteUv(newXyz1.subtract(xyz1), packedUV1, uAxis, vAxis, uScale, vScale, sprite),
             calcSpriteUv(newXyz2.subtract(xyz2), packedUV2, uAxis, vAxis, uScale, vScale, sprite),
             calcSpriteUv(newXyz3.subtract(xyz3), packedUV3, uAxis, vAxis, uScale, vScale, sprite),
-            quad.tintIndex(),
             quad.direction(),
-            quad.spriteInfo(),
-            quad.shade(),
-            quad.lightEmission()
+            info
         );
         NormalsBakedQuad.setNormals(newQuad, NormalsBakedQuad.getNormals(quad));
         return newQuad;
@@ -173,8 +172,8 @@ public class BakedModelHelper {
         int size = quads.size();
         for (int i = 0; i < size; i++) {
             BakedQuad quad = quads.get(i);
-            BakedQuad.SpriteInfo spriteInfo = quad.spriteInfo();
-            TextureAtlasSprite sprite = spriteInfo.sprite();
+            MaterialInfo info = quad.materialInfo();
+            TextureAtlasSprite sprite = info.sprite();
             TextureAtlasSprite newSprite = spriteSwapper.apply(sprite);
             if (newSprite == null || sprite == newSprite) {
                 continue;
@@ -189,11 +188,8 @@ public class BakedModelHelper {
                 calcSpriteUv(quad.packedUV1(), sprite, newSprite),
                 calcSpriteUv(quad.packedUV2(), sprite, newSprite),
                 calcSpriteUv(quad.packedUV3(), sprite, newSprite),
-                quad.tintIndex(),
                 quad.direction(),
-                spriteInfo,
-                quad.shade(),
-                quad.lightEmission()
+                info
             );
             NormalsBakedQuad.setNormals(newQuad, NormalsBakedQuad.getNormals(quad));
             newQuads.set(i, newQuad);
@@ -217,6 +213,7 @@ public class BakedModelHelper {
         }
         List<BakedQuad> result = new ArrayList<>(size);
         for (BakedQuad quad : quads) {
+            MaterialInfo info = quad.materialInfo();
             BakedQuad newQuad = new BakedQuad(
                 quad.position0(),
                 quad.position1(),
@@ -226,12 +223,17 @@ public class BakedModelHelper {
                 quad.packedUV1(),
                 quad.packedUV2(),
                 quad.packedUV3(),
-                quad.tintIndex(),
                 quad.direction(),
-                new BakedQuad.SpriteInfo(quad.spriteInfo().sprite(), layer, itemRenderType),
-                quad.shade(),
-                quad.lightEmission()
+                new MaterialInfo(
+                    info.sprite(),
+                    layer,
+                    itemRenderType,
+                    info.tintIndex(),
+                    info.shade(),
+                    info.lightEmission()
+                )
             );
+            NormalsBakedQuad.setNormals(newQuad, NormalsBakedQuad.getNormals(quad));
             result.add(newQuad);
         }
         return result;

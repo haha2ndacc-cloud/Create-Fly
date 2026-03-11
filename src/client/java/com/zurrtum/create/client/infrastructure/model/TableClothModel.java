@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad.MaterialInfo;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
@@ -141,8 +142,8 @@ public class TableClothModel extends WrapperBlockStateModel {
     }
 
     private static BakedQuad replaceQuad(TextureAtlasSprite replace, BakedQuad quad) {
-        BakedQuad.SpriteInfo spriteInfo = quad.spriteInfo();
-        TextureAtlasSprite original = spriteInfo.sprite();
+        MaterialInfo info = quad.materialInfo();
+        TextureAtlasSprite original = info.sprite();
         if (original == replace) {
             return quad;
         }
@@ -155,11 +156,8 @@ public class TableClothModel extends WrapperBlockStateModel {
             BakedModelHelper.calcSpriteUv(quad.packedUV1(), original, replace),
             BakedModelHelper.calcSpriteUv(quad.packedUV2(), original, replace),
             BakedModelHelper.calcSpriteUv(quad.packedUV3(), original, replace),
-            quad.tintIndex(),
             quad.direction(),
-            spriteInfo,
-            quad.shade(),
-            quad.lightEmission()
+            info
         );
         NormalsBakedQuad.setNormals(newQuad, NormalsBakedQuad.getNormals(quad));
         return newQuad;

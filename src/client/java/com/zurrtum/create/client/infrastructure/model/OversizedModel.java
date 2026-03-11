@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.item.*;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvableModel;
 import net.minecraft.client.resources.model.ResolvedModel;
-import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.client.resources.model.sprite.TextureSlots;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ItemOwner;
@@ -34,16 +34,15 @@ import static com.zurrtum.create.Create.MOD_ID;
 public class OversizedModel implements ItemModel {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/oversized");
     private final List<ItemTintSource> tints;
-    private final List<BakedQuad> quads;
+    private final QuadCollection quads;
     private final Supplier<Vector3fc[]> vector;
     private final ModelRenderProperties settings;
     private final Matrix4fc transformation;
     private final AABB box;
-    private final boolean animated;
 
     public OversizedModel(
         List<ItemTintSource> tints,
-        List<BakedQuad> quads,
+        QuadCollection quads,
         ModelRenderProperties settings,
         Matrix4fc transformation,
         AABB box
@@ -52,18 +51,8 @@ public class OversizedModel implements ItemModel {
         this.quads = quads;
         this.settings = settings;
         this.transformation = transformation;
-        this.vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(this.quads));
+        this.vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(quads.getAll()));
         this.box = box;
-        boolean animated = false;
-
-        for (BakedQuad bakedQuad : quads) {
-            if (bakedQuad.spriteInfo().sprite().contents().isAnimated()) {
-                animated = true;
-                break;
-            }
-        }
-
-        this.animated = animated;
     }
 
     @Override
@@ -101,8 +90,8 @@ public class OversizedModel implements ItemModel {
         layerRenderState.setExtents(vector);
         layerRenderState.setLocalTransform(this.transformation);
         settings.applyToLayer(layerRenderState, displayContext);
-        layerRenderState.prepareQuadList().addAll(quads);
-        if (animated) {
+        layerRenderState.prepareQuadList().addAll(quads.getAll());
+        if (quads.hasMaterialFlag(2)) {
             state.setAnimated();
         }
         if (displayContext == ItemDisplayContext.GUI) {
@@ -131,8 +120,7 @@ public class OversizedModel implements ItemModel {
             ModelBaker baker = context.blockModelBaker();
             ResolvedModel bakedSimpleModel = baker.getModel(this.model);
             TextureSlots modelTextures = bakedSimpleModel.getTopTextureSlots();
-            List<BakedQuad> quads = bakedSimpleModel.bakeTopGeometry(modelTextures, baker, BlockModelRotation.IDENTITY)
-                .getAll();
+            QuadCollection quads = bakedSimpleModel.bakeTopGeometry(modelTextures, baker, BlockModelRotation.IDENTITY);
             ModelRenderProperties modelSettings = ModelRenderProperties.fromResolvedModel(
                 baker,
                 bakedSimpleModel,

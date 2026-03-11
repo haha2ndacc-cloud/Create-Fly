@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.SimpleModelWrapper;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad.MaterialInfo;
 import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -103,7 +104,7 @@ public class CopycatPanelModel extends CopycatModel {
                                 if (quad.direction() != Direction.UP) {
                                     continue;
                                 }
-                                targetSprite = findSprite = quad.spriteInfo().sprite();
+                                targetSprite = findSprite = quad.materialInfo().sprite();
                                 break;
                             }
                         }
@@ -118,7 +119,10 @@ public class CopycatPanelModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
+                        direction,
+                        quad
+                    )
                 );
             }
             parts.add(new SimpleModelWrapper(
@@ -140,8 +144,8 @@ public class CopycatPanelModel extends CopycatModel {
             return;
         }
         for (BakedQuad quad : quads) {
-            BakedQuad.SpriteInfo spriteInfo = quad.spriteInfo();
-            TextureAtlasSprite original = spriteInfo.sprite();
+            MaterialInfo info = quad.materialInfo();
+            TextureAtlasSprite original = info.sprite();
             BakedQuad newQuad = new BakedQuad(
                 quad.position0(),
                 quad.position1(),
@@ -151,11 +155,8 @@ public class CopycatPanelModel extends CopycatModel {
                 BakedModelHelper.calcSpriteUv(quad.packedUV1(), original, targetSprite),
                 BakedModelHelper.calcSpriteUv(quad.packedUV2(), original, targetSprite),
                 BakedModelHelper.calcSpriteUv(quad.packedUV3(), original, targetSprite),
-                quad.tintIndex(),
                 quad.direction(),
-                spriteInfo,
-                quad.shade(),
-                quad.lightEmission()
+                info
             );
             NormalsBakedQuad.setNormals(newQuad, NormalsBakedQuad.getNormals(quad));
             consumer.accept(newQuad);
@@ -207,7 +208,10 @@ public class CopycatPanelModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
+                        direction,
+                        quad
+                    )
                 );
             }
             parts.add(new SimpleModelWrapper(
