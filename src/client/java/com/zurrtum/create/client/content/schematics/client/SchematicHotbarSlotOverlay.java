@@ -24,11 +24,11 @@ public class SchematicHotbarSlotOverlay {
             ms.scale(1.0F / g, (g + 1.0F) / 2.0F);
             ms.translate(-(x + 8), -(y + 12));
         }
-        graphics.renderItem(mc.player, stack, x, y, slot + 1);
+        graphics.item(mc.player, stack, x, y, slot + 1);
         if (f > 0.0F) {
             ms.popMatrix();
         }
-        graphics.renderItemDecorations(mc.font, stack, x, y);
+        graphics.itemDecorations(mc.font, stack, x, y);
     }
 
 }

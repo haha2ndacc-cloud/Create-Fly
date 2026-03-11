@@ -320,7 +320,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
             }
 
             if (!clipboardEntry.icon.isEmpty()) {
-                graphics.renderItem(clipboardEntry.icon, x + 54, y + 50);
+                graphics.item(clipboardEntry.icon, x + 54, y + 50);
             }
 
             for (FormattedCharSequence sequence : split) {

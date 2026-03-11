@@ -130,7 +130,7 @@ public class AddressEditBox extends EditBox {
 
         int itemX = getX() + width + 4;
         int itemY = getY() - 4;
-        pGuiGraphics.renderItem(AllItems.CLIPBOARD.getDefaultInstance(), itemX, itemY);
+        pGuiGraphics.item(AllItems.CLIPBOARD.getDefaultInstance(), itemX, itemY);
         if (pMouseX >= itemX && pMouseX < itemX + 16 && pMouseY >= itemY && pMouseY < itemY + 16) {
             List<Component> promiseTip = List.of(
                 CreateLang.translate("gui.address_box.clipboard_tip").color(ScrollInput.HEADER_RGB).component(),

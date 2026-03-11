@@ -149,7 +149,7 @@ public class ElevatorContactScreen extends AbstractSimiScreen {
             false
         );
 
-        graphics.renderItem(AllItems.TRAIN_DOOR.getDefaultInstance(), x + 37, y + 58);
+        graphics.item(AllItems.TRAIN_DOOR.getDefaultInstance(), x + 37, y + 58);
     }
 
     @Override

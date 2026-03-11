@@ -97,7 +97,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
 
             ms.pushMatrix();
             AllGuiTextures.TOOLBELT_INACTIVE_SLOT.render(graphics, -12, -12);
-            graphics.renderItem(AllItems.BROWN_TOOLBOX.getDefaultInstance(), -9, -9);
+            graphics.item(AllItems.BROWN_TOOLBOX.getDefaultInstance(), -9, -9);
 
             ms.translate(0, -40 + (10 * (1 - fade) * (1 - fade)));
             AllGuiTextures.TOOLBELT_SLOT.render(graphics, -12, -12);
@@ -148,7 +148,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
                             0,
                             0
                         );
-                        graphics.renderItem(stackInSlot, 3, 3);
+                        graphics.item(stackInSlot, 3, 3);
 
                         if (slot == (scrollMode ? scrollSlot : hoveredSlot) && !empty) {
                             AllGuiTextures.TOOLBELT_SLOT_HIGHLIGHT.render(graphics, -1, -1);
@@ -164,7 +164,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
                         AllGuiTextures.TOOLBELT_SLOT.render(graphics, 0, 0);
                         ToolboxBlockEntity toolboxBlockEntity = toolboxes.get(slot);
                         ItemStack stack = toolboxBlockEntity.getBlockState().getBlock().asItem().getDefaultInstance();
-                        graphics.renderItem(stack, 3, 3);
+                        graphics.item(stack, 3, 3);
 
                         if (slot == (scrollMode ? scrollSlot : hoveredSlot)) {
                             AllGuiTextures.TOOLBELT_SLOT_HIGHLIGHT.render(graphics, -1, -1);

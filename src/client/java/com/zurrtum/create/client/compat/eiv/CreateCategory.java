@@ -24,7 +24,7 @@ public abstract class CreateCategory implements IEivRecipeViewType {
             matrices.pushMatrix();
             matrices.translate(x + 13, y + 13);
             matrices.scale(0.5f, 0.5f);
-            context.renderItem(subIcon, 0, 0);
+            context.item(subIcon, 0, 0);
             matrices.popMatrix();
         }
     }

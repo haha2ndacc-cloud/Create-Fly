@@ -75,12 +75,12 @@ public class GuiGameElement {
         public void render(GuiGraphicsExtractor graphics) {
             if (scale <= 1 && xRot == 0 && yRot == 0 && zRot == 0) {
                 if (scale == 1) {
-                    graphics.renderItem(key.stack, (int) x, (int) y);
+                    graphics.item(key.stack, (int) x, (int) y);
                 } else {
                     Matrix3x2fStack matrices = graphics.pose();
                     matrices.pushMatrix();
                     matrices.scale(scale);
-                    graphics.renderItem(key.stack, (int) x, (int) y);
+                    graphics.item(key.stack, (int) x, (int) y);
                     matrices.popMatrix();
                 }
                 return;

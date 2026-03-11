@@ -353,7 +353,7 @@ public class SchematicannonScreen extends AbstractSimiContainerScreen<Schematica
 
         if (be.missingItem != null) {
             stringWidth += 16;
-            graphics.renderItem(be.missingItem, leftPos + 128, topPos + 49);
+            graphics.item(be.missingItem, leftPos + 128, topPos + 49);
         }
 
         graphics.text(font, msg, leftPos + 103 - stringWidth / 2, topPos + 53, 0xFFDDEEFF, true);

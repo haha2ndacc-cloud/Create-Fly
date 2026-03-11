@@ -580,7 +580,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         if (encodeRequester) {
             ms.pushMatrix();
             ms.scale(3.5f, 3.5f);
-            graphics.renderItem(itemToProgram, x + imageWidth + 5, y + imageHeight - 70);
+            graphics.item(itemToProgram, x + imageWidth + 5, y + imageHeight - 70);
             ms.popMatrix();
         }
 
@@ -944,13 +944,13 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         ms.scale(scaleFromHover, scaleFromHover);
         ms.translate((float) (-18 / 2.0), (float) (-18 / 2.0));
         if (customCount != 0 || craftable) {
-            graphics.renderItem(stackWithCount, 0, 0);
+            graphics.item(stackWithCount, 0, 0);
         }
         ms.popMatrix();
 
         ms.pushMatrix();
         if (customCount != 0 || craftable) {
-            graphics.renderItemDecorations(font, stackWithCount, 1, 1, "");
+            graphics.itemDecorations(font, stackWithCount, 1, 1, "");
         }
         if (customCount > 1 || craftable) {
             drawItemCount(graphics, customCount);

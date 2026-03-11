@@ -222,7 +222,7 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
         int itemY = y + 80;
 
         ItemStack displayItem = blockEntity.getDisplayItemForScreen();
-        graphics.renderItem(displayItem.isEmpty() ? new ItemStack(Items.BARRIER) : displayItem, itemX, itemY);
+        graphics.item(displayItem.isEmpty() ? new ItemStack(Items.BARRIER) : displayItem, itemX, itemY);
 
         int torchX = x + 23;
         int torchY = y + 24;

@@ -226,7 +226,7 @@ public class GoggleOverlayRenderer {
                 colorBorderBot.getRGB(),
                 mc.font
             );
-            guiGraphics.renderItem(item, posX + 10, posY - 16);
+            guiGraphics.item(item, posX + 10, posY - 16);
 
             poseStack.popMatrix();
 
@@ -263,7 +263,7 @@ public class GoggleOverlayRenderer {
             mc.font
         );
 
-        guiGraphics.renderItem(item, posX + 10, posY - 16);
+        guiGraphics.item(item, posX + 10, posY - 16);
 
         mouseHandler.xpos = cursorX;
         mouseHandler.ypos = cursorY;

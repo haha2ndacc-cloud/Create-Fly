@@ -94,7 +94,7 @@ public class SchematicPromptScreen extends AbstractSimiScreen {
         background.render(graphics, x, y);
         graphics.text(font, title, x + (background.getWidth() - 8 - font.width(title)) / 2, y + 4, 0xFF505050, false);
 
-        graphics.renderItem(AllItems.SCHEMATIC.getDefaultInstance(), x + 22, y + 24);
+        graphics.item(AllItems.SCHEMATIC.getDefaultInstance(), x + 22, y + 24);
     }
 
     @Override

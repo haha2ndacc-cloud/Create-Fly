@@ -18,10 +18,10 @@ public record TwoIconRenderer(ItemStack icon, ItemStack subIcon) implements Rend
         matrices.pushMatrix();
         matrices.translate(bounds.x, bounds.y);
         matrices.scale(bounds.getWidth() / 16f, bounds.getHeight() / 16f);
-        graphics.renderItem(icon, 0, 0);
+        graphics.item(icon, 0, 0);
         matrices.translate(9, 9);
         matrices.scale(0.5f, 0.5f);
-        graphics.renderItem(subIcon, 0, 0);
+        graphics.item(subIcon, 0, 0);
         matrices.popMatrix();
     }
 }

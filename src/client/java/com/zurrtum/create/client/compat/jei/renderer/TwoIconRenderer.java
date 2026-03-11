@@ -26,10 +26,10 @@ public record TwoIconRenderer(ItemStack icon, ItemStack subIcon) implements IDra
         Matrix3x2fStack matrices = graphics.pose();
         matrices.pushMatrix();
         matrices.translate(x, y);
-        graphics.renderItem(icon, 1, 1);
+        graphics.item(icon, 1, 1);
         matrices.translate(9, 9);
         matrices.scale(0.5f, 0.5f);
-        graphics.renderItem(subIcon, 2, 2);
+        graphics.item(subIcon, 2, 2);
         matrices.popMatrix();
     }
 }

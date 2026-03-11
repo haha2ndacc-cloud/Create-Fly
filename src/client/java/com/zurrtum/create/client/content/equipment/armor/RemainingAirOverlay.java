@@ -55,7 +55,7 @@ public class RemainingAirOverlay {
             Math.max(0, timeLeft - 1) * 20,
             mc.level.tickRateManager().tickrate()
         ));
-        guiGraphics.renderItem(backtank, 0, 0);
+        guiGraphics.item(backtank, 0, 0);
         int color = 0xFF_FFFFFF;
         if (timeLeft < 60 && timeLeft % 2 == 0) {
             color = Color.mixColors(0xFF_FF0000, color, Math.max(timeLeft / 60f, .25f));

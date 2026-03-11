@@ -186,7 +186,7 @@ public class PackagePortScreen extends AbstractSimiContainerScreen<PackagePortMe
         x += 13;
         y += 58;
         AllGuiTextures.FROGPORT_SLOT.render(graphics, x, y);
-        graphics.renderItem(menu.contentHolder.target.getIcon(), x + 1, y + 1);
+        graphics.item(menu.contentHolder.target.getIcon(), x + 1, y + 1);
 
         if (addressBox.isHovered()) {
             graphics.setComponentTooltipForNextFrame(

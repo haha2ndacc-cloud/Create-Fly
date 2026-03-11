@@ -203,13 +203,7 @@ public class AttributeFilterScreen extends AbstractFilterScreen<AttributeFilterM
     @Override
     public void renderForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         ItemStack stack = menu.ghostInventory.getItem(1);
-        graphics.renderItemDecorations(
-            font,
-            stack,
-            leftPos + 16,
-            topPos + 62,
-            String.valueOf(selectedAttributes.size() - 1)
-        );
+        graphics.itemDecorations(font, stack, leftPos + 16, topPos + 62, String.valueOf(selectedAttributes.size() - 1));
 
         super.renderForeground(graphics, mouseX, mouseY, partialTicks);
     }

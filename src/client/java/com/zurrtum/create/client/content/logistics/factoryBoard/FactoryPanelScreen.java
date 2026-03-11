@@ -257,8 +257,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
         if (!restocker) {
             int outputX = x + 160;
             int outputY = y + 48;
-            graphics.renderItem(outputConfig.stack, outputX, outputY);
-            graphics.renderItemDecorations(font, behaviour.getFilter(), outputX, outputY, outputConfig.count + "");
+            graphics.item(outputConfig.stack, outputX, outputY);
+            graphics.itemDecorations(font, behaviour.getFilter(), outputX, outputY, outputConfig.count + "");
 
             if (mouseX >= outputX - 1 && mouseX < outputX - 1 + 18 && mouseY >= outputY - 1 && mouseY < outputY - 1 + 18) {
                 MutableComponent c1 = CreateLang.translate(
@@ -299,7 +299,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
             int itemX = x + 9;
             int itemY = y + windowHeight - 24;
             AllGuiTextures.FROGPORT_SLOT.render(graphics, itemX - 1, itemY - 1);
-            graphics.renderItem(asStack, itemX, itemY);
+            graphics.item(asStack, itemX, itemY);
 
             if (mouseX >= itemX && mouseX < itemX + 16 && mouseY >= itemY && mouseY < itemY + 16) {
                 List<Component> linkTip = List.of(
@@ -326,9 +326,9 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
         ItemStack asStack = PackageStyles.getDefaultBox();
         int itemX = x + 68;
         int itemY = y + windowHeight - 24;
-        graphics.renderItem(asStack, itemX, itemY);
+        graphics.item(asStack, itemX, itemY);
         int promised = behaviour.getPromised();
-        graphics.renderItemDecorations(font, asStack, itemX, itemY, promised + "");
+        graphics.itemDecorations(font, asStack, itemX, itemY, promised + "");
 
         if (mouseX >= itemX && mouseX < itemX + 16 && mouseY >= itemY && mouseY < itemY + 16) {
             List<Component> promiseTip;
@@ -371,9 +371,9 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
         int inputX = guiLeft + (restocker ? 88 : 68 + (slot % 3 * 20));
         int inputY = guiTop + (restocker ? 12 : 28) + (slot / 3 * 20);
 
-        graphics.renderItem(itemStack.stack, inputX, inputY);
+        graphics.item(itemStack.stack, inputX, inputY);
         if (!craftingActive && !restocker && !itemStack.stack.isEmpty()) {
-            graphics.renderItemDecorations(font, itemStack.stack, inputX, inputY, itemStack.count + "");
+            graphics.itemDecorations(font, itemStack.stack, inputX, inputY, itemStack.count + "");
         }
 
         if (mouseX < inputX - 2 || mouseX >= inputX - 2 + 20 || mouseY < inputY - 2 || mouseY >= inputY - 2 + 20) {

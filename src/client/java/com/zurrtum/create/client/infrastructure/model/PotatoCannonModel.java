@@ -169,7 +169,7 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
         Matrix3x2fStack matrices = drawContext.pose();
         matrices.translate(x, y + 8);
         matrices.scale(0.5f);
-        drawContext.renderItem(ammo.stack(), 0, 0);
+        drawContext.item(ammo.stack(), 0, 0);
     }
 
     public static class CogRenderData {

@@ -299,7 +299,7 @@ public class StationScreen extends AbstractStationScreen {
             AllGuiTextures.STATION_EDIT_NAME.render(graphics, nameBoxX(text, nameBox) + font.width(text) + 5, y + 1);
         }
 
-        graphics.renderItem(AllItems.TRAIN_DOOR.getDefaultInstance(), x + 14, y + 103);
+        graphics.item(AllItems.TRAIN_DOOR.getDefaultInstance(), x + 14, y + 103);
 
         Train train = displayedTrain.get();
         if (train == null) {

@@ -158,7 +158,7 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
             if (itemStack.isEmpty()) {
                 continue;
             }
-            graphics.renderItemDecorations(font, itemStack, inputX, inputY, "" + amounts.get(i));
+            graphics.itemDecorations(font, itemStack, inputX, inputY, "" + amounts.get(i));
         }
 
         if (addressBox.isHovered() && !addressBox.isFocused()) {

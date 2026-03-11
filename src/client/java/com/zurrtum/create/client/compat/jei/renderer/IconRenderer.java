@@ -22,6 +22,6 @@ public record IconRenderer(ItemStack icon) implements IDrawable {
 
     @Override
     public void draw(GuiGraphicsExtractor graphics, int x, int y) {
-        graphics.renderItem(icon, x, y);
+        graphics.item(icon, x, y);
     }
 }

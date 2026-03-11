@@ -255,7 +255,7 @@ public class BlueprintOverlayRenderer {
 
             AllGuiTextures.TRADE_OVERLAY.render(guiGraphics, width / 2 - 48, y - 19);
             if (shopContext.purchases() > 0) {
-                guiGraphics.renderItem(AllItems.SHOPPING_LIST.getDefaultInstance(), width / 2 + 20, y - 20);
+                guiGraphics.item(AllItems.SHOPPING_LIST.getDefaultInstance(), width / 2 + 20, y - 20);
                 guiGraphics.text(
                     mc.font,
                     Component.literal("x" + shopContext.purchases()),
@@ -292,7 +292,7 @@ public class BlueprintOverlayRenderer {
         // Outputs
         if (results.isEmpty()) {
             AllGuiTextures.HOTSLOT.render(guiGraphics, x, y);
-            guiGraphics.renderItem(Items.BARRIER.getDefaultInstance(), x + 3, y + 3);
+            guiGraphics.item(Items.BARRIER.getDefaultInstance(), x + 3, y + 3);
         } else {
             for (ItemStack result : results) {
                 AllGuiTextures slot = resultCraftable ? AllGuiTextures.HOTSLOT_SUPER_ACTIVE : AllGuiTextures.HOTSLOT;
@@ -357,8 +357,8 @@ public class BlueprintOverlayRenderer {
             }
         }
 
-        graphics.renderItem(itemStack, x + 3, y + 3);
-        graphics.renderItemDecorations(mc.font, itemStack, x + 3, y + 3, count);
+        graphics.item(itemStack, x + 3, y + 3);
+        graphics.itemDecorations(mc.font, itemStack, x + 3, y + 3, count);
     }
 
     private static ItemStack[] getItemsMatchingFilter(ItemStack filter) {

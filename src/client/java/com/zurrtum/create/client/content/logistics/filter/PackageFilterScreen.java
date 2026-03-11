@@ -68,7 +68,7 @@ public class PackageFilterScreen extends AbstractFilterScreen<PackageFilterMenu>
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
 
-        graphics.renderItem(PackageStyles.getDefaultBox(), leftPos + 16, topPos + 23);
+        graphics.item(PackageStyles.getDefaultBox(), leftPos + 16, topPos + 23);
     }
 
     public void onAddressEdited(String s) {

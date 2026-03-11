@@ -751,7 +751,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
         if (hasItem) {
             item.render(graphics, 3, 0);
             if (stack.getItem() != Items.STRUCTURE_VOID) {
-                graphics.renderItem(stack, 4, 0);
+                graphics.item(stack, 4, 0);
             }
         }
 
@@ -1274,7 +1274,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
             if (icon.isEmpty()) {
                 AllGuiTextures.SCHEDULE_EDITOR_INACTIVE_SLOT.render(graphics, leftPos + 53, topPos + 87);
             } else {
-                graphics.renderItem(icon, leftPos + 54, topPos + 88);
+                graphics.item(icon, leftPos + 54, topPos + 88);
             }
         }
 

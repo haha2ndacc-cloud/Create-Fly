@@ -257,7 +257,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
             AllGuiTextures.STOCK_KEEPER_CATEGORY_DOWN.render(graphics, cardWidth + 12, cardHeader - 9);
         }
 
-        graphics.renderItem(entry, 14, 1);
+        graphics.item(entry, 14, 1);
         Component name = entry.getHoverName();
         graphics.text(
             font,
