@@ -1,20 +1,27 @@
 package com.zurrtum.create.client.catnip.outliner;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
+import com.mojang.blaze3d.vertex.QuadInstance;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollection;
 import net.minecraft.client.renderer.SubmitNodeStorage;
-import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.SubmitNodeStorage.ItemSubmit;
+import net.minecraft.client.renderer.feature.ItemFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.item.ItemStackRenderState.FoilType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 public class ItemOutline extends Outline {
+    private static final QuadInstance quadInstance = new QuadInstance();
     protected Vec3 pos;
     protected ItemStack stack;
     protected ItemStackRenderState itemRenderState;
@@ -41,38 +48,38 @@ public class ItemOutline extends Outline {
         itemRenderState.submit(ms, queue, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 0);
         render(buffer, false);
         render(buffer, true);
+        queue.clear();
         ms.popPose();
     }
 
     private void render(SuperRenderTypeBuffer buffer, boolean translucent) {
         for (SubmitNodeCollection batchingRenderCommandQueue : queue.getSubmitsPerOrder().values()) {
-            for (SubmitNodeStorage.ItemSubmit itemCommand : batchingRenderCommandQueue.getItemSubmits()) {
-                if (hasTranslucency(itemCommand) == translucent) {
-                    matrices.pushPose();
-                    matrices.last().set(itemCommand.pose());
-                    ItemRenderer.renderItem(
-                        itemCommand.displayContext(),
-                        matrices,
-                        buffer,
-                        itemCommand.lightCoords(),
-                        itemCommand.overlayCoords(),
-                        itemCommand.tintLayers(),
-                        itemCommand.quads(),
-                        itemCommand.foilType()
-                    );
-                    matrices.popPose();
+            for (ItemSubmit submit : batchingRenderCommandQueue.getItemSubmits()) {
+                if (ItemFeatureRenderer.hasTranslucency(submit) == translucent) {
+                    Pose pose = submit.pose();
+                    FoilType foilType = submit.foilType();
+                    Pose foilDecalPose = foilType == FoilType.SPECIAL ? ItemFeatureRenderer.computeFoilDecalPose(
+                        submit.displayContext(),
+                        pose
+                    ) : null;
+                    quadInstance.setLightCoords(submit.lightCoords());
+                    quadInstance.setOverlayCoords(submit.overlayCoords());
+                    for (BakedQuad quad : submit.quads()) {
+                        BakedQuad.MaterialInfo material = quad.materialInfo();
+                        RenderType renderType = material.itemRenderType();
+                        quadInstance.setColor(ItemFeatureRenderer.getLayerColorSafe(submit.tintLayers(), material));
+                        if (foilType != FoilType.NONE) {
+                            VertexConsumer foilBuffer = ItemFeatureRenderer.getFoilBuffer(
+                                buffer,
+                                renderType,
+                                foilDecalPose
+                            );
+                            foilBuffer.putBakedQuad(pose, quad, quadInstance);
+                        }
+                        buffer.getBuffer(renderType).putBakedQuad(pose, quad, quadInstance);
+                    }
                 }
             }
         }
-    }
-
-    private static boolean hasTranslucency(final SubmitNodeStorage.ItemSubmit submit) {
-        for (BakedQuad quad : submit.quads()) {
-            if (quad.spriteInfo().itemRenderType().hasBlending()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
