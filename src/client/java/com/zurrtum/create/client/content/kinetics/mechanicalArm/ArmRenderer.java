@@ -90,7 +90,7 @@ public class ArmRenderer extends KineticBlockEntityRenderer<ArmBlockEntity, ArmR
         if (rave) {
             float renderTick = AnimationTickHolder.getRenderTime(world) + (be.hashCode() % 64);
             state.baseAngle = Mth.DEG_TO_RAD * ((renderTick * 10) % 360);
-            state.lowerArmAngle = Mth.DEG_TO_RAD * (Mth.lerpInt((Mth.sin(renderTick / 4) + 1) / 2, -45, 15) - 135);
+            state.lowerArmAngle = Mth.DEG_TO_RAD * (Mth.lerpInt((Mth.sin(renderTick / 4) + 1) / 2, -45, 15) + 135);
             state.upperArmAngle = Mth.DEG_TO_RAD * (Mth.lerpInt((Mth.sin(renderTick / 8) + 1) / 4, -45, 95) - 90);
             state.headAngle = Mth.DEG_TO_RAD * (-state.lowerArmAngle - 45);
         } else {
