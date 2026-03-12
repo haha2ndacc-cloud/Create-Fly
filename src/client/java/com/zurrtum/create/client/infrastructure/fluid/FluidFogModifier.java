@@ -18,12 +18,12 @@ public class FluidFogModifier extends WaterFogEnvironment {
     public void setupFog(FogData data, Camera camera, ClientLevel world, float viewDistance, DeltaTracker tickCounter) {
         Entity cameraEntity = camera.entity();
         BlockPos cameraPos = camera.blockPosition();
-        FluidConfig config = AllFluidConfigs.ALL.get(world.getFluidState(cameraPos).getType());
-        if (config != null) {
+        FogDistanceSupplier supplier = AllFluidConfigs.FOG_DISTANCE.get(world.getFluidState(cameraPos).getType());
+        if (supplier != null) {
             float partialTicks = tickCounter.getGameTimeDeltaPartialTick(false);
             data.environmentalStart = camera.attributeProbe()
                 .getValue(EnvironmentAttributes.WATER_FOG_START_DISTANCE, partialTicks);
-            data.environmentalEnd = config.fogDistance().get();
+            data.environmentalEnd = supplier.get();
             if (camera.entity() instanceof LocalPlayer player) {
                 data.environmentalEnd = data.environmentalEnd * Math.max(0.25F, player.getWaterVision());
             }
@@ -41,11 +41,9 @@ public class FluidFogModifier extends WaterFogEnvironment {
 
     @Override
     public int getBaseColor(ClientLevel world, Camera camera, int viewDistance, float skyDarkness) {
-        FluidConfig config = AllFluidConfigs.ALL.get(world.getFluidState(camera.blockPosition()).getType());
-        if (config != null) {
-            if (config.fogColor() != -1) {
-                return config.fogColor();
-            }
+        int color = AllFluidConfigs.FOG_COLOR.getOrDefault(world.getFluidState(camera.blockPosition()).getType(), -1);
+        if (color != -1) {
+            return color;
         }
         return super.getBaseColor(world, camera, viewDistance, skyDarkness);
     }

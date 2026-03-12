@@ -13,7 +13,6 @@ public class AllParticleTypes {
         particle.register(STEAM_JET, SteamJetParticle.Factory::new);
         particle.register(CUBE, new CubeParticle.Factory());
         particle.register(FLUID_PARTICLE, new FluidParticle.Factory());
-        particle.register(FLUID_DRIP, new FluidParticle.Factory());
         particle.register(BASIN_FLUID, new BasinFluidParticle.Factory());
         particle.register(WIFI, BasicParticleFactory::wifi);
         particle.register(SOUL, BasicParticleFactory::soul);

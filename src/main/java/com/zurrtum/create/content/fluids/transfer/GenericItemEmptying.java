@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.Level;
 
 import java.util.Optional;
@@ -37,15 +38,15 @@ public class GenericItemEmptying {
         }
     }
 
-    public static Pair<FluidStack, ItemStack> emptyItem(Level world, ItemStack stack, boolean simulate) {
+    public static Pair<FluidStack, ItemStack> emptyItem(BlockAndLightGetter level, ItemStack stack, boolean simulate) {
         if (PotionFluidHandler.isPotionItem(stack)) {
             return PotionFluidHandler.emptyPotion(stack, simulate);
         }
 
         //TODO client check recipe
-        if (!world.isClientSide()) {
-            Optional<RecipeHolder<EmptyingRecipe>> recipe = ((ServerLevel) world).recipeAccess()
-                .getRecipeFor(AllRecipeTypes.EMPTYING, new SingleRecipeInput(stack), world);
+        if (level instanceof ServerLevel serverLevel) {
+            Optional<RecipeHolder<EmptyingRecipe>> recipe = serverLevel.recipeAccess()
+                .getRecipeFor(AllRecipeTypes.EMPTYING, new SingleRecipeInput(stack), serverLevel);
             if (recipe.isPresent()) {
                 if (!simulate) {
                     stack.shrink(1);
@@ -53,9 +54,6 @@ public class GenericItemEmptying {
                 EmptyingRecipe emptyingRecipe = recipe.get().value();
                 return Pair.of(emptyingRecipe.fluidResult(), emptyingRecipe.result().create());
             }
-        } else {
-            //TODO
-            //            Create.LOGGER.warn("Client check recipe " + stack.getName().getString());
         }
 
         try (FluidItemInventory capability = FluidHelper.getFluidInventory(stack.copyWithCount(1))) {

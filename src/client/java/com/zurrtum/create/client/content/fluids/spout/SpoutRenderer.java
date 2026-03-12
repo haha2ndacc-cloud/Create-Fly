@@ -5,12 +5,15 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
+import com.zurrtum.create.client.catnip.render.FluidRenderHelper.FluidRenderState;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
 import com.zurrtum.create.content.fluids.spout.SpoutBlockEntity;
 import com.zurrtum.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.zurrtum.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour.TankSegment;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.FluidStateModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -18,15 +21,17 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverl
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.Nullable;
 
 public class SpoutRenderer implements BlockEntityRenderer<SpoutBlockEntity, SpoutRenderer.SpoutRenderState> {
+    protected final FluidStateModelSet fluidStateModelSet;
+
     public SpoutRenderer(BlockEntityRendererProvider.Context context) {
+        fluidStateModelSet = context.blockModelResolver().modelManager.getFluidStateModelSet();
     }
 
     @Override
@@ -53,6 +58,7 @@ public class SpoutRenderer implements BlockEntityRenderer<SpoutBlockEntity, Spou
         int processingTicks = be.processingTicks;
         float processingPT = processingTicks - tickProgress;
         if (!fluidStack.isEmpty()) {
+            BlockAndTintGetter world = (BlockAndTintGetter) be.getLevel();
             float level = primaryTank.getFluidLevel().getValue(tickProgress);
             if (level != 0) {
                 boolean top = false;//TODO fluidStack.getFluid().getFluidType().isLighterThanAir();
@@ -61,16 +67,22 @@ public class SpoutRenderer implements BlockEntityRenderer<SpoutBlockEntity, Spou
                 float max = min + n;
                 float yOffset = n * Math.max(level, 0.175f);
                 float yMin = min - yOffset;
-                float offset = top ? max - min : yOffset;
-                state.fluid = new FluidRenderState(
-                    RenderTypes.translucentMovingBlock(),
+                state.offset = top ? max - min : yOffset;
+                state.fluid = FluidRenderHelper.extractFluidRenderState(
+                    world,
+                    state.blockPos,
+                    fluidStateModelSet,
                     fluidStack.getFluid(),
                     fluidStack.getComponentChanges(),
                     min,
-                    max,
                     yMin,
-                    offset,
-                    state.lightCoords
+                    min,
+                    max,
+                    min,
+                    max,
+                    state.lightCoords,
+                    false,
+                    true
                 );
             }
             if (processingTicks != -1) {
@@ -78,12 +90,21 @@ public class SpoutRenderer implements BlockEntityRenderer<SpoutBlockEntity, Spou
                 processingProgress = Mth.clamp(processingProgress, 0, 1);
                 radius = (float) (Math.pow(((2 * processingProgress) - 1), 2) - 1);
                 AABB box = new AABB(0.5, 0.0, 0.5, 0.5, -1.2, 0.5).inflate(radius / 32f);
-                state.process = new ProcessRenderState(
-                    RenderTypes.translucentMovingBlock(),
+                state.process = FluidRenderHelper.extractFluidRenderState(
+                    world,
+                    state.blockPos,
+                    fluidStateModelSet,
                     fluidStack.getFluid(),
                     fluidStack.getComponentChanges(),
-                    box,
-                    state.lightCoords
+                    (float) box.minX,
+                    (float) box.minY,
+                    (float) box.minZ,
+                    (float) box.maxX,
+                    (float) box.maxY,
+                    (float) box.maxZ,
+                    state.lightCoords,
+                    true,
+                    true
                 );
             }
         }
@@ -119,64 +140,20 @@ public class SpoutRenderer implements BlockEntityRenderer<SpoutBlockEntity, Spou
         CameraRenderState cameraState
     ) {
         if (state.process != null) {
-            queue.submitCustomGeometry(matrices, state.process.layer, state.process);
+            state.process.submit(queue, matrices);
         }
         queue.submitCustomGeometry(matrices, state.bits.layer, state.bits);
         if (state.fluid != null) {
-            matrices.translate(0, state.fluid.offset, 0);
-            queue.submitCustomGeometry(matrices, state.fluid.layer, state.fluid);
+            matrices.translate(0, state.offset, 0);
+            state.fluid.submit(queue, matrices);
         }
     }
 
     public static class SpoutRenderState extends BlockEntityRenderState {
+        public float offset;
         public @Nullable FluidRenderState fluid;
-        public @Nullable ProcessRenderState process;
-        public BitsRenderState bits;
-    }
-
-    public record FluidRenderState(RenderType layer, Fluid fluid, DataComponentPatch changes, float min, float max,
-                                   float yMin, float offset,
-                                   int light) implements SubmitNodeCollector.CustomGeometryRenderer {
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            FluidRenderHelper.renderFluidBox(
-                fluid,
-                changes,
-                min,
-                yMin,
-                min,
-                max,
-                min,
-                max,
-                vertexConsumer,
-                matricesEntry,
-                light,
-                false,
-                true
-            );
-        }
-    }
-
-    public record ProcessRenderState(RenderType layer, Fluid fluid, DataComponentPatch changes, AABB box,
-                                     int light) implements SubmitNodeCollector.CustomGeometryRenderer {
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            FluidRenderHelper.renderFluidBox(
-                fluid,
-                changes,
-                (float) box.minX,
-                (float) box.minY,
-                (float) box.minZ,
-                (float) box.maxX,
-                (float) box.maxY,
-                (float) box.maxZ,
-                vertexConsumer,
-                matricesEntry,
-                light,
-                true,
-                true
-            );
-        }
+        public @Nullable FluidRenderState process;
+        public @UnknownNullability BitsRenderState bits;
     }
 
     public record BitsRenderState(RenderType layer, SuperByteBuffer top, SuperByteBuffer middle, SuperByteBuffer bottom,

@@ -1,32 +1,38 @@
 package com.zurrtum.create.client.content.fluids.pipes;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.api.behaviour.BlockEntityBehaviour;
 import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.client.foundation.fluid.FluidRenderer;
+import com.zurrtum.create.client.foundation.fluid.FluidRenderer.FluidStreamRenderState;
 import com.zurrtum.create.content.fluids.FluidTransportBehaviour;
 import com.zurrtum.create.content.fluids.PipeConnection.Flow;
 import com.zurrtum.create.content.fluids.pipes.StraightPipeBlockEntity;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.FluidStateModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.material.Fluid;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TransparentStraightPipeRenderer implements BlockEntityRenderer<StraightPipeBlockEntity, TransparentStraightPipeRenderer.TransparentStraightPipeRenderState> {
+    protected final FluidStateModelSet fluidStateModelSet;
+
     public TransparentStraightPipeRenderer(BlockEntityRendererProvider.Context context) {
+        fluidStateModelSet = context.blockModelResolver().modelManager.getFluidStateModelSet();
     }
 
     @Override
@@ -46,15 +52,13 @@ public class TransparentStraightPipeRenderer implements BlockEntityRenderer<Stra
         if (pipe == null) {
             return;
         }
-        BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        state.layer = RenderTypes.translucentMovingBlock();
         Direction[] directions = Iterate.directions;
-        int size = directions.length;
-        state.radius = 3 / 16f;
-        state.data = new FluidRenderData[size];
-        Level world = be.getLevel();
-        for (int i = 0; i < size; i++) {
-            Direction side = directions[i];
+        List<FluidStreamRenderState> fluids = new ArrayList<>(directions.length);
+        BlockAndTintGetter level = (BlockAndTintGetter) be.getLevel();
+        BlockPos blockPos = be.getBlockPos();
+        int lightCoords = level != null ? LevelRenderer.getLightCoords(level, blockPos) : LightCoordsUtil.FULL_BRIGHT;
+        float radius = 3 / 16f;
+        for (Direction side : directions) {
             Flow flow = pipe.getFlow(side);
             if (flow == null) {
                 continue;
@@ -77,8 +81,8 @@ public class TransparentStraightPipeRenderer implements BlockEntityRenderer<Stra
                     }
                 } else {
                     FluidTransportBehaviour adjacent = BlockEntityBehaviour.get(
-                        world,
-                        state.blockPos.relative(side),
+                        level,
+                        blockPos.relative(side),
                         FluidTransportBehaviour.TYPE
                     );
                     if (adjacent == null) {
@@ -91,14 +95,28 @@ public class TransparentStraightPipeRenderer implements BlockEntityRenderer<Stra
                     }
                 }
             }
-            state.data[i] = new FluidRenderData(
+            fluids.add(FluidRenderer.extractFluidStreamRenderState(
+                level,
+                blockPos,
+                fluidStateModelSet,
                 fluidStack.getFluid(),
                 fluidStack.getComponentChanges(),
                 side,
                 value,
-                inbound
-            );
+                inbound,
+                radius,
+                lightCoords
+            ));
         }
+        if (fluids.isEmpty()) {
+            return;
+        }
+        state.blockPos = blockPos;
+        state.blockState = be.getBlockState();
+        state.blockEntityType = be.getType();
+        state.lightCoords = lightCoords;
+        state.breakProgress = crumblingOverlay;
+        state.fluids = fluids;
     }
 
     @Override
@@ -108,38 +126,14 @@ public class TransparentStraightPipeRenderer implements BlockEntityRenderer<Stra
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        if (state.data != null) {
-            queue.submitCustomGeometry(matrices, state.layer, state);
-        }
-    }
-
-    public static class TransparentStraightPipeRenderState extends BlockEntityRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
-        public RenderType layer;
-        public float radius;
-        public @Nullable FluidRenderData @Nullable [] data;
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            for (FluidRenderData renderData : data) {
-                if (renderData == null) {
-                    continue;
-                }
-                FluidRenderer.renderFluidStream(
-                    renderData.fluid,
-                    renderData.changes,
-                    renderData.side,
-                    radius,
-                    renderData.value,
-                    renderData.inbound,
-                    vertexConsumer,
-                    matricesEntry,
-                    lightCoords
-                );
+        if (state.fluids != null) {
+            for (FluidStreamRenderState fluid : state.fluids) {
+                fluid.submit(queue, matrices);
             }
         }
     }
 
-    public record FluidRenderData(Fluid fluid, DataComponentPatch changes, Direction side, float value,
-                                  boolean inbound) {
+    public static class TransparentStraightPipeRenderState extends BlockEntityRenderState {
+        public @Nullable List<FluidStreamRenderState> fluids;
     }
 }

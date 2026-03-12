@@ -1,13 +1,13 @@
 package com.zurrtum.create.client.content.processing.basin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.data.IntAttached;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
+import com.zurrtum.create.client.catnip.render.FluidRenderHelper.FluidRenderState;
 import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.processing.basin.BasinBlock;
 import com.zurrtum.create.content.processing.basin.BasinBlockEntity;
@@ -17,22 +17,20 @@ import com.zurrtum.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankB
 import com.zurrtum.create.infrastructure.fluids.BucketFluidInventory;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.FluidStateModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
@@ -40,8 +38,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BasinRenderer extends SmartBlockEntityRenderer<BasinBlockEntity, BasinRenderer.BasinRenderState> {
+    protected final FluidStateModelSet fluidStateModelSet;
+
     public BasinRenderer(BlockEntityRendererProvider.Context context) {
         super(context);
+        fluidStateModelSet = context.blockModelResolver().modelManager.getFluidStateModelSet();
     }
 
     @Override
@@ -72,7 +73,9 @@ public class BasinRenderer extends SmartBlockEntityRenderer<BasinBlockEntity, Ba
     ) {
         super.submit(state, matrices, queue, cameraState);
         if (state.fluids != null) {
-            queue.submitCustomGeometry(matrices, state.layer, state);
+            for (FluidRenderState fluid : state.fluids) {
+                fluid.submit(queue, matrices);
+            }
         }
         if (state.ingredients != null) {
             matrices.pushPose();
@@ -110,9 +113,16 @@ public class BasinRenderer extends SmartBlockEntityRenderer<BasinBlockEntity, Ba
         if (totalUnits < 1) {
             return 0;
         }
+        List<FluidRenderState> fluids = new ArrayList<>();
+        BlockAndTintGetter level = (BlockAndTintGetter) basin.getLevel();
+        float fluidLevel = Mth.clamp(totalUnits / (BucketFluidInventory.CAPACITY * 2), 0, 1);
+        fluidLevel = 1 - ((1 - fluidLevel) * (1 - fluidLevel));
         float xMin = 2 / 16f;
         float xMax = 2 / 16f;
-        List<FluidRenderData> fluids = new ArrayList<>();
+        float yMin = 2 / 16f;
+        float yMax = yMin + 12 / 16f * fluidLevel;
+        float zMin = 2 / 16f;
+        float zMax = 14 / 16f;
         for (SmartFluidTankBehaviour behaviour : List.of(
             basin.getBehaviour(SmartFluidTankBehaviour.INPUT),
             basin.getBehaviour(SmartFluidTankBehaviour.OUTPUT)
@@ -129,31 +139,31 @@ public class BasinRenderer extends SmartBlockEntityRenderer<BasinBlockEntity, Ba
                 if (units < 1) {
                     continue;
                 }
-
-                float partial = Mth.clamp(units / totalUnits, 0, 1);
-                xMax += partial * 12 / 16f;
-                fluids.add(new FluidRenderData(
+                xMax += Mth.clamp(units / totalUnits, 0, 1) * 12 / 16f;
+                fluids.add(FluidRenderHelper.extractFluidRenderState(
+                    level,
+                    state.blockPos,
+                    fluidStateModelSet,
                     renderedFluid.getFluid(),
                     renderedFluid.getComponentChanges(),
                     xMin,
-                    xMax
+                    yMin,
+                    zMin,
+                    xMax,
+                    yMax,
+                    zMax,
+                    state.lightCoords,
+                    false,
+                    false
                 ));
-
                 xMin = xMax;
             }
         }
         if (fluids.isEmpty()) {
             return 0;
         }
-        float fluidLevel = Mth.clamp(totalUnits / (BucketFluidInventory.CAPACITY * 2), 0, 1);
-        fluidLevel = 1 - ((1 - fluidLevel) * (1 - fluidLevel));
-        state.layer = RenderTypes.translucentMovingBlock();
         state.fluids = fluids;
-        state.yMin = 2 / 16f;
-        state.yMax = state.yMin + 12 / 16f * fluidLevel;
-        state.zMin = 2 / 16f;
-        state.zMax = 14 / 16f;
-        return state.yMax;
+        return yMax;
     }
 
     public void updateIngredients(BasinBlockEntity be, BasinRenderState state, float partialTicks, float fluidLevel) {
@@ -260,38 +270,12 @@ public class BasinRenderer extends SmartBlockEntityRenderer<BasinBlockEntity, Ba
         return 16;
     }
 
-    public static class BasinRenderState extends SmartRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
-        public RenderType layer;
-        public float yMin, yMax, zMin, zMax;
-        public @Nullable List<FluidRenderData> fluids;
+    public static class BasinRenderState extends SmartRenderState {
+        public @Nullable List<FluidRenderState> fluids;
         public float ingredientYRot, ingredientXRot;
         public IngredientRenderData @Nullable [] ingredients;
         public float outputYRot;
         public @Nullable List<OutputItemRenderData> outputs;
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            for (FluidRenderData data : fluids) {
-                FluidRenderHelper.renderFluidBox(
-                    data.fluid,
-                    data.changes,
-                    data.xMin,
-                    yMin,
-                    zMin,
-                    data.xMax,
-                    yMax,
-                    zMax,
-                    vertexConsumer,
-                    matricesEntry,
-                    lightCoords,
-                    false,
-                    false
-                );
-            }
-        }
-    }
-
-    public record FluidRenderData(Fluid fluid, DataComponentPatch changes, float xMin, float xMax) {
     }
 
     public record IngredientRenderData(ItemStackRenderState renderState, Vec3 itemPosition, float yRot,

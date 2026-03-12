@@ -6,17 +6,66 @@ import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.client.AllFluidConfigs;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
-import com.zurrtum.create.client.infrastructure.fluid.FluidConfig;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.FluidModel;
+import net.minecraft.client.renderer.block.FluidStateModelSet;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import org.jspecify.annotations.Nullable;
 
 public class FluidRenderer {
-    public static void renderFluidStream(
+    public static FluidStreamRenderState extractFluidStreamRenderState(
+        @Nullable BlockAndTintGetter level,
+        @Nullable BlockPos pos,
+        FluidStateModelSet fluidStateModelSet,
         Fluid fluid,
-        DataComponentPatch changes,
+        DataComponentPatch components,
+        Direction side,
+        float progress,
+        boolean inbound,
+        float radius,
+        int lightCoords
+    ) {
+        FluidState fluidState = fluid.defaultFluidState();
+        BlockState blockState = fluidState.createLegacyBlock();
+        FluidModel model = fluidStateModelSet.get(fluidState);
+        int tint = AllFluidConfigs.getTint(level, pos, blockState, model, fluid, components) | 0xff000000;
+        TextureAtlasSprite flowTexture = model.flowingMaterial().sprite();
+        TextureAtlasSprite stillTexture = progress != 1 ? model.stillMaterial().sprite() : null;
+        int lightEmission = blockState.getLightEmission();
+        RenderType layer = switch (model.layer()) {
+            case SOLID -> RenderTypes.solidMovingBlock();
+            case CUTOUT -> RenderTypes.cutoutMovingBlock();
+            case TRANSLUCENT -> RenderTypes.translucentMovingBlock();
+        };
+        return new FluidStreamRenderState(
+            layer,
+            flowTexture,
+            stillTexture,
+            tint,
+            lightEmission,
+            side,
+            progress,
+            inbound,
+            radius,
+            lightCoords
+        );
+    }
+
+    public static void renderFluidStream(
+        TextureAtlasSprite flowTexture,
+        @Nullable TextureAtlasSprite stillTexture,
+        int tint,
+        int lightEmission,
         Direction direction,
         float radius,
         float progress,
@@ -25,16 +74,8 @@ public class FluidRenderer {
         PoseStack.Pose entry,
         int light
     ) {
-        FluidConfig config = AllFluidConfigs.get(fluid);
-        if (config == null) {
-            return;
-        }
-        TextureAtlasSprite flowTexture = config.flowing().get();
-        TextureAtlasSprite stillTexture = config.still().get();
-
-        int color = config.tint().apply(changes) | 0xff000000;
         int blockLightIn = (light >> 4) & 0xF;
-        int luminosity = Math.max(blockLightIn, fluid.defaultFluidState().createLegacyBlock().getLightEmission());
+        int luminosity = Math.max(blockLightIn, lightEmission);
         light = (light & 0xF00000) | luminosity << 4;
 
         if (inbound) {
@@ -62,14 +103,14 @@ public class FluidRenderer {
                 builder,
                 entry,
                 light,
-                color,
+                tint,
                 flowTexture
             );
             entry.rotate(Axis.YP.rotation(Mth.DEG_TO_RAD * 90));
         }
 
-        if (progress != 1) {
-            FluidRenderHelper.renderStillTiledFace(
+        if (stillTexture != null) {
+            FluidRenderHelper.renderTiledFace(
                 Direction.DOWN,
                 hMin,
                 hMin,
@@ -79,8 +120,9 @@ public class FluidRenderer {
                 builder,
                 entry,
                 light,
-                color,
-                stillTexture
+                tint,
+                stillTexture,
+                1
             );
         }
     }
@@ -112,5 +154,31 @@ public class FluidRenderer {
             texture,
             0.5f
         );
+    }
+
+    public record FluidStreamRenderState(RenderType layer, TextureAtlasSprite flowTexture,
+                                         @Nullable TextureAtlasSprite stillTexture, int tint, int lightEmission,
+                                         Direction side, float value, boolean inbound, float radius,
+                                         int lightCoords) implements SubmitNodeCollector.CustomGeometryRenderer {
+        public void submit(SubmitNodeCollector queue, PoseStack poseStack) {
+            queue.submitCustomGeometry(poseStack, layer, this);
+        }
+
+        @Override
+        public void render(PoseStack.Pose pose, VertexConsumer vertexConsumer) {
+            FluidRenderer.renderFluidStream(
+                flowTexture,
+                stillTexture,
+                tint,
+                lightEmission,
+                side,
+                radius,
+                value,
+                inbound,
+                vertexConsumer,
+                pose,
+                lightCoords
+            );
+        }
     }
 }

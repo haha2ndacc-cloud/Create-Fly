@@ -15,15 +15,20 @@ import com.zurrtum.create.client.flywheel.lib.visual.AbstractBlockEntityVisual;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
 import com.zurrtum.create.client.flywheel.lib.visual.util.SmartRecycler;
 import com.zurrtum.create.client.foundation.render.AllInstanceTypes;
-import com.zurrtum.create.client.infrastructure.fluid.FluidConfig;
 import com.zurrtum.create.content.fluids.FluidTransportBehaviour;
 import com.zurrtum.create.content.fluids.PipeConnection.Flow;
 import com.zurrtum.create.content.fluids.pipes.StraightPipeBlockEntity;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.FluidModel;
+import net.minecraft.client.renderer.block.FluidStateModelSet;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -56,6 +61,7 @@ public class GlassPipeVisual extends AbstractBlockEntityVisual<StraightPipeBlock
             return;
         }
 
+        FluidStateModelSet fluidStateModelSet = Minecraft.getInstance().getModelManager().getFluidStateModelSet();
         for (Direction side : Iterate.directions) {
 
             Flow flow = pipe.getFlow(side);
@@ -97,15 +103,21 @@ public class GlassPipeVisual extends AbstractBlockEntityVisual<StraightPipeBlock
             }
 
             Fluid fluid = fluidStack.getFluid();
-            FluidConfig config = AllFluidConfigs.get(fluid);
-            if (config == null) {
-                continue;
-            }
-            TextureAtlasSprite flowTexture = config.flowing().get();
+            FluidState fluidState = fluid.defaultFluidState();
+            BlockState blockState = fluidState.createLegacyBlock();
+            FluidModel model = fluidStateModelSet.get(fluidState);
+            TextureAtlasSprite flowTexture = model.flowingMaterial().sprite();
 
-            int color = config.tint().apply(fluidStack.getComponentChanges()) | 0xff000000;
+            int tint = AllFluidConfigs.getTint(
+                (BlockAndTintGetter) level,
+                pos,
+                blockState,
+                model,
+                fluid,
+                fluidStack.getComponentChanges()
+            ) | 0xff000000;
             int blockLightIn = (light >> 4) & 0xF;
-            int luminosity = Math.max(blockLightIn, fluid.defaultFluidState().createLegacyBlock().getLightEmission());
+            int luminosity = Math.max(blockLightIn, blockState.getLightEmission());
             int light = (this.light & 0xF00000) | luminosity << 4;
 
             if (inbound) {
@@ -120,7 +132,7 @@ public class GlassPipeVisual extends AbstractBlockEntityVisual<StraightPipeBlock
             fluidInstance.setIdentityTransform().translate(getVisualPosition()).center().rotateTo(Direction.UP, side)
                 .translate(0, -Translate.CENTER + yStart, 0);
 
-            fluidInstance.light(light).colorArgb(color);
+            fluidInstance.light(light).colorArgb(tint);
 
 
             fluidInstance.vScale = (flowTexture.getV1() - flowTexture.getV0()) * 0.5f;
@@ -130,10 +142,10 @@ public class GlassPipeVisual extends AbstractBlockEntityVisual<StraightPipeBlock
             fluidInstance.setChanged();
 
             if (progress != 1) {
-                TextureAtlasSprite stillTexture = config.still().get();
+                TextureAtlasSprite stillTexture = model.stillMaterial().sprite();
                 surface.get(stillTexture).setIdentityTransform().translate(getVisualPosition()).center()
                     .rotateTo(Direction.UP, side).translate(0, -Translate.CENTER + yStart + progressOffset, 0)
-                    .light(light).colorArgb(color).setChanged();
+                    .light(light).colorArgb(tint).setChanged();
             }
         }
 
@@ -143,7 +155,6 @@ public class GlassPipeVisual extends AbstractBlockEntityVisual<StraightPipeBlock
 
     @Override
     public void collectCrumblingInstances(Consumer<@Nullable Instance> consumer) {
-
     }
 
     @Override

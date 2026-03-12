@@ -14,7 +14,7 @@ public class DivingLavaFogModifier extends LavaFogEnvironment {
     public void setupFog(FogData data, Camera camera, ClientLevel world, float viewDistance, DeltaTracker tickCounter) {
         super.setupFog(data, camera, world, viewDistance, tickCounter);
         Entity cameraEntity = camera.entity();
-        if (cameraEntity.isSpectator()) {
+        if (cameraEntity == null || cameraEntity.isSpectator()) {
             return;
         }
         ItemStack divingHelmet = DivingHelmetItem.getWornItem(cameraEntity);

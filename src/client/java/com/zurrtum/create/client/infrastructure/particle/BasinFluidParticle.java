@@ -3,7 +3,6 @@ package com.zurrtum.create.client.infrastructure.particle;
 import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.AllFluidConfigs;
-import com.zurrtum.create.client.infrastructure.fluid.FluidConfig;
 import com.zurrtum.create.content.processing.basin.BasinBlock;
 import com.zurrtum.create.content.processing.basin.BasinBlockEntity;
 import com.zurrtum.create.infrastructure.particle.FluidParticleData;
@@ -11,29 +10,34 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
-public class BasinFluidParticle extends FluidParticle {
-    BlockPos basinPos;
-    @Nullable Vec3 targetPos;
-    Vec3 centerOfBasin;
-    float yOffset;
+public class BasinFluidParticle extends SingleQuadParticle {
+    private final BlockPos basinPos;
+    private final @Nullable Vec3 targetPos;
+    private final Vec3 centerOfBasin;
+    private final float yOffset;
+    private final float uo;
+    private final float vo;
+    private final Layer layer;
 
     public BasinFluidParticle(
         ClientLevel world,
-        Fluid fluid,
-        DataComponentPatch components,
-        FluidConfig config,
+        TextureAtlasSprite still,
+        int tint,
         double x,
         double y,
         double z,
@@ -42,11 +46,18 @@ public class BasinFluidParticle extends FluidParticle {
         double vz,
         RandomSource random
     ) {
-        super(world, fluid, components, config, x, y, z, vx, vy, vz, random);
+        super(world, x, y, z, vx, vy, vz, still);
+        layer = Layer.bySprite(still);
         gravity = 0;
+        rCol = (float) (tint >> 16 & 255) / 255.0F;
+        gCol = (float) (tint >> 8 & 255) / 255.0F;
+        bCol = (float) (tint & 255) / 255.0F;
+        alpha = 0.9F;
         xd = 0;
         yd = 0;
         zd = 0;
+        uo = random.nextFloat() * 3.0F;
+        vo = random.nextFloat() * 3.0F;
         yOffset = random.nextFloat() * 1 / 32f;
         y += yOffset;
         quadSize = 0;
@@ -54,6 +65,7 @@ public class BasinFluidParticle extends FluidParticle {
         Vec3 currentPos = new Vec3(x, y, z);
         basinPos = BlockPos.containing(currentPos);
         centerOfBasin = VecHelper.getCenterOf(basinPos);
+        alpha = 0.9F;
 
         if (vx != 0) {
             lifetime = 20;
@@ -62,6 +74,8 @@ public class BasinFluidParticle extends FluidParticle {
             targetPos = centerOf.add(diff);
             xo = this.x = centerOfBasin.x;
             zo = this.z = centerOfBasin.z;
+        } else {
+            targetPos = null;
         }
     }
 
@@ -100,13 +114,33 @@ public class BasinFluidParticle extends FluidParticle {
     }
 
     @Override
-    protected void updateColor() {
-        this.alpha = 0.9F;
+    protected Layer getLayer() {
+        return layer;
     }
 
     @Override
     protected int getLightCoords(float p_189214_1_) {
         return LightCoordsUtil.FULL_BRIGHT;
+    }
+
+    @Override
+    protected float getU0() {
+        return sprite.getU((uo + 1.0F) / 4.0F);
+    }
+
+    @Override
+    protected float getU1() {
+        return sprite.getU(uo / 4.0F);
+    }
+
+    @Override
+    protected float getV0() {
+        return sprite.getV(vo / 4.0F);
+    }
+
+    @Override
+    protected float getV1() {
+        return sprite.getV((vo + 1.0F) / 4.0F);
     }
 
     @Override
@@ -120,17 +154,12 @@ public class BasinFluidParticle extends FluidParticle {
         rotation.mul(prevRotation);
     }
 
-    @Override
-    protected boolean canEvaporate() {
-        return false;
-    }
-
     public static class Factory implements ParticleProvider<FluidParticleData> {
         @Override
         @Nullable
         public Particle createParticle(
             FluidParticleData data,
-            ClientLevel world,
+            ClientLevel level,
             double x,
             double y,
             double z,
@@ -139,11 +168,11 @@ public class BasinFluidParticle extends FluidParticle {
             double vz,
             RandomSource random
         ) {
-            FluidConfig config = AllFluidConfigs.get(data.fluid());
-            if (config == null) {
-                return null;
-            }
-            return new BasinFluidParticle(world, data.fluid(), data.components(), config, x, y, z, vx, vy, vz, random);
+            Fluid fluid = data.fluid();
+            FluidState state = fluid.defaultFluidState();
+            FluidModel model = level.minecraft.getModelManager().getFluidStateModelSet().get(state);
+            int tint = AllFluidConfigs.getTint(level, x, y, z, state, model, fluid, data.components());
+            return new BasinFluidParticle(level, model.stillMaterial().sprite(), tint, x, y, z, vx, vy, vz, random);
         }
     }
 }

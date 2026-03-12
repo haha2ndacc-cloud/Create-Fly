@@ -15,7 +15,6 @@ import net.minecraft.world.level.material.Fluid;
 
 public record FluidParticleData(ParticleType<FluidParticleData> type, Fluid fluid,
                                 DataComponentPatch components) implements ParticleOptions {
-
     private static final RecordCodecBuilder<FluidParticleData, Fluid> FLUID_CODEC = BuiltInRegistries.FLUID.byNameCodec()
         .fieldOf("fluid").forGetter(FluidParticleData::fluid);
     private static final RecordCodecBuilder<FluidParticleData, DataComponentPatch> COMPONENTS_CODEC = DataComponentPatch.CODEC.fieldOf(
@@ -28,11 +27,6 @@ public record FluidParticleData(ParticleType<FluidParticleData> type, Fluid flui
         FLUID_CODEC,
         COMPONENTS_CODEC
     ).apply(i, FluidParticleData::basin));
-    public static final MapCodec<FluidParticleData> DRIP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-        FLUID_CODEC,
-        COMPONENTS_CODEC
-    ).apply(i, FluidParticleData::drip));
-
     private static final StreamCodec<RegistryFriendlyByteBuf, Fluid> FLUID_STREAM_CODEC = ByteBufCodecs.registry(
         Registries.FLUID);
     public static final StreamCodec<RegistryFriendlyByteBuf, FluidParticleData> STREAM_CODEC = StreamCodec.composite(
@@ -49,13 +43,6 @@ public record FluidParticleData(ParticleType<FluidParticleData> type, Fluid flui
         FluidParticleData::components,
         FluidParticleData::basin
     );
-    public static final StreamCodec<RegistryFriendlyByteBuf, FluidParticleData> DRIP_STREAM_CODEC = StreamCodec.composite(
-        FLUID_STREAM_CODEC,
-        FluidParticleData::fluid,
-        DataComponentPatch.STREAM_CODEC,
-        FluidParticleData::components,
-        FluidParticleData::drip
-    );
 
     public FluidParticleData(ParticleType<FluidParticleData> type, Fluid fluid) {
         this(type, fluid, DataComponentPatch.EMPTY);
@@ -67,10 +54,6 @@ public record FluidParticleData(ParticleType<FluidParticleData> type, Fluid flui
 
     public static FluidParticleData basin(Fluid fluid, DataComponentPatch components) {
         return new FluidParticleData(AllParticleTypes.BASIN_FLUID, fluid, components);
-    }
-
-    public static FluidParticleData drip(Fluid fluid, DataComponentPatch components) {
-        return new FluidParticleData(AllParticleTypes.FLUID_DRIP, fluid, components);
     }
 
     @Override

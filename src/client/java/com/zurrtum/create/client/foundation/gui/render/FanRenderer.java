@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
+import net.minecraft.client.renderer.block.FluidStateModelSet;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
@@ -83,7 +84,11 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
         if (!fluidState.isEmpty()) {
             Fluid fluid = fluidState.getType();
             //            SodiumCompat.markFluidSpriteActive(fluid);
-            FluidRenderHelper.renderFluidBox(
+            FluidStateModelSet fluidStateModelSet = mc.getModelManager().getFluidStateModelSet();
+            FluidRenderHelper.extractFluidRenderState(
+                null,
+                null,
+                fluidStateModelSet,
                 fluid,
                 DataComponentPatch.EMPTY,
                 0,
@@ -92,12 +97,10 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
                 1,
                 1,
                 1,
-                bufferSource,
-                matrices,
                 LightCoordsUtil.FULL_BRIGHT,
                 false,
                 true
-            );
+            ).render(bufferSource, matrices);
             return;
         }
         world.blockState(blockState);

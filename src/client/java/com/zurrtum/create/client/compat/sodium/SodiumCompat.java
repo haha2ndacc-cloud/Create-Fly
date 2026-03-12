@@ -3,7 +3,6 @@ package com.zurrtum.create.client.compat.sodium;
 import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.client.AllFluidConfigs;
 import com.zurrtum.create.client.Create;
-import com.zurrtum.create.client.infrastructure.fluid.FluidConfig;
 import com.zurrtum.create.client.ponder.api.level.PonderLevel;
 import com.zurrtum.create.client.ponder.api.scene.Selection;
 import com.zurrtum.create.content.fluids.tank.FluidTankBlock;

@@ -15,6 +15,7 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.block.FluidStateModelSet;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
@@ -85,7 +86,11 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
 
         float from = 2 / 16f;
         float to = 1f - from;
-        FluidRenderHelper.renderFluidBox(
+        FluidStateModelSet fluidStateModelSet = mc.getModelManager().getFluidStateModelSet();
+        FluidRenderHelper.extractFluidRenderState(
+            null,
+            null,
+            fluidStateModelSet,
             element.fluid(),
             element.components(),
             from,
@@ -94,12 +99,10 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
             to,
             3 / 4f,
             to,
-            bufferSource,
-            matrices,
             LightCoordsUtil.FULL_BRIGHT,
             false,
             true
-        );
+        ).render(bufferSource, matrices);
 
         bufferSource.endBatch();
         matrices.popPose();

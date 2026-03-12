@@ -3,7 +3,6 @@ package com.zurrtum.create.client.compat.rei.renderer;
 import com.zurrtum.create.AllDataComponents;
 import com.zurrtum.create.AllFluids;
 import com.zurrtum.create.client.AllFluidConfigs;
-import com.zurrtum.create.client.infrastructure.fluid.FluidConfig;
 import com.zurrtum.create.content.fluids.potion.PotionFluidHandler;
 import com.zurrtum.create.infrastructure.component.BottleType;
 import dev.architectury.fluid.FluidStack;

@@ -1,9 +1,9 @@
 package com.zurrtum.create.client.content.fluids.drain;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
+import com.zurrtum.create.client.catnip.render.FluidRenderHelper.FluidRenderState;
 import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
 import com.zurrtum.create.content.fluids.drain.ItemDrainBlockEntity;
 import com.zurrtum.create.content.fluids.transfer.GenericItemEmptying;
@@ -13,23 +13,21 @@ import com.zurrtum.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankB
 import com.zurrtum.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour.TankSegment;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.FluidStateModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
@@ -38,9 +36,11 @@ import java.util.Random;
 
 public class ItemDrainRenderer implements BlockEntityRenderer<ItemDrainBlockEntity, ItemDrainRenderer.ItemDrainRenderState> {
     protected final ItemModelResolver itemModelManager;
+    protected final FluidStateModelSet fluidStateModelSet;
 
     public ItemDrainRenderer(BlockEntityRendererProvider.Context context) {
         itemModelManager = context.itemModelResolver();
+        fluidStateModelSet = context.blockModelResolver().modelManager.getFluidStateModelSet();
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ItemDrainRenderer implements BlockEntityRenderer<ItemDrainBlockEnti
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
         BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        updateFluidRenderState(be, state, tickProgress);
+        updateFluidRenderState(be, state, fluidStateModelSet, tickProgress);
         updateItemRenderState(be, state, itemModelManager, tickProgress);
     }
 
@@ -69,42 +69,53 @@ public class ItemDrainRenderer implements BlockEntityRenderer<ItemDrainBlockEnti
         CameraRenderState cameraState
     ) {
         if (state.process != null) {
-            queue.submitCustomGeometry(matrices, state.process.layer, state.process);
+            state.process.submit(queue, matrices);
         }
         if (state.item != null) {
             state.item.render(matrices, queue, cameraState.pos, state.lightCoords);
         }
         if (state.fluid != null) {
-            matrices.translate(0, state.fluid.offset, 0);
-            queue.submitCustomGeometry(matrices, state.fluid.layer, state.fluid);
+            matrices.translate(0, state.offset, 0);
+            state.fluid.submit(queue, matrices);
         }
     }
 
-    public static void updateFluidRenderState(ItemDrainBlockEntity be, ItemDrainRenderState state, float tickProgress) {
+    public static void updateFluidRenderState(
+        ItemDrainBlockEntity be,
+        ItemDrainRenderState state,
+        FluidStateModelSet fluidStateModelSet,
+        float tickProgress
+    ) {
         SmartFluidTankBehaviour tank = be.internalTank;
         if (tank == null) {
             return;
         }
         TankSegment primaryTank = tank.getPrimaryTank();
         FluidStack fluidStack = primaryTank.getRenderedFluid();
+        BlockAndTintGetter world = (BlockAndTintGetter) be.getLevel();
         if (!fluidStack.isEmpty()) {
             float level = primaryTank.getFluidLevel().getValue(tickProgress);
             if (level != 0) {
                 float yMax = 5f / 16f;
                 float min = 2f / 16f;
                 float max = min + (12 / 16f);
-                float yOffset = (7 / 16f) * level;
-                float yMin = yMax - yOffset;
-                state.fluid = new FluidRenderState(
-                    RenderTypes.translucentMovingBlock(),
+                state.offset = (7 / 16f) * level;
+                float yMin = yMax - state.offset;
+                state.fluid = FluidRenderHelper.extractFluidRenderState(
+                    world,
+                    state.blockPos,
+                    fluidStateModelSet,
                     fluidStack.getFluid(),
                     fluidStack.getComponentChanges(),
                     min,
-                    max,
                     yMin,
+                    min,
+                    max,
                     yMax,
-                    yOffset,
-                    state.lightCoords
+                    max,
+                    state.lightCoords,
+                    false,
+                    false
                 );
             }
         }
@@ -116,7 +127,7 @@ public class ItemDrainRenderer implements BlockEntityRenderer<ItemDrainBlockEnti
         if (processingTicks == -1) {
             return;
         }
-        FluidStack fluidStack2 = GenericItemEmptying.emptyItem(be.getLevel(), heldItemStack, true).getFirst();
+        FluidStack fluidStack2 = GenericItemEmptying.emptyItem(world, heldItemStack, true).getFirst();
         if (fluidStack2.isEmpty()) {
             if (fluidStack.isEmpty()) {
                 return;
@@ -128,12 +139,21 @@ public class ItemDrainRenderer implements BlockEntityRenderer<ItemDrainBlockEnti
         processingProgress = Mth.clamp(processingProgress, 0, 1);
         float radius = (float) (Math.pow(((2 * processingProgress) - 1), 2) - 1);
         AABB box = new AABB(0.5, 1.0, 0.5, 0.5, 0.25, 0.5).inflate(radius / 32f);
-        state.process = new ProcessRenderState(
-            RenderTypes.translucentMovingBlock(),
+        state.process = FluidRenderHelper.extractFluidRenderState(
+            world,
+            state.blockPos,
+            fluidStateModelSet,
             fluidStack2.getFluid(),
             fluidStack2.getComponentChanges(),
-            box,
-            state.lightCoords
+            (float) box.minX,
+            (float) box.minY,
+            (float) box.minZ,
+            (float) box.maxX,
+            (float) box.maxY,
+            (float) box.maxZ,
+            state.lightCoords,
+            true,
+            false
         );
     }
 
@@ -173,54 +193,10 @@ public class ItemDrainRenderer implements BlockEntityRenderer<ItemDrainBlockEnti
     }
 
     public static class ItemDrainRenderState extends BlockEntityRenderState {
+        public float offset;
         public @Nullable FluidRenderState fluid;
-        public @Nullable ProcessRenderState process;
+        public @Nullable FluidRenderState process;
         public @Nullable HeldItemRenderState item;
-    }
-
-    public record FluidRenderState(RenderType layer, Fluid fluid, DataComponentPatch changes, float min, float max,
-                                   float yMin, float yMax, float offset,
-                                   int light) implements SubmitNodeCollector.CustomGeometryRenderer {
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            FluidRenderHelper.renderFluidBox(
-                fluid,
-                changes,
-                min,
-                yMin,
-                min,
-                max,
-                yMax,
-                max,
-                vertexConsumer,
-                matricesEntry,
-                light,
-                false,
-                false
-            );
-        }
-    }
-
-    public record ProcessRenderState(RenderType layer, Fluid fluid, DataComponentPatch changes, AABB box,
-                                     int light) implements SubmitNodeCollector.CustomGeometryRenderer {
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            FluidRenderHelper.renderFluidBox(
-                fluid,
-                changes,
-                (float) box.minX,
-                (float) box.minY,
-                (float) box.minZ,
-                (float) box.maxX,
-                (float) box.maxY,
-                (float) box.maxZ,
-                vertexConsumer,
-                matricesEntry,
-                light,
-                true,
-                false
-            );
-        }
     }
 
     public static class HeldItemRenderState {

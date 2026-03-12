@@ -45,11 +45,6 @@ public class AllParticleTypes {
         FluidParticleData.BASIN_CODEC,
         FluidParticleData.BASIN_STREAM_CODEC
     );
-    public static final ParticleType<FluidParticleData> FLUID_DRIP = register(
-        "fluid_drip",
-        FluidParticleData.DRIP_CODEC,
-        FluidParticleData.DRIP_STREAM_CODEC
-    );
     public static final SimpleParticleType WIFI = register("wifi");
     public static final SimpleParticleType SOUL = register("soul");
     public static final SimpleParticleType SOUL_BASE = register("soul_base");

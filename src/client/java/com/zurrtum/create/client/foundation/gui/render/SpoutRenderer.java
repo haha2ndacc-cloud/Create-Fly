@@ -20,6 +20,7 @@ import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
+import net.minecraft.client.renderer.block.FluidStateModelSet;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
@@ -129,7 +130,11 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
             matrices.translate(0, -1.4f, 0);
             float from = 3f / 16f;
             float to = 17f / 16f;
-            FluidRenderHelper.renderFluidBox(
+            FluidStateModelSet fluidStateModelSet = mc.getModelManager().getFluidStateModelSet();
+            FluidRenderHelper.extractFluidRenderState(
+                null,
+                null,
+                fluidStateModelSet,
                 fluid,
                 components,
                 from,
@@ -138,12 +143,10 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
                 to,
                 to,
                 to,
-                bufferSource,
-                matrices,
                 LightCoordsUtil.FULL_BRIGHT,
                 false,
                 true
-            );
+            ).render(bufferSource, matrices);
             matrices.popPose();
 
             matrices.pushPose();
@@ -155,7 +158,10 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
             float fluidWidth = 1 / 128f * -squeeze * 16;
             from = -fluidWidth / 2 + 0.5f;
             to = fluidWidth / 2 + 0.5f;
-            FluidRenderHelper.renderFluidBox(
+            FluidRenderHelper.extractFluidRenderState(
+                null,
+                null,
+                fluidStateModelSet,
                 fluid,
                 components,
                 from,
@@ -164,12 +170,10 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
                 to,
                 2,
                 to,
-                bufferSource,
-                matrices,
                 LightCoordsUtil.FULL_BRIGHT,
                 false,
                 true
-            );
+            ).render(bufferSource, matrices);
             matrices.popPose();
         }
 
@@ -177,7 +181,8 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
         texture.clear();
         state.addBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-            TextureSetup.singleTexture(texture.textureView(),
+            TextureSetup.singleTexture(
+                texture.textureView(),
                 RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)
             ),
             item.pose(),

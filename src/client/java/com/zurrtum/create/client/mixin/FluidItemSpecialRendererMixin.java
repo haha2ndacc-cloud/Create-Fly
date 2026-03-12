@@ -7,7 +7,6 @@ import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.AllFluidConfigs;
-import com.zurrtum.create.client.infrastructure.fluid.FluidConfig;
 import com.zurrtum.create.infrastructure.fluids.FlowableFluid;
 import de.crafty.eiv.common.extra.FluidItemSpecialRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;

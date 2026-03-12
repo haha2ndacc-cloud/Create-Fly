@@ -59,7 +59,7 @@ public class FluidFX {
         }
         if (particle == null) {
             particle = new FluidParticleData(
-                AllParticleTypes.FLUID_DRIP,
+                AllParticleTypes.FLUID_PARTICLE,
                 fluid.getFluid(),
                 fluid.getComponentChanges()
             );

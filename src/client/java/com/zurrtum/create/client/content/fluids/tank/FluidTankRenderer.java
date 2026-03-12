@@ -6,10 +6,13 @@ import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
+import com.zurrtum.create.client.catnip.render.FluidRenderHelper.FluidRenderState;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
 import com.zurrtum.create.content.fluids.tank.FluidTankBlockEntity;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.FluidStateModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -17,14 +20,16 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverl
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.Nullable;
 
 public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEntity, FluidTankRenderer.FluidTankRenderState> {
+    protected final FluidStateModelSet fluidStateModelSet;
+
     public FluidTankRenderer(BlockEntityRendererProvider.Context context) {
+        fluidStateModelSet = context.blockModelResolver().modelManager.getFluidStateModelSet();
     }
 
     @Override
@@ -72,14 +77,8 @@ public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEnti
             return;
         }
         BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        state.layer = RenderTypes.translucentMovingBlock();
-        FluidTankRenderData data = new FluidTankRenderData();
-        state.data = data;
         float clampedLevel = Mth.clamp(level * totalHeight, 0, totalHeight);
-        data.translateY = clampedLevel - totalHeight;
-        data.light = state.lightCoords;
-        data.fluid = fluidStack.getFluid();
-        data.changes = fluidStack.getComponentChanges();
+        state.translate = clampedLevel - totalHeight;
 
         //TODO
         boolean top = false;//fluidStack.getFluid()
@@ -87,19 +86,34 @@ public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEnti
         //            .isLighterThanAir();
 
         int width = be.getWidth();
-        float tankHullWidth = 1 / 16f + 1 / 128f;
-        data.xMin = tankHullWidth;
-        data.xMax = data.xMin + width - 2 * tankHullWidth;
-        data.yMin = totalHeight + capHeight + minPuddleHeight - clampedLevel;
-        data.yMax = data.yMin + clampedLevel;
+        float xMin = 1 / 16f + 1 / 128f;
+        float xMax = xMin + width - 2 * xMin;
+        float yMin = totalHeight + capHeight + minPuddleHeight - clampedLevel;
+        float yMax = yMin + clampedLevel;
 
         if (top) {
-            data.yMin += totalHeight - clampedLevel;
-            data.yMax += totalHeight - clampedLevel;
+            yMin += totalHeight - clampedLevel;
+            yMax += totalHeight - clampedLevel;
         }
 
-        data.zMin = tankHullWidth;
-        data.zMax = data.zMin + width - 2 * tankHullWidth;
+        float zMax = xMin + width - 2 * xMin;
+        BlockAndTintGetter world = (BlockAndTintGetter) be.getLevel();
+        state.fluid = FluidRenderHelper.extractFluidRenderState(
+            world,
+            state.blockPos,
+            fluidStateModelSet,
+            fluidStack.getFluid(),
+            fluidStack.getComponentChanges(),
+            xMin,
+            yMin,
+            xMin,
+            xMax,
+            yMax,
+            zMax,
+            state.lightCoords,
+            false,
+            true
+        );
     }
 
     public void updateBoilerState(
@@ -113,12 +127,12 @@ public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEnti
             return;
         }
         BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        state.layer = RenderTypes.cutoutMovingBlock();
-        BoilerRenderData data = new BoilerRenderData();
-        state.data = data;
-        data.translateXZ = be.getWidth() / 2f;
+        state.translate = be.getWidth() / 2f;
+        BoilerRenderState data = new BoilerRenderState();
+        state.boiler = data;
+        data.layer = RenderTypes.cutoutMovingBlock();
         data.light = state.lightCoords;
-        data.translateX = data.translateXZ - 6 / 16f;
+        data.translateX = state.translate - 6 / 16f;
         data.dialPivotY = 6f / 16;
         data.dialPivotZ = 8f / 16;
         data.progress = -145 * be.boiler.gauge.getValue(tickProgress) + 90;
@@ -137,9 +151,11 @@ public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEnti
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        if (state.data != null) {
-            state.data.translate(matrices);
-            queue.submitCustomGeometry(matrices, state.layer, state.data);
+        if (state.fluid != null) {
+            matrices.translate(0, state.translate, 0);
+            state.fluid.submit(queue, matrices);
+        } else if (state.boiler != null) {
+            state.boiler.submit(queue, matrices, state.translate);
         }
     }
 
@@ -151,54 +167,23 @@ public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEnti
     }
 
     public static class FluidTankRenderState extends BlockEntityRenderState {
+        public float translate;
+        public @Nullable FluidRenderState fluid;
+        public @Nullable BoilerRenderState boiler;
+    }
+
+    public static class BoilerRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
+        @UnknownNullability
         public RenderType layer;
-        public @Nullable RenderData data;
-    }
-
-    public interface RenderData extends SubmitNodeCollector.CustomGeometryRenderer {
-        void translate(PoseStack matrices);
-    }
-
-    public static class FluidTankRenderData implements RenderData {
-        public Fluid fluid;
-        public DataComponentPatch changes;
-        public float xMin, xMax, yMin, yMax, zMin, zMax, translateY;
-        public int light;
-
-        @Override
-        public void translate(PoseStack matrices) {
-            matrices.translate(0, translateY, 0);
-        }
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            FluidRenderHelper.renderFluidBox(
-                fluid,
-                changes,
-                xMin,
-                yMin,
-                zMin,
-                xMax,
-                yMax,
-                zMax,
-                vertexConsumer,
-                matricesEntry,
-                light,
-                false,
-                true
-            );
-        }
-    }
-
-    public static class BoilerRenderData implements RenderData {
-        public float translateX, dialPivotY, dialPivotZ, progress, translateXZ;
+        @UnknownNullability
         public SuperByteBuffer gauge, gaugeDial;
+        public float translateX, dialPivotY, dialPivotZ, progress;
         public boolean south, west, north, east;
         public int light;
 
-        @Override
-        public void translate(PoseStack matrices) {
-            matrices.translate(translateXZ, 0.5, translateXZ);
+        public void submit(SubmitNodeCollector queue, PoseStack poseStack, float translate) {
+            poseStack.translate(translate, 0.5, translate);
+            queue.submitCustomGeometry(poseStack, layer, this);
         }
 
         public void render(int yRot, PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {

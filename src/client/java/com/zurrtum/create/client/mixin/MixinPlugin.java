@@ -42,12 +42,6 @@ public class MixinPlugin implements IMixinConfigPlugin {
 //            mixins.add("BlockRenderInfoMixin");
 //            mixins.add("AbstractTerrainRenderContextMixin");
 //        }
-        if (loader.isModLoaded("fabric-rendering-fluids-v1")) {
-            mixins.add("WaterRenderHandlerMixin");
-        }
-        if (loader.isModLoaded("fabric-transfer-api-v1")) {
-            mixins.add("FluidVariantRenderHandlerMixin");
-        }
         if (loader.isModLoaded("fabric-model-loading-api-v1")) {
 //            mixins.add("WrapperBlockStateModelMixin");
         } else {
