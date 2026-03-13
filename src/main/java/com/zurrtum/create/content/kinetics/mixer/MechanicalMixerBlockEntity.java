@@ -142,8 +142,8 @@ public class MechanicalMixerBlockEntity extends BasinOperatingBlockEntity {
 
             if ((!level.isClientSide() || isVirtual()) && runningTicks == 20) {
                 if (processingTicks < 0) {
-                    float recipeSpeed = currentRecipe instanceof TimedRecipe recipe ? recipe.time() * 0.15f : 15;
-                    processingTicks = Mth.clamp(Mth.log2((int) (512 / speed)) * Mth.ceil(recipeSpeed) + 1, 1, 512);
+                    double recipeSpeed = currentRecipe instanceof TimedRecipe recipe ? recipe.time() * 0.15 : 15;
+                    processingTicks = Mth.log2((int) (512 / speed)) * Mth.ceil(recipeSpeed) + 1;
                     getBasin().ifPresent(basin -> {
                         Couple<SmartFluidTankBehaviour> tanks = basin.getTanks();
                         if (!tanks.getFirst().isEmpty() || !tanks.getSecond().isEmpty()) {
