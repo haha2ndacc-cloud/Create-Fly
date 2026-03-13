@@ -1,6 +1,5 @@
 package com.zurrtum.create.client.compat.eiv;
 
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.content.logistics.stockTicker.CraftableBigItemStack;
 import com.zurrtum.create.client.content.logistics.stockTicker.CraftableInput;
 import com.zurrtum.create.client.content.logistics.stockTicker.StockKeeperRequestScreen;
@@ -11,6 +10,7 @@ import de.crafty.eiv.common.api.recipe.IEivViewRecipe;
 import de.crafty.eiv.common.recipe.inventory.SlotContent;
 import de.crafty.eiv.common.recipe.item.FluidItem;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -137,7 +137,7 @@ public class StockKeeperTransferHandler implements RecipeTransferHandler {
             screen.recipesToOrder.add(cbis);
             screen.searchBox.setValue("");
             screen.refreshSearchNextTick = true;
-            screen.requestCraftable(cbis, AllKeys.hasShiftDown() ? cbis.stack.getMaxStackSize() : 1);
+            screen.requestCraftable(cbis, Minecraft.getInstance().hasShiftDown() ? cbis.stack.getMaxStackSize() : 1);
         }
         button.setSuccess();
         return true;

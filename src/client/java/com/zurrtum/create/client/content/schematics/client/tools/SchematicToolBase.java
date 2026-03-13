@@ -2,7 +2,6 @@ package com.zurrtum.create.client.content.schematics.client.tools;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.catnip.math.VecHelper;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.AllSpecialTextures;
 import com.zurrtum.create.client.Create;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
@@ -136,7 +135,7 @@ public abstract class SchematicToolBase implements ISchematicTool {
         if (renderSelectedFace) {
             outline.getParams().highlightFace(selectedFace).withFaceTextures(
                 AllSpecialTextures.CHECKERED,
-                AllKeys.hasControlDown() ? AllSpecialTextures.HIGHLIGHT_CHECKERED : AllSpecialTextures.CHECKERED
+                mc.hasControlDown() ? AllSpecialTextures.HIGHLIGHT_CHECKERED : AllSpecialTextures.CHECKERED
             );
         }
         outline.getParams().colored(0x6886c5).withFaceTexture(AllSpecialTextures.CHECKERED).lineWidth(1 / 16f);

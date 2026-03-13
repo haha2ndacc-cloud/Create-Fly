@@ -1,7 +1,6 @@
 package com.zurrtum.create.client.foundation.blockEntity.behaviour.scrollValue;
 
 import com.google.common.collect.ImmutableList;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.content.contraptions.chassis.ChassisRangeDisplay;
 import com.zurrtum.create.client.foundation.blockEntity.ValueSettingsBoard;
 import com.zurrtum.create.client.foundation.blockEntity.ValueSettingsFormatter;
@@ -12,6 +11,7 @@ import com.zurrtum.create.content.contraptions.chassis.RadialChassisBlock;
 import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
 import com.zurrtum.create.foundation.blockEntity.behaviour.ValueSettings;
 import com.zurrtum.create.foundation.blockEntity.behaviour.scrollValue.ServerBulkScrollValueBehaviour;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
@@ -40,15 +40,16 @@ public class ChassisScrollValueBehaviour extends ScrollValueBehaviour<ChassisBlo
 
     @Override
     public void newSettingHovered(ValueSettings valueSetting) {
-        if (!AllKeys.hasControlDown()) {
-            blockEntity.currentlySelectedRange = valueSetting.value() + 1;
-        } else {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.hasControlDown()) {
             for (SmartBlockEntity be : behaviour.getBulk()) {
                 if (be instanceof ChassisBlockEntity cbe) {
                     cbe.currentlySelectedRange = valueSetting.value() + 1;
                 }
             }
+        } else {
+            blockEntity.currentlySelectedRange = valueSetting.value() + 1;
         }
-        ChassisRangeDisplay.display(blockEntity);
+        ChassisRangeDisplay.display(blockEntity, mc.hasControlDown());
     }
 }

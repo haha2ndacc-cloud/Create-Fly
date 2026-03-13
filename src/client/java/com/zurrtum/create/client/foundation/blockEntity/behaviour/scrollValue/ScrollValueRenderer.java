@@ -1,7 +1,6 @@
 package com.zurrtum.create.client.foundation.blockEntity.behaviour.scrollValue;
 
 import com.zurrtum.create.AllItems;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.Create;
 import com.zurrtum.create.client.catnip.outliner.Outliner;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.ValueBox;
@@ -61,7 +60,7 @@ public class ScrollValueRenderer {
         }
         boolean highlight = behaviour.testHit(target.getLocation()) && !clipboard;
 
-        if (AllKeys.hasControlDown()) {
+        if (mc.hasControlDown()) {
             List<? extends SmartBlockEntity> bulks = behaviour.getBulk();
             if (bulks != null) {
                 for (SmartBlockEntity smartBlockEntity : bulks) {

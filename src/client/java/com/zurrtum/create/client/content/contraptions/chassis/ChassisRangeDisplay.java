@@ -2,7 +2,6 @@ package com.zurrtum.create.client.content.contraptions.chassis;
 
 import com.mojang.datafixers.util.Pair;
 import com.zurrtum.create.AllItems;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.AllSpecialTextures;
 import com.zurrtum.create.client.catnip.outliner.Outliner;
 import com.zurrtum.create.content.contraptions.chassis.ChassisBlockEntity;
@@ -122,7 +121,7 @@ public class ChassisRangeDisplay {
             return;
         }
 
-        boolean ctrl = AllKeys.hasControlDown();
+        boolean ctrl = mc.hasControlDown();
 
         if (ctrl) {
             GroupEntry existingGroupForPos = getExistingGroupForPos(pos);
@@ -136,7 +135,7 @@ public class ChassisRangeDisplay {
         }
 
         if (!entries.containsKey(pos) || ctrl) {
-            display(chassisBlockEntity);
+            display(chassisBlockEntity, ctrl);
         } else {
             entries.get(pos).timer = DISPLAY_TIME;
         }
@@ -159,10 +158,10 @@ public class ChassisRangeDisplay {
         return entry.timer == 0;
     }
 
-    public static void display(ChassisBlockEntity chassis) {
+    public static void display(ChassisBlockEntity chassis, boolean ctrl) {
 
         // Display a group and kill any selections of its contained chassis blocks
-        if (AllKeys.hasControlDown()) {
+        if (ctrl) {
             GroupEntry hoveredGroup = new GroupEntry(chassis);
 
             for (ChassisBlockEntity included : hoveredGroup.includedBEs) {

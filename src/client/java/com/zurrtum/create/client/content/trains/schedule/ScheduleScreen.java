@@ -7,7 +7,6 @@ import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.catnip.animation.LerpedFloat.Chaser;
 import com.zurrtum.create.catnip.data.IntAttached;
 import com.zurrtum.create.catnip.data.Pair;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.AllScheduleRenders;
 import com.zurrtum.create.client.Create;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
@@ -1112,7 +1111,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
             )).isPresent();
         }
 
-        if (AllKeys.hasShiftDown()) {
+        if (minecraft.hasShiftDown()) {
             List<ScheduleEntry> entries = schedule.entries;
             int y = (int) (pMouseY - this.topPos - 25 + scroll.getValue());
             for (int i = 0; i < entries.size(); i++) {

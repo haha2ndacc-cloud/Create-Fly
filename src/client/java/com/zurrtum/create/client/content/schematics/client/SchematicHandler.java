@@ -328,7 +328,7 @@ public class SchematicHandler {
         return true;
     }
 
-    public boolean mouseScrolled(double delta) {
+    public boolean mouseScrolled(Minecraft mc, double delta) {
         if (!active) {
             return false;
         }
@@ -337,7 +337,7 @@ public class SchematicHandler {
             selectionScreen.cycle((int) Math.signum(delta));
             return true;
         }
-        if (AllKeys.hasControlDown()) {
+        if (mc.hasControlDown()) {
             return currentTool.getTool().handleMouseWheel(delta);
         }
         return false;

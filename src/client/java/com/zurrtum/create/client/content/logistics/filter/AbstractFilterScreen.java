@@ -2,7 +2,6 @@ package com.zurrtum.create.client.content.logistics.filter;
 
 import com.google.common.collect.ImmutableList;
 import com.zurrtum.create.AllPackets;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.catnip.gui.element.GuiGameElement;
 import com.zurrtum.create.client.catnip.gui.widget.ElementWidget;
 import com.zurrtum.create.client.catnip.lang.FontHelper.Palette;
@@ -129,14 +128,15 @@ public abstract class AbstractFilterScreen<F extends AbstractFilterMenu> extends
     protected void handleTooltips() {
         List<IconButton> tooltipButtons = getTooltipButtons();
 
+        boolean hasShift = minecraft.hasShiftDown();
         for (IconButton button : tooltipButtons) {
             if (!button.getToolTip().isEmpty()) {
                 button.setToolTip(button.getToolTip().getFirst());
-                button.getToolTip().add(TooltipHelper.holdShift(Palette.YELLOW, AllKeys.hasShiftDown()));
+                button.getToolTip().add(TooltipHelper.holdShift(Palette.YELLOW, hasShift));
             }
         }
 
-        if (AllKeys.hasShiftDown()) {
+        if (hasShift) {
             List<MutableComponent> tooltipDescriptions = getTooltipDescriptions();
             for (int i = 0; i < tooltipButtons.size(); i++) {
                 fillToolTip(tooltipButtons.get(i), tooltipDescriptions.get(i));

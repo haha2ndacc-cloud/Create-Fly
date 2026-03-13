@@ -1,8 +1,8 @@
 package com.zurrtum.create.client.content.trains.graph;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.zurrtum.create.catnip.data.Pair;
 import com.zurrtum.create.catnip.theme.Color;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.Create;
 import com.zurrtum.create.client.catnip.outliner.Outliner;
 import com.zurrtum.create.content.trains.graph.*;
@@ -276,7 +276,10 @@ public class TrackGraphVisualizer {
                         .colored(Color.mixColors(Color.WHITE, graph.color, 1)).lineWidth(1 / 4f);
                     continue;
                 }
-                if (other.hashCode() > hashCode && !AllKeys.isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL)) {
+                if (other.hashCode() > hashCode && !InputConstants.isKeyDown(
+                    mc.getWindow(),
+                    GLFW.GLFW_KEY_LEFT_CONTROL
+                )) {
                     continue;
                 }
 

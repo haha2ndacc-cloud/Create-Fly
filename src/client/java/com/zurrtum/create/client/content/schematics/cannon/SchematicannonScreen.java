@@ -2,7 +2,6 @@ package com.zurrtum.create.client.content.schematics.cannon;
 
 import com.google.common.collect.ImmutableList;
 import com.zurrtum.create.AllItems;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.catnip.gui.element.GuiGameElement;
 import com.zurrtum.create.client.catnip.gui.widget.ElementWidget;
 import com.zurrtum.create.client.catnip.lang.FontHelper.Palette;
@@ -291,7 +290,7 @@ public class SchematicannonScreen extends AbstractSimiContainerScreen<Schematica
             return;
         }
 
-        boolean hasShiftDown = AllKeys.hasShiftDown();
+        boolean hasShiftDown = minecraft.hasShiftDown();
         for (AbstractWidget w : placementSettingWidgets) {
             if (w instanceof IconButton button) {
                 if (!button.getToolTip().isEmpty()) {

@@ -6,7 +6,6 @@ import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.client.catnip.placement.PlacementClient;
 import com.zurrtum.create.client.content.contraptions.actors.trainControls.ControlsHandler;
 import com.zurrtum.create.client.foundation.gui.AllGuiTextures;
-import com.zurrtum.create.client.foundation.utility.ControlsUtil;
 import com.zurrtum.create.content.contraptions.actors.trainControls.ControlsBlock;
 import com.zurrtum.create.content.trains.entity.Carriage;
 import com.zurrtum.create.content.trains.entity.CarriageContraptionEntity;
@@ -18,6 +17,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -67,19 +67,20 @@ public class TrainHUD {
         displayedThrottle.chase(editedThrottle != null ? editedThrottle : train.throttle, .75f, Chaser.EXP);
         displayedThrottle.tickChaser();
 
-        boolean isSprintKeyPressed = ControlsUtil.isActuallyPressed(mc.options.keySprint);
+        LocalPlayer player = mc.player;
+        boolean isSprintKeyPressed = player.input.keyPresses.sprint();
 
         if (isSprintKeyPressed && honkPacketCooldown-- <= 0) {
             train.determineHonk(mc.level);
             if (train.lowHonk != null) {
-                mc.player.connection.send(new HonkPacket(train, true));
+                player.connection.send(new HonkPacket(train, true));
                 honkPacketCooldown = 5;
                 usedToHonk = true;
             }
         }
 
         if (!isSprintKeyPressed && usedToHonk) {
-            mc.player.connection.send(new HonkPacket(train, false));
+            player.connection.send(new HonkPacket(train, false));
             honkPacketCooldown = 0;
             usedToHonk = false;
         }
@@ -94,7 +95,7 @@ public class TrainHUD {
         }
 
         if (hudPacketCooldown-- <= 0) {
-            mc.player.connection.send(new TrainHUDUpdatePacket(train, editedThrottle));
+            player.connection.send(new TrainHUDUpdatePacket(train, editedThrottle));
             hudPacketCooldown = 5;
         }
     }

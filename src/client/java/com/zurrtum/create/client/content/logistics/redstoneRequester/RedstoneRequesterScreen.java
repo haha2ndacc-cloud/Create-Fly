@@ -1,7 +1,6 @@
 package com.zurrtum.create.client.content.logistics.redstoneRequester;
 
 import com.zurrtum.create.AllItems;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.catnip.gui.element.GuiGameElement;
 import com.zurrtum.create.client.catnip.gui.widget.ElementWidget;
 import com.zurrtum.create.client.content.logistics.AddressEditBox;
@@ -203,7 +202,11 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
                 }
                 amounts.set(
                     i,
-                    Mth.clamp((int) (amounts.get(i) + Math.signum(scrollY) * (AllKeys.hasShiftDown() ? 10 : 1)), 1, 256)
+                    Mth.clamp(
+                        (int) (amounts.get(i) + Math.signum(scrollY) * (minecraft.hasShiftDown() ? 10 : 1)),
+                        1,
+                        256
+                    )
                 );
                 return true;
             }

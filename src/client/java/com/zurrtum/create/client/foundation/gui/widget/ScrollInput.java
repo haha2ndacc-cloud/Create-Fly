@@ -1,7 +1,6 @@
 package com.zurrtum.create.client.foundation.gui.widget;
 
 import com.zurrtum.create.AllSoundEvents;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.catnip.gui.widget.AbstractSimiWidget;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour.StepContext;
 import com.zurrtum.create.client.foundation.utility.CreateLang;
@@ -132,8 +131,9 @@ public class ScrollInput extends AbstractSimiWidget {
         }
 
         StepContext context = new StepContext();
-        context.control = AllKeys.hasControlDown();
-        context.shift = AllKeys.hasShiftDown();
+        Minecraft mc = Minecraft.getInstance();
+        context.control = mc.hasControlDown();
+        context.shift = mc.hasShiftDown();
         context.currentValue = state;
         context.forward = pScrollY > 0;
 
@@ -150,11 +150,10 @@ public class ScrollInput extends AbstractSimiWidget {
 
         if (priorState != state) {
             if (!soundPlayed) {
-                Minecraft.getInstance().getSoundManager()
-                    .play(SimpleSoundInstance.forUI(
-                        AllSoundEvents.SCROLL_VALUE.getMainEvent(),
-                        1.5f + 0.1f * (state - min) / (max - min)
-                    ));
+                mc.getSoundManager().play(SimpleSoundInstance.forUI(
+                    AllSoundEvents.SCROLL_VALUE.getMainEvent(),
+                    1.5f + 0.1f * (state - min) / (max - min)
+                ));
             }
             soundPlayed = true;
             onChanged();

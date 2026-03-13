@@ -243,7 +243,7 @@ public abstract class MinecraftMixin {
             ci.cancel();
         }
         if (hand == InteractionHand.MAIN_HAND) {
-            LinkedControllerClientHandler.deactivateInLectern(player);
+            LinkedControllerClientHandler.deactivateInLectern(mc, player);
         }
     }
 

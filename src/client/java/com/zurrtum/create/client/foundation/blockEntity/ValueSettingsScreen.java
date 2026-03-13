@@ -2,7 +2,6 @@ package com.zurrtum.create.client.foundation.blockEntity;
 
 import com.mojang.blaze3d.platform.Window;
 import com.zurrtum.create.AllSoundEvents;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.catnip.gui.AbstractSimiScreen;
 import com.zurrtum.create.client.catnip.gui.UIRenderHelper;
 import com.zurrtum.create.client.foundation.blockEntity.ValueSettingsFormatter.ScrollOptionSettingsFormatter;
@@ -93,7 +92,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
     public ValueSettings getClosestCoordinate(int mouseX, int mouseY) {
         int row = 0;
         int column = 0;
-        boolean milestonesOnly = AllKeys.hasShiftDown();
+        boolean milestonesOnly = minecraft.hasShiftDown();
 
         double bestDiff = Double.MAX_VALUE;
         for (; row < board.rows().size(); row++) {
@@ -350,7 +349,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
     @Override
     public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY) {
         ValueSettings closest = getClosestCoordinate((int) pMouseX, (int) pMouseY);
-        int column = closest.value() + ((int) Math.signum(pScrollY)) * (AllKeys.hasShiftDown() ? board.milestoneInterval() : 1);
+        int column = closest.value() + ((int) Math.signum(pScrollY)) * (minecraft.hasShiftDown() ? board.milestoneInterval() : 1);
         column = Mth.clamp(column, 0, board.maxValue());
         if (column == closest.value()) {
             return false;
@@ -389,7 +388,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
             null,
             null,
             Direction.UP,
-            AllKeys.hasControlDown(),
+            minecraft.hasControlDown(),
             netId
         ));
         onClose();

@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.zurrtum.create.AllItems;
 import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.catnip.animation.LerpedFloat.Chaser;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.gui.element.GuiGameElement;
 import com.zurrtum.create.client.catnip.gui.widget.ElementWidget;
@@ -362,7 +361,10 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
                     );
                     if (click == 0) {
                         entries.remove(entry);
-                        entries.add((input != null ? input.hasShiftDown() : AllKeys.hasShiftDown()) ? 0 : i - 1, entry);
+                        entries.add(
+                            (input != null ? input.hasShiftDown() : minecraft.hasShiftDown()) ? 0 : i - 1,
+                            entry
+                        );
                         renderedItem.getRenderElement().clear();
                         init();
                     }
@@ -379,7 +381,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
                     if (click == 0) {
                         entries.remove(entry);
                         entries.add(
-                            (input != null ? input.hasShiftDown() : AllKeys.hasShiftDown()) ? entries.size() : i + 1,
+                            (input != null ? input.hasShiftDown() : minecraft.hasShiftDown()) ? entries.size() : i + 1,
                             entry
                         );
                         renderedItem.getRenderElement().clear();

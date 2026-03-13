@@ -41,7 +41,10 @@ public class MouseHandlerMixin {
         CallbackInfo ci,
         @Local(ordinal = 4) double delta
     ) {
-        if (Create.SCHEMATIC_HANDLER.mouseScrolled(delta) || Create.SCHEMATIC_AND_QUILL_HANDLER.mouseScrolled(
+        if (Create.SCHEMATIC_HANDLER.mouseScrolled(
+            minecraft,
+            delta
+        ) || Create.SCHEMATIC_AND_QUILL_HANDLER.mouseScrolled(
             minecraft,
             delta
         ) || TrainHUD.onScroll(delta) || ElevatorControlsHandler.onScroll(minecraft, delta)) {

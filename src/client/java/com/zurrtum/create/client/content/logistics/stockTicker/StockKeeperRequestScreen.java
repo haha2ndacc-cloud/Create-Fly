@@ -10,7 +10,6 @@ import com.zurrtum.create.catnip.data.Couple;
 import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.catnip.data.Pair;
 import com.zurrtum.create.catnip.theme.Color;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.gui.UIRenderHelper;
 import com.zurrtum.create.client.content.logistics.AddressEditBox;
@@ -1348,7 +1347,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         if (noHover && mouseX < leftPos || mouseX > leftPos + imageWidth) {
             return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
         }
-        if (noHover || hoveredSlot.getFirst() >= 0 && !AllKeys.hasShiftDown() && getMaxScroll() != 0) {
+        Minecraft mc = Minecraft.getInstance();
+        if (noHover || hoveredSlot.getFirst() >= 0 && !mc.hasShiftDown() && getMaxScroll() != 0) {
             int maxScroll = getMaxScroll();
             int direction = (int) (Math.ceil(Math.abs(scrollY)) * -Math.signum(scrollY));
             float newTarget = Mth.clamp(Math.round(itemScroll.getChaseTarget() + direction), 0, maxScroll);
@@ -1362,7 +1362,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             hoveredSlot.getSecond()) : displayedItems.get(hoveredSlot.getFirst()).get(hoveredSlot.getSecond());
 
         boolean remove = scrollY < 0;
-        int transfer = Mth.ceil(Math.abs(scrollY)) * (AllKeys.hasControlDown() ? 10 : 1);
+        int transfer = Mth.ceil(Math.abs(scrollY)) * (mc.hasControlDown() ? 10 : 1);
 
         if (recipeClicked && entry instanceof CraftableBigItemStack cbis) {
             requestCraftable(cbis, remove ? -transfer : transfer);

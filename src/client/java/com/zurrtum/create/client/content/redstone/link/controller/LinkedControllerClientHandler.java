@@ -46,23 +46,25 @@ public class LinkedControllerClientHandler {
     private static BlockPos selectedLocation = BlockPos.ZERO;
     private static int packetCooldown;
 
-    public static void toggleBindMode(LocalPlayer player, BlockPos location) {
+    public static void toggleBindMode(BlockPos location) {
         if (MODE == Mode.IDLE) {
             MODE = Mode.BIND;
             selectedLocation = location;
         } else {
             MODE = Mode.IDLE;
-            onReset(player);
+            Minecraft mc = Minecraft.getInstance();
+            onReset(mc, mc.player);
         }
     }
 
-    public static void toggle(LocalPlayer player) {
+    public static void toggle() {
         if (MODE == Mode.IDLE) {
             MODE = Mode.ACTIVE;
             lecternPos = null;
         } else {
             MODE = Mode.IDLE;
-            onReset(player);
+            Minecraft mc = Minecraft.getInstance();
+            onReset(mc, mc.player);
         }
     }
 
@@ -73,10 +75,10 @@ public class LinkedControllerClientHandler {
         }
     }
 
-    public static boolean deactivateInLectern(LocalPlayer player) {
+    public static boolean deactivateInLectern(Minecraft mc, LocalPlayer player) {
         if (MODE == Mode.ACTIVE && inLectern()) {
             MODE = Mode.IDLE;
-            onReset(player);
+            onReset(mc, player);
             return true;
         }
         return false;
@@ -86,8 +88,8 @@ public class LinkedControllerClientHandler {
         return lecternPos != null;
     }
 
-    protected static void onReset(LocalPlayer player) {
-        ControlsUtil.getControls().forEach(kb -> kb.setDown(ControlsUtil.isActuallyPressed(kb)));
+    protected static void onReset(Minecraft mc, LocalPlayer player) {
+        ControlsUtil.getControls().forEach(kb -> kb.setDown(ControlsUtil.isActuallyPressed(mc, kb)));
         packetCooldown = 0;
         selectedLocation = BlockPos.ZERO;
 
@@ -135,14 +137,14 @@ public class LinkedControllerClientHandler {
 
         if (player.isSpectator()) {
             MODE = Mode.IDLE;
-            onReset(player);
+            onReset(mc, player);
             return;
         }
 
         if (inLectern()) {
             if (AllBlocks.LECTERN_CONTROLLER.getBlockEntityOptional(world, lecternPos)
                 .map(be -> !be.isUsedBy(mc.player)).orElse(true)) {
-                deactivateInLectern(player);
+                deactivateInLectern(mc, player);
                 return;
             }
         } else {
@@ -154,7 +156,7 @@ public class LinkedControllerClientHandler {
                     hand = InteractionHand.OFF_HAND;
                 } else {
                     MODE = Mode.IDLE;
-                    onReset(player);
+                    onReset(mc, player);
                     return;
                 }
             }
@@ -162,14 +164,14 @@ public class LinkedControllerClientHandler {
 
         if (mc.screen != null || InputConstants.isKeyDown(mc.getWindow(), GLFW.GLFW_KEY_ESCAPE)) {
             MODE = Mode.IDLE;
-            onReset(player);
+            onReset(mc, player);
             return;
         }
 
         List<KeyMapping> controls = ControlsUtil.getControls();
         Collection<Integer> pressedKeys = new HashSet<>();
         for (int i = 0; i < controls.size(); i++) {
-            if (ControlsUtil.isActuallyPressed(controls.get(i))) {
+            if (ControlsUtil.isActuallyPressed(mc, controls.get(i))) {
                 pressedKeys.add(i);
             }
         }

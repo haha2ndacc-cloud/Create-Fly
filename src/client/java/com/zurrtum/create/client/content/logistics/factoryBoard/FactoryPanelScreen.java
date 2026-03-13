@@ -1,7 +1,6 @@
 package com.zurrtum.create.client.content.logistics.factoryBoard;
 
 import com.zurrtum.create.AllItems;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.catnip.gui.AbstractSimiScreen;
 import com.zurrtum.create.client.catnip.gui.element.GuiGameElement;
 import com.zurrtum.create.client.catnip.gui.widget.ElementWidget;
@@ -546,7 +545,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
                     return true;
                 }
                 itemStack.count = Mth.clamp(
-                    (int) (itemStack.count + Math.signum(scrollY) * (AllKeys.hasShiftDown() ? 10 : 1)),
+                    (int) (itemStack.count + Math.signum(scrollY) * (minecraft.hasShiftDown() ? 10 : 1)),
                     1,
                     64
                 );
@@ -560,7 +559,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
             if (mouseX >= outputX && mouseX < outputX + 16 && mouseY >= outputY && mouseY < outputY + 16) {
                 BigItemStack itemStack = outputConfig;
                 itemStack.count = Mth.clamp(
-                    (int) (itemStack.count + Math.signum(scrollY) * (AllKeys.hasShiftDown() ? 10 : 1)),
+                    (int) (itemStack.count + Math.signum(scrollY) * (minecraft.hasShiftDown() ? 10 : 1)),
                     1,
                     64
                 );

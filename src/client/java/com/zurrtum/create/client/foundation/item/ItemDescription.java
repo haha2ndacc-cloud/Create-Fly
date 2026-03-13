@@ -1,7 +1,6 @@
 package com.zurrtum.create.client.foundation.item;
 
 import com.google.common.collect.ImmutableList;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.catnip.lang.FontHelper.Palette;
 import com.zurrtum.create.client.foundation.utility.CreateLang;
 import net.minecraft.client.Minecraft;
@@ -92,9 +91,10 @@ public record ItemDescription(ImmutableList<Component> lines, ImmutableList<Comp
     }
 
     public ImmutableList<Component> getCurrentLines() {
-        if (AllKeys.hasShiftDown()) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.hasShiftDown()) {
             return linesOnShift;
-        } else if (AllKeys.hasControlDown()) {
+        } else if (mc.hasControlDown()) {
             return linesOnCtrl;
         } else {
             return lines;

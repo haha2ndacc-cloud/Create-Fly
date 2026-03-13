@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.zurrtum.create.AllItems;
 import com.zurrtum.create.Create;
 import com.zurrtum.create.catnip.math.VecHelper;
-import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.AllSpecialTextures;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.gui.ScreenOpener;
@@ -52,7 +51,7 @@ public class SchematicAndQuillHandler {
         if (!isActive(mc)) {
             return false;
         }
-        if (!AllKeys.hasControlDown()) {
+        if (!mc.hasControlDown()) {
             return false;
         }
         if (secondPos == null) {

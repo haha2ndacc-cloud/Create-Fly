@@ -48,10 +48,11 @@ public class ControlsHandler {
         ));
     }
 
-    public static void stopControlling(LocalPlayer player) {
-        ControlsUtil.getControls().forEach(kb -> kb.setDown(ControlsUtil.isActuallyPressed(kb)));
+    public static void stopControlling(Minecraft mc) {
+        ControlsUtil.getControls().forEach(kb -> kb.setDown(ControlsUtil.isActuallyPressed(mc, kb)));
         AbstractContraptionEntity abstractContraptionEntity = entityRef.get();
 
+        LocalPlayer player = mc.player;
         if (!currentlyPressed.isEmpty() && abstractContraptionEntity != null && controlsPos != null) {
             player.connection.send(new ControlsInputPacket(
                 currentlyPressed,
@@ -84,7 +85,7 @@ public class ControlsHandler {
             GLFW.GLFW_KEY_ESCAPE
         ))) {
             BlockPos pos = controlsPos;
-            stopControlling(mc.player);
+            stopControlling(mc);
             mc.player.connection.send(new ControlsInputPacket(currentlyPressed, false, entity.getId(), pos, true));
             return;
         }
@@ -92,7 +93,7 @@ public class ControlsHandler {
         List<KeyMapping> controls = ControlsUtil.getControls();
         Collection<Integer> pressedKeys = new HashSet<>();
         for (int i = 0; i < controls.size(); i++) {
-            if (ControlsUtil.isActuallyPressed(controls.get(i))) {
+            if (ControlsUtil.isActuallyPressed(mc, controls.get(i))) {
                 pressedKeys.add(i);
             }
         }

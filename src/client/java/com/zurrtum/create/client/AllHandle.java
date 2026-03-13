@@ -182,7 +182,7 @@ public class AllHandle extends AllClientHandle {
 
     @Override
     public boolean shiftDown() {
-        return AllKeys.hasShiftDown();
+        return Minecraft.getInstance().hasShiftDown();
     }
 
     @Override
@@ -285,7 +285,7 @@ public class AllHandle extends AllClientHandle {
 
     @Override
     public void onControlsStopControlling() {
-        ControlsHandler.stopControlling(Minecraft.getInstance().player);
+        ControlsHandler.stopControlling(Minecraft.getInstance());
     }
 
     @Override
@@ -1243,10 +1243,11 @@ public class AllHandle extends AllClientHandle {
 
     @Override
     public void tryToggleActive(LecternControllerBlockEntity controller) {
-        LocalPlayer player = Minecraft.getInstance().player;
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
         UUID uuid = player.getUUID();
         if (controller.user == null && uuid.equals(controller.prevUser)) {
-            LinkedControllerClientHandler.deactivateInLectern(player);
+            LinkedControllerClientHandler.deactivateInLectern(mc, player);
         } else if (controller.prevUser == null && uuid.equals(controller.user)) {
             LinkedControllerClientHandler.activateInLectern(controller.getBlockPos());
         }
@@ -1254,12 +1255,12 @@ public class AllHandle extends AllClientHandle {
 
     @Override
     public void toggleLinkedControllerBindMode(BlockPos pos) {
-        LinkedControllerClientHandler.toggleBindMode(Minecraft.getInstance().player, pos);
+        LinkedControllerClientHandler.toggleBindMode(pos);
     }
 
     @Override
     public void toggleLinkedControllerActive() {
-        LinkedControllerClientHandler.toggle(Minecraft.getInstance().player);
+        LinkedControllerClientHandler.toggle();
     }
 
     @Override
