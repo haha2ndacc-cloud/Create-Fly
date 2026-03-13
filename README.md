@@ -8,7 +8,7 @@ https://www.curseforge.com/minecraft/mc-mods/create-fly/files/all?page=1&pageSiz
 
 - This is a Fabric fork of [Create](https://github.com/Creators-of-Create/Create).
   The official [Create Fabric](https://github.com/Fabricators-of-Create/Create) fork has not released a version 1.21.1
-  or higher. it has been 11 months since then.
+  or higher. it has been a year since then.
 - Minecraft uses a new rendering method in higher versions: item models use a dedicated rendering folder, rendering uses
   a rendering pipeline, Entity, BlockEntity and GUI rendering is changed to extract the state first and then render,
   which requires
@@ -75,8 +75,8 @@ repositories {
 }
 
 dependencies {
-    // 26.1-snapshot-10
-    implementation "maven.modrinth:create-fly:26.1-snapshot-10-6.0.9-1"
+    // 26.1-pre-2
+    implementation "maven.modrinth:create-fly:26.1-pre-2-6.0.9-1"
     // 1.21.11
     modImplementation "maven.modrinth:create-fly:1.21.11-6.0.9-5"
     // 1.21.10
@@ -103,8 +103,8 @@ repositories {
 }
 
 dependencies {
-    // 26.1-snapshot-10
-    implementation "curse.maven:create-fly-1346281:7692673-sources-7692709"
+    // 26.1-pre-2
+    implementation "curse.maven:create-fly-1346281:7752013-sources-7752024"
     // 1.21.11
     modImplementation "curse.maven:create-fly-1346281:7658527-sources-7658535"
     // 1.21.10
