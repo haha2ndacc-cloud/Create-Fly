@@ -18,11 +18,11 @@ public class AnimationTickHolder {
         pausedTicks = 0;
     }
 
-    public static void tick() {
-        if (!Minecraft.getInstance().isPaused()) {
-            ticks = (ticks + 1) % 1_728_000; // wrap around every 24 hours so we maintain enough floating point precision
-        } else {
+    public static void tick(Minecraft mc) {
+        if (mc.isPaused()) {
             pausedTicks = (pausedTicks + 1) % 1_728_000;
+        } else {
+            ticks = (ticks + 1) % 1_728_000; // wrap around every 24 hours so we maintain enough floating point precision
         }
     }
 

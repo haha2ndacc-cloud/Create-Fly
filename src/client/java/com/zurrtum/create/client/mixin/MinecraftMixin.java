@@ -142,12 +142,12 @@ public abstract class MinecraftMixin {
 
     @Inject(method = "tick()V", at = @At("HEAD"))
     private void tickPre(CallbackInfo ci) {
-        AnimationTickHolder.tick();
+        Minecraft mc = (Minecraft) (Object) this;
+        AnimationTickHolder.tick(mc);
         PonderTooltipHandler.tick();
         if (level == null || player == null) {
             return;
         }
-        Minecraft mc = (Minecraft) (Object) this;
         PlacementClient.tick(mc);
         GhostBlocks.getInstance().tickGhosts();
         Outliner.getInstance().tickOutlines();
