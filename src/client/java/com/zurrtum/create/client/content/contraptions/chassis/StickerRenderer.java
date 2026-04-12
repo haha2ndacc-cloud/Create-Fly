@@ -1,31 +1,32 @@
 package com.zurrtum.create.client.content.contraptions.chassis;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.content.contraptions.chassis.StickerRenderer.StickerRenderState;
+import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.contraptions.chassis.StickerBlock;
 import com.zurrtum.create.content.contraptions.chassis.StickerBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.Direction;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
-public class StickerRenderer implements BlockEntityRenderer<StickerBlockEntity, StickerRenderer.StickerRenderState> {
-    public StickerRenderer(BlockEntityRendererProvider.Context context) {
+public class StickerRenderer implements BlockEntityRenderer<StickerBlockEntity, StickerRenderState> {
+    public StickerRenderer(Context context) {
     }
 
     @Override
@@ -41,21 +42,20 @@ public class StickerRenderer implements BlockEntityRenderer<StickerBlockEntity, 
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        Level world = be.getLevel();
-        BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        state.layer = RenderTypes.solidMovingBlock();
-        state.head = CachedBuffers.partial(AllPartialModels.STICKER_HEAD, state.blockState);
-        state.seed = be.hashCode();
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        state.head = CachedBuffers.partial(AllPartialModels.STICKER_HEAD, state.blockState).cardinalLighting(level)
+            .light(state.lightCoords).extractRenderState();
         Direction facing = state.blockState.getValue(StickerBlock.FACING);
-        state.yRot = Mth.DEG_TO_RAD * AngleHelper.horizontalAngle(facing);
-        state.xRot = Mth.DEG_TO_RAD * (AngleHelper.verticalAngle(facing) + 90);
+        state.yRot = KineticBlockEntityRenderer.getYRotateAngle(AngleHelper.horizontalAngle(facing));
+        state.xRot = KineticBlockEntityRenderer.getXRotateAngle(AngleHelper.verticalAngle(facing) + 90);
         float offset;
-        if (!be.isVirtual() && world != Minecraft.getInstance().level) {
+        if (!be.isVirtual() && level != Minecraft.getInstance().level) {
             offset = state.blockState.getValue(StickerBlock.EXTENDED) ? 1 : 0;
         } else {
-            offset = be.piston.getValue(AnimationTickHolder.getPartialTicks(world));
+            offset = be.piston.getValue(AnimationTickHolder.getPartialTicks(level));
         }
-        state.offset = (offset * offset) * 4 / 16f;
+        state.offset = offset * offset * 0.25f;
+        state.nudge = SmartBlockEntityRenderer.createNudge(be.hashCode());
     }
 
     @Override
@@ -65,21 +65,26 @@ public class StickerRenderer implements BlockEntityRenderer<StickerBlockEntity, 
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        queue.submitCustomGeometry(matrices, state.layer, state);
+        matrices.translate(state.nudge);
+        if (state.yRot != null || state.xRot != null) {
+            matrices.translate(0.5f, 0.5f, 0.5f);
+            if (state.yRot != null) {
+                matrices.mulPose(state.yRot);
+            }
+            if (state.xRot != null) {
+                matrices.mulPose(state.xRot);
+            }
+            matrices.translate(-0.5f, -0.5f, -0.5f);
+        }
+        matrices.translate(0, state.offset, 0);
+        state.head.submit(matrices, queue);
     }
 
-    public static class StickerRenderState extends BlockEntityRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
-        public RenderType layer;
-        public SuperByteBuffer head;
-        public int seed;
-        public float yRot;
-        public float xRot;
+    public static class StickerRenderState extends BlockEntityRenderState {
+        public @UnknownNullability SuperByteBufferRenderState head;
+        public @UnknownNullability Vec3 nudge;
+        public @Nullable Quaternionf yRot;
+        public @Nullable Quaternionf xRot;
         public float offset;
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            head.nudge(seed).center().rotateY(yRot).rotateX(xRot).uncenter().translate(0, offset, 0);
-            head.light(lightCoords).renderInto(matricesEntry, vertexConsumer);
-        }
     }
 }

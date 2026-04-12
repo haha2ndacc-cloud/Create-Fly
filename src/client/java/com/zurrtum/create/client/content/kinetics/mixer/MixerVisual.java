@@ -10,9 +10,11 @@ import com.zurrtum.create.client.flywheel.lib.instance.InstanceTypes;
 import com.zurrtum.create.client.flywheel.lib.instance.OrientedInstance;
 import com.zurrtum.create.client.flywheel.lib.model.Models;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
+import com.zurrtum.create.client.foundation.blockEntity.behaviour.animation.AnimationBehaviour;
+import com.zurrtum.create.client.foundation.blockEntity.behaviour.animation.MechanicalMixerAnimationBehaviour;
 import com.zurrtum.create.client.foundation.render.AllInstanceTypes;
 import com.zurrtum.create.content.kinetics.mixer.MechanicalMixerBlockEntity;
-import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
 
 import java.util.function.Consumer;
 
@@ -20,18 +22,16 @@ public class MixerVisual extends SingleAxisRotatingVisual<MechanicalMixerBlockEn
 
     private final RotatingInstance mixerHead;
     private final OrientedInstance mixerPole;
-    private final MechanicalMixerBlockEntity mixer;
 
     public MixerVisual(VisualizationContext context, MechanicalMixerBlockEntity blockEntity, float partialTick) {
         super(context, blockEntity, partialTick, Models.partial(AllPartialModels.SHAFTLESS_COGWHEEL));
-        this.mixer = blockEntity;
 
         mixerHead = instancerProvider().instancer(
             AllInstanceTypes.ROTATING,
             Models.partial(AllPartialModels.MECHANICAL_MIXER_HEAD)
         ).createInstance();
 
-        mixerHead.setRotationAxis(Direction.Axis.Y);
+        mixerHead.setRotationAxis(Axis.Y);
 
         mixerPole = instancerProvider().instancer(
             InstanceTypes.ORIENTED,
@@ -47,21 +47,23 @@ public class MixerVisual extends SingleAxisRotatingVisual<MechanicalMixerBlockEn
     }
 
     private void animate(float pt) {
-        float renderedHeadOffset = mixer.getRenderedHeadOffset(pt);
+        float renderedHeadOffset = MechanicalMixerRenderer.getRenderedHeadOffset(blockEntity, pt);
 
         transformPole(renderedHeadOffset);
         transformHead(renderedHeadOffset, pt);
     }
 
     private void transformHead(float renderedHeadOffset, float pt) {
-        float speed = mixer.getRenderedHeadRotationSpeed(pt);
-
-        mixerHead.setPosition(getVisualPosition()).nudge(0, -renderedHeadOffset, 0)
-            .setRotationalSpeed(speed * 2 * RotatingInstance.SPEED_MULTIPLIER).setChanged();
+        MechanicalMixerAnimationBehaviour behaviour = (MechanicalMixerAnimationBehaviour) blockEntity.getBehaviour(
+            AnimationBehaviour.TYPE);
+        float speed = blockEntity.getSpeed();
+        mixerHead.setPosition(getVisualPosition()).nudge(0, renderedHeadOffset, 0)
+            .setRotationalSpeed(speed * RotatingInstance.SPEED_MULTIPLIER)
+            .setRotationOffset(behaviour.getOffset(speed, pt)).setChanged();
     }
 
     private void transformPole(float renderedHeadOffset) {
-        mixerPole.position(getVisualPosition()).translatePosition(0, -renderedHeadOffset, 0).setChanged();
+        mixerPole.position(getVisualPosition()).translatePosition(0, renderedHeadOffset, 0).setChanged();
     }
 
     @Override

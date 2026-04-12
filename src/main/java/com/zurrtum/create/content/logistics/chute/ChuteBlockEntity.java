@@ -86,7 +86,7 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour<?>> behaviours) {
-        behaviours.add(new DirectBeltInputBehaviour(this).onlyInsertWhen((d) -> canDirectlyInsertCached()));
+        behaviours.add(new DirectBeltInputBehaviour(this).onlyInsertWhen(d -> canDirectlyInsertCached()));
         behaviours.add(invVersionTracker = new VersionedInventoryTrackerBehaviour(this));
     }
 
@@ -154,18 +154,18 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
         float nextOffset = itemPosition.getValue() + itemMotion;
 
         if (itemMotion < 0) {
-            if (nextOffset < .5f) {
+            if (nextOffset < 0.5f) {
                 if (!handleDownwardOutput(true)) {
-                    nextOffset = .5f;
+                    nextOffset = 0.5f;
                 } else if (nextOffset < 0) {
                     handleDownwardOutput(clientSide);
                     nextOffset = itemPosition.getValue();
                 }
             }
         } else if (itemMotion > 0) {
-            if (nextOffset > .5f) {
+            if (nextOffset > 0.5f) {
                 if (!handleUpwardOutput(true)) {
-                    nextOffset = .5f;
+                    nextOffset = 0.5f;
                 } else if (nextOffset > 1) {
                     handleUpwardOutput(clientSide);
                     nextOffset = itemPosition.getValue();
@@ -190,7 +190,7 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
             } else if (speed >= 32) {
                 maxPullDistance = 1;
             } else {
-                maxPullDistance = Mth.lerpInt(speed / 32, 0, 1);
+                maxPullDistance = Mth.lerp(speed / 32, 0, 1);
             }
 
             if (AbstractChuteBlock.isChute(level.getBlockState(worldPosition.below()))) {
@@ -214,7 +214,7 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
                 beltBelowOffset = i - 1;
                 break;
             }
-            this.bottomPullDistance = Math.max(0, flowLimit);
+            bottomPullDistance = Math.max(0, flowLimit);
         }
         sendData();
     }
@@ -227,7 +227,7 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
             return;
         }
         Vec3 center = VecHelper.getCenterOf(worldPosition);
-        AABB searchArea = new AABB(center.add(0, -bottomPullDistance - 0.5, 0), center.add(0, -0.5, 0)).inflate(.45f);
+        AABB searchArea = new AABB(center.add(0, -bottomPullDistance - 0.5, 0), center.add(0, -0.5, 0)).inflate(0.45f);
         for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, searchArea)) {
             if (!itemEntity.isAlive()) {
                 continue;
@@ -247,8 +247,7 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
             return;
         }
         if (getItem().isEmpty() && beltBelow != null) {
-            beltBelow.handleCenteredProcessingOnAllItems(
-                .5f, ts -> {
+            beltBelow.handleCenteredProcessingOnAllItems(0.5f, ts -> {
                     if (canAcceptItem(ts.stack)) {
                         setItem(ts.stack.copy(), -beltBelowOffset);
                         return TransportedResult.removeItem();
@@ -300,7 +299,7 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
             level,
             worldPosition.above()
         )) {
-            spawnAirFlow(1, 2, absMotion, .5f);
+            spawnAirFlow(1, 2, absMotion, 0.5f);
         }
 
         if (AbstractChuteBlock.getChuteFacing(blockState) != Direction.DOWN) {
@@ -312,7 +311,7 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
         }
 
         if (!up && BlockHelper.noCollisionInSpace(level, worldPosition.below())) {
-            spawnAirFlow(0, -1, absMotion, .5f);
+            spawnAirFlow(0, -1, absMotion, 0.5f);
         }
 
         if (up && canActivate() && bottomPullDistance > 0) {
@@ -327,8 +326,8 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
         }
         AirParticleData airParticleData = new AirParticleData(drag, motion);
         Vec3 origin = Vec3.atLowerCornerOf(worldPosition);
-        float xOff = level.getRandom().nextFloat() * .5f + .25f;
-        float zOff = level.getRandom().nextFloat() * .5f + .25f;
+        float xOff = level.getRandom().nextFloat() * 0.5f + 0.25f;
+        float zOff = level.getRandom().nextFloat() * 0.5f + 0.25f;
         Vec3 v = origin.add(xOff, verticalStart, zOff);
         Vec3 d = origin.add(xOff, verticalEnd, zOff).subtract(v);
         if (level.getRandom().nextFloat() < 2 * motion) {
@@ -373,7 +372,7 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
         ChuteBlockEntity targetChute = getTargetChute(blockState);
         Direction direction = AbstractChuteBlock.getChuteFacing(blockState);
 
-        if (level == null || direction == null || !this.canActivate()) {
+        if (level == null || direction == null || !canActivate()) {
             return false;
         }
         Container capBelow = grabCapability(Direction.DOWN);
@@ -408,7 +407,7 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
         if (targetChute != null) {
             boolean canInsert = targetChute.canAcceptItem(item);
             if (!simulate && canInsert) {
-                targetChute.setItem(item, direction == Direction.DOWN ? 1 : .51f);
+                targetChute.setItem(item, direction == Direction.DOWN ? 1 : 0.51f);
                 setItem(ItemStack.EMPTY);
             }
             return canInsert;
@@ -427,10 +426,10 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
         }
 
         if (!simulate) {
-            Vec3 dropVec = VecHelper.getCenterOf(worldPosition).add(0, -12 / 16f, 0);
+            Vec3 dropVec = VecHelper.getCenterOf(worldPosition).add(0, -12 / 16.0f, 0);
             ItemEntity dropped = new ItemEntity(level, dropVec.x, dropVec.y, dropVec.z, item.copy());
             dropped.setDefaultPickUpDelay();
-            dropped.setDeltaMovement(0, -.25f, 0);
+            dropped.setDeltaMovement(0, -0.25f, 0);
             level.addFreshEntity(dropped);
             setItem(ItemStack.EMPTY);
         }
@@ -441,7 +440,7 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
     private boolean handleUpwardOutput(boolean simulate) {
         BlockState stateAbove = level.getBlockState(worldPosition.above());
 
-        if (level == null || !this.canActivate()) {
+        if (level == null || !canActivate()) {
             return false;
         }
 
@@ -507,7 +506,7 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
         }
 
         if (!simulate) {
-            Vec3 dropVec = VecHelper.getCenterOf(worldPosition).add(0, 8 / 16f, 0);
+            Vec3 dropVec = VecHelper.getCenterOf(worldPosition).add(0, 8 / 16.0f, 0);
             ItemEntity dropped = new ItemEntity(level, dropVec.x, dropVec.y, dropVec.z, item.copy());
             dropped.setDefaultPickUpDelay();
             dropped.setDeltaMovement(0, getItemMotion() * 2, 0);
@@ -541,7 +540,7 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
     }
 
     private @Nullable Container grabCapability(Direction side) {
-        BlockPos pos = this.worldPosition.relative(side);
+        BlockPos pos = worldPosition.relative(side);
         if (level == null) {
             return null;
         }
@@ -557,16 +556,14 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
                 );
                 capCaches.put(side, cache);
                 return cache.get();
-            } else {
-                BlockEntity be = level.getBlockEntity(pos);
-                if (canAcceptBlockEntity(be, side)) {
-                    return ItemHelper.getInventory(level, pos, null, be, opposite);
-                }
-                return null;
             }
-        } else {
-            return supplier.get();
+            BlockEntity be = level.getBlockEntity(pos);
+            if (canAcceptBlockEntity(be, side)) {
+                return ItemHelper.getInventory(level, pos, null, be, opposite);
+            }
+            return null;
         }
+        return supplier.get();
     }
 
     public void setItem(ItemStack stack) {
@@ -619,7 +616,7 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
                 return;
             }
             Vec3 p = VecHelper.getCenterOf(worldPosition);
-            p = VecHelper.offsetRandomly(p, level.getRandom(), .5f);
+            p = VecHelper.offsetRandomly(p, level.getRandom(), 0.5f);
             Vec3 m = Vec3.ZERO;
             level.addParticle(
                 new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(item)),
@@ -635,12 +632,12 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
 
     public float getItemMotion() {
         // Chutes per second
-        final float fanSpeedModifier = 1 / 64f;
-        final float maxItemSpeed = 20f;
-        final float gravity = 4f;
+        final float fanSpeedModifier = 1 / 64.0f;
+        final float maxItemSpeed = 20.0f;
+        final float gravity = 4.0f;
 
         float motion = (push + pull) * fanSpeedModifier;
-        return (Mth.clamp(motion, -maxItemSpeed, maxItemSpeed) + (motion <= 0 ? -gravity : 0)) / 20f;
+        return (Mth.clamp(motion, -maxItemSpeed, maxItemSpeed) + (motion <= 0 ? -gravity : 0)) / 20.0f;
     }
 
     @Override

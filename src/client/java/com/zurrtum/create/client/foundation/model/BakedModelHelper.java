@@ -120,7 +120,7 @@ public class BakedModelHelper {
             quad.direction(),
             info
         );
-        NormalsBakedQuad.setNormals(newQuad, NormalsBakedQuad.getNormals(quad));
+        NormalsBakedQuad.setNormals(newQuad, quad);
         return newQuad;
     }
 
@@ -188,7 +188,7 @@ public class BakedModelHelper {
                 quad.direction(),
                 info
             );
-            NormalsBakedQuad.setNormals(newQuad, NormalsBakedQuad.getNormals(quad));
+            NormalsBakedQuad.setNormals(newQuad, quad);
             newQuads.set(i, newQuad);
         }
         return newQuads;
@@ -230,7 +230,7 @@ public class BakedModelHelper {
                     info.lightEmission()
                 )
             );
-            NormalsBakedQuad.setNormals(newQuad, NormalsBakedQuad.getNormals(quad));
+            NormalsBakedQuad.setNormals(newQuad, quad);
             result.add(newQuad);
         }
         return result;

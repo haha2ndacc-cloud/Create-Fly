@@ -1,14 +1,17 @@
 package com.zurrtum.create.client.content.trains.display;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
-import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.content.trains.display.FlapDisplayRenderer.FlapDisplayRenderState;
+import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.client.foundation.utility.DyeHelper;
 import com.zurrtum.create.content.trains.display.FlapDisplayBlock;
 import com.zurrtum.create.content.trains.display.FlapDisplayBlockEntity;
@@ -20,11 +23,14 @@ import net.minecraft.client.gui.GlyphSource;
 import net.minecraft.client.gui.font.TextRenderable;
 import net.minecraft.client.gui.font.glyphs.BakedGlyph;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.SubmitNodeCollector.CustomGeometryRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.FormattedCharSink;
@@ -35,6 +41,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -43,12 +50,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayBlockEntity, FlapDisplayRenderer.FlapDisplayRenderState> {
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.*;
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityVisual.rotationOffset;
+
+public class FlapDisplayRenderer implements BlockEntityRenderer<FlapDisplayBlockEntity, FlapDisplayRenderState> {
     protected final Font textRenderer;
 
-    public FlapDisplayRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
+    public FlapDisplayRenderer(Context context) {
         textRenderer = context.font();
+    }
+
+    @Override
+    public boolean shouldRender(FlapDisplayBlockEntity blockEntity, Vec3 cameraPosition) {
+        if (BlockEntityRenderer.super.shouldRender(blockEntity, cameraPosition)) {
+            if (VisualizationManager.supportsVisualization(blockEntity.getLevel())) {
+                return blockEntity.isController;
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -64,23 +84,38 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        super.extractRenderState(be, state, tickProgress, cameraPos, crumblingOverlay);
-        if (!be.isController) {
-            return;
-        }
-        if (state.support) {
-            BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        Direction facing = state.blockState.getValue(FlapDisplayBlock.HORIZONTAL_FACING);
+        float time = AnimationTickHolder.getRenderTime(level);
+        if (!VisualizationManager.supportsVisualization(level)) {
+            state.model = CachedBuffers.partialFacingVertical(
+                AllPartialModels.SHAFTLESS_COGWHEEL,
+                state.blockState,
+                facing
+            ).cardinalLighting(level).light(state.lightCoords).color(getTintColor(be)).extractRenderState();
+            Direction.Axis axis = facing.getAxis();
+            float progress = getProgress(time, be.getSpeed());
+            float offset = rotationOffset(state.blockState, axis, state.blockPos);
+            state.angle = getRotateAngle(progress, offset, axis);
+            if (!be.isController) {
+                return;
+            }
         }
         FlapDisplayData display = new FlapDisplayData();
         List<FlapDisplayLayout> lines = be.getLines();
+        int levelTicks = AnimationTickHolder.getTicks(level);
         boolean paused = !be.isSpeedRequirementFulfilled();
-        Level world = be.getLevel();
-        int levelTicks = AnimationTickHolder.getTicks(world);
-        int ticks = paused ? 0 : levelTicks;
-        float time = paused ? 0 : AnimationTickHolder.getRenderTime(world);
+        int ticks;
+        if (paused) {
+            ticks = 0;
+            time = 0;
+        } else {
+            ticks = levelTicks;
+        }
         int size = lines.size();
         float y = 4.5f;
         int light = state.lightCoords;
+        int xSize = be.xSize;
         for (int j = 0; j < size; j++) {
             List<FlapDisplaySection> line = lines.get(j).getSections();
             int color = getLineColor(be, j);
@@ -92,7 +127,7 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
                 offsets[i] = w;
                 w += section.getSize() + (section.hasGap ? 8 : 1);
             }
-            float margin = be.xSize * 16 - w / 2 + 1;
+            float margin = xSize * 16 - w / 2 + 1;
             boolean glowing = be.isLineGlowing(j);
             FlapDisplayRenderOutput renderOutput = new FlapDisplayRenderOutput(
                 y,
@@ -108,7 +143,7 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
             for (int i = 0; i < count; i++) {
                 FlapDisplaySection section = line.get(i);
                 renderOutput.nextSection(section, margin + offsets[i]);
-                String text = section.renderCharsIndividually() || !section.spinning[0] ? section.text : section.cyclingOptions[((levelTicks / 3) + i * 13) % section.cyclingOptions.length];
+                String text = section.renderCharsIndividually() || !section.spinning[0] ? section.text : section.cyclingOptions[(levelTicks / 3 + i * 13) % section.cyclingOptions.length];
                 StringDecomposer.iterateFormatted(text, Style.EMPTY, renderOutput);
             }
             y += 16;
@@ -116,7 +151,7 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
         if (display.isEmpty()) {
             return;
         }
-        display.yRot = Mth.DEG_TO_RAD * AngleHelper.horizontalAngle(state.blockState.getValue(FlapDisplayBlock.HORIZONTAL_FACING));
+        display.yRot = Mth.DEG_TO_RAD * AngleHelper.horizontalAngle(facing);
         state.display = display;
     }
 
@@ -127,7 +162,16 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        super.submit(state, matrices, queue, cameraState);
+        if (state.model != null) {
+            if (state.angle != null) {
+                matrices.pushPose();
+                matrices.rotateAround(state.angle, 0.5f, 0.5f, 0.5f);
+                state.model.submit(matrices, queue);
+                matrices.popPose();
+            } else {
+                state.model.submit(matrices, queue);
+            }
+        }
         if (state.display != null) {
             state.display.render(matrices, queue);
         }
@@ -169,10 +213,10 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
             this.paused = paused;
             this.ticks = ticks;
             this.time = time;
-            this.a = glowing ? 0xF8000000 : 0xD8000000;
-            this.r = color >> 16 & 255;
-            this.g = color >> 8 & 255;
-            this.b = color & 255;
+            a = glowing ? 0xF8000000 : 0xD8000000;
+            r = color >> 16 & 255;
+            g = color >> 8 & 255;
+            b = color & 255;
             this.color = color;
             this.consumer = consumer;
         }
@@ -190,10 +234,10 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
 
             if (section.renderCharsIndividually() && section.spinning[Math.min(charIndex, section.spinning.length)]) {
                 float speed = section.spinningTicks > 5 && section.spinningTicks < 20 ? 1.75f : 2.5f;
-                float cycle = (time / speed) + charIndex * 16.83f + lineIndex * 0.75f;
+                float cycle = time / speed + charIndex * 16.83f + lineIndex * 0.75f;
                 float partial = cycle % 1;
-                char cyclingGlyph = section.cyclingOptions[((int) cycle) % section.cyclingOptions.length].charAt(0);
-                glyph = paused ? cyclingGlyph : partial > 1 / 2f ? partial > 3 / 4f ? '_' : '-' : cyclingGlyph;
+                char cyclingGlyph = section.cyclingOptions[(int) cycle % section.cyclingOptions.length].charAt(0);
+                glyph = paused ? cyclingGlyph : partial > 0.5f ? partial > 0.75f ? '_' : '-' : cyclingGlyph;
                 if (canDim) {
                     dim = true;
                 }
@@ -238,7 +282,7 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
             if (textcolor != null) {
                 drawColor |= textcolor.getValue();
             } else if (dim) {
-                drawColor |= (r * 0xC0 >> 8 << 16) | (g * 0xC0 >> 8 << 8) | (b * 0xC0 >> 8);
+                drawColor |= r * 0xC0 >> 8 << 16 | g * 0xC0 >> 8 << 8 | b * 0xC0 >> 8;
             } else {
                 drawColor |= color;
             }
@@ -246,14 +290,14 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
             float standardWidth = section.wideFlaps ? FlapDisplaySection.WIDE_MONOSPACE : FlapDisplaySection.MONOSPACE;
 
             if (section.renderCharsIndividually()) {
-                x += (standardWidth - glyphWidth) / 2f;
+                x += (standardWidth - glyphWidth) / 2.0f;
             }
             TextRenderable textDrawable = bakedglyph.createGlyph(x, y, drawColor, 0, style, 0, 0);
             if (textDrawable != null) {
                 consumer.accept(textDrawable);
             }
             if (section.renderCharsIndividually()) {
-                x += standardWidth - (standardWidth - glyphWidth) / 2f;
+                x += standardWidth - (standardWidth - glyphWidth) / 2.0f;
             } else {
                 x += glyphWidth;
             }
@@ -262,21 +306,14 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
     }
 
     @Override
-    protected SuperByteBuffer getRotatedModel(FlapDisplayBlockEntity be, FlapDisplayRenderState state) {
-        return CachedBuffers.partialFacingVertical(
-            AllPartialModels.SHAFTLESS_COGWHEEL,
-            state.blockState,
-            state.blockState.getValue(FlapDisplayBlock.HORIZONTAL_FACING)
-        );
-    }
-
-    @Override
     public boolean shouldRenderOffScreen() {
         //        return be.isController;
         return true;
     }
 
-    public static class FlapDisplayRenderState extends KineticRenderState {
+    public static class FlapDisplayRenderState extends BlockEntityRenderState {
+        public @Nullable SuperByteBufferRenderState model;
+        public @Nullable Quaternionf angle;
         public @Nullable FlapDisplayData display;
     }
 
@@ -291,9 +328,8 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
 
         public void render(PoseStack matrices, SubmitNodeCollector queue) {
             matrices.pushPose();
-            matrices.translate(0.5f, 0.5f, 0.5f);
-            matrices.mulPose(Axis.YP.rotation(yRot));
-            matrices.translate(-0.5f, 0.5f, 0.3125f);
+            matrices.rotateAround(Axis.YP.rotation(yRot), 0.5f, 0.5f, 0.5f);
+            matrices.translate(0, 1.0f, 0.8125f);
             matrices.scale(0.03125f, -0.03125f, 0.03125f);
             matrices.translate(0, 0, 0.5f);
             map.forEach((layer, state) -> queue.submitCustomGeometry(matrices, layer, state));
@@ -305,7 +341,7 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
         }
     }
 
-    public static class TextRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
+    public static class TextRenderState implements CustomGeometryRenderer {
         public List<TextRenderable> glowingText = new ArrayList<>();
         public List<TextRenderable> normalText = new ArrayList<>();
         public int light;
@@ -323,7 +359,7 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
         }
 
         @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
+        public void render(Pose matricesEntry, VertexConsumer vertexConsumer) {
             Matrix4f pose = matricesEntry.pose();
             for (TextRenderable glyph : glowingText) {
                 glyph.render(pose, vertexConsumer, LightCoordsUtil.FULL_BRIGHT, true);

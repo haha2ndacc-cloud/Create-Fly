@@ -73,7 +73,7 @@ public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<ItemDi
         this.core = core;
         this.coreGlow = coreGlow;
         this.bits = bits;
-        this.vector = Suppliers.memoize(() -> {
+        vector = Suppliers.memoize(() -> {
             Set<Vector3fc> set = new HashSet<>();
             addPosition(set, item);
             addPosition(set, core);
@@ -130,11 +130,10 @@ public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<ItemDi
 
         matrices.pushPose();
         float worldTime = AnimationTickHolder.getRenderTime() / 20;
-        float floating = Mth.sin(worldTime) * .05f;
+        float floating = Mth.sin(worldTime) * 0.05f;
         float angle = worldTime * -10 % 360;
-        matrices.translate(0.5f, 0.5f, 0.5f);
-        matrices.mulPose(Axis.YP.rotationDegrees(angle));
-        matrices.translate(-0.5f, floating - 0.5f, -0.5f);
+        matrices.rotateAround(Axis.YP.rotationDegrees(angle), 0.5f, 0.5f, 0.5f);
+        matrices.translate(0, floating, 0);
         renderItem(displayContext, matrices, queue, maxLight, overlay, bits);
         matrices.popPose();
     }

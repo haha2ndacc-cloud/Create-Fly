@@ -7,7 +7,6 @@ import com.zurrtum.create.client.foundation.virtualWorld.VirtualRenderWorld;
 import com.zurrtum.create.content.contraptions.Contraption;
 import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
 import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -19,7 +18,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
 import net.minecraft.world.level.storage.TagValueInput;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -99,11 +97,7 @@ public class ClientContraption {
     }
 
     public void invalidateStructure() {
-        for (ChunkSectionLayer renderType : ChunkSectionLayer.values()) {
-            SuperByteBufferCache.getInstance()
-                .invalidate(ContraptionEntityRenderer.CONTRAPTION, Pair.of(contraption, renderType));
-        }
-
+        SuperByteBufferCache.getInstance().invalidate(ContraptionEntityRenderer.CONTRAPTION, contraption);
         structureVersion++;
     }
 

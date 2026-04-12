@@ -1,35 +1,51 @@
 package com.zurrtum.create.client.catnip.render;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
+import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferCache.Compartment;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
-import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class CachedBuffers {
 
     public static final Compartment<BlockState> GENERIC_BLOCK = new Compartment<>();
     public static final Compartment<PartialModel> PARTIAL = new Compartment<>();
     public static final Compartment<Pair<Direction, PartialModel>> DIRECTIONAL_PARTIAL = new Compartment<>();
-    private static final Function<Direction, Supplier<PoseStack>> ROTATE_TO_FACE = Util.memoize((facing) -> () -> {
-        PoseStack stack = new PoseStack();
-        TransformStack.of(stack).center().rotateYDegrees(AngleHelper.horizontalAngle(facing))
-            .rotateXDegrees(AngleHelper.verticalAngle(facing)).uncenter();
-        return stack;
+    private static final Function<Direction, Pose> ROTATE_TO_FACE = Util.memoize((facing) -> {
+        Pose pose = new Pose();
+        pose.translate(0.5f, 0.5f, 0.5f);
+        float degrees = AngleHelper.horizontalAngle(facing);
+        if (degrees != 0) {
+            pose.rotate(Axis.YP.rotation(Mth.DEG_TO_RAD * degrees));
+        }
+        degrees = AngleHelper.verticalAngle(facing);
+        if (degrees != 0) {
+            pose.rotate(Axis.XP.rotation(Mth.DEG_TO_RAD * degrees));
+        }
+        pose.translate(-0.5f, -0.5f, -0.5f);
+        return pose;
     });
-    private static final Function<Direction, Supplier<PoseStack>> ROTATE_TO_FACE_VERTICAL = Util.memoize((facing) -> () -> {
-        PoseStack stack = new PoseStack();
-        TransformStack.of(stack).center().rotateYDegrees(AngleHelper.horizontalAngle(facing))
-            .rotateXDegrees(AngleHelper.verticalAngle(facing) + 90).uncenter();
-        return stack;
+    private static final Function<Direction, Pose> ROTATE_TO_FACE_VERTICAL = Util.memoize((facing) -> {
+        Pose pose = new Pose();
+        pose.translate(0.5f, 0.5f, 0.5f);
+        float degrees = AngleHelper.horizontalAngle(facing);
+        if (degrees != 0) {
+            pose.rotate(Axis.YP.rotation(Mth.DEG_TO_RAD * degrees));
+        }
+        degrees = AngleHelper.verticalAngle(facing) + 90;
+        if (degrees != 0) {
+            pose.rotate(Axis.XP.rotation(Mth.DEG_TO_RAD * degrees));
+        }
+        pose.translate(-0.5f, -0.5f, -0.5f);
+        return pose;
     });
 
     /**
@@ -63,15 +79,11 @@ public class CachedBuffers {
         );
     }
 
-    public static SuperByteBuffer partial(
-        PartialModel partial,
-        BlockState referenceState,
-        Supplier<PoseStack> modelTransform
-    ) {
+    public static SuperByteBuffer partial(PartialModel partial, BlockState referenceState, Pose modelTransform) {
         return SuperByteBufferCache.getInstance().get(
             PARTIAL,
             partial,
-            () -> SuperBufferFactory.getInstance().createForBlock(partial.get(), referenceState, modelTransform.get())
+            () -> SuperBufferFactory.getInstance().createForBlock(partial.get(), referenceState, modelTransform)
         );
     }
 
@@ -81,7 +93,7 @@ public class CachedBuffers {
     }
 
     public static SuperByteBuffer partialFacing(PartialModel partial, BlockState referenceState, Direction facing) {
-        return partialDirectional(partial, referenceState, facing, ROTATE_TO_FACE.apply(facing));
+        return partialDirectional(partial, referenceState, facing, ROTATE_TO_FACE);
     }
 
     public static SuperByteBuffer partialFacingVertical(
@@ -89,27 +101,28 @@ public class CachedBuffers {
         BlockState referenceState,
         Direction facing
     ) {
-        return partialDirectional(partial, referenceState, facing, ROTATE_TO_FACE_VERTICAL.apply(facing));
+        return partialDirectional(partial, referenceState, facing, ROTATE_TO_FACE_VERTICAL);
     }
 
     public static SuperByteBuffer partialDirectional(
         PartialModel partial,
         BlockState referenceState,
         Direction dir,
-        Supplier<PoseStack> modelTransform
+        Function<Direction, Pose> modelTransform
     ) {
         return SuperByteBufferCache.getInstance().get(
             DIRECTIONAL_PARTIAL,
             Pair.of(dir, partial),
-            () -> SuperBufferFactory.getInstance().createForBlock(partial.get(), referenceState, modelTransform.get())
+            () -> SuperBufferFactory.getInstance()
+                .createForBlock(partial.get(), referenceState, modelTransform.apply(dir))
         );
     }
 
-    public static Supplier<PoseStack> rotateToFace(Direction facing) {
+    public static Pose rotateToFace(Direction facing) {
         return ROTATE_TO_FACE.apply(facing);
     }
 
-    public static Supplier<PoseStack> rotateToFaceVertical(Direction facing) {
+    public static Pose rotateToFaceVertical(Direction facing) {
         return ROTATE_TO_FACE_VERTICAL.apply(facing);
     }
 }

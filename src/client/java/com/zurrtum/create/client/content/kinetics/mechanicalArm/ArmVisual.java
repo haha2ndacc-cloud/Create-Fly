@@ -19,6 +19,7 @@ import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
 import com.zurrtum.create.content.kinetics.mechanicalArm.ArmBlock;
 import com.zurrtum.create.content.kinetics.mechanicalArm.ArmBlockEntity;
+import com.zurrtum.create.content.kinetics.mechanicalArm.ArmBlockEntity.Phase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.util.Mth;
@@ -43,7 +44,7 @@ public class ArmVisual extends SingleAxisRotatingVisual<ArmBlockEntity> implemen
     private final PoseStack poseStack = new PoseStack();
     private final ItemStackRenderState itemRenderState = new ItemStackRenderState();
 
-    private boolean wasDancing = false;
+    private boolean wasDancing;
     private float baseAngle = Float.NaN;
     private float lowerArmAngle = Float.NaN;
     private float upperArmAngle = Float.NaN;
@@ -97,7 +98,7 @@ public class ArmVisual extends SingleAxisRotatingVisual<ArmBlockEntity> implemen
     }
 
     private void animate(float pt) {
-        if (blockEntity.phase == ArmBlockEntity.Phase.DANCING && blockEntity.getSpeed() != 0) {
+        if (blockEntity.phase == Phase.DANCING && blockEntity.getSpeed() != 0) {
             animateRave(pt);
             wasDancing = true;
             return;
@@ -112,10 +113,10 @@ public class ArmVisual extends SingleAxisRotatingVisual<ArmBlockEntity> implemen
             upperArmAngleNow
         ) && Mth.equal(headAngle, headAngleNow);
 
-        this.baseAngle = baseAngleNow;
-        this.lowerArmAngle = lowerArmAngleNow;
-        this.upperArmAngle = upperArmAngleNow;
-        this.headAngle = headAngleNow;
+        baseAngle = baseAngleNow;
+        lowerArmAngle = lowerArmAngleNow;
+        upperArmAngle = upperArmAngleNow;
+        headAngle = headAngleNow;
 
         // Need to reset the animation if the arm is dancing. We'd very likely be settled
         if (!settled || wasDancing) {
@@ -127,18 +128,18 @@ public class ArmVisual extends SingleAxisRotatingVisual<ArmBlockEntity> implemen
 
     private void animateRave(float partialTick) {
         var ticks = AnimationTickHolder.getTicks(blockEntity.getLevel());
-        float renderTick = ticks + partialTick + (blockEntity.hashCode() % 64);
+        float renderTick = ticks + partialTick + blockEntity.hashCode() % 64;
 
-        float baseAngle = (renderTick * 10) % 360;
-        float lowerArmAngle = Mth.lerpInt((Mth.sin(renderTick / 4) + 1) / 2, -45, 15);
-        float upperArmAngle = Mth.lerpInt((Mth.sin(renderTick / 8) + 1) / 4, -45, 95);
+        float baseAngle = renderTick * 10 % 360;
+        float lowerArmAngle = Mth.lerp((Mth.sin(renderTick / 4) + 1) / 2, -45, 15);
+        float upperArmAngle = Mth.lerp((Mth.sin(renderTick / 8) + 1) / 4, -45, 95);
         float headAngle = -lowerArmAngle;
         int color = Color.rainbowColor(ticks * 100).getRGB();
         updateAngles(baseAngle, lowerArmAngle, upperArmAngle, headAngle, color);
     }
 
     private void animateArm() {
-        updateAngles(this.baseAngle, this.lowerArmAngle - 135, this.upperArmAngle - 90, this.headAngle, 0xFFFFFF);
+        updateAngles(baseAngle, lowerArmAngle - 135, upperArmAngle - 90, headAngle, 0xFFFFFF);
     }
 
     private void updateAngles(float baseAngle, float lowerArmAngle, float upperArmAngle, float headAngle, int color) {
@@ -146,16 +147,16 @@ public class ArmVisual extends SingleAxisRotatingVisual<ArmBlockEntity> implemen
 
         var msr = TransformStack.of(poseStack);
 
-        ArmRenderer.transformBase(msr, baseAngle);
+        transformBase(msr, baseAngle);
         base.setTransform(poseStack).setChanged();
 
-        ArmRenderer.transformLowerArm(msr, lowerArmAngle);
+        transformLowerArm(msr, lowerArmAngle);
         lowerBody.setTransform(poseStack).colorRgb(color).setChanged();
 
-        ArmRenderer.transformUpperArm(msr, upperArmAngle);
+        transformUpperArm(msr, upperArmAngle);
         upperBody.setTransform(poseStack).colorRgb(color).setChanged();
 
-        ArmRenderer.transformHead(msr, headAngle);
+        transformHead(msr, headAngle);
 
         if (ceiling && blockEntity.goggles) {
             msr.rotateZDegrees(180);
@@ -182,7 +183,7 @@ public class ArmVisual extends SingleAxisRotatingVisual<ArmBlockEntity> implemen
         for (int index : Iterate.zeroAndOne) {
             poseStack.pushPose();
             int flip = index * 2 - 1;
-            ArmRenderer.transformClawHalf(msr, hasItem, isBlockItem, flip);
+            transformClawHalf(msr, hasItem, isBlockItem, flip);
             clawGrips.get(index).setTransform(poseStack).setChanged();
             poseStack.popPose();
         }
@@ -216,5 +217,29 @@ public class ArmVisual extends SingleAxisRotatingVisual<ArmBlockEntity> implemen
     public void collectCrumblingInstances(Consumer<Instance> consumer) {
         super.collectCrumblingInstances(consumer);
         models.forEach(consumer);
+    }
+
+    public static void transformClawHalf(TransformStack<?> msr, boolean hasItem, boolean isBlockItem, int flip) {
+        msr.translate(0, -flip * (hasItem ? isBlockItem ? 3 / 16.0f : 5 / 64.0f : 1 / 16.0f), -6 / 16.0d);
+    }
+
+    public static void transformHead(TransformStack<?> msr, float headAngle) {
+        msr.translate(0, 0, -15 / 16.0d);
+        msr.rotateXDegrees(headAngle - 45.0f);
+    }
+
+    public static void transformUpperArm(TransformStack<?> msr, float upperArmAngle) {
+        msr.translate(0, 0, -14 / 16.0d);
+        msr.rotateXDegrees(upperArmAngle - 90);
+    }
+
+    public static void transformLowerArm(TransformStack<?> msr, float lowerArmAngle) {
+        msr.translate(0, 2 / 16.0d, 0);
+        msr.rotateXDegrees(lowerArmAngle + 135);
+    }
+
+    public static void transformBase(TransformStack<?> msr, float baseAngle) {
+        msr.translate(0, 4 / 16.0d, 0);
+        msr.rotateYDegrees(baseAngle);
     }
 }

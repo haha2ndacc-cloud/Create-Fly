@@ -9,6 +9,7 @@ import com.zurrtum.create.content.trains.bogey.BogeySize;
 import com.zurrtum.create.content.trains.bogey.BogeyStyle;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.CardinalLighting;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
@@ -26,6 +27,7 @@ public class AllBogeyStyleRenders {
         BogeySize size,
         float tickProgress,
         int light,
+        @Nullable CardinalLighting cardinalLighting,
         float wheelAngle,
         @Nullable CompoundTag bogeyData,
         boolean inContraption
@@ -34,8 +36,11 @@ public class AllBogeyStyleRenders {
         if (sizeRenderers == null) {
             return null;
         }
+        if (bogeyData == null) {
+            bogeyData = new CompoundTag();
+        }
         return sizeRenderers.get(size).renderer()
-            .getRenderData(bogeyData, wheelAngle, tickProgress, light, inContraption);
+            .getRenderData(bogeyData, wheelAngle, tickProgress, light, cardinalLighting, inContraption);
     }
 
     @Nullable

@@ -4,7 +4,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.serialization.Codec;
 import com.zurrtum.create.*;
-import com.zurrtum.create.api.behaviour.BlockEntityBehaviour;
 import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.catnip.animation.LerpedFloat.Chaser;
 import com.zurrtum.create.catnip.codecs.CatnipCodecs;
@@ -22,6 +21,7 @@ import com.zurrtum.create.content.logistics.packagerLink.RequestPromise;
 import com.zurrtum.create.content.logistics.packagerLink.RequestPromiseQueue;
 import com.zurrtum.create.content.logistics.stockTicker.PackageOrder;
 import com.zurrtum.create.content.schematics.requirement.ItemRequirement;
+import com.zurrtum.create.content.schematics.requirement.ItemRequirement.ItemUseType;
 import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
 import com.zurrtum.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.zurrtum.create.foundation.blockEntity.behaviour.ValueSettings;
@@ -33,7 +33,11 @@ import com.zurrtum.create.infrastructure.config.AllConfigs;
 import com.zurrtum.create.infrastructure.packet.s2c.FactoryPanelEffectPacket;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup.Provider;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -60,6 +64,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implements MenuProvider {
@@ -102,24 +107,24 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
     public ServerFactoryPanelBehaviour(FactoryPanelBlockEntity be, PanelSlot slot) {
         super(be);
         this.slot = slot;
-        this.targetedBy = new HashMap<>();
-        this.targetedByLinks = new HashMap<>();
-        this.targeting = new HashSet<>();
-        this.count = 0;
-        this.satisfied = false;
-        this.promisedSatisfied = false;
-        this.waitingForNetwork = false;
-        this.activeCraftingArrangement = List.of();
-        this.recipeAddress = "";
-        this.recipeOutput = 1;
-        this.active = false;
-        this.forceClearPromises = false;
-        this.redstonePowered = false;
-        this.promiseClearingInterval = -1;
-        this.bulb = LerpedFloat.linear().startWithValue(0).chase(0, 0.175, Chaser.EXP);
-        this.restockerPromises = new RequestPromiseQueue(be::setChanged);
-        this.promisePrimedForMarkDirty = true;
-        this.network = UUID.randomUUID();
+        targetedBy = new HashMap<>();
+        targetedByLinks = new HashMap<>();
+        targeting = new HashSet<>();
+        count = 0;
+        satisfied = false;
+        promisedSatisfied = false;
+        waitingForNetwork = false;
+        activeCraftingArrangement = List.of();
+        recipeAddress = "";
+        recipeOutput = 1;
+        active = false;
+        forceClearPromises = false;
+        redstonePowered = false;
+        promiseClearingInterval = -1;
+        bulb = LerpedFloat.linear().startWithValue(0).chase(0, 0.175, Chaser.EXP);
+        restockerPromises = new RequestPromiseQueue(be::setChanged);
+        promisePrimedForMarkDirty = true;
+        network = UUID.randomUUID();
         setLazyTickRate(40);
     }
 
@@ -169,7 +174,7 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
         if (world instanceof Level l && !l.isLoaded(pos.pos())) {
             return null;
         }
-        return BlockEntityBehaviour.get(world, pos.pos(), FactoryPanelSupportBehaviour.TYPE);
+        return get(world, pos.pos(), FactoryPanelSupportBehaviour.TYPE);
     }
 
     public void moveTo(FactoryPanelPosition newPos, ServerPlayer player) {
@@ -177,7 +182,7 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
         BlockState existingState = level.getBlockState(newPos.pos());
 
         // Check if target pos is valid
-        if (ServerFactoryPanelBehaviour.at(level, newPos) != null) {
+        if (at(level, newPos) != null) {
             return;
         }
         boolean isAddedToOtherGauge = existingState.is(AllBlocks.FACTORY_GAUGE);
@@ -374,7 +379,7 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
         }
 
         if (!satisfied && shouldSatisfy && demand > 0) {
-            AllSoundEvents.CONFIRM.playOnServer(getLevel(), getPos(), 0.075f, 1f);
+            AllSoundEvents.CONFIRM.playOnServer(getLevel(), getPos(), 0.075f, 1.0f);
             AllSoundEvents.CONFIRM_2.playOnServer(getLevel(), getPos(), 0.125f, 0.575f);
         }
 
@@ -454,7 +459,7 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
 
         Multimap<UUID, BigItemStack> toRequest = HashMultimap.create();
 
-        for (Map.Entry<UUID, Map<ItemStack, ItemStackConnections>> entry : consolidated.entrySet()) {
+        for (Entry<UUID, Map<ItemStack, ItemStackConnections>> entry : consolidated.entrySet()) {
             UUID network = entry.getKey();
             InventorySummary summary = LogisticsManager.getSummaryOfNetwork(network, true);
 
@@ -491,7 +496,7 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
         }
 
         // Collect request distributions
-        for (Map.Entry<UUID, Collection<BigItemStack>> entry : asMap.entrySet()) {
+        for (Entry<UUID, Collection<BigItemStack>> entry : asMap.entrySet()) {
             PackageOrderWithCrafts order = new PackageOrderWithCrafts(
                 new PackageOrder(new ArrayList<>(entry.getValue())),
                 craftingContext.orderedCrafts()
@@ -1018,7 +1023,7 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
             return;
         }
         List<BigItemStack> inputConfig = targetedBy.values().stream().map(c -> {
-            ServerFactoryPanelBehaviour b = ServerFactoryPanelBehaviour.at(serverWorld, c.from);
+            ServerFactoryPanelBehaviour b = at(serverWorld, c.from);
             return b == null ? new BigItemStack(ItemStack.EMPTY, 0) : new BigItemStack(b.getFilter(), c.amount);
         }).toList();
 
@@ -1199,13 +1204,13 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
     }
 
     public int getIngredientStatusColor() {
-        return count == 0 || isMissingAddress() || redstonePowered ? 0x888898 : waitingForNetwork ? 0x5B3B3B : satisfied ? 0x9EFF7F : promisedSatisfied ? 0x22AFAF : 0x3D6EBD;
+        return count == 0 || isMissingAddress() || redstonePowered ? 0xFF888898 : waitingForNetwork ? 0xFF5B3B3B : satisfied ? 0xFF9EFF7F : promisedSatisfied ? 0xFF22AFAF : 0xFF3D6EBD;
     }
 
     @Override
     public ItemRequirement getRequiredItems() {
         return isActive() ? new ItemRequirement(
-            ItemRequirement.ItemUseType.CONSUME,
+            ItemUseType.CONSUME,
             AllBlocks.FACTORY_GAUGE.asItem()
         ) : ItemRequirement.NONE;
     }
@@ -1221,7 +1226,7 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
     }
 
     @Override
-    public boolean canWrite(HolderLookup.Provider registries, Direction side) {
+    public boolean canWrite(Provider registries, Direction side) {
         return false;
     }
 

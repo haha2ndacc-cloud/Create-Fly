@@ -1,7 +1,7 @@
 package com.zurrtum.create.client.content.contraptions.actors.contraptionControls;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.catnip.data.Couple;
 import com.zurrtum.create.catnip.math.AngleHelper;
@@ -11,7 +11,7 @@ import com.zurrtum.create.client.api.behaviour.movement.MovementRenderBehaviour;
 import com.zurrtum.create.client.api.behaviour.movement.MovementRenderState;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
 import com.zurrtum.create.client.content.contraptions.render.ClientContraption;
 import com.zurrtum.create.client.foundation.utility.DyeHelper;
 import com.zurrtum.create.client.foundation.virtualWorld.VirtualRenderWorld;
@@ -22,17 +22,15 @@ import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
@@ -49,6 +47,7 @@ public class ContraptionControlsMovementRender implements MovementRenderBehaviou
         Font textRenderer,
         MovementContext context,
         VirtualRenderWorld renderWorld,
+        Pose transform,
         Matrix4f worldMatrix4f
     ) {
         if (!(context.temporaryData instanceof ContraptionControlsMovement.ElevatorFloorSelection efs)) {
@@ -59,24 +58,27 @@ public class ContraptionControlsMovementRender implements MovementRenderBehaviou
             return null;
         }
         BlockPos pos = context.localPos;
-        ContraptionControlsMovementRenderState state = new ContraptionControlsMovementRenderState(pos);
+        ContraptionControlsMovementRenderState state = new ContraptionControlsMovementRenderState();
+        state.pos = pos;
+        state.pose = transform;
         float flicker = RANDOM.get().nextFloat();
+        float buttondepth;
         if (ClientContraption.getBlockEntityClientSide(
             context.contraption,
             pos
         ) instanceof ContraptionControlsBlockEntity cbe) {
-            state.buttondepth = -1 / 24f * cbe.button.getValue(AnimationTickHolder.getPartialTicks(renderWorld));
+            buttondepth = -1 / 24f * cbe.button.getValue(AnimationTickHolder.getPartialTicks(renderWorld));
+        } else {
+            buttondepth = 0;
         }
-        state.layer = RenderTypes.solidMovingBlock();
         Direction facing = blockState.getValue(ContraptionControlsBlock.FACING);
         state.button = CachedBuffers.partialFacing(
-            AllPartialModels.CONTRAPTION_CONTROLS_BUTTON,
-            blockState,
-            facing.getOpposite()
-        );
-        state.light = LevelRenderer.getLightCoords(renderWorld, pos);
-        state.world = context.world;
-        state.worldMatrix4f = worldMatrix4f;
+                AllPartialModels.CONTRAPTION_CONTROLS_BUTTON,
+                blockState,
+                facing.getOpposite()
+            ).transform(transform).translate(pos).translate(0, buttondepth, 0)
+            .light(LevelRenderer.getLightCoords(renderWorld, pos)).useLevelLight(context.world, worldMatrix4f)
+            .extractRenderState();
         String text = efs.currentShortName;
         String description = efs.currentLongName;
         Vec3 position = context.position;
@@ -92,7 +94,7 @@ public class ContraptionControlsMovementRender implements MovementRenderBehaviou
         int brightColor = couple.getFirst();
         int darkColor = couple.getSecond();
         state.color = Color.mixColors(brightColor, darkColor, flicker / 4) | 0xFF000000;
-        state.offsetZ = state.buttondepth - .25f;
+        state.offsetZ = buttondepth - .25f;
         if (!hideText) {
             state.shadowColor = Color.mixColors(darkColor, 0, .35f) | 0xFF000000;
             int actualWidth = textRenderer.width(text);
@@ -113,13 +115,8 @@ public class ContraptionControlsMovementRender implements MovementRenderBehaviou
         return state;
     }
 
-    public static class ContraptionControlsMovementRenderState extends MovementRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
-        public RenderType layer;
-        public SuperByteBuffer button;
-        public int light;
-        public Level world;
-        public Matrix4f worldMatrix4f;
-        public float buttondepth;
+    public static class ContraptionControlsMovementRenderState implements MovementRenderState {
+        public @UnknownNullability SuperByteBufferRenderState button;
         public float upAngle;
         public float westAngle;
         public float offsetZ;
@@ -133,18 +130,15 @@ public class ContraptionControlsMovementRender implements MovementRenderBehaviou
         public float descriptionY;
         public int color;
         public int shadowColor;
-
-        public ContraptionControlsMovementRenderState(BlockPos pos) {
-            super(pos);
-        }
+        public @UnknownNullability Pose pose;
+        public @UnknownNullability BlockPos pos;
 
         @Override
-        public void render(PoseStack matrices, SubmitNodeCollector queue) {
-            matrices.pushPose();
-            matrices.translate(0, buttondepth, 0);
-            queue.submitCustomGeometry(matrices, layer, this);
-            matrices.popPose();
+        public void submit(PoseStack matrices, SubmitNodeCollector queue) {
+            button.submit(matrices, queue);
             if (text != null || description != null) {
+                matrices.pushPose();
+                transform(matrices, pose, pos);
                 matrices.rotateAround(new Quaternionf().setAngleAxis(upAngle, 0, 1, 0), 0.5f, 0.5f, 0.5f);
                 matrices.translate(0.4f, 1.125f, 0.5f);
                 matrices.mulPose(new Quaternionf().setAngleAxis(westAngle, -1, 0, 0));
@@ -197,12 +191,8 @@ public class ContraptionControlsMovementRender implements MovementRenderBehaviou
                     );
                     matrices.popPose();
                 }
+                matrices.popPose();
             }
-        }
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            button.light(light).useLevelLight(world, worldMatrix4f).renderInto(matricesEntry, vertexConsumer);
         }
     }
 }

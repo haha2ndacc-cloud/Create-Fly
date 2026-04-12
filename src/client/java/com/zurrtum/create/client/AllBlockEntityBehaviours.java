@@ -7,6 +7,7 @@ import com.zurrtum.create.client.content.logistics.factoryBoard.FactoryPanelBeha
 import com.zurrtum.create.client.content.logistics.tableCloth.TableClothFilteringBehaviour;
 import com.zurrtum.create.client.content.redstone.link.LinkBehaviour;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.animation.CuckooClockAnimationBehaviour;
+import com.zurrtum.create.client.foundation.blockEntity.behaviour.animation.MechanicalMixerAnimationBehaviour;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.animation.WhistleAnimationBehaviour;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.audio.*;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
@@ -114,7 +115,8 @@ public class AllBlockEntityBehaviours {
             AllBlockEntityTypes.MECHANICAL_MIXER,
             KineticAudioBehaviour::new,
             MechanicalMixerAudioBehaviour::new,
-            KineticTooltipBehaviour::new
+            KineticTooltipBehaviour::new,
+            MechanicalMixerAnimationBehaviour::new
         );
         add(
             AllBlockEntityTypes.MECHANICAL_PISTON,

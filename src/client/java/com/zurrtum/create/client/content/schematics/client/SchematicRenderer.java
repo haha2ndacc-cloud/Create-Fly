@@ -3,8 +3,9 @@ package com.zurrtum.create.client.content.schematics.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.levelWrappers.SchematicRenderLevel;
-import com.zurrtum.create.client.catnip.render.ShadedBlockSbbBuilder;
+import com.zurrtum.create.client.catnip.render.EntityBlockSbbBuilder;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper;
@@ -14,23 +15,25 @@ import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.block.BlockModelLighter;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
 
 public class SchematicRenderer {
 
     private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(
         ThreadLocalObjects::new);
 
-    private final Map<ChunkSectionLayer, SuperByteBuffer> bufferCache = new LinkedHashMap<>(ChunkSectionLayer.values().length);
+    private @Nullable SuperByteBufferRenderState bufferCache;
     private boolean changed;
     protected final SchematicRenderLevel schematic;
     private final BlockPos anchor;
@@ -39,9 +42,9 @@ public class SchematicRenderer {
     private final BitSet scratchErroredBlockEntities = new BitSet();
 
     public SchematicRenderer(SchematicRenderLevel world) {
-        this.anchor = world.anchor;
-        this.schematic = world;
-        this.changed = true;
+        anchor = world.anchor;
+        schematic = world;
+        changed = true;
 
         for (var renderedBlockEntity : schematic.getRenderedBlockEntities()) {
             renderedBlockEntities.add(renderedBlockEntity);
@@ -69,15 +72,9 @@ public class SchematicRenderer {
         }
         changed = false;
 
-        bufferCache.forEach((layer, buffer) -> {
-            buffer.renderInto(
-                ms.last(), buffers.getBuffer(switch (layer) {
-                    case SOLID -> RenderTypes.solidMovingBlock();
-                    case CUTOUT -> RenderTypes.cutoutMovingBlock();
-                    case TRANSLUCENT -> RenderTypes.translucentMovingBlock();
-                })
-            );
-        });
+        if (bufferCache != null) {
+            bufferCache.submit(ms, queue);
+        }
         scratchErroredBlockEntities.clear();
         BlockEntityListRenderState renderState = BlockEntityRenderHelper.getBlockEntitiesRenderState(
             VisualizationManager.supportsVisualization(schematic),
@@ -87,11 +84,12 @@ public class SchematicRenderer {
             null,
             schematic,
             null,
+            null,
             transformation.toLocalSpace(camera),
             AnimationTickHolder.getPartialTicks()
         );
         if (renderState != null) {
-            renderState.render(ms, queue, mc.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState);
+            renderState.submit(ms, queue, mc.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState);
         }
 
         // Don't bother looping over errored BEs again.
@@ -99,27 +97,13 @@ public class SchematicRenderer {
     }
 
     protected void redraw(Minecraft mc) {
-        bufferCache.clear();
-
-        for (ChunkSectionLayer layer : ChunkSectionLayer.values()) {
-            SuperByteBuffer buffer = drawLayer(mc, layer);
-            if (!buffer.isEmpty()) {
-                bufferCache.put(layer, buffer);
-            }
-        }
-    }
-
-    @SuppressWarnings("removal")
-    protected SuperByteBuffer drawLayer(Minecraft mc, ChunkSectionLayer layer) {
         BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 
-        BlockPos.MutableBlockPos mutableBlockPos = objects.mutableBlockPos;
+        MutableBlockPos mutableBlockPos = objects.mutableBlockPos;
         BoundingBox bounds = schematic.getBounds();
 
-        ShadedBlockSbbBuilder sbbBuilder = objects.sbbBuilder;
-        sbbBuilder.begin(layer);
-
+        EntityBlockSbbBuilder sbbBuilder = objects.sbbBuilder;
         schematic.renderMode = true;
         boolean ambientOcclusion = mc.options.ambientOcclusion().get();
         ModelBlockRenderer renderer = new ModelBlockRenderer(ambientOcclusion, true, mc.getBlockColors());
@@ -151,13 +135,13 @@ public class SchematicRenderer {
         BlockModelLighter.clearCache();
         schematic.renderMode = false;
 
-        return sbbBuilder.end();
+        SuperByteBuffer buffer = sbbBuilder.build();
+        bufferCache = buffer.cardinalLighting(mc.level.cardinalLighting()).extractRenderState();
     }
 
-    @SuppressWarnings("removal")
     private static class ThreadLocalObjects {
-        public final BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
-        public final ShadedBlockSbbBuilder sbbBuilder = new ShadedBlockSbbBuilder(new PoseStack());
+        public final MutableBlockPos mutableBlockPos = new MutableBlockPos();
+        public final EntityBlockSbbBuilder sbbBuilder = new EntityBlockSbbBuilder();
     }
 
 }

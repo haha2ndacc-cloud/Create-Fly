@@ -14,6 +14,7 @@ import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
 import com.zurrtum.create.content.fluids.pipes.valve.FluidValveBlock;
 import com.zurrtum.create.content.fluids.pipes.valve.FluidValveBlockEntity;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
 
 import java.util.function.Consumer;
@@ -35,10 +36,10 @@ public class FluidValveVisual extends ShaftVisual<FluidValveBlockEntity> impleme
         yRot = AngleHelper.horizontalAngle(facing);
         xRot = facing == Direction.UP ? 0 : facing == Direction.DOWN ? 180 : 90;
 
-        Direction.Axis pipeAxis = FluidValveBlock.getPipeAxis(blockState);
-        Direction.Axis shaftAxis = KineticBlockEntityRenderer.getRotationAxisOf(blockEntity);
+        Axis pipeAxis = FluidValveBlock.getPipeAxis(blockState);
+        Axis shaftAxis = KineticBlockEntityRenderer.getRotationAxisOf(blockEntity);
 
-        boolean twist = pipeAxis.isHorizontal() && shaftAxis == Direction.Axis.X || pipeAxis.isVertical();
+        boolean twist = pipeAxis.isHorizontal() && shaftAxis == Axis.X || pipeAxis.isVertical();
         pointerRotationOffset = twist ? 90 : 0;
         settled = false;
 
@@ -61,7 +62,7 @@ public class FluidValveVisual extends ShaftVisual<FluidValveBlockEntity> impleme
 
     private void transformPointer(float partialTick) {
         float value = blockEntity.pointer.getValue(partialTick);
-        float pointerRotation = Mth.lerpInt(value, 0, -90);
+        float pointerRotation = Mth.lerp(value, 0, -90);
         settled = (value == 0 || value == 1) && blockEntity.pointer.settled();
 
         pointer.setIdentityTransform().translate(getVisualPosition()).center().rotateYDegrees((float) yRot)

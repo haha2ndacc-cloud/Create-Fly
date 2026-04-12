@@ -6,12 +6,11 @@ import com.zurrtum.create.client.ponder.api.level.PonderLevel;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.resources.model.ModelManager;
 
 import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
@@ -36,22 +35,12 @@ public abstract class TrackedElementBase<T> extends PonderElementBase implements
     @Override
     public void renderFirst(
         BlockEntityRenderDispatcher blockEntityRenderDispatcher,
-        BlockStateModelSet blockStateModelSet,
+        ModelManager modelManager,
         PonderLevel world,
         MultiBufferSource buffer,
         SubmitNodeCollector queue,
         Camera camera,
         CameraRenderState cameraRenderState,
-        PoseStack ms,
-        float pt
-    ) {
-    }
-
-    @Override
-    public void renderLayer(
-        PonderLevel world,
-        MultiBufferSource buffer,
-        ChunkSectionLayer type,
         PoseStack ms,
         float pt
     ) {

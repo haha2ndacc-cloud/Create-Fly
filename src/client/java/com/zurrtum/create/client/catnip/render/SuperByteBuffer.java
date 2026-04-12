@@ -1,99 +1,273 @@
 package com.zurrtum.create.client.catnip.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.catnip.theme.Color;
-import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
-import net.minecraft.core.Direction;
-import net.minecraft.util.LightCoordsUtil;
+import com.zurrtum.create.client.flywheel.lib.transform.Transform;
+import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.BlockAndLightGetter;
+import net.minecraft.world.level.CardinalLighting;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.UnknownNullability;
+import org.joml.Matrix3fc;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
+import org.joml.Quaternionfc;
+import org.jspecify.annotations.Nullable;
 
-@SuppressWarnings({"UnusedReturnValue", "unused", "unchecked"})
-public interface SuperByteBuffer extends TransformStack<SuperByteBuffer> {
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedTransferQueue;
 
-    static int maxLight(int packedLight1, int packedLight2) {
-        int blockLight1 = LightCoordsUtil.block(packedLight1);
-        int skyLight1 = LightCoordsUtil.sky(packedLight1);
-        int blockLight2 = LightCoordsUtil.block(packedLight2);
-        int skyLight2 = LightCoordsUtil.sky(packedLight2);
-        return LightCoordsUtil.pack(Math.max(blockLight1, blockLight2), Math.max(skyLight1, skyLight2));
+@SuppressWarnings("UnusedReturnValue")
+public class SuperByteBuffer implements Transform<SuperByteBuffer> {
+    private static final LinkedTransferQueue<SuperByteBufferTask> queue = new LinkedTransferQueue<>();
+    private static final ConcurrentLinkedQueue<SuperByteBufferTask> pool = new ConcurrentLinkedQueue<>();
+    private EntityBlockTemplateMesh @UnknownNullability [] templates;
+    private @UnknownNullability SuperByteBufferTask task;
+
+    protected SuperByteBuffer() {
     }
 
-    void renderInto(PoseStack.Pose entry, VertexConsumer consumer);
-
-    boolean isEmpty();
-
-    PoseStack getTransforms();
-
-    <Self extends SuperByteBuffer> Self reset();
-
-    <Self extends SuperByteBuffer> Self color(int color);
-
-    <Self extends SuperByteBuffer> Self color(int r, int g, int b, int a);
-
-    <Self extends SuperByteBuffer> Self disableDiffuse();
-
-    <Self extends SuperByteBuffer> Self shiftUV(SpriteShiftEntry entry);
-
-    <Self extends SuperByteBuffer> Self shiftUVScrolling(SpriteShiftEntry entry, float scrollU, float scrollV);
-
-    <Self extends SuperByteBuffer> Self shiftUVtoSheet(
-        SpriteShiftEntry entry,
-        float uTarget,
-        float vTarget,
-        int sheetSize
-    );
-
-    <Self extends SuperByteBuffer> Self overlay(int overlay);
-
-    <Self extends SuperByteBuffer> Self light(int packedLight);
-
-    /**
-     * Indicate that this buffer should look up the light coordinates in the level.
-     */
-    <Self extends SuperByteBuffer> Self useLevelLight(BlockAndLightGetter level);
-
-    /**
-     * Indicate that this buffer should look up the light coordinates in the level.
-     * Light Positions will be transformed by the passed Matrix before the lookup.
-     */
-    <Self extends SuperByteBuffer> Self useLevelLight(BlockAndLightGetter level, Matrix4f lightTransform);
-
-    //
-
-    default void delete() {
-    }
-
-    default <Self extends SuperByteBuffer> Self rotate(Direction.Axis axis, float radians) {
-        return (Self) rotate(radians, axis);
-    }
-
-    default <Self extends SuperByteBuffer> Self color(Color color) {
-        return this.color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-    }
-
-    default <Self extends SuperByteBuffer> Self shiftUVScrolling(SpriteShiftEntry entry, float scrollV) {
-        return this.shiftUVScrolling(entry, 0, scrollV);
-    }
-
-    @FunctionalInterface
-    interface SpriteShiftFunc {
-        void shift(float u, float v, Output output);
-
-        interface Output {
-            void accept(float u, float v);
+    public SuperByteBuffer(EntityBlockTemplateMesh[] templates) {
+        this.templates = templates;
+        task = pool.poll();
+        if (task == null) {
+            task = new SuperByteBufferTask();
         }
     }
 
-    class ShiftOutput implements SpriteShiftFunc.Output {
-        public float u;
-        public float v;
+    public static SuperByteBuffer empty() {
+        return EmptySuperByteBuffer.INSTANCE;
+    }
 
-        @Override
-        public void accept(float u, float v) {
-            this.u = u;
-            this.v = v;
+    public static void nudge(Pose pose, int seed) {
+        long randomBits = seed * 31L * 493286711L;
+        randomBits = randomBits * randomBits * 4392167121L + randomBits * 98761L;
+        float xNudge = (((randomBits >> 16 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        float yNudge = (((randomBits >> 20 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        float zNudge = (((randomBits >> 24 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        pose.translate(xNudge, yNudge, zNudge);
+    }
+
+    public static void mul(Pose pose, Pose transform) {
+        pose.pose().mul(transform.pose());
+        if (pose.trustedNormals && transform.trustedNormals) {
+            pose.normal().mul(transform.normal());
+        } else {
+            pose.computeNormalMatrix();
+        }
+    }
+
+    public static void scaleAround(Pose pose, float sx, float sy, float sz, float ox, float oy, float oz) {
+        pose.pose().scaleAround(sx, sy, sz, ox, oy, oz);
+        if (Math.abs(sx) == Math.abs(sy) && Math.abs(sy) == Math.abs(sz)) {
+            if (sx < 0.0F || sy < 0.0F || sz < 0.0F) {
+                pose.normal().scale(Math.signum(sx), Math.signum(sy), Math.signum(sz));
+            }
+        } else {
+            pose.normal().scale(1.0F / sx, 1.0F / sy, 1.0F / sz);
+            pose.trustedNormals = false;
+        }
+    }
+
+    public static void scaleAround(Pose pose, float factor, float ox, float oy, float oz) {
+        pose.pose().scaleAround(factor, factor, factor, ox, oy, oz);
+        if (factor < 0.0F) {
+            float signum = Math.signum(factor);
+            pose.normal().scale(signum, signum, signum);
+        }
+    }
+
+    public static void copyTransform(SuperByteBuffer from, SuperByteBuffer to) {
+        if (from.isEmpty()) {
+            return;
+        }
+        mul(to.task.pose, from.task.pose);
+    }
+
+    public SuperByteBufferRenderState extractRenderState() {
+        if ((task.flag & 0b11111) != 0) {
+            SuperByteBufferRenderState state = task.submit(queue, pool, templates);
+            task = pool.poll();
+            if (task == null) {
+                task = new SuperByteBufferTask();
+            }
+            return state;
+        }
+        return task.resolve(templates);
+    }
+
+    public void submit(PoseStack matrices, OrderedSubmitNodeCollector queue) {
+        extractRenderState().submit(matrices, queue);
+    }
+
+    @Deprecated
+    public void renderInto(Pose pose, VertexConsumer consumer) {
+        extractRenderState().renderInto(pose, consumer);
+    }
+
+    public SuperByteBuffer reset() {
+        task.reset();
+        return this;
+    }
+
+    public boolean isEmpty() {
+        return false;
+    }
+
+    public SuperByteBuffer cardinalLighting(@Nullable Level level) {
+        return cardinalLighting(level instanceof BlockAndTintGetter getter ? getter.cardinalLighting() : null);
+    }
+
+    public SuperByteBuffer cardinalLighting(@Nullable CardinalLighting light) {
+        if (light == CardinalLighting.DEFAULT) {
+            task.flag |= 0b01000000;
+        } else if (light == CardinalLighting.NETHER) {
+            task.flag |= (byte) 0b10000000;
+        } else {
+            task.flag &= 0b00111111;
+        }
+        return this;
+    }
+
+    @Override
+    public SuperByteBuffer scale(float factorX, float factorY, float factorZ) {
+        task.pose.scale(factorX, factorY, factorZ);
+        return this;
+    }
+
+    @Override
+    public SuperByteBuffer rotate(Quaternionfc quaternion) {
+        Pose pose = task.pose;
+        pose.pose().rotate(quaternion);
+        pose.normal().rotate(quaternion);
+        return this;
+    }
+
+    @Override
+    public SuperByteBuffer translate(float x, float y, float z) {
+        task.pose.translate(x, y, z);
+        return this;
+    }
+
+    @Override
+    public SuperByteBuffer transform(Pose pose) {
+        mul(task.pose, pose);
+        return this;
+    }
+
+    @Override
+    public SuperByteBuffer mulPose(Matrix4fc pose) {
+        task.pose.pose().mul(pose);
+        return this;
+    }
+
+    @Override
+    public SuperByteBuffer mulNormal(Matrix3fc normal) {
+        task.pose.normal().mul(normal);
+        return this;
+    }
+
+    public SuperByteBuffer color(int r, int g, int b, int a) {
+        task.color = ARGB.color(a, r, g, b);
+        if (task.color != -1) {
+            task.flag |= 1;
+        }
+        return this;
+    }
+
+    public SuperByteBuffer color(int color) {
+        if (color != -1) {
+            task.color = color;
+            task.flag |= 1;
+        }
+        return this;
+    }
+
+    public SuperByteBuffer color(Color c) {
+        return color(c.getRGB() | 0xFF000000);
+    }
+
+    public SuperByteBuffer disableDiffuse() {
+        task.flag |= 0b100000;
+        return this;
+    }
+
+    public SuperByteBuffer shiftUV(SpriteShiftEntry entry) {
+        task.flag |= 0b100;
+        task.shiftEntry = entry;
+        return this;
+    }
+
+    public SuperByteBuffer shiftUVScrolling(SpriteShiftEntry entry, float scrollV) {
+        task.flag |= 0b010;
+        task.shiftEntry = entry;
+        task.shiftU = 0;
+        task.shiftV = scrollV;
+        return this;
+    }
+
+    public SuperByteBuffer shiftUVScrolling(SpriteShiftEntry entry, float scrollU, float scrollV) {
+        task.flag |= 0b010;
+        task.shiftEntry = entry;
+        task.shiftU = scrollU;
+        task.shiftV = scrollV;
+        return this;
+    }
+
+    public SuperByteBuffer shiftUVtoSheet(SpriteShiftEntry entry, float scrollU, float scrollV, int sheetSize) {
+        task.flag |= 0b110;
+        task.shiftEntry = entry;
+        task.shiftU = scrollU;
+        task.shiftV = scrollV;
+        task.sheetSize = sheetSize;
+        return this;
+    }
+
+    public SuperByteBuffer overlay(int overlay) {
+        task.overlay = overlay;
+        return this;
+    }
+
+    public SuperByteBuffer light(int packedLight) {
+        if (packedLight != 0) {
+            task.flag |= 0b01000;
+            task.packedLight = packedLight;
+        }
+        return this;
+    }
+
+    public SuperByteBuffer useLevelLight(BlockAndLightGetter level) {
+        task.flag |= 0b10000;
+        task.blockAndLightGetter = level;
+        if (level instanceof BlockAndTintGetter blockAndTintGetter) {
+            cardinalLighting(blockAndTintGetter.cardinalLighting());
+        }
+        return this;
+    }
+
+    public SuperByteBuffer useLevelLight(BlockAndLightGetter level, Matrix4f lightTransform) {
+        task.flag |= 0b10000;
+        task.blockAndLightGetter = level;
+        task.lightTransform = lightTransform;
+        if (level instanceof BlockAndTintGetter blockAndTintGetter) {
+            cardinalLighting(blockAndTintGetter.cardinalLighting());
+        }
+        return this;
+    }
+
+    public static void register() {
+        int thread = Runtime.getRuntime().availableProcessors();
+        int count = Math.max(Math.max(thread / 3, thread - 6), 1);
+        for (int i = 0; i < count; i++) {
+            Thread worker = new SuperByteBufferThread(i, queue, pool);
+            worker.setPriority(Mth.clamp(Thread.NORM_PRIORITY - 2, Thread.MIN_PRIORITY, Thread.MAX_PRIORITY));
+            worker.setDaemon(true);
+            worker.start();
         }
     }
 }

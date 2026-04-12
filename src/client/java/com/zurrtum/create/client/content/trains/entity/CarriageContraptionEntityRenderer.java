@@ -7,8 +7,10 @@ import com.zurrtum.create.client.AllBogeyStyleRenders;
 import com.zurrtum.create.client.content.contraptions.render.ClientContraption;
 import com.zurrtum.create.client.content.contraptions.render.OrientedContraptionEntityRenderer;
 import com.zurrtum.create.client.content.trains.bogey.BogeyBlockEntityRenderer.BogeyRenderState;
+import com.zurrtum.create.client.content.trains.entity.CarriageContraptionEntityRenderer.CarriageContraptionState;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.contraptions.Contraption;
 import com.zurrtum.create.content.trains.entity.Carriage;
 import com.zurrtum.create.content.trains.entity.CarriageBogey;
@@ -16,18 +18,19 @@ import com.zurrtum.create.content.trains.entity.CarriageContraption;
 import com.zurrtum.create.content.trains.entity.CarriageContraptionEntity;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public class CarriageContraptionEntityRenderer extends OrientedContraptionEntityRenderer<CarriageContraptionEntity, CarriageContraptionEntityRenderer.CarriageContraptionState> {
-    public CarriageContraptionEntityRenderer(EntityRendererProvider.Context context) {
+public class CarriageContraptionEntityRenderer extends OrientedContraptionEntityRenderer<CarriageContraptionEntity, CarriageContraptionState> {
+    public CarriageContraptionEntityRenderer(Context context) {
         super(context);
     }
 
@@ -93,7 +96,9 @@ public class CarriageContraptionEntityRenderer extends OrientedContraptionEntity
             return;
         }
         int cameraLight = -1;
-        if (!state.contraption.isHiddenInPortal(BlockPos.ZERO)) {
+        Contraption contraption = entity.getContraption();
+        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
+        if (!contraption.isHiddenInPortal(BlockPos.ZERO)) {
             Vec3 pos = first.getAnchorPosition();
             int light;
             if (pos != null) {
@@ -109,6 +114,7 @@ public class CarriageContraptionEntityRenderer extends OrientedContraptionEntity
                 firstYaw,
                 firstPitch,
                 light,
+                cardinalLighting,
                 tickProgress
             );
         }
@@ -117,7 +123,7 @@ public class CarriageContraptionEntityRenderer extends OrientedContraptionEntity
                 entity.getInitialOrientation().getCounterClockWise(),
                 bogeySpacing
             );
-            if (!state.contraption.isHiddenInPortal(bogeyPos)) {
+            if (!contraption.isHiddenInPortal(bogeyPos)) {
                 Vec3 pos = second.getAnchorPosition();
                 int light;
                 if (pos != null) {
@@ -135,6 +141,7 @@ public class CarriageContraptionEntityRenderer extends OrientedContraptionEntity
                     secondYaw,
                     secondPitch,
                     light,
+                    cardinalLighting,
                     tickProgress
                 );
             }
@@ -155,10 +162,10 @@ public class CarriageContraptionEntityRenderer extends OrientedContraptionEntity
     ) {
         super.submit(state, ms, queue, cameraRenderState);
         if (state.firstBogey != null) {
-            state.firstBogey.render(ms, queue);
+            state.firstBogey.submit(ms, queue);
         }
         if (state.secondBogey != null) {
-            state.secondBogey.render(ms, queue);
+            state.secondBogey.submit(ms, queue);
         }
     }
 
@@ -175,7 +182,7 @@ public class CarriageContraptionEntityRenderer extends OrientedContraptionEntity
         boolean leadingUpsideDown = bogey.carriage.leadingBogey().isUpsideDown();
         TransformStack.of(ms).rotateYDegrees(viewYRot + 90).rotateXDegrees(-viewXRot).rotateYDegrees(180)
             .translate(0, 0, bogey.isLeading ? 0 : -bogeySpacing).rotateYDegrees(-180).rotateXDegrees(viewXRot)
-            .rotateYDegrees(-viewYRot - 90).rotateYDegrees(yaw).rotateXDegrees(pitch).translate(0, .5f, 0)
+            .rotateYDegrees(-viewYRot - 90).rotateYDegrees(yaw).rotateXDegrees(pitch).translate(0, 0.5f, 0)
             .rotateZDegrees(selfUpsideDown ? 180 : 0).translateY(selfUpsideDown != leadingUpsideDown ? 2 : 0);
     }
 
@@ -187,7 +194,7 @@ public class CarriageContraptionEntityRenderer extends OrientedContraptionEntity
         );
     }
 
-    public static class CarriageContraptionState extends OrientedContraptionState {
+    public static class CarriageContraptionState extends AbstractContraptionState {
         public @Nullable CarriageBogeyRenderState firstBogey;
         public @Nullable CarriageBogeyRenderState secondBogey;
     }
@@ -203,7 +210,7 @@ public class CarriageContraptionEntityRenderer extends OrientedContraptionEntity
         public float zRot;
         public int offsetY;
 
-        public void render(PoseStack matrices, SubmitNodeCollector queue) {
+        public void submit(PoseStack matrices, SubmitNodeCollector queue) {
             matrices.pushPose();
             if (offsetZ != 0) {
                 matrices.mulPose(Axis.YP.rotation(viewYRot));
@@ -221,7 +228,7 @@ public class CarriageContraptionEntityRenderer extends OrientedContraptionEntity
                 matrices.mulPose(Axis.ZP.rotation(zRot));
             }
             matrices.translate(0, offsetY, 0);
-            data.render(matrices, queue);
+            data.submit(matrices, queue);
             matrices.popPose();
         }
 
@@ -234,6 +241,7 @@ public class CarriageContraptionEntityRenderer extends OrientedContraptionEntity
             float yaw,
             float pitch,
             int light,
+            @Nullable CardinalLighting cardinalLighting,
             float tickProgress
         ) {
             float wheelAngle = bogey.wheelAngle.getValue(tickProgress);
@@ -242,6 +250,7 @@ public class CarriageContraptionEntityRenderer extends OrientedContraptionEntity
                 bogey.getSize(),
                 tickProgress,
                 light,
+                cardinalLighting,
                 wheelAngle,
                 bogey.bogeyData,
                 true

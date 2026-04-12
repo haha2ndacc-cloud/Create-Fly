@@ -7,12 +7,11 @@ import com.zurrtum.create.client.ponder.api.level.PonderLevel;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -45,7 +44,7 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
     @Override
     public final void renderFirst(
         BlockEntityRenderDispatcher blockEntityRenderDispatcher,
-        BlockStateModelSet blockStateModelSet,
+        ModelManager modelManager,
         PonderLevel world,
         MultiBufferSource buffer,
         SubmitNodeCollector queue,
@@ -58,7 +57,7 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
         float currentFade = applyFade(poseStack, pt);
         renderFirst(
             blockEntityRenderDispatcher,
-            blockStateModelSet,
+            modelManager,
             world,
             buffer,
             queue,
@@ -68,20 +67,6 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
             currentFade,
             pt
         );
-        poseStack.popPose();
-    }
-
-    @Override
-    public final void renderLayer(
-        PonderLevel world,
-        MultiBufferSource buffer,
-        ChunkSectionLayer type,
-        PoseStack poseStack,
-        float pt
-    ) {
-        poseStack.pushPose();
-        float currentFade = applyFade(poseStack, pt);
-        renderLayer(world, buffer, type, poseStack, currentFade, pt);
         poseStack.popPose();
     }
 
@@ -124,19 +109,9 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
         return currentFade;
     }
 
-    protected void renderLayer(
-        PonderLevel world,
-        MultiBufferSource buffer,
-        ChunkSectionLayer type,
-        PoseStack ms,
-        float fade,
-        float pt
-    ) {
-    }
-
     protected void renderFirst(
         BlockEntityRenderDispatcher blockEntityRenderDispatcher,
-        BlockStateModelSet blockStateModelSet,
+        ModelManager modelManager,
         PonderLevel world,
         MultiBufferSource buffer,
         SubmitNodeCollector queue,
@@ -165,7 +140,7 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
     protected int lightCoordsFromFade(float fade) {
         int light = LightCoordsUtil.FULL_BRIGHT;
         if (fade != 1) {
-            light = Mth.lerpInt(fade, 5, 0xF);
+            light = (int) Mth.lerp(fade, 5, 0xF);
             light = LightCoordsUtil.pack(light, light);
         }
         return light;

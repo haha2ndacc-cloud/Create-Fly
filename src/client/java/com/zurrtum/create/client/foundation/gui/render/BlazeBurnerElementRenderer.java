@@ -1,8 +1,7 @@
 package com.zurrtum.create.client.foundation.gui.render;
 
-import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.Lighting.Entry;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.client.AllPartialModels;
@@ -12,10 +11,10 @@ import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
@@ -27,7 +26,8 @@ public class BlazeBurnerElementRenderer extends PictureInPictureRenderer<BlazeBu
 
     @Override
     protected void renderToTexture(BlazeBurnerRenderState state, PoseStack matrices) {
-        Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+        GameRenderer gameRenderer = Minecraft.getInstance().gameRenderer;
+        gameRenderer.getLighting().setupFor(Entry.ENTITY_IN_UI);
         matrices.scale(1, 1, -1);
         matrices.mulPose(Axis.XP.rotationDegrees(-22.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(-45));
@@ -36,13 +36,11 @@ public class BlazeBurnerElementRenderer extends PictureInPictureRenderer<BlazeBu
         boolean canDrawFlame = state.heatLevel().isAtLeast(HeatLevel.FADING);
         PartialModel drawHat = AllPartialModels.LOGISTICS_HAT;
 
-        VertexConsumer cutout = bufferSource.getBuffer(RenderTypes.cutoutMovingBlock());
+        FeatureRenderDispatcher renderDispatcher = gameRenderer.getFeatureRenderDispatcher();
+        SubmitNodeStorage queue = renderDispatcher.getSubmitNodeStorage();
         CachedBuffers.partial(AllPartialModels.BLAZE_CAGE, state.block())
             .rotateCentered(horizontalAngle + Mth.PI, Direction.UP).light(LightCoordsUtil.FULL_BRIGHT)
-            .renderInto(matrices.last(), cutout);
-
-        FeatureRenderDispatcher renderDispatcher = Minecraft.getInstance().gameRenderer.getFeatureRenderDispatcher();
-        SubmitNodeStorage queue = renderDispatcher.getSubmitNodeStorage();
+            .submit(matrices, queue);
         BlazeBurnerRenderer.getBlazeBurnerRenderData(
             state.world(),
             state.block(),
@@ -53,7 +51,7 @@ public class BlazeBurnerElementRenderer extends PictureInPictureRenderer<BlazeBu
             state.drawGoggles(),
             drawHat,
             state.hash()
-        ).render(matrices, queue);
+        ).submit(matrices, queue);
         renderDispatcher.renderAllFeatures();
     }
 

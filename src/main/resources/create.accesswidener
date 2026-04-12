@@ -242,3 +242,5 @@ accessible field net/minecraft/client/gui/GuiGraphicsExtractor guiRenderState Ln
 accessible field net/minecraft/client/gui/GuiGraphicsExtractor scissorStack Lnet/minecraft/client/gui/GuiGraphicsExtractor$ScissorStack;
 accessible class net/minecraft/client/gui/GuiGraphicsExtractor$ScissorStack
 accessible field net/minecraft/client/multiplayer/ClientLevel minecraft Lnet/minecraft/client/Minecraft;
+accessible field com/mojang/blaze3d/vertex/PoseStack$Pose trustedNormals Z
+accessible method com/mojang/blaze3d/vertex/PoseStack$Pose computeNormalMatrix ()V

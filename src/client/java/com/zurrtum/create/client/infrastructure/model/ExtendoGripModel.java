@@ -9,6 +9,7 @@ import com.zurrtum.create.AllItems;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.content.equipment.extendoGrip.ExtendoGripRenderHandler;
 import com.zurrtum.create.client.foundation.model.BakedModelHelper;
+import com.zurrtum.create.client.infrastructure.model.ExtendoGripModel.RenderData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -16,6 +17,7 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.item.*;
+import net.minecraft.client.renderer.item.ItemStackRenderState.FoilType;
 import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
@@ -39,7 +41,7 @@ import java.util.function.Consumer;
 
 import static com.zurrtum.create.Create.MOD_ID;
 
-public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<ExtendoGripModel.RenderData> {
+public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<RenderData> {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/extendo_grip");
     public static final Identifier ITEM_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/extendo_grip/item");
     public static final Identifier POLE_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/extendo_grip/pole");
@@ -107,7 +109,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
         this.transformation = transformation;
         this.item = item;
         this.pole = pole;
-        this.vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(item));
+        vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(item));
         this.cog = cog;
         this.thinShort = thinShort;
         this.wideShort = wideShort;
@@ -143,7 +145,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
             );
         }
         data.animation = data.animation * data.animation * data.animation;
-        float extensionAngle = Mth.lerp(data.animation, 24f, 156f);
+        float extensionAngle = Mth.lerp(data.animation, 24.0f, 156.0f);
         data.state = state.newLayer();
         data.state.setExtents(vector);
         data.state.setLocalTransform(transformation);
@@ -151,7 +153,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
         data.state.prepareQuadList().addAll(item);
         data.halfAngle = extensionAngle / 2;
         data.oppositeAngle = 180 - extensionAngle;
-        data.hand = (leftHand || rightHand) ? ExtendoGripRenderHandler.holding ? holding : punching : pointing;
+        data.hand = leftHand || rightHand ? ExtendoGripRenderHandler.holding ? holding : punching : pointing;
         data.angle = AnimationTickHolder.getRenderTime() * -2;
         if (leftHand || rightHand) {
             data.angle += 360 * data.animation;
@@ -193,16 +195,16 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
         if (data.self) {
             data.self = false;
             matrices.pushPose();
-            matrices.translate(0.45f, 0.65f, -0.7f - (data.animation * 2.25f));
+            matrices.translate(0.45f, 0.65f, -0.7f - data.animation * 2.25f);
             settings.transforms().getTransform(displayContext).apply(displayContext.leftHand(), matrices.last());
             submit(data, matrices, queue, light, overlay, glint, i);
             matrices.popPose();
         } else if (data.item != null) {
             matrices.pushPose();
-            matrices.translate(0.45f, 0.65f, -0.7f - (data.animation * 2.25f));
+            matrices.translate(0.45f, 0.65f, -0.7f - data.animation * 2.25f);
             if (data.item.usesBlockLight()) {
                 matrices.mulPose(Axis.YP.rotationDegrees(data.flip * 45));
-                matrices.translate(data.flip * 0.15f, -0.15f, -.05f);
+                matrices.translate(data.flip * 0.15f, -0.15f, -0.05f);
                 matrices.scale(1.25f, 1.25f, 1.25f);
             }
             data.item.submit(matrices, queue, light, overlay, i);
@@ -257,7 +259,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
         matrices.mulPose(Axis.YP.rotationDegrees(180));
         matrices.translate(0, 0, -0.25f);
         matrices.scale(1, 1, 1 / (1 + data.animation));
-        matrices.translate(-1f, -0.5f, -0.5f);
+        matrices.translate(-1.0f, -0.5f, -0.5f);
         renderQuads(displayContext, matrices, queue, light, overlay, data.hand, blockLayer);
         matrices.popPose();
 
@@ -265,9 +267,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
 
         // cog
         matrices.pushPose();
-        matrices.translate(0.5f, 0.5625f, 0.5f);
-        matrices.mulPose(Axis.ZP.rotationDegrees(data.angle));
-        matrices.translate(-0.5f, -0.5625f, -0.5f);
+        matrices.rotateAround(Axis.ZP.rotationDegrees(data.angle), 0.5f, 0.5625f, 0.5f);
         renderQuads(displayContext, matrices, queue, light, overlay, cog, blockLayer);
         matrices.popPose();
     }
@@ -289,7 +289,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<Extendo
             0,
             LayerRenderState.EMPTY_TINTS,
             quads,
-            ItemStackRenderState.FoilType.NONE
+            FoilType.NONE
         );
     }
 

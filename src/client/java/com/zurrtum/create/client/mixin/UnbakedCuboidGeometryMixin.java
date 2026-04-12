@@ -14,6 +14,7 @@ import net.minecraft.client.resources.model.cuboid.UnbakedCuboidGeometry;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
+import org.joml.GeometryUtils;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.spongepowered.asm.mixin.Mixin;
@@ -48,21 +49,10 @@ public class UnbakedCuboidGeometryMixin {
             shade,
             lightEmission
         );
-        if (NormalsModelElement.calcNormals(element)) {
-            Vector3f v1 = new Vector3f(quad.position3());
-            Vector3fc t1 = quad.position1();
-            Vector3f v2 = new Vector3f(quad.position2());
-            Vector3fc t2 = quad.position0();
-            v1.sub(t1);
-            v2.sub(t2);
-            v2.cross(v1);
-            Vector3fc vector = v2.normalize();
-
-            int x = ((byte) Math.round(vector.x() * 127)) & 0xFF;
-            int y = ((byte) Math.round(vector.y() * 127)) & 0xFF;
-            int z = ((byte) Math.round(vector.z() * 127)) & 0xFF;
-            int normal = x | (y << 0x08) | (z << 0x10);
-            NormalsBakedQuad.setNormals(quad, new int[]{normal, normal, normal, normal});
+        if (((NormalsModelElement) (Object) element).create$calcNormals()) {
+            Vector3f normal = new Vector3f();
+            GeometryUtils.normal(quad.position0(), quad.position1(), quad.position2(), normal);
+            ((NormalsBakedQuad) (Object) quad).create$setNormals(normal);
         }
         return quad;
     }

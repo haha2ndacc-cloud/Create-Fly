@@ -6,27 +6,34 @@ import com.zurrtum.create.client.content.redstone.link.LinkRenderer;
 import com.zurrtum.create.client.content.redstone.link.LinkRenderer.LinkRenderState;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.filtering.FilteringRenderer;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.filtering.FilteringRenderer.FilterRenderState;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer.SmartRenderState;
 import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.world.level.CardinalLighting;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public class SmartBlockEntityRenderer<T extends SmartBlockEntity, S extends SmartBlockEntityRenderer.SmartRenderState> implements BlockEntityRenderer<T, S> {
+public class SmartBlockEntityRenderer<T extends SmartBlockEntity, S extends SmartRenderState> implements BlockEntityRenderer<T, S> {
     protected final ItemModelResolver itemModelManager;
 
-    public SmartBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
+    public SmartBlockEntityRenderer(Context context) {
         itemModelManager = context.itemModelResolver();
     }
 
@@ -34,6 +41,34 @@ public class SmartBlockEntityRenderer<T extends SmartBlockEntity, S extends Smar
     @SuppressWarnings("unchecked")
     public S createRenderState() {
         return (S) new SmartRenderState();
+    }
+
+    @Nullable
+    public static Level extractBase(
+        BlockEntity be,
+        BlockEntityRenderState state,
+        @Nullable CrumblingOverlay breakProgress
+    ) {
+        state.blockPos = be.getBlockPos();
+        state.blockState = be.getBlockState();
+        state.blockEntityType = be.getType();
+        Level level = be.getLevel();
+        state.lightCoords = getLightCoords(level, state.blockPos);
+        state.breakProgress = breakProgress;
+        return level;
+    }
+
+    public static void extractBase(
+        @Nullable Level level,
+        BlockEntity be,
+        BlockEntityRenderState state,
+        @Nullable CrumblingOverlay breakProgress
+    ) {
+        state.blockPos = be.getBlockPos();
+        state.blockState = be.getBlockState();
+        state.blockEntityType = be.getType();
+        state.lightCoords = getLightCoords(level, state.blockPos);
+        state.breakProgress = breakProgress;
     }
 
     @Override
@@ -45,9 +80,6 @@ public class SmartBlockEntityRenderer<T extends SmartBlockEntity, S extends Smar
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
         BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        if (be.isRemoved()) {
-            return;
-        }
         double distance = be.isVirtual() ? -1 : cameraPos.distanceToSqr(VecHelper.getCenterOf(state.blockPos));
         state.filter = FilteringRenderer.getFilterRenderState(be, state.blockState, itemModelManager, distance);
         state.link = LinkRenderer.getLinkRenderState(be, itemModelManager, distance);
@@ -56,11 +88,29 @@ public class SmartBlockEntityRenderer<T extends SmartBlockEntity, S extends Smar
     @Override
     public void submit(S state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
         if (state.filter != null) {
-            state.filter.render(state.blockState, queue, matrices, state.lightCoords);
+            state.filter.submit(state.blockState, queue, matrices, state.lightCoords);
         }
         if (state.link != null) {
             state.link.render(state.blockState, queue, matrices, state.lightCoords);
         }
+    }
+
+    public static int getLightCoords(@Nullable Level level, BlockPos pos) {
+        return level != null ? LevelRenderer.getLightCoords(level, pos) : LightCoordsUtil.FULL_BRIGHT;
+    }
+
+    @Nullable
+    public static CardinalLighting getCardinalLighting(@Nullable Level level) {
+        return level instanceof BlockAndTintGetter getter ? getter.cardinalLighting() : null;
+    }
+
+    public static Vec3 createNudge(int seed) {
+        long randomBits = seed * 31L * 493286711L;
+        randomBits = randomBits * randomBits * 4392167121L + randomBits * 98761L;
+        float xNudge = (((randomBits >> 16 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        float yNudge = (((randomBits >> 20 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        float zNudge = (((randomBits >> 24 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        return new Vec3(xNudge, yNudge, zNudge);
     }
 
     @Nullable
@@ -94,7 +144,7 @@ public class SmartBlockEntityRenderer<T extends SmartBlockEntity, S extends Smar
     }
 
     public record NameplateRenderState(Vec3 pos, Component label, int light, double distance) {
-        public void render(PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
+        public void submit(PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
             queue.submitNameTag(matrices, pos, 0, label, true, light, distance, cameraState);
         }
     }

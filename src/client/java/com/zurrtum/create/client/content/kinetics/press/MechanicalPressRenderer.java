@@ -1,25 +1,32 @@
 package com.zurrtum.create.client.content.kinetics.press;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
-import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.content.kinetics.press.MechanicalPressRenderer.MechanicalPressRenderState;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.kinetics.press.MechanicalPressBlockEntity;
 import com.zurrtum.create.content.kinetics.press.PressingBehaviour;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.level.CardinalLighting;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
-public class MechanicalPressRenderer extends KineticBlockEntityRenderer<MechanicalPressBlockEntity, MechanicalPressRenderer.MechanicalPressRenderState> {
-    public MechanicalPressRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.*;
+
+public class MechanicalPressRenderer implements BlockEntityRenderer<MechanicalPressBlockEntity, MechanicalPressRenderState> {
+    public MechanicalPressRenderer(Context context) {
     }
 
     @Override
@@ -35,42 +42,45 @@ public class MechanicalPressRenderer extends KineticBlockEntityRenderer<Mechanic
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        super.extractRenderState(be, state, tickProgress, cameraPos, crumblingOverlay);
-        BlockState blockState = be.getBlockState();
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
+        Axis axis = getRotationAxisOf(state.blockState);
+        int color = getTintColor(be);
+        state.model = CachedBuffers.block(KINETIC_BLOCK, shaft(axis)).cardinalLighting(cardinalLighting)
+            .light(state.lightCoords).color(color).extractRenderState();
+        state.angle = getRotateAngleWithoutBeOffset(axis, be, state, level);
         PressingBehaviour pressingBehaviour = be.getPressingBehaviour();
+        state.offset = -(pressingBehaviour.getRenderedHeadOffset(tickProgress) * pressingBehaviour.mode.headOffset);
         state.head = CachedBuffers.partialFacing(
             AllPartialModels.MECHANICAL_PRESS_HEAD,
-            blockState,
-            blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
-        );
-        state.offset = -(pressingBehaviour.getRenderedHeadOffset(tickProgress) * pressingBehaviour.mode.headOffset);
+            state.blockState,
+            state.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
+        ).cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
     }
 
     @Override
-    protected RenderType getRenderType(MechanicalPressBlockEntity be, BlockState state) {
-        return RenderTypes.solidMovingBlock();
-    }
-
-    @Override
-    public boolean shouldRenderOffScreen() {
-        return true;
-    }
-
-    @Override
-    protected BlockState getRenderedBlockState(MechanicalPressBlockEntity be) {
-        return shaft(getRotationAxisOf(be));
-    }
-
-    public static class MechanicalPressRenderState extends KineticRenderState {
-        SuperByteBuffer head;
-        public float offset;
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            super.render(matricesEntry, vertexConsumer);
-            head.translate(0, offset, 0);
-            head.light(lightCoords);
-            head.renderInto(matricesEntry, vertexConsumer);
+    public void submit(
+        MechanicalPressRenderState state,
+        PoseStack matrices,
+        SubmitNodeCollector queue,
+        CameraRenderState cameraState
+    ) {
+        if (state.angle != null) {
+            matrices.pushPose();
+            matrices.rotateAround(state.angle, 0.5f, 0.5f, 0.5f);
+            state.model.submit(matrices, queue);
+            matrices.popPose();
+        } else {
+            state.model.submit(matrices, queue);
         }
+        matrices.translate(0, state.offset, 0);
+        state.head.submit(matrices, queue);
+    }
+
+    public static class MechanicalPressRenderState extends BlockEntityRenderState {
+        public @UnknownNullability SuperByteBufferRenderState model;
+        public @UnknownNullability SuperByteBufferRenderState head;
+        public float offset;
+        public @Nullable Quaternionf angle;
     }
 }

@@ -22,12 +22,12 @@ public interface IAirCurrentSource {
     @Nullable Direction getAirFlowDirection();
 
     default float getMaxDistance() {
-        float speed = Math.abs(this.getSpeed());
+        float speed = Math.abs(getSpeed());
         CKinetics config = AllConfigs.server().kinetics;
         float distanceFactor = Math.min(speed / config.fanRotationArgmax.get(), 1);
-        float pushDistance = Mth.lerpInt(distanceFactor, 3, config.fanPushDistance.get());
-        float pullDistance = Mth.lerp(distanceFactor, 3f, config.fanPullDistance.get());
-        return this.getSpeed() > 0 ? pushDistance : pullDistance;
+        float pushDistance = Mth.lerp(distanceFactor, 3, config.fanPushDistance.get());
+        float pullDistance = Mth.lerp(distanceFactor, 3.0f, config.fanPullDistance.get());
+        return getSpeed() > 0 ? pushDistance : pullDistance;
     }
 
     boolean isSourceRemoved();

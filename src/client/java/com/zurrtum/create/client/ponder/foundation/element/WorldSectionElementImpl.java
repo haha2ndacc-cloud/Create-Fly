@@ -1,17 +1,14 @@
 package com.zurrtum.create.client.ponder.foundation.element;
 
-import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.zurrtum.create.catnip.data.Pair;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.catnip.registry.RegisteredObjectsHelper;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
-import com.zurrtum.create.client.catnip.client.render.model.BakedModelBufferer;
-import com.zurrtum.create.client.catnip.client.render.model.ShadeSeparatedResultConsumer;
 import com.zurrtum.create.client.catnip.outliner.AABBOutline;
+import com.zurrtum.create.client.catnip.render.EntityBlockLevelSbbBuilder;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
-import com.zurrtum.create.client.catnip.render.SuperByteBufferBuilder;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferCache;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferCache.Compartment;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
@@ -26,27 +23,32 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockModelLighter;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
+import net.minecraft.client.renderer.block.FluidRenderer;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemModelResolver;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.ClipContext.Fluid;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -57,14 +59,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 public class WorldSectionElementImpl extends AnimatedSceneElementBase implements WorldSectionElement {
 
-    public static final Compartment<Pair<Integer, Integer>> PONDER_WORLD_SECTION = new Compartment<>();
+    public static final Compartment<Integer> PONDER_WORLD_SECTION = new Compartment<>();
 
-    private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(
-        ThreadLocalObjects::new);
+    private static final ThreadLocal<EntityBlockLevelSbbBuilder> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(
+        EntityBlockLevelSbbBuilder::new);
 
     @Nullable List<BlockEntity> renderedBlockEntities;
     @Nullable List<Pair<BlockEntity, Consumer<Level>>> tickableBlockEntities;
@@ -76,7 +79,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
     Vec3 prevAnimatedRotation = Vec3.ZERO;
     Vec3 animatedRotation = Vec3.ZERO;
     Vec3 centerOfRotation = Vec3.ZERO;
-    @Nullable Vec3 stabilizationAnchor = null;
+    @Nullable Vec3 stabilizationAnchor;
 
     @Nullable BlockPos selectedBlock;
 
@@ -105,16 +108,16 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 
     @Override
     public void add(Selection toAdd) {
-        applyNewSelection(this.section.add(toAdd));
+        applyNewSelection(section.add(toAdd));
     }
 
     @Override
     public void erase(Selection toErase) {
-        applyNewSelection(this.section.substract(toErase));
+        applyNewSelection(section.substract(toErase));
     }
 
     private void applyNewSelection(Selection selection) {
-        this.section = selection;
+        section = selection;
         queueRedraw();
     }
 
@@ -169,7 +172,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 
     @Override
     public void setAnimatedRotation(Vec3 eulerAngles, boolean force) {
-        this.animatedRotation = eulerAngles;
+        animatedRotation = eulerAngles;
         if (force) {
             prevAnimatedRotation = animatedRotation;
         }
@@ -182,7 +185,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 
     @Override
     public void setAnimatedOffset(Vec3 offset, boolean force) {
-        this.animatedOffset = offset;
+        animatedOffset = offset;
         if (force) {
             prevAnimatedOffset = animatedOffset;
         }
@@ -200,13 +203,13 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 
     @Override
     public Pair<Vec3, BlockHitResult> rayTrace(PonderLevel world, Vec3 source, Vec3 target) {
-        world.setMask(this.section);
+        world.setMask(section);
         Vec3 transformedTarget = reverseTransformVec(target);
         BlockHitResult rayTraceBlocks = world.clip(new ClipContext(
             reverseTransformVec(source),
             transformedTarget,
             ClipContext.Block.OUTLINE,
-            ClipContext.Fluid.NONE,
+            Fluid.NONE,
             CollisionContext.empty()
         ));
         world.clearMask();
@@ -266,7 +269,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
         if (!isVisible()) {
             return;
         }
-        loadBEsIfMissing(scene.getLevel());
+        loadBEsIfMissing(scene.getLevel(), false);
         renderedBlockEntities.removeIf(be -> scene.getLevel().getBlockEntity(be.getBlockPos()) != be);
         tickableBlockEntities.removeIf(be -> scene.getLevel()
             .getBlockEntity(be.getFirst().getBlockPos()) != be.getFirst());
@@ -283,7 +286,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
     }
 
     @SuppressWarnings("deprecation")
-    protected void loadBEsIfMissing(PonderLevel world) {
+    protected void loadBEsIfMissing(PonderLevel world, boolean init) {
         if (renderedBlockEntities != null) {
             return;
         }
@@ -306,6 +309,9 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
             }
             renderedBlockEntities.add(blockEntity);
         });
+        if (init) {
+            tickableBlockEntities.forEach(be -> be.getSecond().accept(world));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -324,7 +330,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
     @Override
     public void renderFirst(
         BlockEntityRenderDispatcher blockEntityRenderDispatcher,
-        BlockStateModelSet blockStateModelSet,
+        ModelManager modelManager,
         PonderLevel world,
         MultiBufferSource buffer,
         SubmitNodeCollector queue,
@@ -336,7 +342,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
     ) {
         int light = -1;
         if (fade != 1) {
-            light = Mth.lerpInt(fade, 5, 15);
+            light = (int) Mth.lerp(fade, 5, 15);
         }
         if (redraw) {
             renderedBlockEntities = null;
@@ -352,7 +358,8 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
         Map<BlockPos, Integer> blockBreakingProgressions = world.getBlockBreakingProgressions();
         PoseStack overlayMS = null;
 
-        for (Map.Entry<BlockPos, Integer> entry : blockBreakingProgressions.entrySet()) {
+        BlockStateModelSet blockStateModelSet = modelManager.getBlockStateModelSet();
+        for (Entry<BlockPos, Integer> entry : blockBreakingProgressions.entrySet()) {
             BlockPos pos = entry.getKey();
             if (!section.test(pos)) {
                 continue;
@@ -360,7 +367,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 
             if (overlayMS == null) {
                 overlayMS = new PoseStack();
-                PoseStack.Pose matrixEntry = poseStack.last();
+                Pose matrixEntry = poseStack.last();
                 overlayMS.last().pose().set(matrixEntry.pose());
                 overlayMS.last().normal().set(matrixEntry.normal());
             }
@@ -377,46 +384,15 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
             poseStack.popPose();
         }
 
-        poseStack.popPose();
-    }
-
-    @Override
-    protected void renderLayer(
-        PonderLevel world,
-        MultiBufferSource buffer,
-        ChunkSectionLayer type,
-        PoseStack poseStack,
-        float fade,
-        float pt
-    ) {
         SuperByteBufferCache bufferCache = SuperByteBufferCache.getInstance();
-
-        int code = hashCode() ^ world.hashCode();
-        Pair<Integer, Integer> key = Pair.of(code, type.ordinal());
-
+        Integer key = hashCode() ^ world.hashCode();
         if (redraw) {
             bufferCache.invalidate(PONDER_WORLD_SECTION, key);
         }
-
         //        SodiumCompat.markPonderSpriteActive(world, section);
-        SuperByteBuffer structureBuffer = bufferCache.get(
-            PONDER_WORLD_SECTION,
-            key,
-            () -> buildStructureBuffer(world, type)
-        );
-        if (structureBuffer.isEmpty()) {
-            return;
-        }
-
-        transformMS(structureBuffer.getTransforms(), pt);
-
-        int light = lightCoordsFromFade(fade);
-        VertexConsumer consumer = buffer.getBuffer(switch (type) {
-            case SOLID -> RenderTypes.solidMovingBlock();
-            case CUTOUT -> RenderTypes.cutoutMovingBlock();
-            case TRANSLUCENT -> RenderTypes.translucentMovingBlock();
-        });
-        structureBuffer.light(light).renderInto(poseStack.last(), consumer);
+        bufferCache.get(PONDER_WORLD_SECTION, key, () -> buildStructureBuffer(world, modelManager))
+            .light(lightCoordsFromFade(fade)).submit(poseStack, queue);
+        poseStack.popPose();
     }
 
     @Override
@@ -450,8 +426,8 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
         transformMS(poseStack, pt);
         poseStack.translate(selectedBlock.getX(), selectedBlock.getY(), selectedBlock.getZ());
 
-        AABBOutline aabbOutline = new AABBOutline(shape.bounds().inflate(1 / 128f));
-        aabbOutline.getParams().lineWidth(1 / 64f).colored(0xefefef).disableLineNormals();
+        AABBOutline aabbOutline = new AABBOutline(shape.bounds().inflate(1 / 128.0f));
+        aabbOutline.getParams().lineWidth(1 / 64.0f).colored(0xefefef).disableLineNormals();
         aabbOutline.render(mc, poseStack, (SuperRenderTypeBuffer) buffer, Vec3.ZERO, pt);
 
         poseStack.popPose();
@@ -466,7 +442,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
         CameraRenderState cameraRenderState,
         float pt
     ) {
-        loadBEsIfMissing(world);
+        loadBEsIfMissing(world, true);
 
         Iterator<BlockEntity> iterator = renderedBlockEntities.iterator();
         Vec3 cameraPos = camera.position();
@@ -475,6 +451,9 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
             BlockEntityRenderer<BlockEntity, BlockEntityRenderState> renderer = dispatcher.getRenderer(tile);
             if (renderer == null) {
                 iterator.remove();
+                continue;
+            }
+            if (!renderer.shouldRender(tile, cameraPos)) {
                 continue;
             }
 
@@ -498,42 +477,44 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
         }
     }
 
-    private SuperByteBuffer buildStructureBuffer(PonderLevel world, ChunkSectionLayer layer) {
-        ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
-        SbbBuilder sbbBuilder = objects.sbbBuilder;
-        sbbBuilder.prepare(layer);
+    private SuperByteBuffer buildStructureBuffer(PonderLevel world, ModelManager modelManager) {
+        EntityBlockLevelSbbBuilder sbbBuilder = THREAD_LOCAL_OBJECTS.get();
+        BlockStateModelSet blockStateModelSet = modelManager.getBlockStateModelSet();
+        FluidRenderer fluidRenderer = new FluidRenderer(modelManager.getFluidStateModelSet());
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        ModelBlockRenderer blockRenderer = new ModelBlockRenderer(ambientOcclusion, true, minecraft.getBlockColors());
 
         world.setMask(section);
         world.pushFakeLight(0);
 
-        BakedModelBufferer.bufferBlocks(section.iterator(), world, null, true, sbbBuilder);
+        BlockModelLighter.enableCaching();
+        for (BlockPos pos : section) {
+            BlockState state = world.getBlockState(pos);
+            FluidState fluidState = state.getFluidState();
+            if (!fluidState.isEmpty()) {
+                sbbBuilder.prepareForFluid(pos);
+                fluidRenderer.tesselate(world, pos, sbbBuilder, state, fluidState);
+            }
+            if (state.getRenderShape() == RenderShape.MODEL) {
+                blockRenderer.tesselateBlock(
+                    sbbBuilder,
+                    pos.getX(),
+                    pos.getY(),
+                    pos.getZ(),
+                    world,
+                    pos,
+                    state,
+                    blockStateModelSet.get(state),
+                    state.getSeed(pos)
+                );
+            }
+        }
+        BlockModelLighter.clearCache();
 
         world.popLight();
         world.clearMask();
 
         return sbbBuilder.build();
     }
-
-    private static class SbbBuilder extends SuperByteBufferBuilder implements ShadeSeparatedResultConsumer {
-        private ChunkSectionLayer renderType;
-
-        public void prepare(ChunkSectionLayer renderType) {
-            prepare();
-            this.renderType = renderType;
-        }
-
-        @Override
-        public void accept(ChunkSectionLayer renderType, boolean shaded, MeshData data) {
-            if (renderType != this.renderType) {
-                return;
-            }
-
-            add(data, shaded);
-        }
-    }
-
-    private static class ThreadLocalObjects {
-        public final SbbBuilder sbbBuilder = new SbbBuilder();
-    }
-
 }

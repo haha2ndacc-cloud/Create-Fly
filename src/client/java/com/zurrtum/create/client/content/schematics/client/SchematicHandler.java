@@ -389,7 +389,7 @@ public class SchematicHandler {
     }
 
     public void equip(ToolType tool) {
-        this.currentTool = tool;
+        currentTool = tool;
         currentTool.getTool().init();
     }
 
@@ -407,7 +407,7 @@ public class SchematicHandler {
 
         bounds = new AABB(0, 0, 0, size.getX(), size.getY(), size.getZ());
         outline = new AABBOutline(bounds);
-        outline.getParams().colored(0x6886c5).lineWidth(1 / 16f);
+        outline.getParams().colored(0x6886c5).lineWidth(1 / 16.0f);
         transformation.init(anchor, settings, bounds);
     }
 

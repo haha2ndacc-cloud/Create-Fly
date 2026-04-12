@@ -1,30 +1,32 @@
 package com.zurrtum.create.client.content.contraptions.actors.harvester;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.content.contraptions.actors.harvester.HarvesterRenderer.HarvesterRenderState;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.contraptions.actors.harvester.HarvesterBlock;
 import com.zurrtum.create.content.contraptions.actors.harvester.HarvesterBlockEntity;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
-public class HarvesterRenderer implements BlockEntityRenderer<HarvesterBlockEntity, HarvesterRenderer.HarvesterRenderState> {
-    public static final Vec3 PIVOT = new Vec3(0, 6, 9);
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getUpRotateAngle;
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getWestRotateAngle;
 
-    public HarvesterRenderer(BlockEntityRendererProvider.Context context) {
+public class HarvesterRenderer implements BlockEntityRenderer<HarvesterBlockEntity, HarvesterRenderState> {
+    public HarvesterRenderer(Context context) {
     }
 
     @Override
@@ -40,14 +42,11 @@ public class HarvesterRenderer implements BlockEntityRenderer<HarvesterBlockEnti
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        state.layer = RenderTypes.cutoutMovingBlock();
-        state.model = CachedBuffers.partial(AllPartialModels.HARVESTER_BLADE, state.blockState);
-        float originOffset = 1 / 16f;
-        state.rotOffset = new Vec3(0, PIVOT.y * originOffset, PIVOT.z * originOffset);
-        float time = AnimationTickHolder.getRenderTime(be.getLevel()) / 20;
-        state.angle = AngleHelper.rad((time * be.getAnimatedSpeed()) % 360);
-        state.horizontalAngle = AngleHelper.rad(AngleHelper.horizontalAngle(state.blockState.getValue(HarvesterBlock.FACING)));
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        state.model = CachedBuffers.partial(AllPartialModels.HARVESTER_BLADE, state.blockState).cardinalLighting(level)
+            .light(state.lightCoords).extractRenderState();
+        state.angle = getWestRotateAngle(AnimationTickHolder.getRenderTime(level) / 20 * be.getAnimatedSpeed() % 360);
+        state.horizontalAngle = getUpRotateAngle(AngleHelper.horizontalAngle(state.blockState.getValue(HarvesterBlock.FACING)));
     }
 
     @Override
@@ -57,24 +56,18 @@ public class HarvesterRenderer implements BlockEntityRenderer<HarvesterBlockEnti
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        queue.submitCustomGeometry(matrices, state.layer, state);
+        if (state.horizontalAngle != null) {
+            matrices.rotateAround(state.horizontalAngle, 0.5f, 0.5f, 0.5f);
+        }
+        if (state.angle != null) {
+            matrices.rotateAround(state.angle, 0, 0.375f, 0.5625f);
+        }
+        state.model.submit(matrices, queue);
     }
 
-    public static class HarvesterRenderState extends BlockEntityRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
-        public RenderType layer;
-        public SuperByteBuffer model;
-        public float angle;
-        public Vec3 rotOffset;
-        public float horizontalAngle;
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            model.rotateCentered(horizontalAngle, Direction.UP);
-            model.translate(rotOffset.x, rotOffset.y, rotOffset.z);
-            model.rotate(angle, Direction.WEST);
-            model.translate(-rotOffset.x, -rotOffset.y, -rotOffset.z);
-            model.light(lightCoords);
-            model.renderInto(matricesEntry, vertexConsumer);
-        }
+    public static class HarvesterRenderState extends BlockEntityRenderState {
+        public @UnknownNullability SuperByteBufferRenderState model;
+        public @Nullable Quaternionf angle;
+        public @Nullable Quaternionf horizontalAngle;
     }
 }

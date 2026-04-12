@@ -1,6 +1,7 @@
 package com.zurrtum.create.client.content.processing.burner;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.catnip.math.AngleHelper;
@@ -9,6 +10,7 @@ import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.api.behaviour.movement.MovementRenderBehaviour;
 import com.zurrtum.create.client.api.behaviour.movement.MovementRenderState;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
+import com.zurrtum.create.client.content.processing.burner.BlazeBurnerRenderer.BlazeBurnerRenderData;
 import com.zurrtum.create.client.foundation.virtualWorld.VirtualRenderWorld;
 import com.zurrtum.create.content.contraptions.Contraption;
 import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
@@ -28,6 +30,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Matrix4f;
 import org.jspecify.annotations.Nullable;
 
@@ -123,6 +126,7 @@ public class BlazeBurnerMovementRenderBehaviour implements MovementRenderBehavio
         Font textRenderer,
         MovementContext context,
         VirtualRenderWorld renderWorld,
+        Pose transform,
         Matrix4f worldMatrix4f
     ) {
         if (!shouldRender(context)) {
@@ -136,7 +140,9 @@ public class BlazeBurnerMovementRenderBehaviour implements MovementRenderBehavio
         if (!heatLevel.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING)) {
             heatLevel = BlazeBurnerBlock.HeatLevel.FADING;
         }
-        BlazeBurnerMovementRenderState state = new BlazeBurnerMovementRenderState(context.localPos);
+        BlazeBurnerMovementRenderState state = new BlazeBurnerMovementRenderState();
+        state.pose = transform;
+        state.pos = context.localPos;
         Level level = context.world;
         float horizontalAngle = AngleHelper.rad(getHeadAngle(context).getValue(AnimationTickHolder.getPartialTicks(level)));
         boolean drawGoggles = context.blockEntityData.contains("Goggles");
@@ -156,16 +162,17 @@ public class BlazeBurnerMovementRenderBehaviour implements MovementRenderBehavio
         return state;
     }
 
-    public static class BlazeBurnerMovementRenderState extends MovementRenderState {
-        public BlazeBurnerRenderer.BlazeBurnerRenderData data;
-
-        public BlazeBurnerMovementRenderState(BlockPos pos) {
-            super(pos);
-        }
+    public static class BlazeBurnerMovementRenderState implements MovementRenderState {
+        public @UnknownNullability BlazeBurnerRenderData data;
+        public @UnknownNullability Pose pose;
+        public @UnknownNullability BlockPos pos;
 
         @Override
-        public void render(PoseStack matrices, SubmitNodeCollector queue) {
-            data.render(matrices, queue);
+        public void submit(PoseStack matrices, SubmitNodeCollector queue) {
+            matrices.pushPose();
+            transform(matrices, pose, pos);
+            data.submit(matrices, queue);
+            matrices.popPose();
         }
     }
 }

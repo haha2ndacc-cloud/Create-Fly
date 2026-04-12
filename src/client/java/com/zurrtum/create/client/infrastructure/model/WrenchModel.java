@@ -6,6 +6,7 @@ import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.scrollValue.ScrollValueHandler;
+import com.zurrtum.create.client.infrastructure.model.WrenchModel.RenderData;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
@@ -33,7 +34,7 @@ import java.util.function.Supplier;
 
 import static com.zurrtum.create.Create.MOD_ID;
 
-public class WrenchModel implements ItemModel, SpecialModelRenderer<WrenchModel.RenderData> {
+public class WrenchModel implements ItemModel, SpecialModelRenderer<RenderData> {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/wrench");
     public static final Identifier ITEM_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/wrench/item");
     public static final Identifier GEAR_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/wrench/gear");
@@ -112,9 +113,7 @@ public class WrenchModel implements ItemModel, SpecialModelRenderer<WrenchModel.
     ) {
         assert data != null;
         matrices.pushPose();
-        matrices.translate(0.5625f, 0.5f, 0.5f);
-        matrices.mulPose(data.rotate);
-        matrices.translate(-0.5625f, -0.5f, -0.5f);
+        matrices.rotateAround(data.rotate, 0.5625f, 0.5f, 0.5f);
         queue.submitItem(
             matrices,
             data.displayContext,

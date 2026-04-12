@@ -27,7 +27,7 @@ public class Color {
     }
 
     public Color(int r, int g, int b, int a) {
-        value = ((a & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | ((b & 0xff) << 0);
+        value = (a & 0xff) << 24 | (r & 0xff) << 16 | (g & 0xff) << 8 | (b & 0xff) << 0;
     }
 
     public Color(float r, float g, float b, float a) {
@@ -65,13 +65,13 @@ public class Color {
     }
 
     public static int mixColors(int color1, int color2, float w) {
-        int a1 = (color1 >> 24);
-        int r1 = (color1 >> 16) & 0xFF;
-        int g1 = (color1 >> 8) & 0xFF;
+        int a1 = color1 >> 24;
+        int r1 = color1 >> 16 & 0xFF;
+        int g1 = color1 >> 8 & 0xFF;
         int b1 = color1 & 0xFF;
-        int a2 = (color2 >> 24);
-        int r2 = (color2 >> 16) & 0xFF;
-        int g2 = (color2 >> 8) & 0xFF;
+        int a2 = color2 >> 24;
+        int r2 = color2 >> 16 & 0xFF;
+        int g2 = color2 >> 8 & 0xFF;
         int b2 = color2 & 0xFF;
 
         return ((int) (a1 + (a2 - a1) * w) << 24) + ((int) (r1 + (r2 - r1) * w) << 16) + ((int) (g1 + (g2 - g1) * w) << 8) + ((int) (b1 + (b2 - b1) * w) << 0);
@@ -87,7 +87,7 @@ public class Color {
         return new Color(red, green, blue);
     }
 
-    private static int colorInPhase(int phase, int progress) {
+    public static int colorInPhase(int phase, int progress) {
         phase = phase % 6;
         if (phase <= 1) {
             return 0;
@@ -97,9 +97,8 @@ public class Color {
         }
         if (phase <= 4) {
             return 255;
-        } else {
-            return 255 - progress;
         }
+        return 255 - progress;
     }
 
     public static Color generateFromLong(long l) {
@@ -113,9 +112,8 @@ public class Color {
     public Color copy(boolean mutable) {
         if (mutable) {
             return new Color(value);
-        } else {
-            return new Color(value).setImmutable();
         }
+        return new Color(value).setImmutable();
     }
 
     /**
@@ -123,7 +121,7 @@ public class Color {
      * will instead cause a copy to be created that can me modified.
      */
     public Color setImmutable() {
-        this.mutable = false;
+        mutable = false;
         return this;
     }
 
@@ -132,7 +130,7 @@ public class Color {
      * @see #getRGB
      */
     public int getRed() {
-        return (getRGB() >> 16) & 0xff;
+        return getRGB() >> 16 & 0xff;
     }
 
     public Color setRed(int r) {
@@ -148,7 +146,7 @@ public class Color {
      * @see #getRGB
      */
     public int getGreen() {
-        return (getRGB() >> 8) & 0xff;
+        return getRGB() >> 8 & 0xff;
     }
 
     public Color setGreen(int g) {
@@ -164,7 +162,7 @@ public class Color {
      * @see #getRGB
      */
     public int getBlue() {
-        return (getRGB() >> 0) & 0xff;
+        return getRGB() >> 0 & 0xff;
     }
 
     public Color setBlue(int b) {
@@ -180,7 +178,7 @@ public class Color {
      * @see #getRGB
      */
     public int getAlpha() {
-        return (getRGB() >> 24) & 0xff;
+        return getRGB() >> 24 & 0xff;
     }
 
     public Color setAlpha(int a) {
@@ -195,28 +193,28 @@ public class Color {
      * @return the red component in the range 0-1f.
      */
     public float getRedAsFloat() {
-        return getRed() / 255f;
+        return getRed() / 255.0f;
     }
 
     /**
      * @return the green component in the range 0-1f.
      */
     public float getGreenAsFloat() {
-        return getGreen() / 255f;
+        return getGreen() / 255.0f;
     }
 
     /**
      * @return the blue component in the range 0-1f.
      */
     public float getBlueAsFloat() {
-        return getBlue() / 255f;
+        return getBlue() / 255.0f;
     }
 
     /**
      * @return the alpha component in the range 0-1f.
      */
     public float getAlphaAsFloat() {
-        return getAlpha() / 255f;
+        return getAlpha() / 255.0f;
     }
 
     /**
@@ -238,7 +236,7 @@ public class Color {
     }
 
     public Style asStyle() {
-        return Style.EMPTY.withColor(this.value);
+        return Style.EMPTY.withColor(value);
     }
 
     public Color scaleAlpha(float factor) {
@@ -264,12 +262,12 @@ public class Color {
 
     public Color darker() {
         int a = getAlpha();
-        return ensureMutable().mixWith(BLACK, .25f).setAlphaUnchecked(a);
+        return ensureMutable().mixWith(BLACK, 0.25f).setAlphaUnchecked(a);
     }
 
     public Color brighter() {
         int a = getAlpha();
-        return ensureMutable().mixWith(WHITE, .25f).setAlphaUnchecked(a);
+        return ensureMutable().mixWith(WHITE, 0.25f).setAlphaUnchecked(a);
     }
 
     public Color setValue(int value) {
@@ -288,30 +286,30 @@ public class Color {
     // ********* //
 
     public Color ensureMutable() {
-        if (this.mutable) {
+        if (mutable) {
             return this;
         }
 
-        return new Color(this.value);
+        return new Color(value);
     }
 
     protected Color setRedUnchecked(int r) {
-        this.value = (this.value & 0xff_00ffff) | ((r & 0xff) << 16);
+        value = value & 0xff_00ffff | (r & 0xff) << 16;
         return this;
     }
 
     protected Color setGreenUnchecked(int g) {
-        this.value = (this.value & 0xff_ff00ff) | ((g & 0xff) << 8);
+        value = value & 0xff_ff00ff | (g & 0xff) << 8;
         return this;
     }
 
     protected Color setBlueUnchecked(int b) {
-        this.value = (this.value & 0xff_ffff00) | ((b & 0xff) << 0);
+        value = value & 0xff_ffff00 | (b & 0xff) << 0;
         return this;
     }
 
     protected Color setAlphaUnchecked(int a) {
-        this.value = (this.value & 0x00_ffffff) | ((a & 0xff) << 24);
+        value = value & 0x00_ffffff | (a & 0xff) << 24;
         return this;
     }
 

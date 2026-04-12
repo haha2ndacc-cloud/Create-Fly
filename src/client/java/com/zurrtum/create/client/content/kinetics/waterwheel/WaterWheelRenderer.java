@@ -4,9 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.catnip.registry.RegisteredObjectsHelper;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.*;
-import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
-import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.KineticRenderState;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferCache.Compartment;
+import com.zurrtum.create.client.content.kinetics.base.SingleKineticRenderState;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import com.zurrtum.create.content.kinetics.waterwheel.LargeWaterWheelBlock;
 import com.zurrtum.create.content.kinetics.waterwheel.WaterWheelBlock;
@@ -14,10 +15,14 @@ import com.zurrtum.create.content.kinetics.waterwheel.WaterWheelBlockEntity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.Direction;
@@ -28,62 +33,95 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends KineticBlockEntityRenderer<T, KineticRenderState> {
-    public static final SuperByteBufferCache.Compartment<ModelKey> WATER_WHEEL = new SuperByteBufferCache.Compartment<>();
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getRotateAngleWithoutBeOffset;
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getTintColor;
+
+public class WaterWheelRenderer implements BlockEntityRenderer<WaterWheelBlockEntity, SingleKineticRenderState> {
+    public static final Compartment<ModelKey> WATER_WHEEL = new Compartment<>();
 
     public static final StitchedSprite OAK_PLANKS_TEMPLATE = new StitchedSprite(Identifier.parse("block/oak_planks"));
     public static final StitchedSprite OAK_LOG_TEMPLATE = new StitchedSprite(Identifier.parse("block/oak_log"));
     public static final StitchedSprite OAK_LOG_TOP_TEMPLATE = new StitchedSprite(Identifier.parse("block/oak_log_top"));
 
-    protected final boolean large;
+    protected ModelKey key;
 
-    public WaterWheelRenderer(BlockEntityRendererProvider.Context context, boolean large) {
-        super(context);
-        this.large = large;
+    public WaterWheelRenderer(boolean large) {
+        key = new ModelKey(large);
     }
 
-    public static <T extends WaterWheelBlockEntity> WaterWheelRenderer<T> standard(BlockEntityRendererProvider.Context context) {
-        return new WaterWheelRenderer<>(context, false);
+    public static WaterWheelRenderer standard(Context context) {
+        return new WaterWheelRenderer(false);
     }
 
-    public static <T extends WaterWheelBlockEntity> WaterWheelRenderer<T> large(BlockEntityRendererProvider.Context context) {
-        return new WaterWheelRenderer<>(context, true);
+    public static WaterWheelRenderer large(Context context) {
+        return new WaterWheelRenderer(true);
     }
 
     @Override
-    protected SuperByteBuffer getRotatedModel(T be, KineticRenderState state) {
-        ModelKey key = new ModelKey(large, state.blockState, be.material);
-        return SuperByteBufferCache.getInstance().get(
-            WATER_WHEEL, key, () -> {
-                BlockStateModel model = generateModel(key);
-                BlockState state1 = key.state();
-                Direction dir;
-                if (key.large()) {
-                    dir = Direction.fromAxisAndDirection(
-                        state1.getValue(LargeWaterWheelBlock.AXIS),
-                        AxisDirection.POSITIVE
-                    );
-                } else {
-                    dir = state1.getValue(WaterWheelBlock.FACING);
-                }
-                PoseStack transform = CachedBuffers.rotateToFaceVertical(dir).get();
-                return SuperBufferFactory.getInstance()
-                    .createForBlock(model, Blocks.AIR.defaultBlockState(), transform);
-            }
-        );
+    public SingleKineticRenderState createRenderState() {
+        return new SingleKineticRenderState();
+    }
+
+    @Override
+    public void extractRenderState(
+        WaterWheelBlockEntity be,
+        SingleKineticRenderState state,
+        float partialTicks,
+        Vec3 cameraPosition,
+        @Nullable CrumblingOverlay breakProgress
+    ) {
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, breakProgress);
+        state.model = getRotatedModel(be.material, state.blockState).cardinalLighting(level).light(state.lightCoords)
+            .color(getTintColor(be)).extractRenderState();
+        state.angle = getRotateAngleWithoutBeOffset(be, state, level);
+    }
+
+    @Override
+    public void submit(
+        SingleKineticRenderState state,
+        PoseStack matrices,
+        SubmitNodeCollector queue,
+        CameraRenderState camera
+    ) {
+        state.submit(matrices, queue);
+    }
+
+    private SuperByteBuffer getRotatedModel(BlockState material, BlockState blockState) {
+        key.update(blockState, material);
+        return SuperByteBufferCache.getInstance().get(WATER_WHEEL, key, this::createRotatedModel);
+    }
+
+    private SuperByteBuffer createRotatedModel() {
+        ModelKey current = key;
+        key = new ModelKey(key.large);
+        BlockStateModel model = generateModel(current);
+        Direction dir;
+        if (current.large) {
+            dir = Direction.fromAxisAndDirection(
+                current.state.getValue(LargeWaterWheelBlock.AXIS),
+                AxisDirection.POSITIVE
+            );
+        } else {
+            dir = current.state.getValue(WaterWheelBlock.FACING);
+        }
+        return SuperBufferFactory.getInstance()
+            .createForBlock(model, Blocks.AIR.defaultBlockState(), CachedBuffers.rotateToFaceVertical(dir));
     }
 
     public static BlockStateModel generateModel(ModelKey key) {
-        return generateModel(Variant.of(key.large(), key.state()), key.material());
+        return generateModel(Variant.of(key.large, key.state), key.material);
     }
 
     public static BlockStateModel generateModel(Variant variant, BlockState material) {
@@ -201,15 +239,45 @@ public class WaterWheelRenderer<T extends WaterWheelBlockEntity> extends Kinetic
                 boolean extension = blockState.getValue(LargeWaterWheelBlock.EXTENSION);
                 if (extension) {
                     return LARGE_EXTENSION;
-                } else {
-                    return LARGE;
                 }
-            } else {
-                return SMALL;
+                return LARGE;
             }
+            return SMALL;
         }
     }
 
-    public record ModelKey(boolean large, BlockState state, BlockState material) {
+    public static class ModelKey {
+        public final boolean large;
+        public @UnknownNullability BlockState state;
+        public @UnknownNullability BlockState material;
+
+        public ModelKey(boolean large) {
+            this.large = large;
+        }
+
+        public void update(BlockState state, BlockState material) {
+            this.state = state;
+            this.material = material;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
+            ModelKey modelKey = (ModelKey) obj;
+            return large == modelKey.large && state.equals(modelKey.state) && material.equals(modelKey.material);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Boolean.hashCode(large);
+            result = 31 * result + state.hashCode();
+            result = 31 * result + material.hashCode();
+            return result;
+        }
     }
 }

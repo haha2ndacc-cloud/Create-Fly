@@ -1,6 +1,7 @@
 package com.zurrtum.create.client.catnip.gui.render;
 
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.Lighting.Entry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -26,10 +27,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRenderState> {
     private static final Int2ObjectMap<GpuTexture> TEXTURES = new Int2ObjectArrayMap<>();
-    private static final CameraRenderState CAMERA = new CameraRenderState();
+    private final CameraRenderState camera = new CameraRenderState();
     private final PoseStack matrices = new PoseStack();
     private final BlockBakedQuadOutput output;
     private final ModelBlockRenderer blockRenderer;
@@ -73,7 +75,7 @@ public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRen
         GameRenderer gameRenderer = mc.gameRenderer;
         boolean lightOption = gameRenderer.useUiLightmap;
         gameRenderer.useUiLightmap = false;
-        gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+        gameRenderer.getLighting().setupFor(Entry.ENTITY_IN_UI);
         if (block.zRot() != 0) {
             matrices.mulPose(Axis.ZP.rotation(block.zRot()));
         }
@@ -98,17 +100,21 @@ public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRen
             BlockEntityRenderer<BlockEntity, BlockEntityRenderState> renderer = mc.getBlockEntityRenderDispatcher()
                 .getRenderer(blockEntity);
             if (renderer != null) {
-                FeatureRenderDispatcher renderDispatcher = gameRenderer.getFeatureRenderDispatcher();
-                Level previousLevel = blockEntity.getLevel();
-                BlockState stateBefore = blockEntity.getBlockState();
-                blockEntity.setLevel(world);
-                blockEntity.setBlockState(blockState);
-                BlockEntityRenderState renderState = renderer.createRenderState();
-                renderer.extractRenderState(blockEntity, renderState, 0, CAMERA.pos, null);
-                renderer.submit(renderState, matrices, renderDispatcher.getSubmitNodeStorage(), CAMERA);
-                renderDispatcher.renderAllFeatures();
-                blockEntity.setBlockState(stateBefore);
-                blockEntity.setLevel(previousLevel);
+                BlockPos pos = blockEntity.getBlockPos();
+                Vec3 cameraPos = camera.pos = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+                if (renderer.shouldRender(blockEntity, cameraPos)) {
+                    FeatureRenderDispatcher renderDispatcher = gameRenderer.getFeatureRenderDispatcher();
+                    Level previousLevel = blockEntity.getLevel();
+                    BlockState stateBefore = blockEntity.getBlockState();
+                    blockEntity.setLevel(world);
+                    blockEntity.setBlockState(blockState);
+                    BlockEntityRenderState renderState = renderer.createRenderState();
+                    renderer.extractRenderState(blockEntity, renderState, 0, cameraPos, null);
+                    renderer.submit(renderState, matrices, renderDispatcher.getSubmitNodeStorage(), camera);
+                    renderDispatcher.renderAllFeatures();
+                    blockEntity.setBlockState(stateBefore);
+                    blockEntity.setLevel(previousLevel);
+                }
             }
         }
         bufferSource.endBatch();

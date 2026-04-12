@@ -1,31 +1,33 @@
 package com.zurrtum.create.client.content.redstone.analogLever;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.content.redstone.analogLever.AnalogLeverRenderer.AnalogLeverRenderState;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.redstone.analogLever.AnalogLeverBlock;
 import com.zurrtum.create.content.redstone.analogLever.AnalogLeverBlockEntity;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.core.Direction;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.CardinalLighting;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
-public class AnalogLeverRenderer implements BlockEntityRenderer<AnalogLeverBlockEntity, AnalogLeverRenderer.AnalogLeverRenderState> {
-    public AnalogLeverRenderer(BlockEntityRendererProvider.Context context) {
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.*;
+
+public class AnalogLeverRenderer implements BlockEntityRenderer<AnalogLeverBlockEntity, AnalogLeverRenderState> {
+    public AnalogLeverRenderer(Context context) {
     }
 
     @Override
@@ -41,18 +43,20 @@ public class AnalogLeverRenderer implements BlockEntityRenderer<AnalogLeverBlock
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        state.layer = RenderTypes.solidMovingBlock();
-        float level = be.clientState.getValue(tickProgress);
-        state.angle = (float) ((level / 15) * 90 / 180 * Math.PI);
-        state.handle = CachedBuffers.partial(AllPartialModels.ANALOG_LEVER_HANDLE, state.blockState);
+        Level world = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(world);
+        float level = be.clientState.getValue(tickProgress) / 15;
+        state.angle = getEastRadiansRotateAngle((float) (level / 2 * Math.PI));
+        state.handle = CachedBuffers.partial(AllPartialModels.ANALOG_LEVER_HANDLE, state.blockState)
+            .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
         AttachFace face = state.blockState.getValue(AnalogLeverBlock.FACE);
-        float rX = face == AttachFace.FLOOR ? 0 : face == AttachFace.WALL ? 90 : 180;
-        float rY = AngleHelper.horizontalAngle(state.blockState.getValue(AnalogLeverBlock.FACING));
-        state.xRot = Mth.DEG_TO_RAD * rX;
-        state.yRot = Mth.DEG_TO_RAD * rY;
-        state.indicator = CachedBuffers.partial(AllPartialModels.ANALOG_LEVER_INDICATOR, state.blockState);
-        state.color = Color.mixColors(0x2C0300, 0xCD0000, level / 15f);
+        if (face != AttachFace.FLOOR) {
+            state.xRot = new Quaternionf().setAngleAxis(face == AttachFace.WALL ? RAD_90 : RAD_180, 1, 0, 0);
+        }
+        state.yRot = getUpRotateAngle(AngleHelper.horizontalAngle(state.blockState.getValue(AnalogLeverBlock.FACING)));
+        int color = Color.mixColors(0xFF2C0300, 0xFFCD0000, level);
+        state.indicator = CachedBuffers.partial(AllPartialModels.ANALOG_LEVER_INDICATOR, state.blockState)
+            .cardinalLighting(cardinalLighting).light(state.lightCoords).color(color).extractRenderState();
     }
 
     @Override
@@ -62,36 +66,24 @@ public class AnalogLeverRenderer implements BlockEntityRenderer<AnalogLeverBlock
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        queue.submitCustomGeometry(matrices, state.layer, state);
-    }
-
-    private SuperByteBuffer transform(SuperByteBuffer buffer, BlockState leverState) {
-        AttachFace face = leverState.getValue(AnalogLeverBlock.FACE);
-        float rX = face == AttachFace.FLOOR ? 0 : face == AttachFace.WALL ? 90 : 180;
-        float rY = AngleHelper.horizontalAngle(leverState.getValue(AnalogLeverBlock.FACING));
-        buffer.rotateCentered((float) (rY / 180 * Math.PI), Direction.UP);
-        buffer.rotateCentered((float) (rX / 180 * Math.PI), Direction.EAST);
-        return buffer;
-    }
-
-    public static class AnalogLeverRenderState extends BlockEntityRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
-        public RenderType layer;
-        public float angle;
-        public SuperByteBuffer handle;
-        public float xRot;
-        public float yRot;
-        public SuperByteBuffer indicator;
-        public int color;
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            handle.rotateCentered(yRot, Direction.UP);
-            handle.rotateCentered(xRot, Direction.EAST);
-            handle.translate(0.5f, 0.0625f, 0.5f).rotate(angle, Direction.EAST).translate(-0.5f, -0.0625f, -0.5f);
-            handle.light(lightCoords).renderInto(matricesEntry, vertexConsumer);
-            indicator.rotateCentered(yRot, Direction.UP);
-            indicator.rotateCentered(xRot, Direction.EAST);
-            indicator.light(lightCoords).color(color).renderInto(matricesEntry, vertexConsumer);
+        if (state.yRot != null) {
+            matrices.rotateAround(state.yRot, 0.5f, 0.5f, 0.5f);
         }
+        if (state.xRot != null) {
+            matrices.rotateAround(state.xRot, 0.5f, 0.5f, 0.5f);
+        }
+        state.indicator.submit(matrices, queue);
+        if (state.angle != null) {
+            matrices.rotateAround(state.angle, 0.5f, 0.0625f, 0.5f);
+        }
+        state.handle.submit(matrices, queue);
+    }
+
+    public static class AnalogLeverRenderState extends BlockEntityRenderState {
+        public @UnknownNullability SuperByteBufferRenderState handle;
+        public @UnknownNullability SuperByteBufferRenderState indicator;
+        public @Nullable Quaternionf angle;
+        public @Nullable Quaternionf xRot;
+        public @Nullable Quaternionf yRot;
     }
 }

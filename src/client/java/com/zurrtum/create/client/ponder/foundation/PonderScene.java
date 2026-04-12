@@ -25,12 +25,11 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.SubmitNodeStorage;
-import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.Identifier;
@@ -258,14 +257,14 @@ public class PonderScene {
         cameraRenderState.orientation.set(camera.rotation());
         renderViewEntity.swap(mc);
         BlockEntityRenderDispatcher blockEntityRenderManager = mc.getBlockEntityRenderDispatcher();
-        BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
+        ModelManager modelManager = mc.getModelManager();
         EntityRenderDispatcher entityRenderDispatcher = mc.getEntityRenderDispatcher();
         ItemModelResolver itemModelManager = mc.getItemModelResolver();
         forEachVisible(
             PonderSceneElement.class,
             e -> e.renderFirst(
                 blockEntityRenderManager,
-                blockStateModelSet,
+                modelManager,
                 world,
                 buffer,
                 queue,
@@ -276,10 +275,6 @@ public class PonderScene {
             )
         );
         renderViewEntity.swap(mc);
-
-        for (ChunkSectionLayer type : ChunkSectionLayer.values()) {
-            forEachVisible(PonderSceneElement.class, e -> e.renderLayer(world, buffer, type, ms, pt));
-        }
 
         forEachVisible(
             PonderSceneElement.class,

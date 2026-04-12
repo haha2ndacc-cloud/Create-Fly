@@ -119,10 +119,7 @@ public class CopycatPanelModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
-                        direction,
-                        quad
-                    )
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
                 );
             }
             parts.add(new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleMaterial()));
@@ -153,7 +150,7 @@ public class CopycatPanelModel extends CopycatModel {
                 quad.direction(),
                 info
             );
-            NormalsBakedQuad.setNormals(newQuad, NormalsBakedQuad.getNormals(quad));
+            NormalsBakedQuad.setNormals(newQuad, quad);
             consumer.accept(newQuad);
         }
     }
@@ -203,10 +200,7 @@ public class CopycatPanelModel extends CopycatModel {
                     block.shouldFaceAlwaysRender(
                         state,
                         direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
-                        direction,
-                        quad
-                    )
+                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
                 );
             }
             parts.add(new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleMaterial()));

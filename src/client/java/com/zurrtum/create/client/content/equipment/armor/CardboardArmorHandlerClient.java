@@ -79,7 +79,7 @@ public class CardboardArmorHandlerClient {
                 renderState.create$getInterpolatedYaw(),
                 state.lightCoords,
                 model
-            ).render(ms, queue);
+            ).submit(ms, queue);
         } catch (ExecutionException e) {
             e.printStackTrace();
         }

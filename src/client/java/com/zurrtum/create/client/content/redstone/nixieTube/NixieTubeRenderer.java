@@ -1,6 +1,7 @@
 package com.zurrtum.create.client.content.redstone.nixieTube;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.data.Couple;
@@ -10,40 +11,49 @@ import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
+import com.zurrtum.create.client.content.redstone.nixieTube.NixieTubeRenderer.NixieTubeRenderState;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.client.foundation.render.CreateRenderTypes;
 import com.zurrtum.create.client.foundation.utility.DyeHelper;
 import com.zurrtum.create.content.redstone.nixieTube.DoubleFaceAttachedBlock.DoubleAttachFace;
 import com.zurrtum.create.content.redstone.nixieTube.NixieTubeBlock;
 import com.zurrtum.create.content.redstone.nixieTube.NixieTubeBlockEntity;
+import com.zurrtum.create.content.redstone.nixieTube.NixieTubeBlockEntity.ComputerSignal.TubeDisplay;
 import com.zurrtum.create.content.trains.signal.SignalBlockEntity.SignalState;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.gui.font.TextRenderable;
 import net.minecraft.client.gui.font.glyphs.BakedGlyph;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.SubmitNodeCollector.CustomGeometryRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.LightCoordsUtil;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.CardinalLighting;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
-public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEntity, NixieTubeRenderer.NixieTubeRenderState> {
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getYRotateAngle;
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getZRotateAngle;
+
+public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEntity, NixieTubeRenderState> {
     protected final Font textRenderer;
 
-    public NixieTubeRenderer(BlockEntityRendererProvider.Context context) {
+    public NixieTubeRenderer(Context context) {
         textRenderer = context.font();
     }
 
@@ -60,30 +70,34 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
         if (be.signalState != null || be.computerSignal != null) {
-            updateSignalRenderState(be, state, cameraPos);
+            updateSignalRenderState(be, state, cameraPos, crumblingOverlay);
         } else {
-            updateTextRenderState(textRenderer, be, state);
+            updateTextRenderState(textRenderer, be, state, crumblingOverlay);
         }
     }
 
-    public static void updateTextRenderState(Font textRenderer, NixieTubeBlockEntity be, NixieTubeRenderState state) {
+    public static void updateTextRenderState(
+        Font textRenderer,
+        NixieTubeBlockEntity be,
+        NixieTubeRenderState state,
+        @Nullable CrumblingOverlay crumblingOverlay
+    ) {
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
         TextRenderState data = new TextRenderState();
         DoubleAttachFace face = state.blockState.getValue(NixieTubeBlock.FACE);
         Direction facing = state.blockState.getValue(NixieTubeBlock.FACING);
-        data.yRot = Mth.DEG_TO_RAD * (AngleHelper.horizontalAngle(facing) - 90 + (face == DoubleAttachFace.WALL_REVERSED ? 180 : 0));
-        data.zRot = Mth.DEG_TO_RAD * (face == DoubleAttachFace.WALL ? -90 : face == DoubleAttachFace.WALL_REVERSED ? 90 : 0);
+        data.yRot = getYRotateAngle(AngleHelper.horizontalAngle(facing) - 90 + (face == DoubleAttachFace.WALL_REVERSED ? 180 : 0));
+        data.zRot = getZRotateAngle(face == DoubleAttachFace.WALL ? -90 : face == DoubleAttachFace.WALL_REVERSED ? 90 : 0);
         if (face == DoubleAttachFace.CEILING || facing == Direction.DOWN) {
-            data.zRot2 = Mth.DEG_TO_RAD * 180;
+            data.zRot2 = Axis.ZP.rotation(KineticBlockEntityRenderer.RAD_180);
         }
-        data.layer = RenderTypes.translucentMovingBlock();
-        data.light = state.lightCoords;
-        data.tube = CachedBuffers.partial(AllPartialModels.NIXIE_TUBE, state.blockState);
+        data.tube = CachedBuffers.partial(AllPartialModels.NIXIE_TUBE, state.blockState).cardinalLighting(level)
+            .light(state.lightCoords).extractRenderState();
         Couple<String> s = be.getDisplayedStrings();
         if (s != null) {
             DyeColor color = NixieTubeBlock.colorOf(state.blockState);
-            float flicker = be.getLevel().getRandom().nextFloat();
+            float flicker = level.getRandom().nextFloat();
             Couple<Integer> couple = DyeHelper.getDyeColors(color);
             int brightColor = couple.getFirst() | 0xFF000000;
             int darkColor = couple.getSecond() | 0xFF000000;
@@ -131,13 +145,13 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
         TextRenderable mix = glyph.createGlyph(
             0,
             0,
-            Color.mixColors(darkColor, 0xFF000000, .35f),
+            Color.mixColors(darkColor, 0xFF000000, 0.35f),
             0,
             Style.EMPTY,
             0,
             0
         );
-        float x = (textRenderer.width(text) - .5f) / -2f;
+        float x = (textRenderer.width(text) - 0.5f) / -2.0f;
         return new TextDrawableState(bright.renderType(DisplayMode.NORMAL), x, y, bright, dark, mix, light);
     }
 
@@ -163,23 +177,33 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
         return c;
     }
 
-    public static void updateSignalRenderState(NixieTubeBlockEntity be, NixieTubeRenderState state, Vec3 cameraPos) {
+    public static void updateSignalRenderState(
+        NixieTubeBlockEntity be,
+        NixieTubeRenderState state,
+        Vec3 cameraPos,
+        @Nullable CrumblingOverlay crumblingOverlay
+    ) {
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
         SignalRenderState data = new SignalRenderState();
         state.data = data;
         DoubleAttachFace face = state.blockState.getValue(NixieTubeBlock.FACE);
         Direction facing = NixieTubeBlock.getFacing(state.blockState);
-        data.yRot = Mth.DEG_TO_RAD * (AngleHelper.horizontalAngle(state.blockState.getValue(NixieTubeBlock.FACING)) - 90 + (face == DoubleAttachFace.WALL_REVERSED ? 180 : 0));
+        float yRot = AngleHelper.horizontalAngle(state.blockState.getValue(NixieTubeBlock.FACING)) - 90;
+        if (face == DoubleAttachFace.WALL_REVERSED) {
+            yRot += 180;
+        }
+        data.yRot = getYRotateAngle(yRot);
         int zRot = face == DoubleAttachFace.WALL ? -90 : face == DoubleAttachFace.WALL_REVERSED ? 90 : 0;
         if (facing == Direction.DOWN) {
             zRot += 180;
         }
-        data.zRot = Mth.DEG_TO_RAD * zRot;
-        data.light = state.lightCoords;
-        data.layer = RenderTypes.solidMovingBlock();
-        data.panel = CachedBuffers.partial(AllPartialModels.SIGNAL_PANEL, state.blockState);
+        data.zRot = getZRotateAngle(zRot);
+        data.panel = CachedBuffers.partial(AllPartialModels.SIGNAL_PANEL, state.blockState)
+            .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
         data.offset = facing == Direction.DOWN || state.blockState.getValue(NixieTubeBlock.FACE) == DoubleAttachFace.WALL_REVERSED ? 0.25f : -0.25f;
 
-        float renderTime = AnimationTickHolder.getRenderTime(be.getLevel());
+        float renderTime = AnimationTickHolder.getRenderTime(level);
         double distance = Vec3.atCenterOf(state.blockPos).subtract(cameraPos).lengthSqr();
         boolean vert = facing.getAxis().isHorizontal();
 
@@ -189,14 +213,15 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
             boolean yellow = signalState.isYellowLight(renderTime);
             float longSide = yellow ? 1 : 4;
             float longSideGlow = yellow ? 2 : 5.125f;
-            left.light = state.lightCoords;
-            left.layer = CreateRenderTypes.translucent();
             if (signalState.isRedLight(renderTime)) {
                 left.additive = true;
                 if (distance < 9216) {
-                    left.cubeLayer = left.layer;
-                    left.cube = CachedBuffers.partial(AllPartialModels.SIGNAL_WHITE_CUBE, state.blockState);
-                    left.glow = CachedBuffers.partial(AllPartialModels.SIGNAL_RED_GLOW, state.blockState);
+                    left.cube = CachedBuffers.partial(AllPartialModels.SIGNAL_WHITE_CUBE, state.blockState)
+                        .cardinalLighting(cardinalLighting).disableDiffuse().light(LightCoordsUtil.FULL_BRIGHT)
+                        .extractRenderState();
+                    left.glow = CachedBuffers.partial(AllPartialModels.SIGNAL_RED_GLOW, state.blockState)
+                        .cardinalLighting(cardinalLighting).disableDiffuse().light(LightCoordsUtil.FULL_BRIGHT)
+                        .color(127, 127, 127, 127).extractRenderState();
                     if (vert) {
                         left.cubeX = 1;
                         left.cubeY = longSide;
@@ -209,24 +234,25 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
                         left.glowY = 2;
                     }
                 }
-                left.layer = CreateRenderTypes.additive2();
-                left.layer2 = CreateRenderTypes.additive();
-                left.signal = CachedBuffers.partial(AllPartialModels.SIGNAL_RED, state.blockState);
+                left.signal = CachedBuffers.partial(AllPartialModels.SIGNAL_RED, state.blockState)
+                    .cardinalLighting(cardinalLighting).disableDiffuse().light(LightCoordsUtil.FULL_BRIGHT)
+                    .color(127, 127, 127, 127).extractRenderState();
             } else {
-                left.signal = CachedBuffers.partial(AllPartialModels.NIXIE_TUBE_SINGLE, state.blockState);
+                left.signal = CachedBuffers.partial(AllPartialModels.NIXIE_TUBE_SINGLE, state.blockState)
+                    .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
             }
             SignalDrawableState right = data.right = new SignalDrawableState();
-            right.light = state.lightCoords;
-            right.layer = CreateRenderTypes.translucent();
             if (yellow || signalState.isGreenLight(renderTime)) {
                 right.additive = true;
                 if (distance < 9216) {
-                    right.cubeLayer = right.layer;
-                    right.cube = CachedBuffers.partial(AllPartialModels.SIGNAL_WHITE_CUBE, state.blockState);
+                    right.cube = CachedBuffers.partial(AllPartialModels.SIGNAL_WHITE_CUBE, state.blockState)
+                        .cardinalLighting(cardinalLighting).disableDiffuse().light(LightCoordsUtil.FULL_BRIGHT)
+                        .extractRenderState();
                     right.glow = CachedBuffers.partial(
-                        yellow ? AllPartialModels.SIGNAL_YELLOW_GLOW : AllPartialModels.SIGNAL_WHITE_GLOW,
-                        state.blockState
-                    );
+                            yellow ? AllPartialModels.SIGNAL_YELLOW_GLOW : AllPartialModels.SIGNAL_WHITE_GLOW,
+                            state.blockState
+                        ).cardinalLighting(cardinalLighting).disableDiffuse().light(LightCoordsUtil.FULL_BRIGHT)
+                        .color(127, 127, 127, 127).extractRenderState();
                     if (vert) {
                         right.cubeX = longSide;
                         right.cubeY = 1;
@@ -239,58 +265,53 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
                         right.glowY = longSideGlow;
                     }
                 }
-                right.layer = CreateRenderTypes.additive2();
-                right.layer2 = CreateRenderTypes.additive();
                 right.signal = CachedBuffers.partial(
-                    yellow ? AllPartialModels.SIGNAL_YELLOW : AllPartialModels.SIGNAL_WHITE,
-                    state.blockState
-                );
+                        yellow ? AllPartialModels.SIGNAL_YELLOW : AllPartialModels.SIGNAL_WHITE,
+                        state.blockState
+                    ).cardinalLighting(cardinalLighting).disableDiffuse().light(LightCoordsUtil.FULL_BRIGHT)
+                    .color(127, 127, 127, 127).extractRenderState();
             } else {
-                right.signal = CachedBuffers.partial(AllPartialModels.NIXIE_TUBE_SINGLE, state.blockState);
+                right.signal = CachedBuffers.partial(AllPartialModels.NIXIE_TUBE_SINGLE, state.blockState)
+                    .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
             }
         } else if (be.computerSignal != null) {
             for (boolean first : Iterate.trueAndFalse) {
-                NixieTubeBlockEntity.ComputerSignal.TubeDisplay tubeDisplay = first ? be.computerSignal.first : be.computerSignal.second;
-
                 SignalDrawableState cState = new SignalDrawableState();
+                TubeDisplay tubeDisplay;
                 if (first) {
+                    tubeDisplay = be.computerSignal.first;
                     data.left = cState;
                 } else {
+                    tubeDisplay = be.computerSignal.second;
                     data.right = cState;
                 }
-
-                cState.light = state.lightCoords;
-                cState.layer = CreateRenderTypes.translucent();
-                cState.signal = CachedBuffers.partial(AllPartialModels.NIXIE_TUBE_SINGLE, state.blockState);
-
                 if (tubeDisplay.blinkPeriod == 0 || tubeDisplay.blinkPeriod > 1 && renderTime % tubeDisplay.blinkPeriod < tubeDisplay.blinkOffTime) {
+                    cState.signal = CachedBuffers.partial(AllPartialModels.NIXIE_TUBE_SINGLE, state.blockState)
+                        .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
                     continue;
                 }
-
-                cState.signalColor = new Color(tubeDisplay.r, tubeDisplay.g, tubeDisplay.b);
-
                 cState.additive = true;
                 if (distance < 9216) {
-                    cState.glowColor = new Color(
-                        Math.min(((tubeDisplay.r & 0xFF) * 6 + 256) >> 3, 255),
-                        Math.min(((tubeDisplay.g & 0xFF) * 6 + 256) >> 3, 255),
-                        Math.min(((tubeDisplay.b & 0xFF) * 6 + 256) >> 3, 255)
-                    );
-                    cState.cubeLayer = CreateRenderTypes.translucent();
-                    cState.cube = CachedBuffers.partial(AllPartialModels.SIGNAL_COMPUTER_WHITE_CUBE, state.blockState);
-                    cState.glow = CachedBuffers.partial(AllPartialModels.SIGNAL_COMPUTER_WHITE_GLOW, state.blockState);
-
+                    cState.cube = CachedBuffers.partial(AllPartialModels.SIGNAL_COMPUTER_WHITE_CUBE, state.blockState)
+                        .cardinalLighting(cardinalLighting).disableDiffuse().light(LightCoordsUtil.FULL_BRIGHT)
+                        .extractRenderState();
+                    cState.glow = CachedBuffers.partial(AllPartialModels.SIGNAL_COMPUTER_WHITE_GLOW, state.blockState)
+                        .cardinalLighting(cardinalLighting).disableDiffuse().light(LightCoordsUtil.FULL_BRIGHT).color(
+                            Math.min((tubeDisplay.r & 0xFF) * 6 + 256 >> 3, 255) >> 1,
+                            Math.min((tubeDisplay.g & 0xFF) * 6 + 256 >> 3, 255) >> 1,
+                            Math.min((tubeDisplay.b & 0xFF) * 6 + 256 >> 3, 255) >> 1,
+                            127
+                        ).extractRenderState();
                     float width = vert ? tubeDisplay.glowHeight : tubeDisplay.glowWidth;
                     float height = vert ? tubeDisplay.glowWidth : tubeDisplay.glowHeight;
-
                     cState.cubeX = width;
                     cState.cubeY = height;
                     cState.glowX = width + 1.125f;
                     cState.glowY = height + 1.125f;
                 }
-                cState.layer = CreateRenderTypes.additive2();
-                cState.layer2 = CreateRenderTypes.additive();
-                cState.signal = CachedBuffers.partial(AllPartialModels.SIGNAL_COMPUTER_WHITE, state.blockState);
+                cState.signal = CachedBuffers.partial(AllPartialModels.SIGNAL_COMPUTER_WHITE, state.blockState)
+                    .cardinalLighting(cardinalLighting).disableDiffuse().light(LightCoordsUtil.FULL_BRIGHT)
+                    .color(tubeDisplay.r >> 1, tubeDisplay.g >> 1, tubeDisplay.b >> 1, 127).extractRenderState();
             }
         }
     }
@@ -302,7 +323,7 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        state.data.render(matrices, queue);
+        state.data.submit(matrices, queue);
     }
 
     public static void drawInWorldString(
@@ -332,41 +353,38 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
     }
 
     public static class NixieTubeRenderState extends BlockEntityRenderState {
-        public NixieTubeRenderData data;
+        public @UnknownNullability NixieTubeRenderData data;
     }
 
     public interface NixieTubeRenderData {
-        void render(PoseStack matrices, SubmitNodeCollector queue);
+        void submit(PoseStack matrices, SubmitNodeCollector queue);
     }
 
-    public static class TextRenderState implements NixieTubeRenderData, SubmitNodeCollector.CustomGeometryRenderer {
-        public RenderType layer;
-        public float yRot;
-        public float zRot;
-        public float zRot2;
+    public static class TextRenderState implements NixieTubeRenderData {
+        public @Nullable Quaternionf yRot;
+        public @Nullable Quaternionf zRot;
+        public @Nullable Quaternionf zRot2;
         public @Nullable TextDrawableState left;
         public @Nullable TextDrawableState right;
-        public SuperByteBuffer tube;
-        public int light;
+        public @UnknownNullability SuperByteBufferRenderState tube;
 
         @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            tube.light(light).renderInto(matricesEntry, vertexConsumer);
-        }
-
-        @Override
-        public void render(PoseStack matrices, SubmitNodeCollector queue) {
+        public void submit(PoseStack matrices, SubmitNodeCollector queue) {
             matrices.pushPose();
             matrices.translate(0.5f, 0.5f, 0.5f);
-            matrices.mulPose(Axis.YP.rotation(yRot));
-            matrices.mulPose(Axis.ZP.rotation(zRot));
-            if (zRot2 != 0) {
+            if (yRot != null) {
+                matrices.mulPose(yRot);
+            }
+            if (zRot != null) {
+                matrices.mulPose(zRot);
+            }
+            if (zRot2 != null) {
                 matrices.pushPose();
-                matrices.mulPose(Axis.ZP.rotation(zRot2));
-                queue.order(1).submitCustomGeometry(matrices, layer, this);
+                matrices.mulPose(zRot2);
+                tube.submit(matrices, queue);
                 matrices.popPose();
             } else {
-                queue.order(1).submitCustomGeometry(matrices, layer, this);
+                tube.submit(matrices, queue);
             }
             if (left != null) {
                 matrices.pushPose();
@@ -385,10 +403,9 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
     }
 
     public record TextDrawableState(RenderType layer, float x, int y, TextRenderable bright, TextRenderable dark,
-                                    TextRenderable mix,
-                                    int light) implements SubmitNodeCollector.CustomGeometryRenderer {
+                                    TextRenderable mix, int light) implements CustomGeometryRenderer {
         @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
+        public void render(Pose matricesEntry, VertexConsumer vertexConsumer) {
             Matrix4f pose = matricesEntry.pose();
             pose.translate(x, y, 0);
             bright.render(pose, vertexConsumer, light, false);
@@ -402,29 +419,28 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
         }
     }
 
-    public static class SignalRenderState implements NixieTubeRenderData, SubmitNodeCollector.CustomGeometryRenderer {
-        public float yRot;
-        public float zRot;
-        public int light;
-        public RenderType layer;
-        public SuperByteBuffer panel;
+    public static class SignalRenderState implements NixieTubeRenderData {
+        public @Nullable Quaternionf yRot;
+        public @Nullable Quaternionf zRot;
+        public @UnknownNullability SuperByteBufferRenderState panel;
         public float offset;
-        public SignalDrawableState left;
-        public SignalDrawableState right;
+        public @UnknownNullability SignalDrawableState left;
+        public @UnknownNullability SignalDrawableState right;
 
         @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            panel.light(light).renderInto(matricesEntry, vertexConsumer);
-        }
-
-        @Override
-        public void render(PoseStack matrices, SubmitNodeCollector queue) {
+        public void submit(PoseStack matrices, SubmitNodeCollector queue) {
             matrices.pushPose();
-            matrices.translate(0.5f, 0.5f, 0.5f);
-            matrices.mulPose(Axis.YP.rotation(yRot));
-            matrices.mulPose(Axis.ZP.rotation(zRot));
-            matrices.translate(-0.5f, -0.5f, -0.5f);
-            queue.submitCustomGeometry(matrices, layer, this);
+            if (yRot != null || zRot != null) {
+                matrices.translate(0.5f, 0.5f, 0.5f);
+                if (yRot != null) {
+                    matrices.mulPose(yRot);
+                }
+                if (zRot != null) {
+                    matrices.mulPose(zRot);
+                }
+                matrices.translate(-0.5f, -0.5f, -0.5f);
+            }
+            panel.submit(matrices, queue);
             matrices.translate(0.5f, 0.46875f, 0.5f);
             matrices.pushPose();
             matrices.translate(offset, 0, 0);
@@ -437,72 +453,38 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
     }
 
     public static class SignalDrawableState {
-        private static final boolean IRIS = FabricLoader.getInstance().isModLoaded("iris");
-        public RenderType layer;
-        public RenderType layer2;
-        public SuperByteBuffer signal;
-        public int light;
-        public RenderType cubeLayer;
-        public @Nullable SuperByteBuffer cube;
+        public @UnknownNullability SuperByteBufferRenderState signal;
+        public @Nullable SuperByteBufferRenderState cube;
+        public @Nullable SuperByteBufferRenderState glow;
         public float cubeX;
         public float cubeY;
-        public @Nullable SuperByteBuffer glow;
         public float glowX;
         public float glowY;
-        public @Nullable Color signalColor;
-        public @Nullable Color glowColor;
         public boolean additive;
 
         public void render(PoseStack matrices, SubmitNodeCollector queue) {
-            if (IRIS) {
-                if (additive) {
-                    queue.submitCustomGeometry(matrices, layer, (e, v) -> renderAdditive(e, v, 153));
-                    if (cube != null) {
-                        queue.order(1).submitCustomGeometry(matrices, cubeLayer, this::renderCube);
-                    }
-                    queue.order(2).submitCustomGeometry(matrices, layer2, (e, v) -> renderAdditive(e, v, 102));
-                } else {
-                    queue.order(1).submitCustomGeometry(matrices, layer, this::renderNormal);
+            if (additive) {
+                if (cube != null) {
+                    matrices.pushPose();
+                    matrices.scale(cubeX, cubeY, 1);
+                    cube.submit(CreateRenderTypes.translucent(), matrices, queue);
+                    matrices.popPose();
+                }
+                matrices.pushPose();
+                matrices.scale(1.0625f, 1.0625f, 1.0625f);
+                signal.submit(CreateRenderTypes.additive2(), matrices, queue);
+                signal.submit(CreateRenderTypes.additive(), matrices, queue);
+                matrices.popPose();
+                if (glow != null) {
+                    matrices.pushPose();
+                    matrices.scale(glowX, glowY, 2);
+                    glow.submit(CreateRenderTypes.additive2(), matrices, queue);
+                    glow.submit(CreateRenderTypes.additive(), matrices, queue);
+                    matrices.popPose();
                 }
             } else {
-                if (additive) {
-                    queue.submitCustomGeometry(matrices, layer, (e, v) -> renderAdditive(e, v, 153));
-                    if (cube != null) {
-                        queue.submitCustomGeometry(matrices, cubeLayer, this::renderCube);
-                    }
-                    queue.submitCustomGeometry(matrices, layer2, (e, v) -> renderAdditive(e, v, 102));
-                } else {
-                    queue.submitCustomGeometry(matrices, layer, this::renderNormal);
-                }
+                signal.submit(CreateRenderTypes.translucent(), matrices, queue);
             }
-        }
-
-        public void renderCube(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            cube.light(LightCoordsUtil.FULL_BRIGHT).disableDiffuse().scale(cubeX, cubeY, 1)
-                .renderInto(matricesEntry, vertexConsumer);
-        }
-
-        public void renderAdditive(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer, int color) {
-            if (glow != null) {
-                var gBuff = glow.light(LightCoordsUtil.FULL_BRIGHT).disableDiffuse().scale(glowX, glowY, 2);
-                if (glowColor != null) {
-                    gBuff.color(glowColor);
-                } else {
-                    gBuff.color(color, color, color, color);
-                }
-                gBuff.renderInto(matricesEntry, vertexConsumer);
-            }
-            var sBuff = signal.light(LightCoordsUtil.FULL_BRIGHT).disableDiffuse().scale(1.0625f);
-            if (signalColor != null) {
-                sBuff.color(signalColor);
-            } else {
-                sBuff.color(color, color, color, color);
-            }
-            sBuff.renderInto(matricesEntry, vertexConsumer);
-        }
-
-        public void renderNormal(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            signal.light(light).renderInto(matricesEntry, vertexConsumer);
         }
     }
 }

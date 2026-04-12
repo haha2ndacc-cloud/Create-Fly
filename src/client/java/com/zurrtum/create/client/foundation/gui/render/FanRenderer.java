@@ -1,6 +1,7 @@
 package com.zurrtum.create.client.foundation.gui.render;
 
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.Lighting.Entry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.zurrtum.create.AllBlocks;
@@ -43,7 +44,7 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
     @Override
     protected void renderToTexture(FanRenderState state, PoseStack matrices) {
         Minecraft mc = Minecraft.getInstance();
-        mc.gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+        mc.gameRenderer.getLighting().setupFor(Entry.ENTITY_IN_UI);
         matrices.scale(1, 1, -1);
         matrices.mulPose(Axis.XP.rotationDegrees(-15.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(22.5f));
@@ -71,9 +72,7 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
         blockState = AllBlocks.ENCASED_FAN.defaultBlockState();
         world.blockState(blockState);
         model = blockStateModelSet.get(blockState);
-        matrices.translate(0.5f, 0.5f, 0.5f);
-        matrices.mulPose(Axis.YP.rotationDegrees(180));
-        matrices.translate(-0.5f, -0.5f, -0.5f);
+        matrices.rotateAround(Axis.YP.rotationDegrees(180), 0.5f, 0.5f, 0.5f);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
@@ -100,7 +99,7 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
                 LightCoordsUtil.FULL_BRIGHT,
                 false,
                 true
-            ).render(bufferSource, matrices);
+            ).render(matrices, bufferSource);
             return;
         }
         world.blockState(blockState);
@@ -117,7 +116,7 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
     }
 
     public static float getCurrentAngle() {
-        return (AnimationTickHolder.getRenderTime() * 4f) % 360;
+        return AnimationTickHolder.getRenderTime() * 4.0f % 360;
     }
 
     @Override

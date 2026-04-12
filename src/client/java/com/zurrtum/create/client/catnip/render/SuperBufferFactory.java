@@ -1,69 +1,62 @@
 package com.zurrtum.create.client.catnip.render;
 
-import com.mojang.blaze3d.vertex.MeshData;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.zurrtum.create.client.catnip.client.render.model.BakedModelBufferer;
-import com.zurrtum.create.client.catnip.client.render.model.ShadeSeparatedResultConsumer;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.zurrtum.create.client.flywheel.lib.model.baked.EmptyVirtualBlockGetter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jspecify.annotations.Nullable;
 
 public class SuperBufferFactory {
     private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(
         ThreadLocalObjects::new);
-    private static SuperBufferFactory instance = new SuperBufferFactory();
+    private static final SuperBufferFactory INSTANCE = new SuperBufferFactory();
 
     public static SuperBufferFactory getInstance() {
-        return instance;
-    }
-
-    static void setInstance(SuperBufferFactory factory) {
-        instance = factory;
-    }
-
-    public SuperByteBuffer create(MeshData data) {
-        return new ShadeSeparatingSuperByteBuffer(new MutableTemplateMesh(data).toImmutable());
+        return INSTANCE;
     }
 
     public SuperByteBuffer createForBlock(BlockState renderedState) {
         return createForBlock(
+            THREAD_LOCAL_OBJECTS.get().sbbBuilder,
             Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(renderedState),
-            renderedState,
-            new PoseStack()
+            renderedState
         );
     }
 
-    public SuperByteBuffer createForBlock(BlockStateModel model, BlockState referenceState) {
-        return createForBlock(model, referenceState, new PoseStack());
+    public SuperByteBuffer createForBlock(BlockStateModel model, BlockState state) {
+        return createForBlock(THREAD_LOCAL_OBJECTS.get().sbbBuilder, model, state);
     }
 
-    public SuperByteBuffer createForBlock(BlockStateModel model, BlockState state, @Nullable PoseStack poseStack) {
-        ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
-        SbbBuilder sbbBuilder = objects.sbbBuilder;
-        sbbBuilder.prepare();
-        BakedModelBufferer.bufferModel(
-            model,
-            BlockPos.ZERO,
+    public SuperByteBuffer createForBlock(BlockStateModel model, BlockState state, Pose pose) {
+        return createForBlock(THREAD_LOCAL_OBJECTS.get().transformSbbBuilder.wrap(pose), model, state);
+    }
+
+    private static SuperByteBuffer createForBlock(
+        EntityBlockSbbBuilder sbbBuilder,
+        BlockStateModel model,
+        BlockState state
+    ) {
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
+        ModelBlockRenderer blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
+        blockRenderer.tesselateBlock(
+            sbbBuilder,
+            0,
+            0,
+            0,
             EmptyVirtualBlockGetter.FULL_DARK,
+            BlockPos.ZERO,
             state,
-            poseStack,
-            sbbBuilder
+            model,
+            state.getSeed(BlockPos.ZERO)
         );
         return sbbBuilder.build();
     }
 
-    private static class SbbBuilder extends SuperByteBufferBuilder implements ShadeSeparatedResultConsumer {
-        @Override
-        public void accept(ChunkSectionLayer renderType, boolean shaded, MeshData data) {
-            add(data, shaded);
-        }
-    }
-
     private static class ThreadLocalObjects {
-        public final SbbBuilder sbbBuilder = new SbbBuilder();
+        public final EntityBlockSbbBuilder sbbBuilder = new EntityBlockSbbBuilder();
+        public final EntityBlockTransformSbbBuilder transformSbbBuilder = new EntityBlockTransformSbbBuilder();
     }
 }

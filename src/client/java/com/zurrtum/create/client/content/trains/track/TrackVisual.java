@@ -45,16 +45,16 @@ public class TrackVisual extends AbstractVisual implements BlockEntityVisual<Tra
 
     public TrackVisual(VisualizationContext context, TrackBlockEntity track, float partialTick) {
         super(context, track.getLevel(), partialTick);
-        this.blockEntity = track;
-        this.pos = blockEntity.getBlockPos();
-        this.visualPos = pos.subtract(context.renderOrigin());
+        blockEntity = track;
+        pos = blockEntity.getBlockPos();
+        visualPos = pos.subtract(context.renderOrigin());
 
         collectConnections();
     }
 
     @Override
     public void setSectionCollector(SectionCollector sectionCollector) {
-        this.lightSections = sectionCollector;
+        lightSections = sectionCollector;
         lightSections.sections(collectLightSections());
     }
 
@@ -170,14 +170,12 @@ public class TrackVisual extends AbstractVisual implements BlockEntityVisual<Tra
             ).createInstances(right);
 
             SegmentAngles segment = bc.getBakedSegments(SegmentAngles::new);
-            for (int i = 1; i < segment.length; i++) {
-                var modelIndex = i - 1;
-
-                ties[modelIndex].setTransform(pose).mul(segment.tieTransform[i]).setChanged();
+            for (int i = 0; i < segment.length; i++) {
+                ties[i].setTransform(pose).mul(segment.tieTransform[i]).setChanged();
 
                 for (boolean first : Iterate.trueAndFalse) {
                     Pose transform = segment.railTransforms[i].get(first);
-                    (first ? this.left : this.right)[modelIndex].setTransform(pose).mul(transform).setChanged();
+                    (first ? left : right)[i].setTransform(pose).mul(transform).setChanged();
                 }
             }
         }
@@ -234,16 +232,13 @@ public class TrackVisual extends AbstractVisual implements BlockEntityVisual<Tra
                 });
 
                 GirderAngles segment = bc.getBakedGirders(GirderAngles::new);
-                for (int i = 1; i < segment.length; i++) {
-                    var modelIndex = i - 1;
-
+                for (int i = 0; i < segment.length; i++) {
                     for (boolean first : Iterate.trueAndFalse) {
                         Pose beamTransform = segment.beams[i].get(first);
-                        beams.get(first)[modelIndex].setTransform(pose).mul(beamTransform).setChanged();
+                        beams.get(first)[i].setTransform(pose).mul(beamTransform).setChanged();
                         for (boolean top : Iterate.trueAndFalse) {
                             Pose beamCapTransform = segment.beamCaps[i].get(top).get(first);
-                            beamCaps.get(top).get(first)[modelIndex].setTransform(pose).mul(beamCapTransform)
-                                .setChanged();
+                            beamCaps.get(top).get(first)[i].setTransform(pose).mul(beamCapTransform).setChanged();
                         }
                     }
                 }

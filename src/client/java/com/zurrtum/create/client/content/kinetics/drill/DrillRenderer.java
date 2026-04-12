@@ -1,20 +1,56 @@
 package com.zurrtum.create.client.content.kinetics.drill;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
-import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
-import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.KineticRenderState;
+import com.zurrtum.create.client.content.kinetics.base.SingleKineticRenderState;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
+import com.zurrtum.create.content.kinetics.drill.DrillBlock;
 import com.zurrtum.create.content.kinetics.drill.DrillBlockEntity;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
-public class DrillRenderer extends KineticBlockEntityRenderer<DrillBlockEntity, KineticRenderState> {
-    public DrillRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getRotateAngleWithoutBeOffset;
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getTintColor;
+
+public class DrillRenderer implements BlockEntityRenderer<DrillBlockEntity, SingleKineticRenderState> {
+    public DrillRenderer(Context context) {
     }
 
     @Override
-    protected SuperByteBuffer getRotatedModel(DrillBlockEntity be, KineticRenderState state) {
-        return CachedBuffers.partialFacing(AllPartialModels.DRILL_HEAD, state.blockState);
+    public SingleKineticRenderState createRenderState() {
+        return new SingleKineticRenderState();
+    }
+
+    @Override
+    public void extractRenderState(
+        DrillBlockEntity be,
+        SingleKineticRenderState state,
+        float partialTicks,
+        Vec3 cameraPosition,
+        @Nullable CrumblingOverlay breakProgress
+    ) {
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, breakProgress);
+        Direction facing = state.blockState.getValue(DrillBlock.FACING);
+        state.model = CachedBuffers.partialFacing(AllPartialModels.DRILL_HEAD, state.blockState, facing)
+            .cardinalLighting(level).light(state.lightCoords).color(getTintColor(be)).extractRenderState();
+        state.angle = getRotateAngleWithoutBeOffset(facing.getAxis(), be, state, level);
+    }
+
+    @Override
+    public void submit(
+        SingleKineticRenderState state,
+        PoseStack matrices,
+        SubmitNodeCollector queue,
+        CameraRenderState camera
+    ) {
+        state.submit(matrices, queue);
     }
 }

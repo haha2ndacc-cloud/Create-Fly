@@ -1,7 +1,7 @@
 package com.zurrtum.create.client.content.contraptions.minecart;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.data.Couple;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.catnip.theme.Color;
@@ -18,8 +18,7 @@ import com.zurrtum.create.content.contraptions.minecart.capability.MinecartContr
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -35,14 +34,14 @@ import java.util.Objects;
 
 public class CouplingRenderer {
 
-    public static void renderAll(Minecraft mc, PoseStack ms, MultiBufferSource buffer, Vec3 camera) {
+    public static void renderAll(Minecraft mc, PoseStack ms, SubmitNodeStorage queue, Vec3 camera) {
         ClientLevel world = mc.level;
         CouplingHandler.forEachLoadedCoupling(
             world, c -> {
                 if (c.getFirst().hasContraptionCoupling(true)) {
                     return;
                 }
-                CouplingRenderer.renderCoupling(world, ms, buffer, camera, c.map(MinecartController::cart));
+                renderCoupling(world, ms, queue, camera, c.map(MinecartController::cart));
             }
         );
     }
@@ -56,7 +55,7 @@ public class CouplingRenderer {
     public static void renderCoupling(
         ClientLevel world,
         PoseStack ms,
-        MultiBufferSource buffer,
+        SubmitNodeStorage queue,
         Vec3 camera,
         Couple<AbstractMinecart> carts
     ) {
@@ -69,12 +68,11 @@ public class CouplingRenderer {
             BlockPos.containing(c.getBoundingBox().getCenter())
         ));
 
-        Vec3 center = carts.getFirst().position().add(carts.getSecond().position()).scale(.5f);
+        Vec3 center = carts.getFirst().position().add(carts.getSecond().position()).scale(0.5f);
 
         Couple<CartEndpoint> transforms = carts.map(c -> getSuitableCartEndpoint(c, center));
 
         BlockState renderState = Blocks.AIR.defaultBlockState();
-        VertexConsumer builder = buffer.getBuffer(RenderTypes.solidMovingBlock());
         SuperByteBuffer attachment = CachedBuffers.partial(AllPartialModels.COUPLING_ATTACHMENT, renderState);
         SuperByteBuffer ring = CachedBuffers.partial(AllPartialModels.COUPLING_RING, renderState);
         SuperByteBuffer connector = CachedBuffers.partial(AllPartialModels.COUPLING_CONNECTOR, renderState);
@@ -86,38 +84,38 @@ public class CouplingRenderer {
         double connectorYaw = -Math.atan2(endPointDiff.z, endPointDiff.x) * 180.0D / Math.PI;
         double connectorPitch = Math.atan2(endPointDiff.y, endPointDiff.multiply(1, 0, 1).length()) * 180 / Math.PI;
 
-        var msr = TransformStack.of(ms);
         carts.forEachWithContext((cart, isFirst) -> {
             CartEndpoint cartTransform = transforms.get(isFirst);
 
             ms.pushPose();
             cartTransform.apply(ms, camera);
-            attachment.light(lightValues.get(isFirst)).renderInto(ms.last(), builder);
-            msr.rotateYDegrees((float) connectorYaw - cartTransform.yaw);
-            ring.light(lightValues.get(isFirst)).renderInto(ms.last(), builder);
+            attachment.light(lightValues.get(isFirst)).submit(ms, queue);
+            ms.mulPose(Axis.YP.rotation((float) (Mth.DEG_TO_RAD * (connectorYaw - cartTransform.yaw))));
+            ring.light(lightValues.get(isFirst)).submit(ms, queue);
             ms.popPose();
         });
 
         int l1 = lightValues.getFirst();
         int l2 = lightValues.getSecond();
-        int meanBlockLight = (((l1 >> 4) & 0xf) + ((l2 >> 4) & 0xf)) / 2;
-        int meanSkyLight = (((l1 >> 20) & 0xf) + ((l2 >> 20) & 0xf)) / 2;
+        int meanBlockLight = ((l1 >> 4 & 0xf) + (l2 >> 4 & 0xf)) / 2;
+        int meanSkyLight = ((l1 >> 20 & 0xf) + (l2 >> 20 & 0xf)) / 2;
 
         ms.pushPose();
-        msr.translate(firstEndpoint.subtract(camera)).rotateYDegrees((float) connectorYaw)
-            .rotateZDegrees((float) connectorPitch);
+        ms.translate(firstEndpoint.subtract(camera));
+        ms.mulPose(Axis.YP.rotation((float) (Mth.DEG_TO_RAD * connectorYaw)));
+        ms.mulPose(Axis.ZP.rotation((float) (Mth.DEG_TO_RAD * connectorPitch)));
         ms.scale((float) endPointDiff.length(), 1, 1);
 
-        connector.light(meanSkyLight << 20 | meanBlockLight << 4).renderInto(ms.last(), builder);
+        connector.light(meanSkyLight << 20 | meanBlockLight << 4).submit(ms, queue);
         ms.popPose();
     }
 
     private static CartEndpoint getSuitableCartEndpoint(AbstractMinecart cart, Vec3 centerOfCoupling) {
         long i = cart.getId() * 493286711L;
         i = i * i * 4392167121L + i * 98761L;
-        double x = (((float) (i >> 16 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
-        double y = (((float) (i >> 20 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
-        double z = (((float) (i >> 24 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        double x = (((i >> 16 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        double y = (((i >> 20 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        double z = (((i >> 24 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
 
         float pt = AnimationTickHolder.getPartialTicks();
 
@@ -159,8 +157,8 @@ public class CouplingRenderer {
                 yaw = Mth.lerp(pt, cart.yRotO, cart.getYRot());
                 pitch = Mth.lerp(pt, cart.xRotO, cart.getXRot());
                 Vec3 positionVec = new Vec3(xIn, yIn, zIn);
-                frontVec = positionVec.add(VecHelper.rotate(new Vec3(.5, 0, 0), 180 - yaw, Direction.Axis.Y));
-                backVec = positionVec.add(VecHelper.rotate(new Vec3(-.5, 0, 0), 180 - yaw, Direction.Axis.Y));
+                frontVec = positionVec.add(VecHelper.rotate(new Vec3(0.5, 0, 0), 180 - yaw, Direction.Axis.Y));
+                backVec = positionVec.add(VecHelper.rotate(new Vec3(-0.5, 0, 0), 180 - yaw, Direction.Axis.Y));
                 x += xIn;
                 y += yIn;
                 z += zIn;
@@ -185,8 +183,8 @@ public class CouplingRenderer {
             x += pos.x;
             y += pos.y;
             z += pos.z;
-            frontVec = pos.add(VecHelper.rotate(new Vec3(.5, 0, 0), yaw, Direction.Axis.Y));
-            backVec = pos.add(VecHelper.rotate(new Vec3(-.5, 0, 0), yaw, Direction.Axis.Y));
+            frontVec = pos.add(VecHelper.rotate(new Vec3(0.5, 0, 0), yaw, Direction.Axis.Y));
+            backVec = pos.add(VecHelper.rotate(new Vec3(-0.5, 0, 0), yaw, Direction.Axis.Y));
         }
         boolean isBackFaceCloser = frontVec.distanceToSqr(centerOfCoupling) > backVec.distanceToSqr(centerOfCoupling);
         return new CartEndpoint(
@@ -196,7 +194,7 @@ public class CouplingRenderer {
             yaw,
             -pitch,
             roll,
-            isBackFaceCloser ? -13 / 16f : 13 / 16f,
+            isBackFaceCloser ? -13 / 16.0f : 13 / 16.0f,
             isBackFaceCloser,
             old
         );
@@ -242,23 +240,22 @@ public class CouplingRenderer {
                 vec = VecHelper.rotate(vec, roll, Direction.Axis.X);
                 vec = VecHelper.rotate(vec, pitch, Direction.Axis.Z);
                 vec = VecHelper.rotate(vec, yaw, Direction.Axis.Y);
-                return vec.add(x, y + 0.375F + 2 / 16f, z);
-            } else {
-                vec = vec.add(0, 0.375F + 2 / 16f, 0);
-                vec = VecHelper.rotate(vec, roll, Direction.Axis.X);
-                vec = VecHelper.rotate(vec, pitch, Direction.Axis.Z);
-                vec = VecHelper.rotate(vec, yaw, Direction.Axis.Y);
-                return vec.add(x, y, z);
+                return vec.add(x, y + 0.375F + 2 / 16.0f, z);
             }
+            vec = vec.add(0, 0.375F + 2 / 16.0f, 0);
+            vec = VecHelper.rotate(vec, roll, Direction.Axis.X);
+            vec = VecHelper.rotate(vec, pitch, Direction.Axis.Z);
+            vec = VecHelper.rotate(vec, yaw, Direction.Axis.Y);
+            return vec.add(x, y, z);
         }
 
         public void apply(PoseStack ms, Vec3 camera) {
             PoseTransformStack msr = TransformStack.of(ms);
             msr.translate(camera.scale(-1).add(x, y, z));
             if (old) {
-                msr.translateY(0.375F + 2 / 16f).rotateYDegrees(yaw).rotateZDegrees(pitch);
+                msr.translateY(0.375F + 2 / 16.0f).rotateYDegrees(yaw).rotateZDegrees(pitch);
             } else {
-                msr.rotateYDegrees(yaw).rotateZDegrees(pitch).translateY(0.375F + 2 / 16f);
+                msr.rotateYDegrees(yaw).rotateZDegrees(pitch).translateY(0.375F + 2 / 16.0f);
             }
             msr.rotateXDegrees(roll).translate(offset, 0, 0).rotateYDegrees(flip ? 180 : 0);
         }
@@ -283,11 +280,11 @@ public class CouplingRenderer {
         );
 
         Outliner.getInstance().showLine(mainCart.getId() + "", mainCenter, connectedCenter).colored(color)
-            .lineWidth(1 / 8f);
+            .lineWidth(1 / 8.0f);
 
         Vec3 point = mainCart.position().add(0, yOffset, 0);
-        Outliner.getInstance().showLine(mainCart.getId() + "_dot", point, point.add(0, 1 / 128f, 0)).colored(0xffffff)
-            .lineWidth(1 / 4f);
+        Outliner.getInstance().showLine(mainCart.getId() + "_dot", point, point.add(0, 1 / 128.0f, 0)).colored(0xffffff)
+            .lineWidth(1 / 4.0f);
     }
 
 }

@@ -1,54 +1,52 @@
 package com.zurrtum.create.client.content.kinetics.deployer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.catnip.math.VecHelper;
-import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
-import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.content.kinetics.deployer.DeployerRenderer.DeployerRenderState;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.filtering.FilteringRenderer;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.filtering.FilteringRenderer.FilterRenderState;
-import com.zurrtum.create.content.kinetics.base.IRotate;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.kinetics.deployer.DeployerBlockEntity;
 import com.zurrtum.create.content.kinetics.deployer.DeployerBlockEntity.Mode;
 import com.zurrtum.create.content.kinetics.deployer.DeployerBlockEntity.State;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.*;
 import static com.zurrtum.create.content.kinetics.base.DirectionalAxisKineticBlock.AXIS_ALONG_FIRST_COORDINATE;
 import static com.zurrtum.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
-public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity, DeployerRenderer.DeployerRenderState> {
+public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity, DeployerRenderState> {
     protected final ItemModelResolver itemModelManager;
 
-    public DeployerRenderer(BlockEntityRendererProvider.Context context) {
+    public DeployerRenderer(Context context) {
         itemModelManager = context.itemModelResolver();
     }
 
@@ -65,16 +63,15 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        Level world = be.getLevel();
-        updateItemRenderState(be, state, itemModelManager, world, tickProgress);
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        updateItemRenderState(be, state, itemModelManager, level, tickProgress);
         state.filter = FilteringRenderer.getFilterRenderState(
             be,
             state.blockState,
             itemModelManager,
             be.isVirtual() ? -1 : cameraPos.distanceToSqr(VecHelper.getCenterOf(state.blockPos))
         );
-        updateComponentsRenderState(be, state, world, tickProgress);
+        updateComponentsRenderState(be, state, level, tickProgress);
     }
 
     public static void updateItemRenderState(
@@ -96,30 +93,33 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
     public static void updateComponentsRenderState(
         DeployerBlockEntity be,
         DeployerRenderState state,
-        Level world,
+        Level level,
         float tickProgress
     ) {
-        if (VisualizationManager.supportsVisualization(world)) {
+        if (VisualizationManager.supportsVisualization(level)) {
             return;
         }
         Direction facing = state.blockState.getValue(FACING);
         ComponentsRenderState components = state.components = new ComponentsRenderState();
-        components.layer = RenderTypes.solidMovingBlock();
-        components.light = state.lightCoords;
-        Direction.Axis axis = ((IRotate) state.blockState.getBlock()).getRotationAxis(state.blockState);
-        components.shaft = CachedBuffers.block(
-            KineticBlockEntityRenderer.KINETIC_BLOCK,
-            KineticBlockEntityRenderer.shaft(axis)
-        );
-        components.angle = KineticBlockEntityRenderer.getAngleForBe(be, state.blockPos, axis);
-        components.direction = Direction.fromAxisAndDirection(axis, AxisDirection.POSITIVE);
-        components.color = KineticBlockEntityRenderer.getColor(be);
+        Direction.Axis axis = getRotationAxisOf(state.blockState);
+        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
+        components.shaft = CachedBuffers.block(KINETIC_BLOCK, shaft(axis)).cardinalLighting(cardinalLighting)
+            .light(state.lightCoords).color(getTintColor(be)).extractRenderState();
+        components.pole = CachedBuffers.partial(AllPartialModels.DEPLOYER_POLE, state.blockState)
+            .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
+        components.hand = CachedBuffers.partial(getHandPose(be), state.blockState).cardinalLighting(cardinalLighting)
+            .light(state.lightCoords).extractRenderState();
+        components.angle = getRotateAngleWithoutBeOffset(axis, be, state, level);
         components.offset = getHandOffset(state, be, tickProgress, facing);
-        components.pole = CachedBuffers.partial(AllPartialModels.DEPLOYER_POLE, state.blockState);
-        components.hand = CachedBuffers.partial(getHandPose(be), state.blockState);
-        components.yRot = Mth.DEG_TO_RAD * AngleHelper.horizontalAngle(facing);
-        components.xRot = Mth.DEG_TO_RAD * (facing == Direction.UP ? 270 : facing == Direction.DOWN ? 90 : 0);
-        components.zRot = Mth.DEG_TO_RAD * ((state.blockState.getValue(AXIS_ALONG_FIRST_COORDINATE) ^ facing.getAxis() == Direction.Axis.Z) ? 90 : 0);
+        components.yRot = getUpRotateAngle(AngleHelper.horizontalAngle(facing));
+        if (facing == Direction.UP) {
+            components.xRot = new Quaternionf().setAngleAxis(RAD_270, 1, 0, 0);
+        } else if (facing == Direction.DOWN) {
+            components.xRot = new Quaternionf().setAngleAxis(RAD_90, 1, 0, 0);
+        }
+        if (state.blockState.getValue(AXIS_ALONG_FIRST_COORDINATE) ^ facing.getAxis() == Direction.Axis.Z) {
+            components.zRot = new Quaternionf().setAngleAxis(RAD_90, 0, 0, 1);
+        }
     }
 
     @Override
@@ -133,10 +133,10 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
             state.item.render(matrices, queue, state.lightCoords);
         }
         if (state.filter != null) {
-            state.filter.render(state.blockState, queue, matrices, state.lightCoords);
+            state.filter.submit(state.blockState, queue, matrices, state.lightCoords);
         }
         if (state.components != null) {
-            queue.submitCustomGeometry(matrices, state.components.layer, state.components);
+            state.components.submit(matrices, queue);
         }
     }
 
@@ -171,33 +171,16 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
         PartialModel handPose = getHandPose(be);
 
         if (be.state == State.EXPANDING) {
-            progress = 1 - (be.timer - partialTicks * timerSpeed) / 1000f;
+            progress = 1 - (be.timer - partialTicks * timerSpeed) / 1000.0f;
             if (be.fistBump) {
                 progress *= progress;
             }
         }
         if (be.state == State.RETRACTING) {
-            progress = (be.timer - partialTicks * timerSpeed) / 1000f;
+            progress = (be.timer - partialTicks * timerSpeed) / 1000.0f;
         }
-        float handLength = handPose == AllPartialModels.DEPLOYER_HAND_POINTING ? 0 : handPose == AllPartialModels.DEPLOYER_HAND_HOLDING ? 4 / 16f : 3 / 16f;
-        return Math.min(Mth.clamp(progress, 0, 1) * (be.reach + handLength), 21 / 16f);
-    }
-
-    private static SuperByteBuffer transform(
-        SuperByteBuffer buffer,
-        BlockState deployerState,
-        boolean axisDirectionMatters
-    ) {
-        Direction facing = deployerState.getValue(FACING);
-
-        float yRot = AngleHelper.horizontalAngle(facing);
-        float xRot = facing == Direction.UP ? 270 : facing == Direction.DOWN ? 90 : 0;
-        float zRot = axisDirectionMatters && (deployerState.getValue(AXIS_ALONG_FIRST_COORDINATE) ^ facing.getAxis() == Direction.Axis.Z) ? 90 : 0;
-
-        buffer.rotateCentered((float) ((yRot) / 180 * Math.PI), Direction.UP);
-        buffer.rotateCentered((float) ((xRot) / 180 * Math.PI), Direction.EAST);
-        buffer.rotateCentered((float) ((zRot) / 180 * Math.PI), Direction.SOUTH);
-        return buffer;
+        float handLength = handPose == AllPartialModels.DEPLOYER_HAND_POINTING ? 0 : handPose == AllPartialModels.DEPLOYER_HAND_HOLDING ? 0.25f : 0.1875f;
+        return Math.min(Mth.clamp(progress, 0, 1) * (be.reach + handLength), 1.3125f);
     }
 
     static PartialModel getHandPose(Mode mode) {
@@ -213,7 +196,7 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
 
     public static abstract class DeployerItemRenderState {
         public Vec3 offset;
-        public float yRot;
+        public @Nullable Quaternionf yRot;
         public ItemStackRenderState item;
 
         public DeployerItemRenderState(
@@ -224,7 +207,7 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
             Direction facing
         ) {
             this.offset = offset;
-            yRot = Mth.DEG_TO_RAD * (AngleHelper.horizontalAngle(facing) + 180);
+            yRot = getYRotateAngle(AngleHelper.horizontalAngle(facing) + 180);
             item = new ItemStackRenderState();
             item.displayContext = getDisplayContext();
             itemModelManager.appendItemLayers(item, heldItem, item.displayContext, world, null, 0);
@@ -240,17 +223,19 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
         ) {
             if (be.mode == Mode.PUNCH) {
                 return new DeployerItemPunchRenderState(itemModelManager, world, heldItem, offset, facing);
-            } else if (facing == Direction.UP && be.getSpeed() == 0) {
-                return new DeployerItemDisplayRenderState(itemModelManager, world, heldItem, offset, facing);
-            } else {
-                return new DeployerItemUseRenderState(itemModelManager, world, heldItem, offset, facing);
             }
+            if (facing == Direction.UP && be.getSpeed() == 0) {
+                return new DeployerItemDisplayRenderState(itemModelManager, world, heldItem, offset, Direction.UP);
+            }
+            return new DeployerItemUseRenderState(itemModelManager, world, heldItem, offset, facing);
         }
 
         public void render(PoseStack matrices, SubmitNodeCollector queue, int light) {
             matrices.pushPose();
             matrices.translate(offset);
-            matrices.mulPose(Axis.YP.rotation(yRot));
+            if (yRot != null) {
+                matrices.mulPose(yRot);
+            }
             transform(matrices);
             item.submit(matrices, queue, light, OverlayTexture.NO_OVERLAY, 0);
             matrices.popPose();
@@ -262,7 +247,7 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
     }
 
     public static class DeployerItemUseRenderState extends DeployerItemRenderState {
-        public float xRot;
+        public @Nullable Quaternionf xRot;
         public boolean isBlockItem;
 
         public DeployerItemUseRenderState(
@@ -274,11 +259,11 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
         ) {
             super(itemModelManager, world, heldItem, offset, facing);
             if (facing == Direction.UP) {
-                xRot = Mth.DEG_TO_RAD * 90;
+                xRot = Axis.XP.rotation(RAD_90);
             } else if (facing == Direction.DOWN) {
-                xRot = Mth.DEG_TO_RAD * 270;
+                xRot = Axis.XP.rotation(RAD_270);
             }
-            isBlockItem = (heldItem.getItem() instanceof BlockItem) && item.usesBlockLight();
+            isBlockItem = heldItem.getItem() instanceof BlockItem && item.usesBlockLight();
         }
 
         @Override
@@ -288,18 +273,20 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
 
         @Override
         protected void transform(PoseStack matrices) {
-            matrices.mulPose(Axis.XP.rotation(xRot));
-            matrices.translate(0, 0, -11 / 16f);
+            if (xRot != null) {
+                matrices.mulPose(xRot);
+            }
+            matrices.translate(0, 0, -0.6875f);
             if (isBlockItem) {
                 matrices.scale(0.734375f, 0.734375f, 0.734375f);
             } else {
-                matrices.scale(.5f, .5f, .5f);
+                matrices.scale(0.5f, 0.5f, 0.5f);
             }
         }
     }
 
     public static class DeployerItemPunchRenderState extends DeployerItemRenderState {
-        public float xRot;
+        public @Nullable Quaternionf xRot;
         public boolean isSpears;
 
         public DeployerItemPunchRenderState(
@@ -313,17 +300,17 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
             isSpears = heldItem.is(ItemTags.SPEARS);
             if (isSpears) {
                 if (facing == Direction.UP) {
-                    xRot = Mth.DEG_TO_RAD * 20;
+                    xRot = Axis.XP.rotation(Mth.DEG_TO_RAD * 20);
                 } else if (facing == Direction.DOWN) {
-                    xRot = Mth.DEG_TO_RAD * 200;
+                    xRot = Axis.XP.rotation(Mth.DEG_TO_RAD * 200);
                 } else {
-                    xRot = Mth.DEG_TO_RAD * -70;
+                    xRot = Axis.XP.rotation(Mth.DEG_TO_RAD * -70);
                 }
             } else {
                 if (facing == Direction.UP) {
-                    xRot = Mth.DEG_TO_RAD * 90;
+                    xRot = Axis.XP.rotation(RAD_90);
                 } else if (facing == Direction.DOWN) {
-                    xRot = Mth.DEG_TO_RAD * 270;
+                    xRot = Axis.XP.rotation(RAD_270);
                 }
             }
         }
@@ -335,18 +322,20 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
 
         @Override
         protected void transform(PoseStack matrices) {
-            matrices.mulPose(Axis.XP.rotation(xRot));
+            if (xRot != null) {
+                matrices.mulPose(xRot);
+            }
             matrices.translate(0, 0.125f, -0.75f);
             if (isSpears) {
                 matrices.translate(0, 0.6f, 0.6f);
             }
-            matrices.scale(.75f, .75f, .75f);
+            matrices.scale(0.75f, 0.75f, 0.75f);
         }
     }
 
     public static class DeployerItemDisplayRenderState extends DeployerItemRenderState {
         public boolean isBlockItem;
-        public float yRot2;
+        public Quaternionf yRot2;
 
         public DeployerItemDisplayRenderState(
             ItemModelResolver itemModelManager,
@@ -356,8 +345,8 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
             Direction facing
         ) {
             super(itemModelManager, world, heldItem, offset, facing);
-            isBlockItem = (heldItem.getItem() instanceof BlockItem) && item.usesBlockLight();
-            yRot2 = Mth.DEG_TO_RAD * AnimationTickHolder.getRenderTime(world);
+            isBlockItem = heldItem.getItem() instanceof BlockItem && item.usesBlockLight();
+            yRot2 = Axis.YP.rotation(Mth.DEG_TO_RAD * AnimationTickHolder.getRenderTime(world));
         }
 
         @Override
@@ -373,31 +362,41 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
             } else {
                 matrices.translate(0, 0.6875f, 0);
             }
-            matrices.mulPose(Axis.YP.rotation(yRot2));
+            matrices.mulPose(yRot2);
         }
     }
 
-    public static class ComponentsRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
-        public RenderType layer;
-        public int light;
-        public SuperByteBuffer shaft;
-        public float angle;
-        public Direction direction;
-        public Color color;
-        public Vec3 offset;
-        public SuperByteBuffer pole;
-        public SuperByteBuffer hand;
-        public float yRot;
-        public float xRot;
-        public float zRot;
+    public static class ComponentsRenderState {
+        public @UnknownNullability SuperByteBufferRenderState shaft;
+        public @UnknownNullability SuperByteBufferRenderState pole;
+        public @UnknownNullability SuperByteBufferRenderState hand;
+        public @Nullable Quaternionf angle;
+        public @UnknownNullability Vec3 offset;
+        public @Nullable Quaternionf yRot;
+        public @Nullable Quaternionf xRot;
+        public @Nullable Quaternionf zRot;
 
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            shaft.light(light).rotateCentered(angle, direction).color(color).renderInto(matricesEntry, vertexConsumer);
-            pole.translate(offset).rotateCentered(yRot, Direction.UP).rotateCentered(xRot, Direction.EAST)
-                .rotateCentered(zRot, Direction.SOUTH).light(light).renderInto(matricesEntry, vertexConsumer);
-            hand.translate(offset).rotateCentered(yRot, Direction.UP).rotateCentered(xRot, Direction.EAST).light(light)
-                .renderInto(matricesEntry, vertexConsumer);
+        public void submit(PoseStack matrices, SubmitNodeCollector queue) {
+            if (angle != null) {
+                matrices.pushPose();
+                matrices.rotateAround(angle, 0.5f, 0.5f, 0.5f);
+                shaft.submit(matrices, queue);
+                matrices.popPose();
+            } else {
+                shaft.submit(matrices, queue);
+            }
+            matrices.translate(offset);
+            if (yRot != null) {
+                matrices.rotateAround(yRot, 0.5f, 0.5f, 0.5f);
+            }
+            if (xRot != null) {
+                matrices.rotateAround(xRot, 0.5f, 0.5f, 0.5f);
+            }
+            hand.submit(matrices, queue);
+            if (zRot != null) {
+                matrices.rotateAround(zRot, 0.5f, 0.5f, 0.5f);
+            }
+            pole.submit(matrices, queue);
         }
     }
 }

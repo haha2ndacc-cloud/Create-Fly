@@ -3,17 +3,17 @@ package com.zurrtum.create.client.content.logistics.depot;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.math.VecHelper;
-import com.zurrtum.create.client.flywheel.lib.transform.PoseTransformStack;
+import com.zurrtum.create.client.content.logistics.depot.DepotRenderer.DepotRenderState;
 import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.kinetics.belt.BeltHelper;
 import com.zurrtum.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.zurrtum.create.content.logistics.box.PackageItem;
 import com.zurrtum.create.content.logistics.depot.DepotBehaviour;
 import com.zurrtum.create.content.logistics.depot.DepotBlockEntity;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.item.ItemModelResolver;
@@ -22,7 +22,6 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -33,12 +32,13 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.function.BiConsumer;
 
-public class DepotRenderer implements BlockEntityRenderer<DepotBlockEntity, DepotRenderer.DepotRenderState> {
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.RAD_90;
+
+public class DepotRenderer implements BlockEntityRenderer<DepotBlockEntity, DepotRenderState> {
     protected final ItemModelResolver itemModelManager;
 
-    public DepotRenderer(BlockEntityRendererProvider.Context context) {
+    public DepotRenderer(Context context) {
         itemModelManager = context.itemModelResolver();
     }
 
@@ -55,16 +55,10 @@ public class DepotRenderer implements BlockEntityRenderer<DepotBlockEntity, Depo
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        state.blockPos = be.getBlockPos();
-        state.blockEntityType = be.getType();
-        Level world = be.getLevel();
-        state.lightCoords = world != null ? LevelRenderer.getLightCoords(
-            world,
-            state.blockPos
-        ) : LightCoordsUtil.FULL_BRIGHT;
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
         DepotBehaviour depotBehaviour = be.depotBehaviour;
-        state.incoming = createIncomingStateList(depotBehaviour, itemModelManager, tickProgress, world);
-        state.outputs = createOutputStateList(depotBehaviour, itemModelManager, world);
+        state.incoming = createIncomingStateList(depotBehaviour, itemModelManager, tickProgress, level);
+        state.outputs = createOutputStateList(depotBehaviour, itemModelManager, level);
     }
 
     public static DepotItemState @Nullable [] createIncomingStateList(
@@ -142,7 +136,7 @@ public class DepotRenderer implements BlockEntityRenderer<DepotBlockEntity, Depo
         Vec3 itemPosition = VecHelper.getCenterOf(pos);
 
         ms.pushPose();
-        ms.translate(.5f, 15 / 16f, .5f);
+        ms.translate(0.5f, 0.9375f, 0.5f);
 
         // Render main items
         if (incoming != null) {
@@ -166,8 +160,7 @@ public class DepotRenderer implements BlockEntityRenderer<DepotBlockEntity, Depo
                     new Random(0),
                     itemPosition,
                     cameraPos,
-                    false,
-                    null
+                    false
                 );
                 ms.popPose();
             }
@@ -181,10 +174,10 @@ public class DepotRenderer implements BlockEntityRenderer<DepotBlockEntity, Depo
                 msr.nudge(i);
 
                 boolean renderUpright = item.upright;
-                msr.rotateYDegrees(360 / 8f * i);
-                ms.translate(.35f, 0, 0);
+                msr.rotateYDegrees(45 * i);
+                ms.translate(0.35f, 0, 0);
                 if (renderUpright) {
-                    msr.rotateYDegrees(-(360 / 8f * i));
+                    msr.rotateYDegrees(-45 * i);
                 }
                 Random r = new Random(i + 1);
                 int angle = (int) (360 * r.nextFloat());
@@ -200,8 +193,7 @@ public class DepotRenderer implements BlockEntityRenderer<DepotBlockEntity, Depo
                     r,
                     itemPosition,
                     cameraPos,
-                    false,
-                    null
+                    false
                 );
                 ms.popPose();
             }
@@ -222,56 +214,51 @@ public class DepotRenderer implements BlockEntityRenderer<DepotBlockEntity, Depo
         @Nullable Random r,
         Vec3 itemPosition,
         Vec3 cameraPos,
-        boolean alwaysUpright,
-        @Nullable BiConsumer<PoseTransformStack, Boolean> transform
+        boolean alwaysUpright
     ) {
         boolean blockItem = state.usesBlockLight();
-        var msr = TransformStack.of(ms);
-        if (transform != null) {
-            transform.accept(msr, blockItem);
-        }
         boolean renderUpright = upright || alwaysUpright && !blockItem;
 
         ms.pushPose();
-        msr.rotateYDegrees(angle);
+        ms.mulPose(Axis.YP.rotation(Mth.DEG_TO_RAD * angle));
 
         if (renderUpright) {
             Vec3 diff = itemPosition.subtract(cameraPos);
             float yRot = (float) (Mth.atan2(diff.x, diff.z) + Math.PI);
             ms.mulPose(Axis.YP.rotation(yRot));
-            ms.translate(0, 3 / 32d, -1 / 16f);
+            ms.translate(0, 0.09375f, -0.0625f);
         }
 
         for (int i = 0; i <= count; i++) {
             ms.pushPose();
             if (blockItem && r != null) {
-                ms.translate(r.nextFloat() * .0625f * i, 0, r.nextFloat() * .0625f * i);
+                ms.translate(r.nextFloat() * 0.0625f * i, 0, r.nextFloat() * 0.0625f * i);
             }
 
             if (box && !alwaysUpright) {
-                ms.translate(0, 4 / 16f, 0);
+                ms.translate(0, 0.25f, 0);
                 ms.scale(1.5f, 1.5f, 1.5f);
             } else if (blockItem && alwaysUpright) {
-                ms.translate(0, 1 / 16f, 0);
-                ms.scale(.755f, .755f, .755f);
+                ms.translate(0, 0.0625f, 0);
+                ms.scale(0.755f, 0.755f, 0.755f);
             } else {
-                ms.scale(.5f, .5f, .5f);
+                ms.scale(0.5f, 0.5f, 0.5f);
             }
 
             if (!blockItem && !renderUpright) {
-                ms.translate(0, -3 / 16f, 0);
-                msr.rotateXDegrees(90);
+                ms.translate(0, -0.1875f, 0);
+                ms.mulPose(Axis.XP.rotation(RAD_90));
             }
             state.submit(ms, queue, light, OverlayTexture.NO_OVERLAY, 0);
             ms.popPose();
 
             if (!renderUpright) {
                 if (!blockItem) {
-                    msr.rotateYDegrees(10);
+                    ms.mulPose(Axis.YP.rotation(Mth.DEG_TO_RAD * 10));
                 }
-                ms.translate(0, blockItem ? 1 / 64d : 1 / 16d, 0);
+                ms.translate(0, blockItem ? 0.015625f : 0.0625f, 0);
             } else {
-                ms.translate(0, 0, -1 / 16f);
+                ms.translate(0, 0, -0.0625f);
             }
         }
 
@@ -299,7 +286,7 @@ public class DepotRenderer implements BlockEntityRenderer<DepotBlockEntity, Depo
                 if (!alongX) {
                     sideOffset *= -1;
                 }
-                offsetVec = Vec3.atLowerCornerOf(tis.insertedFrom.getOpposite().getUnitVec3i()).scale(.5f - offset)
+                offsetVec = Vec3.atLowerCornerOf(tis.insertedFrom.getOpposite().getUnitVec3i()).scale(0.5f - offset)
                     .add(alongX ? sideOffset : 0, 0, alongX ? 0 : sideOffset);
             } else {
                 offsetVec = null;

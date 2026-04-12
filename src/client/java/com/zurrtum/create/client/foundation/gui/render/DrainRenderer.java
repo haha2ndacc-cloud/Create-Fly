@@ -102,7 +102,7 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
             LightCoordsUtil.FULL_BRIGHT,
             false,
             true
-        ).render(bufferSource, matrices);
+        ).render(matrices, bufferSource);
 
         bufferSource.endBatch();
         matrices.popPose();

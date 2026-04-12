@@ -6,6 +6,7 @@ import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import com.zurrtum.create.client.Create;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
+import com.zurrtum.create.client.infrastructure.model.PotatoCannonModel.CogRenderData;
 import com.zurrtum.create.content.equipment.potatoCannon.PotatoCannonItem;
 import com.zurrtum.create.content.equipment.potatoCannon.PotatoCannonItem.Ammo;
 import net.minecraft.client.Minecraft;
@@ -15,6 +16,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.item.*;
+import net.minecraft.client.renderer.item.ItemStackRenderState.FoilType;
 import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.ModelBaker;
@@ -40,7 +42,7 @@ import java.util.function.Supplier;
 
 import static com.zurrtum.create.Create.MOD_ID;
 
-public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<PotatoCannonModel.CogRenderData> {
+public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<CogRenderData> {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/potato_cannon");
     public static final Identifier ITEM_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/potato_cannon/item");
     public static final Identifier COG_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/potato_cannon/cog");
@@ -79,12 +81,12 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
     ) {
         state.appendModelIdentityElement(this);
         state.setAnimated();
-        ItemStackRenderState.FoilType glint;
+        FoilType glint;
         if (stack.hasFoil()) {
-            state.appendModelIdentityElement(ItemStackRenderState.FoilType.STANDARD);
-            glint = ItemStackRenderState.FoilType.STANDARD;
+            state.appendModelIdentityElement(FoilType.STANDARD);
+            glint = FoilType.STANDARD;
         } else {
-            glint = ItemStackRenderState.FoilType.NONE;
+            glint = FoilType.NONE;
         }
         update(state, displayContext, itemQuads, itemSettings, itemVector, glint);
 
@@ -114,7 +116,7 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
         List<BakedQuad> quads,
         ModelRenderProperties settings,
         Supplier<Vector3fc[]> vector,
-        ItemStackRenderState.FoilType glint
+        FoilType glint
     ) {
         LayerRenderState layerRenderState = state.newLayer();
         layerRenderState.setExtents(vector);
@@ -136,9 +138,7 @@ public class PotatoCannonModel implements ItemModel, SpecialModelRenderer<Potato
         int i
     ) {
         assert data != null;
-        matrices.translate(0.5f, 0.53125f, 0.5f);
-        matrices.mulPose(Axis.ZP.rotationDegrees(data.rotation));
-        matrices.translate(-0.5f, -0.53125f, -0.5f);
+        matrices.rotateAround(Axis.ZP.rotationDegrees(data.rotation), 0.5f, 0.53125f, 0.5f);
         LayerRenderState state = data.state;
         queue.submitItem(
             matrices,

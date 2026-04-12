@@ -1,22 +1,23 @@
 package com.zurrtum.create.client.foundation.blockEntity.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.ColoredOverlayBlockEntityRenderer.ColoredOverlayRenderState;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.Nullable;
 
-public abstract class ColoredOverlayBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<T, ColoredOverlayBlockEntityRenderer.ColoredOverlayRenderState> {
-    public ColoredOverlayBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
+public abstract class ColoredOverlayBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<T, ColoredOverlayRenderState> {
+    public ColoredOverlayBlockEntityRenderer(Context context) {
     }
 
     @Override
@@ -32,10 +33,9 @@ public abstract class ColoredOverlayBlockEntityRenderer<T extends BlockEntity> i
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        state.layer = RenderTypes.solidMovingBlock();
-        state.model = getOverlayBuffer(be, state);
-        state.color = getColor(be, tickProgress);
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        state.model = getOverlayBuffer(be, state).cardinalLighting(level).light(state.lightCoords)
+            .color(getColor(be, tickProgress)).extractRenderState();
     }
 
     @Override
@@ -45,21 +45,14 @@ public abstract class ColoredOverlayBlockEntityRenderer<T extends BlockEntity> i
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        queue.submitCustomGeometry(matrices, state.layer, state);
+        state.model.submit(matrices, queue);
     }
 
     protected abstract int getColor(T be, float partialTicks);
 
     protected abstract SuperByteBuffer getOverlayBuffer(T be, ColoredOverlayRenderState state);
 
-    public static class ColoredOverlayRenderState extends BlockEntityRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
-        public RenderType layer;
-        public SuperByteBuffer model;
-        public int color;
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            model.color(color).light(lightCoords).renderInto(matricesEntry, vertexConsumer);
-        }
+    public static class ColoredOverlayRenderState extends BlockEntityRenderState {
+        public @UnknownNullability SuperByteBufferRenderState model;
     }
 }

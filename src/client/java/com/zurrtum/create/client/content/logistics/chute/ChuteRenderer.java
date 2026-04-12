@@ -2,13 +2,15 @@ package com.zurrtum.create.client.content.logistics.chute;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.zurrtum.create.client.content.logistics.chute.ChuteRenderer.ChuteRenderState;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.logistics.box.PackageItem;
 import com.zurrtum.create.content.logistics.chute.ChuteBlock;
 import com.zurrtum.create.content.logistics.chute.ChuteBlock.Shape;
 import com.zurrtum.create.content.logistics.chute.ChuteBlockEntity;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.item.ItemModelResolver;
@@ -20,14 +22,32 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
-public class ChuteRenderer implements BlockEntityRenderer<ChuteBlockEntity, ChuteRenderer.ChuteRenderState> {
+public class ChuteRenderer implements BlockEntityRenderer<ChuteBlockEntity, ChuteRenderState> {
     protected final ItemModelResolver itemModelManager;
 
-    public ChuteRenderer(BlockEntityRendererProvider.Context context) {
+    public ChuteRenderer(Context context) {
         itemModelManager = context.itemModelResolver();
+    }
+
+    @Override
+    public boolean shouldRender(ChuteBlockEntity blockEntity, Vec3 cameraPosition) {
+        if (BlockEntityRenderer.super.shouldRender(blockEntity, cameraPosition)) {
+            if (blockEntity.getItem().isEmpty()) {
+                return false;
+            }
+            BlockState blockState = blockEntity.getBlockState();
+            if (blockState.getValue(ChuteBlock.FACING) != Direction.DOWN) {
+                return false;
+            }
+            return blockState.getValue(ChuteBlock.SHAPE) == Shape.WINDOW || blockEntity.bottomPullDistance != 0;
+        }
+        return false;
     }
 
     @Override
@@ -43,23 +63,12 @@ public class ChuteRenderer implements BlockEntityRenderer<ChuteBlockEntity, Chut
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        ItemStack item = be.getItem();
-        if (item.isEmpty()) {
-            return;
-        }
-        if (state.blockState.getValue(ChuteBlock.FACING) != Direction.DOWN) {
-            return;
-        }
-        boolean notWindow = state.blockState.getValue(ChuteBlock.SHAPE) != Shape.WINDOW;
-        if (notWindow && be.bottomPullDistance == 0) {
-            return;
-        }
         float itemPosition = be.itemPosition.getValue(tickProgress);
-        if (notWindow && itemPosition > .5f) {
+        if (itemPosition > 0.5f && state.blockState.getValue(ChuteBlock.SHAPE) != Shape.WINDOW) {
             return;
         }
-        state.item = ChuteItemRenderState.create(itemModelManager, item, itemPosition, be.getLevel());
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        state.item = ChuteItemRenderState.create(itemModelManager, be.getItem(), itemPosition, level);
     }
 
     @Override
@@ -69,45 +78,44 @@ public class ChuteRenderer implements BlockEntityRenderer<ChuteBlockEntity, Chut
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        if (state.item != null) {
-            state.item.render(matrices, queue, state.lightCoords);
-        }
+        state.item.submit(matrices, queue, state.lightCoords);
     }
 
     public static class ChuteRenderState extends BlockEntityRenderState {
-        public @Nullable ChuteItemRenderState item;
+        public @UnknownNullability ChuteItemRenderState item;
     }
 
-    public record ChuteItemRenderState(ItemStackRenderState item, float offset, float rotate) {
+    public record ChuteItemRenderState(ItemStackRenderState item, float offset, @Nullable Quaternionf xRot,
+                                       Quaternionf yRot) {
         public static ChuteItemRenderState create(
             ItemModelResolver itemModelManager,
             ItemStack stack,
             float itemPosition,
-            Level world
+            @Nullable Level world
         ) {
-            float offset = itemPosition - .5f;
-            float rotate;
-            if (PackageItem.isPackage(stack)) {
-                rotate = -1;
+            Quaternionf xRot, yRot;
+            if (itemPosition != 0 && !PackageItem.isPackage(stack)) {
+                float angle = Mth.DEG_TO_RAD * itemPosition * 180;
+                xRot = Axis.XP.rotation(angle);
+                yRot = Axis.YP.rotation(angle);
             } else {
-                rotate = Mth.DEG_TO_RAD * itemPosition * 180;
+                xRot = yRot = null;
             }
             ItemStackRenderState item = new ItemStackRenderState();
             item.displayContext = ItemDisplayContext.FIXED;
             itemModelManager.appendItemLayers(item, stack, item.displayContext, world, null, 0);
-            return new ChuteItemRenderState(item, offset, rotate);
+            return new ChuteItemRenderState(item, itemPosition, xRot, yRot);
         }
 
-        public void render(PoseStack matrices, SubmitNodeCollector queue, int light) {
+        public void submit(PoseStack matrices, SubmitNodeCollector queue, int light) {
             matrices.pushPose();
-            matrices.translate(0.5f, 0.5f, 0.5f);
-            matrices.translate(0, offset, 0);
-            if (rotate == -1) {
+            matrices.translate(0.5f, offset, 0.5f);
+            if (xRot == null) {
                 matrices.scale(1.5f, 1.5f, 1.5f);
             } else {
                 matrices.scale(0.5f, 0.5f, 0.5f);
-                matrices.mulPose(Axis.XP.rotation(rotate));
-                matrices.mulPose(Axis.YP.rotation(rotate));
+                matrices.mulPose(xRot);
+                matrices.mulPose(yRot);
             }
             item.submit(matrices, queue, light, OverlayTexture.NO_OVERLAY, 0);
             matrices.popPose();

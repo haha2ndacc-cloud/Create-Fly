@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import com.zurrtum.create.client.catnip.event.ClientResourceReloadListener;
 import com.zurrtum.create.client.catnip.lang.LangBuilder;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
+import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferCache;
 import com.zurrtum.create.client.ponder.enums.PonderConfig;
 import com.zurrtum.create.client.ponder.enums.PonderKeybinds;
@@ -30,6 +31,7 @@ public class Ponder {
         SuperByteBufferCache cache = SuperByteBufferCache.getInstance();
         cache.registerCompartment(CachedBuffers.GENERIC_BLOCK);
         cache.registerCompartment(WorldSectionElementImpl.PONDER_WORLD_SECTION);
+        SuperByteBuffer.register();
     }
 
     public static void invalidateRenderers() {

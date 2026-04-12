@@ -1,6 +1,7 @@
 package com.zurrtum.create.client.mixin;
 
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+import com.zurrtum.create.client.catnip.render.PonderRenderTypes;
 import com.zurrtum.create.client.foundation.render.CreateRenderTypes;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.client.renderer.RenderBuffers;
@@ -20,9 +21,21 @@ public abstract class RenderBuffersMixin {
     ) {
     }
 
-    @Inject(method = "lambda$new$0(Lit/unimi/dsi/fastutil/objects/Object2ObjectLinkedOpenHashMap;)V", at = @At("TAIL"))
+    @Inject(method = "lambda$new$0(Lit/unimi/dsi/fastutil/objects/Object2ObjectLinkedOpenHashMap;)V", at = @At("HEAD"))
     private void registerLayers(Object2ObjectLinkedOpenHashMap<RenderType, ByteBufferBuilder> map, CallbackInfo ci) {
+        put(map, PonderRenderTypes.getEntityBlockSolid());
+        put(map, PonderRenderTypes.getEntityBlockCutout());
+        put(map, PonderRenderTypes.getEntityBlockLightSolid());
+        put(map, PonderRenderTypes.getEntityBlockLightCutout());
+        put(map, PonderRenderTypes.getNetherEntityBlockSolid());
+        put(map, PonderRenderTypes.getNetherEntityBlockCutout());
+        put(map, PonderRenderTypes.getNetherEntityBlockLightSolid());
+        put(map, PonderRenderTypes.getNetherEntityBlockLightCutout());
         put(map, CreateRenderTypes.additive2());
+        put(map, PonderRenderTypes.getEntityBlockTranslucent());
+        put(map, PonderRenderTypes.getEntityBlockLightTranslucent());
+        put(map, PonderRenderTypes.getNetherEntityBlockTranslucent());
+        put(map, PonderRenderTypes.getNetherEntityBlockLightTranslucent());
         put(map, CreateRenderTypes.translucent());
         put(map, CreateRenderTypes.additive());
     }

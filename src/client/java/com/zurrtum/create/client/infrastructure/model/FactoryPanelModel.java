@@ -4,7 +4,6 @@ import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
-import com.zurrtum.create.client.model.NormalsBakedQuad;
 import com.zurrtum.create.client.ponder.api.level.PonderLevel;
 import com.zurrtum.create.content.logistics.factoryBoard.FactoryPanelBlock;
 import com.zurrtum.create.content.logistics.factoryBoard.FactoryPanelPosition;
@@ -83,13 +82,11 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
         float yRot = Mth.RAD_TO_DEG * FactoryPanelBlock.getYRot(state);
         double xOffset = slot.xOffset * .5;
         double yOffset = slot.yOffset * .5;
-        int normal = 127 << 16;
-        int[] normals = new int[]{normal, normal, normal, normal};
 
         List<BlockStateModelPart> modelParts = new ObjectArrayList<>();
         factoryPanel.get().collectParts(random, modelParts);
         for (BlockStateModelPart part : modelParts) {
-            parts.add(replacePart(part, xRot, yRot, xOffset, yOffset, normals, ponder));
+            parts.add(replacePart(part, xRot, yRot, xOffset, yOffset, ponder));
         }
     }
 
@@ -99,17 +96,16 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
         float yRot,
         double xOffset,
         double yOffset,
-        int[] normals,
         boolean ponder
     ) {
         QuadCollection.Builder builder = new QuadCollection.Builder();
         for (Direction direction : Iterate.directions) {
             for (BakedQuad bakedQuad : part.getQuads(direction)) {
-                builder.addCulledFace(direction, replaceQuad(bakedQuad, xRot, yRot, xOffset, yOffset, normals, ponder));
+                builder.addCulledFace(direction, replaceQuad(bakedQuad, xRot, yRot, xOffset, yOffset, ponder));
             }
         }
         for (BakedQuad bakedQuad : part.getQuads(null)) {
-            builder.addUnculledFace(replaceQuad(bakedQuad, xRot, yRot, xOffset, yOffset, normals, ponder));
+            builder.addUnculledFace(replaceQuad(bakedQuad, xRot, yRot, xOffset, yOffset, ponder));
         }
         return new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleMaterial());
     }
@@ -120,7 +116,6 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
         float yRot,
         double xOffset,
         double yOffset,
-        int[] normals,
         boolean ponder
     ) {
         Vec3 quadNormal = Vec3.atLowerCornerOf(bakedQuad.direction().getUnitVec3i());
@@ -144,7 +139,7 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
                 info.lightEmission()
             );
         }
-        BakedQuad quad = new BakedQuad(
+        return new BakedQuad(
             calcXYZ(bakedQuad.position0(), xOffset, yOffset, xRot, yRot),
             calcXYZ(bakedQuad.position1(), xOffset, yOffset, xRot, yRot),
             calcXYZ(bakedQuad.position2(), xOffset, yOffset, xRot, yRot),
@@ -156,7 +151,5 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
             newNormal,
             info
         );
-        NormalsBakedQuad.setNormals(quad, normals);
-        return quad;
     }
 }

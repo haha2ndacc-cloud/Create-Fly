@@ -12,6 +12,7 @@ import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.content.redstone.link.controller.LinkedControllerClientHandler;
 import com.zurrtum.create.client.content.redstone.link.controller.LinkedControllerClientHandler.Mode;
 import com.zurrtum.create.client.foundation.model.BakedModelHelper;
+import com.zurrtum.create.client.infrastructure.model.LinkedControllerModel.RenderData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -19,6 +20,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.item.*;
+import net.minecraft.client.renderer.item.ItemStackRenderState.FoilType;
 import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
@@ -43,7 +45,7 @@ import java.util.function.Consumer;
 
 import static com.zurrtum.create.Create.MOD_ID;
 
-public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<LinkedControllerModel.RenderData> {
+public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<RenderData> {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/linked_controller");
     public static final Identifier ITEM_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/linked_controller/item");
     public static final Identifier POWERED_ID = Identifier.fromNamespaceAndPath(
@@ -72,7 +74,7 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Li
         }
 
         boolean active = LinkedControllerClientHandler.MODE != Mode.IDLE;
-        equipProgress.chase(active ? 1 : 0, .2f, Chaser.EXP);
+        equipProgress.chase(active ? 1 : 0, 0.2f, Chaser.EXP);
         equipProgress.tickChaser();
 
         if (!active) {
@@ -81,7 +83,7 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Li
 
         for (int i = 0; i < buttons.size(); i++) {
             LerpedFloat lerpedFloat = buttons.get(i);
-            lerpedFloat.chase(LinkedControllerClientHandler.currentlyPressed.contains(i) ? 1 : 0, .4f, Chaser.EXP);
+            lerpedFloat.chase(LinkedControllerClientHandler.currentlyPressed.contains(i) ? 1 : 0, 0.4f, Chaser.EXP);
             lerpedFloat.tickChaser();
         }
     }
@@ -114,7 +116,7 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Li
         this.settings = settings;
         this.transformation = transformation;
         this.item = item;
-        this.vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(item));
+        vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(item));
         this.powered = powered;
         this.torch = torch;
         this.torchOff = torchOff;
@@ -264,10 +266,10 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Li
         }
         renderQuads(displayContext, matrices, queue, light, overlay, torch);
         if (bind) {
-            light = Mth.lerpInt((Mth.sin(AnimationTickHolder.getRenderTime() / 4f) + 1) / 2, 5, 15) << 20;
+            light = (int) Mth.lerp((Mth.sin(AnimationTickHolder.getRenderTime() / 4.0f) + 1) / 2, 5, 15) << 20;
         }
-        float s = 1 / 16f;
-        float b = s * -.75f;
+        float s = 1 / 16.0f;
+        float b = s * -0.75f;
         int index = 0;
         if (pt == -1) {
             pt = AnimationTickHolder.getPartialTicks();
@@ -320,7 +322,7 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Li
         int overlay,
         List<BakedQuad> quads
     ) {
-        queue.submitItem(matrices, displayContext, light, overlay, 0, tints, quads, ItemStackRenderState.FoilType.NONE);
+        queue.submitItem(matrices, displayContext, light, overlay, 0, tints, quads, FoilType.NONE);
     }
 
     public static class RenderData {

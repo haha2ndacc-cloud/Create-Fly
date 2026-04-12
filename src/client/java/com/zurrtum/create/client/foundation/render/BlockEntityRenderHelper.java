@@ -1,8 +1,10 @@
 package com.zurrtum.create.client.foundation.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.zurrtum.create.Create;
 import com.zurrtum.create.catnip.registry.RegisteredObjectsHelper;
+import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
 import com.zurrtum.create.client.flywheel.lib.visualization.VisualizationHelper;
 import com.zurrtum.create.client.foundation.virtualWorld.VirtualRenderWorld;
 import com.zurrtum.create.client.infrastructure.config.AllConfigs;
@@ -42,6 +44,7 @@ public class BlockEntityRenderHelper {
         BitSet erroredBEsOut,
         @Nullable VirtualRenderWorld renderLevel,
         Level realLevel,
+        @Nullable Pose transform,
         @Nullable Matrix4f lightTransform,
         Vec3 camera,
         float pt
@@ -63,6 +66,9 @@ public class BlockEntityRenderHelper {
             if (renderer == null) {
                 // Don't bother looping over it again if we can't do anything with it.
                 erroredBEsOut.set(i);
+                continue;
+            }
+            if (!renderer.shouldRender(blockEntity, camera)) {
                 continue;
             }
 
@@ -99,27 +105,30 @@ public class BlockEntityRenderHelper {
         if (states.isEmpty()) {
             return null;
         }
-        return new BlockEntityListRenderState(dispatcher, camera, BlockPos.containing(camera), states);
+        return new BlockEntityListRenderState(dispatcher, camera, BlockPos.containing(camera), transform, states);
     }
 
     private static BlockPos getLightPos(@Nullable Matrix4f lightTransform, BlockPos contraptionPos) {
         if (lightTransform != null) {
             Vector4f lightVec = new Vector4f(
-                contraptionPos.getX() + .5f,
-                contraptionPos.getY() + .5f,
-                contraptionPos.getZ() + .5f,
+                contraptionPos.getX() + 0.5f,
+                contraptionPos.getY() + 0.5f,
+                contraptionPos.getZ() + 0.5f,
                 1
             );
             lightVec.mul(lightTransform);
             return BlockPos.containing(lightVec.x(), lightVec.y(), lightVec.z());
-        } else {
-            return contraptionPos;
         }
+        return contraptionPos;
     }
 
     public record BlockEntityListRenderState(BlockEntityRenderDispatcher dispatcher, Vec3 camera, BlockPos cameraPos,
-                                             List<BlockEntityRenderState> states) {
-        public void render(PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraRenderState) {
+                                             @Nullable Pose transform, List<BlockEntityRenderState> states) {
+        public void submit(PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraRenderState) {
+            matrices.pushPose();
+            if (transform != null) {
+                SuperByteBuffer.mul(matrices.last(), transform);
+            }
             Vec3 prevPos = cameraRenderState.pos;
             BlockPos prevBlockPos = cameraRenderState.blockPos;
             cameraRenderState.pos = camera;
@@ -137,6 +146,7 @@ public class BlockEntityRenderHelper {
             }
             cameraRenderState.pos = prevPos;
             cameraRenderState.blockPos = prevBlockPos;
+            matrices.popPose();
         }
     }
 }

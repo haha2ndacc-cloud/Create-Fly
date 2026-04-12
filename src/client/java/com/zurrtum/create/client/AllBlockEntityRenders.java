@@ -14,7 +14,6 @@ import com.zurrtum.create.client.content.contraptions.elevator.ElevatorPulleyRen
 import com.zurrtum.create.client.content.contraptions.elevator.ElevatorPulleyVisual;
 import com.zurrtum.create.client.content.contraptions.gantry.GantryCarriageRenderer;
 import com.zurrtum.create.client.content.contraptions.gantry.GantryCarriageVisual;
-import com.zurrtum.create.client.content.contraptions.piston.MechanicalPistonRenderer;
 import com.zurrtum.create.client.content.contraptions.pulley.PulleyRenderer;
 import com.zurrtum.create.client.content.contraptions.pulley.RopePulleyVisual;
 import com.zurrtum.create.client.content.decoration.placard.PlacardRenderer;
@@ -34,7 +33,10 @@ import com.zurrtum.create.client.content.fluids.pipes.valve.FluidValveRenderer;
 import com.zurrtum.create.client.content.fluids.pipes.valve.FluidValveVisual;
 import com.zurrtum.create.client.content.fluids.spout.SpoutRenderer;
 import com.zurrtum.create.client.content.fluids.tank.FluidTankRenderer;
-import com.zurrtum.create.client.content.kinetics.base.*;
+import com.zurrtum.create.client.content.kinetics.base.OrientedRotatingVisual;
+import com.zurrtum.create.client.content.kinetics.base.ShaftRenderer;
+import com.zurrtum.create.client.content.kinetics.base.SingleAxisRotatingRenderer;
+import com.zurrtum.create.client.content.kinetics.base.SingleAxisRotatingVisual;
 import com.zurrtum.create.client.content.kinetics.belt.BeltRenderer;
 import com.zurrtum.create.client.content.kinetics.belt.BeltVisual;
 import com.zurrtum.create.client.content.kinetics.chainConveyor.ChainConveyorRenderer;
@@ -52,8 +54,10 @@ import com.zurrtum.create.client.content.kinetics.fan.EncasedFanRenderer;
 import com.zurrtum.create.client.content.kinetics.fan.FanVisual;
 import com.zurrtum.create.client.content.kinetics.flywheel.FlywheelRenderer;
 import com.zurrtum.create.client.content.kinetics.flywheel.FlywheelVisual;
+import com.zurrtum.create.client.content.kinetics.gantry.GantryShaftRenderer;
 import com.zurrtum.create.client.content.kinetics.gauge.GaugeRenderer;
-import com.zurrtum.create.client.content.kinetics.gauge.GaugeVisual;
+import com.zurrtum.create.client.content.kinetics.gauge.GaugeVisual.Speed;
+import com.zurrtum.create.client.content.kinetics.gauge.GaugeVisual.Stress;
 import com.zurrtum.create.client.content.kinetics.gearbox.GearboxRenderer;
 import com.zurrtum.create.client.content.kinetics.gearbox.GearboxVisual;
 import com.zurrtum.create.client.content.kinetics.mechanicalArm.ArmRenderer;
@@ -68,9 +72,11 @@ import com.zurrtum.create.client.content.kinetics.saw.SawRenderer;
 import com.zurrtum.create.client.content.kinetics.saw.SawVisual;
 import com.zurrtum.create.client.content.kinetics.simpleRelays.BracketedKineticBlockEntityRenderer;
 import com.zurrtum.create.client.content.kinetics.simpleRelays.BracketedKineticBlockEntityVisual;
-import com.zurrtum.create.client.content.kinetics.simpleRelays.encased.EncasedCogRenderer;
 import com.zurrtum.create.client.content.kinetics.simpleRelays.encased.EncasedCogVisual;
+import com.zurrtum.create.client.content.kinetics.simpleRelays.encased.EncasedLargeCogRenderer;
+import com.zurrtum.create.client.content.kinetics.simpleRelays.encased.EncasedSmallCogRenderer;
 import com.zurrtum.create.client.content.kinetics.speedController.SpeedControllerRenderer;
+import com.zurrtum.create.client.content.kinetics.steamEngine.PoweredShaftRenderer;
 import com.zurrtum.create.client.content.kinetics.steamEngine.SteamEngineRenderer;
 import com.zurrtum.create.client.content.kinetics.steamEngine.SteamEngineVisual;
 import com.zurrtum.create.client.content.kinetics.transmission.SplitShaftRenderer;
@@ -117,8 +123,9 @@ import com.zurrtum.create.client.content.trains.station.StationRenderer;
 import com.zurrtum.create.client.content.trains.track.TrackRenderer;
 import com.zurrtum.create.client.content.trains.track.TrackVisual;
 import com.zurrtum.create.client.flywheel.lib.visualization.SimpleBlockEntityVisualizer;
-import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
-import com.zurrtum.create.content.kinetics.belt.BeltBlockEntity;
+import com.zurrtum.create.client.flywheel.lib.visualization.SimpleBlockEntityVisualizer.Factory;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.FilterBlockEntityRenderer;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.LinkBlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -131,7 +138,7 @@ public class AllBlockEntityRenders {
     public static <T extends BlockEntity, P extends T, S extends BlockEntityRenderState> void visual(
         BlockEntityType<P> type,
         BlockEntityRendererProvider<T, S> rendererFactory,
-        SimpleBlockEntityVisualizer.Factory<P> visualizerFactory
+        Factory<P> visualizerFactory
     ) {
         visual(type, rendererFactory, visualizerFactory, blockEntity -> true);
     }
@@ -139,7 +146,7 @@ public class AllBlockEntityRenders {
     public static <T extends BlockEntity, P extends T, S extends BlockEntityRenderState> void normal(
         BlockEntityType<P> type,
         BlockEntityRendererProvider<T, S> rendererFactory,
-        SimpleBlockEntityVisualizer.Factory<P> visualizerFactory
+        Factory<P> visualizerFactory
     ) {
         visual(type, rendererFactory, visualizerFactory, blockEntity -> false);
     }
@@ -147,7 +154,7 @@ public class AllBlockEntityRenders {
     public static <T extends BlockEntity, P extends T, S extends BlockEntityRenderState> void visual(
         BlockEntityType<P> type,
         BlockEntityRendererProvider<T, S> rendererFactory,
-        SimpleBlockEntityVisualizer.Factory<P> visualizerFactory,
+        Factory<P> visualizerFactory,
         Predicate<P> skipVanillaRender
     ) {
         BlockEntityRenderers.register(type, rendererFactory);
@@ -181,7 +188,7 @@ public class AllBlockEntityRenders {
         visual(AllBlockEntityTypes.WATER_WHEEL, WaterWheelRenderer::standard, WaterWheelVisual::standard);
         visual(AllBlockEntityTypes.LARGE_WATER_WHEEL, WaterWheelRenderer::large, WaterWheelVisual::large);
         render(AllBlockEntityTypes.DEPOT, DepotRenderer::new);
-        visual(AllBlockEntityTypes.BELT, BeltRenderer::new, BeltVisual::new, BeltBlockEntity::shouldSkipVanillaRender);
+        visual(AllBlockEntityTypes.BELT, BeltRenderer::new, BeltVisual::new, BeltVisual::shouldSkipVanillaRender);
         visual(AllBlockEntityTypes.GEARBOX, GearboxRenderer::new, GearboxVisual::new);
         visual(AllBlockEntityTypes.CLUTCH, SplitShaftRenderer::new, SplitShaftVisual::new);
         visual(AllBlockEntityTypes.GEARSHIFT, SplitShaftRenderer::new, SplitShaftVisual::new);
@@ -189,12 +196,12 @@ public class AllBlockEntityRenders {
         visual(AllBlockEntityTypes.ENCASED_SHAFT, ShaftRenderer::new, SingleAxisRotatingVisual::shaft);
         visual(AllBlockEntityTypes.ADJUSTABLE_CHAIN_GEARSHIFT, ShaftRenderer::new, SingleAxisRotatingVisual::shaft);
         normal(AllBlockEntityTypes.CHAIN_CONVEYOR, ChainConveyorRenderer::new, ChainConveyorVisual::new);
-        visual(AllBlockEntityTypes.ENCASED_COGWHEEL, EncasedCogRenderer::small, EncasedCogVisual::small);
-        visual(AllBlockEntityTypes.ENCASED_LARGE_COGWHEEL, EncasedCogRenderer::large, EncasedCogVisual::large);
+        visual(AllBlockEntityTypes.ENCASED_COGWHEEL, EncasedSmallCogRenderer::new, EncasedCogVisual::small);
+        visual(AllBlockEntityTypes.ENCASED_LARGE_COGWHEEL, EncasedLargeCogRenderer::new, EncasedCogVisual::large);
         visual(AllBlockEntityTypes.HAND_CRANK, HandCrankRenderer::new, HandCrankVisual::new);
         visual(AllBlockEntityTypes.VALVE_HANDLE, ValveHandleRenderer::new, ValveHandleVisual::new);
-        normal(AllBlockEntityTypes.WINDMILL_BEARING, BearingRenderer::new, BearingVisual::new);
-        normal(
+        visual(AllBlockEntityTypes.WINDMILL_BEARING, BearingRenderer::new, BearingVisual::new);
+        visual(
             AllBlockEntityTypes.MECHANICAL_PUMP,
             PumpRenderer::new,
             SingleAxisRotatingVisual.ofZ(AllPartialModels.MECHANICAL_PUMP_COG)
@@ -205,7 +212,7 @@ public class AllBlockEntityRenders {
         visual(AllBlockEntityTypes.STEAM_ENGINE, SteamEngineRenderer::new, SteamEngineVisual::new);
         visual(
             AllBlockEntityTypes.POWERED_SHAFT,
-            SingleAxisRotatingRenderer.of(AllPartialModels.POWERED_SHAFT),
+            PoweredShaftRenderer::new,
             SingleAxisRotatingVisual.of(AllPartialModels.POWERED_SHAFT)
         );
         visual(AllBlockEntityTypes.HEATER, BlazeBurnerRenderer::new, BlazeBurnerVisual::new);
@@ -218,8 +225,8 @@ public class AllBlockEntityRenders {
             SingleAxisRotatingVisual.of(AllPartialModels.MILLSTONE_COG)
         );
         visual(AllBlockEntityTypes.ENCASED_FAN, EncasedFanRenderer::new, FanVisual::new);
-        render(AllBlockEntityTypes.PECULIAR_BELL, BellRenderer::new);
-        render(AllBlockEntityTypes.HAUNTED_BELL, BellRenderer::new);
+        render(AllBlockEntityTypes.PECULIAR_BELL, BellRenderer.of(AllPartialModels.PECULIAR_BELL));
+        render(AllBlockEntityTypes.HAUNTED_BELL, BellRenderer.of(AllPartialModels.HAUNTED_BELL));
         normal(AllBlockEntityTypes.SAW, SawRenderer::new, SawVisual::new);
         render(AllBlockEntityTypes.BASIN, BasinRenderer::new);
         normal(AllBlockEntityTypes.FUNNEL, FunnelRenderer::new, FunnelVisual::new);
@@ -227,20 +234,20 @@ public class AllBlockEntityRenders {
         normal(AllBlockEntityTypes.BRASS_TUNNEL, BeltTunnelRenderer::new, BeltTunnelVisual::new);
         render(AllBlockEntityTypes.CHUTE, ChuteRenderer::new);
         render(AllBlockEntityTypes.SMART_CHUTE, SmartChuteRenderer::new);
-        visual(AllBlockEntityTypes.MECHANICAL_PISTON, MechanicalPistonRenderer::new, SingleAxisRotatingVisual::shaft);
+        visual(AllBlockEntityTypes.MECHANICAL_PISTON, ShaftRenderer::new, SingleAxisRotatingVisual::shaft);
         render(AllBlockEntityTypes.HARVESTER, HarvesterRenderer::new);
-        normal(AllBlockEntityTypes.MECHANICAL_BEARING, BearingRenderer::new, BearingVisual::new);
-        normal(AllBlockEntityTypes.PORTABLE_FLUID_INTERFACE, PortableStorageInterfaceRenderer::new, PSIVisual::new);
-        normal(AllBlockEntityTypes.PORTABLE_STORAGE_INTERFACE, PortableStorageInterfaceRenderer::new, PSIVisual::new);
-        normal(AllBlockEntityTypes.SPEEDOMETER, GaugeRenderer::speed, GaugeVisual.Speed::new);
-        normal(AllBlockEntityTypes.STRESSOMETER, GaugeRenderer::stress, GaugeVisual.Stress::new);
+        visual(AllBlockEntityTypes.MECHANICAL_BEARING, BearingRenderer::new, BearingVisual::new);
+        visual(AllBlockEntityTypes.PORTABLE_FLUID_INTERFACE, PortableStorageInterfaceRenderer::new, PSIVisual::new);
+        visual(AllBlockEntityTypes.PORTABLE_STORAGE_INTERFACE, PortableStorageInterfaceRenderer::new, PSIVisual::new);
+        visual(AllBlockEntityTypes.SPEEDOMETER, GaugeRenderer::speed, Speed::new);
+        visual(AllBlockEntityTypes.STRESSOMETER, GaugeRenderer::stress, Stress::new);
         normal(
             AllBlockEntityTypes.CUCKOO_CLOCK,
             CuckooClockRenderer::new,
             OrientedRotatingVisual.backHorizontal(AllPartialModels.SHAFT_HALF)
         );
-        normal(AllBlockEntityTypes.MECHANICAL_MIXER, MechanicalMixerRenderer::new, MixerVisual::new);
-        normal(AllBlockEntityTypes.HOSE_PULLEY, HosePulleyRenderer::new, HosePulleyVisual::new);
+        visual(AllBlockEntityTypes.MECHANICAL_MIXER, MechanicalMixerRenderer::new, MixerVisual::new);
+        visual(AllBlockEntityTypes.HOSE_PULLEY, HosePulleyRenderer::new, HosePulleyVisual::new);
         render(AllBlockEntityTypes.SPOUT, SpoutRenderer::new);
         render(AllBlockEntityTypes.ITEM_DRAIN, ItemDrainRenderer::new);
         render(AllBlockEntityTypes.STEAM_WHISTLE, WhistleRenderer::new);
@@ -252,30 +259,30 @@ public class AllBlockEntityRenders {
             SingleAxisRotatingVisual.of(AllPartialModels.TURNTABLE)
         );
         visual(AllBlockEntityTypes.DRILL, DrillRenderer::new, OrientedRotatingVisual.of(AllPartialModels.DRILL_HEAD));
-        visual(AllBlockEntityTypes.GANTRY_SHAFT, KineticBlockEntityRenderer::new, OrientedRotatingVisual::gantryShaft);
-        normal(AllBlockEntityTypes.GANTRY_PINION, GantryCarriageRenderer::new, GantryCarriageVisual::new);
-        normal(AllBlockEntityTypes.CLOCKWORK_BEARING, BearingRenderer::new, BearingVisual::new);
+        visual(AllBlockEntityTypes.GANTRY_SHAFT, GantryShaftRenderer::new, OrientedRotatingVisual::gantryShaft);
+        visual(AllBlockEntityTypes.GANTRY_PINION, GantryCarriageRenderer::new, GantryCarriageVisual::new);
+        visual(AllBlockEntityTypes.CLOCKWORK_BEARING, BearingRenderer::new, BearingVisual::new);
         visual(
             AllBlockEntityTypes.CRUSHING_WHEEL,
             SingleAxisRotatingRenderer.of(AllPartialModels.CRUSHING_WHEEL),
             SingleAxisRotatingVisual.of(AllPartialModels.CRUSHING_WHEEL)
         );
-        normal(
+        visual(
             AllBlockEntityTypes.FLAP_DISPLAY,
             FlapDisplayRenderer::new,
             SingleAxisRotatingVisual.of(AllPartialModels.SHAFTLESS_COGWHEEL)
         );
         render(AllBlockEntityTypes.DISPLAY_LINK, LinkBulbRenderer::new);
         render(AllBlockEntityTypes.NIXIE_TUBE, NixieTubeRenderer::new);
-        normal(AllBlockEntityTypes.FLUID_VALVE, FluidValveRenderer::new, FluidValveVisual::new);
-        render(AllBlockEntityTypes.SMART_FLUID_PIPE, SmartBlockEntityRenderer::new);
+        visual(AllBlockEntityTypes.FLUID_VALVE, FluidValveRenderer::new, FluidValveVisual::new);
+        render(AllBlockEntityTypes.SMART_FLUID_PIPE, FilterBlockEntityRenderer::new);
         visual(AllBlockEntityTypes.ANALOG_LEVER, AnalogLeverRenderer::new, AnalogLeverVisual::new);
-        render(AllBlockEntityTypes.REDSTONE_LINK, SmartBlockEntityRenderer::new);
+        render(AllBlockEntityTypes.REDSTONE_LINK, LinkBlockEntityRenderer::new);
         visual(AllBlockEntityTypes.PULSE_REPEATER, BrassDiodeRenderer::new, BrassDiodeVisual::new);
         visual(AllBlockEntityTypes.PULSE_EXTENDER, BrassDiodeRenderer::new, BrassDiodeVisual::new);
         visual(AllBlockEntityTypes.PULSE_TIMER, BrassDiodeRenderer::new, BrassDiodeVisual::new);
-        render(AllBlockEntityTypes.SMART_OBSERVER, SmartBlockEntityRenderer::new);
-        render(AllBlockEntityTypes.THRESHOLD_SWITCH, SmartBlockEntityRenderer::new);
+        render(AllBlockEntityTypes.SMART_OBSERVER, FilterBlockEntityRenderer::new);
+        render(AllBlockEntityTypes.THRESHOLD_SWITCH, FilterBlockEntityRenderer::new);
         visual(AllBlockEntityTypes.STICKER, StickerRenderer::new, StickerVisual::new);
         render(AllBlockEntityTypes.CONTRAPTION_CONTROLS, ContraptionControlsRenderer::new);
         visual(AllBlockEntityTypes.ELEVATOR_PULLEY, ElevatorPulleyRenderer::new, ElevatorPulleyVisual::new);
@@ -286,11 +293,11 @@ public class AllBlockEntityRenders {
             MechanicalCrafterRenderer::new,
             SingleAxisRotatingVisual.of(AllPartialModels.SHAFTLESS_COGWHEEL)
         );
-        render(AllBlockEntityTypes.CREATIVE_CRATE, SmartBlockEntityRenderer::new);
+        render(AllBlockEntityTypes.CREATIVE_CRATE, FilterBlockEntityRenderer::new);
         normal(AllBlockEntityTypes.MECHANICAL_ARM, ArmRenderer::new, ArmVisual::new);
-        normal(AllBlockEntityTypes.TRACK, TrackRenderer::new, TrackVisual::new);
+        visual(AllBlockEntityTypes.TRACK, TrackRenderer::new, TrackVisual::new);
         visual(AllBlockEntityTypes.BOGEY, BogeyBlockEntityRenderer::new, BogeyBlockEntityVisual::new);
-        normal(AllBlockEntityTypes.TRACK_SIGNAL, SignalRenderer::new, SignalVisual::new);
+        visual(AllBlockEntityTypes.TRACK_SIGNAL, SignalRenderer::new, SignalVisual::new);
         render(AllBlockEntityTypes.TRACK_STATION, StationRenderer::new);
         normal(AllBlockEntityTypes.TRACK_OBSERVER, TrackObserverRenderer::new, TrackObserverVisual::new);
         render(AllBlockEntityTypes.MECHANICAL_ROLLER, RollerRenderer::new);
@@ -303,7 +310,7 @@ public class AllBlockEntityRenders {
         normal(AllBlockEntityTypes.PACKAGE_FROGPORT, FrogportRenderer::new, FrogportVisual::new);
         render(AllBlockEntityTypes.FACTORY_PANEL, FactoryPanelRenderer::new);
         visual(AllBlockEntityTypes.FLYWHEEL, FlywheelRenderer::new, FlywheelVisual::new);
-        render(AllBlockEntityTypes.ITEM_HATCH, SmartBlockEntityRenderer::new);
+        render(AllBlockEntityTypes.ITEM_HATCH, FilterBlockEntityRenderer::new);
         render(AllBlockEntityTypes.PLACARD, PlacardRenderer::new);
         visual(AllBlockEntityTypes.TOOLBOX, ToolboxRenderer::new, ToolBoxVisual::new);
         normal(AllBlockEntityTypes.SCHEMATICANNON, SchematicannonRenderer::new, SchematicannonVisual::new);

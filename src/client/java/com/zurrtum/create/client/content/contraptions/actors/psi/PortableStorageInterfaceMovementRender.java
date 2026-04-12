@@ -1,7 +1,6 @@
 package com.zurrtum.create.client.content.contraptions.actors.psi;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.client.api.behaviour.movement.MovementRenderBehaviour;
@@ -9,6 +8,7 @@ import com.zurrtum.create.client.api.behaviour.movement.MovementRenderState;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
 import com.zurrtum.create.client.content.contraptions.render.ActorVisual;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
@@ -19,14 +19,12 @@ import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Matrix4f;
 import org.jspecify.annotations.Nullable;
 
@@ -48,61 +46,49 @@ public class PortableStorageInterfaceMovementRender implements MovementRenderBeh
         Font textRenderer,
         MovementContext context,
         VirtualRenderWorld renderWorld,
+        PoseStack.Pose transform,
         Matrix4f worldMatrix4f
     ) {
         if (VisualizationManager.supportsVisualization(context.world)) {
             return null;
         }
-        PortableStorageInterfaceMovementRenderState state = new PortableStorageInterfaceMovementRenderState(context.localPos);
-        state.layer = RenderTypes.solidMovingBlock();
+        BlockPos pos = context.localPos;
+        PortableStorageInterfaceMovementRenderState state = new PortableStorageInterfaceMovementRenderState();
         BlockState blockState = context.state;
         float renderPartialTicks = AnimationTickHolder.getPartialTicks();
         LerpedFloat animation = PortableStorageInterfaceMovement.getAnimation(context);
-        state.middle = CachedBuffers.partial(
+        Direction facing = blockState.getValue(PortableStorageInterfaceBlock.FACING);
+        float yRot = Mth.DEG_TO_RAD * AngleHelper.horizontalAngle(facing);
+        float xRot = Mth.DEG_TO_RAD * (facing == Direction.UP ? 0 : facing == Direction.DOWN ? 180 : 90);
+        float topOffset = animation.getValue(renderPartialTicks);
+        float middleOffset = topOffset * 0.5f + 0.375f;
+        int light = LevelRenderer.getLightCoords(renderWorld, pos);
+        SuperByteBuffer middle = CachedBuffers.partial(
             PortableStorageInterfaceRenderer.getMiddleForState(
                 blockState,
                 animation.settled()
             ), blockState
+        ).transform(transform).translate(pos).center().rotateY(yRot).rotateX(xRot).uncenter();
+        SuperByteBuffer top = CachedBuffers.partial(
+            PortableStorageInterfaceRenderer.getTopForState(blockState),
+            blockState
         );
-        state.top = CachedBuffers.partial(PortableStorageInterfaceRenderer.getTopForState(blockState), blockState);
-        Direction facing = blockState.getValue(PortableStorageInterfaceBlock.FACING);
-        state.yRot = Mth.DEG_TO_RAD * AngleHelper.horizontalAngle(facing);
-        state.xRot = Mth.DEG_TO_RAD * (facing == Direction.UP ? 0 : facing == Direction.DOWN ? 180 : 90);
-        state.topOffset = animation.getValue(renderPartialTicks);
-        state.middleOffset = state.topOffset * 0.5f + 0.375f;
-        state.light = LevelRenderer.getLightCoords(renderWorld, context.localPos);
-        state.world = context.world;
-        state.worldMatrix4f = worldMatrix4f;
+        SuperByteBuffer.copyTransform(middle, top);
+        state.middle = middle.translate(0, middleOffset, 0).light(light).useLevelLight(context.world, worldMatrix4f)
+            .extractRenderState();
+        state.top = top.translate(0, topOffset, 0).light(light).useLevelLight(context.world, worldMatrix4f)
+            .extractRenderState();
         return state;
     }
 
-    public static class PortableStorageInterfaceMovementRenderState extends MovementRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
-        public RenderType layer;
-        public SuperByteBuffer middle;
-        public SuperByteBuffer top;
-        public float yRot;
-        public float xRot;
-        public float middleOffset;
-        public float topOffset;
-        public int light;
-        public Level world;
-        public Matrix4f worldMatrix4f;
-
-        public PortableStorageInterfaceMovementRenderState(BlockPos pos) {
-            super(pos);
-        }
+    public static class PortableStorageInterfaceMovementRenderState implements MovementRenderState {
+        public @UnknownNullability SuperByteBufferRenderState middle;
+        public @UnknownNullability SuperByteBufferRenderState top;
 
         @Override
-        public void render(PoseStack matrices, SubmitNodeCollector queue) {
-            queue.submitCustomGeometry(matrices, layer, this);
-        }
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            middle.center().rotateY(yRot).rotateX(xRot).uncenter().translate(0, middleOffset, 0).light(light)
-                .useLevelLight(world, worldMatrix4f).renderInto(matricesEntry, vertexConsumer);
-            top.center().rotateY(yRot).rotateX(xRot).uncenter().translate(0, topOffset, 0).light(light)
-                .useLevelLight(world, worldMatrix4f).renderInto(matricesEntry, vertexConsumer);
+        public void submit(PoseStack matrices, SubmitNodeCollector queue) {
+            middle.submit(matrices, queue);
+            top.submit(matrices, queue);
         }
     }
 }

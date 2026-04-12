@@ -15,7 +15,7 @@ import com.zurrtum.create.client.Create;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.ghostblock.GhostBlocks;
 import com.zurrtum.create.client.catnip.outliner.Outliner;
-import com.zurrtum.create.client.catnip.render.DefaultSuperRenderTypeBuffer;
+import com.zurrtum.create.client.catnip.render.DefaultSuperRenderTypeBuffer.Dispatcher;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.content.contraptions.actors.seat.ContraptionPlayerPassengerRotation;
 import com.zurrtum.create.client.content.contraptions.minecart.CouplingRenderer;
@@ -38,6 +38,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionsToRender;
@@ -125,15 +126,16 @@ public abstract class LevelRendererMixin {
         @Local Vec3 cameraPos,
         @Local PoseStack ms
     ) {
-        DefaultSuperRenderTypeBuffer.Dispatcher dispatcher = DefaultSuperRenderTypeBuffer.Dispatcher.getInstance();
+        Dispatcher dispatcher = Dispatcher.getInstance();
         SuperRenderTypeBuffer buffer = dispatcher.getBuffer();
+        SubmitNodeStorage queue = dispatcher.getSubmitNodeStorage();
         GhostBlocks.getInstance().renderAll(minecraft, ms, buffer, cameraPos);
         Outliner.getInstance().renderOutlines(minecraft, ms, buffer, cameraPos, AnimationTickHolder.getPartialTicks());
         TrackBlockOutline.drawCurveSelection(minecraft, ms, buffer, cameraPos);
-        TrackTargetingClient.render(minecraft, ms, buffer, cameraPos);
-        CouplingRenderer.renderAll(minecraft, ms, buffer, cameraPos);
-        CarriageCouplingRenderer.renderAll(minecraft, ms, buffer, cameraPos);
-        Create.SCHEMATIC_HANDLER.render(minecraft, ms, buffer, dispatcher.getSubmitNodeStorage(), cameraPos);
+        TrackTargetingClient.render(minecraft, ms, queue, cameraPos);
+        CouplingRenderer.renderAll(minecraft, ms, queue, cameraPos);
+        CarriageCouplingRenderer.renderAll(minecraft, ms, queue, cameraPos);
+        Create.SCHEMATIC_HANDLER.render(minecraft, ms, buffer, queue, cameraPos);
         ChainConveyorInteractionHandler.drawCustomBlockSelection(ms, buffer, cameraPos);
         SymmetryHandlerClient.onRenderWorld(minecraft, ms, buffer, cameraPos);
         dispatcher.draw(ms);
@@ -213,10 +215,10 @@ public abstract class LevelRendererMixin {
         return original.call(state);
     }
 
-//    @Inject(method = "submitBlockEntities(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/state/level/LevelRenderState;Lnet/minecraft/client/renderer/SubmitNodeStorage;)V", at = @At("HEAD"))
-//    private void markSpriteActive(CallbackInfo ci) {
-//        SodiumCompat.markSpriteActive(minecraft);
-//    }
+    //    @Inject(method = "submitBlockEntities(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/state/level/LevelRenderState;Lnet/minecraft/client/renderer/SubmitNodeStorage;)V", at = @At("HEAD"))
+    //    private void markSpriteActive(CallbackInfo ci) {
+    //        SodiumCompat.markSpriteActive(minecraft);
+    //    }
 
     @Inject(method = "extractBlockDestroyAnimation(Lnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At("HEAD"))
     private void init(

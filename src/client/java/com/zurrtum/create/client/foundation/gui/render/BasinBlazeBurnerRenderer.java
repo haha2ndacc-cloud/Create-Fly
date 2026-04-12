@@ -1,6 +1,6 @@
 package com.zurrtum.create.client.foundation.gui.render;
 
-import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.Lighting.Entry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.zurrtum.create.AllBlocks;
@@ -14,10 +14,12 @@ import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockG
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
@@ -39,7 +41,8 @@ public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlaz
     @Override
     protected void renderToTexture(BasinBlazeBurnerRenderState state, PoseStack matrices) {
         Minecraft mc = Minecraft.getInstance();
-        mc.gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+        GameRenderer gameRenderer = mc.gameRenderer;
+        gameRenderer.getLighting().setupFor(Entry.ENTITY_IN_UI);
         matrices.scale(1, 1, -1);
         matrices.mulPose(Axis.XP.rotationDegrees(-15.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(22.5f));
@@ -50,7 +53,7 @@ public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlaz
         BlockStateModel model;
         output.setPoseStack(matrices);
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
-        float offset = -(Mth.sin(AnimationTickHolder.getRenderTime() / 16f) + 0.5f) / 16f;
+        float offset = -(Mth.sin(AnimationTickHolder.getRenderTime() / 16.0f) + 0.5f) / 16.0f;
 
         blockState = AllBlocks.BLAZE_BURNER.defaultBlockState();
         world.blockState(blockState);
@@ -61,9 +64,7 @@ public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlaz
         matrices.pushPose();
         blockState = Blocks.AIR.defaultBlockState();
         world.blockState(blockState);
-        matrices.translate(0.5f, 0.5f, 0.5f);
-        matrices.mulPose(Axis.YP.rotationDegrees(180));
-        matrices.translate(-0.5f, -0.5f, -0.5f);
+        matrices.rotateAround(Axis.YP.rotationDegrees(180), 0.5f, 0.5f, 0.5f);
         boolean seething = state.heat() == HeatLevel.SEETHING;
         model = (seething ? AllPartialModels.BLAZE_SUPER : AllPartialModels.BLAZE_ACTIVE).get();
         output.updateBuffer(model);
@@ -83,7 +84,7 @@ public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlaz
         float spriteHeight = spriteShift.getTarget().getV1() - spriteShift.getTarget().getV0();
 
         float time = AnimationTickHolder.getRenderTime(mc.level);
-        float speed = 1 / 32f + 1 / 64f * state.heat().ordinal();
+        float speed = 1 / 32.0f + 1 / 64.0f * state.heat().ordinal();
 
         double vScroll = speed * time;
         vScroll = vScroll - Math.floor(vScroll);
@@ -93,9 +94,12 @@ public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlaz
         uScroll = uScroll - Math.floor(uScroll);
         uScroll = uScroll * spriteWidth / 2;
 
+        FeatureRenderDispatcher featureRenderDispatcher = gameRenderer.getFeatureRenderDispatcher();
+        SubmitNodeStorage queue = featureRenderDispatcher.getSubmitNodeStorage();
         CachedBuffers.partial(AllPartialModels.BLAZE_BURNER_FLAME, Blocks.AIR.defaultBlockState())
             .shiftUVScrolling(spriteShift, (float) uScroll, (float) vScroll).light(LightCoordsUtil.FULL_BRIGHT)
-            .renderInto(matrices.last(), bufferSource.getBuffer(RenderTypes.cutoutMovingBlock()));
+            .submit(matrices, queue);
+        featureRenderDispatcher.renderAllFeatures();
     }
 
     @Override

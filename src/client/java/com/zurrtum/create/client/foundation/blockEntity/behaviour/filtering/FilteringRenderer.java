@@ -78,7 +78,7 @@ public class FilteringRenderer {
             if (!behaviour.isActive()) {
                 continue;
             }
-            if (behaviour.slotPositioning instanceof ValueBoxTransform.Sided) {
+            if (behaviour.slotPositioning instanceof Sided) {
                 ((Sided) behaviour.slotPositioning).fromSide(result.getDirection());
             }
             if (!behaviour.slotPositioning.shouldRender(state)) {
@@ -100,14 +100,14 @@ public class FilteringRenderer {
             );
 
             AABB emptyBB = new AABB(Vec3.ZERO, Vec3.ZERO);
-            AABB bb = isFilterSlotted ? emptyBB.inflate(.45f, .31f, .2f) : emptyBB.inflate(.25f);
+            AABB bb = isFilterSlotted ? emptyBB.inflate(0.45f, 0.31f, 0.2f) : emptyBB.inflate(0.25f);
 
             ValueBox box = new ItemValueBox(label, bb, pos, filter, behaviour.getCountLabelForValueBox());
             box.passive(!hit || behaviour.bypassesInput(mainhandItem));
 
             Outliner.getInstance()
                 .showOutline(Pair.of("filter" + behaviour.netId(), pos), box.transform(behaviour.slotPositioning))
-                .lineWidth(1 / 64f).withFaceTexture(hit ? AllSpecialTextures.THIN_CHECKERED : null)
+                .lineWidth(1 / 64.0f).withFaceTexture(hit ? AllSpecialTextures.THIN_CHECKERED : null)
                 .highlightFace(result.getDirection());
 
             if (!hit) {
@@ -199,14 +199,14 @@ public class FilteringRenderer {
     }
 
     public interface FilterRenderState {
-        void render(BlockState blockState, SubmitNodeCollector queue, PoseStack ms, int light);
+        void submit(BlockState blockState, SubmitNodeCollector queue, PoseStack ms, int light);
     }
 
     public record FactoryPanelRenderState(List<SingleFilterRenderState> states) implements FilterRenderState {
         @Override
-        public void render(BlockState blockState, SubmitNodeCollector queue, PoseStack ms, int light) {
+        public void submit(BlockState blockState, SubmitNodeCollector queue, PoseStack ms, int light) {
             for (SingleFilterRenderState state : states) {
-                state.render(blockState, queue, ms, light);
+                state.submit(blockState, queue, ms, light);
             }
         }
     }
@@ -230,7 +230,7 @@ public class FilteringRenderer {
         }
 
         @Override
-        public void render(BlockState blockState, SubmitNodeCollector queue, PoseStack ms, int light) {
+        public void submit(BlockState blockState, SubmitNodeCollector queue, PoseStack ms, int light) {
             ms.pushPose();
             slotPositioning.transform(blockState, ms);
             ValueBoxRenderer.renderItemIntoValueBox(state, queue, ms, light, offset);
@@ -270,7 +270,7 @@ public class FilteringRenderer {
         }
 
         @Override
-        public void render(BlockState blockState, SubmitNodeCollector queue, PoseStack ms, int light) {
+        public void submit(BlockState blockState, SubmitNodeCollector queue, PoseStack ms, int light) {
             boolean flat = offset == null;
             for (Direction side : sides) {
                 ms.pushPose();
@@ -298,7 +298,7 @@ public class FilteringRenderer {
         ) {
             boolean flat = blockState.is(AllBlocks.CONTRAPTION_CONTROLS);
             Sided sided = behaviour.getSlotPositioning();
-            List<SidedFilterRenderState.BoxRenderState> boxes = new ArrayList<>();
+            List<BoxRenderState> boxes = new ArrayList<>();
             Direction side = sided.getSide();
             for (Direction direction : Iterate.directions) {
                 ItemStack filter = behaviour.getFilter(direction);
@@ -325,7 +325,7 @@ public class FilteringRenderer {
         }
 
         @Override
-        public void render(BlockState blockState, SubmitNodeCollector queue, PoseStack ms, int light) {
+        public void submit(BlockState blockState, SubmitNodeCollector queue, PoseStack ms, int light) {
             for (BoxRenderState box : boxes) {
                 ms.pushPose();
                 slotPositioning.fromSide(box.side());

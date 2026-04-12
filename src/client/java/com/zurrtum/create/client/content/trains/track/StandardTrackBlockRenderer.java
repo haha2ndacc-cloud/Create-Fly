@@ -1,15 +1,15 @@
 package com.zurrtum.create.client.content.trains.track;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.levelWrappers.SchematicLevel;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.client.flywheel.lib.transform.Affine;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.client.ponder.api.level.PonderLevel;
 import com.zurrtum.create.content.trains.station.StationBlockEntity;
 import com.zurrtum.create.content.trains.track.BezierConnection;
@@ -17,18 +17,27 @@ import com.zurrtum.create.content.trains.track.TrackBlock;
 import com.zurrtum.create.content.trains.track.TrackBlockEntity;
 import com.zurrtum.create.content.trains.track.TrackTargetingBehaviour.RenderedTrackOverlayType;
 import com.zurrtum.create.infrastructure.component.BezierTrackPointLocation;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
+
+import java.util.function.IntFunction;
+
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.*;
 
 public class StandardTrackBlockRenderer implements TrackBlockRenderer {
     @Override
@@ -58,7 +67,7 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
                 diff = bc.getPosition(tpost).subtract(bc.getPosition(tpre)).normalize();
 
                 affine.translate(offset.subtract(Vec3.atBottomCenterOf(pos)));
-                affine.translate(0, -4 / 16f, 0);
+                affine.translate(0, -4 / 16.0f, 0);
             } else {
                 return;
             }
@@ -75,9 +84,9 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
         affine.center().rotateY((float) angles.y).rotateX((float) angles.x).uncenter();
 
         if (axis != null) {
-            affine.translate(0, axis.y != 0 ? 7 / 16f : 0, axis.y != 0 ? direction.getStep() * 2.5f / 16f : 0);
+            affine.translate(0, axis.y != 0 ? 7 / 16.0f : 0, axis.y != 0 ? direction.getStep() * 2.5f / 16.0f : 0);
         } else {
-            affine.translate(0, 4 / 16f, 0);
+            affine.translate(0, 4 / 16.0f, 0);
             if (direction == AxisDirection.NEGATIVE) {
                 affine.rotateCentered(Mth.PI, Direction.UP);
             }
@@ -119,7 +128,7 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
                 double t = seg / length;
                 double tpre = (seg - 1) / length;
                 double tpost = (seg + 1) / length;
-                offset = bc.getPosition(t).subtract(Vec3.atBottomCenterOf(pos)).add(offset).add(0, -4 / 16f, 0);
+                offset = bc.getPosition(t).subtract(Vec3.atBottomCenterOf(pos)).add(offset).add(0, -4 / 16.0f, 0);
                 normal = bc.getNormal(t);
                 diff = bc.getPosition(tpost).subtract(bc.getPosition(tpre)).normalize();
             } else {
@@ -134,10 +143,10 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
         StandardTrackBlockRenderState state = new StandardTrackBlockRenderState();
         state.offset = offset;
         Vec3 angles = TrackRenderer.getModelAngles(normal, diff);
-        state.yRot = (float) angles.y;
-        state.xRot = (float) angles.x;
+        state.yRot = getYRadiansRotateAngle((float) angles.y);
+        state.xRot = getXRadiansRotateAngle((float) angles.x);
         if (axis != null) {
-            state.offset2 = axis.y != 0 ? new Vec3(0, 7 / 16f, direction.getStep() * 2.5f / 16f) : Vec3.ZERO;
+            state.offset2 = axis.y != 0 ? new Vec3(0, 7 / 16.0f, direction.getStep() * 2.5f / 16.0f) : Vec3.ZERO;
         } else if (direction == AxisDirection.NEGATIVE) {
             state.negative = true;
         }
@@ -146,19 +155,19 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
             for (BezierConnection bc : trackTE.getConnections().values()) {
                 yOffset += bc.starts.getFirst().y - pos.getY();
             }
-            state.xRot2 = Mth.DEG_TO_RAD * (float) (-direction.getStep() * trackTE.tilt.smoothingAngle.get());
+            state.xRot2 = getXRotateAngle((float) (-direction.getStep() * trackTE.tilt.smoothingAngle.get()));
             state.offset3 = (float) (yOffset / 2);
         }
-        state.layer = RenderTypes.cutoutMovingBlock();
         PartialModel partial = switch (type) {
             case DUAL_SIGNAL -> AllPartialModels.TRACK_SIGNAL_DUAL_OVERLAY;
             case OBSERVER -> AllPartialModels.TRACK_OBSERVER_OVERLAY;
             case SIGNAL -> AllPartialModels.TRACK_SIGNAL_OVERLAY;
             case STATION -> AllPartialModels.TRACK_STATION_OVERLAY;
         };
-        state.model = CachedBuffers.partial(partial, trackState);
+        int light = LevelRenderer.getLightCoords(world, pos);
+        state.model = CachedBuffers.partial(partial, trackState).cardinalLighting(world).light(light)
+            .extractRenderState();
         state.scale = scale;
-        state.light = LevelRenderer.getLightCoords(world, pos);
         return state;
     }
 
@@ -184,14 +193,18 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
             return null;
         }
         StandardTrackAssemblyRenderState state = new StandardTrackAssemblyRenderState();
-        state.layer = RenderTypes.cutoutMovingBlock();
         state.offset = offset;
-        state.angle = AngleHelper.rad(AngleHelper.horizontalAngle(direction));
-        state.model = CachedBuffers.partial(AllPartialModels.TRACK_ASSEMBLING_OVERLAY, blockState);
-        int colorWhenValid = 0x96B5FF;
-        int colorWhenCarriage = 0xCAFF96;
-        BlockPos.MutableBlockPos currentPos = pos.mutable();
-        int[][] data = state.data = new int[length][];
+        state.angle = getUpRotateAngle(AngleHelper.horizontalAngle(direction));
+        SuperByteBuffer model = CachedBuffers.partial(AllPartialModels.TRACK_ASSEMBLING_OVERLAY, blockState);
+        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(world);
+        Int2ObjectMap<SuperByteBufferRenderState> valid = new Int2ObjectOpenHashMap<>();
+        Int2ObjectMap<SuperByteBufferRenderState> carriage = new Int2ObjectOpenHashMap<>();
+        IntFunction<SuperByteBufferRenderState> validGetter = i -> model.cardinalLighting(cardinalLighting).light(i)
+            .color(0xFF96B5FF).extractRenderState();
+        IntFunction<SuperByteBufferRenderState> carriageGetter = i -> model.cardinalLighting(cardinalLighting).light(i)
+            .color(0xFFCAFF96).extractRenderState();
+        MutableBlockPos currentPos = pos.mutable();
+        @Nullable SuperByteBufferRenderState[] states = state.states = new SuperByteBufferRenderState[length];
         int index = 0;
         for (int location : locations) {
             if (location == -1 || location >= length) {
@@ -201,43 +214,58 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
             index = location;
             for (; i < index; i++) {
                 if (be.isValidBogeyOffset(i)) {
-                    data[i] = new int[]{
-                        colorWhenValid, LevelRenderer.getLightCoords(world, currentPos.move(direction, 1))
-                    };
+                    states[i] = valid.computeIfAbsent(
+                        LevelRenderer.getLightCoords(
+                            world,
+                            currentPos.move(direction, 1)
+                        ), validGetter
+                    );
                 }
             }
-            data[i] = new int[]{colorWhenCarriage, LevelRenderer.getLightCoords(world, currentPos.move(direction, 1))};
+            states[i] = carriage.computeIfAbsent(
+                LevelRenderer.getLightCoords(world, currentPos.move(direction, 1)),
+                carriageGetter
+            );
             index++;
         }
         for (; index < length; index++) {
             if (be.isValidBogeyOffset(index)) {
-                data[index] = new int[]{
-                    colorWhenValid, LevelRenderer.getLightCoords(world, currentPos.move(direction, 1))
-                };
+                states[index] = valid.computeIfAbsent(
+                    LevelRenderer.getLightCoords(
+                        world,
+                        currentPos.move(direction, 1)
+                    ), validGetter
+                );
             }
         }
         return state;
     }
 
-    public static class StandardTrackBlockRenderState extends TrackBlockRenderState {
-        public Vec3 offset;
-        public float yRot;
-        public float xRot;
+    public static class StandardTrackBlockRenderState implements TrackBlockRenderState {
+        public @UnknownNullability Vec3 offset;
+        public @Nullable Quaternionf yRot;
+        public @Nullable Quaternionf xRot;
         public @Nullable Vec3 offset2;
-        public float xRot2;
-        public @Nullable Float offset3;
+        public @Nullable Quaternionf xRot2;
+        public float offset3;
         public boolean negative;
-        public SuperByteBuffer model;
-        public int light;
+        public @UnknownNullability SuperByteBufferRenderState model;
         public float scale;
 
         @Override
-        public void transform(PoseStack matrices) {
+        public void submit(PoseStack matrices, SubmitNodeCollector queue) {
+            matrices.pushPose();
             matrices.translate(offset);
-            matrices.translate(0.5f, 0.5f, 0.5f);
-            matrices.mulPose(Axis.YP.rotation(yRot));
-            matrices.mulPose(Axis.XP.rotation(xRot));
-            matrices.translate(-0.5f, -0.5f, -0.5f);
+            if (yRot != null || xRot != null) {
+                matrices.translate(0.5f, 0.5f, 0.5f);
+                if (yRot != null) {
+                    matrices.mulPose(yRot);
+                }
+                if (xRot != null) {
+                    matrices.mulPose(xRot);
+                }
+                matrices.translate(-0.5f, -0.5f, -0.5f);
+            }
             if (offset2 != null) {
                 if (offset2 != Vec3.ZERO) {
                     matrices.translate(offset2);
@@ -248,41 +276,35 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
                     matrices.rotateAround(new Quaternionf().setAngleAxis(Math.PI, 0, 1, 0), 0.5f, 0.5f, 0.5f);
                 }
             }
-            if (offset3 != null) {
-                matrices.translate(0.5f, 0.5f, 0.5f);
-                matrices.mulPose(Axis.XP.rotation(xRot2));
-                matrices.translate(-0.5f, -0.5f, -0.5f);
+            if (xRot2 != null) {
+                matrices.rotateAround(xRot2, 0.5f, 0.5f, 0.5f);
                 matrices.translate(0, offset3, 0);
             }
-        }
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            model.translate(.5f, 0, .5f).scale(scale).translate(-.5f, 0, -.5f).light(light)
-                .renderInto(matricesEntry, vertexConsumer);
+            SuperByteBuffer.scaleAround(matrices.last(), scale, 0.5f, 0, 0.5f);
+            model.submit(matrices, queue);
+            matrices.popPose();
         }
     }
 
-    public static class StandardTrackAssemblyRenderState extends TrackBlockRenderState {
-        public Vec3 offset;
-        public float angle;
-        public SuperByteBuffer model;
-        public int[][] data;
+    public static class StandardTrackAssemblyRenderState implements TrackBlockRenderState {
+        public @UnknownNullability Vec3 offset;
+        public @Nullable Quaternionf angle;
+        public @Nullable SuperByteBufferRenderState @UnknownNullability [] states;
 
         @Override
-        public void transform(PoseStack matrices) {
+        public void submit(PoseStack matrices, SubmitNodeCollector queue) {
+            matrices.pushPose();
             matrices.translate(offset);
-            matrices.rotateAround(new Quaternionf().setAngleAxis(angle, 0, 1, 0), 0.5f, 0.5f, 0.5f);
-        }
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            for (int[] pair : data) {
-                matricesEntry.translate(0, 0, 1);
-                if (pair != null) {
-                    model.color(pair[0]).light(pair[1]).renderInto(matricesEntry, vertexConsumer);
+            if (angle != null) {
+                matrices.rotateAround(angle, 0.5f, 0.5f, 0.5f);
+            }
+            for (SuperByteBufferRenderState state : states) {
+                matrices.translate(0, 0, 1);
+                if (state != null) {
+                    state.submit(matrices, queue);
                 }
             }
+            matrices.popPose();
         }
     }
 }

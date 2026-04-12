@@ -17,11 +17,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBaker.Interner;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.Direction;
-import net.minecraft.util.ARGB;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-
-import java.util.Arrays;
 
 /**
  * Vertex consumer that outputs {@linkplain BakedQuad baked quads}.
@@ -34,9 +31,9 @@ import java.util.Arrays;
 public class QuadBakingVertexConsumer implements VertexConsumer {
     private final Vector3f[] positions = new Vector3f[4];
     private final long[] uvs = new long[4];
-    private final int[] normals = new int[4];
-    private int vertexIndex = 0;
-    private boolean building = false;
+    private final Vector3f[] normals = new Vector3f[4];
+    private int vertexIndex;
+    private boolean building;
 
     private int tintIndex = -1;
     private Direction direction = Direction.DOWN;
@@ -46,11 +43,10 @@ public class QuadBakingVertexConsumer implements VertexConsumer {
     private ChunkSectionLayer chunkLayer;
     @Nullable
     private RenderType itemRenderType;
-    private boolean shade;
+    private boolean shade = true;
     private int lightEmission;
 
     public QuadBakingVertexConsumer() {
-        clear();
     }
 
     @Override
@@ -62,16 +58,13 @@ public class QuadBakingVertexConsumer implements VertexConsumer {
         }
         building = true;
 
-        positions[vertexIndex].set(x, y, z);
+        positions[vertexIndex] = new Vector3f(x, y, z);
         return this;
     }
 
     @Override
     public VertexConsumer setNormal(float x, float y, float z) {
-        int packedx = ((byte) Math.round(x * 127)) & 0xFF;
-        int packedy = ((byte) Math.round(y * 127)) & 0xFF;
-        int packedz = ((byte) Math.round(z * 127)) & 0xFF;
-        normals[vertexIndex] = packedx | (packedy << 8) | (packedz << 16);
+        normals[vertexIndex] = new Vector3f(x, y, z);
         return this;
     }
 
@@ -82,7 +75,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer {
 
     @Override
     public VertexConsumer setColor(int r, int g, int b, int a) {
-        return setColor(ARGB.color(a, r, g, b));
+        return this;
     }
 
     @Override
@@ -173,22 +166,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer {
             direction,
             interner.materialInfo(materialInfo)
         );
-        NormalsBakedQuad.setNormals(quad, normals.clone());
-        clear();
+        ((NormalsBakedQuad) (Object) quad).create$setNormals(normals[0], normals[1], normals[2], normals[3]);
         return quad;
-    }
-
-    private void clear() {
-        vertexIndex = 0;
-        building = false;
-        Arrays.setAll(positions, _ -> new Vector3f());
-        Arrays.fill(uvs, 0L);
-        Arrays.fill(normals, 0);
-        direction = Direction.DOWN;
-        sprite = null;
-        chunkLayer = null;
-        itemRenderType = null;
-        shade = true;
-        lightEmission = 0;
     }
 }

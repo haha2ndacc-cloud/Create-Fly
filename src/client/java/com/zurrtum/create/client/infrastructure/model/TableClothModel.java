@@ -159,7 +159,7 @@ public class TableClothModel extends WrapperBlockStateModel {
             quad.direction(),
             info
         );
-        NormalsBakedQuad.setNormals(newQuad, NormalsBakedQuad.getNormals(quad));
+        NormalsBakedQuad.setNormals(newQuad, quad);
         return newQuad;
     }
 

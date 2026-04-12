@@ -1,7 +1,6 @@
 package com.zurrtum.create.client.content.kinetics.saw;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.AllPartialModels;
@@ -9,6 +8,7 @@ import com.zurrtum.create.client.api.behaviour.movement.MovementRenderBehaviour;
 import com.zurrtum.create.client.api.behaviour.movement.MovementRenderState;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
 import com.zurrtum.create.client.content.contraptions.render.ActorVisual;
 import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
 import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityVisual;
@@ -21,16 +21,14 @@ import com.zurrtum.create.content.kinetics.saw.SawBlock;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Matrix4f;
 import org.jspecify.annotations.Nullable;
 
@@ -50,9 +48,10 @@ public class SawMovementRenderBehaviour implements MovementRenderBehaviour {
         Font textRenderer,
         MovementContext context,
         VirtualRenderWorld renderWorld,
+        PoseStack.Pose transform,
         Matrix4f worldMatrix4f
     ) {
-        SawMovementRenderState state = new SawMovementRenderState(context.localPos);
+        SawMovementRenderState state = new SawMovementRenderState();
         BlockState blockState = context.state;
         Direction facing = blockState.getValue(SawBlock.FACING);
         Vec3 facingVec = Vec3.atLowerCornerOf(facing.getUnitVec3i());
@@ -62,30 +61,29 @@ public class SawMovementRenderBehaviour implements MovementRenderBehaviour {
         boolean backwards = VecHelper.isVecPointingTowards(context.relativeMotion, facing.getOpposite());
         boolean moving = context.getAnimationSpeed() != 0;
         boolean shouldAnimate = (context.contraption.stalled && horizontal) || (!context.contraption.stalled && !backwards && moving);
-        state.layer = RenderTypes.cutoutMovingBlock();
+        SuperByteBuffer saw;
+        float zRot;
         if (SawBlock.isHorizontal(blockState)) {
-            state.saw = CachedBuffers.partial(
+            saw = CachedBuffers.partial(
                 shouldAnimate ? AllPartialModels.SAW_BLADE_HORIZONTAL_ACTIVE : AllPartialModels.SAW_BLADE_HORIZONTAL_INACTIVE,
                 blockState
             );
+            zRot = 0;
         } else {
-            state.saw = CachedBuffers.partial(
+            saw = CachedBuffers.partial(
                 shouldAnimate ? AllPartialModels.SAW_BLADE_VERTICAL_ACTIVE : AllPartialModels.SAW_BLADE_VERTICAL_INACTIVE,
                 blockState
             );
-            if (blockState.getValue(SawBlock.AXIS_ALONG_FIRST_COORDINATE)) {
-                state.zRot = Mth.DEG_TO_RAD * 90;
-            }
+            zRot = blockState.getValue(SawBlock.AXIS_ALONG_FIRST_COORDINATE) ? Mth.DEG_TO_RAD * 90 : 0;
         }
-        state.yRot = Mth.DEG_TO_RAD * AngleHelper.horizontalAngle(facing);
-        state.xRot = Mth.DEG_TO_RAD * AngleHelper.verticalAngle(facing);
-        state.light = LevelRenderer.getLightCoords(renderWorld, context.localPos);
-        state.world = context.world;
-        state.worldMatrix4f = worldMatrix4f;
+        BlockPos pos = context.localPos;
+        int light = LevelRenderer.getLightCoords(renderWorld, pos);
+        saw.transform(transform).translate(pos);
         if (!VisualizationManager.supportsVisualization(context.world)) {
             Axis axis = facing.getAxis();
+            SuperByteBuffer shaft;
             if (axis.isHorizontal()) {
-                state.shaft = CachedBuffers.partialFacing(
+                shaft = CachedBuffers.partialFacing(
                     AllPartialModels.SHAFT_HALF,
                     blockState.getBlock().rotate(blockState, Rotation.CLOCKWISE_180)
                 );
@@ -98,46 +96,33 @@ public class SawMovementRenderBehaviour implements MovementRenderBehaviour {
                 } else if (axis == Axis.Z) {
                     axis = alongFirst ? Axis.X : Axis.Y;
                 }
-                state.shaft = CachedBuffers.block(
+                shaft = CachedBuffers.block(
                     KineticBlockEntityRenderer.KINETIC_BLOCK,
                     KineticBlockEntityRenderer.shaft(axis)
                 );
             }
-            state.angle = Mth.DEG_TO_RAD * KineticBlockEntityVisual.rotationOffset(blockState, axis, context.localPos);
-            state.direction = Direction.fromAxisAndDirection(axis, Direction.AxisDirection.POSITIVE);
+            float angle = Mth.DEG_TO_RAD * KineticBlockEntityVisual.rotationOffset(blockState, axis, pos);
+            Direction direction = Direction.fromAxisAndDirection(axis, Direction.AxisDirection.POSITIVE);
+            SuperByteBuffer.copyTransform(saw, shaft);
+            state.shaft = shaft.rotateCentered(angle, direction).light(light)
+                .useLevelLight(context.world, worldMatrix4f).extractRenderState();
         }
+        float yRot = Mth.DEG_TO_RAD * AngleHelper.horizontalAngle(facing);
+        float xRot = Mth.DEG_TO_RAD * AngleHelper.verticalAngle(facing);
+        state.saw = saw.center().rotateY(yRot).rotateX(xRot).rotateZ(zRot).uncenter().light(light)
+            .useLevelLight(context.world, worldMatrix4f).extractRenderState();
         return state;
     }
 
-    public static class SawMovementRenderState extends MovementRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
-        public RenderType layer;
-        public Level world;
-        public SuperByteBuffer saw;
-        public Matrix4f worldMatrix4f;
-        public float yRot;
-        public float xRot;
-        public float zRot;
-        public int light;
-        public @Nullable SuperByteBuffer shaft;
-        public float angle;
-        public Direction direction;
-
-        public SawMovementRenderState(BlockPos pos) {
-            super(pos);
-        }
+    public static class SawMovementRenderState implements MovementRenderState {
+        public @UnknownNullability SuperByteBufferRenderState saw;
+        public @Nullable SuperByteBufferRenderState shaft;
 
         @Override
-        public void render(PoseStack matrices, SubmitNodeCollector queue) {
-            queue.submitCustomGeometry(matrices, layer, this);
-        }
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            saw.center().rotateY(yRot).rotateX(xRot).rotateZ(zRot).uncenter().light(light)
-                .useLevelLight(world, worldMatrix4f).renderInto(matricesEntry, vertexConsumer);
+        public void submit(PoseStack matrices, SubmitNodeCollector queue) {
+            saw.submit(matrices, queue);
             if (shaft != null) {
-                shaft.light(light).useLevelLight(world, worldMatrix4f).rotateCentered(angle, direction)
-                    .renderInto(matricesEntry, vertexConsumer);
+                shaft.submit(matrices, queue);
             }
         }
     }

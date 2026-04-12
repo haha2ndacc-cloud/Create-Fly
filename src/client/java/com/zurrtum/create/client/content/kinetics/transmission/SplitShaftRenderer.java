@@ -1,31 +1,32 @@
 package com.zurrtum.create.client.content.kinetics.transmission;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.AllPartialModels;
-import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
-import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
-import com.zurrtum.create.content.kinetics.base.IRotate;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.content.kinetics.transmission.SplitShaftRenderer.SplitShaftRenderState;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.kinetics.transmission.SplitShaftBlockEntity;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.level.CardinalLighting;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
-public class SplitShaftRenderer implements BlockEntityRenderer<SplitShaftBlockEntity, SplitShaftRenderer.SplitShaftRenderState> {
-    public SplitShaftRenderer(BlockEntityRendererProvider.Context context) {
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.*;
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityVisual.rotationOffset;
+
+public class SplitShaftRenderer implements BlockEntityRenderer<SplitShaftBlockEntity, SplitShaftRenderState> {
+    public SplitShaftRenderer(Context context) {
     }
 
     @Override
@@ -41,34 +42,26 @@ public class SplitShaftRenderer implements BlockEntityRenderer<SplitShaftBlockEn
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        state.layer = RenderTypes.solidMovingBlock();
-        state.color = KineticBlockEntityRenderer.getColor(be);
-        Axis boxAxis = ((IRotate) state.blockState.getBlock()).getRotationAxis(state.blockState);
-        BlockPos pos = state.blockPos;
-        float time = AnimationTickHolder.getRenderTime(be.getLevel());
-        float offset = KineticBlockEntityRenderer.getRotationOffsetForPosition(be, pos, boxAxis);
-        float angle = (time * be.getSpeed() * 3f / 10) % 360;
-        state.direction = switch (boxAxis) {
-            case Y -> Direction.UP;
-            case Z -> Direction.SOUTH;
-            case X -> Direction.EAST;
-        };
-        Direction bottom = switch (boxAxis) {
-            case Y -> Direction.DOWN;
-            case Z -> Direction.NORTH;
-            case X -> Direction.WEST;
-        };
-        state.top = CachedBuffers.partialFacing(AllPartialModels.SHAFT_HALF, state.blockState, state.direction);
-        state.topAngle = getAngle(be, angle, offset, state.direction);
-        state.bottom = CachedBuffers.partialFacing(AllPartialModels.SHAFT_HALF, state.blockState, bottom);
-        state.bottomAngle = getAngle(be, angle, offset, bottom);
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
+        int color = getTintColor(be);
+        Axis axis = getRotationAxisOf(state.blockState);
+        Direction direction = axis.getPositive();
+        float offset = rotationOffset(state.blockState, axis, state.blockPos);
+        float progress = getProgress(be, level);
+        state.topAngle = getRotateAngle(progress * be.getRotationSpeedModifier(direction), offset, direction);
+        state.top = CachedBuffers.partialFacing(AllPartialModels.SHAFT_HALF, state.blockState, direction)
+            .cardinalLighting(cardinalLighting).light(state.lightCoords).color(color).extractRenderState();
+        Direction bottom = direction.getOpposite();
+        state.bottomAngle = getRotateAngle(progress * be.getRotationSpeedModifier(bottom), offset, direction);
+        state.bottom = CachedBuffers.partialFacing(AllPartialModels.SHAFT_HALF, state.blockState, bottom)
+            .cardinalLighting(cardinalLighting).light(state.lightCoords).color(color).extractRenderState();
     }
 
     private static float getAngle(SplitShaftBlockEntity be, float angle, float offset, Direction direction) {
         angle *= be.getRotationSpeedModifier(direction);
         angle += offset;
-        return angle / 180f * (float) Math.PI;
+        return angle;
     }
 
     @Override
@@ -78,28 +71,24 @@ public class SplitShaftRenderer implements BlockEntityRenderer<SplitShaftBlockEn
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        queue.submitCustomGeometry(matrices, state.layer, state);
+        if (state.topAngle != null) {
+            matrices.pushPose();
+            matrices.rotateAround(state.topAngle, 0.5f, 0.5f, 0.5f);
+            state.top.submit(matrices, queue);
+            matrices.popPose();
+        } else {
+            state.top.submit(matrices, queue);
+        }
+        if (state.bottomAngle != null) {
+            matrices.rotateAround(state.bottomAngle, 0.5f, 0.5f, 0.5f);
+        }
+        state.bottom.submit(matrices, queue);
     }
 
-    public static class SplitShaftRenderState extends BlockEntityRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
-        public RenderType layer;
-        public Color color;
-        public Direction direction;
-        public SuperByteBuffer top;
-        public float topAngle;
-        public SuperByteBuffer bottom;
-        public float bottomAngle;
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            top.light(lightCoords);
-            top.rotateCentered(topAngle, direction);
-            top.color(color);
-            top.renderInto(matricesEntry, vertexConsumer);
-            bottom.light(lightCoords);
-            bottom.rotateCentered(bottomAngle, direction);
-            bottom.color(color);
-            bottom.renderInto(matricesEntry, vertexConsumer);
-        }
+    public static class SplitShaftRenderState extends BlockEntityRenderState {
+        public @UnknownNullability SuperByteBufferRenderState top;
+        public @UnknownNullability SuperByteBufferRenderState bottom;
+        public @Nullable Quaternionf topAngle;
+        public @Nullable Quaternionf bottomAngle;
     }
 }

@@ -146,7 +146,7 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
                 LightCoordsUtil.FULL_BRIGHT,
                 false,
                 true
-            ).render(bufferSource, matrices);
+            ).render(matrices, bufferSource);
             matrices.popPose();
 
             matrices.pushPose();
@@ -173,7 +173,7 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
                 LightCoordsUtil.FULL_BRIGHT,
                 false,
                 true
-            ).render(bufferSource, matrices);
+            ).render(matrices, bufferSource);
             matrices.popPose();
         }
 
@@ -181,8 +181,7 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
         texture.clear();
         state.addBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-            TextureSetup.singleTexture(
-                texture.textureView(),
+            TextureSetup.singleTexture(texture.textureView(),
                 RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)
             ),
             item.pose(),

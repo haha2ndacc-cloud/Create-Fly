@@ -1,34 +1,32 @@
 package com.zurrtum.create.client.content.kinetics.speedController;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
-import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.content.kinetics.speedController.SpeedControllerRenderer.SpeedControllerRenderState;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
-import com.zurrtum.create.content.kinetics.base.IRotate;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.kinetics.speedController.SpeedControllerBlock;
 import com.zurrtum.create.content.kinetics.speedController.SpeedControllerBlockEntity;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
-import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
-public class SpeedControllerRenderer implements BlockEntityRenderer<SpeedControllerBlockEntity, SpeedControllerRenderer.SpeedControllerRenderState> {
-    public SpeedControllerRenderer(BlockEntityRendererProvider.Context context) {
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.*;
+import static com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer.getLightCoords;
+
+public class SpeedControllerRenderer implements BlockEntityRenderer<SpeedControllerBlockEntity, SpeedControllerRenderState> {
+    public SpeedControllerRenderer(Context context) {
     }
 
     @Override
@@ -44,29 +42,38 @@ public class SpeedControllerRenderer implements BlockEntityRenderer<SpeedControl
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        Level world = be.getLevel();
-        state.render = !VisualizationManager.supportsVisualization(world);
-        if (state.render) {
-            state.model = getRotatedModel(be);
-            Axis axis = ((IRotate) state.blockState.getBlock()).getRotationAxis(state.blockState);
-            state.direction = Direction.fromAxisAndDirection(axis, Direction.AxisDirection.POSITIVE);
-            state.angle = KineticBlockEntityRenderer.getAngleForBe(be, state.blockPos, axis);
-            state.color = KineticBlockEntityRenderer.getColor(be);
+        Level level = be.getLevel();
+        if (VisualizationManager.supportsVisualization(level)) {
+            if (be.hasBracket) {
+                state.blockPos = be.getBlockPos();
+                state.blockState = be.getBlockState();
+                state.blockEntityType = be.getType();
+                CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
+                updateBracketState(state, level, cardinalLighting);
+            }
+            return;
         }
-        state.hasBracket = be.hasBracket;
-        if (state.hasBracket) {
-            state.bracket = CachedBuffers.partial(AllPartialModels.SPEED_CONTROLLER_BRACKET, state.blockState);
-            boolean alongX = state.blockState.getValue(SpeedControllerBlock.HORIZONTAL_AXIS) == Axis.X;
-            state.bracketAngle = (float) (alongX ? Math.PI : Math.PI / 2);
-            state.bracketLight = world != null ? LevelRenderer.getLightCoords(
-                world,
-                state.blockPos.above()
-            ) : LightCoordsUtil.FULL_BRIGHT;
+        SmartBlockEntityRenderer.extractBase(level, be, state, crumblingOverlay);
+        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
+        Axis axis = getRotationAxisOf(state.blockState);
+        state.angle = getRotateAngleWithoutBeOffset(axis, be, state, level);
+        state.model = CachedBuffers.block(KINETIC_BLOCK, shaft(axis)).cardinalLighting(cardinalLighting)
+            .light(state.lightCoords).color(getTintColor(be)).extractRenderState();
+        if (be.hasBracket) {
+            updateBracketState(state, level, cardinalLighting);
         }
-        if (state.render || state.hasBracket) {
-            state.layer = RenderTypes.solidMovingBlock();
-        }
+    }
+
+    public static void updateBracketState(
+        SpeedControllerRenderState state,
+        @Nullable Level level,
+        @Nullable CardinalLighting cardinalLighting
+    ) {
+        boolean alongX = state.blockState.getValue(SpeedControllerBlock.HORIZONTAL_AXIS) == Axis.X;
+        state.bracketAngle = getUpRadiansRotateAngle((float) (alongX ? Math.PI : Math.PI / 2));
+        state.bracket = CachedBuffers.partial(AllPartialModels.SPEED_CONTROLLER_BRACKET, state.blockState)
+            .cardinalLighting(cardinalLighting).light(getLightCoords(level, state.blockPos.above()))
+            .extractRenderState();
     }
 
     @Override
@@ -76,44 +83,29 @@ public class SpeedControllerRenderer implements BlockEntityRenderer<SpeedControl
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        if (state.render || state.hasBracket) {
-            queue.submitCustomGeometry(matrices, state.layer, state);
+        if (state.model != null) {
+            if (state.angle != null) {
+                matrices.pushPose();
+                matrices.rotateAround(state.angle, 0.5f, 0.5f, 0.5f);
+                state.model.submit(matrices, queue);
+                matrices.popPose();
+            } else {
+                state.model.submit(matrices, queue);
+            }
+        }
+        if (state.bracket != null) {
+            matrices.translate(0, 1, 0);
+            if (state.bracketAngle != null) {
+                matrices.rotateAround(state.bracketAngle, 0.5f, 0.5f, 0.5f);
+            }
+            state.bracket.submit(matrices, queue);
         }
     }
 
-    private SuperByteBuffer getRotatedModel(SpeedControllerBlockEntity blockEntity) {
-        return CachedBuffers.block(
-            KineticBlockEntityRenderer.KINETIC_BLOCK,
-            KineticBlockEntityRenderer.shaft(KineticBlockEntityRenderer.getRotationAxisOf(blockEntity))
-        );
-    }
-
-    public static class SpeedControllerRenderState extends BlockEntityRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
-        public RenderType layer;
-        public boolean render;
-        public SuperByteBuffer model;
-        public Direction direction;
-        public float angle;
-        public Color color;
-        public boolean hasBracket;
-        public SuperByteBuffer bracket;
-        public float bracketAngle;
-        public int bracketLight;
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            if (render) {
-                model.light(lightCoords);
-                model.rotateCentered(angle, direction);
-                model.color(color);
-                model.renderInto(matricesEntry, vertexConsumer);
-            }
-            if (hasBracket) {
-                bracket.translate(0, 1, 0);
-                bracket.rotateCentered(bracketAngle, Direction.UP);
-                bracket.light(bracketLight);
-                bracket.renderInto(matricesEntry, vertexConsumer);
-            }
-        }
+    public static class SpeedControllerRenderState extends BlockEntityRenderState {
+        public @Nullable SuperByteBufferRenderState model;
+        public @Nullable SuperByteBufferRenderState bracket;
+        public @Nullable Quaternionf angle;
+        public @Nullable Quaternionf bracketAngle;
     }
 }

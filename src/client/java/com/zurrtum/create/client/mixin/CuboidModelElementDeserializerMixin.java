@@ -18,7 +18,7 @@ public class CuboidModelElementDeserializerMixin {
             try {
                 JsonElement value = data.getAsJsonObject().get("calculate_normals");
                 if (value != null && value.getAsBoolean()) {
-                    NormalsModelElement.markNormals(element);
+                    ((NormalsModelElement) (Object) element).create$markNormals();
                 }
             } catch (Exception ignored) {
             }

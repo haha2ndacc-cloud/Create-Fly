@@ -1,30 +1,42 @@
 package com.zurrtum.create.client.content.equipment.bell;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.catnip.math.AngleHelper;
-import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.content.equipment.bell.BellRenderer.BellRenderState;
+import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.equipment.bell.AbstractBellBlockEntity;
-import com.zurrtum.create.content.equipment.bell.PeculiarBellBlockEntity;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BellBlock;
 import net.minecraft.world.level.block.state.properties.BellAttachType;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
-public class BellRenderer<BE extends AbstractBellBlockEntity> implements BlockEntityRenderer<BE, BellRenderer.BellRenderState> {
-    public BellRenderer(BlockEntityRendererProvider.Context context) {
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getRadiansRotateAngle;
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getUpRotateAngle;
+
+public class BellRenderer<BE extends AbstractBellBlockEntity> implements BlockEntityRenderer<BE, BellRenderState> {
+    private final PartialModel model;
+
+    public BellRenderer(Context context, PartialModel model) {
+        this.model = model;
+    }
+
+    public static <BE extends AbstractBellBlockEntity> BlockEntityRendererProvider<BE, BellRenderState> of(PartialModel model) {
+        return context -> new BellRenderer<>(context, model);
     }
 
     @Override
@@ -40,23 +52,20 @@ public class BellRenderer<BE extends AbstractBellBlockEntity> implements BlockEn
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        state.layer = RenderTypes.cutoutMovingBlock();
-        state.model = CachedBuffers.partial(
-            be instanceof PeculiarBellBlockEntity ? AllPartialModels.PECULIAR_BELL : AllPartialModels.HAUNTED_BELL,
-            state.blockState
-        );
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        state.model = CachedBuffers.partial(model, state.blockState).cardinalLighting(level).light(state.lightCoords)
+            .extractRenderState();
         if (be.isRinging) {
-            state.direction = be.ringDirection.getCounterClockWise();
-            state.angle = getSwingAngle(be.ringingTicks + tickProgress);
+            Direction direction = be.ringDirection.getCounterClockWise();
+            state.angle = getRadiansRotateAngle(getSwingAngle(be.ringingTicks + tickProgress), direction);
         }
         Direction facing = state.blockState.getValue(BellBlock.FACING);
         BellAttachType attachment = state.blockState.getValue(BellBlock.ATTACHMENT);
-        float rY = AngleHelper.horizontalAngle(facing);
         if (attachment == BellAttachType.SINGLE_WALL || attachment == BellAttachType.DOUBLE_WALL) {
-            rY += 90;
+            state.upAngle = getUpRotateAngle(AngleHelper.horizontalAngle(facing) + 90);
+        } else {
+            state.upAngle = getUpRotateAngle(AngleHelper.horizontalAngle(facing));
         }
-        state.upAngle = AngleHelper.rad(rY);
     }
 
     @Override
@@ -66,7 +75,13 @@ public class BellRenderer<BE extends AbstractBellBlockEntity> implements BlockEn
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        queue.submitCustomGeometry(matrices, state.layer, state);
+        if (state.angle != null) {
+            matrices.rotateAround(state.angle, 0.5f, 0.5f, 0.5f);
+        }
+        if (state.upAngle != null) {
+            matrices.rotateAround(state.upAngle, 0.5f, 0.5f, 0.5f);
+        }
+        state.model.submit(matrices, queue);
     }
 
     public static float getSwingAngle(float time) {
@@ -74,21 +89,9 @@ public class BellRenderer<BE extends AbstractBellBlockEntity> implements BlockEn
         return 1.2f * Mth.sin(t / (float) Math.PI) / (2.5f + t / 3.0f);
     }
 
-    public static class BellRenderState extends BlockEntityRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
-        public RenderType layer;
-        public SuperByteBuffer model;
-        public float upAngle;
-        public @Nullable Direction direction;
-        public float angle;
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            if (direction != null) {
-                model.rotateCentered(angle, direction);
-            }
-            model.rotateCentered(upAngle, Direction.UP);
-            model.light(lightCoords);
-            model.renderInto(matricesEntry, vertexConsumer);
-        }
+    public static class BellRenderState extends BlockEntityRenderState {
+        public @UnknownNullability SuperByteBufferRenderState model;
+        public @Nullable Quaternionf angle;
+        public @Nullable Quaternionf upAngle;
     }
 }

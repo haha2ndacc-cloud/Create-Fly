@@ -4,7 +4,6 @@ import com.google.common.base.Objects;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.AllDataComponents;
 import com.zurrtum.create.client.AllTrackRenders;
-import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.content.trains.GlobalRailwayManagerClient;
 import com.zurrtum.create.client.content.trains.track.TrackBlockOutline.BezierPointSelection;
 import com.zurrtum.create.content.trains.graph.EdgePointType;
@@ -16,6 +15,7 @@ import com.zurrtum.create.content.trains.track.TrackTargetingBlockItem.OverlapRe
 import com.zurrtum.create.infrastructure.component.BezierTrackPointLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.item.ItemStack;
@@ -114,7 +114,7 @@ public class TrackTargetingClient {
         );
     }
 
-    public static void render(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer, Vec3 camera) {
+    public static void render(Minecraft mc, PoseStack ms, SubmitNodeStorage queue, Vec3 camera) {
         if (lastLocation == null || lastResult.feedback != null) {
             return;
         }
@@ -138,8 +138,8 @@ public class TrackTargetingClient {
                 direction,
                 lastHoveredBezierSegment,
                 type,
-                1 + 1 / 16f
-            ).render(ms, buffer);
+                1 + 1 / 16.0f
+            ).submit(ms, queue);
         }
     }
 

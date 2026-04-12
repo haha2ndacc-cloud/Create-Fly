@@ -14,12 +14,14 @@ import com.zurrtum.create.foundation.blockEntity.behaviour.filtering.ServerFilte
 import com.zurrtum.create.foundation.codec.CreateCodecs;
 import com.zurrtum.create.infrastructure.component.AutoRequestData;
 import com.zurrtum.create.infrastructure.component.ShoppingList;
+import com.zurrtum.create.infrastructure.component.ShoppingList.Mutable;
 import com.zurrtum.create.infrastructure.packet.c2s.LogisticalStockRequestPacket;
 import com.zurrtum.create.infrastructure.packet.s2c.RemoveBlockEntityPacket;
 import com.zurrtum.create.infrastructure.packet.s2c.ShopUpdatePacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -69,6 +71,13 @@ public class TableClothBlockEntity extends SmartBlockEntity implements Transform
     @Override
     public void addBehaviours(List<BlockEntityBehaviour<?>> behaviours) {
         behaviours.add(priceTag = new ServerTableClothFilteringBehaviour(this));
+    }
+
+    public List<ItemStack> getShopItemsForRender() {
+        if (renderedItemsForShop == null) {
+            renderedItemsForShop = requestData.encodedRequest().stacks().stream().map(b -> b.stack).limit(4).toList();
+        }
+        return renderedItemsForShop;
     }
 
     public List<ItemStack> getItemsForRender() {
@@ -129,7 +138,7 @@ public class TableClothBlockEntity extends SmartBlockEntity implements Transform
                 return InteractionResult.SUCCESS;
             }
             player.setItemInHand(InteractionHand.MAIN_HAND, manuallyAddedItems.remove(manuallyAddedItems.size() - 1));
-            level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.5f, 1f);
+            level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.5f, 1.0f);
 
             if (manuallyAddedItems.isEmpty() && !AbstractComputerBehaviour.contains(this)) {
                 level.setBlock(
@@ -155,7 +164,7 @@ public class TableClothBlockEntity extends SmartBlockEntity implements Transform
             return InteractionResult.SUCCESS;
         }
 
-        level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.5f, 1f);
+        level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.5f, 1.0f);
         manuallyAddedItems.add(heldItem.copyWithCount(1));
         facing = player.getDirection().getOpposite();
         heldItem.shrink(1);
@@ -253,7 +262,7 @@ public class TableClothBlockEntity extends SmartBlockEntity implements Transform
         } else {
             AllSoundEvents.CONFIRM_2.playOnServer(level, worldPosition, 0.5f, 1.0f);
 
-            ShoppingList.Mutable mutable = new ShoppingList.Mutable(list);
+            Mutable mutable = new Mutable(list);
             mutable.addPurchases(worldPosition, 1);
             list = mutable.toImmutable();
 
@@ -363,9 +372,10 @@ public class TableClothBlockEntity extends SmartBlockEntity implements Transform
         return priceTag.getFilter().isEmpty() ? 1 : priceTag.count;
     }
 
+    @Override
     public void transform(BlockEntity blockEntity, StructureTransform transform) {
         facing = transform.mirrorFacing(facing);
-        if (transform.rotationAxis == Direction.Axis.Y) {
+        if (transform.rotationAxis == Axis.Y) {
             facing = transform.rotateFacing(facing);
         }
         notifyUpdate();

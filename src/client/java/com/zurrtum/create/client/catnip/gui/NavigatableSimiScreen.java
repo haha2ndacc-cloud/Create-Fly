@@ -2,6 +2,7 @@ package com.zurrtum.create.client.catnip.gui;
 
 import com.mojang.blaze3d.platform.Window;
 import com.zurrtum.create.catnip.animation.LerpedFloat;
+import com.zurrtum.create.catnip.animation.LerpedFloat.Chaser;
 import com.zurrtum.create.catnip.data.Couple;
 import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.catnip.gui.element.BoxElement;
@@ -30,13 +31,11 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
         new Color(0x30_aa9999)
     ).map(Color::setImmutable);
 
-    protected static boolean currentlyRenderingPreviousScreen = false;
+    protected static boolean currentlyRenderingPreviousScreen;
 
     protected int depthPointX, depthPointY;
-    public final LerpedFloat transition = LerpedFloat.linear().startWithValue(0)
-        .chase(0, .1f, LerpedFloat.Chaser.LINEAR);
-    protected final LerpedFloat arrowAnimation = LerpedFloat.linear().startWithValue(0)
-        .chase(0, 0.075f, LerpedFloat.Chaser.LINEAR);
+    public final LerpedFloat transition = LerpedFloat.linear().startWithValue(0).chase(0, 0.1f, Chaser.LINEAR);
+    protected final LerpedFloat arrowAnimation = LerpedFloat.linear().startWithValue(0).chase(0, 0.075f, Chaser.LINEAR);
     @Nullable
     protected BoxWidget backTrack;
 
@@ -114,7 +113,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 
         Matrix3x2fStack poseStack = graphics.pose();
 
-        int x = Mth.lerpInt(arrowAnimation.getValue(partialTicks), -9, 21);
+        int x = (int) Mth.lerp(arrowAnimation.getValue(partialTicks), -9, 21);
         int maxX = backTrack.getX() + backTrack.getWidth();
         Couple<Color> colors = COLOR_NAV_ARROW;
 
@@ -170,7 +169,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
         float tValue = transition.getValue(partialTicks);
         float tValueAbsolute = Math.abs(tValue);
         // modify current screen as well
-        float scale = tValue > 0 ? 1 - 0.5f * (1 - tValueAbsolute) : 1 + .5f * (1 - tValueAbsolute);
+        float scale = tValue > 0 ? 1 - 0.5f * (1 - tValueAbsolute) : 1 + 0.5f * (1 - tValueAbsolute);
         int dpx = (int) (guiScaledWidth / 2);
         //dpx = depthPointX;
         int dpy = (int) (guiScaledHeight / 2);
@@ -219,7 +218,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 
         List<String> names = new ArrayList<>();
         for (Screen screen : history) {
-            names.add(NavigatableSimiScreen.screenTitle(screen));
+            names.add(screenTitle(screen));
         }
 
         int bWidth = 0;
@@ -270,6 +269,6 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
     }
 
     protected String getBreadcrumbTitle() {
-        return this.getClass().getSimpleName();
+        return getClass().getSimpleName();
     }
 }

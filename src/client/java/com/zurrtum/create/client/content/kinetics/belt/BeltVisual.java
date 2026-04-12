@@ -19,19 +19,22 @@ import com.zurrtum.create.content.kinetics.belt.BeltBlockEntity;
 import com.zurrtum.create.content.kinetics.belt.BeltPart;
 import com.zurrtum.create.content.kinetics.belt.BeltSlope;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
 public class BeltVisual extends KineticBlockEntityVisual<BeltBlockEntity> {
-    public static final float MAGIC_SCROLL_MULTIPLIER = 1f / (31.5f * 16f);
-    public static final float SCROLL_FACTOR_DIAGONAL = 3f / 8f;
+    public static final float MAGIC_SCROLL_MULTIPLIER = 1.0f / (31.5f * 16.0f);
+    public static final float SCROLL_FACTOR_DIAGONAL = 3.0f / 8.0f;
     public static final float SCROLL_FACTOR_OTHERWISE = 0.5f;
     public static final float SCROLL_OFFSET_BOTTOM = 0.5f;
-    public static final float SCROLL_OFFSET_OTHERWISE = 0f;
+    public static final float SCROLL_OFFSET_OTHERWISE = 0.0f;
 
     protected final ScrollInstance[] belts;
     @Nullable
@@ -117,10 +120,10 @@ public class BeltVisual extends KineticBlockEntityVisual<BeltBlockEntity> {
             AllPartialModels.BELT_PULLEY, dir.getAxis(), (axis11, modelTransform1) -> {
                 var msr = TransformStack.of(modelTransform1);
                 msr.center();
-                if (axis11 == Direction.Axis.X) {
+                if (axis11 == Axis.X) {
                     msr.rotateYDegrees(90);
                 }
-                if (axis11 == Direction.Axis.Y) {
+                if (axis11 == Axis.Y) {
                     msr.rotateXDegrees(90);
                 }
                 msr.rotateXDegrees(90);
@@ -146,20 +149,20 @@ public class BeltVisual extends KineticBlockEntityVisual<BeltBlockEntity> {
         boolean sideways = beltSlope == BeltSlope.SIDEWAYS;
         boolean vertical = beltSlope == BeltSlope.VERTICAL;
         boolean upward = beltSlope == BeltSlope.UPWARD;
-        boolean alongX = facing.getAxis() == Direction.Axis.X;
-        boolean alongZ = facing.getAxis() == Direction.Axis.Z;
+        boolean alongX = facing.getAxis() == Axis.X;
+        boolean alongZ = facing.getAxis() == Axis.Z;
         boolean downward = beltSlope == BeltSlope.DOWNWARD;
 
         float speed = blockEntity.getSpeed();
-        if (((facing.getAxisDirection() == Direction.AxisDirection.NEGATIVE) ^ upward) ^ ((alongX && !diagonal) || (alongZ && diagonal))) {
+        if (facing.getAxisDirection() == AxisDirection.NEGATIVE ^ upward ^ (alongX && !diagonal || alongZ && diagonal)) {
             speed = -speed;
         }
-        if (sideways && (facing == Direction.SOUTH || facing == Direction.WEST) || (vertical && facing == Direction.EAST)) {
+        if (sideways && (facing == Direction.SOUTH || facing == Direction.WEST) || vertical && facing == Direction.EAST) {
             speed = -speed;
         }
 
         float rotX = (!diagonal && beltSlope != BeltSlope.HORIZONTAL ? 90 : 0) + (downward ? 180 : 0) + (sideways ? 90 : 0) + (vertical && alongZ ? 180 : 0);
-        float rotY = facing.toYRot() + ((diagonal ^ alongX) && !downward ? 180 : 0) + (sideways && alongZ ? 180 : 0) + (vertical && alongX ? 90 : 0);
+        float rotY = facing.toYRot() + (diagonal ^ alongX && !downward ? 180 : 0) + (sideways && alongZ ? 180 : 0) + (vertical && alongX ? 90 : 0);
         float rotZ = (sideways ? 90 : 0) + (vertical && alongX ? 90 : 0);
 
         Quaternionf q = new Quaternionf().rotationXYZ(
@@ -168,7 +171,7 @@ public class BeltVisual extends KineticBlockEntityVisual<BeltBlockEntity> {
             rotZ * Mth.DEG_TO_RAD
         );
 
-        key.setSpriteShift(spriteShift, 1f, (diagonal ? SCROLL_FACTOR_DIAGONAL : SCROLL_FACTOR_OTHERWISE))
+        key.setSpriteShift(spriteShift, 1.0f, diagonal ? SCROLL_FACTOR_DIAGONAL : SCROLL_FACTOR_OTHERWISE)
             .position(getVisualPosition()).rotation(q).speed(0, speed * MAGIC_SCROLL_MULTIPLIER)
             .offset(0, bottom ? SCROLL_OFFSET_BOTTOM : SCROLL_OFFSET_OTHERWISE)
             .colorRgb(RotatingInstance.colorFromBE(blockEntity)).setChanged();
@@ -184,5 +187,13 @@ public class BeltVisual extends KineticBlockEntityVisual<BeltBlockEntity> {
         for (var key : belts) {
             consumer.accept(key);
         }
+    }
+
+    public static boolean shouldSkipVanillaRender(BeltBlockEntity be) {
+        if (be.hasLevel()) {
+            BlockState state = be.getBlockState();
+            return !state.hasProperty(BeltBlock.PART) || state.getValue(BeltBlock.PART) != BeltPart.START;
+        }
+        return be.isController();
     }
 }

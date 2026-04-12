@@ -104,7 +104,7 @@ public class DefaultSuperRenderTypeBuffer implements SuperRenderTypeBuffer {
                 put(
                     map,
                     Sheets.translucentBlockItemSheet(),
-                    this.fixedBufferPack.buffer(ChunkSectionLayer.TRANSLUCENT)
+                    fixedBufferPack.buffer(ChunkSectionLayer.TRANSLUCENT)
                 );
                 put(map, Sheets.translucentItemSheet());
                 put(map, RenderTypes.armorEntityGlint());
@@ -116,7 +116,6 @@ public class DefaultSuperRenderTypeBuffer implements SuperRenderTypeBuffer {
 
                 //extras
                 put(map, PonderRenderTypes.outlineSolid());
-                put(map, CreateRenderTypes.translucent());
                 put(map, CreateRenderTypes.additive());
             }
         );

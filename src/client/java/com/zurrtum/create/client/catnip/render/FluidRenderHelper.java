@@ -242,11 +242,11 @@ public class FluidRenderHelper {
                                    float xMin, float yMin, float zMin, float xMax, float yMax, float zMax,
                                    int lightCoords, boolean renderBottom,
                                    boolean invertGasses) implements SubmitNodeCollector.CustomGeometryRenderer {
-        public void submit(SubmitNodeCollector queue, PoseStack poseStack) {
+        public void submit(PoseStack poseStack, SubmitNodeCollector queue) {
             queue.submitCustomGeometry(poseStack, layer, this);
         }
 
-        public void render(MultiBufferSource bufferSource, PoseStack matrices) {
+        public void render(PoseStack matrices, MultiBufferSource bufferSource) {
             render(matrices.last(), bufferSource.getBuffer(layer));
         }
 

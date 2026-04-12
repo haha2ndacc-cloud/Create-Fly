@@ -1,27 +1,34 @@
 package com.zurrtum.create.client.content.kinetics.crank;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
 import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
-import com.zurrtum.create.content.kinetics.crank.HandCrankBlock;
+import com.zurrtum.create.client.content.kinetics.crank.HandCrankRenderer.HandCrankRenderState;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.kinetics.crank.HandCrankBlockEntity;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.level.CardinalLighting;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
-public class HandCrankRenderer extends KineticBlockEntityRenderer<HandCrankBlockEntity, HandCrankRenderer.HandCrankRenderState> {
-    public HandCrankRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getRotateAngle;
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getTintColor;
+
+public class HandCrankRenderer implements BlockEntityRenderer<HandCrankBlockEntity, HandCrankRenderState> {
+    public HandCrankRenderer(Context context) {
     }
 
     @Override
@@ -37,46 +44,52 @@ public class HandCrankRenderer extends KineticBlockEntityRenderer<HandCrankBlock
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        super.extractRenderState(be, state, tickProgress, cameraPos, crumblingOverlay);
-        state.handle = getRenderedHandle(state.blockState);
-        state.handleAngle = AngleHelper.rad(getHandCrankIndependentAngle(be, tickProgress));
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
+        Direction facing = state.blockState.getValue(BlockStateProperties.FACING);
+        Axis axis = facing.getAxis();
+        Direction direction = axis.getPositive();
+        int color = getTintColor(be);
+        state.angle = KineticBlockEntityRenderer.getRotateAngleWithoutBeOffset(axis, direction, be, state, level);
+        state.model = CachedBuffers.partialFacingVertical(AllPartialModels.HAND_CRANK_BASE, state.blockState, facing)
+            .cardinalLighting(cardinalLighting).light(state.lightCoords).color(color).extractRenderState();
+        state.handleAngle = getRotateAngle(getHandCrankIndependentAngle(be, tickProgress), direction);
+        state.handle = CachedBuffers.partialFacing(
+            AllPartialModels.HAND_CRANK_HANDLE,
+            state.blockState,
+            facing.getOpposite()
+        ).cardinalLighting(cardinalLighting).light(state.lightCoords).color(color).extractRenderState();
     }
 
     @Override
-    protected RenderType getRenderType(HandCrankBlockEntity be, BlockState state) {
-        return RenderTypes.solidMovingBlock();
+    public void submit(
+        HandCrankRenderState state,
+        PoseStack matrices,
+        SubmitNodeCollector queue,
+        CameraRenderState cameraState
+    ) {
+        if (state.angle != null) {
+            matrices.pushPose();
+            matrices.rotateAround(state.angle, 0.5f, 0.5f, 0.5f);
+            state.model.submit(matrices, queue);
+            matrices.popPose();
+        } else {
+            state.model.submit(matrices, queue);
+        }
+        if (state.handleAngle != null) {
+            matrices.rotateAround(state.handleAngle, 0.5f, 0.5f, 0.5f);
+        }
+        state.handle.submit(matrices, queue);
     }
 
     public static float getHandCrankIndependentAngle(HandCrankBlockEntity be, float partialTicks) {
         return be.independentAngle + partialTicks * be.chasingAngularVelocity;
     }
 
-    @Override
-    protected SuperByteBuffer getRotatedModel(HandCrankBlockEntity be, HandCrankRenderState state) {
-        BlockState blockState = state.blockState;
-        return CachedBuffers.partialFacingVertical(
-            AllPartialModels.HAND_CRANK_BASE,
-            blockState,
-            blockState.getValue(BlockStateProperties.FACING)
-        );
-    }
-
-    public SuperByteBuffer getRenderedHandle(BlockState blockState) {
-        Direction facing = blockState.getOptionalValue(HandCrankBlock.FACING).orElse(Direction.UP);
-        return CachedBuffers.partialFacing(AllPartialModels.HAND_CRANK_HANDLE, blockState, facing.getOpposite());
-    }
-
-    public static class HandCrankRenderState extends KineticRenderState {
-        public SuperByteBuffer handle;
-        public float handleAngle;
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            super.render(matricesEntry, vertexConsumer);
-            handle.light(lightCoords);
-            handle.rotateCentered(handleAngle, direction);
-            handle.color(color);
-            handle.renderInto(matricesEntry, vertexConsumer);
-        }
+    public static class HandCrankRenderState extends BlockEntityRenderState {
+        public @UnknownNullability SuperByteBufferRenderState model;
+        public @UnknownNullability SuperByteBufferRenderState handle;
+        public @Nullable Quaternionf angle;
+        public @Nullable Quaternionf handleAngle;
     }
 }

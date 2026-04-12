@@ -1,122 +1,164 @@
 package com.zurrtum.create.client.content.trains.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.Create;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
+import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.trains.entity.Carriage;
 import com.zurrtum.create.content.trains.entity.CarriageBogey;
 import com.zurrtum.create.content.trains.entity.CarriageContraptionEntity;
 import com.zurrtum.create.content.trains.entity.Train;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
 
 public class CarriageCouplingRenderer {
-    public static void renderAll(Minecraft client, PoseStack ms, MultiBufferSource buffer, Vec3 camera) {
+    public static void renderAll(Minecraft client, PoseStack ms, SubmitNodeStorage queue, Vec3 camera) {
         Collection<Train> trains = Create.RAILWAYS.trains.values();
-        VertexConsumer vb = buffer.getBuffer(RenderTypes.solidMovingBlock());
-        BlockState air = Blocks.AIR.defaultBlockState();
-        float partialTicks = AnimationTickHolder.getPartialTicks();
-        Level level = client.level;
-
+        CouplingRenderer render = null;
         for (Train train : trains) {
             List<Carriage> carriages = train.carriages;
-            for (int i = 0, end = carriages.size() - 1; i < end; i++) {
-                Carriage carriage = carriages.get(i);
-                CarriageContraptionEntity entity = carriage.getDimensional(level).entity.get();
-                Carriage carriage2 = carriages.get(i + 1);
-                CarriageContraptionEntity entity2 = carriage.getDimensional(level).entity.get();
-
-                if (entity == null || entity2 == null) {
+            int size = carriages.size();
+            if (size == 1) {
+                continue;
+            }
+            if (render == null) {
+                render = new CouplingRenderer(client.level);
+            }
+            Carriage nextCarriage = carriages.getFirst();
+            for (int i = 0, end = size - 1; i < end; i++) {
+                Carriage carriage = nextCarriage;
+                nextCarriage = carriages.get(i + 1);
+                CarriageContraptionEntity entity = render.getCarriageEntity(carriage);
+                if (entity == null) {
                     continue;
                 }
-
                 CarriageBogey bogey1 = carriage.trailingBogey();
-                CarriageBogey bogey2 = carriage2.leadingBogey();
                 Vec3 anchor = bogey1.couplingAnchors.getSecond();
+                if (anchor == null || !anchor.closerThan(camera, 64)) {
+                    continue;
+                }
+                CarriageBogey bogey2 = nextCarriage.leadingBogey();
                 Vec3 anchor2 = bogey2.couplingAnchors.getFirst();
-
-                if (anchor == null || anchor2 == null) {
+                if (anchor2 == null) {
                     continue;
                 }
-                if (!anchor.closerThan(camera, 64)) {
-                    continue;
-                }
-
-                int lightCoords = getPackedLightCoords(entity, partialTicks);
-                int lightCoords2 = getPackedLightCoords(entity2, partialTicks);
-
+                render.updateLight(entity);
                 double diffX = anchor2.x - anchor.x;
                 double diffY = anchor2.y - anchor.y;
                 double diffZ = anchor2.z - anchor.z;
                 float yRot = AngleHelper.deg(Mth.atan2(diffZ, diffX)) + 90;
                 float xRot = AngleHelper.deg(Math.atan2(diffY, Math.sqrt(diffX * diffX + diffZ * diffZ)));
-
-                Vec3 position = entity.getPosition(partialTicks);
-                Vec3 position2 = entity2.getPosition(partialTicks);
+                SuperByteBufferRenderState head = render.createHeadRenderState();
 
                 ms.pushPose();
+                ms.translate(anchor.x - camera.x, anchor.y - camera.y, anchor.z - camera.z);
+                ms.pushPose();
+                ms.mulPose(Axis.YP.rotation(Mth.DEG_TO_RAD * -yRot));
+                ms.mulPose(Axis.XP.rotation(Mth.DEG_TO_RAD * xRot));
+                head.submit(ms, queue);
+                ms.popPose();
 
-                {
-                    ms.pushPose();
-                    ms.translate(anchor.x - camera.x, anchor.y - camera.y, anchor.z - camera.z);
-                    CachedBuffers.partial(AllPartialModels.TRAIN_COUPLING_HEAD, air).rotateYDegrees(-yRot)
-                        .rotateXDegrees(xRot).light(lightCoords).renderInto(ms.last(), vb);
-
-                    float margin = 3 / 16f;
-                    double couplingDistance = train.carriageSpacing.get(i) - 2 * margin - bogey1.type.getConnectorAnchorOffset(
-                        bogey1.isUpsideDown()).z - bogey2.type.getConnectorAnchorOffset(bogey2.isUpsideDown()).z;
-                    int couplingSegments = (int) Math.round(couplingDistance * 4);
-                    double stretch = ((anchor2.distanceTo(anchor) - 2 * margin) * 4) / couplingSegments;
-                    for (int j = 0; j < couplingSegments; j++) {
-                        CachedBuffers.partial(AllPartialModels.TRAIN_COUPLING_CABLE, air).rotateYDegrees(-yRot + 180)
-                            .rotateXDegrees(-xRot).translate(0, 0, margin + 2 / 16f).scale(1, 1, (float) stretch)
-                            .translate(0, 0, j / 4f).light(lightCoords).renderInto(ms.last(), vb);
+                double couplingDistance = train.carriageSpacing.get(i) - 0.375f - bogey1.type.getConnectorAnchorOffset(
+                    bogey1.isUpsideDown()).z - bogey2.type.getConnectorAnchorOffset(bogey2.isUpsideDown()).z;
+                int couplingSegments = (int) Math.round(couplingDistance * 4);
+                Quaternionf yRot2 = Axis.YP.rotation(Mth.DEG_TO_RAD * (-yRot + 180));
+                Quaternionf xRot2 = Axis.XP.rotation(Mth.DEG_TO_RAD * -xRot);
+                if (couplingSegments > 0) {
+                    double stretch = (anchor2.distanceTo(anchor) - 0.375f) * 4 / couplingSegments;
+                    ms.mulPose(yRot2);
+                    ms.mulPose(xRot2);
+                    ms.translate(0, 0, 0.3125f);
+                    ms.scale(1, 1, (float) stretch);
+                    SuperByteBufferRenderState cable = render.createCableRenderState();
+                    cable.submit(ms, queue);
+                    for (int j = 1; j < couplingSegments; j++) {
+                        ms.translate(0, 0, 0.25f);
+                        cable.submit(ms, queue);
                     }
-                    ms.popPose();
                 }
+                ms.popPose();
 
-                {
-                    ms.pushPose();
-                    Vec3 translation = position2.subtract(position).add(anchor2).subtract(camera);
-                    ms.translate(translation.x, translation.y, translation.z);
-                    CachedBuffers.partial(AllPartialModels.TRAIN_COUPLING_HEAD, air).rotateYDegrees(-yRot + 180)
-                        .rotateXDegrees(-xRot).light(lightCoords2).renderInto(ms.last(), vb);
-                    ms.popPose();
-                }
-
+                ms.pushPose();
+                Vec3 translation = anchor2.subtract(camera);
+                ms.translate(translation.x, translation.y, translation.z);
+                ms.mulPose(yRot2);
+                ms.mulPose(xRot2);
+                head.submit(ms, queue);
                 ms.popPose();
             }
         }
-
     }
 
-    public static int getPackedLightCoords(Entity pEntity, float pPartialTicks) {
-        BlockPos blockpos = BlockPos.containing(pEntity.getLightProbePosition(pPartialTicks));
-        return LightCoordsUtil.pack(getBlockLightLevel(pEntity, blockpos), getSkyLightLevel(pEntity, blockpos));
-    }
+    private static class CouplingRenderer {
+        private final Level level;
+        private final SuperByteBuffer head;
+        private final SuperByteBuffer cable;
+        private final @Nullable CardinalLighting cardinalLighting;
+        private final Int2ObjectMap<SuperByteBufferRenderState> headCache = new Int2ObjectOpenHashMap<>();
+        private final Int2ObjectMap<SuperByteBufferRenderState> cableCache = new Int2ObjectOpenHashMap<>();
+        private final float partialTicks = AnimationTickHolder.getPartialTicks();
+        private int light;
 
-    protected static int getSkyLightLevel(Entity pEntity, BlockPos pPos) {
-        return pEntity.level().getBrightness(LightLayer.SKY, pPos);
-    }
+        public CouplingRenderer(
+            Level level
+        ) {
+            this.level = level;
+            BlockState air = Blocks.AIR.defaultBlockState();
+            head = CachedBuffers.partial(AllPartialModels.TRAIN_COUPLING_HEAD, air);
+            cable = CachedBuffers.partial(AllPartialModels.TRAIN_COUPLING_CABLE, air);
+            cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
+        }
 
-    protected static int getBlockLightLevel(Entity pEntity, BlockPos pPos) {
-        return pEntity.isOnFire() ? 15 : pEntity.level().getBrightness(LightLayer.BLOCK, pPos);
+        @Nullable
+        public CarriageContraptionEntity getCarriageEntity(Carriage carriage) {
+            return carriage.getDimensional(level).entity.get();
+        }
+
+        public void updateLight(Entity entity) {
+            BlockPos pos = BlockPos.containing(entity.getLightProbePosition(partialTicks));
+            light = LightCoordsUtil.pack(
+                entity.isOnFire() ? 15 : level.getBrightness(LightLayer.BLOCK, pos),
+                level.getBrightness(LightLayer.SKY, pos)
+            );
+        }
+
+        public SuperByteBufferRenderState createHeadRenderState() {
+            return headCache.computeIfAbsent(light, this::extractHeadRederState);
+        }
+
+        private SuperByteBufferRenderState extractHeadRederState(int light) {
+            return head.cardinalLighting(cardinalLighting).light(light).extractRenderState();
+        }
+
+        public SuperByteBufferRenderState createCableRenderState() {
+            return cableCache.computeIfAbsent(light, this::extractCableRenderState);
+        }
+
+        private SuperByteBufferRenderState extractCableRenderState(int light) {
+            return cable.cardinalLighting(cardinalLighting).light(light).extractRenderState();
+        }
     }
 }

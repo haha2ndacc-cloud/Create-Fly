@@ -12,12 +12,16 @@ import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
 import com.zurrtum.create.content.kinetics.crank.ValveHandleBlock;
 import com.zurrtum.create.content.kinetics.crank.ValveHandleBlockEntity;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.joml.Quaternionf;
 
 import java.util.function.Consumer;
+
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getAngleForBe;
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getRotationAxisOf;
 
 public class ValveHandleVisual extends KineticBlockEntityVisual<ValveHandleBlockEntity> implements SimpleDynamicVisual {
     private final TransformedInstance crank;
@@ -46,10 +50,15 @@ public class ValveHandleVisual extends KineticBlockEntityVisual<ValveHandleBlock
 
     private void rotateCrank(float pt) {
         var facing = blockState.getValue(BlockStateProperties.FACING);
-        float angle = AngleHelper.rad(ValveHandleRenderer.getValveHandleIndependentAngle(blockEntity, pt));
+        float angle;
+        if (blockEntity.inUse == 0 && blockEntity.source != null && blockEntity.getSpeed() != 0) {
+            angle = getAngleForBe(blockEntity, blockEntity.getBlockPos(), getRotationAxisOf(blockEntity));
+        } else {
+            angle = AngleHelper.rad(ValveHandleRenderer.getValveHandleIndependentAngle(blockEntity, facing, pt));
+        }
 
         crank.setIdentityTransform().translate(getVisualPosition()).center()
-            .rotate(angle, Direction.get(Direction.AxisDirection.POSITIVE, facing.getAxis()))
+            .rotate(angle, Direction.get(AxisDirection.POSITIVE, facing.getAxis()))
             .rotate(new Quaternionf().rotateTo(0, 1, 0, facing.getStepX(), facing.getStepY(), facing.getStepZ()))
             .uncenter().setChanged();
     }

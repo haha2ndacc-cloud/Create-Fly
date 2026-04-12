@@ -88,7 +88,6 @@ public abstract class BlockEntityBehaviour<T extends SmartBlockEntity> {
             lazyTickCounter = lazyTickRate;
             lazyTick();
         }
-
     }
 
     public void read(ValueInput view, boolean clientPacket) {

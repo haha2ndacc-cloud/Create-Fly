@@ -14,15 +14,15 @@ import java.util.Optional;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-public class Couple<T extends @Nullable Object> extends Pair<T, T> implements Iterable<T> {
+public class Couple<T> extends Pair<T, T> implements Iterable<T> {
 
-    private static final Couple<Boolean> TRUE_AND_FALSE = Couple.create(true, false);
+    private static final Couple<Boolean> TRUE_AND_FALSE = create(true, false);
 
     protected Couple(T first, T second) {
         super(first, second);
     }
 
-    public static <T extends @Nullable Object> Couple<T> create(T first, T second) {
+    public static <T> Couple<T> create(T first, T second) {
         return new Couple<>(first, second);
     }
 
@@ -99,7 +99,7 @@ public class Couple<T extends @Nullable Object> extends Pair<T, T> implements It
                         ));
                     },
                     e -> DataResult.success(com.mojang.datafixers.util.Pair.of(
-                        Couple.create(Optional::empty),
+                        create(Optional::empty),
                         ops.empty()
                     ))
                 );
@@ -136,27 +136,27 @@ public class Couple<T extends @Nullable Object> extends Pair<T, T> implements It
         return create(first, second);
     }
 
-    public <S extends @Nullable Object> Couple<S> map(Function<T, S> function) {
-        return Couple.create(function.apply(first), function.apply(second));
+    public <S> Couple<S> map(Function<T, S> function) {
+        return create(function.apply(first), function.apply(second));
     }
 
-    public <S extends @Nullable Object> Couple<S> mapNotNull(Function<T, S> function) {
-        return Couple.create(
+    public <S> Couple<S> mapNotNull(Function<T, S> function) {
+        return create(
             first != null ? function.apply(first) : null,
             second != null ? function.apply(second) : null
         );
     }
 
-    public <S extends @Nullable Object> Couple<S> mapWithContext(BiFunction<T, Boolean, S> function) {
-        return Couple.create(function.apply(first, true), function.apply(second, false));
+    public <S> Couple<S> mapWithContext(BiFunction<T, Boolean, S> function) {
+        return create(function.apply(first, true), function.apply(second, false));
     }
 
-    public <S, R extends @Nullable Object> Couple<S> mapWithParams(BiFunction<T, R, S> function, Couple<R> values) {
-        return Couple.create(function.apply(first, values.first), function.apply(second, values.second));
+    public <S, R> Couple<S> mapWithParams(BiFunction<T, R, S> function, Couple<R> values) {
+        return create(function.apply(first, values.first), function.apply(second, values.second));
     }
 
-    public <S extends @Nullable Object, R> Couple<S> mapNotNullWithParam(BiFunction<T, R, S> function, R value) {
-        return Couple.create(
+    public <S, R> Couple<S> mapNotNullWithParam(BiFunction<T, R, S> function, R value) {
+        return create(
             first != null ? function.apply(first, value) : null,
             second != null ? function.apply(second, value) : null
         );
@@ -199,8 +199,9 @@ public class Couple<T extends @Nullable Object> extends Pair<T, T> implements It
         function.accept(getSecond(), values.getSecond());
     }
 
+    @Override
     public Couple<T> swap() {
-        return Couple.create(second, first);
+        return create(second, first);
     }
 
     public ListTag serializeEach(Function<T, CompoundTag> serializer) {

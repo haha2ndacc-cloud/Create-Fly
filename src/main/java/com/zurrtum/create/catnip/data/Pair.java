@@ -7,7 +7,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 
-public class Pair<F extends @Nullable Object, S extends @Nullable Object> {
+public class Pair<F, S> {
 
     F first;
     S second;
@@ -17,7 +17,7 @@ public class Pair<F extends @Nullable Object, S extends @Nullable Object> {
         this.second = second;
     }
 
-    public static <F extends @Nullable Object, S extends @Nullable Object> Pair<F, S> of(F first, S second) {
+    public static <F, S> Pair<F, S> of(F first, S second) {
         return new Pair<>(first, second);
     }
 
@@ -53,7 +53,7 @@ public class Pair<F extends @Nullable Object, S extends @Nullable Object> {
     }
 
     public Pair<F, S> copy() {
-        return Pair.of(first, second);
+        return of(first, second);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class Pair<F extends @Nullable Object, S extends @Nullable Object> {
 
     @Override
     public int hashCode() {
-        return (nullHash(first) * 31) ^ nullHash(second);
+        return nullHash(first) * 31 ^ nullHash(second);
     }
 
     int nullHash(@Nullable Object o) {
@@ -82,6 +82,6 @@ public class Pair<F extends @Nullable Object, S extends @Nullable Object> {
     }
 
     public Pair<S, F> swap() {
-        return Pair.of(second, first);
+        return of(second, first);
     }
 }

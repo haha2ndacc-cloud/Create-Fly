@@ -1,29 +1,37 @@
 package com.zurrtum.create.client.content.contraptions.actors.contraptionControls;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.content.contraptions.actors.contraptionControls.ContraptionControlsRenderer.ContraptionControlsRenderState;
+import com.zurrtum.create.client.foundation.blockEntity.behaviour.filtering.FilteringRenderer;
+import com.zurrtum.create.client.foundation.blockEntity.behaviour.filtering.FilteringRenderer.FilterRenderState;
 import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.contraptions.actors.contraptionControls.ContraptionControlsBlock;
 import com.zurrtum.create.content.contraptions.actors.contraptionControls.ContraptionControlsBlockEntity;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.level.CardinalLighting;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.Nullable;
 
-public class ContraptionControlsRenderer extends SmartBlockEntityRenderer<ContraptionControlsBlockEntity, ContraptionControlsRenderer.ContraptionControlsRenderState> {
-    public ContraptionControlsRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
+public class ContraptionControlsRenderer implements BlockEntityRenderer<ContraptionControlsBlockEntity, ContraptionControlsRenderState> {
+    protected final ItemModelResolver itemModelManager;
+
+    public ContraptionControlsRenderer(Context context) {
+        itemModelManager = context.itemModelResolver();
     }
 
     @Override
@@ -39,23 +47,29 @@ public class ContraptionControlsRenderer extends SmartBlockEntityRenderer<Contra
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        super.extractRenderState(be, state, tickProgress, cameraPos, crumblingOverlay);
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        state.filter = FilteringRenderer.getFilterRenderState(
+            be,
+            state.blockState,
+            itemModelManager,
+            be.isVirtual() ? -1 : cameraPos.distanceToSqr(VecHelper.getCenterOf(state.blockPos))
+        );
+        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
         Direction facing = state.blockState.getValue(ContraptionControlsBlock.FACING).getOpposite();
-        Vec3 buttonMovementAxis = VecHelper.rotate(new Vec3(0, 1, -.325), AngleHelper.horizontalAngle(facing), Axis.Y);
-        state.buttonMovement = buttonMovementAxis.scale(-0.07f + -1 / 24f * be.button.getValue(tickProgress));
+        Vec3 buttonMovementAxis = VecHelper.rotate(new Vec3(0, 1, -0.325), AngleHelper.horizontalAngle(facing), Axis.Y);
+        state.buttonMovement = buttonMovementAxis.scale(-0.07f + -1 / 24.0f * be.button.getValue(tickProgress));
         state.buttonOffset = buttonMovementAxis.scale(0.07f);
-        state.layer = RenderTypes.solidMovingBlock();
         state.button = CachedBuffers.partialFacing(
             AllPartialModels.CONTRAPTION_CONTROLS_BUTTON,
             state.blockState,
             facing
-        );
-        int i = (((int) be.indicator.getValue(tickProgress) / 45) % 8) + 8;
+        ).cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
+        int i = (int) be.indicator.getValue(tickProgress) / 45 % 8 + 8;
         state.indicator = CachedBuffers.partialFacing(
             AllPartialModels.CONTRAPTION_CONTROLS_INDICATOR.get(i % 8),
             state.blockState,
             facing
-        );
+        ).cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
     }
 
     @Override
@@ -67,26 +81,20 @@ public class ContraptionControlsRenderer extends SmartBlockEntityRenderer<Contra
     ) {
         matrices.pushPose();
         matrices.translate(state.buttonMovement);
-        super.submit(state, matrices, queue, cameraState);
+        if (state.filter != null) {
+            state.filter.submit(state.blockState, queue, matrices, state.lightCoords);
+        }
         matrices.translate(state.buttonOffset);
-        queue.submitCustomGeometry(matrices, state.layer, state::renderButton);
+        state.button.submit(matrices, queue);
         matrices.popPose();
-        queue.submitCustomGeometry(matrices, state.layer, state::renderIndicator);
+        state.indicator.submit(matrices, queue);
     }
 
-    public static class ContraptionControlsRenderState extends SmartRenderState {
-        public Vec3 buttonMovement;
-        public Vec3 buttonOffset;
-        public RenderType layer;
-        public SuperByteBuffer button;
-        public SuperByteBuffer indicator;
-
-        public void renderButton(PoseStack.Pose entry, VertexConsumer vertexConsumer) {
-            button.light(lightCoords).renderInto(entry, vertexConsumer);
-        }
-
-        public void renderIndicator(PoseStack.Pose entry, VertexConsumer vertexConsumer) {
-            indicator.light(lightCoords).renderInto(entry, vertexConsumer);
-        }
+    public static class ContraptionControlsRenderState extends BlockEntityRenderState {
+        public @Nullable FilterRenderState filter;
+        public @UnknownNullability Vec3 buttonMovement;
+        public @UnknownNullability Vec3 buttonOffset;
+        public @UnknownNullability SuperByteBufferRenderState button;
+        public @UnknownNullability SuperByteBufferRenderState indicator;
     }
 }

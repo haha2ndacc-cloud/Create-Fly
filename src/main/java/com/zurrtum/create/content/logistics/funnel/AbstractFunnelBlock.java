@@ -119,7 +119,7 @@ public abstract class AbstractFunnelBlock extends Block implements IBE<FunnelBlo
     public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource r) {
         boolean previouslyPowered = state.getValue(POWERED);
         if (previouslyPowered != worldIn.hasNeighborSignal(pos)) {
-            worldIn.setBlock(pos, state.cycle(POWERED), Block.UPDATE_CLIENTS);
+            worldIn.setBlock(pos, state.cycle(POWERED), UPDATE_CLIENTS);
         }
     }
 
@@ -161,19 +161,20 @@ public abstract class AbstractFunnelBlock extends Block implements IBE<FunnelBlo
 
     @Nullable
     public static Direction getFunnelFacing(BlockState state) {
-        if (!(state.getBlock() instanceof AbstractFunnelBlock)) {
+        if (!(state.getBlock() instanceof AbstractFunnelBlock funnelBlock)) {
             return null;
         }
-        return ((AbstractFunnelBlock) state.getBlock()).getFacing(state);
+        return funnelBlock.getFacing(state);
     }
 
-    protected abstract Direction getFacing(BlockState state);
+    public abstract Direction getFacing(BlockState state);
 
     @Override
     public Class<FunnelBlockEntity> getBlockEntityClass() {
         return FunnelBlockEntity.class;
     }
 
+    @Override
     public BlockEntityType<? extends FunnelBlockEntity> getBlockEntityType() {
         return AllBlockEntityTypes.FUNNEL;
     }

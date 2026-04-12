@@ -10,6 +10,7 @@ import com.zurrtum.create.client.ponder.api.PonderPalette;
 import com.zurrtum.create.client.ponder.api.element.ElementLink;
 import com.zurrtum.create.client.ponder.api.element.ParrotElement;
 import com.zurrtum.create.client.ponder.api.element.ParrotPose;
+import com.zurrtum.create.client.ponder.api.element.ParrotPose.FacePointOfInterestPose;
 import com.zurrtum.create.client.ponder.api.element.WorldSectionElement;
 import com.zurrtum.create.client.ponder.api.level.PonderLevel;
 import com.zurrtum.create.client.ponder.api.scene.SceneBuilder;
@@ -53,7 +54,7 @@ public class FrogAndConveyorScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("chain_conveyor", "Relaying rotational force using Chain Conveyors");
         scene.configureBasePlate(0, 0, 9);
-        scene.scaleSceneView(.75f);
+        scene.scaleSceneView(0.75f);
         scene.setSceneOffsetY(-1);
         scene.world().showSection(util.select().layer(0), Direction.UP);
 
@@ -164,10 +165,7 @@ public class FrogAndConveyorScenes {
         scene.idle(40);
         ElementLink<ParrotElement> parrot = new ElementLinkImpl<>(ParrotElement.class);
         Vec3 parrotStart = util.vector().centerOf(conv2).add(0, -1.45, 1);
-        ChainConveyorParrotElement element = new ChainConveyorParrotElement(
-            parrotStart,
-            ParrotPose.FacePointOfInterestPose::new
-        );
+        ChainConveyorParrotElement element = new ChainConveyorParrotElement(parrotStart, FacePointOfInterestPose::new);
         scene.addInstruction(new CreateParrotInstruction(0, Direction.DOWN, element));
         scene.addInstruction(s -> s.linkElement(element, parrot));
         scene.special().movePointOfInterest(util.grid().at(0, 3, 2));
@@ -259,9 +257,12 @@ public class FrogAndConveyorScenes {
             poseStack.translate(lx, ly, lz);
             poseStack.mulPose(Axis.YP.rotationDegrees(angle));
 
-            poseStack.translate(0, 1.5f, 0);
-            poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.sin((world.scene.getCurrentTime() + pt) * 0.2f) * 10));
-            poseStack.translate(0, -1.5f, 0);
+            poseStack.rotateAround(
+                Axis.ZP.rotationDegrees(Mth.sin((world.scene.getCurrentTime() + pt) * 0.2f) * 10),
+                0,
+                1.5f,
+                0
+            );
 
             poseStack.pushPose();
             poseStack.mulPose(Axis.YP.rotationDegrees(90));
@@ -295,7 +296,7 @@ public class FrogAndConveyorScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("package_frogport", "Transporting packages between Frogports");
         scene.configureBasePlate(0, 0, 9);
-        scene.scaleSceneView(.75f);
+        scene.scaleSceneView(0.75f);
         scene.setSceneOffsetY(-1);
 
         BlockPos conv1 = util.grid().at(1, 4, 7);
@@ -398,7 +399,7 @@ public class FrogAndConveyorScenes {
         scene.world().createItemOnBelt(util.grid().at(5, 1, 0), Direction.NORTH, box);
         scene.idle(5);
 
-        scene.world().multiplyKineticSpeed(util.select().fromTo(9, 0, 1, 5, 1, 0), 1 / 32f);
+        scene.world().multiplyKineticSpeed(util.select().fromTo(9, 0, 1, 5, 1, 0), 1 / 32.0f);
 
         scene.overlay().showText(60).attachKeyFrame().text("If the address of an inserted package does not match it..")
             .pointAt(util.vector().topOf(5, 0, 3)).placeNearTarget();
@@ -413,7 +414,7 @@ public class FrogAndConveyorScenes {
 
         scene.idle(50);
 
-        scene.world().multiplyKineticSpeed(util.select().fromTo(9, 0, 1, 5, 1, 0), 32f);
+        scene.world().multiplyKineticSpeed(util.select().fromTo(9, 0, 1, 5, 1, 0), 32.0f);
         scene.idle(13);
         scene.world().removeItemsFromBelt(util.grid().at(5, 1, 1));
         scene.world().flapFunnel(fromFunnel, false);

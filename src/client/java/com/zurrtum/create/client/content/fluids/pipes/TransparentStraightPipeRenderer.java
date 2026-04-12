@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.api.behaviour.BlockEntityBehaviour;
 import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.catnip.data.Iterate;
+import com.zurrtum.create.client.content.fluids.pipes.TransparentStraightPipeRenderer.TransparentStraightPipeRenderState;
 import com.zurrtum.create.client.foundation.fluid.FluidRenderer;
 import com.zurrtum.create.client.foundation.fluid.FluidRenderer.FluidStreamRenderState;
 import com.zurrtum.create.content.fluids.FluidTransportBehaviour;
@@ -15,7 +16,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.FluidStateModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
@@ -28,10 +29,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransparentStraightPipeRenderer implements BlockEntityRenderer<StraightPipeBlockEntity, TransparentStraightPipeRenderer.TransparentStraightPipeRenderState> {
+public class TransparentStraightPipeRenderer implements BlockEntityRenderer<StraightPipeBlockEntity, TransparentStraightPipeRenderState> {
     protected final FluidStateModelSet fluidStateModelSet;
 
-    public TransparentStraightPipeRenderer(BlockEntityRendererProvider.Context context) {
+    public TransparentStraightPipeRenderer(Context context) {
         fluidStateModelSet = context.blockModelResolver().modelManager.getFluidStateModelSet();
     }
 
@@ -57,7 +58,7 @@ public class TransparentStraightPipeRenderer implements BlockEntityRenderer<Stra
         BlockAndTintGetter level = (BlockAndTintGetter) be.getLevel();
         BlockPos blockPos = be.getBlockPos();
         int lightCoords = level != null ? LevelRenderer.getLightCoords(level, blockPos) : LightCoordsUtil.FULL_BRIGHT;
-        float radius = 3 / 16f;
+        float radius = 0.1875f;
         for (Direction side : directions) {
             Flow flow = pipe.getFlow(side);
             if (flow == null) {
@@ -77,7 +78,7 @@ public class TransparentStraightPipeRenderer implements BlockEntityRenderer<Stra
                 if (inbound) {
                     Flow opposite = pipe.getFlow(side.getOpposite());
                     if (opposite == null) {
-                        value -= 1e-6f;
+                        value -= 1.0e-6f;
                     }
                 } else {
                     FluidTransportBehaviour adjacent = BlockEntityBehaviour.get(
@@ -86,11 +87,11 @@ public class TransparentStraightPipeRenderer implements BlockEntityRenderer<Stra
                         FluidTransportBehaviour.TYPE
                     );
                     if (adjacent == null) {
-                        value -= 1e-6f;
+                        value -= 1.0e-6f;
                     } else {
                         Flow other = adjacent.getFlow(side.getOpposite());
                         if (other == null || !other.inbound && !other.complete) {
-                            value -= 1e-6f;
+                            value -= 1.0e-6f;
                         }
                     }
                 }

@@ -23,7 +23,7 @@ public class AbstractDirectionalFunnelBlock extends AbstractFunnelBlock {
     }
 
     @Override
-    protected Direction getFacing(BlockState state) {
+    public Direction getFacing(BlockState state) {
         return state.getValue(FACING);
     }
 

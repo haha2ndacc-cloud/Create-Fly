@@ -5,18 +5,16 @@ import com.zurrtum.create.client.ponder.api.level.PonderLevel;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.resources.model.ModelManager;
 
 public interface PonderSceneElement extends PonderElement {
-
     void renderFirst(
         BlockEntityRenderDispatcher blockEntityRenderDispatcher,
-        BlockStateModelSet blockStateModelSet,
+        ModelManager modelManager,
         PonderLevel world,
         MultiBufferSource buffer,
         SubmitNodeCollector queue,
@@ -25,8 +23,6 @@ public interface PonderSceneElement extends PonderElement {
         PoseStack ms,
         float pt
     );
-
-    void renderLayer(PonderLevel world, MultiBufferSource buffer, ChunkSectionLayer type, PoseStack ms, float pt);
 
     void renderLast(
         EntityRenderDispatcher entityRenderManager,
@@ -39,5 +35,4 @@ public interface PonderSceneElement extends PonderElement {
         PoseStack ms,
         float pt
     );
-
 }

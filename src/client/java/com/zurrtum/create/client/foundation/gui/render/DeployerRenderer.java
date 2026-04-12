@@ -1,6 +1,7 @@
 package com.zurrtum.create.client.foundation.gui.render;
 
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.Lighting.Entry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -66,7 +67,7 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         matrices.scale(scale, scale, scale);
 
         Minecraft mc = Minecraft.getInstance();
-        mc.gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+        mc.gameRenderer.getLighting().setupFor(Entry.ENTITY_IN_UI);
         matrices.mulPose(Axis.XP.rotationDegrees(-15.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(22.5f));
         matrices.translate(-0.5f, -2.24f, -0.5f);
@@ -78,15 +79,13 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float time = AnimationTickHolder.getRenderTime();
         float cycle = (time - item.offset() * 8) % 30;
-        float offset = cycle < 10 ? cycle / 10f : cycle < 20 ? (20 - cycle) / 10f : 0;
+        float offset = cycle < 10 ? cycle / 10.0f : cycle < 20 ? (20 - cycle) / 10.0f : 0;
 
         matrices.pushPose();
         blockState = AllBlocks.SHAFT.defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.Z);
         world.blockState(blockState);
         model = blockStateModelSet.get(blockState);
-        matrices.translate(0.5f, 0.5f, 0.5f);
-        matrices.mulPose(Axis.ZP.rotationDegrees(getCurrentAngle(time)));
-        matrices.translate(-0.5f, -0.5f, -0.5f);
+        matrices.rotateAround(Axis.ZP.rotationDegrees(getCurrentAngle(time)), 0.5f, 0.5f, 0.5f);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
@@ -102,9 +101,7 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         blockState = Blocks.AIR.defaultBlockState();
         world.blockState(blockState);
         matrices.translate(0, -offset, 0);
-        matrices.translate(0.5f, 0.5f, 0.5f);
-        matrices.mulPose(Axis.XP.rotationDegrees(90));
-        matrices.translate(-0.5f, -0.5f, -0.5f);
+        matrices.rotateAround(Axis.XP.rotationDegrees(90), 0.5f, 0.5f, 0.5f);
         model = AllPartialModels.DEPLOYER_POLE.get();
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
@@ -145,7 +142,7 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
     }
 
     public static float getCurrentAngle(float time) {
-        return (time * 4f) % 360;
+        return time * 4.0f % 360;
     }
 
     @Override

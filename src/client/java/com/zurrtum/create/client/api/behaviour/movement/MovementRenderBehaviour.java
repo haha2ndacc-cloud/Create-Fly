@@ -1,5 +1,6 @@
 package com.zurrtum.create.client.api.behaviour.movement;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.content.contraptions.render.ActorVisual;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.foundation.virtualWorld.VirtualRenderWorld;
@@ -16,6 +17,7 @@ public interface MovementRenderBehaviour {
         Font textRenderer,
         MovementContext context,
         VirtualRenderWorld renderWorld,
+        PoseStack.Pose transform,
         Matrix4f worldMatrix4f
     ) {
         return null;

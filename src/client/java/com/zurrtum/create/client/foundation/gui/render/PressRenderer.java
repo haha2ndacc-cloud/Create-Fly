@@ -1,6 +1,7 @@
 package com.zurrtum.create.client.foundation.gui.render;
 
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.Lighting.Entry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -24,6 +25,7 @@ import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -64,7 +66,7 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
         matrices.scale(scale, scale, scale);
 
         Minecraft mc = Minecraft.getInstance();
-        mc.gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+        mc.gameRenderer.getLighting().setupFor(Entry.ENTITY_IN_UI);
         matrices.mulPose(Axis.XP.rotationDegrees(-15.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(22.5f));
         matrices.translate(-0.5f, -1.14f, -0.5f);
@@ -84,12 +86,10 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
 
         matrices.pushPose();
         blockState = AllBlocks.SHAFT.defaultBlockState()
-            .setValue(BlockStateProperties.AXIS, net.minecraft.core.Direction.Axis.Z);
+            .setValue(BlockStateProperties.AXIS, Direction.Axis.Z);
         world.blockState(blockState);
         model = blockStateModelSet.get(blockState);
-        matrices.translate(0.5f, 0.5f, 0.5f);
-        matrices.mulPose(Axis.ZP.rotationDegrees(getShaftAngle(time)));
-        matrices.translate(-0.5f, -0.5f, -0.5f);
+        matrices.rotateAround(Axis.ZP.rotationDegrees(getShaftAngle(time)), 0.5f, 0.5f, 0.5f);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
@@ -128,7 +128,7 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
     }
 
     private static float getShaftAngle(float time) {
-        return (time * 4f) % 360;
+        return time * 4.0f % 360;
     }
 
     private static float getAnimatedHeadOffset(float time, float offset) {
@@ -141,7 +141,7 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
             return -1;
         }
         if (cycle < 20) {
-            return -1 + (1 - ((20 - cycle) / 5));
+            return -1 + (1 - (20 - cycle) / 5);
         }
         return 0;
     }

@@ -33,7 +33,7 @@ public abstract class SmartBlockEntity extends CachedRenderBBBlockEntity impleme
     private final Map<BehaviourType<?>, BlockEntityBehaviour<?>> behaviours = new Reference2ObjectArrayMap<>();
     protected int lazyTickRate;
     protected int lazyTickCounter;
-    private boolean initialized = false;
+    private boolean initialized;
     private boolean firstNbtRead = true;
     private boolean chunkUnloaded;
 
@@ -198,7 +198,6 @@ public abstract class SmartBlockEntity extends CachedRenderBBBlockEntity impleme
     }
 
     @SuppressWarnings("unchecked")
-    @Nullable
     public <T extends BlockEntityBehaviour<?>> T getBehaviour(BehaviourType<T> type) {
         return (T) behaviours.get(type);
     }
@@ -220,6 +219,7 @@ public abstract class SmartBlockEntity extends CachedRenderBBBlockEntity impleme
         behaviour.initialize();
     }
 
+    @Override
     public ItemRequirement getRequiredItems(BlockState state) {
         return getAllBehaviours().stream()
             .reduce(ItemRequirement.NONE, (r, b) -> r.union(b.getRequiredItems()), ItemRequirement::union);
@@ -233,14 +233,16 @@ public abstract class SmartBlockEntity extends CachedRenderBBBlockEntity impleme
     }
 
     public void setLazyTickRate(int slowTickRate) {
-        this.lazyTickRate = slowTickRate;
-        this.lazyTickCounter = slowTickRate;
+        lazyTickRate = slowTickRate;
+        lazyTickCounter = slowTickRate;
     }
 
+    @Override
     public void markVirtual() {
         virtualMode = true;
     }
 
+    @Override
     public boolean isVirtual() {
         return virtualMode;
     }

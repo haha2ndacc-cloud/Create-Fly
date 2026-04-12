@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderSetup.OutlineProperty;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
@@ -66,20 +65,14 @@ public class CreateRenderTypes {
 
     public static final Supplier<GpuSampler> CHAIN_SAMPLER = () -> RenderSystem.getSamplerCache()
         .getSampler(AddressMode.REPEAT, AddressMode.REPEAT, FilterMode.LINEAR, FilterMode.NEAREST, true);
-    private static final Function<Identifier, RenderType> CHAIN = Util.memoize((texture) -> RenderType.create(
+    private static final Function<Identifier, RenderType> CHAIN = Util.memoize(texture -> RenderType.create(
         "chain_conveyor_chain",
         RenderSetup.builder(RenderPipelines.CUTOUT_BLOCK).sortOnUpload().withTexture("Sampler0", texture, CHAIN_SAMPLER)
             .useLightmap().useOverlay().setOutline(OutlineProperty.AFFECTS_OUTLINE).createRenderSetup()
     ));
 
-    private static final RenderType SOLID_BLOCK_SHEET = RenderTypes.entitySolid(TextureAtlas.LOCATION_BLOCKS);
-
     public static RenderType translucent() {
         return TRANSLUCENT;
-    }
-
-    public static RenderType solidBlockSheet() {
-        return SOLID_BLOCK_SHEET;
     }
 
     public static RenderType additive() {

@@ -1,17 +1,19 @@
 package com.zurrtum.create.client.content.contraptions.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.zurrtum.create.api.behaviour.movement.MovementBehaviour;
 import com.zurrtum.create.client.api.behaviour.movement.MovementRenderBehaviour;
 import com.zurrtum.create.client.api.behaviour.movement.MovementRenderState;
-import com.zurrtum.create.client.catnip.render.ShadedBlockSbbBuilder;
+import com.zurrtum.create.client.catnip.render.EntityBlockSbbBuilder;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferCache;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
 import com.zurrtum.create.client.content.contraptions.render.ClientContraption.RenderedBlocks;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper;
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper.BlockEntityListRenderState;
+import com.zurrtum.create.client.foundation.utility.worldWrappers.WrappedBlockAndTintGetter;
 import com.zurrtum.create.client.foundation.virtualWorld.VirtualRenderWorld;
 import com.zurrtum.create.content.contraptions.AbstractContraptionEntity;
 import com.zurrtum.create.content.contraptions.Contraption;
@@ -20,18 +22,17 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.BlockModelLighter;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
@@ -43,31 +44,21 @@ import org.joml.Matrix4f;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S extends ContraptionEntityRenderer.AbstractContraptionState> extends EntityRenderer<C, S> {
-    public static final SuperByteBufferCache.Compartment<Pair<Contraption, ChunkSectionLayer>> CONTRAPTION = new SuperByteBufferCache.Compartment<>();
-    private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(
-        ThreadLocalObjects::new);
-    private final PoseStack matrixStack;
+    public static final SuperByteBufferCache.Compartment<Contraption> CONTRAPTION = new SuperByteBufferCache.Compartment<>();
+    private static final ThreadLocal<EntityBlockSbbBuilder> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(
+        EntityBlockSbbBuilder::new);
+    private final BlockStateModelSet blockStateModelSet;
+    private final Pose identity = new Pose();
 
     public ContraptionEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.matrixStack = new PoseStack();
-    }
-
-    public static SuperByteBuffer getBuffer(
-        Contraption contraption,
-        ClientContraption clientContraption,
-        VirtualRenderWorld renderWorld,
-        ChunkSectionLayer renderType
-    ) {
-        return SuperByteBufferCache.getInstance().get(
-            CONTRAPTION,
-            Pair.of(contraption, renderType),
-            () -> buildStructureBuffer(clientContraption, renderWorld, renderType)
-        );
+        blockStateModelSet = context.getBlockModelResolver().modelManager.getBlockStateModelSet();
     }
 
     @SuppressWarnings("unchecked")
@@ -92,43 +83,48 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
         return new ClientContraption(contraption);
     }
 
-    @SuppressWarnings("removal")
     private static SuperByteBuffer buildStructureBuffer(
+        Contraption contraption,
         ClientContraption clientContraption,
         VirtualRenderWorld renderWorld,
-        ChunkSectionLayer layer
+        BlockStateModelSet blockStateModelSet
     ) {
         Minecraft minecraft = Minecraft.getInstance();
-        BlockStateModelSet blockStateModelSet = minecraft.getModelManager().getBlockStateModelSet();
-        ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
-
-        RenderedBlocks blocks = clientContraption.getRenderedBlocks();
-
-        ShadedBlockSbbBuilder sbbBuilder = objects.sbbBuilder;
-        sbbBuilder.begin(layer);
-
         boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
         ModelBlockRenderer renderer = new ModelBlockRenderer(ambientOcclusion, true, minecraft.getBlockColors());
+        RenderedBlocks blocks = clientContraption.getRenderedBlocks();
+        Function<BlockPos, BlockState> lookup = blocks.lookup();
+        BlockAndTintGetter modelWorld = new WrappedBlockAndTintGetter(renderWorld) {
+            @Override
+            public BlockState getBlockState(BlockPos pos) {
+                return lookup.apply(pos);
+            }
+        };
+        Vec3 offset = contraption.entity.toGlobalVector(Vec3.ZERO, 1);
+        int offsetX = (int) Math.round(offset.x);
+        int offsetY = (int) Math.round(offset.y);
+        int offsetZ = (int) Math.round(offset.z);
+        MutableBlockPos globalPos = new MutableBlockPos();
+        EntityBlockSbbBuilder sbbBuilder = THREAD_LOCAL_OBJECTS.get();
         BlockModelLighter.enableCaching();
         for (BlockPos pos : blocks.positions()) {
-            BlockState state = blocks.lookup().apply(pos);
+            BlockState state = lookup.apply(pos);
             if (state.getRenderShape() == RenderShape.MODEL) {
                 renderer.tesselateBlock(
                     sbbBuilder,
                     pos.getX(),
                     pos.getY(),
                     pos.getZ(),
-                    renderWorld,
+                    modelWorld,
                     pos,
                     state,
                     blockStateModelSet.get(state),
-                    state.getSeed(pos)
+                    state.getSeed(globalPos.setWithOffset(pos, offsetX, offsetY, offsetZ))
                 );
             }
         }
         BlockModelLighter.clearCache();
-
-        return sbbBuilder.end();
+        return sbbBuilder.build();
     }
 
     @Override
@@ -164,25 +160,28 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
         if (camera == null) {
             return;
         }
-        state.contraption = contraption;
         state.x = Mth.lerp(tickProgress, entity.xOld, entity.getX());
         state.y = Mth.lerp(tickProgress, entity.yOld, entity.getY());
         state.z = Mth.lerp(tickProgress, entity.zOld, entity.getZ());
-        matrixStack.pushPose();
-        transform(state, matrixStack);
-        state.modelEntry = matrixStack.last().copy();
-        matrixStack.popPose();
+        Pose transform = createTransform(entity, tickProgress);
         Level world = entity.level();
         VirtualRenderWorld renderWorld = clientContraption.getRenderLevel();
         Matrix4f worldMatrix4f = new Matrix4f().setTranslation((float) state.x, (float) state.y, (float) state.z);
         boolean support = VisualizationManager.supportsVisualization(world);
         if (!support) {
-            state.layers = createLayers(contraption, clientContraption, renderWorld, world, worldMatrix4f);
+            SuperByteBuffer buffer = SuperByteBufferCache.getInstance().get(
+                CONTRAPTION,
+                contraption,
+                () -> buildStructureBuffer(contraption, clientContraption, renderWorld, blockStateModelSet)
+            );
+            if (!buffer.isEmpty()) {
+                state.layers = buffer.transform(transform).useLevelLight(world, worldMatrix4f).extractRenderState();
+            }
         }
-        var adjustRenderedBlockEntities = clientContraption.getAndAdjustShouldRenderBlockEntities();
+        BitSet adjustRenderedBlockEntities = clientContraption.getAndAdjustShouldRenderBlockEntities();
         clientContraption.scratchErroredBlockEntities.clear();
         Vec3 cameraPos = camera.position();
-        Matrix4f lightTransform = worldMatrix4f.mul(state.modelEntry.pose(), new Matrix4f());
+        Matrix4f lightTransform = worldMatrix4f.mul(transform.pose(), new Matrix4f());
         state.blockEntity = BlockEntityRenderHelper.getBlockEntitiesRenderState(
             support,
             clientContraption.renderedBlockEntityView,
@@ -190,87 +189,38 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
             clientContraption.scratchErroredBlockEntities,
             renderWorld,
             world,
+            transform,
             lightTransform,
             contraption.entity.toLocalVector(cameraPos, tickProgress),
             tickProgress
         );
         clientContraption.shouldRenderBlockEntities.andNot(clientContraption.scratchErroredBlockEntities);
-        state.actors = createActors(cameraPos, getFont(), world, renderWorld, contraption, worldMatrix4f);
+        state.actors = createActors(cameraPos, getFont(), world, renderWorld, contraption, transform, worldMatrix4f);
     }
 
     @Override
     public void submit(S state, PoseStack poseStack, SubmitNodeCollector queue, CameraRenderState cameraRenderState) {
-        if (state.contraption == null) {
-            return;
-        }
-        poseStack.pushPose();
-        PoseStack.Pose entry = poseStack.last();
-        entry.pose().mul(state.modelEntry.pose());
-        entry.normal().mul(state.modelEntry.normal());
         if (state.layers != null) {
-            for (ContraptionBlockLayer layer : state.layers) {
-                queue.submitCustomGeometry(poseStack, layer.renderLayer, layer);
-            }
+            state.layers.submit(poseStack, queue);
         }
         if (state.blockEntity != null) {
-            state.blockEntity.render(poseStack, queue, cameraRenderState);
+            state.blockEntity.submit(poseStack, queue, cameraRenderState);
         }
         if (state.actors != null) {
             for (MovementRenderState actor : state.actors) {
-                poseStack.pushPose();
-                actor.transform(poseStack);
-                actor.render(poseStack, queue);
-                poseStack.popPose();
+                actor.submit(poseStack, queue);
             }
         }
-        poseStack.popPose();
     }
 
-    public void transform(S state, PoseStack matrixStack) {
+    public Pose createTransform(C entity, float tickProgress) {
+        return identity;
     }
 
     public static class AbstractContraptionState extends EntityRenderState {
-        public @Nullable Contraption contraption;
-        public PoseStack.Pose modelEntry;
-        public @Nullable List<ContraptionBlockLayer> layers;
+        public @Nullable SuperByteBufferRenderState layers;
         public @Nullable BlockEntityListRenderState blockEntity;
         public @Nullable List<MovementRenderState> actors;
-    }
-
-    @Nullable
-    public static List<ContraptionBlockLayer> createLayers(
-        Contraption contraption,
-        ClientContraption clientContraption,
-        VirtualRenderWorld renderWorld,
-        Level world,
-        Matrix4f lightTransform
-    ) {
-        List<ContraptionBlockLayer> layers = new ArrayList<>();
-        for (ChunkSectionLayer blockLayer : ChunkSectionLayer.values()) {
-            SuperByteBuffer buffer = getBuffer(contraption, clientContraption, renderWorld, blockLayer);
-            if (buffer.isEmpty()) {
-                continue;
-            }
-            layers.add(new ContraptionBlockLayer(
-                switch (blockLayer) {
-                    case SOLID -> RenderTypes.solidMovingBlock();
-                    case CUTOUT -> RenderTypes.cutoutMovingBlock();
-                    case TRANSLUCENT -> RenderTypes.translucentMovingBlock();
-                }, buffer, world, lightTransform
-            ));
-        }
-        if (layers.isEmpty()) {
-            return null;
-        }
-        return layers;
-    }
-
-    public record ContraptionBlockLayer(RenderType renderLayer, SuperByteBuffer buffer, Level world,
-                                        Matrix4f lightTransform) implements SubmitNodeCollector.CustomGeometryRenderer {
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            buffer.useLevelLight(world, lightTransform).renderInto(matricesEntry, vertexConsumer);
-        }
     }
 
     @Nullable
@@ -280,6 +230,7 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
         Level world,
         VirtualRenderWorld renderWorld,
         Contraption contraption,
+        Pose transform,
         Matrix4f worldMatrix4f
     ) {
         List<MovementRenderState> actors = new ArrayList<>();
@@ -302,6 +253,7 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
                     textRenderer,
                     context,
                     renderWorld,
+                    transform,
                     worldMatrix4f
                 );
                 if (renderState != null) {
@@ -313,10 +265,5 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
             return null;
         }
         return actors;
-    }
-
-    @SuppressWarnings("removal")
-    private static class ThreadLocalObjects {
-        public final ShadedBlockSbbBuilder sbbBuilder = new ShadedBlockSbbBuilder(new PoseStack());
     }
 }

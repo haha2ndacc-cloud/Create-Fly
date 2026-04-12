@@ -1,40 +1,51 @@
 package com.zurrtum.create.client.content.fluids.tank;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper.FluidRenderState;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.content.fluids.tank.FluidTankRenderer.FluidTankRenderState;
+import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.fluids.tank.FluidTankBlockEntity;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.FluidStateModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.CardinalLighting;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.UnknownNullability;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
-public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEntity, FluidTankRenderer.FluidTankRenderState> {
+public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEntity, FluidTankRenderState> {
     protected final FluidStateModelSet fluidStateModelSet;
 
-    public FluidTankRenderer(BlockEntityRendererProvider.Context context) {
+    public FluidTankRenderer(Context context) {
         fluidStateModelSet = context.blockModelResolver().modelManager.getFluidStateModelSet();
     }
 
     @Override
     public FluidTankRenderState createRenderState() {
         return new FluidTankRenderState();
+    }
+
+    @Override
+    public boolean shouldRender(FluidTankBlockEntity be, Vec3 cameraPosition) {
+        return be.isController() && BlockEntityRenderer.super.shouldRender(be, cameraPosition);
     }
 
     @Override
@@ -45,9 +56,6 @@ public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEnti
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        if (!be.isController()) {
-            return;
-        }
         if (be.window) {
             updateFluidTankState(be, state, tickProgress, crumblingOverlay);
         } else if (be.boiler.isActive()) {
@@ -65,18 +73,26 @@ public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEnti
         if (fluidLevel == null) {
             return;
         }
-        float capHeight = 1 / 4f;
-        float minPuddleHeight = 1 / 16f;
+        float capHeight = 0.25f;
+        float minPuddleHeight = 0.0625f;
         float totalHeight = be.getHeight() - 2 * capHeight - minPuddleHeight;
         float level = fluidLevel.getValue(tickProgress);
-        if (level < 1 / (512f * totalHeight)) {
+        if (level < 1 / (512.0f * totalHeight)) {
             return;
         }
         FluidStack fluidStack = be.getTankInventory().getFluid();
         if (fluidStack.isEmpty()) {
             return;
         }
-        BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
+        Level world = be.getLevel();
+        state.blockPos = be.getBlockPos();
+        state.blockState = be.getBlockState();
+        state.blockEntityType = be.getType();
+        state.lightCoords = world != null ? LevelRenderer.getLightCoords(
+            world,
+            state.blockPos
+        ) : LightCoordsUtil.FULL_BRIGHT;
+        state.breakProgress = crumblingOverlay;
         float clampedLevel = Mth.clamp(level * totalHeight, 0, totalHeight);
         state.translate = clampedLevel - totalHeight;
 
@@ -86,7 +102,7 @@ public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEnti
         //            .isLighterThanAir();
 
         int width = be.getWidth();
-        float xMin = 1 / 16f + 1 / 128f;
+        float xMin = 0.0625f + 1 / 128.0f;
         float xMax = xMin + width - 2 * xMin;
         float yMin = totalHeight + capHeight + minPuddleHeight - clampedLevel;
         float yMax = yMin + clampedLevel;
@@ -97,9 +113,8 @@ public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEnti
         }
 
         float zMax = xMin + width - 2 * xMin;
-        BlockAndTintGetter world = (BlockAndTintGetter) be.getLevel();
         state.fluid = FluidRenderHelper.extractFluidRenderState(
-            world,
+            world instanceof BlockAndTintGetter getter ? getter : null,
             state.blockPos,
             fluidStateModelSet,
             fluidStack.getFluid(),
@@ -126,18 +141,17 @@ public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEnti
         if (occludedDirections[0] && occludedDirections[1] && occludedDirections[2] && occludedDirections[3]) {
             return;
         }
-        BlockEntityRenderState.extractBase(be, state, crumblingOverlay);
-        state.translate = be.getWidth() / 2f;
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
+        state.translate = be.getWidth() / 2.0f;
         BoilerRenderState data = new BoilerRenderState();
         state.boiler = data;
-        data.layer = RenderTypes.cutoutMovingBlock();
-        data.light = state.lightCoords;
-        data.translateX = state.translate - 6 / 16f;
-        data.dialPivotY = 6f / 16;
-        data.dialPivotZ = 8f / 16;
-        data.progress = -145 * be.boiler.gauge.getValue(tickProgress) + 90;
-        data.gauge = CachedBuffers.partial(AllPartialModels.BOILER_GAUGE, state.blockState);
-        data.gaugeDial = CachedBuffers.partial(AllPartialModels.BOILER_GAUGE_DIAL, state.blockState);
+        data.translateX = state.translate - 0.875f;
+        data.xRot = KineticBlockEntityRenderer.getXRotateAngle(-145 * be.boiler.gauge.getValue(tickProgress) + 90);
+        data.gauge = CachedBuffers.partial(AllPartialModels.BOILER_GAUGE, state.blockState)
+            .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
+        data.gaugeDial = CachedBuffers.partial(AllPartialModels.BOILER_GAUGE_DIAL, state.blockState)
+            .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
         data.south = !occludedDirections[0];
         data.west = !occludedDirections[1];
         data.north = !occludedDirections[2];
@@ -153,9 +167,10 @@ public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEnti
     ) {
         if (state.fluid != null) {
             matrices.translate(0, state.translate, 0);
-            state.fluid.submit(queue, matrices);
+            state.fluid.submit(matrices, queue);
         } else if (state.boiler != null) {
-            state.boiler.submit(queue, matrices, state.translate);
+            matrices.translate(state.translate, 0.5, state.translate);
+            state.boiler.submit(queue, matrices);
         }
     }
 
@@ -172,42 +187,42 @@ public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEnti
         public @Nullable BoilerRenderState boiler;
     }
 
-    public static class BoilerRenderState implements SubmitNodeCollector.CustomGeometryRenderer {
+    public static class BoilerRenderState {
+        private static final Quaternionf SOUTH_Y_ROTATE = Axis.YP.rotation(Mth.DEG_TO_RAD * -90);
+        private static final Quaternionf WEST_Y_ROTATE = Axis.YP.rotation(Mth.DEG_TO_RAD * -180);
+        private static final Quaternionf NORTH_Y_ROTATE = Axis.YP.rotation(Mth.DEG_TO_RAD * -270);
+        private static final Quaternionf EAST_Y_ROTATE = Axis.YP.rotation(Mth.DEG_TO_RAD * -360);
         @UnknownNullability
-        public RenderType layer;
-        @UnknownNullability
-        public SuperByteBuffer gauge, gaugeDial;
-        public float translateX, dialPivotY, dialPivotZ, progress;
+        public SuperByteBufferRenderState gauge, gaugeDial;
+        public float translateX;
+        public @Nullable Quaternionf xRot;
         public boolean south, west, north, east;
-        public int light;
 
-        public void submit(SubmitNodeCollector queue, PoseStack poseStack, float translate) {
-            poseStack.translate(translate, 0.5, translate);
-            queue.submitCustomGeometry(poseStack, layer, this);
-        }
-
-        public void render(int yRot, PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            gauge.rotateYDegrees(yRot).uncenter().translate(translateX, 0, 0).light(light)
-                .renderInto(matricesEntry, vertexConsumer);
-            gaugeDial.rotateYDegrees(yRot).uncenter().translate(translateX, 0, 0).translate(0, dialPivotY, dialPivotZ)
-                .rotateXDegrees(progress).translate(0, -dialPivotY, -dialPivotZ).light(light)
-                .renderInto(matricesEntry, vertexConsumer);
-        }
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
+        public void submit(SubmitNodeCollector queue, PoseStack poseStack) {
             if (south) {
-                render(-90, matricesEntry, vertexConsumer);
+                submit(poseStack, queue, SOUTH_Y_ROTATE);
             }
             if (west) {
-                render(-180, matricesEntry, vertexConsumer);
+                submit(poseStack, queue, WEST_Y_ROTATE);
             }
             if (north) {
-                render(-270, matricesEntry, vertexConsumer);
+                submit(poseStack, queue, NORTH_Y_ROTATE);
             }
             if (east) {
-                render(-360, matricesEntry, vertexConsumer);
+                submit(poseStack, queue, EAST_Y_ROTATE);
             }
+        }
+
+        public void submit(PoseStack poseStack, SubmitNodeCollector queue, Quaternionf yRot) {
+            poseStack.pushPose();
+            poseStack.mulPose(yRot);
+            poseStack.translate(translateX, -0.5f, -0.5f);
+            gauge.submit(poseStack, queue);
+            if (xRot != null) {
+                poseStack.rotateAround(xRot, 0, 0.375f, 0.5f);
+            }
+            gaugeDial.submit(poseStack, queue);
+            poseStack.popPose();
         }
     }
 }

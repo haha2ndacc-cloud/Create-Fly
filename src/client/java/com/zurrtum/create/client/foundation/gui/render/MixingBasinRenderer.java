@@ -1,6 +1,7 @@
 package com.zurrtum.create.client.foundation.gui.render;
 
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.Lighting.Entry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.zurrtum.create.AllBlocks;
@@ -34,7 +35,7 @@ public class MixingBasinRenderer extends PictureInPictureRenderer<MixingBasinRen
     @Override
     protected void renderToTexture(MixingBasinRenderState state, PoseStack matrices) {
         Minecraft mc = Minecraft.getInstance();
-        mc.gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+        mc.gameRenderer.getLighting().setupFor(Entry.ENTITY_IN_UI);
         matrices.scale(1, 1, -1);
         matrices.mulPose(Axis.XP.rotationDegrees(-15.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(22.5f));
@@ -59,9 +60,7 @@ public class MixingBasinRenderer extends PictureInPictureRenderer<MixingBasinRen
         world.blockState(blockState);
         matrices.pushPose();
         model = AllPartialModels.SHAFTLESS_COGWHEEL.get();
-        matrices.translate(0.5f, 0.5f, 0.5f);
-        matrices.mulPose(Axis.YP.rotationDegrees(angle * 2));
-        matrices.translate(-0.5f, -0.5f, -0.5f);
+        matrices.rotateAround(Axis.YP.rotationDegrees(angle * 2), 0.5f, 0.5f, 0.5f);
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
@@ -71,9 +70,7 @@ public class MixingBasinRenderer extends PictureInPictureRenderer<MixingBasinRen
         model = AllPartialModels.MECHANICAL_MIXER_POLE.get();
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
-        matrices.translate(0.5f, 0.5f, 0.5f);
-        matrices.mulPose(Axis.YP.rotationDegrees(angle * 4));
-        matrices.translate(-0.5f, -0.5f, -0.5f);
+        matrices.rotateAround(Axis.YP.rotationDegrees(angle * 4), 0.5f, 0.5f, 0.5f);
         model = AllPartialModels.MECHANICAL_MIXER_HEAD.get();
         output.updateBuffer(model);
         blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
@@ -89,11 +86,11 @@ public class MixingBasinRenderer extends PictureInPictureRenderer<MixingBasinRen
     }
 
     private static float getCurrentAngle(float time) {
-        return (time * 4f) % 360;
+        return time * 4.0f % 360;
     }
 
     private static float getAnimatedHeadOffset(float time) {
-        return -(((Mth.sin(time / 32f) + 1) / 5) + .5f);
+        return -((Mth.sin(time / 32.0f) + 1) / 5 + 0.5f);
     }
 
     @Override

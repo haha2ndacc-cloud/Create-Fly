@@ -1,36 +1,45 @@
 package com.zurrtum.create.client.content.contraptions.elevator;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.AllSpriteShifts;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.SpriteShiftEntry;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
+import com.zurrtum.create.client.content.contraptions.elevator.ElevatorPulleyRenderer.ElevatorPulleyRenderState;
 import com.zurrtum.create.client.content.contraptions.pulley.AbstractPulleyRenderer;
 import com.zurrtum.create.client.content.contraptions.pulley.PulleyRenderer;
-import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.contraptions.elevator.ElevatorPulleyBlock;
 import com.zurrtum.create.content.contraptions.elevator.ElevatorPulleyBlockEntity;
-import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Mth;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.UnknownNullability;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
-public class ElevatorPulleyRenderer extends KineticBlockEntityRenderer<ElevatorPulleyBlockEntity, ElevatorPulleyRenderer.ElevatorPulleyRenderState> {
-    public ElevatorPulleyRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.*;
+
+public class ElevatorPulleyRenderer implements BlockEntityRenderer<ElevatorPulleyBlockEntity, ElevatorPulleyRenderState> {
+    private final Int2ObjectMap<SuperByteBufferRenderState> cache = new Int2ObjectOpenHashMap<>();
+
+    public ElevatorPulleyRenderer(Context context) {
     }
 
     @Override
@@ -46,49 +55,68 @@ public class ElevatorPulleyRenderer extends KineticBlockEntityRenderer<ElevatorP
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        super.extractRenderState(be, state, tickProgress, cameraPos, crumblingOverlay);
-        Level world = be.getLevel();
-        BlockState blockState = be.getBlockState();
+        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
+        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
+        Direction facing = state.blockState.getValue(ElevatorPulleyBlock.HORIZONTAL_FACING);
+        Axis axis = facing.getClockWise().getAxis();
+        state.shaft = CachedBuffers.block(KINETIC_BLOCK, shaft(axis)).cardinalLighting(cardinalLighting)
+            .light(state.lightCoords).color(getTintColor(be)).extractRenderState();
+        state.angle = getRotateAngleWithoutBeOffset(axis, be, state, level);
         float offset = PulleyRenderer.getBlockEntityOffset(tickProgress, be);
         boolean running = PulleyRenderer.isPulleyRunning(be);
-        state.yRot = Mth.DEG_TO_RAD * (180 + AngleHelper.horizontalAngle(blockState.getValue(ElevatorPulleyBlock.HORIZONTAL_FACING)));
+        state.yRot = getYRotateAngle(180 + AngleHelper.horizontalAngle(facing));
+        BlockPos blockPos = state.blockPos;
         if (running || offset == 0) {
-            state.magnet = CachedBuffers.partial(AllPartialModels.ELEVATOR_MAGNET, blockState);
             state.magnetOffset = -offset;
-            state.magnetLight = LevelRenderer.getLightCoords(world, state.blockPos.below((int) offset));
+            int magnetLight = LevelRenderer.getLightCoords(level, blockPos.below((int) offset));
+            state.magnet = CachedBuffers.partial(AllPartialModels.ELEVATOR_MAGNET, state.blockState)
+                .cardinalLighting(cardinalLighting).light(magnetLight).extractRenderState();
         }
-        state.rotatedCoil = getRotatedCoil(be);
+        SuperByteBuffer rotatedCoil = CachedBuffers.partialFacing(
+            AllPartialModels.ELEVATOR_COIL,
+            state.blockState,
+            facing
+        ).cardinalLighting(cardinalLighting).light(state.lightCoords);
         if (offset == 0) {
+            state.rotatedCoil = rotatedCoil.extractRenderState();
             return;
         }
-        state.coilShift = AllSpriteShifts.ELEVATOR_COIL;
-        state.coilScroll = AbstractPulleyRenderer.getCoilVScroll(state.coilShift, offset, 2);
+        SpriteShiftEntry coilShift = AllSpriteShifts.ELEVATOR_COIL;
+        SpriteShiftEntry halfShift = AllSpriteShifts.ELEVATOR_BELT;
+        float coilScroll = AbstractPulleyRenderer.getCoilVScroll(coilShift, offset, 2);
+        state.rotatedCoil = rotatedCoil.shiftUVScrolling(coilShift, coilScroll).extractRenderState();
         float f = offset % 1;
-        if (f < .25f || f > .75f) {
-            state.halfRope = CachedBuffers.partial(AllPartialModels.ELEVATOR_BELT_HALF, blockState);
-            updateHalfShift(state, offset);
-            float down = f > .75f ? f - 1 : f;
+        float halfScroll;
+        if (f < 0.25f || f > 0.75f) {
+            halfScroll = getHalfShift(offset);
+            float down = f > 0.75f ? f - 1 : f;
             state.halfRopeOffset = -down;
-            state.halfRopeLight = LevelRenderer.getLightCoords(world, state.blockPos.below((int) down));
+            int halfRopeLight = LevelRenderer.getLightCoords(level, blockPos.below((int) down));
+            state.halfRope = CachedBuffers.partial(AllPartialModels.ELEVATOR_BELT_HALF, state.blockState)
+                .cardinalLighting(cardinalLighting).light(halfRopeLight).shiftUVScrolling(halfShift, halfScroll)
+                .extractRenderState();
+            if (!running || offset <= 0.25f) {
+                return;
+            }
+        } else {
+            if (!running || offset <= 0.25f) {
+                return;
+            }
+            halfScroll = getHalfShift(offset);
         }
-        if (!running) {
-            return;
+        SuperByteBuffer rope = CachedBuffers.partial(AllPartialModels.ELEVATOR_BELT, state.blockState);
+        int size = (int) Math.ceil(offset - 0.25f);
+        SuperByteBufferRenderState[] ropes = new SuperByteBufferRenderState[size];
+        state.ropeOffset = -offset - 1;
+        for (int i = 0, down = (int) offset; i < size; i++, down--) {
+            ropes[i] = cache.computeIfAbsent(
+                LevelRenderer.getLightCoords(level, blockPos.below(down)),
+                l -> rope.cardinalLighting(cardinalLighting).light(l).shiftUVScrolling(halfShift, halfScroll)
+                    .extractRenderState()
+            );
         }
-        if (state.halfRope == null) {
-            updateHalfShift(state, offset);
-        }
-        state.rope = CachedBuffers.partial(AllPartialModels.ELEVATOR_BELT, blockState);
-        int size = (int) Math.ceil(offset - .25f);
-        float[] offsets = new float[size];
-        int[] lights = new int[size];
-        for (int i = 0; i < size; i++) {
-            float down = offset - i;
-            int light = LevelRenderer.getLightCoords(world, state.blockPos.below((int) down));
-            offsets[i] = -down;
-            lights[i] = light;
-        }
-        state.offsets = offsets;
-        state.lights = lights;
+        cache.clear();
+        state.ropes = ropes;
     }
 
     @Override
@@ -98,34 +126,44 @@ public class ElevatorPulleyRenderer extends KineticBlockEntityRenderer<ElevatorP
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        queue.submitCustomGeometry(matrices, state.layer, state);
+        if (state.angle != null) {
+            matrices.pushPose();
+            matrices.rotateAround(state.angle, 0.5f, 0.5f, 0.5f);
+            state.shaft.submit(matrices, queue);
+            matrices.popPose();
+        } else {
+            state.shaft.submit(matrices, queue);
+        }
+        state.rotatedCoil.submit(matrices, queue);
+        if (state.yRot != null) {
+            matrices.rotateAround(state.yRot, 0.5f, 0.5f, 0.5f);
+        }
+        if (state.magnet != null) {
+            matrices.pushPose();
+            matrices.translate(0, state.magnetOffset, 0);
+            state.magnet.submit(matrices, queue);
+            matrices.popPose();
+        }
+        if (state.halfRope != null) {
+            matrices.pushPose();
+            matrices.translate(0, state.halfRopeOffset, 0);
+            state.halfRope.submit(matrices, queue);
+            matrices.popPose();
+        }
+        if (state.ropes != null) {
+            matrices.translate(0, state.ropeOffset, 0);
+            for (SuperByteBufferRenderState rope : state.ropes) {
+                matrices.translate(0, 1, 0);
+                rope.submit(matrices, queue);
+            }
+        }
     }
 
-    private static void updateHalfShift(ElevatorPulleyRenderState state, float offset) {
-        state.halfShift = AllSpriteShifts.ELEVATOR_BELT;
-        double beltScroll = (-(offset + .5) - Math.floor(-(offset + .5))) / 2;
-        TextureAtlasSprite target = state.halfShift.getTarget();
+    private static float getHalfShift(float offset) {
+        double beltScroll = (-(offset + 0.5) - Math.floor(-(offset + 0.5))) / 2;
+        TextureAtlasSprite target = AllSpriteShifts.ELEVATOR_BELT.getTarget();
         float spriteSize = target.getV1() - target.getV0();
-        state.halfScroll = (float) beltScroll * spriteSize;
-    }
-
-    @Override
-    protected RenderType getRenderType(ElevatorPulleyBlockEntity be, BlockState state) {
-        return RenderTypes.solidMovingBlock();
-    }
-
-    @Override
-    protected BlockState getRenderedBlockState(ElevatorPulleyBlockEntity be) {
-        return shaft(getRotationAxisOf(be));
-    }
-
-    protected SuperByteBuffer getRotatedCoil(KineticBlockEntity be) {
-        BlockState blockState = be.getBlockState();
-        return CachedBuffers.partialFacing(
-            AllPartialModels.ELEVATOR_COIL,
-            blockState,
-            blockState.getValue(ElevatorPulleyBlock.HORIZONTAL_FACING)
-        );
+        return (float) beltScroll * spriteSize;
     }
 
     @Override
@@ -133,48 +171,16 @@ public class ElevatorPulleyRenderer extends KineticBlockEntityRenderer<ElevatorP
         return true;
     }
 
-    public static class ElevatorPulleyRenderState extends KineticRenderState {
-        public float yRot;
-        public @Nullable SuperByteBuffer magnet;
+    public static class ElevatorPulleyRenderState extends BlockEntityRenderState {
+        public @UnknownNullability SuperByteBufferRenderState shaft;
+        public @Nullable Quaternionf angle;
+        public @Nullable Quaternionf yRot;
         public float magnetOffset;
-        public int magnetLight;
-        public SuperByteBuffer rotatedCoil;
-        public SpriteShiftEntry coilShift;
-        public float coilScroll;
-        public @Nullable SuperByteBuffer halfRope;
-        public SpriteShiftEntry halfShift;
-        public float halfScroll;
         public float halfRopeOffset;
-        public int halfRopeLight;
-        public @Nullable SuperByteBuffer rope;
-        public float[] offsets;
-        public int[] lights;
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            if (model != null) {
-                super.render(matricesEntry, vertexConsumer);
-            }
-            if (magnet != null) {
-                magnet.center().rotateY(yRot).uncenter().translate(0, magnetOffset, 0).light(magnetLight)
-                    .renderInto(matricesEntry, vertexConsumer);
-            }
-            if (coilScroll != 0) {
-                rotatedCoil.shiftUVScrolling(coilShift, coilScroll);
-            }
-            rotatedCoil.light(lightCoords).renderInto(matricesEntry, vertexConsumer);
-            if (halfRope != null) {
-                halfRope.center().rotateY(yRot).uncenter().translate(0, halfRopeOffset, 0)
-                    .shiftUVScrolling(halfShift, halfScroll).light(halfRopeLight)
-                    .renderInto(matricesEntry, vertexConsumer);
-            }
-            if (rope != null) {
-                for (int i = 0, size = offsets.length; i < size; i++) {
-                    rope.center().rotateY(yRot).uncenter().translate(0, offsets[i], 0)
-                        .shiftUVScrolling(halfShift, halfScroll).light(lights[i])
-                        .renderInto(matricesEntry, vertexConsumer);
-                }
-            }
-        }
+        public float ropeOffset;
+        public @Nullable SuperByteBufferRenderState magnet;
+        public @UnknownNullability SuperByteBufferRenderState rotatedCoil;
+        public @Nullable SuperByteBufferRenderState halfRope;
+        public SuperByteBufferRenderState @Nullable [] ropes;
     }
 }

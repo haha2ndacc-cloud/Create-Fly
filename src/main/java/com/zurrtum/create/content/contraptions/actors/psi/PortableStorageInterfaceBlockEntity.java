@@ -29,7 +29,7 @@ public abstract class PortableStorageInterfaceBlockEntity extends SmartBlockEnti
     protected boolean powered;
     protected @Nullable Entity connectedEntity;
 
-    public int keepAlive = 0;
+    public int keepAlive;
 
     public PortableStorageInterfaceBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -109,9 +109,9 @@ public abstract class PortableStorageInterfaceBlockEntity extends SmartBlockEnti
         if (isConnected) {
             progress = 1;
         } else if (transferTimer >= timeUnit + animation) {
-            progress = Mth.lerpInt((transferTimer - timeUnit - animation) / (float) animation, 1, 0);
+            progress = Mth.lerp((transferTimer - timeUnit - animation) / (float) animation, 1, 0);
         } else if (transferTimer < animation) {
-            progress = Mth.lerpInt(transferTimer / (float) animation, 0, 1);
+            progress = Mth.lerp(transferTimer / (float) animation, 0, 1);
         }
         connectionAnimation.setValue(progress);
     }

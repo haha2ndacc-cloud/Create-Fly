@@ -1,45 +1,47 @@
 package com.zurrtum.create.client.content.logistics.depot;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
-import com.zurrtum.create.client.content.kinetics.base.ShaftRenderer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
 import com.zurrtum.create.client.content.logistics.depot.DepotRenderer.DepotItemState;
 import com.zurrtum.create.client.content.logistics.depot.DepotRenderer.DepotOutputItemState;
+import com.zurrtum.create.client.content.logistics.depot.EjectorRenderer.EjectorRenderState;
+import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.client.flywheel.lib.transform.Rotate;
 import com.zurrtum.create.client.flywheel.lib.transform.Translate;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
 import com.zurrtum.create.content.logistics.depot.DepotBehaviour;
 import com.zurrtum.create.content.logistics.depot.EjectorBlock;
 import com.zurrtum.create.content.logistics.depot.EjectorBlockEntity;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.item.ItemModelResolver;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-public class EjectorRenderer extends ShaftRenderer<EjectorBlockEntity, EjectorRenderer.EjectorRenderState> {
+import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.*;
+
+public class EjectorRenderer implements BlockEntityRenderer<EjectorBlockEntity, EjectorRenderState> {
     static final Vec3 pivot = VecHelper.voxelSpace(0, 11.25, 0.75);
     protected final ItemModelResolver itemModelManager;
 
-    public EjectorRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
+    public EjectorRenderer(Context context) {
         itemModelManager = context.itemModelResolver();
     }
 
@@ -56,29 +58,48 @@ public class EjectorRenderer extends ShaftRenderer<EjectorBlockEntity, EjectorRe
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        super.extractRenderState(be, state, tickProgress, cameraPos, crumblingOverlay);
-        BlockState blockState = be.getBlockState();
-        if (!state.support) {
-            state.top = CachedBuffers.partial(AllPartialModels.EJECTOR_TOP, blockState);
-            state.lidAngle = Mth.DEG_TO_RAD * (be.getLidProgress(tickProgress) * -70);
-            state.yRot = Mth.DEG_TO_RAD * (180 + AngleHelper.horizontalAngle(blockState.getValue(EjectorBlock.HORIZONTAL_FACING)));
-        }
-        DepotBehaviour behaviour = be.getBehaviour(DepotBehaviour.TYPE);
-        if (behaviour == null || behaviour.isEmpty()) {
-            return;
-        }
-        Level world = be.getLevel();
-        state.incoming = DepotRenderer.createIncomingStateList(behaviour, itemModelManager, tickProgress, world);
-        state.outputs = DepotRenderer.createOutputStateList(behaviour, itemModelManager, world);
-        if (state.support && (state.incoming != null || state.outputs != null)) {
-            state.blockPos = be.getBlockPos();
-            state.blockEntityType = be.getType();
-            state.lightCoords = world != null ? LevelRenderer.getLightCoords(
-                world,
-                state.blockPos
-            ) : LightCoordsUtil.FULL_BRIGHT;
-            state.lidAngle = Mth.DEG_TO_RAD * (be.getLidProgress(tickProgress) * -70);
-            state.yRot = Mth.DEG_TO_RAD * (180 + AngleHelper.horizontalAngle(blockState.getValue(EjectorBlock.HORIZONTAL_FACING)));
+        Level level = be.getLevel();
+        if (VisualizationManager.supportsVisualization(level)) {
+            DepotBehaviour behaviour = be.getBehaviour(DepotBehaviour.TYPE);
+            if (behaviour == null || behaviour.isEmpty()) {
+                return;
+            }
+            state.incoming = DepotRenderer.createIncomingStateList(behaviour, itemModelManager, tickProgress, level);
+            state.outputs = DepotRenderer.createOutputStateList(behaviour, itemModelManager, level);
+            if (state.incoming != null || state.outputs != null) {
+                SmartBlockEntityRenderer.extractBase(level, be, state, crumblingOverlay);
+                state.lidAngle = getXRotateAngle(be.getLidProgress(tickProgress) * -70);
+                Direction direction = state.blockState.getValue(EjectorBlock.HORIZONTAL_FACING);
+                float yRot = 180 + AngleHelper.horizontalAngle(direction);
+                if (yRot != 0) {
+                    yRot *= Mth.DEG_TO_RAD;
+                    state.yRot = new Quaternionf().rotationY(yRot);
+                    state.yRotBack = new Quaternionf().rotationY(-yRot);
+                }
+            }
+        } else {
+            SmartBlockEntityRenderer.extractBase(level, be, state, crumblingOverlay);
+            CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
+            Direction direction = state.blockState.getValue(EjectorBlock.HORIZONTAL_FACING);
+            Axis axis = direction.getClockWise().getAxis();
+            state.model = CachedBuffers.block(KINETIC_BLOCK, shaft(axis)).cardinalLighting(cardinalLighting)
+                .light(state.lightCoords).color(getTintColor(be)).extractRenderState();
+            state.angle = getRotateAngleWithoutBeOffset(axis, be, state, level);
+            state.top = CachedBuffers.partial(AllPartialModels.EJECTOR_TOP, state.blockState)
+                .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
+            state.lidAngle = getXRotateAngle(be.getLidProgress(tickProgress) * -70);
+            float yRot = 180 + AngleHelper.horizontalAngle(direction);
+            if (yRot != 0) {
+                yRot *= Mth.DEG_TO_RAD;
+                state.yRot = new Quaternionf().rotationY(yRot);
+            }
+            DepotBehaviour behaviour = be.getBehaviour(DepotBehaviour.TYPE);
+            if (behaviour == null || behaviour.isEmpty()) {
+                return;
+            }
+            state.incoming = DepotRenderer.createIncomingStateList(behaviour, itemModelManager, tickProgress, level);
+            state.outputs = DepotRenderer.createOutputStateList(behaviour, itemModelManager, level);
+            state.yRotBack = state.yRot != null ? new Quaternionf().rotationY(-yRot) : null;
         }
     }
 
@@ -89,17 +110,29 @@ public class EjectorRenderer extends ShaftRenderer<EjectorBlockEntity, EjectorRe
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        super.submit(state, matrices, queue, cameraState);
+        if (state.model != null) {
+            if (state.angle != null) {
+                matrices.pushPose();
+                matrices.rotateAround(state.angle, 0.5f, 0.5f, 0.5f);
+                state.model.submit(matrices, queue);
+                matrices.popPose();
+            } else {
+                state.model.submit(matrices, queue);
+            }
+        }
+        if (state.yRot != null) {
+            matrices.rotateAround(state.yRot, 0.5f, 0.5f, 0.5f);
+        }
+        if (state.lidAngle != null) {
+            matrices.rotateAround(state.lidAngle, 0, (float) pivot.y, (float) pivot.z);
+        }
+        if (state.top != null) {
+            state.top.submit(matrices, queue);
+        }
         if (state.incoming != null || state.outputs != null) {
-            matrices.translate(0.5f, 0.5f, 0.5f);
-            matrices.mulPose(Axis.YP.rotation(state.yRot));
-            matrices.translate(-0.5f, -0.5f, -0.5f);
-            matrices.translate(pivot.x, pivot.y, pivot.z);
-            matrices.mulPose(Axis.XP.rotation(state.lidAngle));
-            matrices.translate(-pivot.x, -pivot.y, -pivot.z);
-            matrices.translate(0.5f, 0.5f, 0.5f);
-            matrices.mulPose(Axis.YP.rotation(-state.yRot));
-            matrices.translate(-0.5f, -0.5f, -0.5f);
+            if (state.yRotBack != null) {
+                matrices.rotateAround(state.yRotBack, 0.5f, 0.5f, 0.5f);
+            }
             DepotRenderer.renderItemsOf(
                 state.incoming,
                 state.outputs,
@@ -112,36 +145,20 @@ public class EjectorRenderer extends ShaftRenderer<EjectorBlockEntity, EjectorRe
         }
     }
 
-    @Override
-    protected RenderType getRenderType(EjectorBlockEntity be, BlockState state) {
-        return RenderTypes.solidMovingBlock();
-    }
-
-    @Override
-    public boolean shouldRenderOffScreen() {
-        return true;
-    }
-
     static <T extends Translate<T> & Rotate<T>> void applyLidAngle(KineticBlockEntity be, float angle, T tr) {
         tr.center().rotateYDegrees(180 + AngleHelper.horizontalAngle(be.getBlockState()
                 .getValue(EjectorBlock.HORIZONTAL_FACING))).uncenter().translate(pivot).rotateXDegrees(-angle)
             .translateBack(pivot);
     }
 
-    public static class EjectorRenderState extends KineticRenderState {
-        public SuperByteBuffer top;
-        public float lidAngle;
-        public float yRot;
+    public static class EjectorRenderState extends BlockEntityRenderState {
+        public @Nullable SuperByteBufferRenderState model;
+        public @Nullable Quaternionf angle;
+        public @Nullable Quaternionf lidAngle;
+        public @Nullable Quaternionf yRot;
+        public @Nullable Quaternionf yRotBack;
+        public @Nullable SuperByteBufferRenderState top;
         public DepotItemState @Nullable [] incoming;
         public @Nullable List<DepotOutputItemState> outputs;
-
-        @Override
-        public void render(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer) {
-            super.render(matricesEntry, vertexConsumer);
-            top.center().rotateY(yRot).uncenter();
-            top.translate(pivot).rotateX(lidAngle).translateBack(pivot);
-            top.light(lightCoords);
-            top.renderInto(matricesEntry, vertexConsumer);
-        }
     }
 }
