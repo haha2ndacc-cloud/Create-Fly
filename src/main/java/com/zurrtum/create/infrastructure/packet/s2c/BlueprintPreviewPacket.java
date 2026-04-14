@@ -2,7 +2,6 @@ package com.zurrtum.create.infrastructure.packet.s2c;
 
 import com.zurrtum.create.AllClientHandle;
 import com.zurrtum.create.AllPackets;
-import com.zurrtum.create.infrastructure.items.BaseInventory;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectBidirectionalIterator;
@@ -12,6 +11,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketType;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -35,11 +35,11 @@ public record BlueprintPreviewPacket(List<ItemStack> available, List<ItemStack> 
     );
 
     public static Object2IntLinkedOpenCustomHashMap<ItemStack> createMap() {
-        return new Object2IntLinkedOpenCustomHashMap<>(BaseInventory.ITEM_STACK_HASH_STRATEGY);
+        return new Object2IntLinkedOpenCustomHashMap<>(Container.ITEM_STACK_HASH_STRATEGY);
     }
 
     public static Object2IntLinkedOpenCustomHashMap<ItemStack> createMap(Object2IntLinkedOpenCustomHashMap<ItemStack> source) {
-        return new Object2IntLinkedOpenCustomHashMap<>(source, BaseInventory.ITEM_STACK_HASH_STRATEGY);
+        return new Object2IntLinkedOpenCustomHashMap<>(source, Container.ITEM_STACK_HASH_STRATEGY);
     }
 
     public BlueprintPreviewPacket(

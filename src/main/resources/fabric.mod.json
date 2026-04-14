@@ -26,17 +26,7 @@
       "com.zurrtum.create.AllEarlyRegistries"
     ]
   },
-  "custom": {
-    "loom:injected_interfaces": {
-      "net/minecraft/world/Container": [
-        "com/zurrtum/create/infrastructure/items/BaseInventory"
-      ],
-      "net/minecraft/world/WorldlyContainer": [
-        "com/zurrtum/create/infrastructure/items/BaseSidedInventory"
-      ]
-    }
-  },
-  "accessWidener": "create.accesswidener",
+  "accessWidener": "create.classtweaker",
   "mixins": [
     "create.mixins.json",
     {

@@ -48,7 +48,7 @@ base {
 
 loom {
     splitEnvironmentSourceSets()
-    accessWidenerPath = file("src/main/resources/create.accesswidener")
+    accessWidenerPath = file("src/main/resources/create.classtweaker")
     mods {
         create {
             sourceSet sourceSets.main

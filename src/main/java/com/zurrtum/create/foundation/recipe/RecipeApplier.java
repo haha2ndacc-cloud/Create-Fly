@@ -1,10 +1,10 @@
 package com.zurrtum.create.foundation.recipe;
 
-import com.zurrtum.create.infrastructure.items.BaseInventory;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
@@ -68,7 +68,7 @@ public class RecipeApplier {
         }
         List<ItemStack> stacks = new ArrayList<>();
         Object2ObjectMap<ItemStack, @Nullable ObjectIntPair<ItemStack>> buffer = new Object2ObjectOpenCustomHashMap<>(
-            BaseInventory.ITEM_STACK_HASH_STRATEGY);
+            Container.ITEM_STACK_HASH_STRATEGY);
         int max, amount;
         ItemStack exist;
         for (int i = 0; i < count; i++) {
