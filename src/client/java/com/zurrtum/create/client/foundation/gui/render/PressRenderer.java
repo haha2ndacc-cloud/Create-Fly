@@ -1,6 +1,5 @@
 package com.zurrtum.create.client.foundation.gui.render;
 
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.Lighting.Entry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
@@ -11,6 +10,8 @@ import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
 import com.zurrtum.create.client.catnip.gui.render.GpuTexture;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -20,7 +21,6 @@ import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
@@ -34,15 +34,11 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
     private static final Int2ObjectMap<GpuTexture> TEXTURES = new Int2ObjectArrayMap<>();
     private final PoseStack matrices = new PoseStack();
     private final BlockBakedQuadOutput output;
-    private final ModelBlockRenderer blockRenderer;
     private int windowScaleFactor;
 
     public PressRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
         output = new BlockBakedQuadOutput(vertexConsumers, matrices);
-        Minecraft minecraft = Minecraft.getInstance();
-        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
-        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -74,6 +70,7 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
 
         BlockState blockState;
         BlockStateModel model;
+        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float time = AnimationTickHolder.getRenderTime();
@@ -82,16 +79,15 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
         world.blockState(blockState);
         model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
-        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
         matrices.pushPose();
-        blockState = AllBlocks.SHAFT.defaultBlockState()
-            .setValue(BlockStateProperties.AXIS, Direction.Axis.Z);
+        blockState = AllBlocks.SHAFT.defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.Z);
         world.blockState(blockState);
         model = blockStateModelSet.get(blockState);
         matrices.rotateAround(Axis.ZP.rotationDegrees(getShaftAngle(time)), 0.5f, 0.5f, 0.5f);
         output.updateBuffer(model);
-        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
         matrices.pushPose();
@@ -100,7 +96,7 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
         model = AllPartialModels.MECHANICAL_PRESS_HEAD.get();
         matrices.translate(0, getAnimatedHeadOffset(time, item.offset()), 0);
         output.updateBuffer(model);
-        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
         output.clearBuffer();
 

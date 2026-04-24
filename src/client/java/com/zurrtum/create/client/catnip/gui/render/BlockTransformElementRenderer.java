@@ -4,13 +4,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import net.minecraft.core.BlockPos;
@@ -25,16 +24,12 @@ public class BlockTransformElementRenderer extends PictureInPictureRenderer<Bloc
     private final PoseStack matrices = new PoseStack();
     private final BlockBakedQuadOutput output;
     private final TerrainBakedQuadOutput terrainOutput;
-    private final ModelBlockRenderer blockRenderer;
     private int windowScaleFactor;
 
     public BlockTransformElementRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
         output = new BlockBakedQuadOutput(vertexConsumers, matrices);
         terrainOutput = new TerrainBakedQuadOutput(vertexConsumers, matrices);
-        Minecraft minecraft = Minecraft.getInstance();
-        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
-        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     public static void clear(Object key) {
@@ -87,10 +82,12 @@ public class BlockTransformElementRenderer extends PictureInPictureRenderer<Bloc
             SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullDark();
             world.blockState(key.state);
             if (key.state.is(Blocks.REDSTONE_TORCH) && key.state.getValue(RedstoneTorchBlock.LIT)) {
-                blockRenderer.tesselateBlock(terrainOutput, 0, 0, 0, world, BlockPos.ZERO, key.state, key.model, 42L);
+                ModelRenderHelper.getHelper(terrainOutput)
+                    .tesselateBlock(0, 0, 0, world, BlockPos.ZERO, key.state, key.model, 42L);
             } else {
                 output.updateBuffer(key.model);
-                blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, key.state, key.model, 42L);
+                ModelRenderHelper.getHelper(output)
+                    .tesselateBlock(0, 0, 0, world, BlockPos.ZERO, key.state, key.model, 42L);
                 output.clearBuffer();
             }
             bufferSource.endBatch();

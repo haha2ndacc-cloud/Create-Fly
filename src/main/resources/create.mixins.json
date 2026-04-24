@@ -6,7 +6,6 @@
     "AbstractBoatMixin",
     "AbstractMinecartMixin",
     "BlockItemMixin",
-    "BlockLightEngineMixin",
     "BlockPlaceContextMixin",
     "BlocksMixin",
     "BuiltInPackSourceMixin",

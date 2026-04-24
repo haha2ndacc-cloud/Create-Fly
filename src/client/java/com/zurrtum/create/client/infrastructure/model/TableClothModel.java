@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.client.foundation.model.BakedModelHelper;
-import com.zurrtum.create.client.model.NormalsBakedQuad;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
@@ -147,20 +146,14 @@ public class TableClothModel extends WrapperBlockStateModel {
         if (original == replace) {
             return quad;
         }
-        BakedQuad newQuad = new BakedQuad(
-            quad.position0(),
-            quad.position1(),
-            quad.position2(),
-            quad.position3(),
+        return BakedModelHelper.replaceBakedQuadUV(
+            quad,
             BakedModelHelper.calcSpriteUv(quad.packedUV0(), original, replace),
             BakedModelHelper.calcSpriteUv(quad.packedUV1(), original, replace),
             BakedModelHelper.calcSpriteUv(quad.packedUV2(), original, replace),
             BakedModelHelper.calcSpriteUv(quad.packedUV3(), original, replace),
-            quad.direction(),
             info
         );
-        NormalsBakedQuad.setNormals(newQuad, quad);
-        return newQuad;
     }
 
     private record BakedCorner(List<BakedQuad> south, List<BakedQuad> west, List<BakedQuad> north, List<BakedQuad> east,

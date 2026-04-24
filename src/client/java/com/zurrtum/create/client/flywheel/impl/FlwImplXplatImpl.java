@@ -1,6 +1,7 @@
 package com.zurrtum.create.client.flywheel.impl;
 
 import com.zurrtum.create.client.flywheel.backend.engine.uniform.Uniforms;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.multiplayer.ClientLevel;
 
@@ -14,6 +15,7 @@ public class FlwImplXplatImpl implements FlwImplXplat {
     public void dispatchReloadLevelRendererEvent(ClientLevel level) {
         BackendManagerImpl.onReloadLevelRenderer(level);
         Uniforms.onReloadLevelRenderer();
+        ModelRenderHelper.onReloadLevelRenderer();
         //TODO Fabric
     }
 

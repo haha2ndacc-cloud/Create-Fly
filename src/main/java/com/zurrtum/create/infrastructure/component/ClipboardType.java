@@ -4,24 +4,16 @@ import com.mojang.serialization.Codec;
 import com.zurrtum.create.catnip.codecs.stream.CatnipStreamCodecBuilders;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
 
 import java.util.Locale;
 
 public enum ClipboardType implements StringRepresentable {
-    EMPTY("empty_clipboard"), WRITTEN("clipboard"), EDITING("clipboard_and_quill");
+    EMPTY, WRITTEN, EDITING;
 
     public static final Codec<ClipboardType> CODEC = StringRepresentable.fromEnum(ClipboardType::values);
     public static final StreamCodec<ByteBuf, ClipboardType> STREAM_CODEC = CatnipStreamCodecBuilders.ofEnum(
         ClipboardType.class);
-
-    public final String file;
-    public static Identifier ID = Identifier.parse("clipboard_type");
-
-    ClipboardType(String file) {
-        this.file = file;
-    }
 
     @Override
     public String getSerializedName() {

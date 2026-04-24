@@ -5,7 +5,6 @@ import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
 import com.zurrtum.create.content.decoration.copycat.CopycatStepBlock;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.resources.model.SimpleModelWrapper;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
@@ -19,13 +18,11 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public class CopycatStepModel extends CopycatModel {
     protected static final Vec3 VEC_Y_3 = new Vec3(0, .75, 0);
     protected static final Vec3 VEC_Y_2 = new Vec3(0, .5, 0);
     protected static final Vec3 VEC_Y_N2 = new Vec3(0, -.5, 0);
-    protected static final AABB CUBE_AABB = new AABB(BlockPos.ZERO);
 
     public CopycatStepModel(BlockState state, UnbakedRoot unbaked) {
         super(state, unbaked);
@@ -41,101 +38,103 @@ public class CopycatStepModel extends CopycatModel {
         RandomSource random,
         List<BlockStateModelPart> parts
     ) {
+        List<BlockStateModelPart> list = getMaterialParts(world, pos, material, random, getModelOf(material));
+        if (list.isEmpty()) {
+            return;
+        }
         Direction facing = state.getValueOrElse(CopycatStepBlock.FACING, Direction.SOUTH);
+        Direction opposite = facing.getOpposite();
         boolean upperHalf = state.getValueOrElse(CopycatStepBlock.HALF, Half.BOTTOM) == Half.TOP;
         Vec3 normal = Vec3.atLowerCornerOf(facing.getUnitVec3i());
         Vec3 normalScaled2 = normal.scale(.5);
         Vec3 normalScaledN3 = normal.scale(-.75);
-        AABB bb = CUBE_AABB.contract(-normal.x * .75, .75, -normal.z * .75);
-
-        OcclusionData occlusionData = gatherOcclusionData(world, pos, state, material, block);
-        BlockStateModel model = getModelOf(material);
-        for (BlockStateModelPart part : getMaterialParts(world, pos, material, random, model)) {
+        AABB bottomBack = CUBE_AABB.contract(-normal.x * .75, .75, -normal.z * .75);
+        AABB bottomFront = bottomBack.move(normalScaledN3);
+        AABB topBack = bottomBack.move(VEC_Y_3);
+        AABB topFront = bottomFront.move(VEC_Y_3);
+        Vec3 topFrontOffset, bottomFrontOffset, topBackOffset, bottomBackOffset;
+        if (upperHalf) {
+            topFrontOffset = normalScaled2;
+            bottomFrontOffset = normalScaled2.add(VEC_Y_2);
+            topBackOffset = Vec3.ZERO;
+            bottomBackOffset = VEC_Y_2;
+        } else {
+            topFrontOffset = normalScaled2.add(VEC_Y_N2);
+            bottomFrontOffset = normalScaled2;
+            topBackOffset = VEC_Y_N2;
+            bottomBackOffset = Vec3.ZERO;
+        }
+        DirectionData directionData = gatherDirectionData(block, state);
+        for (BlockStateModelPart part : list) {
             QuadCollection.Builder builder = new QuadCollection.Builder();
-            addCroppedQuads(
-                facing,
-                upperHalf,
-                normalScaled2,
-                normalScaledN3,
-                bb,
-                part.getQuads(null),
-                builder::addUnculledFace
-            );
+            for (BakedQuad quad : part.getQuads(null)) {
+                builder.addUnculledFace(BakedModelHelper.cropAndMove(quad, topFront, topFrontOffset));
+                builder.addUnculledFace(BakedModelHelper.cropAndMove(quad, bottomFront, bottomFrontOffset));
+                builder.addUnculledFace(BakedModelHelper.cropAndMove(quad, topBack, topBackOffset));
+                builder.addUnculledFace(BakedModelHelper.cropAndMove(quad, bottomBack, bottomBackOffset));
+            }
             for (Direction direction : Iterate.directions) {
-                if (occlusionData.isOccluded(direction)) {
-                    continue;
+                if (directionData.isUncull(direction)) {
+                    for (BakedQuad quad : part.getQuads(direction)) {
+                        if (direction != facing) {
+                            if (direction != Direction.DOWN) {
+                                builder.addUnculledFace(BakedModelHelper.cropAndMove(quad, topFront, topFrontOffset));
+                            }
+                            if (direction != Direction.UP) {
+                                builder.addUnculledFace(BakedModelHelper.cropAndMove(
+                                    quad,
+                                    bottomFront,
+                                    bottomFrontOffset
+                                ));
+                            }
+                        }
+                        if (direction != opposite) {
+                            if (direction != Direction.DOWN) {
+                                builder.addUnculledFace(BakedModelHelper.cropAndMove(quad, topBack, topBackOffset));
+                            }
+                            if (direction != Direction.UP) {
+                                builder.addUnculledFace(BakedModelHelper.cropAndMove(
+                                    quad,
+                                    bottomBack,
+                                    bottomBackOffset
+                                ));
+                            }
+                        }
+                    }
+                } else {
+                    for (BakedQuad quad : part.getQuads(direction)) {
+                        if (direction != facing) {
+                            if (direction != Direction.DOWN) {
+                                builder.addCulledFace(
+                                    direction,
+                                    BakedModelHelper.cropAndMove(quad, topFront, topFrontOffset)
+                                );
+                            }
+                            if (direction != Direction.UP) {
+                                builder.addCulledFace(
+                                    direction,
+                                    BakedModelHelper.cropAndMove(quad, bottomFront, bottomFrontOffset)
+                                );
+                            }
+                        }
+                        if (direction != opposite) {
+                            if (direction != Direction.DOWN) {
+                                builder.addCulledFace(
+                                    direction,
+                                    BakedModelHelper.cropAndMove(quad, topBack, topBackOffset)
+                                );
+                            }
+                            if (direction != Direction.UP) {
+                                builder.addCulledFace(
+                                    direction,
+                                    BakedModelHelper.cropAndMove(quad, bottomBack, bottomBackOffset)
+                                );
+                            }
+                        }
+                    }
                 }
-                addCroppedQuads(
-                    facing,
-                    upperHalf,
-                    normalScaled2,
-                    normalScaledN3,
-                    bb,
-                    part.getQuads(direction),
-                    block.shouldFaceAlwaysRender(
-                        state,
-                        direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(
-                        direction,
-                        quad
-                    )
-                );
             }
             parts.add(new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleMaterial()));
-        }
-    }
-
-    protected void addCroppedQuads(
-        Direction facing,
-        boolean upperHalf,
-        Vec3 normalScaled2,
-        Vec3 normalScaledN3,
-        AABB bb,
-        List<BakedQuad> quads,
-        Consumer<BakedQuad> consumer
-    ) {
-        int size = quads.size();
-        if (size == 0) {
-            return;
-        }
-        for (boolean top : Iterate.trueAndFalse) {
-            for (boolean front : Iterate.trueAndFalse) {
-                AABB bb1 = bb;
-                if (front) {
-                    bb1 = bb1.move(normalScaledN3);
-                }
-                if (top) {
-                    bb1 = bb1.move(VEC_Y_3);
-                }
-
-                Vec3 offset = Vec3.ZERO;
-                if (front) {
-                    offset = offset.add(normalScaled2);
-                }
-                if (top != upperHalf) {
-                    offset = offset.add(upperHalf ? VEC_Y_2 : VEC_Y_N2);
-                }
-
-                for (int i = 0; i < size; i++) {
-                    BakedQuad quad = quads.get(i);
-                    Direction direction = quad.direction();
-
-                    if (front && direction == facing) {
-                        continue;
-                    }
-                    if (!front && direction == facing.getOpposite()) {
-                        continue;
-                    }
-                    if (!top && direction == Direction.UP) {
-                        continue;
-                    }
-                    if (top && direction == Direction.DOWN) {
-                        continue;
-                    }
-
-                    consumer.accept(BakedModelHelper.cropAndMove(quad, bb1, offset));
-                }
-            }
         }
     }
 }

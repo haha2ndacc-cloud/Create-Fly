@@ -1,23 +1,19 @@
 package com.zurrtum.create.client.infrastructure.model;
 
 import com.google.common.base.Suppliers;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import com.zurrtum.create.client.foundation.render.CreateRenderTypes;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.renderer.item.ItemStackRenderState.FoilType;
 import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
 import net.minecraft.client.renderer.item.ModelRenderProperties;
-import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
@@ -28,6 +24,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
@@ -35,12 +32,13 @@ import org.jspecify.annotations.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static com.zurrtum.create.Create.MOD_ID;
+import static com.zurrtum.create.client.flywheel.lib.model.baked.ItemModelRenderHelper.submitCustomLayerWithLight;
+import static com.zurrtum.create.client.flywheel.lib.model.baked.ItemModelRenderHelper.submitQuads;
 
-public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<ItemDisplayContext> {
+public class SymmetryWandModel implements ItemModel {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/wand_of_symmetry");
     public static final Identifier ITEM_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/wand_of_symmetry/item");
     public static final Identifier CORE_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/wand_of_symmetry/core");
@@ -49,10 +47,7 @@ public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<ItemDi
         "item/wand_of_symmetry/core_glow"
     );
     public static final Identifier BITS_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/wand_of_symmetry/bits");
-    private static final int[] TINTS = new int[0];
-
     private final ModelRenderProperties settings;
-    private final Matrix4fc transformation;
     private final List<BakedQuad> item;
     private final List<BakedQuad> core;
     private final List<BakedQuad> coreGlow;
@@ -61,14 +56,12 @@ public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<ItemDi
 
     public SymmetryWandModel(
         ModelRenderProperties settings,
-        Matrix4fc transformation,
         List<BakedQuad> item,
         List<BakedQuad> core,
         List<BakedQuad> coreGlow,
         List<BakedQuad> bits
     ) {
         this.settings = settings;
-        this.transformation = transformation;
         this.item = item;
         this.core = core;
         this.coreGlow = coreGlow;
@@ -104,59 +97,17 @@ public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<ItemDi
     ) {
         state.appendModelIdentityElement(this);
         state.setAnimated();
-        LayerRenderState renderState = state.newLayer();
-        renderState.setExtents(vector);
-        renderState.setLocalTransform(transformation);
-        renderState.setupSpecialModel(this, displayContext);
-        settings.applyToLayer(renderState, displayContext);
-    }
-
-    @Override
-    public void submit(
-        @Nullable ItemDisplayContext displayContext,
-        PoseStack matrices,
-        SubmitNodeCollector queue,
-        int light,
-        int overlay,
-        boolean glint,
-        int i
-    ) {
-        assert displayContext != null;
+        submitQuads(state, settings, displayContext, item).setExtents(vector);
         int maxLight = displayContext == ItemDisplayContext.GUI ? 0 : LightCoordsUtil.FULL_BRIGHT;
-
-        renderItem(displayContext, matrices, queue, light, overlay, item);
-        renderItem(displayContext, matrices, queue, maxLight, overlay, core);
-        renderItem(displayContext, matrices, queue, maxLight, overlay, coreGlow);
-
-        matrices.pushPose();
+        submitCustomLayerWithLight(state, settings, displayContext, maxLight, core);
+        submitCustomLayerWithLight(state, settings, displayContext, maxLight, coreGlow);
+        LayerRenderState bitsLayer = submitCustomLayerWithLight(state, settings, displayContext, maxLight, bits);
         float worldTime = AnimationTickHolder.getRenderTime() / 20;
         float floating = Mth.sin(worldTime) * 0.05f;
         float angle = worldTime * -10 % 360;
-        matrices.rotateAround(Axis.YP.rotationDegrees(angle), 0.5f, 0.5f, 0.5f);
-        matrices.translate(0, floating, 0);
-        renderItem(displayContext, matrices, queue, maxLight, overlay, bits);
-        matrices.popPose();
-    }
-
-    private static void renderItem(
-        ItemDisplayContext displayContext,
-        PoseStack matrices,
-        SubmitNodeCollector queue,
-        int light,
-        int overlay,
-        List<BakedQuad> item
-    ) {
-        queue.submitItem(matrices, displayContext, light, overlay, 0, TINTS, item, FoilType.NONE);
-    }
-
-    @Override
-    public void getExtents(Consumer<Vector3fc> output) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ItemDisplayContext extractArgument(ItemStack stack) {
-        throw new UnsupportedOperationException();
+        Matrix4f pose = bitsLayer.localTransform;
+        pose.rotateAround(Axis.YP.rotationDegrees(angle), 0.5f, 0.5f, 0.5f);
+        pose.translate(0, floating, 0);
     }
 
     public static class Unbaked implements ItemModel.Unbaked {
@@ -200,7 +151,7 @@ public class SymmetryWandModel implements ItemModel, SpecialModelRenderer<ItemDi
                 ChunkSectionLayer.TRANSLUCENT,
                 CreateRenderTypes.itemGlowingTranslucent()
             );
-            return new SymmetryWandModel(settings, transformation, quads, core, coreGlow, bits);
+            return new SymmetryWandModel(settings, quads, core, coreGlow, bits);
         }
     }
 }

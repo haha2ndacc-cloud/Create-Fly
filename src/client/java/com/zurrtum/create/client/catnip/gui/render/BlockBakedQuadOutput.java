@@ -1,16 +1,18 @@
 package com.zurrtum.create.client.catnip.gui.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.QuadInstance;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.zurrtum.create.client.flywheel.lib.model.baked.BufferPoseEmitter;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.block.BlockQuadOutput;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import org.jetbrains.annotations.UnknownNullability;
 
-public class BlockBakedQuadOutput implements BlockQuadOutput {
+public class BlockBakedQuadOutput implements BufferPoseEmitter {
     public final MultiBufferSource bufferSource;
     @UnknownNullability
     public VertexConsumer buffer;
@@ -53,5 +55,15 @@ public class BlockBakedQuadOutput implements BlockQuadOutput {
         } else {
             buffer.putBakedQuad(poseStack.last(), quad, instance);
         }
+    }
+
+    @Override
+    public Pose getPose() {
+        return poseStack.last();
+    }
+
+    @Override
+    public VertexConsumer getBuffer(boolean shade, ChunkSectionLayer layer) {
+        return buffer;
     }
 }

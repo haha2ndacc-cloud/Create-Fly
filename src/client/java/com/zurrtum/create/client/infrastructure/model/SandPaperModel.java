@@ -2,23 +2,22 @@ package com.zurrtum.create.client.infrastructure.model;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.zurrtum.create.AllDataComponents;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ItemModelRenderHelper;
 import com.zurrtum.create.infrastructure.component.SandPaperItemComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.item.*;
 import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
-import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvedModel;
+import net.minecraft.client.resources.model.cuboid.ItemTransform;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.TextureSlots;
 import net.minecraft.resources.Identifier;
@@ -27,28 +26,28 @@ import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
+import org.joml.Quaternionf;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import static com.zurrtum.create.Create.MOD_ID;
+import static com.zurrtum.create.client.flywheel.lib.model.baked.ItemModelRenderHelper.submitQuads;
 
-public class SandPaperModel implements ItemModel, SpecialModelRenderer<SandPaperModel.RenderData> {
+public class SandPaperModel implements ItemModel {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/sand_paper");
 
     private final List<BakedQuad> quads;
     private final ModelRenderProperties settings;
-    private final Supplier<Vector3fc[]> vector;
-    private final Matrix4fc transformation;
+    private final Supplier<Vector3fc[]> extents;
 
-    public SandPaperModel(List<BakedQuad> quads, ModelRenderProperties settings, Matrix4fc transformation) {
+    public SandPaperModel(List<BakedQuad> quads, ModelRenderProperties settings) {
         this.quads = quads;
         this.settings = settings;
-        this.transformation = transformation;
-        this.vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(this.quads));
+        this.extents = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(this.quads));
     }
 
     @Override
@@ -63,126 +62,74 @@ public class SandPaperModel implements ItemModel, SpecialModelRenderer<SandPaper
     ) {
         state.appendModelIdentityElement(this);
         state.setAnimated();
-        ItemStackRenderState.LayerRenderState layerRenderState = state.newLayer();
-        layerRenderState.setExtents(vector);
-        layerRenderState.setLocalTransform(transformation);
-        settings.applyToLayer(layerRenderState, displayContext);
-        layerRenderState.prepareQuadList().addAll(quads);
-
-        RenderData data = new RenderData(displayContext, layerRenderState);
+        LayerRenderState itemLayer = submitQuads(state, settings, displayContext, quads);
+        itemLayer.setExtents(extents);
         Player entity;
+        int itemInUseCount;
         if (ctx instanceof Player player) {
-            data.itemInUseCount = player.getUseItemRemainingTicks();
+            itemInUseCount = player.getUseItemRemainingTicks();
             entity = player;
         } else {
             LocalPlayer player = Minecraft.getInstance().player;
-            data.itemInUseCount = player.getUseItemRemainingTicks();
+            itemInUseCount = player.getUseItemRemainingTicks();
             entity = player;
         }
-
+        boolean leftHand = displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
+        if ((leftHand || displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND) && itemInUseCount > 0) {
+            Matrix4f pose = itemLayer.localTransform;
+            pose.translate(0.5F, 0.5F, 0.5F);
+            if (leftHand) {
+                pose.translate(-.5f, 0, -.25f);
+                pose.rotate(Axis.ZP.rotationDegrees(-40));
+                pose.rotate(Axis.XP.rotationDegrees(-10));
+                pose.rotate(Axis.YP.rotationDegrees(-90));
+            } else {
+                pose.translate(.5f, 0, -.25f);
+                pose.rotate(Axis.ZP.rotationDegrees(40));
+                pose.rotate(Axis.XP.rotationDegrees(10));
+                pose.rotate(Axis.YP.rotationDegrees(90));
+            }
+            pose.translate(-0.5F, -0.5F, -0.5F);
+        }
         SandPaperItemComponent component = stack.get(AllDataComponents.SAND_PAPER_POLISHING);
         if (component != null) {
-            int maxUseTime = stack.getUseDuration(entity);
-            boolean jeiMode = stack.has(AllDataComponents.SAND_PAPER_JEI);
-            float partialTicks = AnimationTickHolder.getPartialTicks();
-            float time = (float) (!jeiMode ? data.itemInUseCount : (-AnimationTickHolder.getTicks()) % maxUseTime) - partialTicks + 1.0F;
-            data.reverseBobbing = time / (float) maxUseTime < 0.8F;
-            if (data.reverseBobbing) {
-                data.bobbing = -Mth.abs(Mth.cos(time / 4.0F * (float) Math.PI) * 0.1F);
+            int i = state.activeLayerCount;
+            resolver.appendItemLayers(state, component.item(), ItemDisplayContext.GUI, world, ctx, seed);
+            int size = state.activeLayerCount;
+            if (i != size) {
+                int maxUseTime = stack.getUseDuration(entity);
+                boolean jeiMode = stack.has(AllDataComponents.SAND_PAPER_JEI);
+                float partialTicks = AnimationTickHolder.getPartialTicks();
+                float time = (float) (jeiMode ? (-AnimationTickHolder.getTicks()) % maxUseTime : itemInUseCount) - partialTicks + 1.0F;
+                LayerRenderState[] layers = state.layers;
+                ItemTransform transform = settings.transforms().getTransform(displayContext);
+                boolean applyLeftHandFix = displayContext.leftHand();
+                boolean reverseBobbing = time / (float) maxUseTime < 0.8F;
+                boolean isGui = displayContext == ItemDisplayContext.GUI;
+                Quaternionf rotate = isGui ? null : Axis.YP.rotationDegrees(leftHand ? -40 : 40);
+                float bobbing = reverseBobbing ? -Mth.abs(Mth.cos(time / 4.0F * (float) Math.PI) * 0.1F) : 0;
+                for (; i < size; i++) {
+                    LayerRenderState layer = layers[i];
+                    ItemTransform itemTransform = layer.itemTransform;
+                    layer.itemTransform = transform;
+                    Matrix4f pose = layer.localTransform;
+                    pose.mulLocal(ItemModelRenderHelper.getPose(applyLeftHandFix, itemTransform));
+                    if (reverseBobbing) {
+                        if (isGui) {
+                            pose.translateLocal(bobbing, bobbing, 0.0F);
+                        } else {
+                            pose.translateLocal(0.0F, bobbing, 0.0F);
+                        }
+                    }
+                    if (isGui) {
+                        pose.scaleLocal(.75f);
+                        pose.translateLocal(0.5f, 0.7f, 1.5f);
+                    } else {
+                        pose.rotateLocal(rotate);
+                        pose.translateLocal(0.5f, 0.5f, 0.5f);
+                    }
+                }
             }
-
-            ItemStack toPolish = component.item();
-            data.item = new ItemStackRenderState();
-            data.item.displayContext = displayContext;
-            resolver.appendItemLayers(data.item, toPolish, ItemDisplayContext.GUI, world, ctx, seed);
-        }
-
-        layerRenderState.setupSpecialModel(this, data);
-    }
-
-    @Override
-    public void submit(
-        @Nullable RenderData data,
-        PoseStack matrices,
-        SubmitNodeCollector queue,
-        int light,
-        int overlay,
-        boolean glint,
-        int i
-    ) {
-        assert data != null;
-        LayerRenderState state = data.state;
-        ItemDisplayContext displayContext = data.displayContext;
-        boolean leftHand = displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
-        boolean firstPerson = leftHand || displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
-
-        matrices.pushPose();
-        if (firstPerson && data.itemInUseCount > 0) {
-            int modifier = leftHand ? -1 : 1;
-            matrices.translate(0.5F, 0.5F, 0.5F);
-            matrices.translate(modifier * .5f, 0, -.25f);
-            matrices.mulPose(Axis.ZP.rotationDegrees(modifier * 40));
-            matrices.mulPose(Axis.XP.rotationDegrees(modifier * 10));
-            matrices.mulPose(Axis.YP.rotationDegrees(modifier * 90));
-            matrices.translate(-0.5F, -0.5F, -0.5F);
-        }
-        queue.submitItem(
-            matrices,
-            displayContext,
-            light,
-            overlay,
-            0,
-            LayerRenderState.EMPTY_TINTS,
-            state.prepareQuadList(),
-            state.foilType
-        );
-        matrices.popPose();
-
-        if (data.item == null) {
-            return;
-        }
-
-        matrices.pushPose();
-        matrices.translate(0.5F, 0.5F, 0.5F);
-        if (displayContext == ItemDisplayContext.GUI) {
-            matrices.translate(0.0F, .2f, 1.0F);
-            matrices.scale(.75f, .75f, .75f);
-        } else {
-            int modifier = leftHand ? -1 : 1;
-            matrices.mulPose(Axis.YP.rotationDegrees(modifier * 40));
-        }
-        if (data.reverseBobbing) {
-            if (displayContext == ItemDisplayContext.GUI) {
-                matrices.translate(data.bobbing, data.bobbing, 0.0F);
-            } else {
-                matrices.translate(0.0F, data.bobbing, 0.0F);
-            }
-        }
-        data.item.submit(matrices, queue, light, overlay, 0);
-        matrices.popPose();
-    }
-
-    @Override
-    public void getExtents(Consumer<Vector3fc> output) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public RenderData extractArgument(ItemStack stack) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static class RenderData {
-        ItemDisplayContext displayContext;
-        LayerRenderState state;
-        @Nullable ItemStackRenderState item;
-        int itemInUseCount;
-        boolean reverseBobbing;
-        float bobbing;
-
-        public RenderData(ItemDisplayContext displayContext, LayerRenderState state) {
-            this.displayContext = displayContext;
-            this.state = state;
         }
     }
 
@@ -207,7 +154,7 @@ public class SandPaperModel implements ItemModel, SpecialModelRenderer<SandPaper
             TextureSlots textures = model.getTopTextureSlots();
             List<BakedQuad> quads = model.bakeTopGeometry(textures, baker, BlockModelRotation.IDENTITY).getAll();
             ModelRenderProperties settings = ModelRenderProperties.fromResolvedModel(baker, model, textures);
-            return new SandPaperModel(quads, settings, transformation);
+            return new SandPaperModel(quads, settings);
         }
     }
 }

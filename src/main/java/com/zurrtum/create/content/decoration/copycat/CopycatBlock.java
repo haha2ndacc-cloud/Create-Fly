@@ -33,7 +33,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public abstract class CopycatBlock extends Block implements IBE<CopycatBlockEntity>, IWrenchable, ResistanceControlBlock, SlipperinessControlBlock, EnchantingControlBlock, AppearanceControlBlock, SoundControlBlock, LightControlBlock, SelfEmissiveLightingBlock {
+public abstract class CopycatBlock extends Block implements IBE<CopycatBlockEntity>, IWrenchable, ResistanceControlBlock, SlipperinessControlBlock, EnchantingControlBlock, AppearanceControlBlock, SoundControlBlock {
 
     public CopycatBlock(Properties pProperties) {
         super(pProperties);
@@ -362,7 +362,6 @@ public abstract class CopycatBlock extends Block implements IBE<CopycatBlockEnti
         return material.getFriction();
     }
 
-    @Override
     public int getLuminance(BlockGetter world, BlockPos pos) {
         return getMaterial(world, pos).getLightEmission();
     }

@@ -17,8 +17,6 @@ public class MixinPlugin implements IMixinConfigPlugin {
         mixins = new ArrayList<>();
         FabricLoader loader = FabricLoader.getInstance();
         //        if (loader.isModLoaded("sodium")) {
-        //            mixins.add("FabricModelAccessMixin");
-        //            mixins.add("AbstractBlockRenderContextMixin");
         //        }
         //        if (loader.isModLoaded("iris")) {
         //            mixins.add("IrisPipelinesMixin");
@@ -35,16 +33,29 @@ public class MixinPlugin implements IMixinConfigPlugin {
         if (!loader.isModLoaded("fabric-creative-tab-api-v1")) {
             mixins.add("CreativeModeInventoryScreenMixin");
         }
-//        if (loader.isModLoaded("fabric-renderer-api-v1")) {
-//            mixins.add("FabricBlockStateModelMixin");
-//        }
-//        if (loader.isModLoaded("fabric-renderer-indigo")) {
-//            mixins.add("BlockRenderInfoMixin");
-//            mixins.add("AbstractTerrainRenderContextMixin");
-//        }
-        if (loader.isModLoaded("fabric-model-loading-api-v1")) {
-//            mixins.add("WrapperBlockStateModelMixin");
+        if (loader.isModLoaded("fabric-renderer-api-v1")) {
+            mixins.add("WrapperBlockStateModelMixin");
+            mixins.add("CopycatModelMixin");
+            mixins.add("CopycatStepModelMixin");
+            mixins.add("CopycatPanelModelMixin");
+            mixins.add("ModelRenderHelperMixin");
+            mixins.add("BufferEmitterMixin");
+            mixins.add("BufferPoseEmitterMixin");
+            mixins.add("BufferColorPoseEmitterMixin");
+            mixins.add("BufferAoPoseEmitterMixin");
+            mixins.add("ItemModelRenderHelperMixin");
+            mixins.add("BakedModelHelperMixin");
         } else {
+            mixins.add("CuboidModelElementDeserializerMixin");
+            mixins.add("CuboidModelElementMixin");
+            mixins.add("UnbakedCuboidGeometryMixin");
+            mixins.add("BakedQuadMixin");
+            mixins.add("VertexConsumerMixin");
+            mixins.add("ModelBlockRendererMixin");
+            mixins.add("BlockModelLighterMixin");
+            mixins.add("TerrainParticleMixin");
+        }
+        if (!loader.isModLoaded("fabric-model-loading-api-v1")) {
             mixins.add("LoadBlockModelMixin");
         }
     }

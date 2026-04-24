@@ -1,5 +1,19 @@
 {
   "model": {
-    "type": "create:model/goggles"
+    "type": "minecraft:select",
+    "cases": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "create:block/goggles"
+        },
+        "when": "head"
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "create:item/goggles"
+    },
+    "property": "minecraft:display_context"
   }
 }

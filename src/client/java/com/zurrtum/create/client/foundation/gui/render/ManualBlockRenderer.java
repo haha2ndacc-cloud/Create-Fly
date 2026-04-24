@@ -7,13 +7,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
 import com.zurrtum.create.client.catnip.gui.render.GpuTexture;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
@@ -28,15 +28,11 @@ public class ManualBlockRenderer extends PictureInPictureRenderer<ManualBlockRen
     private static final Deque<GpuTexture> TEXTURES = new ArrayDeque<>(MAX);
     private final PoseStack matrices = new PoseStack();
     private final BlockBakedQuadOutput output;
-    private final ModelBlockRenderer blockRenderer;
     private int windowScaleFactor;
 
     public ManualBlockRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
         output = new BlockBakedQuadOutput(vertexConsumers, matrices);
-        Minecraft minecraft = Minecraft.getInstance();
-        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
-        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -73,7 +69,7 @@ public class ManualBlockRenderer extends PictureInPictureRenderer<ManualBlockRen
         world.blockState(block.state());
         BlockStateModel model = mc.getModelManager().getBlockStateModelSet().get(block.state());
         output.updateBuffer(model);
-        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, block.state(), model, 42L);
+        ModelRenderHelper.getHelper(output).tesselateBlock(0, 0, 0, world, BlockPos.ZERO, block.state(), model, 42L);
         output.clearBuffer();
 
         bufferSource.endBatch();

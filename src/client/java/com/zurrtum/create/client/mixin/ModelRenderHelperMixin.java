@@ -1,0 +1,113 @@
+package com.zurrtum.create.client.mixin;
+
+import com.zurrtum.create.client.flywheel.lib.model.baked.BufferEmitterOutput;
+import com.zurrtum.create.client.flywheel.lib.model.baked.FabricEmitterSupplier;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
+import net.fabricmc.fabric.api.client.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.client.renderer.v1.mesh.MutableQuadView;
+import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
+import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadTransform;
+import net.fabricmc.fabric.api.client.renderer.v1.render.AltModelBlockRenderer;
+import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.UnknownNullability;
+import org.jspecify.annotations.NonNull;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+
+@Mixin(ModelRenderHelper.class)
+public class ModelRenderHelperMixin {
+    @Shadow
+    private static @UnknownNullability ModelConsumer CULL_INSTANCE;
+    @Shadow
+    private static @UnknownNullability ModelConsumer INSTANCE;
+
+    @Overwrite(remap = false)
+    public static void onReloadLevelRenderer() {
+        Minecraft mc = Minecraft.getInstance();
+        boolean ao = mc.options.ambientOcclusion().get();
+        BlockColors blockColors = mc.getBlockColors();
+        Renderer renderer = Renderer.get();
+        AltModelBlockRenderer aoRender = renderer.altModelBlockRenderer(ao, false, blockColors);
+        AltModelBlockRenderer cullRender = renderer.altModelBlockRenderer(ao, true, blockColors);
+        if (ao) {
+            INSTANCE = new Consumer(aoRender);
+            CULL_INSTANCE = new Consumer(cullRender);
+        } else {
+            INSTANCE = new FlatConsumer(aoRender);
+            CULL_INSTANCE = new FlatConsumer(cullRender);
+        }
+    }
+
+    private static class FlatConsumer implements ModelConsumer {
+        private final AltModelBlockRenderer renderer;
+        protected @UnknownNullability QuadEmitter emitter;
+
+        public FlatConsumer(AltModelBlockRenderer renderer) {
+            this.renderer = renderer;
+        }
+
+        @Override
+        public void updateOutput(@NonNull BufferEmitterOutput output) {
+            emitter = ((FabricEmitterSupplier) output).quadEmitter();
+        }
+
+        @Override
+        public void tesselateBlock(
+            float x,
+            float y,
+            float z,
+            @NonNull BlockAndTintGetter level,
+            @NonNull BlockPos pos,
+            @NonNull BlockState blockState,
+            @NonNull BlockStateModel model,
+            long seed
+        ) {
+            renderer.tesselateBlock(emitter, x, y, z, level, pos, blockState, model, seed);
+        }
+    }
+
+    private static class Consumer extends FlatConsumer implements QuadTransform {
+        private TriState defaultAo;
+
+        public Consumer(AltModelBlockRenderer renderer) {
+            super(renderer);
+        }
+
+        @Override
+        public void updateOutput(@NonNull BufferEmitterOutput output) {
+            super.updateOutput(output);
+            emitter.pushTransform(this);
+        }
+
+        @Override
+        public void tesselateBlock(
+            float x,
+            float y,
+            float z,
+            @NonNull BlockAndTintGetter level,
+            @NonNull BlockPos pos,
+            @NonNull BlockState blockState,
+            @NonNull BlockStateModel model,
+            long seed
+        ) {
+            defaultAo = TriState.of(blockState.getLightEmission() == 0);
+            super.tesselateBlock(x, y, z, level, pos, blockState, model, seed);
+        }
+
+        @Override
+        public boolean transform(@NonNull MutableQuadView quad) {
+            if (quad.ambientOcclusion() == TriState.DEFAULT) {
+                quad.ambientOcclusion(defaultAo);
+            }
+            return true;
+        }
+    }
+}

@@ -1,0 +1,123 @@
+package com.zurrtum.create.client.infrastructure.model;
+
+import com.google.common.base.Suppliers;
+import com.mojang.math.Transformation;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.client.color.item.ItemTintSource;
+import net.minecraft.client.color.item.ItemTintSources;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
+import net.minecraft.client.renderer.item.*;
+import net.minecraft.client.renderer.item.ItemStackRenderState.FoilType;
+import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ResolvableModel;
+import net.minecraft.client.resources.model.ResolvedModel;
+import net.minecraft.client.resources.model.geometry.QuadCollection;
+import net.minecraft.client.resources.model.sprite.TextureSlots;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.ItemOwner;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4fc;
+import org.joml.Vector3fc;
+import org.jspecify.annotations.Nullable;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import static com.zurrtum.create.Create.MOD_ID;
+import static com.zurrtum.create.client.flywheel.lib.model.baked.ItemModelRenderHelper.submitQuads;
+
+/**
+ * When FAPI loads, use FRAPI rendering instead of the default rendering.
+ */
+public class NormalModel implements ItemModel {
+    public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/normal");
+    private final List<ItemTintSource> tints;
+    private final QuadCollection quads;
+    private final Supplier<Vector3fc[]> extents;
+    private final ModelRenderProperties properties;
+    private final Matrix4fc transformation;
+
+    private NormalModel(
+        List<ItemTintSource> tints,
+        QuadCollection quads,
+        ModelRenderProperties properties,
+        Matrix4fc transformation
+    ) {
+        this.tints = tints;
+        this.quads = quads;
+        this.properties = properties;
+        this.transformation = transformation;
+        extents = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(quads.getAll()));
+    }
+
+    @Override
+    public void update(
+        ItemStackRenderState output,
+        ItemStack item,
+        ItemModelResolver resolver,
+        ItemDisplayContext displayContext,
+        @Nullable ClientLevel level,
+        @Nullable ItemOwner owner,
+        int seed
+    ) {
+        output.appendModelIdentityElement(this);
+        LayerRenderState layer = submitQuads(output, properties, displayContext, quads.getAll());
+        if (item.hasFoil()) {
+            layer.setFoilType(FoilType.STANDARD);
+            output.setAnimated();
+            output.appendModelIdentityElement(FoilType.STANDARD);
+        } else if (quads.hasMaterialFlag(2)) {
+            output.setAnimated();
+        }
+        if (!tints.isEmpty()) {
+            IntList tintLayers = layer.tintLayers();
+            for (ItemTintSource tintSource : tints) {
+                int tint = tintSource.calculate(item, level, owner == null ? null : owner.asLivingEntity());
+                tintLayers.add(tint);
+                output.appendModelIdentityElement(tint);
+            }
+        }
+        layer.setExtents(extents);
+        layer.setLocalTransform(transformation);
+    }
+
+    public record Unbaked(Identifier model, Optional<Transformation> transformation,
+                          List<ItemTintSource> tints) implements ItemModel.Unbaked {
+        public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+            Identifier.CODEC.fieldOf("model").forGetter(Unbaked::model),
+            Transformation.EXTENDED_CODEC.optionalFieldOf("transformation").forGetter(Unbaked::transformation),
+            ItemTintSources.CODEC.listOf().optionalFieldOf("tints", List.of()).forGetter(Unbaked::tints)
+        ).apply(i, Unbaked::new));
+
+        @Override
+        public void resolveDependencies(ResolvableModel.Resolver resolver) {
+            resolver.markDependency(model);
+        }
+
+        @Override
+        public ItemModel bake(BakingContext context, Matrix4fc transformation) {
+            ModelBaker baker = context.blockModelBaker();
+            ResolvedModel resolvedModel = baker.getModel(model);
+            TextureSlots textureSlots = resolvedModel.getTopTextureSlots();
+            QuadCollection quads = resolvedModel.bakeTopGeometry(textureSlots, baker, BlockModelRotation.IDENTITY);
+            ModelRenderProperties properties = ModelRenderProperties.fromResolvedModel(
+                baker,
+                resolvedModel,
+                textureSlots
+            );
+            Matrix4fc modelTransform = Transformation.compose(transformation, this.transformation);
+            return new NormalModel(tints, quads, properties, modelTransform);
+        }
+
+        @Override
+        public MapCodec<Unbaked> type() {
+            return CODEC;
+        }
+    }
+}

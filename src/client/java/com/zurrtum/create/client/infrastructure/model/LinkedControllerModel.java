@@ -97,7 +97,7 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Re
     private final int[] tints = new int[0];
     private final ModelRenderProperties settings;
     private final Matrix4fc transformation;
-    private final Supplier<Vector3fc[]> vector;
+    private final Supplier<Vector3fc[]> extents;
     private final List<BakedQuad> item;
     private final List<BakedQuad> powered;
     private final List<BakedQuad> torch;
@@ -116,7 +116,7 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Re
         this.settings = settings;
         this.transformation = transformation;
         this.item = item;
-        vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(item));
+        extents = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(item));
         this.powered = powered;
         this.torch = torch;
         this.torchOff = torchOff;
@@ -136,7 +136,7 @@ public class LinkedControllerModel implements ItemModel, SpecialModelRenderer<Re
         state.appendModelIdentityElement(this);
         state.setAnimated();
         LayerRenderState layerRenderState = state.newLayer();
-        layerRenderState.setExtents(vector);
+        layerRenderState.setExtents(extents);
         layerRenderState.setLocalTransform(transformation);
         settings.applyToLayer(layerRenderState, displayContext);
 

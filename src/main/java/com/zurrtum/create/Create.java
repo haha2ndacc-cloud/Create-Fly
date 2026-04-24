@@ -132,6 +132,7 @@ public class Create implements ModInitializer {
         AllPlacementModifiers.register();
         AllMountedDispenseItemBehaviors.register();
         AllBlockSpoutingBehaviours.register();
+        AllDataComponentPredicates.register();
         //        CompatMod.register();
     }
 }

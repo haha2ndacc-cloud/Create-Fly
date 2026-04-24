@@ -36,6 +36,7 @@
 		{
 			"from": [3, -1, 6.5],
 			"to": [13, 17, 9.5],
+			"neoforge_data": {"calculate_normals": true},
 			"rotation": {"angle": 45, "axis": "x", "origin": [8, 8, 8]},
 			"faces": {
 				"north": {"uv": [0, 9, 9, 14], "rotation": 270, "texture": "#4"},
@@ -49,6 +50,7 @@
 		{
 			"from": [3, 6.5, -1],
 			"to": [13, 9.5, 17],
+			"neoforge_data": {"calculate_normals": true},
 			"rotation": {"angle": 45, "axis": "x", "origin": [8, 8, 8]},
 			"faces": {
 				"north": {"uv": [10, 6.5, 15, 8], "texture": "#4"},
@@ -88,6 +90,7 @@
 		{
 			"from": [3.05, 0.9, 5.5],
 			"to": [12.95, 15.1, 10.5],
+			"neoforge_data": {"calculate_normals": true},
 			"rotation": {"angle": 22.5, "axis": "x", "origin": [8, 8, 8]},
 			"faces": {
 				"east": {"uv": [1, 7, 1.5, 7.5], "texture": "#4"},
@@ -99,6 +102,7 @@
 		{
 			"from": [3.05, 5.5, 0.9],
 			"to": [12.95, 10.5, 15.1],
+			"neoforge_data": {"calculate_normals": true},
 			"rotation": {"angle": 22.5, "axis": "x", "origin": [8, 8, 8]},
 			"faces": {
 				"north": {"uv": [10, 9, 15, 11.5], "texture": "#4"},
@@ -110,6 +114,7 @@
 		{
 			"from": [3.05, 0.9, 5.5],
 			"to": [12.95, 15.1, 10.5],
+			"neoforge_data": {"calculate_normals": true},
 			"rotation": {"angle": -22.5, "axis": "x", "origin": [8, 8, 8]},
 			"faces": {
 				"east": {"uv": [1, 7, 1.5, 7.5], "rotation": 180, "texture": "#4"},
@@ -121,6 +126,7 @@
 		{
 			"from": [3.05, 5.5, 0.9],
 			"to": [12.95, 10.5, 15.1],
+			"neoforge_data": {"calculate_normals": true},
 			"rotation": {"angle": -22.5, "axis": "x", "origin": [8, 8, 8]},
 			"faces": {
 				"north": {"uv": [10, 9, 15, 11.5], "texture": "#4"},

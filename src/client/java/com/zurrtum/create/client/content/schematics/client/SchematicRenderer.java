@@ -8,13 +8,14 @@ import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper;
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper.BlockEntityListRenderState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.block.BlockModelLighter;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.world.level.block.RenderShape;
@@ -105,8 +106,7 @@ public class SchematicRenderer {
 
         EntityBlockSbbBuilder sbbBuilder = objects.sbbBuilder;
         schematic.renderMode = true;
-        boolean ambientOcclusion = mc.options.ambientOcclusion().get();
-        ModelBlockRenderer renderer = new ModelBlockRenderer(ambientOcclusion, true, mc.getBlockColors());
+        ModelConsumer renderer = ModelRenderHelper.getCullHelper(sbbBuilder);
         BlockModelLighter.enableCaching();
         for (BlockPos localPos : BlockPos.betweenClosed(
             bounds.minX(),
@@ -120,7 +120,6 @@ public class SchematicRenderer {
             BlockState state = schematic.getBlockState(pos);
             if (state.getRenderShape() == RenderShape.MODEL) {
                 renderer.tesselateBlock(
-                    sbbBuilder,
                     pos.getX(),
                     pos.getY(),
                     pos.getZ(),

@@ -1,25 +1,19 @@
 package com.zurrtum.create.client.infrastructure.model;
 
 import com.google.common.base.Suppliers;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.scrollValue.ScrollValueHandler;
-import com.zurrtum.create.client.infrastructure.model.WrenchModel.RenderData;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.item.*;
-import net.minecraft.client.renderer.item.ItemStackRenderState.FoilType;
 import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
-import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.TextureSlots;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -29,36 +23,35 @@ import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static com.zurrtum.create.Create.MOD_ID;
+import static com.zurrtum.create.client.flywheel.lib.model.baked.ItemModelRenderHelper.submitQuads;
 
-public class WrenchModel implements ItemModel, SpecialModelRenderer<RenderData> {
+public class WrenchModel implements ItemModel {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/wrench");
     public static final Identifier ITEM_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/wrench/item");
     public static final Identifier GEAR_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/wrench/gear");
 
     private final List<BakedQuad> itemQuads;
     private final ModelRenderProperties itemSettings;
-    private final Supplier<Vector3fc[]> itemVector;
+    private final Supplier<Vector3fc[]> itemExtents;
     private final List<BakedQuad> gearQuads;
     private final ModelRenderProperties gearSettings;
-    private final Supplier<Vector3fc[]> gearVector;
-    private final Matrix4fc transformation;
+    private final Supplier<Vector3fc[]> gearExtents;
 
     public WrenchModel(
-        Matrix4fc transformation,
-        Tuple<List<BakedQuad>, ModelRenderProperties> item,
-        Tuple<List<BakedQuad>, ModelRenderProperties> gear
+        List<BakedQuad> itemQuads,
+        ModelRenderProperties itemSettings,
+        List<BakedQuad> gearQuads,
+        ModelRenderProperties gearSettings
     ) {
-        this.transformation = transformation;
-        itemQuads = item.getA();
-        itemSettings = item.getB();
-        itemVector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(itemQuads));
-        gearQuads = gear.getA();
-        gearSettings = gear.getB();
-        gearVector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(gearQuads));
+        this.itemQuads = itemQuads;
+        this.itemSettings = itemSettings;
+        itemExtents = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(this.itemQuads));
+        this.gearQuads = gearQuads;
+        this.gearSettings = gearSettings;
+        gearExtents = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(this.gearQuads));
     }
 
     @Override
@@ -73,71 +66,11 @@ public class WrenchModel implements ItemModel, SpecialModelRenderer<RenderData> 
     ) {
         state.appendModelIdentityElement(this);
         state.setAnimated();
-        update(state, displayContext, itemQuads, itemSettings, itemVector, false);
-        update(state, displayContext, gearQuads, gearSettings, gearVector, true);
-    }
-
-    private void update(
-        ItemStackRenderState state,
-        ItemDisplayContext displayContext,
-        List<BakedQuad> quads,
-        ModelRenderProperties settings,
-        Supplier<Vector3fc[]> vector,
-        boolean rotation
-    ) {
-        LayerRenderState layerRenderState = state.newLayer();
-        layerRenderState.setExtents(vector);
-        layerRenderState.setLocalTransform(transformation);
-        settings.applyToLayer(layerRenderState, displayContext);
-        if (rotation) {
-            RenderData data = new RenderData(
-                displayContext,
-                Axis.YP.rotationDegrees(ScrollValueHandler.getScroll(AnimationTickHolder.getPartialTicks())),
-                quads
-            );
-            layerRenderState.setupSpecialModel(this, data);
-        } else {
-            layerRenderState.prepareQuadList().addAll(quads);
-        }
-    }
-
-    @Override
-    public void submit(
-        @Nullable RenderData data,
-        PoseStack matrices,
-        SubmitNodeCollector queue,
-        int light,
-        int overlay,
-        boolean glint,
-        int i
-    ) {
-        assert data != null;
-        matrices.pushPose();
-        matrices.rotateAround(data.rotate, 0.5625f, 0.5f, 0.5f);
-        queue.submitItem(
-            matrices,
-            data.displayContext,
-            light,
-            overlay,
-            0,
-            LayerRenderState.EMPTY_TINTS,
-            data.quads,
-            FoilType.NONE
-        );
-        matrices.popPose();
-    }
-
-    public record RenderData(ItemDisplayContext displayContext, Quaternionf rotate, List<BakedQuad> quads) {
-    }
-
-    @Override
-    public void getExtents(Consumer<Vector3fc> output) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public RenderData extractArgument(ItemStack stack) {
-        throw new UnsupportedOperationException();
+        submitQuads(state, itemSettings, displayContext, itemQuads).setExtents(itemExtents);
+        LayerRenderState gearLayer = submitQuads(state, gearSettings, displayContext, gearQuads);
+        gearLayer.setExtents(gearExtents);
+        Quaternionf rotate = Axis.YP.rotationDegrees(ScrollValueHandler.getScroll(AnimationTickHolder.getPartialTicks()));
+        gearLayer.localTransform.rotateAround(rotate, 0.5625f, 0.5f, 0.5f);
     }
 
     public static class Unbaked implements ItemModel.Unbaked {
@@ -157,15 +90,15 @@ public class WrenchModel implements ItemModel, SpecialModelRenderer<RenderData> 
         @Override
         public ItemModel bake(ItemModel.BakingContext context, Matrix4fc transformation) {
             ModelBaker baker = context.blockModelBaker();
-            return new WrenchModel(transformation, bake(baker, ITEM_ID), bake(baker, GEAR_ID));
-        }
-
-        private static Tuple<List<BakedQuad>, ModelRenderProperties> bake(ModelBaker baker, Identifier id) {
-            ResolvedModel model = baker.getModel(id);
-            TextureSlots textures = model.getTopTextureSlots();
-            List<BakedQuad> quads = model.bakeTopGeometry(textures, baker, BlockModelRotation.IDENTITY).getAll();
-            ModelRenderProperties settings = ModelRenderProperties.fromResolvedModel(baker, model, textures);
-            return new Tuple<>(quads, settings);
+            ResolvedModel item = baker.getModel(ITEM_ID);
+            TextureSlots itemTextures = item.getTopTextureSlots();
+            List<BakedQuad> itemQuads = item.bakeTopGeometry(itemTextures, baker, BlockModelRotation.IDENTITY).getAll();
+            ModelRenderProperties itemSettings = ModelRenderProperties.fromResolvedModel(baker, item, itemTextures);
+            ResolvedModel gear = baker.getModel(GEAR_ID);
+            TextureSlots gearTextures = gear.getTopTextureSlots();
+            List<BakedQuad> gearQuads = gear.bakeTopGeometry(gearTextures, baker, BlockModelRotation.IDENTITY).getAll();
+            ModelRenderProperties gearSettings = ModelRenderProperties.fromResolvedModel(baker, gear, gearTextures);
+            return new WrenchModel(itemQuads, itemSettings, gearQuads, gearSettings);
         }
     }
 }

@@ -11,6 +11,8 @@ import com.zurrtum.create.client.catnip.render.SuperByteBufferCache;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
 import com.zurrtum.create.client.content.contraptions.render.ClientContraption.RenderedBlocks;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper;
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper.BlockEntityListRenderState;
 import com.zurrtum.create.client.foundation.utility.worldWrappers.WrappedBlockAndTintGetter;
@@ -19,13 +21,11 @@ import com.zurrtum.create.content.contraptions.AbstractContraptionEntity;
 import com.zurrtum.create.content.contraptions.Contraption;
 import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
 import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.BlockModelLighter;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -89,9 +89,8 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
         VirtualRenderWorld renderWorld,
         BlockStateModelSet blockStateModelSet
     ) {
-        Minecraft minecraft = Minecraft.getInstance();
-        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
-        ModelBlockRenderer renderer = new ModelBlockRenderer(ambientOcclusion, true, minecraft.getBlockColors());
+        EntityBlockSbbBuilder sbbBuilder = THREAD_LOCAL_OBJECTS.get();
+        ModelConsumer renderer = ModelRenderHelper.getCullHelper(sbbBuilder);
         RenderedBlocks blocks = clientContraption.getRenderedBlocks();
         Function<BlockPos, BlockState> lookup = blocks.lookup();
         BlockAndTintGetter modelWorld = new WrappedBlockAndTintGetter(renderWorld) {
@@ -105,13 +104,11 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
         int offsetY = (int) Math.round(offset.y);
         int offsetZ = (int) Math.round(offset.z);
         MutableBlockPos globalPos = new MutableBlockPos();
-        EntityBlockSbbBuilder sbbBuilder = THREAD_LOCAL_OBJECTS.get();
         BlockModelLighter.enableCaching();
         for (BlockPos pos : blocks.positions()) {
             BlockState state = lookup.apply(pos);
             if (state.getRenderShape() == RenderShape.MODEL) {
                 renderer.tesselateBlock(
-                    sbbBuilder,
                     pos.getX(),
                     pos.getY(),
                     pos.getZ(),

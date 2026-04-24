@@ -10,6 +10,8 @@ import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.SpriteShiftEntry;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import net.minecraft.client.Minecraft;
@@ -17,7 +19,6 @@ import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.SubmitNodeStorage;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.core.BlockPos;
@@ -28,14 +29,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlazeBurnerRenderState> {
     private final BlockBakedQuadOutput output;
-    private final ModelBlockRenderer blockRenderer;
 
     public BasinBlazeBurnerRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
         output = new BlockBakedQuadOutput(vertexConsumers);
-        Minecraft minecraft = Minecraft.getInstance();
-        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
-        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -51,6 +48,7 @@ public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlaz
 
         BlockState blockState;
         BlockStateModel model;
+        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         output.setPoseStack(matrices);
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float offset = -(Mth.sin(AnimationTickHolder.getRenderTime() / 16.0f) + 0.5f) / 16.0f;
@@ -59,7 +57,7 @@ public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlaz
         world.blockState(blockState);
         model = mc.getModelManager().getBlockStateModelSet().get(blockState);
         output.updateBuffer(model);
-        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
         matrices.pushPose();
         blockState = Blocks.AIR.defaultBlockState();
@@ -68,11 +66,11 @@ public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlaz
         boolean seething = state.heat() == HeatLevel.SEETHING;
         model = (seething ? AllPartialModels.BLAZE_SUPER : AllPartialModels.BLAZE_ACTIVE).get();
         output.updateBuffer(model);
-        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.translate(0, offset, 0);
         model = (seething ? AllPartialModels.BLAZE_BURNER_SUPER_RODS_2 : AllPartialModels.BLAZE_BURNER_RODS_2).get();
         output.updateBuffer(model);
-        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
         output.clear();
 

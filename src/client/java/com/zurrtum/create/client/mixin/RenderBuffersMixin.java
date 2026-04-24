@@ -38,5 +38,7 @@ public abstract class RenderBuffersMixin {
         put(map, PonderRenderTypes.getNetherEntityBlockLightTranslucent());
         put(map, CreateRenderTypes.translucent());
         put(map, CreateRenderTypes.additive());
+        put(map, CreateRenderTypes.itemGlowingSolid());
+        put(map, CreateRenderTypes.itemGlowingTranslucent());
     }
 }

@@ -3,7 +3,10 @@ package com.zurrtum.create.client.flywheel.lib.model.baked;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.flywheel.lib.model.SimpleModel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.*;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockModelLighter;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
+import net.minecraft.client.renderer.block.FluidRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.BlockPos;
@@ -35,10 +38,7 @@ final class BakedModelBufferer {
         }
         VanillinMeshEmitterManager emitters = objects.emitters;
         emitters.prepare(blockMaterialFunction, poseStack);
-        Minecraft minecraft = Minecraft.getInstance();
-        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
-        ModelBlockRenderer blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
-        blockRenderer.tesselateBlock(emitters, 0, 0, 0, level, pos, state, model, state.getSeed(pos));
+        ModelRenderHelper.getHelper(emitters).tesselateBlock(0, 0, 0, level, pos, state, model, state.getSeed(pos));
         return emitters.end();
     }
 
@@ -60,9 +60,7 @@ final class BakedModelBufferer {
         BlockStateModelSet blockStateModelSet = modelManager.getBlockStateModelSet();
         FluidRenderer fluidRenderer = new FluidRenderer(modelManager.getFluidStateModelSet());
 
-        Minecraft minecraft = Minecraft.getInstance();
-        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
-        ModelBlockRenderer blockRenderer = new ModelBlockRenderer(ambientOcclusion, true, minecraft.getBlockColors());
+        ModelConsumer blockRenderer = ModelRenderHelper.getCullHelper(emitters);
         BlockModelLighter.enableCaching();
 
         while (posIterator.hasNext()) {
@@ -83,7 +81,6 @@ final class BakedModelBufferer {
 
             if (state.getRenderShape() == RenderShape.MODEL) {
                 blockRenderer.tesselateBlock(
-                    emitters,
                     pos.getX(),
                     pos.getY(),
                     pos.getZ(),

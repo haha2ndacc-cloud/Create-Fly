@@ -3,7 +3,6 @@ package com.zurrtum.create.client.infrastructure.model;
 import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.client.foundation.model.BakedModelHelper;
-import com.zurrtum.create.client.model.NormalsBakedQuad;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
 import com.zurrtum.create.content.decoration.copycat.CopycatPanelBlock;
 import com.zurrtum.create.content.decoration.copycat.CopycatSpecialCases;
@@ -23,14 +22,10 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public class CopycatPanelModel extends CopycatModel {
-    protected static final AABB CUBE_AABB = new AABB(BlockPos.ZERO);
-
     public CopycatPanelModel(BlockState state, UnbakedRoot unbaked) {
         super(state, unbaked);
     }
@@ -49,16 +44,15 @@ public class CopycatPanelModel extends CopycatModel {
             addModelParts(world, pos, material, random, getModelOf(material), parts);
             return;
         }
-        OcclusionData occlusionData = gatherOcclusionData(world, pos, state, material, block);
+        DirectionData directionData = gatherDirectionData(block, state);
         if (CopycatSpecialCases.isBarsMaterial(material)) {
             Direction facing = state.getValueOrElse(CopycatPanelBlock.FACING, Direction.UP);
             BlockState bars = AllBlocks.COPYCAT_BARS.defaultBlockState()
                 .setValue(WrenchableDirectionalBlock.FACING, facing);
             BlockStateModel model = getModelOf(material);
             addBarsParts(
-                occlusionData,
+                directionData,
                 state,
-                block,
                 model.particleMaterial().sprite(),
                 getMaterialParts(world, pos, material, random, model),
                 getMaterialParts(world, pos, material, random, getModelOf(bars)),
@@ -66,9 +60,8 @@ public class CopycatPanelModel extends CopycatModel {
             );
         } else {
             addPanelParts(
-                occlusionData,
+                directionData,
                 state,
-                block,
                 getMaterialParts(world, pos, material, random, getModelOf(material)),
                 parts
             );
@@ -76,89 +69,61 @@ public class CopycatPanelModel extends CopycatModel {
     }
 
     protected void addBarsParts(
-        OcclusionData occlusionData,
+        DirectionData directionData,
         BlockState state,
-        CopycatBlock block,
         TextureAtlasSprite particle,
         List<BlockStateModelPart> material,
         List<BlockStateModelPart> original,
         List<BlockStateModelPart> parts
     ) {
         boolean vertical = state.getValue(CopycatPanelBlock.FACING).getAxis() == Axis.Y;
-        TextureAtlasSprite findSprite = null;
+        TextureAtlasSprite targetSprite = particle;
+        Find:
+        for (BlockStateModelPart materialPart : material) {
+            for (BakedQuad quad : materialPart.getQuads(null)) {
+                if (quad.direction() == Direction.UP) {
+                    targetSprite = quad.materialInfo().sprite();
+                    break Find;
+                }
+            }
+        }
         for (BlockStateModelPart part : original) {
             QuadCollection.Builder builder = new QuadCollection.Builder();
-            addBarsCroppedQuads(particle, part.getQuads(null), builder::addUnculledFace);
+            for (BakedQuad quad : part.getQuads(null)) {
+                builder.addUnculledFace(replaceBarsQuad(quad, particle));
+            }
             for (Direction direction : Iterate.directions) {
-                if (occlusionData.isOccluded(direction)) {
-                    continue;
-                }
-                List<BakedQuad> quads = part.getQuads(direction);
-                TextureAtlasSprite targetSprite = particle;
-                if (vertical || direction.getAxis() == Axis.Y) {
-                    if (findSprite != null) {
-                        targetSprite = findSprite;
-                    } else {
-                        for (BlockStateModelPart materialPart : material) {
-                            for (BakedQuad quad : materialPart.getQuads(null)) {
-                                if (quad.direction() != Direction.UP) {
-                                    continue;
-                                }
-                                targetSprite = findSprite = quad.materialInfo().sprite();
-                                break;
-                            }
-                        }
-                        if (findSprite == null) {
-                            findSprite = particle;
-                        }
+                TextureAtlasSprite sprite = vertical || direction.getAxis() == Axis.Y ? targetSprite : particle;
+                if (directionData.isUncull(direction)) {
+                    for (BakedQuad quad : part.getQuads(direction)) {
+                        builder.addUnculledFace(replaceBarsQuad(quad, sprite));
+                    }
+                } else {
+                    for (BakedQuad quad : part.getQuads(direction)) {
+                        builder.addCulledFace(direction, replaceBarsQuad(quad, sprite));
                     }
                 }
-                addBarsCroppedQuads(
-                    targetSprite,
-                    quads,
-                    block.shouldFaceAlwaysRender(
-                        state,
-                        direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
-                );
             }
             parts.add(new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleMaterial()));
         }
     }
 
-    protected void addBarsCroppedQuads(
-        @Nullable TextureAtlasSprite targetSprite,
-        List<BakedQuad> quads,
-        Consumer<BakedQuad> consumer
-    ) {
-        if (targetSprite == null) {
-            quads.forEach(consumer);
-            return;
-        }
-        for (BakedQuad quad : quads) {
-            MaterialInfo info = quad.materialInfo();
-            TextureAtlasSprite original = info.sprite();
-            BakedQuad newQuad = new BakedQuad(
-                quad.position0(),
-                quad.position1(),
-                quad.position2(),
-                quad.position3(),
-                BakedModelHelper.calcSpriteUv(quad.packedUV0(), original, targetSprite),
-                BakedModelHelper.calcSpriteUv(quad.packedUV1(), original, targetSprite),
-                BakedModelHelper.calcSpriteUv(quad.packedUV2(), original, targetSprite),
-                BakedModelHelper.calcSpriteUv(quad.packedUV3(), original, targetSprite),
-                quad.direction(),
-                info
-            );
-            NormalsBakedQuad.setNormals(newQuad, quad);
-            consumer.accept(newQuad);
-        }
+    protected BakedQuad replaceBarsQuad(BakedQuad quad, TextureAtlasSprite targetSprite) {
+        MaterialInfo info = quad.materialInfo();
+        TextureAtlasSprite original = info.sprite();
+        return BakedModelHelper.replaceBakedQuadUV(
+            quad,
+            BakedModelHelper.calcSpriteUv(quad.packedUV0(), original, targetSprite),
+            BakedModelHelper.calcSpriteUv(quad.packedUV1(), original, targetSprite),
+            BakedModelHelper.calcSpriteUv(quad.packedUV2(), original, targetSprite),
+            BakedModelHelper.calcSpriteUv(quad.packedUV3(), original, targetSprite),
+            info
+        );
     }
 
     protected void addPanelParts(
-        OcclusionData occlusionData,
+        DirectionData directionData,
         BlockState state,
-        CopycatBlock block,
         List<BlockStateModelPart> original,
         List<BlockStateModelPart> parts
     ) {
@@ -166,83 +131,41 @@ public class CopycatPanelModel extends CopycatModel {
             return;
         }
         Direction facing = state.getValueOrElse(CopycatPanelBlock.FACING, Direction.UP);
+        Direction opposite = facing.getOpposite();
         Vec3 normal = Vec3.atLowerCornerOf(facing.getUnitVec3i());
         Vec3 normalScaled14 = normal.scale(14 / 16f);
-        Vec3 frontNormalScaledN13 = normal.scale((float) 0);
-        Vec3 normalScaledN13 = normal.scale(-13 / 16f);
-        double frontContract = 15d / 16;
-        double contract = 14d / 16;
-        AABB frontBB = CUBE_AABB.contract(normal.x * frontContract, normal.y * frontContract, normal.z * frontContract);
-        AABB bb = CUBE_AABB.contract(normal.x * contract, normal.y * contract, normal.z * contract)
-            .move(normalScaled14);
+        AABB front = CUBE_AABB.contract(normal.x * 0.9375d, normal.y * 0.9375d, normal.z * 0.9375d);
+        Vec3 frontOffset = Vec3.ZERO;
+        AABB back = CUBE_AABB.contract(normal.x * 0.875d, normal.y * 0.875d, normal.z * 0.875d).move(normalScaled14);
+        Vec3 backOffset = normal.scale(-0.8125f);
         for (BlockStateModelPart part : original) {
             QuadCollection.Builder builder = new QuadCollection.Builder();
-            addPanelCroppedQuads(
-                facing,
-                frontBB,
-                bb,
-                frontNormalScaledN13,
-                normalScaledN13,
-                part.getQuads(null),
-                builder::addUnculledFace
-            );
+            for (BakedQuad quad : part.getQuads(null)) {
+                builder.addUnculledFace(BakedModelHelper.cropAndMove(quad, front, frontOffset));
+                builder.addUnculledFace(BakedModelHelper.cropAndMove(quad, back, backOffset));
+            }
             for (Direction direction : Iterate.directions) {
-                if (occlusionData.isOccluded(direction)) {
-                    continue;
+                if (directionData.isUncull(direction)) {
+                    for (BakedQuad quad : part.getQuads(direction)) {
+                        if (direction != facing) {
+                            builder.addUnculledFace(BakedModelHelper.cropAndMove(quad, front, frontOffset));
+                        }
+                        if (direction != opposite) {
+                            builder.addUnculledFace(BakedModelHelper.cropAndMove(quad, back, backOffset));
+                        }
+                    }
+                } else {
+                    for (BakedQuad quad : part.getQuads(direction)) {
+                        if (direction != facing) {
+                            builder.addCulledFace(direction, BakedModelHelper.cropAndMove(quad, front, frontOffset));
+                        }
+                        if (direction != opposite) {
+                            builder.addCulledFace(direction, BakedModelHelper.cropAndMove(quad, back, backOffset));
+                        }
+                    }
                 }
-                addPanelCroppedQuads(
-                    facing,
-                    frontBB,
-                    bb,
-                    frontNormalScaledN13,
-                    normalScaledN13,
-                    part.getQuads(direction),
-                    block.shouldFaceAlwaysRender(
-                        state,
-                        direction
-                    ) ? builder::addUnculledFace : (BakedQuad quad) -> builder.addCulledFace(direction, quad)
-                );
             }
             parts.add(new SimpleModelWrapper(builder.build(), part.useAmbientOcclusion(), part.particleMaterial()));
-        }
-    }
-
-    protected void addPanelCroppedQuads(
-        Direction facing,
-        AABB frontBB,
-        AABB bb,
-        Vec3 frontNormalScaledN13,
-        Vec3 normalScaledN13,
-        List<BakedQuad> quads,
-        Consumer<BakedQuad> consumer
-    ) {
-        int size = quads.size();
-        if (size == 0) {
-            return;
-        }
-        AABB crop;
-        Vec3 move;
-        for (boolean front : Iterate.trueAndFalse) {
-            if (front) {
-                crop = frontBB;
-                move = frontNormalScaledN13;
-            } else {
-                crop = bb;
-                move = normalScaledN13;
-            }
-            for (int i = 0; i < size; i++) {
-                BakedQuad quad = quads.get(i);
-                Direction direction = quad.direction();
-
-                if (front && direction == facing) {
-                    continue;
-                }
-                if (!front && direction == facing.getOpposite()) {
-                    continue;
-                }
-
-                consumer.accept(BakedModelHelper.cropAndMove(quad, crop, move));
-            }
         }
     }
 }

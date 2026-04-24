@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @SuppressWarnings("UnstableApiUsage")
 @Mixin(CreateResourceReloader.class)
 public abstract class ReloadListenerMixin implements FabricResourceReloader {
-    @Shadow
+    @Shadow(remap = false)
     public abstract Identifier getId();
 
     @Override

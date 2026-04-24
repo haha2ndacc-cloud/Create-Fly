@@ -1,6 +1,5 @@
 package com.zurrtum.create.client.model;
 
-import net.minecraft.client.resources.model.geometry.BakedQuad;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
@@ -25,8 +24,4 @@ public interface NormalsBakedQuad {
     @Nullable Vector3fc create$getNormal3();
 
     @Nullable Vector3fc create$getNormal(int vertex);
-
-    static void setNormals(BakedQuad quad, BakedQuad target) {
-        ((NormalsBakedQuad) (Object) quad).create$setNormals((NormalsBakedQuad) (Object) target);
-    }
 }

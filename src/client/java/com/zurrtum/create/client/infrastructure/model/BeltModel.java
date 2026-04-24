@@ -4,7 +4,7 @@ import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.AllSpriteShifts;
 import com.zurrtum.create.client.catnip.render.SpriteShiftEntry;
-import com.zurrtum.create.client.model.NormalsBakedQuad;
+import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import com.zurrtum.create.content.kinetics.belt.BeltBlock;
 import com.zurrtum.create.content.kinetics.belt.BeltBlockEntity;
 import com.zurrtum.create.content.kinetics.belt.BeltBlockEntity.CasingType;
@@ -119,19 +119,13 @@ public class BeltModel extends WrapperBlockStateModel {
         if (original != replace) {
             return quad;
         }
-        BakedQuad newQuad = new BakedQuad(
-            quad.position0(),
-            quad.position1(),
-            quad.position2(),
-            quad.position3(),
+        return BakedModelHelper.replaceBakedQuadUV(
+            quad,
             calcSpriteUv(quad.packedUV0()),
             calcSpriteUv(quad.packedUV1()),
             calcSpriteUv(quad.packedUV2()),
             calcSpriteUv(quad.packedUV3()),
-            quad.direction(),
             info
         );
-        NormalsBakedQuad.setNormals(newQuad, quad);
-        return newQuad;
     }
 }

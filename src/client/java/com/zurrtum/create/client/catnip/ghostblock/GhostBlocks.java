@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -74,11 +73,9 @@ public class GhostBlocks {
         if (ghosts.isEmpty()) {
             return;
         }
-        boolean ambientOcclusion = mc.options.ambientOcclusion().get();
-        ModelBlockRenderer blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, mc.getBlockColors());
         BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         for (Entry entry : ghosts.values()) {
-            entry.ghost.render(blockRenderer, blockStateModelSet, ms, buffer, camera, entry.params);
+            entry.ghost.render(blockStateModelSet, ms, buffer, camera, entry.params);
         }
     }
 

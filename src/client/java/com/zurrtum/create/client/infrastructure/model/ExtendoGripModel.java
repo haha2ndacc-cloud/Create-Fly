@@ -2,27 +2,22 @@ package com.zurrtum.create.client.infrastructure.model;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import com.zurrtum.create.AllItems;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.content.equipment.extendoGrip.ExtendoGripRenderHandler;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ItemModelRenderHelper;
 import com.zurrtum.create.client.foundation.model.BakedModelHelper;
-import com.zurrtum.create.client.infrastructure.model.ExtendoGripModel.RenderData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.item.*;
-import net.minecraft.client.renderer.item.ItemStackRenderState.FoilType;
 import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvedModel;
+import net.minecraft.client.resources.model.cuboid.ItemTransform;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.TextureSlots;
 import net.minecraft.resources.Identifier;
@@ -32,19 +27,20 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
+import org.joml.Quaternionf;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import static com.zurrtum.create.Create.MOD_ID;
+import static com.zurrtum.create.client.flywheel.lib.model.baked.ItemModelRenderHelper.submitQuads;
 
-public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<RenderData> {
+public class ExtendoGripModel implements ItemModel {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/extendo_grip");
     public static final Identifier ITEM_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/extendo_grip/item");
-    public static final Identifier POLE_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/extendo_grip/pole");
     public static final Identifier COG_ID = Identifier.fromNamespaceAndPath(MOD_ID, "item/extendo_grip/cog");
     public static final Identifier THIN_SHORT_ID = Identifier.fromNamespaceAndPath(
         MOD_ID,
@@ -75,13 +71,9 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<RenderD
         "block/deployer/hand_holding"
     );
 
-    private final RenderType itemLayer = Sheets.translucentItemSheet();
-    private final RenderType blockLayer = Sheets.translucentBlockItemSheet();
     private final ModelRenderProperties settings;
-    private final Matrix4fc transformation;
-    private final Supplier<Vector3fc[]> vector;
+    private final Supplier<Vector3fc[]> extents;
     private final List<BakedQuad> item;
-    private final List<BakedQuad> pole;
     private final List<BakedQuad> cog;
     private final List<BakedQuad> thinShort;
     private final List<BakedQuad> wideShort;
@@ -93,9 +85,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<RenderD
 
     public ExtendoGripModel(
         ModelRenderProperties settings,
-        Matrix4fc transformation,
         List<BakedQuad> item,
-        List<BakedQuad> pole,
         List<BakedQuad> cog,
         List<BakedQuad> thinShort,
         List<BakedQuad> wideShort,
@@ -106,10 +96,8 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<RenderD
         List<BakedQuad> holding
     ) {
         this.settings = settings;
-        this.transformation = transformation;
         this.item = item;
-        this.pole = pole;
-        vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(item));
+        extents = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(item));
         this.cog = cog;
         this.thinShort = thinShort;
         this.wideShort = wideShort;
@@ -132,188 +120,139 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<RenderD
     ) {
         state.appendModelIdentityElement(this);
         state.setAnimated();
-
-        RenderData data = new RenderData();
-        data.animation = 0.25f;
         boolean leftHand = displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
         boolean rightHand = displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
+        boolean applyLeftHandFix = displayContext.leftHand();
+        List<BakedQuad> hand = leftHand || rightHand ? ExtendoGripRenderHandler.holding ? holding : punching : pointing;
+        float animation;
         if (leftHand || rightHand) {
-            data.animation = Mth.lerp(
+            animation = Mth.lerp(
                 AnimationTickHolder.getPartialTicks(),
                 ExtendoGripRenderHandler.lastMainHandAnimation,
                 ExtendoGripRenderHandler.mainHandAnimation
             );
+        } else {
+            animation = 0.25f;
         }
-        data.animation = data.animation * data.animation * data.animation;
-        float extensionAngle = Mth.lerp(data.animation, 24.0f, 156.0f);
-        data.state = state.newLayer();
-        data.state.setExtents(vector);
-        data.state.setLocalTransform(transformation);
-        settings.applyToLayer(data.state, displayContext);
-        data.state.prepareQuadList().addAll(item);
-        data.halfAngle = extensionAngle / 2;
-        data.oppositeAngle = 180 - extensionAngle;
-        data.hand = leftHand || rightHand ? ExtendoGripRenderHandler.holding ? holding : punching : pointing;
-        data.angle = AnimationTickHolder.getRenderTime() * -2;
+        animation = animation * animation * animation;
+        float extensionAngle = Mth.lerp(animation, 24.0f, 156.0f);
+        float oppositeAngle = 180 - extensionAngle;
+        float halfAngle = extensionAngle / 2;
+        float angle = AnimationTickHolder.getRenderTime() * -2;
         if (leftHand || rightHand) {
-            data.angle += 360 * data.animation;
+            angle += 360 * animation;
         }
-        data.angle %= 360;
+        float offsetZ = -0.7f - animation * 2.25f;
+        ItemTransform transform = settings.transforms().getTransform(displayContext);
+        submitQuads(state, settings, displayContext, item).setExtents(extents);
+        LayerRenderState cogLayer = submitQuads(state, settings, displayContext, cog);
+        LayerRenderState thinShortLayer1 = submitQuads(state, settings, displayContext, thinShort);
+        LayerRenderState thinShortLayer2 = submitQuads(state, settings, displayContext, thinShort);
+        LayerRenderState wideLongLayer1 = submitQuads(state, settings, displayContext, wideLong);
+        LayerRenderState wideShortLayer1 = submitQuads(state, settings, displayContext, wideShort);
+        LayerRenderState wideShortLayer2 = submitQuads(state, settings, displayContext, wideShort);
+        LayerRenderState thinLongLayer1 = submitQuads(state, settings, displayContext, thinLong);
+        LayerRenderState handLayer1 = submitQuads(state, settings, displayContext, hand);
+        cogLayer.localTransform.rotateAround(Axis.ZP.rotationDegrees(angle % 360), 0.5f, 0.5625f, 0.5f);
+        Matrix4f pose = thinShortLayer1.localTransform;
+        pose.translate(0, 0.5625f, 0.0625f);
+        pose.scale(1, 1, 1 + animation);
+        wideShortLayer1.localTransform.set(pose);
+        pose.rotate(Axis.XN.rotationDegrees(halfAngle));
+        pose = wideLongLayer1.localTransform.set(pose);
+        pose.translate(0, 0.34375f, 0);
+        pose.rotate(Axis.XN.rotationDegrees(oppositeAngle));
+        pose = thinShortLayer2.localTransform.set(pose);
+        pose.translate(0, 0.6875f, 0);
+        pose.rotate(Axis.XP.rotationDegrees(oppositeAngle));
+        pose.translate(0, 0.03125f, 0);
+        pose = wideShortLayer1.localTransform;
+        pose.rotate(Axis.XP.rotationDegrees(halfAngle - 180));
+        pose = thinLongLayer1.localTransform.set(pose);
+        pose.translate(0, 0.34375f, 0);
+        pose.rotate(Axis.XP.rotationDegrees(oppositeAngle));
+        pose = wideShortLayer2.localTransform.set(pose);
+        pose.translate(0, 0.6875f, 0);
+        pose.rotate(Axis.XN.rotationDegrees(oppositeAngle));
+        pose.translate(0, 0.03125f, 0);
+        pose = handLayer1.localTransform.set(pose);
+        pose.translate(0, 0.34375f, 0);
+        pose.rotate(Axis.XP.rotationDegrees(180 - halfAngle));
+        pose.rotate(Axis.YP.rotationDegrees(180));
+        pose.translate(0, 0, -0.25f);
+        pose.scale(1, 1, 1 / (1 + animation));
+        pose.translate(-1.0f, -0.5f, -0.5f);
         if (stack == null) {
-            data.self = true;
+            LayerRenderState itemLayer = submitQuads(state, settings, displayContext, item);
+            itemLayer.setExtents(extents);
+            pose = itemLayer.localTransform;
+            pose.translate(0.45f, 0.65f, offsetZ);
+            pose.mul(ItemModelRenderHelper.getPose(applyLeftHandFix, transform));
+            LayerRenderState cogLayer2 = submitQuads(state, settings, displayContext, cog);
+            LayerRenderState thinShortLayer3 = submitQuads(state, settings, displayContext, thinShort);
+            LayerRenderState thinShortLayer4 = submitQuads(state, settings, displayContext, thinShort);
+            LayerRenderState wideLongLayer2 = submitQuads(state, settings, displayContext, wideLong);
+            LayerRenderState wideShortLayer3 = submitQuads(state, settings, displayContext, wideShort);
+            LayerRenderState wideShortLayer4 = submitQuads(state, settings, displayContext, wideShort);
+            LayerRenderState thinLongLayer2 = submitQuads(state, settings, displayContext, thinLong);
+            LayerRenderState handLayer2 = submitQuads(state, settings, displayContext, hand);
+            cogLayer2.localTransform.set(pose).mul(cogLayer.localTransform);
+            thinShortLayer3.localTransform.set(pose).mul(thinShortLayer1.localTransform);
+            thinShortLayer4.localTransform.set(pose).mul(thinShortLayer2.localTransform);
+            wideLongLayer2.localTransform.set(pose).mul(wideLongLayer1.localTransform);
+            wideShortLayer3.localTransform.set(pose).mul(wideShortLayer1.localTransform);
+            wideShortLayer4.localTransform.set(pose).mul(wideShortLayer2.localTransform);
+            thinLongLayer2.localTransform.set(pose).mul(thinLongLayer1.localTransform);
+            handLayer2.localTransform.set(handLayer1.localTransform).mulLocal(pose);
         } else if (!stack.is(AllItems.EXTENDO_GRIP)) {
-            data.item = new ItemStackRenderState();
-            data.item.displayContext = displayContext;
-            resolver.appendItemLayers(data.item, stack, displayContext, world, ctx, seed);
-            HumanoidArm mainArm = HumanoidArm.RIGHT;
-            if (ctx instanceof Avatar entity) {
-                mainArm = entity.getMainArm();
-            } else {
-                LocalPlayer player = Minecraft.getInstance().player;
-                if (player != null) {
-                    mainArm = player.getMainArm();
+            int i = state.activeLayerCount;
+            resolver.appendItemLayers(state, stack, displayContext, world, ctx, seed);
+            int size = state.activeLayerCount;
+            if (i != size) {
+                LayerRenderState[] layers = state.layers;
+                LayerRenderState layer = layers[i];
+                boolean blockLight = layer.usesBlockLight;
+                HumanoidArm mainArm = HumanoidArm.RIGHT;
+                if (ctx instanceof Avatar entity) {
+                    mainArm = entity.getMainArm();
+                } else {
+                    LocalPlayer player = Minecraft.getInstance().player;
+                    if (player != null) {
+                        mainArm = player.getMainArm();
+                    }
                 }
+                float blockOffsetX;
+                Quaternionf blockRotate;
+                if (blockLight) {
+                    if (rightHand ^ mainArm == HumanoidArm.LEFT) {
+                        blockOffsetX = 0.15f;
+                        blockRotate = Axis.YP.rotationDegrees(45);
+                    } else {
+                        blockOffsetX = -0.15f;
+                        blockRotate = Axis.YP.rotationDegrees(-45);
+                    }
+                } else {
+                    blockOffsetX = 0;
+                    blockRotate = null;
+                }
+                do {
+                    ItemTransform itemTransform = layer.itemTransform;
+                    layer.itemTransform = transform;
+                    pose = layer.localTransform;
+                    pose.mulLocal(ItemModelRenderHelper.getPose(applyLeftHandFix, itemTransform));
+                    if (blockLight) {
+                        pose.scaleLocal(1.25f);
+                        pose.translateLocal(blockOffsetX, -0.15f, -0.05f);
+                        pose.rotateLocal(blockRotate);
+                    }
+                    pose.translateLocal(0.45f, 0.65f, offsetZ);
+                    if (++i == size) {
+                        break;
+                    }
+                    layer = layers[i];
+                } while (true);
             }
-            data.flip = rightHand ^ mainArm == HumanoidArm.LEFT ? 1 : -1;
         }
-        data.displayContext = displayContext;
-        data.state.setupSpecialModel(this, data);
-    }
-
-    @Override
-    public void submit(
-        @Nullable RenderData data,
-        PoseStack matrices,
-        SubmitNodeCollector queue,
-        int light,
-        int overlay,
-        boolean glint,
-        int i
-    ) {
-        assert data != null;
-        ItemDisplayContext displayContext = data.displayContext;
-        if (data.self) {
-            data.self = false;
-            matrices.pushPose();
-            matrices.translate(0.45f, 0.65f, -0.7f - data.animation * 2.25f);
-            settings.transforms().getTransform(displayContext).apply(displayContext.leftHand(), matrices.last());
-            submit(data, matrices, queue, light, overlay, glint, i);
-            matrices.popPose();
-        } else if (data.item != null) {
-            matrices.pushPose();
-            matrices.translate(0.45f, 0.65f, -0.7f - data.animation * 2.25f);
-            if (data.item.usesBlockLight()) {
-                matrices.mulPose(Axis.YP.rotationDegrees(data.flip * 45));
-                matrices.translate(data.flip * 0.15f, -0.15f, -0.05f);
-                matrices.scale(1.25f, 1.25f, 1.25f);
-            }
-            data.item.submit(matrices, queue, light, overlay, i);
-            matrices.popPose();
-        }
-
-        // grip
-        LayerRenderState grip = data.state;
-        queue.submitItem(
-            matrices,
-            displayContext,
-            light,
-            overlay,
-            0,
-            LayerRenderState.EMPTY_TINTS,
-            grip.prepareQuadList(),
-            grip.foilType
-        );
-        renderQuads(displayContext, matrices, queue, light, overlay, pole, blockLayer);
-
-        // bits
-        matrices.pushPose();
-        matrices.translate(0, 0.5625f, 0.0625f);
-        matrices.scale(1, 1, 1 + data.animation);
-
-        matrices.pushPose();
-        matrices.mulPose(Axis.XN.rotationDegrees(data.halfAngle));
-        renderQuads(displayContext, matrices, queue, light, overlay, thinShort, itemLayer);
-        matrices.translate(0, 0.34375f, 0);
-        matrices.mulPose(Axis.XN.rotationDegrees(data.oppositeAngle));
-        renderQuads(displayContext, matrices, queue, light, overlay, wideLong, itemLayer);
-        matrices.translate(0, 0.6875f, 0);
-        matrices.mulPose(Axis.XP.rotationDegrees(data.oppositeAngle));
-        matrices.translate(0, 0.03125f, 0);
-        renderQuads(displayContext, matrices, queue, light, overlay, thinShort, itemLayer);
-        matrices.popPose();
-
-        matrices.pushPose();
-        matrices.mulPose(Axis.XP.rotationDegrees(-180 + data.halfAngle));
-        renderQuads(displayContext, matrices, queue, light, overlay, wideShort, itemLayer);
-        matrices.translate(0, 0.34375f, 0);
-        matrices.mulPose(Axis.XP.rotationDegrees(data.oppositeAngle));
-        renderQuads(displayContext, matrices, queue, light, overlay, thinLong, itemLayer);
-        matrices.translate(0, 0.6875f, 0);
-        matrices.mulPose(Axis.XN.rotationDegrees(data.oppositeAngle));
-        matrices.translate(0, 0.03125f, 0);
-        renderQuads(displayContext, matrices, queue, light, overlay, wideShort, itemLayer);
-
-        // hand
-        matrices.translate(0, 0.34375f, 0);
-        matrices.mulPose(Axis.XP.rotationDegrees(180 - data.halfAngle));
-        matrices.mulPose(Axis.YP.rotationDegrees(180));
-        matrices.translate(0, 0, -0.25f);
-        matrices.scale(1, 1, 1 / (1 + data.animation));
-        matrices.translate(-1.0f, -0.5f, -0.5f);
-        renderQuads(displayContext, matrices, queue, light, overlay, data.hand, blockLayer);
-        matrices.popPose();
-
-        matrices.popPose();
-
-        // cog
-        matrices.pushPose();
-        matrices.rotateAround(Axis.ZP.rotationDegrees(data.angle), 0.5f, 0.5625f, 0.5f);
-        renderQuads(displayContext, matrices, queue, light, overlay, cog, blockLayer);
-        matrices.popPose();
-    }
-
-    private void renderQuads(
-        ItemDisplayContext displayContext,
-        PoseStack matrices,
-        SubmitNodeCollector queue,
-        int light,
-        int overlay,
-        List<BakedQuad> quads,
-        RenderType layer
-    ) {
-        queue.submitItem(
-            matrices,
-            displayContext,
-            light,
-            overlay,
-            0,
-            LayerRenderState.EMPTY_TINTS,
-            quads,
-            FoilType.NONE
-        );
-    }
-
-    public static class RenderData {
-        ItemDisplayContext displayContext;
-        @Nullable ItemStackRenderState item;
-        LayerRenderState state;
-        List<BakedQuad> hand;
-        float halfAngle;
-        float oppositeAngle;
-        float animation;
-        float angle;
-        boolean self;
-        int flip;
-    }
-
-    @Override
-    public void getExtents(Consumer<Vector3fc> output) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public RenderData extractArgument(ItemStack stack) {
-        throw new UnsupportedOperationException();
     }
 
     public static class Unbaked implements ItemModel.Unbaked {
@@ -327,7 +266,6 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<RenderD
         @Override
         public void resolveDependencies(Resolver resolver) {
             resolver.markDependency(ITEM_ID);
-            resolver.markDependency(POLE_ID);
             resolver.markDependency(COG_ID);
             resolver.markDependency(THIN_SHORT_ID);
             resolver.markDependency(WIDE_SHORT_ID);
@@ -347,9 +285,7 @@ public class ExtendoGripModel implements ItemModel, SpecialModelRenderer<RenderD
             ModelRenderProperties settings = ModelRenderProperties.fromResolvedModel(baker, model, textures);
             return new ExtendoGripModel(
                 settings,
-                transformation,
                 quads,
-                BakedModelHelper.bakeQuads(baker, POLE_ID),
                 BakedModelHelper.bakeQuads(baker, COG_ID),
                 BakedModelHelper.bakeQuads(baker, THIN_SHORT_ID),
                 BakedModelHelper.bakeQuads(baker, WIDE_SHORT_ID),

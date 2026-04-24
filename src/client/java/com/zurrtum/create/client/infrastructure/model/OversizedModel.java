@@ -11,6 +11,8 @@ import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.item.*;
+import net.minecraft.client.renderer.item.ItemStackRenderState.FoilType;
+import net.minecraft.client.renderer.item.ItemStackRenderState.LayerRenderState;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvableModel;
 import net.minecraft.client.resources.model.ResolvedModel;
@@ -30,6 +32,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static com.zurrtum.create.Create.MOD_ID;
+import static com.zurrtum.create.client.flywheel.lib.model.baked.ItemModelRenderHelper.submitQuads;
 
 public class OversizedModel implements ItemModel {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(MOD_ID, "model/oversized");
@@ -66,17 +69,18 @@ public class OversizedModel implements ItemModel {
         int seed
     ) {
         state.appendModelIdentityElement(this);
-        ItemStackRenderState.LayerRenderState layerRenderState = state.newLayer();
+        LayerRenderState layerRenderState = submitQuads(state, settings, displayContext, quads.getAll());
         if (stack.hasFoil()) {
-            layerRenderState.setFoilType(ItemStackRenderState.FoilType.STANDARD);
+            layerRenderState.setFoilType(FoilType.STANDARD);
             state.setAnimated();
-            state.appendModelIdentityElement(ItemStackRenderState.FoilType.STANDARD);
+            state.appendModelIdentityElement(FoilType.STANDARD);
+        } else if (quads.hasMaterialFlag(2)) {
+            state.setAnimated();
         }
-
-        if (!this.tints.isEmpty()) {
+        if (!tints.isEmpty()) {
             IntList tintLayers = layerRenderState.tintLayers();
 
-            for (ItemTintSource tintSource : this.tints) {
+            for (ItemTintSource tintSource : tints) {
                 int tint = tintSource.calculate(
                     stack,
                     world,
@@ -86,14 +90,8 @@ public class OversizedModel implements ItemModel {
                 state.appendModelIdentityElement(tint);
             }
         }
-
         layerRenderState.setExtents(vector);
-        layerRenderState.setLocalTransform(this.transformation);
-        settings.applyToLayer(layerRenderState, displayContext);
-        layerRenderState.prepareQuadList().addAll(quads.getAll());
-        if (quads.hasMaterialFlag(2)) {
-            state.setAnimated();
-        }
+        layerRenderState.setLocalTransform(transformation);
         if (displayContext == ItemDisplayContext.GUI) {
             state.setOversizedInGui(true);
             state.cachedModelBoundingBox = box;
@@ -112,13 +110,13 @@ public class OversizedModel implements ItemModel {
 
         @Override
         public void resolveDependencies(ResolvableModel.Resolver resolver) {
-            resolver.markDependency(this.model);
+            resolver.markDependency(model);
         }
 
         @Override
         public ItemModel bake(ItemModel.BakingContext context, Matrix4fc transformation) {
             ModelBaker baker = context.blockModelBaker();
-            ResolvedModel bakedSimpleModel = baker.getModel(this.model);
+            ResolvedModel bakedSimpleModel = baker.getModel(model);
             TextureSlots modelTextures = bakedSimpleModel.getTopTextureSlots();
             QuadCollection quads = bakedSimpleModel.bakeTopGeometry(modelTextures, baker, BlockModelRotation.IDENTITY);
             ModelRenderProperties modelSettings = ModelRenderProperties.fromResolvedModel(

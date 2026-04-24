@@ -5,23 +5,41 @@ import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlockEntity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.fabricmc.fabric.api.client.renderer.v1.mesh.MutableQuadView;
+import net.fabricmc.fabric.api.client.renderer.v1.model.FabricBlockStateModel;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jspecify.annotations.Nullable;
+import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.List;
 
+/**
+ * If FRAPI is already loaded, you need to override {@link FabricBlockStateModel#emitQuads} to use the {@link MutableQuadView#ambientOcclusion(TriState ao)} and {@link MutableQuadView#emissive(boolean emissive)} methods.
+ */
 public abstract class CopycatModel extends WrapperBlockStateModel {
+    protected static final AABB CUBE_AABB = new AABB(BlockPos.ZERO);
+    private @UnknownNullability ModelManager modelManager;
+
     public CopycatModel(BlockState state, UnbakedRoot unbaked) {
         super(state, unbaked);
+    }
+
+    @Override
+    public BlockStateModel bake(BlockState state, ModelBaker baker) {
+        this.modelManager = Minecraft.getInstance().getModelManager();
+        return super.bake(state, baker);
     }
 
     @Override
@@ -50,8 +68,8 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
         List<BlockStateModelPart> parts
     );
 
-    protected static BlockStateModel getModelOf(BlockState material) {
-        return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(material);
+    protected BlockStateModel getModelOf(BlockState material) {
+        return modelManager.getBlockStateModelSet().get(material);
     }
 
     @Override
@@ -76,7 +94,7 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
         BlockStateModel model,
         List<BlockStateModelPart> parts
     ) {
-        if (WrapperBlockStateModel.unwrapCompat(model) instanceof WrapperBlockStateModel wrapper) {
+        if (model instanceof WrapperBlockStateModel wrapper) {
             wrapper.addPartsWithInfo(world, pos, material, random, parts);
         } else {
             model.collectParts(random, parts);
@@ -95,39 +113,51 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
         return parts;
     }
 
-    protected OcclusionData gatherOcclusionData(
-        BlockAndTintGetter world,
-        BlockPos pos,
-        BlockState state,
-        BlockState material,
-        CopycatBlock copycatBlock
-    ) {
-        OcclusionData occlusionData = new OcclusionData();
-        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
-        for (Direction face : Iterate.directions) {
-            if (!copycatBlock.canFaceBeOccluded(state, face)) {
-                continue;
-            }
-            if (!Block.shouldRenderFace(material, world.getBlockState(mutablePos.setWithOffset(pos, face)), face)) {
-                occlusionData.occlude(face);
+    protected DirectionData gatherDirectionData(CopycatBlock block, BlockState state) {
+        DirectionData directionData = new DirectionData();
+        for (Direction direction : Iterate.directions) {
+            if (block.shouldFaceAlwaysRender(state, direction)) {
+                directionData.noCull(direction);
             }
         }
-        return occlusionData;
+        return directionData;
     }
 
-    protected static class OcclusionData {
-        private final boolean[] occluded;
+    protected static class DirectionData {
+        private int data;
 
-        public OcclusionData() {
-            occluded = new boolean[6];
+        public void cull(Direction face) {
+            data &= ~(1 << face.get3DDataValue());
         }
 
-        public void occlude(Direction face) {
-            occluded[face.get3DDataValue()] = true;
+        public void noCull(Direction face) {
+            data |= (1 << face.get3DDataValue());
         }
 
-        public boolean isOccluded(@Nullable Direction face) {
-            return face != null && occluded[face.get3DDataValue()];
+        public boolean isCull(Direction face) {
+            return (data & (1 << face.get3DDataValue())) == 0;
+        }
+
+        public boolean isUncull(Direction face) {
+            return (data & (1 << face.get3DDataValue())) != 0;
+        }
+    }
+
+    protected static class SpriteHolder {
+        private TextureAtlasSprite sprite;
+        public boolean isDefault = true;
+
+        public SpriteHolder(TextureAtlasSprite sprite) {
+            this.sprite = sprite;
+        }
+
+        public void set(TextureAtlasSprite sprite) {
+            this.sprite = sprite;
+            isDefault = false;
+        }
+
+        public TextureAtlasSprite get() {
+            return sprite;
         }
     }
 }

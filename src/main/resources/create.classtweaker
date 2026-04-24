@@ -231,6 +231,24 @@ accessible method net/minecraft/world/level/lighting/LayerLightSectionStorage ge
 accessible method net/minecraft/world/level/material/FlowingFluid getNewLiquid (Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/world/level/material/FluidState;
 accessible method net/minecraft/world/level/storage/TagValueInput <init> (Lnet/minecraft/util/ProblemReporter;Lnet/minecraft/world/level/storage/ValueInputContextHelper;Lnet/minecraft/nbt/CompoundTag;)V
 accessible method net/minecraft/world/level/storage/TagValueOutput <init> (Lnet/minecraft/util/ProblemReporter;Lcom/mojang/serialization/DynamicOps;Lnet/minecraft/nbt/CompoundTag;)V
+accessible field net/minecraft/client/renderer/item/ItemStackRenderState activeLayerCount I
+accessible field net/minecraft/client/renderer/item/ItemStackRenderState layers [Lnet/minecraft/client/renderer/item/ItemStackRenderState$LayerRenderState;
+accessible field net/minecraft/client/renderer/item/ItemStackRenderState$LayerRenderState itemTransform Lnet/minecraft/client/resources/model/cuboid/ItemTransform;
+accessible field net/minecraft/client/renderer/item/ItemStackRenderState$LayerRenderState localTransform Lorg/joml/Matrix4f;
+accessible field net/minecraft/client/renderer/item/ItemStackRenderState$LayerRenderState usesBlockLight Z
+accessible class net/minecraft/client/renderer/block/BlockModelLighter$AdjacencyInfo
+accessible field net/minecraft/client/renderer/block/BlockModelLighter$AdjacencyInfo corners [Lnet/minecraft/core/Direction;
+accessible class net/minecraft/client/renderer/block/BlockModelLighter$AmbientVertexRemap
+accessible field net/minecraft/client/renderer/block/BlockModelLighter$AdjacencyInfo doNonCubicWeight Z
+accessible field net/minecraft/client/renderer/block/BlockModelLighter$SizeInfo index I
+accessible field net/minecraft/client/renderer/block/BlockModelLighter$AmbientVertexRemap vert0 I
+accessible field net/minecraft/client/renderer/block/BlockModelLighter$AmbientVertexRemap vert1 I
+accessible field net/minecraft/client/renderer/block/BlockModelLighter$AmbientVertexRemap vert2 I
+accessible field net/minecraft/client/renderer/block/BlockModelLighter$AmbientVertexRemap vert3 I
+accessible field net/minecraft/client/renderer/block/BlockModelLighter$AdjacencyInfo vert0Weights [Lnet/minecraft/client/renderer/block/BlockModelLighter$SizeInfo;
+accessible field net/minecraft/client/renderer/block/BlockModelLighter$AdjacencyInfo vert1Weights [Lnet/minecraft/client/renderer/block/BlockModelLighter$SizeInfo;
+accessible field net/minecraft/client/renderer/block/BlockModelLighter$AdjacencyInfo vert2Weights [Lnet/minecraft/client/renderer/block/BlockModelLighter$SizeInfo;
+accessible field net/minecraft/client/renderer/block/BlockModelLighter$AdjacencyInfo vert3Weights [Lnet/minecraft/client/renderer/block/BlockModelLighter$SizeInfo;
 extendable class net/minecraft/world/item/crafting/Ingredient
 extendable method net/minecraft/client/gui/components/AbstractWidget extractRenderState (Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V
 extendable method net/minecraft/client/gui/screens/Screen init (II)V

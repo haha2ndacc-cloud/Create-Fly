@@ -26,7 +26,7 @@ public class PipeAttachmentModel extends WrapperBlockStateModel {
     }
 
     public static UnbakedRoot encased(BlockState state, UnbakedRoot unbaked) {
-        return new PipeAttachmentModel(state, new CTModel(state, unbaked, AllCTBehaviours.COPPER_CASING));
+        return new PipeAttachmentModel.Encased(state, new CTModel(state, unbaked, AllCTBehaviours.COPPER_CASING));
     }
 
     @Override
@@ -37,11 +37,7 @@ public class PipeAttachmentModel extends WrapperBlockStateModel {
         RandomSource random,
         List<BlockStateModelPart> parts
     ) {
-        if (model instanceof WrapperBlockStateModel wrapper) {
-            wrapper.addPartsWithInfo(world, pos, state, random, parts);
-        } else {
-            model.collectParts(random, parts);
-        }
+        collectModelParts(world, pos, state, random, parts);
         Optional.ofNullable(BlockEntityBehaviour.get(world, pos, BracketedBlockEntityBehaviour.TYPE))
             .map(BracketedBlockEntityBehaviour::getBracket)
             .map(bracket -> Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(bracket))
@@ -57,6 +53,33 @@ public class PipeAttachmentModel extends WrapperBlockStateModel {
         }
         if (FluidPipeBlock.shouldDrawCasing(world, pos, state)) {
             AllPartialModels.FLUID_PIPE_CASING.get().collectParts(random, parts);
+        }
+    }
+
+    protected void collectModelParts(
+        BlockAndTintGetter world,
+        BlockPos pos,
+        BlockState state,
+        RandomSource random,
+        List<BlockStateModelPart> parts
+    ) {
+        model.collectParts(random, parts);
+    }
+
+    public static class Encased extends PipeAttachmentModel {
+        public Encased(BlockState state, UnbakedRoot unbaked) {
+            super(state, unbaked);
+        }
+
+        @Override
+        protected void collectModelParts(
+            BlockAndTintGetter world,
+            BlockPos pos,
+            BlockState state,
+            RandomSource random,
+            List<BlockStateModelPart> parts
+        ) {
+            ((WrapperBlockStateModel) model).addPartsWithInfo(world, pos, state, random, parts);
         }
     }
 }

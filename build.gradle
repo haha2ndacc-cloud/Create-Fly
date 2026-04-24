@@ -79,10 +79,7 @@ sourceSets {
             exclude 'com/zurrtum/create/client/compat/eiv/**'
             exclude 'com/zurrtum/create/client/compat/sodium/**'
             exclude 'com/zurrtum/create/client/compat/trinkets/**'
-            exclude 'com/zurrtum/create/client/mixin/FabricModelAccessMixin.java'
             exclude 'com/zurrtum/create/client/mixin/IrisPipelinesMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/HoldMyItemsMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/AnimationResourceLoaderMixin.java'
             exclude 'com/zurrtum/create/client/mixin/CraftingViewRecipeAccessor.java'
             exclude 'com/zurrtum/create/client/mixin/FabricEIVMixin.java'
             exclude 'com/zurrtum/create/client/mixin/FluidItemSpecialRendererMixin.java'
@@ -90,11 +87,6 @@ sourceSets {
             exclude 'com/zurrtum/create/client/mixin/RecipeViewMenuMixin.java'
             exclude 'com/zurrtum/create/client/mixin/RecipeViewScreenMixin.java'
             exclude 'com/zurrtum/create/client/mixin/ViewTypeButtonMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/AbstractBlockRenderContextMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/FabricBlockStateModelMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/BlockRenderInfoMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/AbstractTerrainRenderContextMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/WrapperBlockStateModelMixin.java'
         }
     }
 }
@@ -120,7 +112,6 @@ dependencies {
         compileOnly fabricApi.module("fabric-transfer-api-v1", project.fabric_version)
         compileOnly fabricApi.module("fabric-events-interaction-v0", project.fabric_version)
         compileOnly fabricApi.module("fabric-renderer-api-v1", project.fabric_version)
-        compileOnly fabricApi.module("fabric-renderer-indigo", project.fabric_version)
         compileOnly fabricApi.module("fabric-recipe-api-v1", project.fabric_version)
         compileOnly fabricApi.module("fabric-model-loading-api-v1", project.fabric_version)
         compileOnly fabricApi.module("fabric-resource-loader-v1", project.fabric_version)

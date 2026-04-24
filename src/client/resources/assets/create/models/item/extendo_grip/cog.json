@@ -1,6 +1,5 @@
 {
 	"credit": "Made with Blockbench",
-	"parent": "create:item/extendo_grip/item",
 	"textures": {
 		"cog": "block/stripped_dark_oak_log"
 	},

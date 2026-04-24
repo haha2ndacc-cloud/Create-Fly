@@ -7,7 +7,7 @@ package com.zurrtum.create.client.model.obj;
 
 import com.mojang.blaze3d.platform.Transparency;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.zurrtum.create.client.model.NormalsBakedQuad;
+import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
@@ -166,7 +166,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer {
             direction,
             interner.materialInfo(materialInfo)
         );
-        ((NormalsBakedQuad) (Object) quad).create$setNormals(normals[0], normals[1], normals[2], normals[3]);
+        BakedModelHelper.setNormals(quad, normals);
         return quad;
     }
 }

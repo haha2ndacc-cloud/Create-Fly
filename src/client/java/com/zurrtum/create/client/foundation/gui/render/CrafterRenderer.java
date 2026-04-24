@@ -1,6 +1,5 @@
 package com.zurrtum.create.client.foundation.gui.render;
 
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.Lighting.Entry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -8,11 +7,12 @@ import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
@@ -20,14 +20,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class CrafterRenderer extends PictureInPictureRenderer<CrafterRenderState> {
     private final BlockBakedQuadOutput output;
-    private final ModelBlockRenderer blockRenderer;
 
     public CrafterRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
         output = new BlockBakedQuadOutput(vertexConsumers);
-        Minecraft minecraft = Minecraft.getInstance();
-        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
-        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -42,6 +38,7 @@ public class CrafterRenderer extends PictureInPictureRenderer<CrafterRenderState
 
         BlockState blockState;
         BlockStateModel model;
+        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         output.setPoseStack(matrices);
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
 
@@ -54,7 +51,7 @@ public class CrafterRenderer extends PictureInPictureRenderer<CrafterRenderState
         matrices.mulPose(Axis.XP.rotationDegrees(90));
         matrices.translate(-0.5f, -0.5f, -0.5f);
         output.updateBuffer(model);
-        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
         blockState = AllBlocks.MECHANICAL_CRAFTER.defaultBlockState();
@@ -63,7 +60,7 @@ public class CrafterRenderer extends PictureInPictureRenderer<CrafterRenderState
         model = mc.getModelManager().getBlockStateModelSet().get(blockState);
         matrices.rotateAround(Axis.YP.rotationDegrees(180), 0.5f, 0.5f, 0.5f);
         output.updateBuffer(model);
-        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
         output.clear();
     }

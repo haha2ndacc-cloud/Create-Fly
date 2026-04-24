@@ -1,6 +1,5 @@
 package com.zurrtum.create.client.foundation.gui.render;
 
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.Lighting.Entry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -10,13 +9,14 @@ import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
 import com.zurrtum.create.client.catnip.gui.render.TerrainBakedQuadOutput;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.FluidStateModelSet;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentPatch;
@@ -30,15 +30,11 @@ import net.minecraft.world.level.material.FluidState;
 public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
     private final BlockBakedQuadOutput output;
     private final TerrainBakedQuadOutput terrainOutput;
-    private final ModelBlockRenderer blockRenderer;
 
     public FanRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
         output = new BlockBakedQuadOutput(vertexConsumers);
         terrainOutput = new TerrainBakedQuadOutput(vertexConsumers);
-        Minecraft minecraft = Minecraft.getInstance();
-        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
-        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -53,6 +49,7 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
 
         BlockState blockState;
         BlockStateModel model;
+        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         output.setPoseStack(matrices);
         BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
@@ -65,7 +62,7 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
         matrices.mulPose(Axis.XP.rotationDegrees(180));
         matrices.translate(-0.5f, -0.5f, -0.5f);
         output.updateBuffer(model);
-        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
         matrices.pushPose();
@@ -74,7 +71,7 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
         model = blockStateModelSet.get(blockState);
         matrices.rotateAround(Axis.YP.rotationDegrees(180), 0.5f, 0.5f, 0.5f);
         output.updateBuffer(model);
-        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
         matrices.translate(0, 0, 2);
@@ -106,11 +103,12 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
         model = blockStateModelSet.get(blockState);
         if (blockState.getBlock() instanceof BaseFireBlock) {
             terrainOutput.setPoseStack(matrices);
-            blockRenderer.tesselateBlock(terrainOutput, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+            blockRenderer.updateOutput(terrainOutput);
+            blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
             terrainOutput.clear();
         } else {
             output.updateBuffer(model);
-            blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+            blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         }
         output.clear();
     }

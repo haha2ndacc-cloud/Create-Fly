@@ -5,6 +5,8 @@ import com.zurrtum.create.AllItems;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
 import com.zurrtum.create.content.equipment.symmetryWand.SymmetryWandItem;
@@ -17,7 +19,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -37,7 +38,7 @@ public class SymmetryHandlerClient {
         LocalPlayer player = mc.player;
         Inventory inventory = player.getInventory();
         BlockBakedQuadOutput output = null;
-        ModelBlockRenderer blockRenderer = null;
+        ModelConsumer blockRenderer = null;
         for (int i = 0, size = Inventory.getSelectionSize(); i < size; i++) {
             ItemStack stackInSlot = inventory.getItem(i);
             if (!stackInSlot.is(AllItems.WAND_OF_SYMMETRY)) {
@@ -63,12 +64,10 @@ public class SymmetryHandlerClient {
             BlockStateModel model = getModel(mirror).get();
             if (output == null) {
                 output = new BlockBakedQuadOutput(buffer, ms);
-                boolean ambientOcclusion = mc.options.ambientOcclusion().get();
-                blockRenderer = new ModelBlockRenderer(ambientOcclusion, true, mc.getBlockColors());
+                blockRenderer = ModelRenderHelper.getCullHelper(output);
             }
             output.updateBuffer(model);
             blockRenderer.tesselateBlock(
-                output,
                 0,
                 0,
                 0,

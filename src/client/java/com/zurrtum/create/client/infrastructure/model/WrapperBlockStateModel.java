@@ -1,13 +1,12 @@
 package com.zurrtum.create.client.infrastructure.model;
 
-import com.zurrtum.create.client.compat.fabric.WrapperModel;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.UnknownNullability;
@@ -17,9 +16,86 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class WrapperBlockStateModel implements BlockStateModel, BlockStateModel.UnbakedRoot {
-    private static final boolean FABRIC = FabricLoader.getInstance().isModLoaded("fabric-model-loading-api-v1");
-    @UnknownNullability
-    protected BlockStateModel model;
+    private static final RandomSource RANDOM = RandomSource.createThreadLocalInstance(0L);
+    private static final Vec3i[] DIRECTIONS = new Vec3i[]{
+        new Vec3i(0, 0, -1),
+        new Vec3i(0, 0, 1),
+        new Vec3i(-1, 0, 0),
+        new Vec3i(1, 0, 0),
+        new Vec3i(-1, 0, -1),
+        new Vec3i(1, 0, -1),
+        new Vec3i(1, 0, 1),
+        new Vec3i(-1, 0, 1),
+        new Vec3i(0, -1, 0),
+        new Vec3i(0, 1, 0),
+        new Vec3i(0, -1, -1),
+        new Vec3i(0, -1, 1),
+        new Vec3i(-1, -1, 0),
+        new Vec3i(1, -1, 0),
+        new Vec3i(-1, -1, -1),
+        new Vec3i(1, -1, -1),
+        new Vec3i(1, -1, 1),
+        new Vec3i(-1, -1, 1)
+    };
+
+    public static BlockPos findPos(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        BlockState target = level.getBlockState(pos);
+        if (target == state) {
+            return pos;
+        }
+        BlockPos.MutableBlockPos position = pos.mutable();
+        for (Vec3i move : DIRECTIONS) {
+            target = level.getBlockState(position.setWithOffset(pos, move));
+            if (target == state) {
+                return position;
+            }
+        }
+        return pos;
+    }
+
+    public static BlockStateModel getBlockDestroyModel(
+        BlockStateModel model,
+        BlockAndTintGetter level,
+        BlockPos pos,
+        BlockState state,
+        long seed
+    ) {
+        if (model instanceof WrapperBlockStateModel wrapper) {
+            return extractBlockDestroyModel(wrapper, level, pos, state, seed);
+        }
+        return model;
+    }
+
+    public static BlockStateModel getBlockDestroyModel(
+        BlockStateModel model,
+        BlockAndTintGetter level,
+        BlockPos pos,
+        BlockState state
+    ) {
+        if (model instanceof WrapperBlockStateModel wrapper) {
+            return extractBlockDestroyModel(wrapper, level, pos, state, state.getSeed(pos));
+        }
+        return model;
+    }
+
+    private static BlockStateModel extractBlockDestroyModel(
+        WrapperBlockStateModel model,
+        BlockAndTintGetter world,
+        BlockPos pos,
+        BlockState state,
+        long seed
+    ) {
+        RANDOM.setSeed(seed);
+        ArrayList<BlockStateModelPart> parts = new ArrayList<>();
+        model.addPartsWithInfo(world, pos, state, RANDOM, parts);
+        return switch (parts.size()) {
+            case 0 -> BlockStateRenderModel.INSTANCE;
+            case 1 -> new BlockStateRenderModel.Single(parts.getFirst());
+            default -> new BlockStateRenderModel.Multiple(parts);
+        };
+    }
+
+    protected @UnknownNullability BlockStateModel model;
     protected @Nullable Entry entry;
 
     public WrapperBlockStateModel() {
@@ -27,10 +103,6 @@ public abstract class WrapperBlockStateModel implements BlockStateModel, BlockSt
 
     public WrapperBlockStateModel(BlockState state, UnbakedRoot unbaked) {
         entry = new Entry(state, unbaked);
-    }
-
-    public BlockStateModel extractRenderModel(BlockAndTintGetter world, BlockPos pos, BlockState state, long seed) {
-        return BlockStateRenderModel.create(this, world, pos, state, seed);
     }
 
     public void addPartsWithInfo(
@@ -97,39 +169,8 @@ public abstract class WrapperBlockStateModel implements BlockStateModel, BlockSt
         }
     }
 
-    public static BlockStateModel unwrapCompat(BlockStateModel model) {
-        if (FABRIC) {
-            while (model instanceof WrapperModel wrapper) {
-                BlockStateModel child = wrapper.create$getWrapped();
-                if (child == model) {
-                    break;
-                }
-                model = child;
-            }
-        }
-        return model;
-    }
-
     private static class BlockStateRenderModel implements BlockStateModel {
         private static final BlockStateModel INSTANCE = new BlockStateRenderModel();
-        private static final RandomSource RANDOM = RandomSource.createThreadLocalInstance(0L);
-
-        public static BlockStateModel create(
-            WrapperBlockStateModel model,
-            BlockAndTintGetter world,
-            BlockPos pos,
-            BlockState state,
-            long seed
-        ) {
-            RANDOM.setSeed(seed);
-            ArrayList<BlockStateModelPart> parts = new ArrayList<>();
-            model.addPartsWithInfo(world, pos, state, RANDOM, parts);
-            return switch (parts.size()) {
-                case 0 -> INSTANCE;
-                case 1 -> new Single(parts.getFirst());
-                default -> new Multiple(parts);
-            };
-        }
 
         @Override
         public void collectParts(RandomSource random, List<BlockStateModelPart> output) {

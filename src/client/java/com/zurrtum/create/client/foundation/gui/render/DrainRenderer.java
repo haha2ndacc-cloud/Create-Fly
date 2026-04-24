@@ -9,6 +9,8 @@ import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
 import com.zurrtum.create.client.catnip.gui.render.GpuTexture;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.TextureSetup;
@@ -16,7 +18,6 @@ import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.block.FluidStateModelSet;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
@@ -33,15 +34,11 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
     private static final Deque<GpuTexture> TEXTURES = new ArrayDeque<>(MAX);
     private final PoseStack matrices = new PoseStack();
     private final BlockBakedQuadOutput output;
-    private final ModelBlockRenderer blockRenderer;
     private int windowScaleFactor;
 
     public DrainRenderer(BufferSource vertexConsumers) {
         super(vertexConsumers);
         output = new BlockBakedQuadOutput(vertexConsumers, matrices);
-        Minecraft minecraft = Minecraft.getInstance();
-        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
-        blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
     }
 
     @Override
@@ -77,11 +74,12 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
 
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
 
+        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         BlockState blockState = AllBlocks.ITEM_DRAIN.defaultBlockState();
         world.blockState(blockState);
         BlockStateModel model = mc.getModelManager().getBlockStateModelSet().get(blockState);
         output.updateBuffer(model);
-        blockRenderer.tesselateBlock(output, 0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         output.clearBuffer();
 
         float from = 2 / 16f;

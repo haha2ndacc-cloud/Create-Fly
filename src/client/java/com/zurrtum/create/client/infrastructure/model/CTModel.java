@@ -5,7 +5,7 @@ import com.zurrtum.create.client.foundation.block.connected.CTSpriteShiftEntry;
 import com.zurrtum.create.client.foundation.block.connected.CTType;
 import com.zurrtum.create.client.foundation.block.connected.ConnectedTextureBehaviour;
 import com.zurrtum.create.client.foundation.block.connected.ConnectedTextureBehaviour.CTContext;
-import com.zurrtum.create.client.model.NormalsBakedQuad;
+import com.zurrtum.create.client.foundation.model.BakedModelHelper;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.model.geom.builders.UVPair;
@@ -89,20 +89,14 @@ public class CTModel extends WrapperBlockStateModel {
         if (spriteShift == null || sprite != spriteShift.getOriginal()) {
             return quad;
         }
-        BakedQuad newQuad = new BakedQuad(
-            quad.position0(),
-            quad.position1(),
-            quad.position2(),
-            quad.position3(),
+        return BakedModelHelper.replaceBakedQuadUV(
+            quad,
             calcSpriteUv(quad.packedUV0(), spriteShift, index),
             calcSpriteUv(quad.packedUV1(), spriteShift, index),
             calcSpriteUv(quad.packedUV2(), spriteShift, index),
             calcSpriteUv(quad.packedUV3(), spriteShift, index),
-            quad.direction(),
             info
         );
-        NormalsBakedQuad.setNormals(newQuad, quad);
-        return newQuad;
     }
 
     protected int[] createCTData(BlockAndTintGetter world, BlockPos pos, BlockState state) {

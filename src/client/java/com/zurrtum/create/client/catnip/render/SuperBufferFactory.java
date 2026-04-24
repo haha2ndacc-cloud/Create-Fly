@@ -2,8 +2,8 @@ package com.zurrtum.create.client.catnip.render;
 
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.zurrtum.create.client.flywheel.lib.model.baked.EmptyVirtualBlockGetter;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
@@ -38,11 +38,7 @@ public class SuperBufferFactory {
         BlockStateModel model,
         BlockState state
     ) {
-        Minecraft minecraft = Minecraft.getInstance();
-        boolean ambientOcclusion = minecraft.options.ambientOcclusion().get();
-        ModelBlockRenderer blockRenderer = new ModelBlockRenderer(ambientOcclusion, false, minecraft.getBlockColors());
-        blockRenderer.tesselateBlock(
-            sbbBuilder,
+        ModelRenderHelper.getHelper(sbbBuilder).tesselateBlock(
             0,
             0,
             0,

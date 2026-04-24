@@ -1,6 +1,6 @@
 {
   "model": {
-    "type": "minecraft:model",
+    "type": "create:model/normal",
     "model": "create:block/blaze_burner/block_with_blaze"
   }
 }

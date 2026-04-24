@@ -26,17 +26,15 @@ public class AllModels {
     }
 
     public static void register() {
-        register(GogglesModel.ID, GogglesModel.Unbaked.CODEC);
         register(WrenchModel.ID, WrenchModel.Unbaked.CODEC);
-        register(SandPaperModel.ID, SandPaperModel.Unbaked.CODEC);
-        register(ClipboardModel.ID, ClipboardModel.Unbaked.CODEC);
         register(PotatoCannonModel.ID, PotatoCannonModel.Unbaked.CODEC);
         register(ExtendoGripModel.ID, ExtendoGripModel.Unbaked.CODEC);
-        register(LinkedControllerModel.ID, LinkedControllerModel.Unbaked.CODEC);
-        register(CardboardSwordModel.ID, CardboardSwordModel.Unbaked.CODEC);
         register(SymmetryWandModel.ID, SymmetryWandModel.Unbaked.CODEC);
         register(WorldshaperModel.ID, WorldshaperModel.Unbaked.CODEC);
         register(OversizedModel.ID, OversizedModel.Unbaked.CODEC);
+        register(NormalModel.ID, NormalModel.Unbaked.CODEC);
+        register(SandPaperModel.ID, SandPaperModel.Unbaked.CODEC);
+        register(LinkedControllerModel.ID, LinkedControllerModel.Unbaked.CODEC);
 
         BiFunction<BlockState, UnbakedRoot, UnbakedRoot> andesiteCasing = CTModel.of(AllCTBehaviours.ANDESITE_CASING);
         BiFunction<BlockState, UnbakedRoot, UnbakedRoot> brassCasing = CTModel.of(AllCTBehaviours.BRASS_CASING);

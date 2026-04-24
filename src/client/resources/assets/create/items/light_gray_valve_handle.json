@@ -1,6 +1,6 @@
 {
   "model": {
-    "type": "minecraft:model",
+    "type": "create:model/normal",
     "model": "create:block/light_gray_valve_handle"
   }
 }

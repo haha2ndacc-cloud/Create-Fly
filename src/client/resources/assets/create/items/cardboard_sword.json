@@ -1,5 +1,19 @@
 {
   "model": {
-    "type": "create:model/cardboard_sword"
+    "type": "minecraft:select",
+    "cases": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "create:item/cardboard_sword/item"
+        },
+        "when": "gui"
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "create:item/cardboard_sword/item_in_hand"
+    },
+    "property": "minecraft:display_context"
   }
 }
