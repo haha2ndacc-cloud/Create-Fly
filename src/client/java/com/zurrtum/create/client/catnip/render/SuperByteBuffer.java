@@ -8,7 +8,6 @@ import com.zurrtum.create.client.flywheel.lib.transform.Transform;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.util.ARGB;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
@@ -125,11 +124,11 @@ public class SuperByteBuffer implements Transform<SuperByteBuffer> {
 
     public SuperByteBuffer cardinalLighting(@Nullable CardinalLighting light) {
         if (light == CardinalLighting.DEFAULT) {
-            task.flag |= 0b01000000;
+            task.flag |= 0b010000000;
         } else if (light == CardinalLighting.NETHER) {
-            task.flag |= (byte) 0b10000000;
+            task.flag |= (byte) 0b100000000;
         } else {
-            task.flag &= 0b00111111;
+            task.flag &= 0b001111111;
         }
         return this;
     }
@@ -194,6 +193,11 @@ public class SuperByteBuffer implements Transform<SuperByteBuffer> {
 
     public SuperByteBuffer disableDiffuse() {
         task.flag |= 0b100000;
+        return this;
+    }
+
+    public SuperByteBuffer keepAlive() {
+        task.flag |= 0b1000000;
         return this;
     }
 
@@ -262,10 +266,13 @@ public class SuperByteBuffer implements Transform<SuperByteBuffer> {
 
     public static void register() {
         int thread = Runtime.getRuntime().availableProcessors();
-        int count = Math.max(Math.max(thread / 3, thread - 6), 1);
+        boolean priority = thread > 4;
+        int count = Math.max(thread - 2, 1);
         for (int i = 0; i < count; i++) {
             Thread worker = new SuperByteBufferThread(i, queue, pool);
-            worker.setPriority(Mth.clamp(Thread.NORM_PRIORITY - 2, Thread.MIN_PRIORITY, Thread.MAX_PRIORITY));
+            if (priority) {
+                worker.setPriority(Thread.NORM_PRIORITY + 1);
+            }
             worker.setDaemon(true);
             worker.start();
         }

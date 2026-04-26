@@ -16,6 +16,8 @@ import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.ghostblock.GhostBlocks;
 import com.zurrtum.create.client.catnip.outliner.Outliner;
 import com.zurrtum.create.client.catnip.render.DefaultSuperRenderTypeBuffer.Dispatcher;
+import com.zurrtum.create.client.catnip.render.EntityBlockLayer;
+import com.zurrtum.create.client.catnip.render.EntityBlockLightLayer;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.content.contraptions.actors.seat.ContraptionPlayerPassengerRotation;
 import com.zurrtum.create.client.content.contraptions.minecart.CouplingRenderer;
@@ -35,7 +37,6 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
@@ -69,10 +70,6 @@ import static com.zurrtum.create.client.infrastructure.model.WrapperBlockStateMo
 public abstract class LevelRendererMixin {
     @Shadow
     private ClientLevel level;
-
-    @Shadow
-    @Final
-    private LevelTargetBundle targets;
 
     @Shadow
     @Final
@@ -144,6 +141,14 @@ public abstract class LevelRendererMixin {
         ContraptionPlayerPassengerRotation.frame(minecraft);
     }
 
+    @Inject(method = "allChanged()V", at = @At("RETURN"))
+    private void flywheel$reload(CallbackInfo ci) {
+        if (level != null) {
+            EntityBlockLightLayer.clear();
+            EntityBlockLayer.clear();
+        }
+    }
+
     @Inject(method = "destroyBlockProgress(ILnet/minecraft/core/BlockPos;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/BlockDestructionProgress;updateTick(I)V"))
     private void onDestroyBlockProgress(
         int entityId,
@@ -198,7 +203,13 @@ public abstract class LevelRendererMixin {
             vertexConsumers,
             cameraPos,
             matrices
-        ) || TrackBlockOutline.drawCustomBlockSelection(minecraft, state.pos(), vertexConsumers, cameraPos, matrices)) {
+        ) || TrackBlockOutline.drawCustomBlockSelection(
+            minecraft,
+            state.pos(),
+            vertexConsumers,
+            cameraPos,
+            matrices
+        )) {
             ci.cancel();
         }
     }

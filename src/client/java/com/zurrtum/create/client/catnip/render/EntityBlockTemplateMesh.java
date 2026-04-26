@@ -5,6 +5,8 @@ import org.joml.Vector4f;
 import org.joml.Vector4fc;
 import org.jspecify.annotations.Nullable;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 public class EntityBlockTemplateMesh {
     public final EntityBlockRenderType type;
     public final int vertexCount;
@@ -14,6 +16,9 @@ public class EntityBlockTemplateMesh {
     public final int[] lights;
     public final Vector3fc[] normals;
     private Vector4fc @Nullable [] lightPositions;
+    private final ConcurrentLinkedQueue<int[]> colorsPool = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<float[]> uvsPool = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<int[]> lightsPool = new ConcurrentLinkedQueue<>();
 
     public EntityBlockTemplateMesh(
         EntityBlockRenderType type,
@@ -48,5 +53,32 @@ public class EntityBlockTemplateMesh {
             lightPositions = data;
         }
         return lightPositions;
+    }
+
+    public int[] createColors() {
+        int @Nullable [] colors = colorsPool.poll();
+        return colors == null ? new int[vertexCount] : colors;
+    }
+
+    public float[] createUVs() {
+        float @Nullable [] uvs = uvsPool.poll();
+        return uvs == null ? new float[vertexCount << 1] : uvs;
+    }
+
+    public int[] createLights() {
+        int @Nullable [] lights = lightsPool.poll();
+        return lights == null ? new int[vertexCount] : lights;
+    }
+
+    public void recycle(int[] colors, float[] uvs, int[] lights) {
+        if (colors != this.colors) {
+            colorsPool.offer(colors);
+        }
+        if (uvs != this.uvs) {
+            uvsPool.offer(uvs);
+        }
+        if (lights != this.lights) {
+            lightsPool.offer(lights);
+        }
     }
 }

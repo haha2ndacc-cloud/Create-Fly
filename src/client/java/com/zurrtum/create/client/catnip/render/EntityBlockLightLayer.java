@@ -5,35 +5,114 @@ import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
-import org.joml.Vector4f;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class EntityBlockLightLayer extends AbstractEntityBlockLayer {
-    private final Matrix4fc pose;
+    private static final ConcurrentLinkedQueue<EntityBlockLightLayer> pool = new ConcurrentLinkedQueue<>();
+    private static int capacity = 16, index;
+    private static @UnknownNullability EntityBlockLightLayer[] used = new EntityBlockLightLayer[capacity];
+    private final Matrix4f pose = new Matrix4f();
 
-    public EntityBlockLightLayer(Matrix4fc pose, RenderType type) {
-        super(new CompletableFuture<>(), type);
-        this.pose = pose;
+    public static void recycleAll() {
+        for (int i = 0; i < index; i++) {
+            EntityBlockLightLayer layer = used[i];
+            layer.template.recycle(layer.colors, layer.uvs, layer.lights);
+            pool.offer(layer);
+        }
+        index = 0;
     }
 
-    private EntityBlockLightLayer(Matrix4fc pose, RenderType type, EntityBlockTemplateMesh template) {
-        super(type);
-        this.pose = pose;
-        positions = template.positions;
-        colors = template.colors;
-        uvs = template.uvs;
-        lights = template.lights;
+    public static void clear() {
+        pool.clear();
+        index = 0;
+        for (int i = 0; i < capacity; i++) {
+            used[i] = null;
+        }
     }
 
-    public static EntityBlockLightLayer create(Matrix4fc pose, EntityBlockTemplateMesh template, int cardinalLighting) {
-        return new EntityBlockLightLayer(pose, template.type.getRenderType(cardinalLighting), template);
+    public static EntityBlockLightLayer create(
+        Pose pose,
+        EntityBlockTemplateMesh template,
+        int cardinalLighting,
+        boolean keepAlive
+    ) {
+        EntityBlockLightLayer layer = pool.poll();
+        if (layer == null) {
+            layer = new EntityBlockLightLayer();
+        }
+        layer.keepAlive = keepAlive;
+        layer.future = new CompletableFuture<>();
+        layer.type = template.type.getRenderType(cardinalLighting);
+        layer.template = template;
+        layer.pose.set(pose.pose());
+        return layer;
     }
 
-    public static EntityBlockLightLayer light(Matrix4fc pose, EntityBlockTemplateMesh template, int cardinalLighting) {
-        return new EntityBlockLightLayer(pose, template.type.getLightRenderType(cardinalLighting), template);
+    public static EntityBlockLightLayer createLight(
+        Pose pose,
+        EntityBlockTemplateMesh template,
+        int cardinalLighting,
+        boolean keepAlive
+    ) {
+        EntityBlockLightLayer layer = pool.poll();
+        if (layer == null) {
+            layer = new EntityBlockLightLayer();
+        }
+        layer.keepAlive = keepAlive;
+        layer.future = new CompletableFuture<>();
+        layer.type = template.type.getLightRenderType(cardinalLighting);
+        layer.template = template;
+        layer.pose.set(pose.pose());
+        return layer;
+    }
+
+    public static EntityBlockLightLayer resolve(
+        Pose pose,
+        EntityBlockTemplateMesh template,
+        int cardinalLighting,
+        boolean keepAlive
+    ) {
+        EntityBlockLightLayer layer = pool.poll();
+        if (layer == null) {
+            layer = new EntityBlockLightLayer();
+        }
+        layer.keepAlive = keepAlive;
+        layer.future = DONE;
+        layer.type = template.type.getRenderType(cardinalLighting);
+        layer.template = template;
+        layer.pose.set(pose.pose());
+        layer.positions = template.positions;
+        layer.colors = template.colors;
+        layer.uvs = template.uvs;
+        layer.lights = template.lights;
+        return layer;
+    }
+
+    public static EntityBlockLightLayer resolveLight(
+        Pose pose,
+        EntityBlockTemplateMesh template,
+        int cardinalLighting,
+        boolean keepAlive
+    ) {
+        EntityBlockLightLayer layer = pool.poll();
+        if (layer == null) {
+            layer = new EntityBlockLightLayer();
+        }
+        layer.keepAlive = keepAlive;
+        layer.future = DONE;
+        layer.type = template.type.getLightRenderType(cardinalLighting);
+        layer.template = template;
+        layer.pose.set(pose.pose());
+        layer.positions = template.positions;
+        layer.colors = template.colors;
+        layer.uvs = template.uvs;
+        layer.lights = template.lights;
+        return layer;
     }
 
     @Override
@@ -74,9 +153,18 @@ public class EntityBlockLightLayer extends AbstractEntityBlockLayer {
 
     @Override
     public void render(Pose pose, VertexConsumer buffer) {
-        future.join();
+        if (future != null) {
+            future.join();
+            future = null;
+            if (index == capacity) {
+                capacity <<= 1;
+                EntityBlockLightLayer[] old = used;
+                used = new EntityBlockLightLayer[capacity];
+                System.arraycopy(old, 0, used, 0, index);
+            }
+            used[index++] = this;
+        }
         Matrix4f modelMat = pose.pose();
-        Vector4f pos = new Vector4f();
         for (int i = 0, size = positions.length; i < size; i++) {
             positions[i].mul(modelMat, pos);
             buffer.addVertex(

@@ -23,6 +23,7 @@
     "EntityFluidInteractionMixin",
     "EntityMixin",
     "EntityTypeMixin",
+    "FeatureRenderDispatcherMixin",
     "FluidStateModelSetMixin",
     "FlywheelLevelRendererMixin",
     "FogRendererMixin",

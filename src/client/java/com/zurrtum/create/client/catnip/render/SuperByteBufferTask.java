@@ -1,11 +1,9 @@
 package com.zurrtum.create.client.catnip.render;
 
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.level.BlockAndLightGetter;
 import org.jetbrains.annotations.UnknownNullability;
-import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.jspecify.annotations.Nullable;
 
@@ -13,12 +11,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedTransferQueue;
 
 public class SuperByteBufferTask {
-    private static final Pose IDENTITY_ENTRY = new Pose();
-    private static final Matrix4fc IDENTITY_POSE = IDENTITY_ENTRY.pose();
     public Pose pose = new Pose();
     public @UnknownNullability AbstractEntityBlockLayer layer;
-    public @UnknownNullability EntityBlockTemplateMesh template;
-    public byte flag;
+    public int flag;
     public int color;
     public @UnknownNullability SpriteShiftEntry shiftEntry;
     float shiftU;
@@ -29,48 +24,37 @@ public class SuperByteBufferTask {
     public @Nullable Matrix4fc lightTransform;
     int overlay = OverlayTexture.NO_OVERLAY;
 
-    public Matrix4fc copyPose() {
-        Matrix4f mat = pose.pose();
-        return (mat.properties() & Matrix4fc.PROPERTY_IDENTITY) != 0 ? IDENTITY_POSE : new Matrix4f(mat);
-    }
-
-    public Pose copyEntry() {
-        Matrix4f mat = pose.pose();
-        return (mat.properties() & Matrix4fc.PROPERTY_IDENTITY) != 0 ? IDENTITY_ENTRY : pose.copy();
-    }
-
     public SuperByteBufferRenderState resolve(EntityBlockTemplateMesh[] templates) {
         int size = templates.length;
         if (size == 1) {
             SuperByteBufferRenderState state;
             if ((flag & 0b100000) != 0) {
-                state = EntityBlockLightLayer.light(copyPose(), templates[0], flag >>> 6);
+                state = EntityBlockLightLayer.resolveLight(pose, templates[0], flag >>> 7, (flag & 0b1000000) != 0);
             } else {
                 EntityBlockTemplateMesh template = templates[0];
                 if (template.type.isLight()) {
-                    state = EntityBlockLightLayer.create(copyPose(), template, flag >>> 6);
+                    state = EntityBlockLightLayer.resolve(pose, template, flag >>> 7, (flag & 0b1000000) != 0);
                 } else {
-                    state = EntityBlockLayer.create(copyEntry(), template, overlay, flag >>> 6);
+                    state = EntityBlockLayer.resolve(pose, template, overlay, flag >>> 7, (flag & 0b1000000) != 0);
                 }
             }
             reset();
             return state;
         }
-        int cardinalLighting = flag >>> 6;
+        boolean keepAlive = (flag & 0b1000000) != 0;
+        int cardinalLighting = flag >>> 7;
         SuperByteBufferRenderState[] states = new SuperByteBufferRenderState[size];
         if ((flag & 0b100000) != 0) {
-            Matrix4fc pose = copyPose();
             for (int i = 0; i < size; i++) {
-                states[i] = EntityBlockLightLayer.light(pose, templates[i], cardinalLighting);
+                states[i] = EntityBlockLightLayer.resolveLight(pose, templates[i], cardinalLighting, keepAlive);
             }
         } else {
-            Pose pose = copyEntry();
             for (int i = 0; i < size; i++) {
                 EntityBlockTemplateMesh template = templates[i];
                 if (template.type.isLight()) {
-                    states[i] = EntityBlockLightLayer.create(pose.pose(), template, cardinalLighting);
+                    states[i] = EntityBlockLightLayer.resolve(pose, template, cardinalLighting, keepAlive);
                 } else {
-                    states[i] = EntityBlockLayer.create(pose, template, overlay, cardinalLighting);
+                    states[i] = EntityBlockLayer.resolve(pose, template, overlay, cardinalLighting, keepAlive);
                 }
             }
         }
@@ -79,15 +63,15 @@ public class SuperByteBufferTask {
     }
 
     private void submit(
-        Matrix4fc pose,
+        Pose pose,
         LinkedTransferQueue<SuperByteBufferTask> queue,
         EntityBlockTemplateMesh[] templates,
         SuperByteBufferRenderState[] states,
+        boolean keepAlive,
         int cardinalLighting,
         int i
     ) {
-        template = templates[i];
-        states[i] = layer = new EntityBlockLightLayer(pose, template.type.getLightRenderType(cardinalLighting));
+        states[i] = layer = EntityBlockLightLayer.createLight(pose, templates[i], cardinalLighting, keepAlive);
         queue.put(this);
     }
 
@@ -97,15 +81,17 @@ public class SuperByteBufferTask {
         LinkedTransferQueue<SuperByteBufferTask> queue,
         EntityBlockTemplateMesh[] templates,
         SuperByteBufferRenderState[] states,
+        boolean keepAlive,
         int cardinalLighting,
         int i
     ) {
-        template = templates[i];
-        RenderType type = template.type.getRenderType(cardinalLighting);
+        EntityBlockTemplateMesh template = templates[i];
         if (template.type.isLight()) {
-            states[i] = layer = new EntityBlockLightLayer(pose.pose(), type);
+            layer = EntityBlockLightLayer.create(pose, template, cardinalLighting, keepAlive);
+            states[i] = layer;
         } else {
-            states[i] = layer = new EntityBlockLayer(pose, type, template.normals, overlay);
+            layer = EntityBlockLayer.create(pose, template, overlay, cardinalLighting, keepAlive);
+            states[i] = layer;
         }
         queue.put(this);
     }
@@ -117,46 +103,50 @@ public class SuperByteBufferTask {
     ) {
         int size = templates.length;
         if (size == 1) {
-            template = templates[0];
+            EntityBlockTemplateMesh template = templates[0];
             SuperByteBufferRenderState state;
             if ((flag & 0b100000) != 0) {
-                state = layer = new EntityBlockLightLayer(copyPose(), template.type.getLightRenderType(flag >>> 6));
+                state = layer = EntityBlockLightLayer.createLight(pose, template, flag >>> 7, (flag & 0b1000000) != 0);
             } else {
-                RenderType type = template.type.getRenderType(flag >>> 6);
                 if (template.type.isLight()) {
-                    state = layer = new EntityBlockLightLayer(copyPose(), type);
+                    state = layer = EntityBlockLightLayer.create(pose, template, flag >>> 7, (flag & 0b1000000) != 0);
                 } else {
-                    state = layer = new EntityBlockLayer(copyEntry(), type, template.normals, overlay);
+                    state = layer = EntityBlockLayer.create(
+                        pose,
+                        template,
+                        overlay,
+                        flag >>> 7,
+                        (flag & 0b1000000) != 0
+                    );
                 }
             }
             queue.put(this);
             return state;
         }
-        int cardinalLighting = flag >>> 6;
+        boolean keepAlive = (flag & 0b1000000) != 0;
+        int cardinalLighting = flag >>> 7;
         SuperByteBufferRenderState[] states = new SuperByteBufferRenderState[size];
         int end = size - 1;
         if ((flag & 0b100000) != 0) {
-            Matrix4fc pose = copyPose();
             for (int i = 0; i < end; i++) {
                 SuperByteBufferTask task = pool.poll();
                 if (task == null) {
                     task = new SuperByteBufferTask();
                 }
                 task.set(this);
-                task.submit(pose, queue, templates, states, cardinalLighting, i);
+                task.submit(pose, queue, templates, states, keepAlive, cardinalLighting, i);
             }
-            submit(pose, queue, templates, states, cardinalLighting, end);
+            submit(pose, queue, templates, states, keepAlive, cardinalLighting, end);
         } else {
-            Pose pose = copyEntry();
             for (int i = 0; i < end; i++) {
                 SuperByteBufferTask task = pool.poll();
                 if (task == null) {
                     task = new SuperByteBufferTask();
                 }
                 task.set(this);
-                task.submit(pose, overlay, queue, templates, states, cardinalLighting, i);
+                task.submit(pose, overlay, queue, templates, states, keepAlive, cardinalLighting, i);
             }
-            submit(pose, overlay, queue, templates, states, cardinalLighting, end);
+            submit(pose, overlay, queue, templates, states, keepAlive, cardinalLighting, end);
         }
         return new EntityBlockMultipleLayer(states);
     }
@@ -176,7 +166,6 @@ public class SuperByteBufferTask {
     public void reset() {
         pose.setIdentity();
         layer = null;
-        template = null;
         flag = 0;
         shiftEntry = null;
         blockAndLightGetter = null;

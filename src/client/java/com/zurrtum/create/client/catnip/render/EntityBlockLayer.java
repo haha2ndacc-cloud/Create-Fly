@@ -5,40 +5,83 @@ import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import org.joml.*;
+import org.jetbrains.annotations.UnknownNullability;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
+import org.joml.Vector3fc;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class EntityBlockLayer extends AbstractEntityBlockLayer {
-    private final Pose pose;
-    private final int overlay;
-    private final Vector3fc[] normals;
+    private static final ConcurrentLinkedQueue<EntityBlockLayer> pool = new ConcurrentLinkedQueue<>();
+    private static int capacity = 16, index;
+    private static @UnknownNullability EntityBlockLayer[] used = new EntityBlockLayer[capacity];
+    private final Pose pose = new Pose();
+    private int overlay;
+    private @UnknownNullability Vector3fc[] normals;
 
-    public EntityBlockLayer(Pose pose, RenderType type, Vector3fc[] normals, int overlay) {
-        super(new CompletableFuture<>(), type);
-        this.pose = pose;
-        this.overlay = overlay;
-        this.normals = normals;
+    public static void recycleAll() {
+        for (int i = 0; i < index; i++) {
+            EntityBlockLayer layer = used[i];
+            layer.template.recycle(layer.colors, layer.uvs, layer.lights);
+            pool.offer(layer);
+        }
+        index = 0;
     }
 
-    private EntityBlockLayer(Pose pose, RenderType type, EntityBlockTemplateMesh template, int overlay) {
-        super(type);
-        this.pose = pose;
-        positions = template.positions;
-        colors = template.colors;
-        uvs = template.uvs;
-        lights = template.lights;
-        this.overlay = overlay;
-        normals = template.normals;
+    public static void clear() {
+        pool.clear();
+        index = 0;
+        for (int i = 0; i < capacity; i++) {
+            used[i] = null;
+        }
     }
 
     public static EntityBlockLayer create(
         Pose pose,
         EntityBlockTemplateMesh template,
         int overlay,
-        int cardinalLighting
+        int cardinalLighting,
+        boolean keepAlive
     ) {
-        return new EntityBlockLayer(pose, template.type.getRenderType(cardinalLighting), template, overlay);
+        EntityBlockLayer layer = pool.poll();
+        if (layer == null) {
+            layer = new EntityBlockLayer();
+        }
+        layer.keepAlive = keepAlive;
+        layer.future = new CompletableFuture<>();
+        layer.type = template.type.getRenderType(cardinalLighting);
+        layer.template = template;
+        layer.pose.set(pose);
+        layer.overlay = overlay;
+        layer.normals = template.normals;
+        return layer;
+    }
+
+    public static EntityBlockLayer resolve(
+        Pose pose,
+        EntityBlockTemplateMesh template,
+        int overlay,
+        int cardinalLighting,
+        boolean keepAlive
+    ) {
+        EntityBlockLayer layer = pool.poll();
+        if (layer == null) {
+            layer = new EntityBlockLayer();
+        }
+        layer.keepAlive = keepAlive;
+        layer.future = DONE;
+        layer.type = template.type.getRenderType(cardinalLighting);
+        layer.template = template;
+        layer.pose.set(pose);
+        layer.positions = template.positions;
+        layer.colors = template.colors;
+        layer.uvs = template.uvs;
+        layer.lights = template.lights;
+        layer.overlay = overlay;
+        layer.normals = template.normals;
+        return layer;
     }
 
     @Override
@@ -81,10 +124,18 @@ public class EntityBlockLayer extends AbstractEntityBlockLayer {
 
     @Override
     public void render(Pose pose, VertexConsumer buffer) {
-        future.join();
+        if (future != null) {
+            future.join();
+            future = null;
+            if (index == capacity) {
+                capacity <<= 1;
+                EntityBlockLayer[] old = used;
+                used = new EntityBlockLayer[capacity];
+                System.arraycopy(old, 0, used, 0, index);
+            }
+            used[index++] = this;
+        }
         Matrix4f modelMat = pose.pose();
-        Vector4f pos = new Vector4f();
-        Vector3f normal = new Vector3f();
         for (int i = 0, size = positions.length; i < size; i++) {
             positions[i].mul(modelMat, pos);
             pose.transformNormal(normals[i], normal);

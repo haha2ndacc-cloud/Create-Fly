@@ -50,24 +50,24 @@ public class SuperByteBufferThread extends Thread {
     @Override
     @SuppressWarnings("DataFlowIssue")
     public void run() {
-        while (!isInterrupted()) {
+        while (true) {
             try {
                 SuperByteBufferTask task = queue.poll();
                 if (task == null) {
                     task = spinThenTake();
                 }
                 AbstractEntityBlockLayer layer = task.layer;
-                EntityBlockTemplateMesh template = task.template;
+                EntityBlockTemplateMesh template = layer.template;
                 int vertexCount = template.vertexCount;
                 layer.positions = template.positions;
-                byte flag = task.flag;
+                int flag = task.flag;
                 switch (flag & 0b11111) {
                     case 0b00001 -> {
                         colorMultiplyInstance.update(task);
                         layer.uvs = template.uvs;
                         layer.lights = template.lights;
                         int[] templateColors = template.colors;
-                        int[] colors = layer.colors = new int[vertexCount];
+                        int[] colors = layer.colors = template.createColors();
                         for (int j = 0; j < vertexCount; j++) {
                             colorMultiplyInstance.multiply(templateColors, colors, j);
                         }
@@ -77,7 +77,7 @@ public class SuperByteBufferThread extends Thread {
                         layer.colors = template.colors;
                         layer.lights = template.lights;
                         float[] templateUvs = template.uvs;
-                        float[] uvs = layer.uvs = new float[vertexCount << 1];
+                        float[] uvs = layer.uvs = template.createUVs();
                         for (int j = 0; j < vertexCount; j++) {
                             shiftFunction.shift(templateUvs, uvs, j << 1);
                         }
@@ -87,7 +87,7 @@ public class SuperByteBufferThread extends Thread {
                         layer.colors = template.colors;
                         layer.uvs = template.uvs;
                         int[] templateLights = template.lights;
-                        int[] lights = layer.lights = new int[vertexCount];
+                        int[] lights = layer.lights = template.createLights();
                         for (int j = 0; j < vertexCount; j++) {
                             lightFunction.mix(templateLights, lights, j);
                         }
@@ -99,8 +99,8 @@ public class SuperByteBufferThread extends Thread {
                         layer.lights = template.lights;
                         int[] templateColors = template.colors;
                         float[] templateUvs = template.uvs;
-                        int[] colors = layer.colors = new int[vertexCount];
-                        float[] uvs = layer.uvs = new float[vertexCount << 1];
+                        int[] colors = layer.colors = template.createColors();
+                        float[] uvs = layer.uvs = template.createUVs();
                         for (int j = 0; j < vertexCount; j++) {
                             colorMultiplyInstance.multiply(templateColors, colors, j);
                             shiftFunction.shift(templateUvs, uvs, j << 1);
@@ -112,8 +112,8 @@ public class SuperByteBufferThread extends Thread {
                         layer.uvs = template.uvs;
                         int[] templateColors = template.colors;
                         int[] templateLights = template.lights;
-                        int[] colors = layer.colors = new int[vertexCount];
-                        int[] lights = layer.lights = new int[vertexCount];
+                        int[] colors = layer.colors = template.createColors();
+                        int[] lights = layer.lights = template.createLights();
                         for (int j = 0; j < vertexCount; j++) {
                             colorMultiplyInstance.multiply(templateColors, colors, j);
                             lightFunction.mix(templateLights, lights, j);
@@ -126,8 +126,8 @@ public class SuperByteBufferThread extends Thread {
                         layer.colors = template.colors;
                         float[] templateUvs = template.uvs;
                         int[] templateLights = template.lights;
-                        float[] uvs = layer.uvs = new float[vertexCount << 1];
-                        int[] lights = layer.lights = new int[vertexCount];
+                        float[] uvs = layer.uvs = template.createUVs();
+                        int[] lights = layer.lights = template.createLights();
                         for (int j = 0; j < vertexCount; j++) {
                             shiftFunction.shift(templateUvs, uvs, j << 1);
                             lightFunction.mix(templateLights, lights, j);
@@ -141,9 +141,9 @@ public class SuperByteBufferThread extends Thread {
                         int[] templateColors = template.colors;
                         float[] templateUvs = template.uvs;
                         int[] templateLights = template.lights;
-                        int[] colors = layer.colors = new int[vertexCount];
-                        float[] uvs = layer.uvs = new float[vertexCount << 1];
-                        int[] lights = layer.lights = new int[vertexCount];
+                        int[] colors = layer.colors = template.createColors();
+                        float[] uvs = layer.uvs = template.createUVs();
+                        int[] lights = layer.lights = template.createLights();
                         for (int j = 0; j < vertexCount; j++) {
                             colorMultiplyInstance.multiply(templateColors, colors, j);
                             shiftFunction.shift(templateUvs, uvs, j << 1);
@@ -195,7 +195,7 @@ public class SuperByteBufferThread extends Thread {
         protected float offsetU, offsetV;
         private float diffU, diffV;
 
-        public ShiftFunction update(SuperByteBufferTask task, byte flag) {
+        public ShiftFunction update(SuperByteBufferTask task, int flag) {
             return switch (flag & 0b110) {
                 case 0b010 -> shiftUVScrolling(task.shiftEntry, task.shiftU, task.shiftV);
                 case 0b100 -> shiftUV(task.shiftEntry);
@@ -207,8 +207,7 @@ public class SuperByteBufferThread extends Thread {
         private class ShiftFunction {
             public void shift(float[] src, float[] dest, int index) {
                 dest[index] = src[index] + offsetU;
-                index++;
-                dest[index] = src[index] + offsetV;
+                dest[index + 1] = src[index + 1] + offsetV;
             }
         }
 
@@ -216,8 +215,7 @@ public class SuperByteBufferThread extends Thread {
             @Override
             public void shift(float[] src, float[] dest, int index) {
                 dest[index] = src[index] * diffU + offsetU;
-                index++;
-                dest[index] = src[index] * diffV + offsetV;
+                dest[index + 1] = src[index + 1] * diffV + offsetV;
             }
         }
 
@@ -328,7 +326,7 @@ public class SuperByteBufferThread extends Thread {
 
         public LightFunction update(
             SuperByteBufferTask task,
-            byte flag,
+            int flag,
             AbstractEntityBlockLayer layer,
             EntityBlockTemplateMesh template
         ) {

@@ -135,7 +135,7 @@ public class SchematicRenderer {
         schematic.renderMode = false;
 
         SuperByteBuffer buffer = sbbBuilder.build();
-        bufferCache = buffer.cardinalLighting(mc.level.cardinalLighting()).extractRenderState();
+        bufferCache = buffer.cardinalLighting(mc.level.cardinalLighting()).keepAlive().extractRenderState();
     }
 
     private static class ThreadLocalObjects {

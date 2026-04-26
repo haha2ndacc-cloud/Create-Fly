@@ -118,23 +118,22 @@ public class EntityBlockSbbBuilder implements BufferEmitter {
             float nz
         ) {
             if (index == capacity) {
-                int size = capacity;
                 capacity <<= 1;
                 Vector4fc[] positions = this.positions;
                 this.positions = new Vector4fc[capacity];
-                System.arraycopy(positions, 0, this.positions, 0, size);
+                System.arraycopy(positions, 0, this.positions, 0, index);
                 int[] colors = this.colors;
                 this.colors = new int[capacity];
-                System.arraycopy(colors, 0, this.colors, 0, size);
+                System.arraycopy(colors, 0, this.colors, 0, index);
                 float[] uvs = this.uvs;
                 this.uvs = new float[capacity << 1];
                 System.arraycopy(uvs, 0, this.uvs, 0, capacity);
                 int[] lights = this.lights;
                 this.lights = new int[capacity];
-                System.arraycopy(lights, 0, this.lights, 0, size);
+                System.arraycopy(lights, 0, this.lights, 0, index);
                 Vector3fc[] normals = this.normals;
                 this.normals = new Vector3fc[capacity];
-                System.arraycopy(normals, 0, this.normals, 0, size);
+                System.arraycopy(normals, 0, this.normals, 0, index);
             }
             positions[index] = new Vector4f(x, y, z, 1);
             colors[index] = color;
