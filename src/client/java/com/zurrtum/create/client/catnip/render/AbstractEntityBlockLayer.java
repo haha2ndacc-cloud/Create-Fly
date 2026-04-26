@@ -14,7 +14,7 @@ public abstract class AbstractEntityBlockLayer implements SuperByteBufferRenderS
     protected static final CompletableFuture<Void> DONE = CompletableFuture.completedFuture(null);
     protected static final Vector4f pos = new Vector4f();
     protected static final Vector3f normal = new Vector3f();
-    protected boolean keepAlive;
+    protected boolean recycle;
     public @Nullable CompletableFuture<Void> future;
     public @UnknownNullability RenderType type;
     public @UnknownNullability EntityBlockTemplateMesh template;

@@ -29,32 +29,32 @@ public class SuperByteBufferTask {
         if (size == 1) {
             SuperByteBufferRenderState state;
             if ((flag & 0b100000) != 0) {
-                state = EntityBlockLightLayer.resolveLight(pose, templates[0], flag >>> 7, (flag & 0b1000000) != 0);
+                state = EntityBlockLightLayer.resolveLight(pose, templates[0], flag >>> 7, (flag & 0b1000000) == 0);
             } else {
                 EntityBlockTemplateMesh template = templates[0];
                 if (template.type.isLight()) {
-                    state = EntityBlockLightLayer.resolve(pose, template, flag >>> 7, (flag & 0b1000000) != 0);
+                    state = EntityBlockLightLayer.resolve(pose, template, flag >>> 7, (flag & 0b1000000) == 0);
                 } else {
-                    state = EntityBlockLayer.resolve(pose, template, overlay, flag >>> 7, (flag & 0b1000000) != 0);
+                    state = EntityBlockLayer.resolve(pose, template, overlay, flag >>> 7, (flag & 0b1000000) == 0);
                 }
             }
             reset();
             return state;
         }
-        boolean keepAlive = (flag & 0b1000000) != 0;
+        boolean recycle = (flag & 0b1000000) == 0;
         int cardinalLighting = flag >>> 7;
         SuperByteBufferRenderState[] states = new SuperByteBufferRenderState[size];
         if ((flag & 0b100000) != 0) {
             for (int i = 0; i < size; i++) {
-                states[i] = EntityBlockLightLayer.resolveLight(pose, templates[i], cardinalLighting, keepAlive);
+                states[i] = EntityBlockLightLayer.resolveLight(pose, templates[i], cardinalLighting, recycle);
             }
         } else {
             for (int i = 0; i < size; i++) {
                 EntityBlockTemplateMesh template = templates[i];
                 if (template.type.isLight()) {
-                    states[i] = EntityBlockLightLayer.resolve(pose, template, cardinalLighting, keepAlive);
+                    states[i] = EntityBlockLightLayer.resolve(pose, template, cardinalLighting, recycle);
                 } else {
-                    states[i] = EntityBlockLayer.resolve(pose, template, overlay, cardinalLighting, keepAlive);
+                    states[i] = EntityBlockLayer.resolve(pose, template, overlay, cardinalLighting, recycle);
                 }
             }
         }
@@ -67,11 +67,11 @@ public class SuperByteBufferTask {
         LinkedTransferQueue<SuperByteBufferTask> queue,
         EntityBlockTemplateMesh[] templates,
         SuperByteBufferRenderState[] states,
-        boolean keepAlive,
+        boolean recycle,
         int cardinalLighting,
         int i
     ) {
-        states[i] = layer = EntityBlockLightLayer.createLight(pose, templates[i], cardinalLighting, keepAlive);
+        states[i] = layer = EntityBlockLightLayer.createLight(pose, templates[i], cardinalLighting, recycle);
         queue.put(this);
     }
 
@@ -81,16 +81,16 @@ public class SuperByteBufferTask {
         LinkedTransferQueue<SuperByteBufferTask> queue,
         EntityBlockTemplateMesh[] templates,
         SuperByteBufferRenderState[] states,
-        boolean keepAlive,
+        boolean recycle,
         int cardinalLighting,
         int i
     ) {
         EntityBlockTemplateMesh template = templates[i];
         if (template.type.isLight()) {
-            layer = EntityBlockLightLayer.create(pose, template, cardinalLighting, keepAlive);
+            layer = EntityBlockLightLayer.create(pose, template, cardinalLighting, recycle);
             states[i] = layer;
         } else {
-            layer = EntityBlockLayer.create(pose, template, overlay, cardinalLighting, keepAlive);
+            layer = EntityBlockLayer.create(pose, template, overlay, cardinalLighting, recycle);
             states[i] = layer;
         }
         queue.put(this);
@@ -106,24 +106,24 @@ public class SuperByteBufferTask {
             EntityBlockTemplateMesh template = templates[0];
             SuperByteBufferRenderState state;
             if ((flag & 0b100000) != 0) {
-                state = layer = EntityBlockLightLayer.createLight(pose, template, flag >>> 7, (flag & 0b1000000) != 0);
+                state = layer = EntityBlockLightLayer.createLight(pose, template, flag >>> 7, (flag & 0b1000000) == 0);
             } else {
                 if (template.type.isLight()) {
-                    state = layer = EntityBlockLightLayer.create(pose, template, flag >>> 7, (flag & 0b1000000) != 0);
+                    state = layer = EntityBlockLightLayer.create(pose, template, flag >>> 7, (flag & 0b1000000) == 0);
                 } else {
                     state = layer = EntityBlockLayer.create(
                         pose,
                         template,
                         overlay,
                         flag >>> 7,
-                        (flag & 0b1000000) != 0
+                        (flag & 0b1000000) == 0
                     );
                 }
             }
             queue.put(this);
             return state;
         }
-        boolean keepAlive = (flag & 0b1000000) != 0;
+        boolean recycle = (flag & 0b1000000) == 0;
         int cardinalLighting = flag >>> 7;
         SuperByteBufferRenderState[] states = new SuperByteBufferRenderState[size];
         int end = size - 1;
@@ -134,9 +134,9 @@ public class SuperByteBufferTask {
                     task = new SuperByteBufferTask();
                 }
                 task.set(this);
-                task.submit(pose, queue, templates, states, keepAlive, cardinalLighting, i);
+                task.submit(pose, queue, templates, states, recycle, cardinalLighting, i);
             }
-            submit(pose, queue, templates, states, keepAlive, cardinalLighting, end);
+            submit(pose, queue, templates, states, recycle, cardinalLighting, end);
         } else {
             for (int i = 0; i < end; i++) {
                 SuperByteBufferTask task = pool.poll();
@@ -144,9 +144,9 @@ public class SuperByteBufferTask {
                     task = new SuperByteBufferTask();
                 }
                 task.set(this);
-                task.submit(pose, overlay, queue, templates, states, keepAlive, cardinalLighting, i);
+                task.submit(pose, overlay, queue, templates, states, recycle, cardinalLighting, i);
             }
-            submit(pose, overlay, queue, templates, states, keepAlive, cardinalLighting, end);
+            submit(pose, overlay, queue, templates, states, recycle, cardinalLighting, end);
         }
         return new EntityBlockMultipleLayer(states);
     }

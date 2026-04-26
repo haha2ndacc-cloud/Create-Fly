@@ -39,13 +39,13 @@ public class EntityBlockLightLayer extends AbstractEntityBlockLayer {
         Pose pose,
         EntityBlockTemplateMesh template,
         int cardinalLighting,
-        boolean keepAlive
+        boolean recycle
     ) {
         EntityBlockLightLayer layer = pool.poll();
         if (layer == null) {
             layer = new EntityBlockLightLayer();
         }
-        layer.keepAlive = keepAlive;
+        layer.recycle = recycle;
         layer.future = new CompletableFuture<>();
         layer.type = template.type.getRenderType(cardinalLighting);
         layer.template = template;
@@ -57,13 +57,13 @@ public class EntityBlockLightLayer extends AbstractEntityBlockLayer {
         Pose pose,
         EntityBlockTemplateMesh template,
         int cardinalLighting,
-        boolean keepAlive
+        boolean recycle
     ) {
         EntityBlockLightLayer layer = pool.poll();
         if (layer == null) {
             layer = new EntityBlockLightLayer();
         }
-        layer.keepAlive = keepAlive;
+        layer.recycle = recycle;
         layer.future = new CompletableFuture<>();
         layer.type = template.type.getLightRenderType(cardinalLighting);
         layer.template = template;
@@ -75,13 +75,13 @@ public class EntityBlockLightLayer extends AbstractEntityBlockLayer {
         Pose pose,
         EntityBlockTemplateMesh template,
         int cardinalLighting,
-        boolean keepAlive
+        boolean recycle
     ) {
         EntityBlockLightLayer layer = pool.poll();
         if (layer == null) {
             layer = new EntityBlockLightLayer();
         }
-        layer.keepAlive = keepAlive;
+        layer.recycle = recycle;
         layer.future = DONE;
         layer.type = template.type.getRenderType(cardinalLighting);
         layer.template = template;
@@ -97,13 +97,13 @@ public class EntityBlockLightLayer extends AbstractEntityBlockLayer {
         Pose pose,
         EntityBlockTemplateMesh template,
         int cardinalLighting,
-        boolean keepAlive
+        boolean recycle
     ) {
         EntityBlockLightLayer layer = pool.poll();
         if (layer == null) {
             layer = new EntityBlockLightLayer();
         }
-        layer.keepAlive = keepAlive;
+        layer.recycle = recycle;
         layer.future = DONE;
         layer.type = template.type.getLightRenderType(cardinalLighting);
         layer.template = template;
@@ -156,13 +156,15 @@ public class EntityBlockLightLayer extends AbstractEntityBlockLayer {
         if (future != null) {
             future.join();
             future = null;
-            if (index == capacity) {
-                capacity <<= 1;
-                EntityBlockLightLayer[] old = used;
-                used = new EntityBlockLightLayer[capacity];
-                System.arraycopy(old, 0, used, 0, index);
+            if (recycle) {
+                if (index == capacity) {
+                    capacity <<= 1;
+                    EntityBlockLightLayer[] old = used;
+                    used = new EntityBlockLightLayer[capacity];
+                    System.arraycopy(old, 0, used, 0, index);
+                }
+                used[index++] = this;
             }
-            used[index++] = this;
         }
         Matrix4f modelMat = pose.pose();
         for (int i = 0, size = positions.length; i < size; i++) {
