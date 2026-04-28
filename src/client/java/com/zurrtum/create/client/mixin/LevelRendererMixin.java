@@ -18,6 +18,7 @@ import com.zurrtum.create.client.catnip.outliner.Outliner;
 import com.zurrtum.create.client.catnip.render.DefaultSuperRenderTypeBuffer.Dispatcher;
 import com.zurrtum.create.client.catnip.render.EntityBlockLayer;
 import com.zurrtum.create.client.catnip.render.EntityBlockLightLayer;
+import com.zurrtum.create.client.catnip.render.EntityBlockMultipleLayer;
 import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.content.contraptions.actors.seat.ContraptionPlayerPassengerRotation;
 import com.zurrtum.create.client.content.contraptions.minecart.CouplingRenderer;
@@ -146,6 +147,7 @@ public abstract class LevelRendererMixin {
         if (level != null) {
             EntityBlockLightLayer.clear();
             EntityBlockLayer.clear();
+            EntityBlockMultipleLayer.clear();
         }
     }
 
@@ -203,13 +205,7 @@ public abstract class LevelRendererMixin {
             vertexConsumers,
             cameraPos,
             matrices
-        ) || TrackBlockOutline.drawCustomBlockSelection(
-            minecraft,
-            state.pos(),
-            vertexConsumers,
-            cameraPos,
-            matrices
-        )) {
+        ) || TrackBlockOutline.drawCustomBlockSelection(minecraft, state.pos(), vertexConsumers, cameraPos, matrices)) {
             ci.cancel();
         }
     }

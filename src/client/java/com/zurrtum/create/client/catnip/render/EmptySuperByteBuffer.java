@@ -501,6 +501,10 @@ class EmptySuperByteBuffer extends SuperByteBuffer {
         }
 
         @Override
+        public void recycle() {
+        }
+
+        @Override
         public boolean isEmpty() {
             return true;
         }

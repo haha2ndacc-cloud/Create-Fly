@@ -10,11 +10,12 @@ import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class EntityBlockLayer extends AbstractEntityBlockLayer {
-    private static final ConcurrentLinkedQueue<EntityBlockLayer> pool = new ConcurrentLinkedQueue<>();
+    private static final Deque<EntityBlockLayer> pool = new ArrayDeque<>();
     private static int capacity = 16, index;
     private static @UnknownNullability EntityBlockLayer[] used = new EntityBlockLayer[capacity];
     private final Pose pose = new Pose();
@@ -23,9 +24,7 @@ public class EntityBlockLayer extends AbstractEntityBlockLayer {
 
     public static void recycleAll() {
         for (int i = 0; i < index; i++) {
-            EntityBlockLayer layer = used[i];
-            layer.template.recycle(layer.colors, layer.uvs, layer.lights);
-            pool.offer(layer);
+            used[i].recycle();
         }
         index = 0;
     }
@@ -38,6 +37,11 @@ public class EntityBlockLayer extends AbstractEntityBlockLayer {
         }
     }
 
+    public void recycle() {
+        template.recycle(colors, uvs, lights);
+        pool.addLast(this);
+    }
+
     public static EntityBlockLayer create(
         Pose pose,
         EntityBlockTemplateMesh template,
@@ -45,7 +49,7 @@ public class EntityBlockLayer extends AbstractEntityBlockLayer {
         int cardinalLighting,
         boolean recycle
     ) {
-        EntityBlockLayer layer = pool.poll();
+        EntityBlockLayer layer = pool.pollFirst();
         if (layer == null) {
             layer = new EntityBlockLayer();
         }
@@ -66,7 +70,7 @@ public class EntityBlockLayer extends AbstractEntityBlockLayer {
         int cardinalLighting,
         boolean recycle
     ) {
-        EntityBlockLayer layer = pool.poll();
+        EntityBlockLayer layer = pool.pollFirst();
         if (layer == null) {
             layer = new EntityBlockLayer();
         }

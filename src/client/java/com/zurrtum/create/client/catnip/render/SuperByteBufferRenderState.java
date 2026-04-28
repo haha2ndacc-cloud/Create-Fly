@@ -16,6 +16,8 @@ public interface SuperByteBufferRenderState extends CustomGeometryRenderer {
 
     void submit(RenderType type, PoseStack matrices, OrderedSubmitNodeCollector queue);
 
+    void recycle();
+
     default boolean isEmpty() {
         return false;
     }

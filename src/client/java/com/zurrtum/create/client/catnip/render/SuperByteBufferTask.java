@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedTransferQueue;
 
 public class SuperByteBufferTask {
-    public Pose pose = new Pose();
+    public final Pose pose = new Pose();
     public @UnknownNullability AbstractEntityBlockLayer layer;
     public int flag;
     public int color;
@@ -43,35 +43,36 @@ public class SuperByteBufferTask {
         }
         boolean recycle = (flag & 0b1000000) == 0;
         int cardinalLighting = flag >>> 7;
-        SuperByteBufferRenderState[] states = new SuperByteBufferRenderState[size];
+        EntityBlockMultipleLayer layers = EntityBlockMultipleLayer.create(recycle);
         if ((flag & 0b100000) != 0) {
             for (int i = 0; i < size; i++) {
-                states[i] = EntityBlockLightLayer.resolveLight(pose, templates[i], cardinalLighting, recycle);
+                layers.add(EntityBlockLightLayer.resolveLight(pose, templates[i], cardinalLighting, recycle));
             }
         } else {
             for (int i = 0; i < size; i++) {
                 EntityBlockTemplateMesh template = templates[i];
                 if (template.type.isLight()) {
-                    states[i] = EntityBlockLightLayer.resolve(pose, template, cardinalLighting, recycle);
+                    layers.add(EntityBlockLightLayer.resolve(pose, template, cardinalLighting, recycle));
                 } else {
-                    states[i] = EntityBlockLayer.resolve(pose, template, overlay, cardinalLighting, recycle);
+                    layers.add(EntityBlockLayer.resolve(pose, template, overlay, cardinalLighting, recycle));
                 }
             }
         }
         reset();
-        return new EntityBlockMultipleLayer(states);
+        return layers;
     }
 
     private void submit(
         Pose pose,
         LinkedTransferQueue<SuperByteBufferTask> queue,
         EntityBlockTemplateMesh[] templates,
-        SuperByteBufferRenderState[] states,
+        EntityBlockMultipleLayer layers,
         boolean recycle,
         int cardinalLighting,
         int i
     ) {
-        states[i] = layer = EntityBlockLightLayer.createLight(pose, templates[i], cardinalLighting, recycle);
+        layer = EntityBlockLightLayer.createLight(pose, templates[i], cardinalLighting, recycle);
+        layers.add(layer);
         queue.put(this);
     }
 
@@ -80,7 +81,7 @@ public class SuperByteBufferTask {
         int overlay,
         LinkedTransferQueue<SuperByteBufferTask> queue,
         EntityBlockTemplateMesh[] templates,
-        SuperByteBufferRenderState[] states,
+        EntityBlockMultipleLayer layers,
         boolean recycle,
         int cardinalLighting,
         int i
@@ -88,11 +89,10 @@ public class SuperByteBufferTask {
         EntityBlockTemplateMesh template = templates[i];
         if (template.type.isLight()) {
             layer = EntityBlockLightLayer.create(pose, template, cardinalLighting, recycle);
-            states[i] = layer;
         } else {
             layer = EntityBlockLayer.create(pose, template, overlay, cardinalLighting, recycle);
-            states[i] = layer;
         }
+        layers.add(layer);
         queue.put(this);
     }
 
@@ -125,7 +125,7 @@ public class SuperByteBufferTask {
         }
         boolean recycle = (flag & 0b1000000) == 0;
         int cardinalLighting = flag >>> 7;
-        SuperByteBufferRenderState[] states = new SuperByteBufferRenderState[size];
+        EntityBlockMultipleLayer layers = EntityBlockMultipleLayer.create(recycle);
         int end = size - 1;
         if ((flag & 0b100000) != 0) {
             for (int i = 0; i < end; i++) {
@@ -134,9 +134,9 @@ public class SuperByteBufferTask {
                     task = new SuperByteBufferTask();
                 }
                 task.set(this);
-                task.submit(pose, queue, templates, states, recycle, cardinalLighting, i);
+                task.submit(pose, queue, templates, layers, recycle, cardinalLighting, i);
             }
-            submit(pose, queue, templates, states, recycle, cardinalLighting, end);
+            submit(pose, queue, templates, layers, recycle, cardinalLighting, end);
         } else {
             for (int i = 0; i < end; i++) {
                 SuperByteBufferTask task = pool.poll();
@@ -144,11 +144,11 @@ public class SuperByteBufferTask {
                     task = new SuperByteBufferTask();
                 }
                 task.set(this);
-                task.submit(pose, overlay, queue, templates, states, recycle, cardinalLighting, i);
+                task.submit(pose, overlay, queue, templates, layers, recycle, cardinalLighting, i);
             }
-            submit(pose, overlay, queue, templates, states, recycle, cardinalLighting, end);
+            submit(pose, overlay, queue, templates, layers, recycle, cardinalLighting, end);
         }
-        return new EntityBlockMultipleLayer(states);
+        return layers;
     }
 
     public void set(SuperByteBufferTask origin) {

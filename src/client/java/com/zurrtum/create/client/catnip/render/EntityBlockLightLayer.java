@@ -9,20 +9,19 @@ import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class EntityBlockLightLayer extends AbstractEntityBlockLayer {
-    private static final ConcurrentLinkedQueue<EntityBlockLightLayer> pool = new ConcurrentLinkedQueue<>();
+    private static final Deque<EntityBlockLightLayer> pool = new ArrayDeque<>();
     private static int capacity = 16, index;
     private static @UnknownNullability EntityBlockLightLayer[] used = new EntityBlockLightLayer[capacity];
     private final Matrix4f pose = new Matrix4f();
 
     public static void recycleAll() {
         for (int i = 0; i < index; i++) {
-            EntityBlockLightLayer layer = used[i];
-            layer.template.recycle(layer.colors, layer.uvs, layer.lights);
-            pool.offer(layer);
+            used[i].recycle();
         }
         index = 0;
     }
@@ -35,13 +34,19 @@ public class EntityBlockLightLayer extends AbstractEntityBlockLayer {
         }
     }
 
+    @Override
+    public void recycle() {
+        template.recycle(colors, uvs, lights);
+        pool.addLast(this);
+    }
+
     public static EntityBlockLightLayer create(
         Pose pose,
         EntityBlockTemplateMesh template,
         int cardinalLighting,
         boolean recycle
     ) {
-        EntityBlockLightLayer layer = pool.poll();
+        EntityBlockLightLayer layer = pool.pollFirst();
         if (layer == null) {
             layer = new EntityBlockLightLayer();
         }
@@ -59,7 +64,7 @@ public class EntityBlockLightLayer extends AbstractEntityBlockLayer {
         int cardinalLighting,
         boolean recycle
     ) {
-        EntityBlockLightLayer layer = pool.poll();
+        EntityBlockLightLayer layer = pool.pollFirst();
         if (layer == null) {
             layer = new EntityBlockLightLayer();
         }
@@ -77,7 +82,7 @@ public class EntityBlockLightLayer extends AbstractEntityBlockLayer {
         int cardinalLighting,
         boolean recycle
     ) {
-        EntityBlockLightLayer layer = pool.poll();
+        EntityBlockLightLayer layer = pool.pollFirst();
         if (layer == null) {
             layer = new EntityBlockLightLayer();
         }
@@ -99,7 +104,7 @@ public class EntityBlockLightLayer extends AbstractEntityBlockLayer {
         int cardinalLighting,
         boolean recycle
     ) {
-        EntityBlockLightLayer layer = pool.poll();
+        EntityBlockLightLayer layer = pool.pollFirst();
         if (layer == null) {
             layer = new EntityBlockLightLayer();
         }
