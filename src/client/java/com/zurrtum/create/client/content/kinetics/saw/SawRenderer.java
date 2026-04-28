@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
+import com.zurrtum.create.client.catnip.render.QuadRenderHelper;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
 import com.zurrtum.create.client.content.kinetics.saw.SawRenderer.SawRenderState;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
@@ -18,6 +19,7 @@ import com.zurrtum.create.content.logistics.box.PackageItem;
 import com.zurrtum.create.content.processing.recipe.ProcessingInventory;
 import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
 import it.unimi.dsi.fastutil.booleans.BooleanList;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
@@ -27,6 +29,7 @@ import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
@@ -49,9 +52,11 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 
 public class SawRenderer implements BlockEntityRenderer<SawBlockEntity, SawRenderState> {
     protected final ItemModelResolver itemModelManager;
+    protected final TextureAtlasSprite sprite;
 
     public SawRenderer(Context context) {
         itemModelManager = context.itemModelResolver();
+        sprite = context.sprites().get(Sheets.BLOCKS_MAPPER.defaultNamespaceApply("stonecutter_saw"));
     }
 
     @Override
@@ -77,8 +82,10 @@ public class SawRenderer implements BlockEntityRenderer<SawBlockEntity, SawRende
         if (axis == Axis.Y) {
             if (speed > 0) {
                 partial = AllPartialModels.SAW_BLADE_VERTICAL_ACTIVE;
+                QuadRenderHelper.markSpriteActive(sprite);
             } else if (speed < 0) {
                 partial = AllPartialModels.SAW_BLADE_VERTICAL_REVERSED;
+                QuadRenderHelper.markSpriteActive(sprite);
             } else {
                 partial = AllPartialModels.SAW_BLADE_VERTICAL_INACTIVE;
             }
@@ -88,8 +95,10 @@ public class SawRenderer implements BlockEntityRenderer<SawBlockEntity, SawRende
         } else {
             if (speed > 0) {
                 partial = AllPartialModels.SAW_BLADE_HORIZONTAL_ACTIVE;
+                QuadRenderHelper.markSpriteActive(sprite);
             } else if (speed < 0) {
                 partial = AllPartialModels.SAW_BLADE_HORIZONTAL_REVERSED;
+                QuadRenderHelper.markSpriteActive(sprite);
             } else {
                 partial = AllPartialModels.SAW_BLADE_HORIZONTAL_INACTIVE;
             }

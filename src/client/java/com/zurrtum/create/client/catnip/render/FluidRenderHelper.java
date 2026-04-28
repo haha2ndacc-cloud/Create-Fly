@@ -47,9 +47,11 @@ public class FluidRenderHelper {
             case CUTOUT -> RenderTypes.cutoutMovingBlock();
             case TRANSLUCENT -> RenderTypes.translucentMovingBlock();
         };
+        TextureAtlasSprite fluidTexture = model.stillMaterial().sprite();
+        QuadRenderHelper.markSpriteActive(fluidTexture);
         return new FluidRenderState(
             layer,
-            model.stillMaterial().sprite(),
+            fluidTexture,
             AllFluidConfigs.getTint(level, pos, blockState, model, fluid, components) | 0xff000000,
             blockState.getLightEmission(),
             xMin,
@@ -85,12 +87,12 @@ public class FluidRenderHelper {
         light = (light & 0xF00000) | luminosity << 4;
 
         //TODO
-//        Vec3 center = new Vec3(xMin + (xMax - xMin) / 2, yMin + (yMax - yMin) / 2, zMin + (zMax - zMin) / 2);
-//        if (invertGasses && false) {
-//            entry.translate((float) center.x, (float) center.y, (float) center.z);
-//            entry.rotate(Axis.XP.rotationDegrees(180));
-//            entry.translate((float) -center.x, (float) -center.y, (float) -center.z);
-//        }
+        //        Vec3 center = new Vec3(xMin + (xMax - xMin) / 2, yMin + (yMax - yMin) / 2, zMin + (zMax - zMin) / 2);
+        //        if (invertGasses && false) {
+        //            entry.translate((float) center.x, (float) center.y, (float) center.z);
+        //            entry.rotate(Axis.XP.rotationDegrees(180));
+        //            entry.translate((float) -center.x, (float) -center.y, (float) -center.z);
+        //        }
 
         for (Direction side : Iterate.directions) {
             if (side == Direction.DOWN && !renderBottom) {

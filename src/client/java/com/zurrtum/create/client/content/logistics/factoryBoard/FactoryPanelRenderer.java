@@ -6,6 +6,7 @@ import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.AllSpriteShifts;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
+import com.zurrtum.create.client.catnip.render.QuadRenderHelper;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
 import com.zurrtum.create.client.content.logistics.factoryBoard.FactoryPanelRenderer.FactoryPanelRenderState;
@@ -17,6 +18,7 @@ import com.zurrtum.create.client.foundation.render.CreateRenderTypes;
 import com.zurrtum.create.content.logistics.factoryBoard.*;
 import com.zurrtum.create.content.redstone.displayLink.DisplayLinkBlockEntity;
 import com.zurrtum.create.content.redstone.link.RedstoneLinkBlockEntity;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -25,8 +27,10 @@ import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.CardinalLighting;
@@ -42,15 +46,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.zurrtum.create.Create.MOD_ID;
 import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getEastRadiansRotateAngle;
 import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getUpRadiansRotateAngle;
 
 public class FactoryPanelRenderer implements BlockEntityRenderer<FactoryPanelBlockEntity, FactoryPanelRenderState> {
     public static final Quaternionfc UP_ANGLE = new Quaternionf().setAngleAxis(Mth.PI, 0, 1, 0);
     protected final ItemModelResolver itemModelManager;
+    protected final TextureAtlasSprite sprite;
 
     public FactoryPanelRenderer(Context context) {
         itemModelManager = context.itemModelResolver();
+        sprite = context.sprites().get(Sheets.BLOCKS_MAPPER.apply(Identifier.fromNamespaceAndPath(
+            MOD_ID,
+            "factory_panel_connections_animated"
+        )));
     }
 
     @Override
@@ -77,6 +87,7 @@ public class FactoryPanelRenderer implements BlockEntityRenderer<FactoryPanelBlo
             be.isVirtual() ? -1 : cameraPos.distanceToSqr(VecHelper.getCenterOf(blockPos))
         );
         List<SingleFactoryPanelRenderState> panels = new ArrayList<>();
+        boolean activeSprite = true;
         for (ServerFactoryPanelBehaviour behaviour : be.panels.values()) {
             if (behaviour.isActive()) {
                 boolean bulb = behaviour.getAmount() > 0;
@@ -129,6 +140,10 @@ public class FactoryPanelRenderer implements BlockEntityRenderer<FactoryPanelBlo
                             missingAddress,
                             glow
                         ));
+                    }
+                    if (activeSprite && !paths.isEmpty()) {
+                        QuadRenderHelper.markSpriteActive(sprite);
+                        activeSprite = false;
                     }
                 }
                 if (bulb) {

@@ -16,8 +16,9 @@ public class MixinPlugin implements IMixinConfigPlugin {
     public void onLoad(String mixinPackage) {
         mixins = new ArrayList<>();
         FabricLoader loader = FabricLoader.getInstance();
-        //        if (loader.isModLoaded("sodium")) {
-        //        }
+        if (loader.isModLoaded("sodium")) {
+            mixins.add("QuadRenderHelperMixin");
+        }
         //        if (loader.isModLoaded("iris")) {
         //            mixins.add("IrisPipelinesMixin");
         //        }
