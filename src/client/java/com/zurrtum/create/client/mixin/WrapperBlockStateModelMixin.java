@@ -28,7 +28,8 @@ import java.util.function.Predicate;
 @Mixin(WrapperBlockStateModel.class)
 public abstract class WrapperBlockStateModelMixin implements FabricBlockStateModel {
     @Unique
-    private final List<BlockStateModelPart> parts = new ObjectArrayList<>();
+    private static final ThreadLocal<List<BlockStateModelPart>> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(
+        ObjectArrayList::new);
 
     @Shadow(remap = false)
     public abstract void addPartsWithInfo(
@@ -107,6 +108,7 @@ public abstract class WrapperBlockStateModelMixin implements FabricBlockStateMod
         @NonNull RandomSource random,
         @NonNull Predicate<@Nullable Direction> cullTest
     ) {
+        List<BlockStateModelPart> parts = THREAD_LOCAL_OBJECTS.get();
         addPartsWithInfo(level, pos, state, random, parts);
         int size = parts.size();
         if (size == 0) {

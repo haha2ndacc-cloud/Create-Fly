@@ -38,7 +38,8 @@ final class BakedModelBufferer {
         }
         VanillinMeshEmitterManager emitters = objects.emitters;
         emitters.prepare(blockMaterialFunction, poseStack);
-        ModelRenderHelper.getHelper(emitters).tesselateBlock(0, 0, 0, level, pos, state, model, state.getSeed(pos));
+        ModelRenderHelper.getCurrentThreadAoHelper(emitters)
+            .tesselateBlock(0, 0, 0, level, pos, state, model, state.getSeed(pos));
         return emitters.end();
     }
 
@@ -60,7 +61,7 @@ final class BakedModelBufferer {
         BlockStateModelSet blockStateModelSet = modelManager.getBlockStateModelSet();
         FluidRenderer fluidRenderer = new FluidRenderer(modelManager.getFluidStateModelSet());
 
-        ModelConsumer blockRenderer = ModelRenderHelper.getCullHelper(emitters);
+        ModelConsumer blockRenderer = ModelRenderHelper.getCurrentThreadAoCullHelper(emitters);
         BlockModelLighter.enableCaching();
 
         while (posIterator.hasNext()) {

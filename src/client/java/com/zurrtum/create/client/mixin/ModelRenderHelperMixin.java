@@ -4,6 +4,7 @@ import com.zurrtum.create.client.flywheel.lib.model.baked.BufferEmitterOutput;
 import com.zurrtum.create.client.flywheel.lib.model.baked.FabricEmitterSupplier;
 import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
 import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
+import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper.ThreadLocalObjects;
 import net.fabricmc.fabric.api.client.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
@@ -28,6 +29,10 @@ public class ModelRenderHelperMixin {
     private static @UnknownNullability ModelConsumer CULL_INSTANCE;
     @Shadow
     private static @UnknownNullability ModelConsumer INSTANCE;
+    @Shadow
+    private static @UnknownNullability ModelConsumer AO_CULL_INSTANCE;
+    @Shadow
+    private static @UnknownNullability ModelConsumer AO_INSTANCE;
 
     @Overwrite(remap = false)
     public static void onReloadLevelRenderer() {
@@ -37,20 +42,38 @@ public class ModelRenderHelperMixin {
         Renderer renderer = Renderer.get();
         AltModelBlockRenderer aoRender = renderer.altModelBlockRenderer(ao, false, blockColors);
         AltModelBlockRenderer cullRender = renderer.altModelBlockRenderer(ao, true, blockColors);
+        INSTANCE = new Consumer(aoRender);
+        CULL_INSTANCE = new Consumer(cullRender);
         if (ao) {
-            INSTANCE = new Consumer(aoRender);
-            CULL_INSTANCE = new Consumer(cullRender);
+            AO_INSTANCE = new AoConsumer(aoRender);
+            AO_CULL_INSTANCE = new AoConsumer(cullRender);
         } else {
-            INSTANCE = new FlatConsumer(aoRender);
-            CULL_INSTANCE = new FlatConsumer(cullRender);
+            AO_INSTANCE = INSTANCE;
+            AO_CULL_INSTANCE = CULL_INSTANCE;
         }
     }
 
-    private static class FlatConsumer implements ModelConsumer {
+    @Overwrite(remap = false)
+    private static void onReloadLevelRenderer(boolean ao, BlockColors blockColors, ThreadLocalObjects objects) {
+        Renderer renderer = Renderer.get();
+        AltModelBlockRenderer aoRender = renderer.altModelBlockRenderer(ao, false, blockColors);
+        AltModelBlockRenderer cullRender = renderer.altModelBlockRenderer(ao, true, blockColors);
+        objects.instance = new Consumer(aoRender);
+        objects.cullInstance = new Consumer(cullRender);
+        if (ao) {
+            objects.aoInstance = new AoConsumer(aoRender);
+            objects.aoCullInstance = new AoConsumer(cullRender);
+        } else {
+            objects.aoInstance = objects.instance;
+            objects.aoCullInstance = objects.cullInstance;
+        }
+    }
+
+    private static class Consumer implements ModelConsumer {
         private final AltModelBlockRenderer renderer;
         protected @UnknownNullability QuadEmitter emitter;
 
-        public FlatConsumer(AltModelBlockRenderer renderer) {
+        public Consumer(AltModelBlockRenderer renderer) {
             this.renderer = renderer;
         }
 
@@ -74,10 +97,10 @@ public class ModelRenderHelperMixin {
         }
     }
 
-    private static class Consumer extends FlatConsumer implements QuadTransform {
+    private static class AoConsumer extends Consumer implements QuadTransform {
         private TriState defaultAo;
 
-        public Consumer(AltModelBlockRenderer renderer) {
+        public AoConsumer(AltModelBlockRenderer renderer) {
             super(renderer);
         }
 
