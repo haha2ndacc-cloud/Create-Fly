@@ -87,9 +87,9 @@ public abstract class CopycatPanelModelMixin extends CopycatModel implements Fab
                 }
                 return false;
             });
-            TextureAtlasSprite targetSprite = spriteHolder.get();
             ((FabricBlockStateModel) model).emitQuads(emitter, level, pos, material, random, Predicates.alwaysFalse());
             emitter.popTransform();
+            TextureAtlasSprite targetSprite = spriteHolder.get();
             emitter.pushTransform(quad -> {
                 Direction direction = quad.cullFace();
                 TextureAtlasSprite sprite;
