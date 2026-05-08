@@ -36,6 +36,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
         }
         if (loader.isModLoaded("fabric-renderer-api-v1")) {
             mixins.add("WrapperBlockStateModelMixin");
+            mixins.add("WrapperBlockStateModelAccessor");
             mixins.add("CopycatModelMixin");
             mixins.add("CopycatStepModelMixin");
             mixins.add("CopycatPanelModelMixin");
