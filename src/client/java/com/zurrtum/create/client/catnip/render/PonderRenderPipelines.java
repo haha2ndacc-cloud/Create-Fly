@@ -47,11 +47,11 @@ public class PonderRenderPipelines {
         RenderPipeline.builder(ENTITY_BLOCK_LIGHT_SNIPPET)
     );
     public static final RenderPipeline ENTITY_BLOCK_LIGHT_CUTOUT = register(
-        "entity_block_cutout",
+        "entity_block_light_cutout",
         RenderPipeline.builder(ENTITY_BLOCK_LIGHT_SNIPPET).withShaderDefine("ALPHA_CUTOUT", 0.5F)
     );
     public static final RenderPipeline ENTITY_BLOCK_LIGHT_TRANSLUCENT = register(
-        "entity_block_translucent",
+        "entity_block_light_translucent",
         RenderPipeline.builder(ENTITY_BLOCK_LIGHT_SNIPPET).withShaderDefine("ALPHA_CUTOUT", 0.01F)
             .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
     );
@@ -73,12 +73,12 @@ public class PonderRenderPipelines {
         RenderPipeline.builder(ENTITY_BLOCK_LIGHT_SNIPPET).withShaderDefine("NETHER_LIGHT")
     );
     public static final RenderPipeline NETHER_ENTITY_BLOCK_LIGHT_CUTOUT = register(
-        "nether_entity_block_cutout",
+        "nether_entity_block_light_cutout",
         RenderPipeline.builder(ENTITY_BLOCK_LIGHT_SNIPPET).withShaderDefine("NETHER_LIGHT")
             .withShaderDefine("ALPHA_CUTOUT", 0.5F)
     );
     public static final RenderPipeline NETHER_ENTITY_BLOCK_LIGHT_TRANSLUCENT = register(
-        "nether_entity_block_translucent",
+        "nether_entity_block_light_translucent",
         RenderPipeline.builder(ENTITY_BLOCK_LIGHT_SNIPPET).withShaderDefine("NETHER_LIGHT")
             .withShaderDefine("ALPHA_CUTOUT", 0.01F)
             .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))

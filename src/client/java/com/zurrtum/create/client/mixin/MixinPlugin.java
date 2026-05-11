@@ -19,9 +19,9 @@ public class MixinPlugin implements IMixinConfigPlugin {
         if (loader.isModLoaded("sodium")) {
             mixins.add("QuadRenderHelperMixin");
         }
-        //        if (loader.isModLoaded("iris")) {
-        //            mixins.add("IrisPipelinesMixin");
-        //        }
+        if (loader.isModLoaded("iris")) {
+            mixins.add("IrisPipelinesMixin");
+        }
         //        if (loader.isModLoaded("eiv")) {
         //            mixins.add("ItemSlotMixin");
         //            mixins.add("FabricEIVMixin");

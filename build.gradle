@@ -78,7 +78,6 @@ sourceSets {
             exclude 'com/zurrtum/create/client/compat/rei/**'
             exclude 'com/zurrtum/create/client/compat/eiv/**'
             exclude 'com/zurrtum/create/client/compat/trinkets/**'
-            exclude 'com/zurrtum/create/client/mixin/IrisPipelinesMixin.java'
             exclude 'com/zurrtum/create/client/mixin/CraftingViewRecipeAccessor.java'
             exclude 'com/zurrtum/create/client/mixin/FabricEIVMixin.java'
             exclude 'com/zurrtum/create/client/mixin/FluidItemSpecialRendererMixin.java'
@@ -127,7 +126,7 @@ dependencies {
 //    modCompileOnly "maven.modrinth:trinkets-canary:${project.trinkets_version}"
 //    modCompileOnly "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cca_version}"
     clientCompileOnly "maven.modrinth:sodium:${project.sodium_version}"
-//    modClientCompileOnly "maven.modrinth:iris:${project.iris_version}"
+    clientCompileOnly "maven.modrinth:iris:${project.iris_version}"
 }
 
 processResources {
