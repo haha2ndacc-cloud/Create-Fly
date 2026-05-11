@@ -70,7 +70,6 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
 
         BlockState blockState;
         BlockStateModel model;
-        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float time = AnimationTickHolder.getRenderTime();
@@ -79,6 +78,7 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
         world.blockState(blockState);
         model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
+        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
         matrices.pushPose();
@@ -87,6 +87,7 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
         model = blockStateModelSet.get(blockState);
         matrices.rotateAround(Axis.ZP.rotationDegrees(getShaftAngle(time)), 0.5f, 0.5f, 0.5f);
         output.updateBuffer(model);
+        blockRenderer.updateOutput(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 

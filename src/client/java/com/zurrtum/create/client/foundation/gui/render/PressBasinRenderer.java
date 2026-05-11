@@ -41,7 +41,6 @@ public class PressBasinRenderer extends PictureInPictureRenderer<PressBasinRende
 
         BlockState blockState;
         BlockStateModel model;
-        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         output.setPoseStack(matrices);
         BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
@@ -51,6 +50,7 @@ public class PressBasinRenderer extends PictureInPictureRenderer<PressBasinRende
         world.blockState(blockState);
         model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
+        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
         matrices.pushPose();
@@ -59,6 +59,7 @@ public class PressBasinRenderer extends PictureInPictureRenderer<PressBasinRende
         model = blockStateModelSet.get(blockState);
         matrices.rotateAround(Axis.ZP.rotationDegrees(getShaftAngle(time)), 0.5f, 0.5f, 0.5f);
         output.updateBuffer(model);
+        blockRenderer.updateOutput(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
@@ -76,6 +77,7 @@ public class PressBasinRenderer extends PictureInPictureRenderer<PressBasinRende
         world.blockState(blockState);
         model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
+        blockRenderer.updateOutput(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         output.clear();
     }

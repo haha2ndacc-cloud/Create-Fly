@@ -71,7 +71,6 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
 
         BlockState blockState;
         BlockStateModel model;
-        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float time = AnimationTickHolder.getRenderTime();
@@ -84,6 +83,7 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         model = blockStateModelSet.get(blockState);
         matrices.rotateAround(Axis.ZP.rotationDegrees(getCurrentAngle(time)), 0.5f, 0.5f, 0.5f);
         output.updateBuffer(model);
+        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
@@ -92,6 +92,7 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         world.blockState(blockState);
         model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
+        blockRenderer.updateOutput(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
         matrices.pushPose();
@@ -101,6 +102,7 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         matrices.rotateAround(Axis.XP.rotationDegrees(90), 0.5f, 0.5f, 0.5f);
         model = AllPartialModels.DEPLOYER_POLE.get();
         output.updateBuffer(model);
+        blockRenderer.updateOutput(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         model = AllPartialModels.DEPLOYER_HAND_HOLDING.get();
         output.updateBuffer(model);
@@ -112,6 +114,7 @@ public class DeployerRenderer extends PictureInPictureRenderer<DeployerRenderSta
         world.blockState(blockState);
         model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
+        blockRenderer.updateOutput(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         output.clearBuffer();
 

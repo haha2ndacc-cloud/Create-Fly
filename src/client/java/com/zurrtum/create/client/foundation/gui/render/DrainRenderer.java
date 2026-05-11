@@ -9,7 +9,6 @@ import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
 import com.zurrtum.create.client.catnip.gui.render.GpuTexture;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
-import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
 import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
 import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
 import net.minecraft.client.Minecraft;
@@ -74,12 +73,11 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
 
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
 
-        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         BlockState blockState = AllBlocks.ITEM_DRAIN.defaultBlockState();
         world.blockState(blockState);
         BlockStateModel model = mc.getModelManager().getBlockStateModelSet().get(blockState);
         output.updateBuffer(model);
-        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        ModelRenderHelper.getHelper(output).tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         output.clearBuffer();
 
         float from = 2 / 16f;

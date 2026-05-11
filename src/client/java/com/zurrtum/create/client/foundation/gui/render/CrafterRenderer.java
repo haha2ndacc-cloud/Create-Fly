@@ -38,7 +38,6 @@ public class CrafterRenderer extends PictureInPictureRenderer<CrafterRenderState
 
         BlockState blockState;
         BlockStateModel model;
-        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         output.setPoseStack(matrices);
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
 
@@ -51,6 +50,7 @@ public class CrafterRenderer extends PictureInPictureRenderer<CrafterRenderState
         matrices.mulPose(Axis.XP.rotationDegrees(90));
         matrices.translate(-0.5f, -0.5f, -0.5f);
         output.updateBuffer(model);
+        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 

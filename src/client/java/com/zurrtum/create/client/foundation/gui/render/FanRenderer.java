@@ -49,7 +49,6 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
 
         BlockState blockState;
         BlockStateModel model;
-        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         output.setPoseStack(matrices);
         BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
@@ -62,6 +61,7 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
         matrices.mulPose(Axis.XP.rotationDegrees(180));
         matrices.translate(-0.5f, -0.5f, -0.5f);
         output.updateBuffer(model);
+        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
@@ -79,7 +79,6 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
         FluidState fluidState = blockState.getFluidState();
         if (!fluidState.isEmpty()) {
             Fluid fluid = fluidState.getType();
-            //            SodiumCompat.markFluidSpriteActive(fluid);
             FluidStateModelSet fluidStateModelSet = mc.getModelManager().getFluidStateModelSet();
             FluidRenderHelper.extractFluidRenderState(
                 null,
@@ -108,6 +107,7 @@ public class FanRenderer extends PictureInPictureRenderer<FanRenderState> {
             terrainOutput.clear();
         } else {
             output.updateBuffer(model);
+            blockRenderer.updateOutput(output);
             blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         }
         output.clear();

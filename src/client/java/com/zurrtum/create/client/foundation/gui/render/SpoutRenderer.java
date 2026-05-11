@@ -75,7 +75,6 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
 
         BlockState blockState;
         BlockStateModel model;
-        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float time = AnimationTickHolder.getRenderTime();
@@ -84,6 +83,7 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
         world.blockState(blockState);
         model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
+        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
         float cycle = (time - item.offset() * 8) % 30;
@@ -96,6 +96,7 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
         model = AllPartialModels.SPOUT_MIDDLE.get();
         matrices.translate(0, move, 0);
         output.updateBuffer(model);
+        blockRenderer.updateOutput(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         model = AllPartialModels.SPOUT_BOTTOM.get();
         matrices.translate(0, move, 0);

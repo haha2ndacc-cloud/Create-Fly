@@ -40,7 +40,6 @@ public class MixingBasinRenderer extends PictureInPictureRenderer<MixingBasinRen
 
         BlockState blockState;
         BlockStateModel model;
-        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         output.setPoseStack(matrices);
         BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
@@ -51,6 +50,7 @@ public class MixingBasinRenderer extends PictureInPictureRenderer<MixingBasinRen
         world.blockState(blockState);
         model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
+        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
         blockState = Blocks.AIR.defaultBlockState();
@@ -59,6 +59,7 @@ public class MixingBasinRenderer extends PictureInPictureRenderer<MixingBasinRen
         model = AllPartialModels.SHAFTLESS_COGWHEEL.get();
         matrices.rotateAround(Axis.YP.rotationDegrees(angle * 2), 0.5f, 0.5f, 0.5f);
         output.updateBuffer(model);
+        blockRenderer.updateOutput(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
@@ -78,6 +79,7 @@ public class MixingBasinRenderer extends PictureInPictureRenderer<MixingBasinRen
         world.blockState(blockState);
         model = blockStateModelSet.get(blockState);
         output.updateBuffer(model);
+        blockRenderer.updateOutput(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         output.clear();
     }

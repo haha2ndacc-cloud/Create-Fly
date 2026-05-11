@@ -34,7 +34,6 @@ public class MillstoneRenderer extends PictureInPictureRenderer<MillstoneRenderS
         matrices.scale(1, -1, -1);
         BlockState blockState;
         BlockStateModel model;
-        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         output.setPoseStack(matrices);
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
 
@@ -47,6 +46,7 @@ public class MillstoneRenderer extends PictureInPictureRenderer<MillstoneRenderS
         matrices.mulPose(Axis.YP.rotationDegrees(getCurrentAngle()));
         matrices.translate(-0.5f, -0.5f, -0.5f);
         output.updateBuffer(model);
+        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.popPose();
 
@@ -58,6 +58,7 @@ public class MillstoneRenderer extends PictureInPictureRenderer<MillstoneRenderS
         matrices.mulPose(Axis.YP.rotationDegrees(22.5f));
         matrices.translate(-0.5f, -0.5f, -0.5f);
         output.updateBuffer(model);
+        blockRenderer.updateOutput(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         output.clear();
     }

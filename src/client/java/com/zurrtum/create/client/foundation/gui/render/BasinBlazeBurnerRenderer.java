@@ -48,7 +48,6 @@ public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlaz
 
         BlockState blockState;
         BlockStateModel model;
-        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         output.setPoseStack(matrices);
         SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float offset = -(Mth.sin(AnimationTickHolder.getRenderTime() / 16.0f) + 0.5f) / 16.0f;
@@ -57,6 +56,7 @@ public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlaz
         world.blockState(blockState);
         model = mc.getModelManager().getBlockStateModelSet().get(blockState);
         output.updateBuffer(model);
+        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
 
         matrices.pushPose();
@@ -66,6 +66,7 @@ public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlaz
         boolean seething = state.heat() == HeatLevel.SEETHING;
         model = (seething ? AllPartialModels.BLAZE_SUPER : AllPartialModels.BLAZE_ACTIVE).get();
         output.updateBuffer(model);
+        blockRenderer.updateOutput(output);
         blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.translate(0, offset, 0);
         model = (seething ? AllPartialModels.BLAZE_BURNER_SUPER_RODS_2 : AllPartialModels.BLAZE_BURNER_RODS_2).get();
