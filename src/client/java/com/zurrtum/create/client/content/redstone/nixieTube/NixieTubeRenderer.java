@@ -22,6 +22,7 @@ import com.zurrtum.create.content.redstone.nixieTube.NixieTubeBlock;
 import com.zurrtum.create.content.redstone.nixieTube.NixieTubeBlockEntity;
 import com.zurrtum.create.content.redstone.nixieTube.NixieTubeBlockEntity.ComputerSignal.TubeDisplay;
 import com.zurrtum.create.content.trains.signal.SignalBlockEntity.SignalState;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.gui.font.TextRenderable;
@@ -51,6 +52,7 @@ import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntity
 import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getZRotateAngle;
 
 public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEntity, NixieTubeRenderState> {
+    private static final boolean IRIS = FabricLoader.getInstance().isModLoaded("iris");
     protected final Font textRenderer;
 
     public NixieTubeRenderer(Context context) {
@@ -87,8 +89,10 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
         TextRenderState data = new TextRenderState();
         DoubleAttachFace face = state.blockState.getValue(NixieTubeBlock.FACE);
         Direction facing = state.blockState.getValue(NixieTubeBlock.FACING);
-        data.yRot = getYRotateAngle(AngleHelper.horizontalAngle(facing) - 90 + (face == DoubleAttachFace.WALL_REVERSED ? 180 : 0));
-        data.zRot = getZRotateAngle(face == DoubleAttachFace.WALL ? -90 : face == DoubleAttachFace.WALL_REVERSED ? 90 : 0);
+        data.yRot = getYRotateAngle(AngleHelper.horizontalAngle(facing) - 90 + (face == DoubleAttachFace.WALL_REVERSED ?
+            180 : 0));
+        data.zRot = getZRotateAngle(
+            face == DoubleAttachFace.WALL ? -90 : face == DoubleAttachFace.WALL_REVERSED ? 90 : 0);
         if (face == DoubleAttachFace.CEILING || facing == Direction.DOWN) {
             data.zRot2 = Axis.ZP.rotation(KineticBlockEntityRenderer.RAD_180);
         }
@@ -201,7 +205,9 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
         data.zRot = getZRotateAngle(zRot);
         data.panel = CachedBuffers.partial(AllPartialModels.SIGNAL_PANEL, state.blockState)
             .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
-        data.offset = facing == Direction.DOWN || state.blockState.getValue(NixieTubeBlock.FACE) == DoubleAttachFace.WALL_REVERSED ? 0.25f : -0.25f;
+        data.offset =
+            facing == Direction.DOWN || state.blockState.getValue(NixieTubeBlock.FACE) == DoubleAttachFace.WALL_REVERSED ?
+                0.25f : -0.25f;
 
         float renderTime = AnimationTickHolder.getRenderTime(level);
         double distance = Vec3.atCenterOf(state.blockPos).subtract(cameraPos).lengthSqr();
@@ -381,10 +387,10 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
             if (zRot2 != null) {
                 matrices.pushPose();
                 matrices.mulPose(zRot2);
-                tube.submit(matrices, queue);
+                tube.submit(matrices, (IRIS ? queue.order(1) : queue));
                 matrices.popPose();
             } else {
-                tube.submit(matrices, queue);
+                tube.submit(matrices, (IRIS ? queue.order(1) : queue));
             }
             if (left != null) {
                 matrices.pushPose();
