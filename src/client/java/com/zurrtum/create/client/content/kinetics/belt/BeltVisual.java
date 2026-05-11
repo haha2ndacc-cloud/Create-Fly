@@ -58,7 +58,7 @@ public class BeltVisual extends KineticBlockEntityVisual<BeltBlockEntity> {
 
             Instancer<ScrollInstance> beltModel = instancerProvider().instancer(
                 AllInstanceTypes.SCROLLING,
-                Models.partial(beltPartial)
+                Models.chunkPartial(beltPartial)
             );
 
             belts[bottom ? 0 : 1] = setup(beltModel.createInstance(), bottom, spriteShift);
@@ -74,6 +74,27 @@ public class BeltVisual extends KineticBlockEntityVisual<BeltBlockEntity> {
             pulley.setup(BeltVisual.this.blockEntity).setPosition(getVisualPosition()).setChanged();
         } else {
             pulley = null;
+        }
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        switch (blockState.getValue(BeltBlock.SLOPE)) {
+            case DOWNWARD -> {
+                switch (blockState.getValue(BeltBlock.PART)) {
+                    case START -> setSectionCollector(sectionCollector, 0, -1, 0, 0, 0, 0);
+                    case END -> setSectionCollector(sectionCollector, 0, 0, 0, 0, 1, 0);
+                    default -> setSectionCollector(sectionCollector, 0, -1, 0, 0, 1, 0);
+                }
+            }
+            case UPWARD -> {
+                switch (blockState.getValue(BeltBlock.PART)) {
+                    case START -> setSectionCollector(sectionCollector, 0, 0, 0, 0, 1, 0);
+                    case END -> setSectionCollector(sectionCollector, 0, -1, 0, 0, 0, 0);
+                    default -> setSectionCollector(sectionCollector, 0, -1, 0, 0, 1, 0);
+                }
+            }
+            default -> super.setSectionCollector(sectionCollector);
         }
     }
 
@@ -116,7 +137,7 @@ public class BeltVisual extends KineticBlockEntityVisual<BeltBlockEntity> {
     private Model getPulleyModel() {
         Direction dir = getOrientation();
 
-        return Models.partial(
+        return Models.chunkPartial(
             AllPartialModels.BELT_PULLEY, dir.getAxis(), (axis11, modelTransform1) -> {
                 var msr = TransformStack.of(modelTransform1);
                 msr.center();
@@ -194,6 +215,6 @@ public class BeltVisual extends KineticBlockEntityVisual<BeltBlockEntity> {
             BlockState state = be.getBlockState();
             return !state.hasProperty(BeltBlock.PART) || state.getValue(BeltBlock.PART) != BeltPart.START;
         }
-        return be.isController();
+        return !be.isController();
     }
 }

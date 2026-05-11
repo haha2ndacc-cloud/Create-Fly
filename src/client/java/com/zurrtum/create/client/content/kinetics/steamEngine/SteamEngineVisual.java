@@ -5,6 +5,7 @@ import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer;
 import com.zurrtum.create.client.flywheel.api.instance.Instance;
 import com.zurrtum.create.client.flywheel.api.visual.DynamicVisual;
+import com.zurrtum.create.client.flywheel.api.visual.ShaderLightVisual;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.flywheel.lib.instance.InstanceTypes;
 import com.zurrtum.create.client.flywheel.lib.instance.TransformedInstance;
@@ -17,12 +18,13 @@ import com.zurrtum.create.content.kinetics.steamEngine.SteamEngineBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class SteamEngineVisual extends AbstractBlockEntityVisual<SteamEngineBlockEntity> implements SimpleDynamicVisual {
+public class SteamEngineVisual extends AbstractBlockEntityVisual<SteamEngineBlockEntity> implements SimpleDynamicVisual, ShaderLightVisual {
 
     protected final TransformedInstance piston;
     protected final TransformedInstance linkage;
@@ -36,18 +38,34 @@ public class SteamEngineVisual extends AbstractBlockEntityVisual<SteamEngineBloc
 
         piston = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.ENGINE_PISTON)
+            Models.chunkPartial(AllPartialModels.ENGINE_PISTON)
         ).createInstance();
         linkage = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.ENGINE_LINKAGE)
+            Models.chunkPartial(AllPartialModels.ENGINE_LINKAGE)
         ).createInstance();
         connector = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.ENGINE_CONNECTOR)
+            Models.chunkPartial(AllPartialModels.ENGINE_CONNECTOR)
         ).createInstance();
 
         animate();
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        switch (blockState.getValue(BlockStateProperties.ATTACH_FACE)) {
+            case FLOOR -> setSectionCollector(sectionCollector, -1, 0, -1, 1, 3, 1);
+            case CEILING -> setSectionCollector(sectionCollector, -1, -3, -1, 1, 0, 1);
+            default -> {
+                switch (blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+                    case NORTH -> setSectionCollector(sectionCollector, -1, -1, -3, 1, 1, 0);
+                    case SOUTH -> setSectionCollector(sectionCollector, -1, -1, 0, 1, 1, 3);
+                    case EAST -> setSectionCollector(sectionCollector, 0, -1, -1, 3, 1, 1);
+                    case WEST -> setSectionCollector(sectionCollector, -3, -1, -1, 0, 1, 1);
+                }
+            }
+        }
     }
 
     @Override

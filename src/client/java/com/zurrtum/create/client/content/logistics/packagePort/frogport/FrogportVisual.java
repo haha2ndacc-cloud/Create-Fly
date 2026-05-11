@@ -2,6 +2,7 @@ package com.zurrtum.create.client.content.logistics.packagePort.frogport;
 
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.flywheel.api.instance.Instance;
+import com.zurrtum.create.client.flywheel.api.visual.ShaderLightVisual;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.flywheel.lib.instance.InstanceTypes;
 import com.zurrtum.create.client.flywheel.lib.instance.TransformedInstance;
@@ -19,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class FrogportVisual extends AbstractBlockEntityVisual<FrogportBlockEntity> implements SimpleDynamicVisual {
+public class FrogportVisual extends AbstractBlockEntityVisual<FrogportBlockEntity> implements SimpleDynamicVisual, ShaderLightVisual {
     private final TransformedInstance body;
     private TransformedInstance head;
     private final TransformedInstance tongue;
@@ -37,10 +38,10 @@ public class FrogportVisual extends AbstractBlockEntityVisual<FrogportBlockEntit
         super(ctx, blockEntity, partialTick);
 
         body = ctx.instancerProvider()
-            .instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.FROGPORT_BODY)).createInstance();
+            .instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(AllPartialModels.FROGPORT_BODY)).createInstance();
 
         head = ctx.instancerProvider()
-            .instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.FROGPORT_HEAD)).createInstance();
+            .instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(AllPartialModels.FROGPORT_HEAD)).createInstance();
 
         tongue = ctx.instancerProvider()
             .instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.FROGPORT_TONGUE)).createInstance();
@@ -55,6 +56,11 @@ public class FrogportVisual extends AbstractBlockEntityVisual<FrogportBlockEntit
         box.handle().setVisible(false);
 
         animate(partialTick);
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        setSectionCollector(sectionCollector, -1, 0, -1, 1, 1, 1);
     }
 
     @Override
@@ -116,10 +122,8 @@ public class FrogportVisual extends AbstractBlockEntityVisual<FrogportBlockEntit
         } else {
             tongueLength = 0;
             float anticipation = blockEntity.anticipationProgress.getValue(partialTicks);
-            headPitchModifier = anticipation > 0 ? (float) Math.max(
-                0,
-                1 - Math.pow((anticipation * 1.25) * 2 - 1, 4)
-            ) : 0;
+            headPitchModifier =
+                anticipation > 0 ? (float) Math.max(0, 1 - Math.pow((anticipation * 1.25) * 2 - 1, 4)) : 0;
             rig.handle().setVisible(false);
             box.handle().setVisible(false);
         }

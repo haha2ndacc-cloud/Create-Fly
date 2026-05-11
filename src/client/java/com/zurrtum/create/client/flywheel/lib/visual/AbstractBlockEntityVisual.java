@@ -5,6 +5,7 @@ import com.zurrtum.create.client.flywheel.api.visualization.VisualManager;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.flywheel.lib.instance.FlatLit;
 import com.zurrtum.create.client.flywheel.lib.math.MoreMath;
+import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
@@ -54,6 +55,33 @@ public abstract class AbstractBlockEntityVisual<T extends BlockEntity> extends A
     public void setSectionCollector(SectionCollector sectionCollector) {
         this.lightSections = sectionCollector;
         lightSections.sections(LongSet.of(SectionPos.asLong(pos)));
+    }
+
+    protected void setSectionCollector(
+        SectionCollector sectionCollector,
+        int minX,
+        int minY,
+        int minZ,
+        int maxX,
+        int maxY,
+        int maxZ
+    ) {
+        lightSections = sectionCollector;
+        LongSet longSet = new LongArraySet();
+        int offsetX = pos.getX();
+        int offsetY = pos.getY();
+        int offsetZ = pos.getZ();
+        int maxSectionX = SectionPos.posToSectionCoord(offsetX + maxX);
+        int maxSectionY = SectionPos.posToSectionCoord(offsetY + maxY);
+        int maxSectionZ = SectionPos.posToSectionCoord(offsetZ + maxZ);
+        for (int x = SectionPos.posToSectionCoord(offsetX + minX); x <= maxSectionX; x++) {
+            for (int y = SectionPos.posToSectionCoord(offsetY + minY); y <= maxSectionY; y++) {
+                for (int z = SectionPos.posToSectionCoord(offsetZ + minZ); z <= maxSectionZ; z++) {
+                    longSet.add(SectionPos.asLong(x, y, z));
+                }
+            }
+        }
+        sectionCollector.sections(longSet);
     }
 
     /**
@@ -106,19 +134,19 @@ public abstract class AbstractBlockEntityVisual<T extends BlockEntity> extends A
         relight(pos, instances);
     }
 
-    protected void relight(BlockPos pos, Iterator<@Nullable FlatLit> instances) {
+    protected void relight(BlockPos pos, Iterator<? extends @Nullable FlatLit> instances) {
         FlatLit.relight(LevelRenderer.getLightCoords(level, pos), instances);
     }
 
-    protected void relight(Iterator<@Nullable FlatLit> instances) {
+    protected void relight(Iterator<? extends @Nullable FlatLit> instances) {
         relight(pos, instances);
     }
 
-    protected void relight(BlockPos pos, Iterable<@Nullable FlatLit> instances) {
+    protected void relight(BlockPos pos, Iterable<? extends @Nullable FlatLit> instances) {
         FlatLit.relight(LevelRenderer.getLightCoords(level, pos), instances);
     }
 
-    protected void relight(Iterable<@Nullable FlatLit> instances) {
+    protected void relight(Iterable<? extends @Nullable FlatLit> instances) {
         relight(pos, instances);
     }
 }

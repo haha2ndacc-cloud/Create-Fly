@@ -24,21 +24,26 @@ public class MixerVisual extends SingleAxisRotatingVisual<MechanicalMixerBlockEn
     private final OrientedInstance mixerPole;
 
     public MixerVisual(VisualizationContext context, MechanicalMixerBlockEntity blockEntity, float partialTick) {
-        super(context, blockEntity, partialTick, Models.partial(AllPartialModels.SHAFTLESS_COGWHEEL));
+        super(context, blockEntity, partialTick, Models.chunkPartial(AllPartialModels.SHAFTLESS_COGWHEEL));
 
         mixerHead = instancerProvider().instancer(
             AllInstanceTypes.ROTATING,
-            Models.partial(AllPartialModels.MECHANICAL_MIXER_HEAD)
+            Models.chunkPartial(AllPartialModels.MECHANICAL_MIXER_HEAD)
         ).createInstance();
 
         mixerHead.setRotationAxis(Axis.Y);
 
         mixerPole = instancerProvider().instancer(
             InstanceTypes.ORIENTED,
-            Models.partial(AllPartialModels.MECHANICAL_MIXER_POLE)
+            Models.chunkPartial(AllPartialModels.MECHANICAL_MIXER_POLE)
         ).createInstance();
 
         animate(partialTick);
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        setSectionCollector(sectionCollector, 0, -2, 0, 0, 1, 0);
     }
 
     @Override

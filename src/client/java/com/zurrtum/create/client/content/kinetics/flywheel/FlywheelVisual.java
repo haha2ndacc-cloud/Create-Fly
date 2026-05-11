@@ -14,6 +14,7 @@ import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
 import com.zurrtum.create.client.foundation.render.AllInstanceTypes;
 import com.zurrtum.create.content.kinetics.flywheel.FlywheelBlockEntity;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
@@ -31,12 +32,12 @@ public class FlywheelVisual extends KineticBlockEntityVisual<FlywheelBlockEntity
         super(context, blockEntity, partialTick);
 
         var axis = rotationAxis();
-        shaft = instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFT))
+        shaft = instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.chunkPartial(AllPartialModels.SHAFT))
             .createInstance();
 
         shaft.setup(FlywheelVisual.this.blockEntity).setPosition(getVisualPosition()).rotateToFace(axis).setChanged();
 
-        wheel = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.FLYWHEEL))
+        wheel = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(AllPartialModels.FLYWHEEL))
             .createInstance();
 
 
@@ -48,6 +49,15 @@ public class FlywheelVisual extends KineticBlockEntityVisual<FlywheelBlockEntity
         baseTransform.set(wheel.pose);
 
         animate(blockEntity.angle);
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        switch (blockState.getValue(BlockStateProperties.AXIS)) {
+            case X -> setSectionCollector(sectionCollector, 0, -1, -1, 0, 1, 1);
+            case Y -> setSectionCollector(sectionCollector, -1, 0, -1, 1, 0, 1);
+            case Z -> setSectionCollector(sectionCollector, -1, -1, 0, 1, 1, 0);
+        }
     }
 
     @Override

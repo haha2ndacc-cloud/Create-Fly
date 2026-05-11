@@ -1,11 +1,11 @@
 package com.zurrtum.create.client.content.trains.track;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.zurrtum.create.catnip.data.Couple;
 import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.AllTrackMaterialModels.TrackModelHolder;
+import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
 import com.zurrtum.create.client.content.trains.track.TrackRenderer.GirderAngles;
 import com.zurrtum.create.client.content.trains.track.TrackRenderer.SegmentAngles;
 import com.zurrtum.create.client.flywheel.api.instance.Instance;
@@ -14,9 +14,8 @@ import com.zurrtum.create.client.flywheel.api.visual.ShaderLightVisual;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.flywheel.lib.instance.InstanceTypes;
 import com.zurrtum.create.client.flywheel.lib.instance.TransformedInstance;
-import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
+import com.zurrtum.create.client.flywheel.lib.model.Models;
 import com.zurrtum.create.client.flywheel.lib.visual.AbstractVisual;
-import com.zurrtum.create.client.foundation.render.SpecialModels;
 import com.zurrtum.create.content.trains.track.BezierConnection;
 import com.zurrtum.create.content.trains.track.TrackBlockEntity;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
@@ -150,8 +149,8 @@ public class TrackVisual extends AbstractVisual implements BlockEntityVisual<Tra
         private BezierTrackVisual(BezierConnection bc) {
             girder = bc.hasGirder ? new GirderVisual(bc) : null;
 
-            PoseStack pose = new PoseStack();
-            TransformStack.of(pose).translate(visualPos);
+            Pose pose = new Pose();
+            pose.translate(visualPos.getX(), visualPos.getY(), visualPos.getZ());
 
             int segCount = bc.getSegmentCount();
             ties = new TransformedInstance[segCount];
@@ -160,14 +159,12 @@ public class TrackVisual extends AbstractVisual implements BlockEntityVisual<Tra
 
             TrackModelHolder modelHolder = bc.getMaterial().getModelHolder();
 
-            instancerProvider().instancer(InstanceTypes.TRANSFORMED, SpecialModels.flatChunk(modelHolder.tie()))
+            instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(modelHolder.tie()))
                 .createInstances(ties);
-            instancerProvider().instancer(InstanceTypes.TRANSFORMED, SpecialModels.flatChunk(modelHolder.leftSegment()))
+            instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(modelHolder.leftSegment()))
                 .createInstances(left);
-            instancerProvider().instancer(
-                InstanceTypes.TRANSFORMED,
-                SpecialModels.flatChunk(modelHolder.rightSegment())
-            ).createInstances(right);
+            instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(modelHolder.rightSegment()))
+                .createInstances(right);
 
             SegmentAngles segment = bc.getBakedSegments(SegmentAngles::new);
             for (int i = 0; i < segment.length; i++) {
@@ -216,18 +213,20 @@ public class TrackVisual extends AbstractVisual implements BlockEntityVisual<Tra
             private final Couple<Couple<TransformedInstance[]>> beamCaps;
 
             private GirderVisual(BezierConnection bc) {
-                PoseStack pose = new PoseStack();
-                TransformStack.of(pose).translate(visualPos).nudge((int) bc.bePositions.getFirst().asLong());
+                Pose pose = new Pose();
+                pose.translate(visualPos.getX(), visualPos.getY(), visualPos.getZ());
+                SuperByteBuffer.nudge(pose, (int) bc.bePositions.getFirst().asLong());
 
                 int segCount = bc.getSegmentCount();
                 beams = Couple.create(() -> new TransformedInstance[segCount]);
                 beamCaps = Couple.create(() -> Couple.create(() -> new TransformedInstance[segCount]));
                 beams.forEach(instancerProvider().instancer(
                     InstanceTypes.TRANSFORMED,
-                    SpecialModels.flatChunk(AllPartialModels.GIRDER_SEGMENT_MIDDLE)
+                    Models.chunkPartial(AllPartialModels.GIRDER_SEGMENT_MIDDLE)
                 )::createInstances);
                 beamCaps.forEachWithContext((c, top) -> {
-                    var partialModel = SpecialModels.flatChunk(top ? AllPartialModels.GIRDER_SEGMENT_TOP : AllPartialModels.GIRDER_SEGMENT_BOTTOM);
+                    var partialModel = Models.chunkPartial(
+                        top ? AllPartialModels.GIRDER_SEGMENT_TOP : AllPartialModels.GIRDER_SEGMENT_BOTTOM);
                     c.forEach(instancerProvider().instancer(InstanceTypes.TRANSFORMED, partialModel)::createInstances);
                 });
 

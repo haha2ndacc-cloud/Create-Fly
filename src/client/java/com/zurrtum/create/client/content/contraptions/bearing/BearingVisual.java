@@ -33,7 +33,7 @@ public class BearingVisual<B extends KineticBlockEntity & IBearingBlockEntity> e
             partialTick,
             Direction.SOUTH,
             blockEntity.getBlockState().getValue(BlockStateProperties.FACING).getOpposite(),
-            Models.partial(AllPartialModels.SHAFT_HALF)
+            Models.chunkPartial(AllPartialModels.SHAFT_HALF)
         );
 
         Direction facing = blockState.getValue(BlockStateProperties.FACING);
@@ -43,9 +43,18 @@ public class BearingVisual<B extends KineticBlockEntity & IBearingBlockEntity> e
 
         PartialModel top = blockEntity.isWoodenTop() ? AllPartialModels.BEARING_TOP_WOODEN : AllPartialModels.BEARING_TOP;
 
-        topInstance = instancerProvider().instancer(InstanceTypes.ORIENTED, Models.partial(top)).createInstance();
+        topInstance = instancerProvider().instancer(InstanceTypes.ORIENTED, Models.chunkPartial(top)).createInstance();
 
         topInstance.position(getVisualPosition()).rotation(blockOrientation).setChanged();
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        switch (blockState.getValue(BlockStateProperties.FACING).getAxis()) {
+            case X -> setSectionCollector(sectionCollector, 0, -1, -1, 0, 1, 1);
+            case Y -> setSectionCollector(sectionCollector, -1, 0, -1, 1, 0, 1);
+            case Z -> setSectionCollector(sectionCollector, -1, -1, 0, 1, 1, 0);
+        }
     }
 
     @Override

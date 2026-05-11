@@ -90,8 +90,6 @@ public class ChainConveyorRenderer implements BlockEntityRenderer<ChainConveyorB
         state.model = CachedBuffers.partial(AllPartialModels.CHAIN_CONVEYOR_SHAFT, state.blockState)
             .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
         state.angle = KineticBlockEntityRenderer.getRotateAngleWithoutBeOffset(be, state, level);
-        state.wheel = CachedBuffers.partial(AllPartialModels.CHAIN_CONVEYOR_WHEEL, blockState)
-            .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
         state.chains = getChainsRenderState(be, level, blockPos, cameraPos);
         if (state.chains != null) {
             state.chain = CreateRenderTypes.chain(CHAIN_LOCATION);
@@ -143,9 +141,6 @@ public class ChainConveyorRenderer implements BlockEntityRenderer<ChainConveyorB
             } else {
                 state.model.submit(matrices, queue);
             }
-        }
-        if (state.wheel != null) {
-            state.wheel.submit(matrices, queue);
         }
         if (state.chains != null) {
             if (state.guard != null) {
@@ -464,7 +459,6 @@ public class ChainConveyorRenderer implements BlockEntityRenderer<ChainConveyorB
     public static class ChainConveyorRenderState extends BlockEntityRenderState {
         public @Nullable Quaternionf angle;
         public @Nullable SuperByteBufferRenderState model;
-        public @Nullable SuperByteBufferRenderState wheel;
         public @Nullable SuperByteBufferRenderState guard;
         public @UnknownNullability RenderType chain;
         public @Nullable List<ChainRenderState> chains;

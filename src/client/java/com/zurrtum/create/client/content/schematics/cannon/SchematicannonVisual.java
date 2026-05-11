@@ -3,6 +3,7 @@ package com.zurrtum.create.client.content.schematics.cannon;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.flywheel.api.instance.Instance;
 import com.zurrtum.create.client.flywheel.api.visual.DynamicVisual;
+import com.zurrtum.create.client.flywheel.api.visual.ShaderLightVisual;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.flywheel.lib.instance.InstanceTypes;
 import com.zurrtum.create.client.flywheel.lib.instance.TransformedInstance;
@@ -14,7 +15,7 @@ import net.minecraft.core.Direction;
 
 import java.util.function.Consumer;
 
-public class SchematicannonVisual extends AbstractBlockEntityVisual<SchematicannonBlockEntity> implements SimpleDynamicVisual {
+public class SchematicannonVisual extends AbstractBlockEntityVisual<SchematicannonBlockEntity> implements SimpleDynamicVisual, ShaderLightVisual {
 
     private final TransformedInstance connector;
     private final TransformedInstance pipe;
@@ -32,14 +33,19 @@ public class SchematicannonVisual extends AbstractBlockEntityVisual<Schematicann
 
         connector = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.SCHEMATICANNON_CONNECTOR)
+            Models.chunkPartial(AllPartialModels.SCHEMATICANNON_CONNECTOR)
         ).createInstance();
         pipe = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.SCHEMATICANNON_PIPE)
+            Models.chunkPartial(AllPartialModels.SCHEMATICANNON_PIPE)
         ).createInstance();
 
         animate(partialTick);
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        setSectionCollector(sectionCollector, -1, 0, -1, 1, 1, 1);
     }
 
     @Override

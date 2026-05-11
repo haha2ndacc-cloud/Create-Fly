@@ -1,6 +1,5 @@
 {
 	"parent": "create:block/large_wheels",
-	"ambientocclusion": false,
 	"textures": {
 		"axis": "create:block/axis",
 		"gearbox": "create:block/gearbox",

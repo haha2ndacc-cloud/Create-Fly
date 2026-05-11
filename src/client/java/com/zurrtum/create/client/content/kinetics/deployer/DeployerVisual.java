@@ -51,16 +51,30 @@ public class DeployerVisual extends ShaftVisual<DeployerBlockEntity> implements 
         xRot = facing == Direction.UP ? 270 : facing == Direction.DOWN ? 90 : 0;
         zRot = rotatePole ? 90 : 0;
 
-        pole = instancerProvider().instancer(InstanceTypes.ORIENTED, Models.partial(AllPartialModels.DEPLOYER_POLE))
-            .createInstance();
+        pole = instancerProvider().instancer(
+            InstanceTypes.ORIENTED,
+            Models.chunkPartial(AllPartialModels.DEPLOYER_POLE)
+        ).createInstance();
 
         currentHand = DeployerRenderer.getHandPose(blockEntity);
 
-        hand = instancerProvider().instancer(InstanceTypes.ORIENTED, Models.partial(currentHand)).createInstance();
+        hand = instancerProvider().instancer(InstanceTypes.ORIENTED, Models.chunkPartial(currentHand)).createInstance();
 
         progress = getProgress(partialTick);
         updateRotation(pole, hand, yRot, xRot, zRot);
         updatePosition();
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        switch (facing) {
+            case UP -> setSectionCollector(sectionCollector, 0, -1, 0, 0, 2, 0);
+            case DOWN -> setSectionCollector(sectionCollector, 0, -2, 0, 0, 1, 0);
+            case NORTH -> setSectionCollector(sectionCollector, 0, 0, -2, 0, 0, 1);
+            case SOUTH -> setSectionCollector(sectionCollector, 0, 0, -1, 0, 0, 2);
+            case WEST -> setSectionCollector(sectionCollector, -2, 0, 0, 1, 0, 0);
+            case EAST -> setSectionCollector(sectionCollector, -1, 0, 0, 2, 0, 0);
+        }
     }
 
     @Override
@@ -69,7 +83,7 @@ public class DeployerVisual extends ShaftVisual<DeployerBlockEntity> implements 
 
         if (currentHand != handPose) {
             currentHand = handPose;
-            instancerProvider().instancer(InstanceTypes.ORIENTED, Models.partial(currentHand)).stealInstance(hand);
+            instancerProvider().instancer(InstanceTypes.ORIENTED, Models.chunkPartial(currentHand)).stealInstance(hand);
         }
     }
 

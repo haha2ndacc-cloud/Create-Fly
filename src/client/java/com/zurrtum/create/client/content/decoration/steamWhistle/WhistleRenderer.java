@@ -48,7 +48,6 @@ public class WhistleRenderer implements BlockEntityRenderer<WhistleBlockEntity, 
     ) {
         Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
         WhistleSize size = state.blockState.getValue(WhistleBlock.SIZE);
-        PartialModel mouth = size == WhistleSize.LARGE ? AllPartialModels.WHISTLE_MOUTH_LARGE : size == WhistleSize.MEDIUM ? AllPartialModels.WHISTLE_MOUTH_MEDIUM : AllPartialModels.WHISTLE_MOUTH_SMALL;
         WhistleAnimationBehaviour behaviour = (WhistleAnimationBehaviour) be.getBehaviour(AnimationBehaviour.TYPE);
         if (behaviour != null) {
             float offset = behaviour.animation.getValue(tickProgress);
@@ -56,10 +55,10 @@ public class WhistleRenderer implements BlockEntityRenderer<WhistleBlockEntity, 
                 float wiggleProgress = (AnimationTickHolder.getTicks(level) + tickProgress) / 8.0f;
                 offset = (float) (offset - Math.sin(wiggleProgress * (2 * Mth.PI) * (4 - size.ordinal())) / 16.0f);
             }
-            state.offset = offset * 4 / 16.0f;
+            state.offset = offset * 0.25f;
         }
-        state.model = CachedBuffers.partial(mouth, state.blockState).cardinalLighting(level).light(state.lightCoords)
-            .extractRenderState();
+        state.model = CachedBuffers.partial(getMouthModel(size), state.blockState).cardinalLighting(level)
+            .light(state.lightCoords).extractRenderState();
         state.yRot = getYRotateAngle(AngleHelper.horizontalAngle(state.blockState.getValue(WhistleBlock.FACING)));
     }
 
@@ -75,6 +74,14 @@ public class WhistleRenderer implements BlockEntityRenderer<WhistleBlockEntity, 
         }
         matrices.translate(0, state.offset, 0);
         state.model.submit(matrices, queue);
+    }
+
+    public static PartialModel getMouthModel(WhistleSize size) {
+        return switch (size) {
+            case LARGE -> AllPartialModels.WHISTLE_MOUTH_LARGE;
+            case MEDIUM -> AllPartialModels.WHISTLE_MOUTH_MEDIUM;
+            default -> AllPartialModels.WHISTLE_MOUTH_SMALL;
+        };
     }
 
     public static class WhistleRenderState extends BlockEntityRenderState {

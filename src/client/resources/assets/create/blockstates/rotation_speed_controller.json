@@ -1,11 +1,18 @@
 {
   "variants": {
-    "axis=x": {
+    "axis=x,bracket=false": {
       "model": "create:block/rotation_speed_controller/block",
       "y": 90
     },
-    "axis=z": {
+    "axis=z,bracket=false": {
       "model": "create:block/rotation_speed_controller/block"
+    },
+    "axis=x,bracket=true": {
+      "model": "create:block/rotation_speed_controller/block_with_bracket",
+      "y": 90
+    },
+    "axis=z,bracket=true": {
+      "model": "create:block/rotation_speed_controller/block_with_bracket"
     }
   }
 }

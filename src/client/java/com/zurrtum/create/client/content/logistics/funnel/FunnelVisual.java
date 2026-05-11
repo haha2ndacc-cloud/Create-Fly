@@ -5,18 +5,20 @@ import com.zurrtum.create.client.content.logistics.FlapStuffs;
 import com.zurrtum.create.client.content.logistics.FlapStuffs.Visual;
 import com.zurrtum.create.client.flywheel.api.instance.Instance;
 import com.zurrtum.create.client.flywheel.api.visual.DynamicVisual;
+import com.zurrtum.create.client.flywheel.api.visual.ShaderLightVisual;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.flywheel.lib.model.Models;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.client.flywheel.lib.visual.AbstractBlockEntityVisual;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
+import com.zurrtum.create.content.logistics.funnel.BeltFunnelBlock;
 import com.zurrtum.create.content.logistics.funnel.FunnelBlock;
 import com.zurrtum.create.content.logistics.funnel.FunnelBlockEntity;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class FunnelVisual extends AbstractBlockEntityVisual<FunnelBlockEntity> implements SimpleDynamicVisual {
+public class FunnelVisual extends AbstractBlockEntityVisual<FunnelBlockEntity> implements SimpleDynamicVisual, ShaderLightVisual {
 
     private final @Nullable Visual flaps;
 
@@ -36,9 +38,32 @@ public class FunnelVisual extends AbstractBlockEntityVisual<FunnelBlockEntity> i
             funnelFacing,
             -blockEntity.getFlapOffset()
         );
-        flaps = new Visual(instancerProvider(), commonTransform, FlapStuffs.FUNNEL_PIVOT, Models.partial(flapPartial));
+        flaps = new Visual(
+            instancerProvider(),
+            commonTransform,
+            FlapStuffs.FUNNEL_PIVOT,
+            Models.chunkPartial(flapPartial)
+        );
 
         flaps.update(blockEntity.flap.getValue(partialTick));
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        if (blockEntity.hasFlap() && blockState.getBlock() instanceof BeltFunnelBlock block) {
+            if (blockState.getValue(BeltFunnelBlock.SHAPE) != BeltFunnelBlock.Shape.EXTENDED) {
+                setSectionCollector(sectionCollector, 0, -1, 0, 0, 0, 0);
+            } else {
+                switch (block.getFacing(blockState)) {
+                    case NORTH -> setSectionCollector(sectionCollector, 0, -1, -1, 0, 0, 0);
+                    case SOUTH -> setSectionCollector(sectionCollector, 0, -1, 0, 0, 0, 1);
+                    case WEST -> setSectionCollector(sectionCollector, -1, -1, 0, 0, 0, 0);
+                    case EAST -> setSectionCollector(sectionCollector, 0, -1, 0, 1, 0, 0);
+                }
+            }
+        } else {
+            super.setSectionCollector(sectionCollector);
+        }
     }
 
     @Override

@@ -1,7 +1,6 @@
 {
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
-	"ambientocclusion": false,
 	"textures": {
 		"mechanical_press_pole": "create:block/mechanical_press_pole",
 		"particle": "#mechanical_press_pole"

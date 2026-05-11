@@ -73,28 +73,11 @@ public class CuckooClockRenderer implements BlockEntityRenderer<CuckooClockBlock
             .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
         state.rightDoor = CachedBuffers.partial(AllPartialModels.CUCKOO_RIGHT_DOOR, state.blockState)
             .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
-        float doorAngle = 0;
-        if (be.animationType != null) {
-            float value = be.animationProgress.getValue(tickProgress);
-            int step = be.animationType == Animation.SURPRISE ? 3 : 15;
-            for (int phase = 30; phase <= 60; phase += step) {
-                float local = value - phase;
-                if (local < -step / 3) {
-                    continue;
-                }
-                if (local < 0) {
-                    doorAngle = Mth.lerp((value - (phase - 5)) / 5, 0, 135);
-                } else if (local < step / 3) {
-                    doorAngle = 135;
-                } else if (local < 2 * step / 3) {
-                    doorAngle = Mth.lerp((value - (phase + 5)) / 5, 135, 0);
-                }
-            }
-        }
+        float doorAngle = getDoorAngle(be, tickProgress);
         if (doorAngle != 0) {
             float radians = Mth.DEG_TO_RAD * doorAngle;
-            state.leftDoorAngle = new Quaternionf().setAngleAxis(-radians, 0, 1, 0);
             state.rightDoorAngle = new Quaternionf().setAngleAxis(radians, 0, 1, 0);
+            state.leftDoorAngle = new Quaternionf(state.rightDoorAngle).conjugate();
             if (be.animationType == Animation.NONE) {
                 return;
             }
@@ -106,6 +89,31 @@ public class CuckooClockRenderer implements BlockEntityRenderer<CuckooClockBlock
             state.figure = CachedBuffers.partial(partialModel, state.blockState).cardinalLighting(cardinalLighting)
                 .light(state.lightCoords).extractRenderState();
         }
+    }
+
+    public static float getDoorAngle(CuckooClockBlockEntity be, float tickProgress) {
+        float value = be.animationProgress.getValue(tickProgress);
+        if (value < 25 || value >= 70) {
+            return 0;
+        }
+        int step, minValue;
+        if (be.animationType != Animation.SURPRISE) {
+            minValue = 25;
+            step = 5;
+        } else if (value >= 29 && value < 62) {
+            minValue = 29;
+            step = 1;
+        } else {
+            return 0;
+        }
+        float local = value - (int) value - step + ((int) value - minValue) % (step * 3);
+        if (local < 0) {
+            return Mth.lerp((local + 5) / 5.0f, 0, 135);
+        }
+        if (local < step) {
+            return 135;
+        }
+        return Mth.lerp((local - 5) / 5.0f, 135, 0);
     }
 
     @Override

@@ -28,8 +28,22 @@ public class BeltTunnelVisual extends AbstractBlockEntityVisual<BeltTunnelBlockE
         updateFlaps(partialTick);
     }
 
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        Map<Direction, LerpedFloat> flaps = blockEntity.flaps;
+        setSectionCollector(
+            sectionCollector,
+            flaps.containsKey(Direction.WEST) ? -1 : 0,
+            -1,
+            flaps.containsKey(Direction.NORTH) ? -1 : 0,
+            flaps.containsKey(Direction.EAST) ? 1 : 0,
+            0,
+            flaps.containsKey(Direction.SOUTH) ? 1 : 0
+        );
+    }
+
     private void createFlaps() {
-        blockEntity.flaps.forEach((direction, flapValue) -> {
+        for (Direction direction : blockEntity.flaps.keySet()) {
             var commonTransform = FlapStuffs.commonTransform(visualPos, direction, 0);
             var flapSide = new FlapStuffs.Visual(
                 instancerProvider(),
@@ -41,7 +55,7 @@ public class BeltTunnelVisual extends AbstractBlockEntityVisual<BeltTunnelBlockE
             flapSide.updateLight(light);
 
             tunnelFlaps.put(direction, flapSide);
-        });
+        }
     }
 
     @Override

@@ -45,7 +45,7 @@ public class FluidValveVisual extends ShaftVisual<FluidValveBlockEntity> impleme
 
         pointer = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.FLUID_VALVE_POINTER)
+            Models.chunkPartial(AllPartialModels.FLUID_VALVE_POINTER)
         ).createInstance();
 
         transformPointer(partialTick);

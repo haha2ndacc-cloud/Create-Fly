@@ -15,6 +15,7 @@ import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -37,7 +38,7 @@ public class EncasedCogVisual extends KineticBlockEntityVisual<KineticBlockEntit
             blockEntity,
             false,
             partialTick,
-            Models.partial(AllPartialModels.SHAFTLESS_COGWHEEL)
+            Models.chunkPartial(AllPartialModels.SHAFTLESS_COGWHEEL)
         );
     }
 
@@ -51,7 +52,7 @@ public class EncasedCogVisual extends KineticBlockEntityVisual<KineticBlockEntit
             blockEntity,
             true,
             partialTick,
-            Models.partial(AllPartialModels.SHAFTLESS_LARGE_COGWHEEL)
+            Models.chunkPartial(AllPartialModels.SHAFTLESS_LARGE_COGWHEEL)
         );
     }
 
@@ -79,7 +80,7 @@ public class EncasedCogVisual extends KineticBlockEntityVisual<KineticBlockEntit
                 }
                 RotatingInstance instance = instancerProvider().instancer(
                     AllInstanceTypes.ROTATING,
-                    Models.partial(AllPartialModels.SHAFT_HALF)
+                    Models.chunkPartial(AllPartialModels.SHAFT_HALF)
                 ).createInstance();
                 instance.setup(blockEntity).setPosition(getVisualPosition()).rotateToFace(Direction.SOUTH, d)
                     .setChanged();
@@ -101,6 +102,15 @@ public class EncasedCogVisual extends KineticBlockEntityVisual<KineticBlockEntit
 
         this.rotatingTopShaft = rotatingTopShaft;
         this.rotatingBottomShaft = rotatingBottomShaft;
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        switch (blockState.getValue(BlockStateProperties.AXIS)) {
+            case X -> setSectionCollector(sectionCollector, 0, -1, -1, 0, 1, 1);
+            case Y -> setSectionCollector(sectionCollector, -1, 0, -1, 1, 0, 1);
+            default -> setSectionCollector(sectionCollector, -1, -1, 0, 1, 1, 0);
+        }
     }
 
     @Override

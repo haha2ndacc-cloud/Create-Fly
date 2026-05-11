@@ -10,7 +10,6 @@ import com.zurrtum.create.content.kinetics.base.HorizontalAxisKineticBlock;
 import com.zurrtum.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.zurrtum.create.content.kinetics.simpleRelays.ICogWheel;
 import com.zurrtum.create.foundation.block.IBE;
-import com.zurrtum.create.foundation.block.NeighborUpdateListeningBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.InteractionHand;
@@ -24,18 +23,29 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Predicate;
 
-public class SpeedControllerBlock extends HorizontalAxisKineticBlock implements IBE<SpeedControllerBlockEntity>, NeighborUpdateListeningBlock {
-
+public class SpeedControllerBlock extends HorizontalAxisKineticBlock implements IBE<SpeedControllerBlockEntity> {
     private static final int placementHelperId = PlacementHelpers.register(new PlacementHelper());
+    public static final BooleanProperty BRACKET = BooleanProperty.create("bracket");
 
     public SpeedControllerBlock(Properties properties) {
         super(properties);
+        registerDefaultState(defaultBlockState().setValue(BRACKET, false));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(BRACKET);
+        super.createBlockStateDefinition(builder);
     }
 
     @Override
@@ -45,22 +55,25 @@ public class SpeedControllerBlock extends HorizontalAxisKineticBlock implements 
             return defaultBlockState().setValue(
                 HORIZONTAL_AXIS,
                 above.getValue(CogWheelBlock.AXIS) == Axis.X ? Axis.Z : Axis.X
-            );
+            ).setValue(BRACKET, true);
         }
         return super.getStateForPlacement(context);
     }
 
     @Override
-    public void neighborUpdate(
+    protected void neighborChanged(
         BlockState state,
-        Level world,
+        Level level,
         BlockPos pos,
-        Block sourceBlock,
-        BlockPos neighborPos,
-        boolean isMoving
+        Block block,
+        @Nullable Orientation orientation,
+        boolean movedByPiston
     ) {
-        if (neighborPos.equals(pos.above())) {
-            withBlockEntityDo(world, pos, SpeedControllerBlockEntity::updateBracket);
+        BlockState stateAbove = level.getBlockState(pos.above());
+        boolean hasBracket = stateAbove.getBlock() instanceof ICogWheel cogWheel && cogWheel.isDedicatedCogWheel() && cogWheel.isLargeCog() && stateAbove.getValue(
+            CogWheelBlock.AXIS).isHorizontal();
+        if (hasBracket != state.getValue(BRACKET)) {
+            level.setBlockAndUpdate(pos, state.setValue(BRACKET, hasBracket));
         }
     }
 

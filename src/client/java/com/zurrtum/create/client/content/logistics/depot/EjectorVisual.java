@@ -10,6 +10,7 @@ import com.zurrtum.create.client.flywheel.lib.instance.TransformedInstance;
 import com.zurrtum.create.client.flywheel.lib.model.Models;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
 import com.zurrtum.create.content.logistics.depot.EjectorBlockEntity;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.function.Consumer;
 
@@ -22,10 +23,22 @@ public class EjectorVisual extends ShaftVisual<EjectorBlockEntity> implements Si
     public EjectorVisual(VisualizationContext dispatcher, EjectorBlockEntity blockEntity, float partialTick) {
         super(dispatcher, blockEntity, partialTick);
 
-        plate = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.EJECTOR_TOP))
-            .createInstance();
+        plate = instancerProvider().instancer(
+            InstanceTypes.TRANSFORMED,
+            Models.chunkPartial(AllPartialModels.EJECTOR_TOP)
+        ).createInstance();
 
         pivotPlate(getLidProgress(partialTick));
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        switch (blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+            case NORTH -> setSectionCollector(sectionCollector, 0, 0, 0, 0, 1, 1);
+            case SOUTH -> setSectionCollector(sectionCollector, 0, 0, -1, 0, 1, 0);
+            case EAST -> setSectionCollector(sectionCollector, 0, 0, 0, 1, 1, 0);
+            case WEST -> setSectionCollector(sectionCollector, -1, 0, 0, 0, 1, 0);
+        }
     }
 
     @Override

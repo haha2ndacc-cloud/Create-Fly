@@ -1,7 +1,6 @@
 package com.zurrtum.create.client.content.kinetics.base;
 
 import com.zurrtum.create.client.AllPartialModels;
-import com.zurrtum.create.client.content.equipment.armor.BacktankRenderer;
 import com.zurrtum.create.client.flywheel.api.instance.Instance;
 import com.zurrtum.create.client.flywheel.api.model.Model;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
@@ -12,12 +11,11 @@ import com.zurrtum.create.client.flywheel.lib.visualization.SimpleBlockEntityVis
 import com.zurrtum.create.client.foundation.render.AllInstanceTypes;
 import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.Direction;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
 public class SingleAxisRotatingVisual<T extends KineticBlockEntity> extends KineticBlockEntityVisual<T> implements SimpleTickableVisual {
-    public static boolean rainbowMode = false;
-
     protected final RotatingInstance rotatingModel;
 
     public SingleAxisRotatingVisual(VisualizationContext context, T blockEntity, float partialTick, Model model) {
@@ -47,7 +45,7 @@ public class SingleAxisRotatingVisual<T extends KineticBlockEntity> extends Kine
             context,
             blockEntity,
             partialTick,
-            Models.partial(partial)
+            Models.chunkPartial(partial)
         );
     }
 
@@ -60,7 +58,7 @@ public class SingleAxisRotatingVisual<T extends KineticBlockEntity> extends Kine
             blockEntity,
             partialTick,
             Direction.SOUTH,
-            Models.partial(partial)
+            Models.chunkPartial(partial)
         );
     }
 
@@ -73,17 +71,8 @@ public class SingleAxisRotatingVisual<T extends KineticBlockEntity> extends Kine
             context,
             blockEntity,
             partialTick,
-            Models.partial(AllPartialModels.SHAFT)
+            Models.chunkPartial(AllPartialModels.SHAFT)
         );
-    }
-
-    public static <T extends KineticBlockEntity> SingleAxisRotatingVisual<T> backtank(
-        VisualizationContext context,
-        T blockEntity,
-        float partialTick
-    ) {
-        var model = Models.partial(BacktankRenderer.getShaftModel(blockEntity.getBlockState()));
-        return new SingleAxisRotatingVisual<>(context, blockEntity, partialTick, model);
     }
 
     @Override
@@ -107,7 +96,7 @@ public class SingleAxisRotatingVisual<T extends KineticBlockEntity> extends Kine
     }
 
     @Override
-    public void collectCrumblingInstances(Consumer<Instance> consumer) {
+    public void collectCrumblingInstances(Consumer<@Nullable Instance> consumer) {
         consumer.accept(rotatingModel);
     }
 }

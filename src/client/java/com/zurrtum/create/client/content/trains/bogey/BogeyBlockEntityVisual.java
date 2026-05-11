@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.zurrtum.create.client.AllBogeyStyleRenders;
 import com.zurrtum.create.client.flywheel.api.instance.Instance;
+import com.zurrtum.create.client.flywheel.api.visual.ShaderLightVisual;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.flywheel.lib.visual.AbstractBlockEntityVisual;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
@@ -18,7 +19,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class BogeyBlockEntityVisual extends AbstractBlockEntityVisual<AbstractBogeyBlockEntity> implements SimpleDynamicVisual {
+public class BogeyBlockEntityVisual extends AbstractBlockEntityVisual<AbstractBogeyBlockEntity> implements SimpleDynamicVisual, ShaderLightVisual {
     private final PoseStack poseStack = new PoseStack();
 
     @Nullable
@@ -50,6 +51,16 @@ public class BogeyBlockEntityVisual extends AbstractBlockEntityVisual<AbstractBo
         bogey = AllBogeyStyleRenders.createVisual(lastStyle, bogeySize, visualizationContext, partialTick, false);
 
         updateBogey(partialTick);
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        if (bogey != null) {
+            this.lightSections = sectionCollector;
+            lightSections.sections(bogey.createSections(pos));
+        } else {
+            super.setSectionCollector(sectionCollector);
+        }
     }
 
     @Override

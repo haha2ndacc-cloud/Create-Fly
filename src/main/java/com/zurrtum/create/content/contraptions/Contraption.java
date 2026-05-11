@@ -734,9 +734,6 @@ public abstract class Contraption {
         if (blockstate.getBlock() instanceof ControlsBlock && getType().is(AllContraptionTypeTags.OPENS_CONTROLS)) {
             blockstate = blockstate.setValue(ControlsBlock.OPEN, true);
         }
-        if (blockstate.hasProperty(SlidingDoorBlock.VISIBLE)) {
-            blockstate = blockstate.setValue(SlidingDoorBlock.VISIBLE, false);
-        }
         if (blockstate.getBlock() instanceof ButtonBlock) {
             blockstate = blockstate.setValue(ButtonBlock.POWERED, false);
             world.scheduleTick(pos, blockstate.getBlock(), -1);
@@ -1226,10 +1223,6 @@ public abstract class Contraption {
 
                 if (state.is(AllBlocks.SHAFT)) {
                     state = ShaftBlock.pickCorrectShaftType(state, world, targetPos);
-                }
-                if (state.hasProperty(SlidingDoorBlock.VISIBLE)) {
-                    state = state.setValue(SlidingDoorBlock.VISIBLE, !state.getValue(SlidingDoorBlock.OPEN))
-                        .setValue(SlidingDoorBlock.POWERED, false);
                 }
                 // Stop Sculk shriekers from getting "stuck" if moved mid-shriek.
                 if (state.is(Blocks.SCULK_SHRIEKER)) {

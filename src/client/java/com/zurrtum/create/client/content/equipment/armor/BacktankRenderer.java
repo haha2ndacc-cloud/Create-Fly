@@ -8,7 +8,6 @@ import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
 import com.zurrtum.create.client.content.equipment.armor.BacktankRenderer.BacktankRenderState;
-import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.equipment.armor.BacktankBlock;
@@ -19,6 +18,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Con
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
@@ -52,14 +52,11 @@ public class BacktankRenderer implements BlockEntityRenderer<BacktankBlockEntity
         CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
         float time = AnimationTickHolder.getRenderTime(level);
         float speed = be.getSpeed();
-        if (!VisualizationManager.supportsVisualization(level)) {
-            state.shaft = CachedBuffers.partial(getShaftModel(state.blockState), state.blockState)
-                .cardinalLighting(cardinalLighting).light(state.lightCoords).color(getTintColor(be))
-                .extractRenderState();
-            float progress = getProgress(speed, time);
-            float offset = rotationOffset(state.blockState, Axis.Y, state.blockPos);
-            state.angle = getRotateAngle(progress, offset, Axis.Y);
-        }
+        state.shaft = CachedBuffers.partial(getShaftModel(state.blockState), state.blockState)
+            .cardinalLighting(cardinalLighting).light(state.lightCoords).color(getTintColor(be)).extractRenderState();
+        float progress = getProgress(speed, time);
+        float offset = rotationOffset(state.blockState, Axis.Y, state.blockPos);
+        state.angle = getRotateAngle(progress, offset, Direction.UP);
         state.yRot = getYRotateAngle(180 + AngleHelper.horizontalAngle(state.blockState.getValue(BacktankBlock.HORIZONTAL_FACING)));
         state.rotate = getEastRotateAngle(speed / 4.0f * time % 360);
         state.cogs = CachedBuffers.partial(getCogsModel(state.blockState), state.blockState)
@@ -73,15 +70,13 @@ public class BacktankRenderer implements BlockEntityRenderer<BacktankBlockEntity
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        if (state.shaft != null) {
-            if (state.angle != null) {
-                matrices.pushPose();
-                matrices.rotateAround(state.angle, 0.5f, 0.5f, 0.5f);
-                state.shaft.submit(matrices, queue);
-                matrices.popPose();
-            } else {
-                state.shaft.submit(matrices, queue);
-            }
+        if (state.angle != null) {
+            matrices.pushPose();
+            matrices.rotateAround(state.angle, 0.5f, 0.5f, 0.5f);
+            state.shaft.submit(matrices, queue);
+            matrices.popPose();
+        } else {
+            state.shaft.submit(matrices, queue);
         }
         if (state.yRot != null) {
             matrices.rotateAround(state.yRot, 0.5f, 0.5f, 0.5f);

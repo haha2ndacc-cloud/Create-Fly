@@ -1,24 +1,25 @@
 package com.zurrtum.create.catnip.math;
 
 import net.minecraft.core.Direction;
-import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
 
 public class AngleHelper {
 
     public static float horizontalAngle(Direction facing) {
-        if (facing.getAxis().isVertical()) {
-            return 0;
-        }
-        float angle = facing.toYRot();
-        if (facing.getAxis() == Axis.X) {
-            angle = -angle;
-        }
-        return angle;
+        return switch (facing) {
+            case NORTH -> 180f;
+            case WEST -> -90f;
+            case EAST -> -270f;
+            default -> 0f;
+        };
     }
 
     public static float verticalAngle(Direction facing) {
-        return facing == Direction.UP ? -90 : facing == Direction.DOWN ? 90 : 0;
+        return switch (facing) {
+            case UP -> -90f;
+            case DOWN -> 90f;
+            default -> 0f;
+        };
     }
 
     public static float rad(double angle) {

@@ -1,8 +1,6 @@
 package com.zurrtum.create.client.catnip.render;
 
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
-import com.mojang.math.Axis;
-import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferCache.Compartment;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import net.minecraft.core.Direction;
@@ -11,6 +9,7 @@ import net.minecraft.util.Util;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.apache.commons.lang3.tuple.Pair;
+import org.joml.Quaternionf;
 
 import java.util.function.Function;
 
@@ -21,30 +20,42 @@ public class CachedBuffers {
     public static final Compartment<Pair<Direction, PartialModel>> DIRECTIONAL_PARTIAL = new Compartment<>();
     private static final Function<Direction, Pose> ROTATE_TO_FACE = Util.memoize((facing) -> {
         Pose pose = new Pose();
-        pose.translate(0.5f, 0.5f, 0.5f);
-        float degrees = AngleHelper.horizontalAngle(facing);
-        if (degrees != 0) {
-            pose.rotate(Axis.YP.rotation(Mth.DEG_TO_RAD * degrees));
+        switch (facing) {
+            case NORTH -> pose.rotateAround(new Quaternionf().rotationY(Mth.DEG_TO_RAD * 180), 0.5f, 0.5f, 0.5f);
+            case WEST -> pose.rotateAround(new Quaternionf().rotationY(Mth.DEG_TO_RAD * -90), 0.5f, 0.5f, 0.5f);
+            case EAST -> pose.rotateAround(new Quaternionf().rotationY(Mth.DEG_TO_RAD * -270), 0.5f, 0.5f, 0.5f);
+            case UP -> pose.rotateAround(new Quaternionf().rotationX(Mth.DEG_TO_RAD * -90), 0.5f, 0.5f, 0.5f);
+            case DOWN -> pose.rotateAround(new Quaternionf().rotationX(Mth.DEG_TO_RAD * 90), 0.5f, 0.5f, 0.5f);
         }
-        degrees = AngleHelper.verticalAngle(facing);
-        if (degrees != 0) {
-            pose.rotate(Axis.XP.rotation(Mth.DEG_TO_RAD * degrees));
-        }
-        pose.translate(-0.5f, -0.5f, -0.5f);
         return pose;
     });
     private static final Function<Direction, Pose> ROTATE_TO_FACE_VERTICAL = Util.memoize((facing) -> {
         Pose pose = new Pose();
-        pose.translate(0.5f, 0.5f, 0.5f);
-        float degrees = AngleHelper.horizontalAngle(facing);
-        if (degrees != 0) {
-            pose.rotate(Axis.YP.rotation(Mth.DEG_TO_RAD * degrees));
+        switch (facing) {
+            case NORTH ->
+                pose.rotateAround(
+                    new Quaternionf().rotationY(Mth.DEG_TO_RAD * 180).rotateX(Mth.DEG_TO_RAD * 90),
+                    0.5f,
+                    0.5f,
+                    0.5f
+                );
+            case WEST ->
+                pose.rotateAround(
+                    new Quaternionf().rotationY(Mth.DEG_TO_RAD * -90).rotateX(Mth.DEG_TO_RAD * 90),
+                    0.5f,
+                    0.5f,
+                    0.5f
+                );
+            case EAST ->
+                pose.rotateAround(
+                    new Quaternionf().rotationY(Mth.DEG_TO_RAD * -270).rotateX(Mth.DEG_TO_RAD * 90),
+                    0.5f,
+                    0.5f,
+                    0.5f
+                );
+            case SOUTH -> pose.rotateAround(new Quaternionf().rotationX(Mth.DEG_TO_RAD * 90), 0.5f, 0.5f, 0.5f);
+            case DOWN -> pose.rotateAround(new Quaternionf().rotationX(Mth.DEG_TO_RAD * 180), 0.5f, 0.5f, 0.5f);
         }
-        degrees = AngleHelper.verticalAngle(facing) + 90;
-        if (degrees != 0) {
-            pose.rotate(Axis.XP.rotation(Mth.DEG_TO_RAD * degrees));
-        }
-        pose.translate(-0.5f, -0.5f, -0.5f);
         return pose;
     });
 

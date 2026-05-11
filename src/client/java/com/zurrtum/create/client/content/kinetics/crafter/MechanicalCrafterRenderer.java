@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.data.Pair;
 import com.zurrtum.create.catnip.math.AngleHelper;
-import com.zurrtum.create.catnip.math.Pointing;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.AllSpriteShifts;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
@@ -48,6 +47,7 @@ import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntity
 import static com.zurrtum.create.content.kinetics.base.HorizontalKineticBlock.HORIZONTAL_FACING;
 
 public class MechanicalCrafterRenderer implements BlockEntityRenderer<MechanicalCrafterBlockEntity, MechanicalCrafterRenderState> {
+    protected static final int CRAFTING_PHASE_ORDINAL = Phase.CRAFTING.ordinal();
     protected final ItemModelResolver itemModelManager;
 
     public MechanicalCrafterRenderer(Context context) {
@@ -67,49 +67,31 @@ public class MechanicalCrafterRenderer implements BlockEntityRenderer<Mechanical
         Vec3 cameraPos,
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
-        Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
-        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
-        Phase phase = be.phase;
-        state.item = createItemState(itemModelManager, be, level, state.blockState, phase, tickProgress);
-        Direction facing = state.blockState.getValue(HORIZONTAL_FACING);
-        float yRot = AngleHelper.horizontalAngle(facing);
-        if (state.item != null) {
-            Vec3 vec = Vec3.atLowerCornerOf(facing.getUnitVec3i()).scale(0.58).add(0.5, 0.5, 0.5);
-            if (phase == Phase.EXPORTING) {
-                Direction targetDirection = MechanicalCrafterBlock.getTargetDirection(state.blockState);
-                float progress = Mth.clamp(
-                    (1000 - be.countDown + be.getCountDownSpeed() * tickProgress) / 1000.0f,
-                    0,
-                    1
-                );
-                vec = vec.add(Vec3.atLowerCornerOf(targetDirection.getUnitVec3i()).scale(progress * 0.75f));
+        Level level = be.getLevel();
+        state.item = createItemState(itemModelManager, be, level, be.getBlockState(), be.phase, tickProgress);
+        Direction facing;
+        if (VisualizationManager.supportsVisualization(level)) {
+            if (state.item == null) {
+                return;
             }
-            state.offset = vec;
-            state.yRot = getYRotateAngle(yRot);
-        }
-        if (!VisualizationManager.supportsVisualization(level)) {
-            state.cogwheel = CogwheelRenderState.create(be, level, state, cardinalLighting, facing);
-        }
-        state.upRot = getUpRotateAngle(yRot + 90);
-        state.eastRot = getEastRotateAngle(state.blockState.getValue(MechanicalCrafterBlock.POINTING).getXRotation());
-        if ((be.covered || phase != Phase.IDLE) && phase != Phase.CRAFTING && phase != Phase.INSERTING) {
-            state.lid = CachedBuffers.partial(AllPartialModels.MECHANICAL_CRAFTER_LID, state.blockState)
-                .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
-        }
-        Direction targetDirection = MechanicalCrafterBlock.getTargetDirection(state.blockState);
-        if (MechanicalCrafterBlock.isValidTarget(level, state.blockPos.relative(targetDirection), state.blockState)) {
-            SuperByteBuffer belt = CachedBuffers.partial(AllPartialModels.MECHANICAL_CRAFTER_BELT, state.blockState);
-            if (phase == Phase.EXPORTING) {
-                int textureIndex = (int) (be.getCountDownSpeed() / 128.0f * AnimationTickHolder.getTicks());
-                belt.shiftUVtoSheet(AllSpriteShifts.CRAFTER_THINGIES, (textureIndex % 4) / 4.0f, 0, 1);
-            }
-            state.belt = belt.cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
-            state.frame = CachedBuffers.partial(AllPartialModels.MECHANICAL_CRAFTER_BELT_FRAME, state.blockState)
-                .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
+            SmartBlockEntityRenderer.extractBase(level, be, state, crumblingOverlay);
+            facing = state.blockState.getValue(HORIZONTAL_FACING);
         } else {
-            state.arrow = CachedBuffers.partial(AllPartialModels.MECHANICAL_CRAFTER_ARROW, state.blockState)
-                .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
+            SmartBlockEntityRenderer.extractBase(level, be, state, crumblingOverlay);
+            facing = state.blockState.getValue(HORIZONTAL_FACING);
+            state.model = MechanicalCrafterBlockRenderState.create(be, level, state, facing);
+            if (state.item == null) {
+                return;
+            }
         }
+        Vec3 vec = Vec3.atLowerCornerOf(facing.getUnitVec3i()).scale(0.58).add(0.5, 0.5, 0.5);
+        if (be.phase == Phase.EXPORTING) {
+            Direction targetDirection = MechanicalCrafterBlock.getTargetDirection(state.blockState);
+            float progress = Mth.clamp((1000 - be.countDown + be.getCountDownSpeed() * tickProgress) / 1000.0f, 0, 1);
+            vec = vec.add(Vec3.atLowerCornerOf(targetDirection.getUnitVec3i()).scale(progress * 0.75f));
+        }
+        state.offset = vec;
+        state.yRot = getYRotateAngle(AngleHelper.horizontalAngle(facing));
     }
 
     @Nullable
@@ -147,23 +129,8 @@ public class MechanicalCrafterRenderer implements BlockEntityRenderer<Mechanical
             state.item.submit(queue, matrices, state.lightCoords);
             matrices.popPose();
         }
-        if (state.cogwheel != null) {
-            state.cogwheel.submit(matrices, queue);
-        }
-        if (state.upRot != null) {
-            matrices.rotateAround(state.upRot, 0.5f, 0.5f, 0.5f);
-        }
-        if (state.eastRot != null) {
-            matrices.rotateAround(state.eastRot, 0.5f, 0.5f, 0.5f);
-        }
-        if (state.lid != null) {
-            state.lid.submit(matrices, queue);
-        }
-        if (state.belt != null) {
-            state.belt.submit(matrices, queue);
-            state.frame.submit(matrices, queue);
-        } else {
-            state.arrow.submit(matrices, queue);
+        if (state.model != null) {
+            state.model.submit(matrices, queue);
         }
     }
 
@@ -171,39 +138,74 @@ public class MechanicalCrafterRenderer implements BlockEntityRenderer<Mechanical
         public @UnknownNullability Vec3 offset;
         public @Nullable Quaternionf yRot;
         public @Nullable MechanicalCrafterItemRenderState item;
-        public @Nullable CogwheelRenderState cogwheel;
-        public @Nullable Quaternionfc upRot;
-        public @Nullable Quaternionfc eastRot;
-        public @Nullable SuperByteBufferRenderState lid;
-        public @Nullable SuperByteBufferRenderState belt;
-        public @UnknownNullability SuperByteBufferRenderState frame;
-        public @UnknownNullability SuperByteBufferRenderState arrow;
+        public @Nullable MechanicalCrafterBlockRenderState model;
     }
 
-    public record CogwheelRenderState(SuperByteBufferRenderState cogwheel, @Nullable Quaternionf angle,
-                                      @Nullable Quaternionf upAngle) {
+    public record MechanicalCrafterBlockRenderState(SuperByteBufferRenderState cogwheel, @Nullable Quaternionf angle,
+                                                    @Nullable Quaternionf upAngle, @Nullable Quaternionfc beltUpAngle,
+                                                    @Nullable Quaternionfc beltEastAngle,
+                                                    @Nullable SuperByteBufferRenderState lid,
+                                                    @Nullable SuperByteBufferRenderState belt,
+                                                    @UnknownNullability SuperByteBufferRenderState frame,
+                                                    @UnknownNullability SuperByteBufferRenderState arrow) {
         private static final Quaternionf EAST_ANGLE = new Quaternionf().setAngleAxis(Mth.HALF_PI, 1, 0, 0);
 
-        public static CogwheelRenderState create(
+        public static MechanicalCrafterBlockRenderState create(
             MechanicalCrafterBlockEntity be,
             @Nullable Level level,
             MechanicalCrafterRenderState state,
-            @Nullable CardinalLighting cardinalLighting,
             Direction facing
         ) {
-            SuperByteBufferRenderState model = CachedBuffers.partial(
+            CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
+            SuperByteBufferRenderState cogwheel = CachedBuffers.partial(
                 AllPartialModels.SHAFTLESS_COGWHEEL,
                 state.blockState
             ).cardinalLighting(cardinalLighting).light(state.lightCoords).color(getTintColor(be)).extractRenderState();
             Direction.Axis axis = facing.getAxis();
             Quaternionf angle = getRotateAngleWithoutBeOffset(axis, be, state, level);
-            Quaternionf upAngle = axis == Direction.Axis.X ? new Quaternionf().setAngleAxis(
-                Mth.HALF_PI,
-                0,
-                1,
-                0
-            ) : null;
-            return new CogwheelRenderState(model, angle, upAngle);
+            Quaternionf upAngle =
+                axis == Direction.Axis.X ? new Quaternionf().setAngleAxis(Mth.HALF_PI, 0, 1, 0) : null;
+            Quaternionf beltUpAngle = getUpRotateAngle(AngleHelper.horizontalAngle(facing) + 90);
+            Quaternionf beltEastAngle = getEastRotateAngle(state.blockState.getValue(MechanicalCrafterBlock.POINTING)
+                .getXRotation());
+            Phase phase = be.phase;
+            SuperByteBufferRenderState lid = null, belt = null, frame = null, arrow = null;
+            if ((be.covered || phase != Phase.IDLE) && phase.ordinal() < CRAFTING_PHASE_ORDINAL) {
+                lid = CachedBuffers.partial(AllPartialModels.MECHANICAL_CRAFTER_LID, state.blockState)
+                    .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
+            }
+            Direction targetDirection = MechanicalCrafterBlock.getTargetDirection(state.blockState);
+            if (MechanicalCrafterBlock.isValidTarget(
+                level,
+                state.blockPos.relative(targetDirection),
+                state.blockState
+            )) {
+                SuperByteBuffer beltBuffer = CachedBuffers.partial(
+                    AllPartialModels.MECHANICAL_CRAFTER_BELT,
+                    state.blockState
+                );
+                if (phase == Phase.EXPORTING) {
+                    int textureIndex = (int) (be.getCountDownSpeed() / 128.0f * AnimationTickHolder.getTicks());
+                    beltBuffer.shiftUVtoSheet(AllSpriteShifts.CRAFTER_THINGIES, (textureIndex % 4) / 4.0f, 0, 1);
+                }
+                belt = beltBuffer.cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
+                frame = CachedBuffers.partial(AllPartialModels.MECHANICAL_CRAFTER_BELT_FRAME, state.blockState)
+                    .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
+            } else {
+                arrow = CachedBuffers.partial(AllPartialModels.MECHANICAL_CRAFTER_ARROW, state.blockState)
+                    .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
+            }
+            return new MechanicalCrafterBlockRenderState(
+                cogwheel,
+                angle,
+                upAngle,
+                beltUpAngle,
+                beltEastAngle,
+                lid,
+                belt,
+                frame,
+                arrow
+            );
         }
 
         public void submit(PoseStack matrices, SubmitNodeCollector queue) {
@@ -217,10 +219,29 @@ public class MechanicalCrafterRenderer implements BlockEntityRenderer<Mechanical
             matrices.rotateAround(EAST_ANGLE, 0.5f, 0.5f, 0.5f);
             cogwheel.submit(matrices, queue);
             matrices.popPose();
+            matrices.pushPose();
+            if (beltUpAngle != null) {
+                matrices.rotateAround(beltUpAngle, 0.5f, 0.5f, 0.5f);
+            }
+            if (beltEastAngle != null) {
+                matrices.rotateAround(beltEastAngle, 0.5f, 0.5f, 0.5f);
+            }
+            if (lid != null) {
+                lid.submit(matrices, queue);
+            }
+            if (belt != null) {
+                belt.submit(matrices, queue);
+                frame.submit(matrices, queue);
+            } else {
+                arrow.submit(matrices, queue);
+            }
+            matrices.popPose();
         }
     }
 
     public interface MechanicalCrafterItemRenderState {
+        Quaternionf Y_ROT = Axis.YP.rotation(RAD_180);
+
         void submit(SubmitNodeCollector queue, PoseStack ms, int light);
     }
 
@@ -255,7 +276,7 @@ public class MechanicalCrafterRenderer implements BlockEntityRenderer<Mechanical
     }
 
     public record MechanicalCrafterCraftingItemRenderState(float scale, @Nullable Vec3 centering,
-                                                           @Nullable List<GridItemRenderState> before, Quaternionf yRot,
+                                                           @Nullable List<GridItemRenderState> before,
                                                            @Nullable Quaternionf zRot, float upScaling,
                                                            float downScaling,
                                                            @Nullable List<ItemStackRenderState> states) implements MechanicalCrafterItemRenderState {
@@ -272,7 +293,6 @@ public class MechanicalCrafterRenderer implements BlockEntityRenderer<Mechanical
             if (beforeEmpty && itemsEmpty) {
                 return null;
             }
-            Quaternionf yRot = Axis.YP.rotation(RAD_180);
             float value = be.countDown - be.getCountDownSpeed() * tickProgress;
             float scale;
             Vec3 centering;
@@ -293,21 +313,7 @@ public class MechanicalCrafterRenderer implements BlockEntityRenderer<Mechanical
                 ).scale(earlyProgress).multiply(0.5, 0.5, 1);
                 float distance = 0.5f + (-4 * (progress - 0.5f) * (progress - 0.5f) + 1) * 0.25f;
                 boolean onlyRenderFirst = be.countDown < 1000;
-                before = new ArrayList<>(items.grid.size());
-                items.grid.forEach((pair, stack) -> {
-                    if (onlyRenderFirst && (pair.getFirst() != 0 || pair.getSecond() != 0)) {
-                        return;
-                    }
-                    int x = pair.getFirst();
-                    int y = pair.getSecond();
-                    float offsetX = x * distance;
-                    float offsetY = y * distance;
-                    float offsetZ = (x + y * 3) / 1024.0f;
-                    ItemStackRenderState state = new ItemStackRenderState();
-                    state.displayContext = ItemDisplayContext.FIXED;
-                    itemModelManager.appendItemLayers(state, stack, state.displayContext, world, null, 0);
-                    before.add(new GridItemRenderState(state, offsetX, offsetY, offsetZ));
-                });
+                before = GridItemRenderState.create(items.grid, itemModelManager, world, distance, 0, onlyRenderFirst);
             }
             Quaternionf zRot;
             float upScaling;
@@ -339,7 +345,6 @@ public class MechanicalCrafterRenderer implements BlockEntityRenderer<Mechanical
                 scale,
                 centering,
                 before,
-                yRot,
                 zRot,
                 upScaling,
                 downScaling,
@@ -354,7 +359,7 @@ public class MechanicalCrafterRenderer implements BlockEntityRenderer<Mechanical
                 ms.scale(scale, scale, scale);
                 ms.translate(centering);
                 for (GridItemRenderState state : before) {
-                    state.submit(queue, ms, yRot, light);
+                    state.submit(queue, ms, Y_ROT, light);
                 }
                 ms.popPose();
             }
@@ -364,7 +369,7 @@ public class MechanicalCrafterRenderer implements BlockEntityRenderer<Mechanical
                 }
                 ms.scale(upScaling, upScaling, upScaling);
                 ms.scale(downScaling, downScaling, downScaling);
-                ms.mulPose(yRot);
+                ms.mulPose(Y_ROT);
                 for (ItemStackRenderState state : states) {
                     state.submit(ms, queue, light, OverlayTexture.NO_OVERLAY, 0);
                 }
@@ -372,8 +377,8 @@ public class MechanicalCrafterRenderer implements BlockEntityRenderer<Mechanical
         }
     }
 
-    public record MechanicalCrafterPhaseItemRenderState(List<GridItemRenderState> states,
-                                                        Quaternionf yRot) implements MechanicalCrafterItemRenderState {
+    public record MechanicalCrafterPhaseItemRenderState(
+        List<GridItemRenderState> states) implements MechanicalCrafterItemRenderState {
         @Nullable
         public static MechanicalCrafterPhaseItemRenderState create(
             ItemModelResolver itemModelManager,
@@ -386,47 +391,76 @@ public class MechanicalCrafterRenderer implements BlockEntityRenderer<Mechanical
             if (grid.isEmpty()) {
                 return null;
             }
-            float distance = 0.5f;
-            boolean onlyRenderFirst = phase == Phase.INSERTING;
-            boolean isExporting = phase == Phase.EXPORTING && blockState.hasProperty(MechanicalCrafterBlock.POINTING);
-            Pointing pointing = isExporting ? blockState.getValue(MechanicalCrafterBlock.POINTING) : null;
-            Quaternionf yRot = Axis.YP.rotation(RAD_180);
-            List<GridItemRenderState> states = new ArrayList<>(grid.size());
-            grid.forEach((pair, stack) -> {
-                if (onlyRenderFirst && (pair.getFirst() != 0 || pair.getSecond() != 0)) {
-                    return;
-                }
-                int x = pair.getFirst();
-                int y = pair.getSecond();
-                float offsetX = x * distance;
-                float offsetY = y * distance;
-                int value = x + y * 3;
-                if (pointing != null) {
-                    switch (pointing) {
-                        case UP -> value -= 9;
-                        case LEFT -> value += 18;
-                        case RIGHT -> value -= 18;
-                        case DOWN -> value += 9;
-                    }
-                }
-                float offsetZ = value / 1024.0f;
-                ItemStackRenderState state = new ItemStackRenderState();
-                state.displayContext = ItemDisplayContext.FIXED;
-                itemModelManager.appendItemLayers(state, stack, state.displayContext, world, null, 0);
-                states.add(new GridItemRenderState(state, offsetX, offsetY, offsetZ));
-            });
-            return new MechanicalCrafterPhaseItemRenderState(states, yRot);
+            float offset;
+            if (phase == Phase.EXPORTING && blockState.hasProperty(MechanicalCrafterBlock.POINTING)) {
+                offset = switch (blockState.getValue(MechanicalCrafterBlock.POINTING)) {
+                    case UP -> -9 / 1024.0f;
+                    case LEFT -> 18 / 1024.0f;
+                    case RIGHT -> -18 / 1024.0f;
+                    case DOWN -> 9 / 1024.0f;
+                };
+            } else {
+                offset = 0;
+            }
+            List<GridItemRenderState> states = GridItemRenderState.create(
+                grid,
+                itemModelManager,
+                world,
+                0.5f,
+                offset,
+                phase == Phase.INSERTING
+            );
+            return new MechanicalCrafterPhaseItemRenderState(states);
         }
 
         @Override
         public void submit(SubmitNodeCollector queue, PoseStack ms, int light) {
             for (GridItemRenderState state : states) {
-                state.submit(queue, ms, yRot, light);
+                state.submit(queue, ms, Y_ROT, light);
             }
         }
     }
 
     public record GridItemRenderState(ItemStackRenderState state, float offsetX, float offsetY, float offsetZ) {
+        public static List<GridItemRenderState> create(
+            Map<Pair<Integer, Integer>, ItemStack> grid,
+            ItemModelResolver itemModelManager,
+            @Nullable Level level,
+            float distance,
+            float offset,
+            boolean onlyRenderFirst
+        ) {
+            List<GridItemRenderState> states;
+            if (onlyRenderFirst) {
+                states = new ArrayList<>(1);
+                for (Map.Entry<Pair<Integer, Integer>, ItemStack> entry : grid.entrySet()) {
+                    Pair<Integer, Integer> pair = entry.getKey();
+                    if (pair.getFirst() != 0 || pair.getSecond() != 0) {
+                        continue;
+                    }
+                    ItemStackRenderState state = new ItemStackRenderState();
+                    state.displayContext = ItemDisplayContext.FIXED;
+                    itemModelManager.appendItemLayers(state, entry.getValue(), state.displayContext, level, null, 0);
+                    states.add(new GridItemRenderState(state, 0, 0, offset));
+                    break;
+                }
+            } else {
+                states = new ArrayList<>(grid.size());
+                grid.forEach((pair, stack) -> {
+                    int x = pair.getFirst();
+                    int y = pair.getSecond();
+                    float offsetX = x * distance;
+                    float offsetY = y * distance;
+                    float offsetZ = (x + y * 3) / 1024.0f;
+                    ItemStackRenderState state = new ItemStackRenderState();
+                    state.displayContext = ItemDisplayContext.FIXED;
+                    itemModelManager.appendItemLayers(state, stack, state.displayContext, level, null, 0);
+                    states.add(new GridItemRenderState(state, offsetX, offsetY, offsetZ + offset));
+                });
+            }
+            return states;
+        }
+
         public void submit(SubmitNodeCollector queue, PoseStack ms, Quaternionf yRot, int light) {
             ms.pushPose();
             ms.translate(offsetX, offsetY, 0);

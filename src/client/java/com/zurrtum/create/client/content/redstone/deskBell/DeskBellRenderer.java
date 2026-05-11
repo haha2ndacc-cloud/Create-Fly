@@ -46,9 +46,6 @@ public class DeskBellRenderer implements BlockEntityRenderer<DeskBellBlockEntity
     ) {
         float p = be.animation.getValue(tickProgress);
         BlockState blockState = be.getBlockState();
-        if (p < 0.004 && !blockState.getValue(DeskBellBlock.POWERED)) {
-            return;
-        }
         Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
         CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
         float f = (float) (1 - 4 * Math.pow(Math.max(p - 0.5, 0) - 0.5, 2));
@@ -88,9 +85,7 @@ public class DeskBellRenderer implements BlockEntityRenderer<DeskBellBlockEntity
         matrices.translate(0, state.bellOffset, 0);
         matrices.mulPose(state.bellXRot);
         matrices.mulPose(state.bellZRot);
-        matrices.translate(0, -state.bellOffset, 0);
-        matrices.scale(0.995f, 0.995f, 0.995f);
-        matrices.translate(-0.5f, -0.5f, -0.5f);
+        matrices.translate(-0.5f, -state.bellOffset - 0.5f, -0.5f);
         state.bell.submit(matrices, queue);
     }
 

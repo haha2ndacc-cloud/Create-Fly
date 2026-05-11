@@ -11,7 +11,6 @@ import com.zurrtum.create.client.flywheel.lib.visual.AbstractBlockEntityVisual;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -69,16 +68,16 @@ public class ChestVisual<T extends BlockEntity & LidBlockEntity> extends Abstrac
 
     private float lastProgress = Float.NaN;
 
-    @SuppressWarnings("rawtypes")
     public ChestVisual(VisualizationContext ctx, T blockEntity, float partialTick) {
         super(ctx, blockEntity, partialTick);
 
         Block block = blockState.getBlock();
         if (block instanceof AbstractChestBlock<?> chestBlock) {
             ChestType chestType = blockState.hasProperty(ChestBlock.TYPE) ? blockState.getValue(ChestBlock.TYPE) : ChestType.SINGLE;
-            ChestRenderer<?> renderer = (ChestRenderer) Minecraft.getInstance().getBlockEntityRenderDispatcher()
-                .getRenderer(blockEntity);
-            SpriteId texture = Sheets.chooseSprite(renderer.getChestMaterial(blockEntity, isChristmas()), chestType);
+            SpriteId texture = Sheets.chooseSprite(
+                ChestRenderer.getChestMaterial(blockEntity, isChristmas()),
+                chestType
+            );
             instances = InstanceTree.create(
                 instancerProvider(),
                 ModelTrees.of(LAYER_LOCATIONS.get(chestType), texture, MATERIAL)

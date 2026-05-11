@@ -27,6 +27,7 @@ import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -34,13 +35,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DoorBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Quaternionf;
 import org.joml.Quaternionfc;
+import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
@@ -51,12 +51,9 @@ import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntity
 import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getYRotateAngle;
 
 public class SlidingDoorRenderer implements BlockEntityRenderer<SlidingDoorBlockEntity, DoorRenderState> {
-    public SlidingDoorRenderer(Context context) {
-    }
+    public static float DOOR_OFFSET = -1 / 512.0f;
 
-    @Override
-    public boolean shouldRender(SlidingDoorBlockEntity be, Vec3 cameraPosition) {
-        return BlockEntityRenderer.super.shouldRender(be, cameraPosition) && be.shouldRenderSpecial(be.getBlockState());
+    public SlidingDoorRenderer(Context context) {
     }
 
     @Override
@@ -73,19 +70,20 @@ public class SlidingDoorRenderer implements BlockEntityRenderer<SlidingDoorBlock
         @Nullable CrumblingOverlay crumblingOverlay
     ) {
         Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
-        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
         Direction facing = state.blockState.getValue(DoorBlock.FACING);
-        Direction movementDirection = facing.getClockWise();
         boolean isLeft = state.blockState.getValue(DoorBlock.HINGE) == DoorHingeSide.LEFT;
         float value = be.animation.getValue(tickProgress);
-        Vec3 offset = Vec3.atLowerCornerOf(facing.getUnitVec3i()).scale(Mth.clamp(value * 10, 0, 1) * 0.03125f);
+        Vec3i facingVec = facing.getUnitVec3i();
+        float scale = Mth.clamp(value * 10, 0, 1) * 0.03125f;
         SlidingDoorBlock block = (SlidingDoorBlock) state.blockState.getBlock();
         if (block.isFoldingDoor()) {
+            CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
             FoldingDoorRenderState renderState = new FoldingDoorRenderState();
-            renderState.offset = offset.add(0, -1 / 512.0f, 0);
-            renderState.angle = getUpRotateAngle(AngleHelper.horizontalAngle(movementDirection));
-            float f = isLeft ? 1 : -1;
-            float v = f * value * value;
+            renderState.offsetX = facingVec.getX() * scale;
+            renderState.offsetY = Math.fma(facingVec.getY(), scale, DOOR_OFFSET);
+            renderState.offsetZ = facingVec.getZ() * scale;
+            renderState.angle = getUpRotateAngle(AngleHelper.horizontalAngle(facing.getClockWise()));
+            float v = value * value * (isLeft ? 1 : -1);
             renderState.yRot = getYRotateAngle(91 * v);
             renderState.flip = !isLeft;
             Couple<PartialModel> partials = AllPartialModels.FOLDING_DOORS.get(BuiltInRegistries.BLOCK.getKey(block));
@@ -93,22 +91,23 @@ public class SlidingDoorRenderer implements BlockEntityRenderer<SlidingDoorBlock
                 .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
             renderState.right = CachedBuffers.partial(partials.get(renderState.flip), state.blockState)
                 .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
-            renderState.rightOffset = f / 2.0f;
             renderState.rightYRot = getYRotateAngle(-181 * v);
             state.door = renderState;
         } else {
-            if (isLeft) {
-                movementDirection = movementDirection.getOpposite();
-            }
             SlidingDoorRenderState renderState = new SlidingDoorRenderState();
-            BlockState blockState = state.blockState.setValue(DoorBlock.OPEN, false);
-            renderState.upper = CachedBuffers.block(blockState.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER))
-                .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
-            renderState.lower = CachedBuffers.block(blockState.setValue(DoorBlock.HALF, DoubleBlockHalf.LOWER))
-                .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
-            renderState.upperOffset = 1 - 1 / 512.0f;
-            renderState.offset = Vec3.atLowerCornerOf(movementDirection.getUnitVec3i()).scale(value * value * 0.8125f)
-                .add(offset);
+            renderState.model = CachedBuffers.partialFacing(
+                    AllPartialModels.SLIDING_DOORS.get(BuiltInRegistries.BLOCK.getKey(block)), state.blockState, facing)
+                .cardinalLighting(level).light(state.lightCoords).extractRenderState();
+            Vector3fc movementVec =
+                isLeft ? facing.getCounterClockWise().getUnitVec3f() : facing.getClockWise().getUnitVec3f();
+            float movementScale = value * value * 0.8125f;
+            renderState.offsetX = Math.fma(movementVec.x(), movementScale, facingVec.getX() * scale);
+            renderState.offsetY = Math.fma(
+                movementVec.y(),
+                movementScale,
+                Math.fma(facingVec.getY(), scale, DOOR_OFFSET)
+            );
+            renderState.offsetZ = Math.fma(movementVec.z(), movementScale, facingVec.getZ() * scale);
             state.door = renderState;
         }
     }
@@ -171,56 +170,58 @@ public class SlidingDoorRenderer implements BlockEntityRenderer<SlidingDoorBlock
     public static class FoldingDoorRenderState implements AbstractDoorRenderState {
         public @UnknownNullability SuperByteBufferRenderState left;
         public @UnknownNullability SuperByteBufferRenderState right;
-        public @UnknownNullability Vec3 offset;
+        public float offsetX;
+        public float offsetY;
+        public float offsetZ;
         public @Nullable Quaternionfc yRot;
         public @Nullable Quaternionfc rightYRot;
         public @Nullable Quaternionf angle;
         public boolean flip;
-        public float rightOffset;
 
         @Override
         public void submit(PoseStack matrices, OrderedSubmitNodeCollector queue) {
-            matrices.translate(offset);
+            matrices.translate(offsetX, offsetY, offsetZ);
             if (angle != null) {
                 matrices.rotateAround(angle, 0.5f, 0.5f, 0.5f);
             }
             if (flip) {
-                matrices.translate(0, 0, 1);
-            }
-            if (yRot != null) {
-                matrices.mulPose(yRot);
-            }
-            if (flip) {
-                matrices.pushPose();
-                matrices.translate(0, 0, -0.5f);
+                if (yRot != null) {
+                    matrices.translate(0, 0, 1);
+                    matrices.mulPose(yRot);
+                    matrices.translate(0, 0, -0.5f);
+                } else {
+                    matrices.translate(0, 0, 0.5f);
+                }
                 left.submit(matrices, queue);
-                matrices.popPose();
+                if (rightYRot != null) {
+                    matrices.mulPose(rightYRot);
+                }
+                matrices.translate(0, 0, -0.5f);
+                right.submit(matrices, queue);
             } else {
+                if (yRot != null) {
+                    matrices.mulPose(yRot);
+                }
                 left.submit(matrices, queue);
+                matrices.translate(0, 0, 0.5f);
+                if (rightYRot != null) {
+                    matrices.mulPose(rightYRot);
+                }
+                right.submit(matrices, queue);
             }
-            matrices.translate(0, 0, rightOffset);
-            if (rightYRot != null) {
-                matrices.mulPose(rightYRot);
-            }
-            if (flip) {
-                matrices.translate(0, 0, -0.5f);
-            }
-            right.submit(matrices, queue);
         }
     }
 
     public static class SlidingDoorRenderState implements AbstractDoorRenderState {
-        public @UnknownNullability SuperByteBufferRenderState upper;
-        public @UnknownNullability SuperByteBufferRenderState lower;
-        public @UnknownNullability Vec3 offset;
-        public float upperOffset;
+        public @UnknownNullability SuperByteBufferRenderState model;
+        public float offsetX;
+        public float offsetY;
+        public float offsetZ;
 
         @Override
         public void submit(PoseStack matrices, OrderedSubmitNodeCollector queue) {
-            matrices.translate(offset);
-            lower.submit(matrices, queue);
-            matrices.translate(0, upperOffset, 0);
-            upper.submit(matrices, queue);
+            matrices.translate(offsetX, offsetY, offsetZ);
+            model.submit(matrices, queue);
         }
     }
 }

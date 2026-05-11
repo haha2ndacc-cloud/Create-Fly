@@ -1,6 +1,7 @@
 package com.zurrtum.create.client.content.kinetics.base;
 
 import com.zurrtum.create.catnip.theme.Color;
+import com.zurrtum.create.client.flywheel.api.visual.ShaderLightVisual;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.flywheel.lib.visual.AbstractBlockEntityVisual;
 import com.zurrtum.create.content.kinetics.base.IRotate;
@@ -10,7 +11,7 @@ import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class KineticBlockEntityVisual<T extends KineticBlockEntity> extends AbstractBlockEntityVisual<T> {
+public abstract class KineticBlockEntityVisual<T extends KineticBlockEntity> extends AbstractBlockEntityVisual<T> implements ShaderLightVisual {
 
     public KineticBlockEntityVisual(VisualizationContext context, T blockEntity, float partialTick) {
         super(context, blockEntity, partialTick);

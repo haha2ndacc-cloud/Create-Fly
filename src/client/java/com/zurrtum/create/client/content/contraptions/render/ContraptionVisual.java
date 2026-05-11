@@ -4,8 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.api.behaviour.movement.MovementBehaviour;
 import com.zurrtum.create.client.api.behaviour.movement.MovementRenderBehaviour;
 import com.zurrtum.create.client.content.contraptions.render.ClientContraption.RenderedBlocks;
-import com.zurrtum.create.client.flywheel.api.material.CardinalLightingMode;
-import com.zurrtum.create.client.flywheel.api.material.Material;
 import com.zurrtum.create.client.flywheel.api.task.Plan;
 import com.zurrtum.create.client.flywheel.api.visual.BlockEntityVisual;
 import com.zurrtum.create.client.flywheel.api.visual.DynamicVisual;
@@ -17,7 +15,6 @@ import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizerRegistry;
 import com.zurrtum.create.client.flywheel.lib.instance.InstanceTypes;
 import com.zurrtum.create.client.flywheel.lib.instance.TransformedInstance;
-import com.zurrtum.create.client.flywheel.lib.material.SimpleMaterial;
 import com.zurrtum.create.client.flywheel.lib.model.ModelUtil;
 import com.zurrtum.create.client.flywheel.lib.model.baked.BlockModelBuilder;
 import com.zurrtum.create.client.flywheel.lib.task.ForEachPlan;
@@ -32,11 +29,11 @@ import com.zurrtum.create.content.contraptions.Contraption;
 import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.Mth;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -96,14 +93,8 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
             }
         };
 
-        var model = new BlockModelBuilder(modelWorld, blocks.positions()).materialFunc((renderType, shaded, ao) -> {
-            Material material = ModelUtil.getMaterial(renderType, shaded, ao);
-            if (material != null && material.cardinalLightingMode() == CardinalLightingMode.ENTITY) {
-                return SimpleMaterial.builderOf(material).cardinalLightingMode(CardinalLightingMode.CHUNK).build();
-            } else {
-                return material;
-            }
-        }).build();
+        var model = new BlockModelBuilder(modelWorld, blocks.positions()).materialFunc(ModelUtil::getChunkMaterial)
+            .build();
 
         var instancer = embedding.instancerProvider().instancer(InstanceTypes.TRANSFORMED, model);
 

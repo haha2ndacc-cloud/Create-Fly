@@ -7,6 +7,7 @@ import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.render.SpriteShiftEntry;
 import com.zurrtum.create.client.flywheel.api.instance.Instance;
 import com.zurrtum.create.client.flywheel.api.visual.DynamicVisual;
+import com.zurrtum.create.client.flywheel.api.visual.ShaderLightVisual;
 import com.zurrtum.create.client.flywheel.api.visual.TickableVisual;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.flywheel.lib.instance.InstanceTypes;
@@ -28,7 +29,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class BlazeBurnerVisual extends AbstractBlockEntityVisual<BlazeBurnerBlockEntity> implements SimpleDynamicVisual, SimpleTickableVisual {
+public class BlazeBurnerVisual extends AbstractBlockEntityVisual<BlazeBurnerBlockEntity> implements SimpleDynamicVisual, SimpleTickableVisual, ShaderLightVisual {
 
     private BlazeBurnerBlock.HeatLevel heatLevel;
 
@@ -58,7 +59,8 @@ public class BlazeBurnerVisual extends AbstractBlockEntityVisual<BlazeBurnerBloc
         PartialModel blazeModel = BlazeBurnerRenderer.getBlazeModel(heatLevel, validBlockAbove);
         isInert = blazeModel == AllPartialModels.BLAZE_INERT;
 
-        head = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(blazeModel)).createInstance();
+        head = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(blazeModel))
+            .createInstance();
 
         head.light(LightCoordsUtil.FULL_BRIGHT);
 

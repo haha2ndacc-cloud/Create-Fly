@@ -41,7 +41,7 @@ public interface FlatLit extends Instance {
         }
     }
 
-    static void relight(int packedLight, Iterator<@Nullable FlatLit> instances) {
+    static void relight(int packedLight, Iterator<? extends @Nullable FlatLit> instances) {
         while (instances.hasNext()) {
             FlatLit instance = instances.next();
 
@@ -51,11 +51,11 @@ public interface FlatLit extends Instance {
         }
     }
 
-    static void relight(int packedLight, Iterable<@Nullable FlatLit> instances) {
+    static void relight(int packedLight, Iterable<? extends @Nullable FlatLit> instances) {
         relight(packedLight, instances.iterator());
     }
 
-    static void relight(int packedLight, Stream<@Nullable FlatLit> instances) {
+    static void relight(int packedLight, Stream<? extends @Nullable FlatLit> instances) {
         relight(packedLight, instances.iterator());
     }
 }

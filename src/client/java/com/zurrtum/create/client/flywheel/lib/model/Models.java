@@ -27,8 +27,12 @@ public final class Models {
     ).build());
     private static final RendererReloadCache<PartialModel, Model> PARTIAL = new RendererReloadCache<>(it -> new BakedModelBuilder(
         it.get()).build());
+    private static final RendererReloadCache<PartialModel, Model> CHUNK_PARTIAL = new RendererReloadCache<>(it -> new BakedModelBuilder(
+        it.get()).materialFunc(ModelUtil::getChunkMaterial).build());
     private static final RendererReloadCache<TransformedPartial<?>, Model> TRANSFORMED_PARTIAL = new RendererReloadCache<>(
         TransformedPartial::create);
+    private static final RendererReloadCache<TransformedPartial<?>, Model> CHUNK_TRANSFORMED_PARTIAL = new RendererReloadCache<>(
+        TransformedPartial::createChunk);
 
     private Models() {
     }
@@ -54,6 +58,17 @@ public final class Models {
     }
 
     /**
+     * Get a usable model for a given partial model. World-space normal based darkening will be applied.
+     * Need to implement ShaderLightVisual and override the setSectionCollector method.
+     *
+     * @param partial The partial model you wish to render.
+     * @return A model built from the baked model the partial model represents.
+     */
+    public static Model chunkPartial(PartialModel partial) {
+        return CHUNK_PARTIAL.get(partial);
+    }
+
+    /**
      * Get a usable model for a given partial model, transformed in some way.
      * <br>
      * In general, you should try to avoid captures in the transformer function,
@@ -67,6 +82,23 @@ public final class Models {
      */
     public static <T> Model partial(PartialModel partial, T key, BiConsumer<T, PoseStack> transformer) {
         return TRANSFORMED_PARTIAL.get(new TransformedPartial<>(partial, key, transformer));
+    }
+
+    /**
+     * Get a usable model for a given partial model, transformed in some way. World-space normal based darkening will be applied.
+     * Need to implement ShaderLightVisual and override the setSectionCollector method.
+     * <br>
+     * In general, you should try to avoid captures in the transformer function,
+     * i.e. prefer static method references over lambdas.
+     *
+     * @param partial     The partial model you wish to render.
+     * @param key         A key that will be used to cache the transformed model.
+     * @param transformer A function that will transform the model in some way.
+     * @param <T>         The type of the key.
+     * @return A model built from the baked model the partial model represents, transformed by the given function.
+     */
+    public static <T> Model chunkPartial(PartialModel partial, T key, BiConsumer<T, PoseStack> transformer) {
+        return CHUNK_TRANSFORMED_PARTIAL.get(new TransformedPartial<>(partial, key, transformer));
     }
 
     /**
@@ -91,6 +123,13 @@ public final class Models {
             var stack = new PoseStack();
             transformer.accept(key, stack);
             return new BakedModelBuilder(partial.get()).poseStack(stack).build();
+        }
+
+        public Model createChunk() {
+            var stack = new PoseStack();
+            transformer.accept(key, stack);
+            return new BakedModelBuilder(partial.get()).poseStack(stack).materialFunc(ModelUtil::getChunkMaterial)
+                .build();
         }
     }
 }

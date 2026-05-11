@@ -1,6 +1,5 @@
 {
 	"parent": "block/block",
-	"ambientocclusion": false,
 	"textures": {
 		"0": "create:block/flywheel",
 		"1": "create:block/axis",

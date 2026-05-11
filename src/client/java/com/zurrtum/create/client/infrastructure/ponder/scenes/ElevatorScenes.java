@@ -277,8 +277,6 @@ public class ElevatorScenes {
         scene.effects().indicateSuccess(util.grid().at(3, 6, 2));
         scene.world().movePulley(pulleyPos, 1, 0);
         scene.world().cycleBlockProperty(doorPos, SlidingDoorBlock.OPEN);
-        scene.world().cycleBlockProperty(doorPos, SlidingDoorBlock.VISIBLE);
-        scene.world().cycleBlockProperty(doorPos.above(), SlidingDoorBlock.VISIBLE);
 
         scene.overlay().showText(80).placeNearTarget().attachKeyFrame()
             .pointAt(util.vector().blockSurface(util.grid().at(3, 1, 1), Direction.NORTH))
@@ -311,8 +309,6 @@ public class ElevatorScenes {
         scene.world().moveSection(elevatorLink, util.vector().of(0, -12, 0), 50);
         scene.world().movePulley(pulleyPos, 12, 50);
         scene.world().cycleBlockProperty(doorPos, SlidingDoorBlock.OPEN);
-        scene.world().cycleBlockProperty(doorPos, SlidingDoorBlock.VISIBLE);
-        scene.world().cycleBlockProperty(doorPos.above(), SlidingDoorBlock.VISIBLE);
         scene.idle(20);
 
         scene.world().toggleRedstonePower(botInput);
@@ -324,8 +320,6 @@ public class ElevatorScenes {
         scene.world().toggleRedstonePower(util.select().position(1, 1, 1));
         scene.world().toggleRedstonePower(outputRedstone);
         scene.world().cycleBlockProperty(doorPos, SlidingDoorBlock.OPEN);
-        scene.world().cycleBlockProperty(doorPos, SlidingDoorBlock.VISIBLE);
-        scene.world().cycleBlockProperty(doorPos.above(), SlidingDoorBlock.VISIBLE);
         scene.idle(15);
 
         scene.overlay().showText(80).placeNearTarget().attachKeyFrame().pointAt(util.vector().topOf(0, 1, 2))
@@ -378,8 +372,6 @@ public class ElevatorScenes {
         scene.world().moveSection(elevatorLink, util.vector().of(0, 12, 0), 70);
         scene.world().movePulley(pulleyPos, -12, 70);
         scene.world().cycleBlockProperty(doorPos, SlidingDoorBlock.OPEN);
-        scene.world().cycleBlockProperty(doorPos, SlidingDoorBlock.VISIBLE);
-        scene.world().cycleBlockProperty(doorPos.above(), SlidingDoorBlock.VISIBLE);
         scene.idle(20);
 
         scene.world().toggleRedstonePower(topInput);
@@ -401,8 +393,6 @@ public class ElevatorScenes {
         scene.world().cycleBlockProperty(topContact, ElevatorContactBlock.POWERING);
         scene.world().toggleRedstonePower(util.select().position(1, 13, 1));
         scene.world().cycleBlockProperty(doorPos, SlidingDoorBlock.OPEN);
-        scene.world().cycleBlockProperty(doorPos, SlidingDoorBlock.VISIBLE);
-        scene.world().cycleBlockProperty(doorPos.above(), SlidingDoorBlock.VISIBLE);
 
         scene.world().flashDisplayLink(linkPos);
         scene.world().modifyBlockEntityNBT(

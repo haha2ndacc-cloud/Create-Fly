@@ -21,17 +21,24 @@ public class SpeedControllerBlockEntity extends KineticBlockEntity {
     public static final int DEFAULT_SPEED = 16;
     public ServerScrollValueBehaviour targetSpeed;
 
-    public boolean hasBracket;
-
     public SpeedControllerBlockEntity(BlockPos pos, BlockState state) {
         super(AllBlockEntityTypes.ROTATION_SPEED_CONTROLLER, pos, state);
-        hasBracket = false;
     }
 
     @Override
     public void lazyTick() {
-        super.lazyTick();
-        updateBracket();
+        //TODO remove
+        if (level != null && level.isClientSide()) {
+            BlockState stateAbove = level.getBlockState(worldPosition.above());
+            boolean hasBracket = stateAbove.getBlock() instanceof ICogWheel cogWheel && cogWheel.isDedicatedCogWheel() && cogWheel.isLargeCog() && stateAbove.getValue(
+                CogWheelBlock.AXIS).isHorizontal();
+            if (getBlockState().getValue(SpeedControllerBlock.BRACKET) != hasBracket) {
+                level.setBlockAndUpdate(
+                    worldPosition,
+                    getBlockState().setValue(SpeedControllerBlock.BRACKET, hasBracket)
+                );
+            }
+        }
     }
 
     @Override
@@ -59,7 +66,7 @@ public class SpeedControllerBlockEntity extends KineticBlockEntity {
         removeSource();
         attachKinetics();
 
-        if (isCogwheelPresent() && getSpeed() != 0) {
+        if (getBlockState().getValue(SpeedControllerBlock.BRACKET) && getSpeed() != 0) {
             award(AllAdvancements.SPEED_CONTROLLER);
         }
     }
@@ -124,17 +131,5 @@ public class SpeedControllerBlockEntity extends KineticBlockEntity {
             return speed;
         }
         return targetSpeed;
-    }
-
-    public void updateBracket() {
-        if (level != null && level.isClientSide()) {
-            hasBracket = isCogwheelPresent();
-        }
-    }
-
-    private boolean isCogwheelPresent() {
-        BlockState stateAbove = level.getBlockState(worldPosition.above());
-        return ICogWheel.isDedicatedCogWheel(stateAbove.getBlock()) && ICogWheel.isLargeCog(stateAbove) && stateAbove.getValue(
-            CogWheelBlock.AXIS).isHorizontal();
     }
 }

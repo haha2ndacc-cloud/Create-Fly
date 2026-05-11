@@ -20,30 +20,39 @@ public class HosePulleyVisual extends AbstractPulleyVisual<HosePulleyBlockEntity
 
     @Override
     protected Instancer<TransformedInstance> getRopeModel() {
-        return instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.HOSE));
+        return instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(AllPartialModels.HOSE));
     }
 
     @Override
     protected Instancer<TransformedInstance> getMagnetModel() {
-        return instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.HOSE_MAGNET));
+        return instancerProvider().instancer(
+            InstanceTypes.TRANSFORMED,
+            Models.chunkPartial(AllPartialModels.HOSE_MAGNET)
+        );
     }
 
     @Override
     protected Instancer<TransformedInstance> getHalfMagnetModel() {
         return instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.HOSE_HALF_MAGNET)
+            Models.chunkPartial(AllPartialModels.HOSE_HALF_MAGNET)
         );
     }
 
     @Override
     protected Instancer<ScrollInstance> getCoilModel() {
-        return instancerProvider().instancer(AllInstanceTypes.SCROLLING, Models.partial(AllPartialModels.HOSE_COIL));
+        return instancerProvider().instancer(
+            AllInstanceTypes.SCROLLING,
+            Models.chunkPartial(AllPartialModels.HOSE_COIL)
+        );
     }
 
     @Override
     protected Instancer<TransformedInstance> getHalfRopeModel() {
-        return instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.HOSE_HALF));
+        return instancerProvider().instancer(
+            InstanceTypes.TRANSFORMED,
+            Models.chunkPartial(AllPartialModels.HOSE_HALF)
+        );
     }
 
     @Override

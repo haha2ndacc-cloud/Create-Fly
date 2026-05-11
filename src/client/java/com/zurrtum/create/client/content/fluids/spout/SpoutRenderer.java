@@ -7,11 +7,12 @@ import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper.FluidRenderState;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
 import com.zurrtum.create.client.content.fluids.spout.SpoutRenderer.SpoutRenderState;
+import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.fluids.spout.SpoutBlockEntity;
 import com.zurrtum.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.zurrtum.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour.TankSegment;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.FluidStateModelSet;
@@ -20,7 +21,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Con
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
@@ -53,28 +53,20 @@ public class SpoutRenderer implements BlockEntityRenderer<SpoutBlockEntity, Spou
         if (tank == null) {
             return;
         }
-        state.blockPos = be.getBlockPos();
-        state.blockState = be.getBlockState();
-        state.blockEntityType = be.getType();
-        BlockAndTintGetter renderWorld = null;
-        CardinalLighting cardinalLighting = null;
         Level world = be.getLevel();
-        if (world != null) {
-            state.lightCoords = LevelRenderer.getLightCoords(world, state.blockPos);
-            if (world instanceof BlockAndTintGetter getter) {
-                renderWorld = getter;
-                cardinalLighting = getter.cardinalLighting();
-            }
-        } else {
-            state.lightCoords = LightCoordsUtil.FULL_BRIGHT;
-        }
-        state.breakProgress = crumblingOverlay;
         TankSegment primaryTank = tank.getPrimaryTank();
         FluidStack fluidStack = primaryTank.getRenderedFluid();
-        float radius = 0;
-        int processingTicks = be.processingTicks;
-        float processingPT = processingTicks - tickProgress;
-        if (!fluidStack.isEmpty()) {
+        float radius, processingPT;
+        if (fluidStack.isEmpty()) {
+            if (VisualizationManager.supportsVisualization(world)) {
+                return;
+            }
+            radius = 0;
+            processingPT = be.processingTicks - tickProgress;
+            SmartBlockEntityRenderer.extractBase(world, be, state, crumblingOverlay);
+        } else {
+            SmartBlockEntityRenderer.extractBase(world, be, state, crumblingOverlay);
+            BlockAndTintGetter renderWorld = world instanceof BlockAndTintGetter getter ? getter : null;
             float level = primaryTank.getFluidLevel().getValue(tickProgress);
             if (level != 0) {
                 boolean top = false;//TODO fluidStack.getFluid().getFluidType().isLighterThanAir();
@@ -101,7 +93,9 @@ public class SpoutRenderer implements BlockEntityRenderer<SpoutBlockEntity, Spou
                     true
                 );
             }
+            int processingTicks = be.processingTicks;
             if (processingTicks != -1) {
+                processingPT = processingTicks - tickProgress;
                 float processingProgress = 1 - (processingPT - 5) / 10;
                 processingProgress = Mth.clamp(processingProgress, 0, 1);
                 radius = (float) (Math.pow(2 * processingProgress - 1, 2) - 1);
@@ -122,6 +116,15 @@ public class SpoutRenderer implements BlockEntityRenderer<SpoutBlockEntity, Spou
                     true,
                     true
                 );
+                if (VisualizationManager.supportsVisualization(world)) {
+                    return;
+                }
+            } else {
+                if (VisualizationManager.supportsVisualization(world)) {
+                    return;
+                }
+                processingPT = processingTicks - tickProgress;
+                radius = 0;
             }
         }
         float squeeze;
@@ -134,8 +137,7 @@ public class SpoutRenderer implements BlockEntityRenderer<SpoutBlockEntity, Spou
         } else {
             squeeze = radius;
         }
-        state.top = CachedBuffers.partial(AllPartialModels.SPOUT_TOP, state.blockState)
-            .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
+        CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(world);
         state.middle = CachedBuffers.partial(AllPartialModels.SPOUT_MIDDLE, state.blockState)
             .cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
         state.bottom = CachedBuffers.partial(AllPartialModels.SPOUT_BOTTOM, state.blockState)
@@ -150,13 +152,14 @@ public class SpoutRenderer implements BlockEntityRenderer<SpoutBlockEntity, Spou
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        matrices.pushPose();
-        state.top.submit(matrices, queue);
-        matrices.translate(0, state.bitOffset, 0);
-        state.middle.submit(matrices, queue);
-        matrices.translate(0, state.bitOffset, 0);
-        state.bottom.submit(matrices, queue);
-        matrices.popPose();
+        if (state.middle != null) {
+            matrices.pushPose();
+            matrices.translate(0, state.bitOffset, 0);
+            state.middle.submit(matrices, queue);
+            matrices.translate(0, state.bitOffset, 0);
+            state.bottom.submit(matrices, queue);
+            matrices.popPose();
+        }
         if (state.process != null) {
             state.process.submit(matrices, queue);
         }
@@ -168,8 +171,7 @@ public class SpoutRenderer implements BlockEntityRenderer<SpoutBlockEntity, Spou
 
     public static class SpoutRenderState extends BlockEntityRenderState {
         public float bitOffset;
-        public @UnknownNullability SuperByteBufferRenderState top;
-        public @UnknownNullability SuperByteBufferRenderState middle;
+        public @Nullable SuperByteBufferRenderState middle;
         public @UnknownNullability SuperByteBufferRenderState bottom;
         public float offset;
         public @Nullable FluidRenderState fluid;

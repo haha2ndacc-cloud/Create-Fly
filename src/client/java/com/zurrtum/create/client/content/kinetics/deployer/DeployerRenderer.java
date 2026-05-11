@@ -168,7 +168,6 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
 
         float progress = 0;
         int timerSpeed = be.getTimerSpeed();
-        PartialModel handPose = getHandPose(be);
 
         if (be.state == State.EXPANDING) {
             progress = 1 - (be.timer - partialTicks * timerSpeed) / 1000.0f;
@@ -179,7 +178,7 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
         if (be.state == State.RETRACTING) {
             progress = (be.timer - partialTicks * timerSpeed) / 1000.0f;
         }
-        float handLength = handPose == AllPartialModels.DEPLOYER_HAND_POINTING ? 0 : handPose == AllPartialModels.DEPLOYER_HAND_HOLDING ? 0.25f : 0.1875f;
+        float handLength = be.mode == Mode.PUNCH ? 0.1875f : be.heldItem.isEmpty() ? 0 : 0.25f;
         return Math.min(Mth.clamp(progress, 0, 1) * (be.reach + handLength), 1.3125f);
     }
 

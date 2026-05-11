@@ -4,6 +4,7 @@ import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.AllTrackRenders;
 import com.zurrtum.create.client.content.trains.track.TrackBlockRenderer;
 import com.zurrtum.create.client.flywheel.api.instance.Instance;
+import com.zurrtum.create.client.flywheel.api.visual.ShaderLightVisual;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.flywheel.lib.instance.InstanceTypes;
 import com.zurrtum.create.client.flywheel.lib.instance.TransformedInstance;
@@ -15,7 +16,10 @@ import com.zurrtum.create.content.trains.observer.TrackObserverBlockEntity;
 import com.zurrtum.create.content.trains.track.ITrackBlock;
 import com.zurrtum.create.content.trains.track.TrackTargetingBehaviour;
 import com.zurrtum.create.content.trains.track.TrackTargetingBehaviour.RenderedTrackOverlayType;
+import it.unimi.dsi.fastutil.longs.LongArraySet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,7 +27,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class TrackObserverVisual extends AbstractBlockEntityVisual<TrackObserverBlockEntity> implements SimpleTickableVisual {
+public class TrackObserverVisual extends AbstractBlockEntityVisual<TrackObserverBlockEntity> implements SimpleTickableVisual, ShaderLightVisual {
     private final TransformedInstance overlay;
     private @Nullable BlockPos oldTargetPos;
 
@@ -31,10 +35,23 @@ public class TrackObserverVisual extends AbstractBlockEntityVisual<TrackObserver
         super(ctx, blockEntity, partialTick);
 
         overlay = ctx.instancerProvider()
-            .instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.TRACK_OBSERVER_OVERLAY))
+            .instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(AllPartialModels.TRACK_OBSERVER_OVERLAY))
             .createInstance();
 
         setupVisual();
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        if (oldTargetPos != null) {
+            this.lightSections = sectionCollector;
+            LongSet longSet = new LongArraySet();
+            longSet.add(SectionPos.asLong(pos));
+            longSet.add(SectionPos.asLong(oldTargetPos));
+            lightSections.sections(longSet);
+        } else {
+            super.setSectionCollector(sectionCollector);
+        }
     }
 
     @Override

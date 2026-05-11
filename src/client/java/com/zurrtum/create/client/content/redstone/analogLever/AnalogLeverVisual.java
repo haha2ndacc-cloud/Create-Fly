@@ -33,7 +33,7 @@ public class AnalogLeverVisual extends AbstractBlockEntityVisual<AnalogLeverBloc
 
         handle = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.ANALOG_LEVER_HANDLE)
+            Models.chunkPartial(AllPartialModels.ANALOG_LEVER_HANDLE)
         ).createInstance();
         indicator = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,

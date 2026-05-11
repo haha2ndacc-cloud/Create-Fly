@@ -13,13 +13,15 @@ import com.zurrtum.create.client.flywheel.lib.model.Models;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleTickableVisual;
 import com.zurrtum.create.client.flywheel.lib.visual.util.SmartRecycler;
-import com.zurrtum.create.client.foundation.render.SpecialModels;
 import com.zurrtum.create.content.kinetics.chainConveyor.ChainConveyorBehaviour;
 import com.zurrtum.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import com.zurrtum.create.content.kinetics.chainConveyor.ChainConveyorPackage;
 import com.zurrtum.create.content.logistics.box.PackageItem;
+import it.unimi.dsi.fastutil.longs.LongArraySet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
@@ -40,7 +42,7 @@ public class ChainConveyorVisual extends SingleAxisRotatingVisual<ChainConveyorB
     private final SmartRecycler<Identifier, TransformedInstance> rigging;
 
     public ChainConveyorVisual(VisualizationContext context, ChainConveyorBlockEntity blockEntity, float partialTick) {
-        super(context, blockEntity, partialTick, Models.partial(AllPartialModels.CHAIN_CONVEYOR_SHAFT));
+        super(context, blockEntity, partialTick, Models.chunkPartial(AllPartialModels.CHAIN_CONVEYOR_SHAFT));
 
         setupGuards();
 
@@ -52,6 +54,24 @@ public class ChainConveyorVisual extends SingleAxisRotatingVisual<ChainConveyorB
             InstanceTypes.TRANSFORMED,
             Models.partial(AllPartialModels.PACKAGE_RIGGING.get(key))
         ).createInstance());
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        int offsetX = pos.getX();
+        int offsetZ = pos.getZ();
+        int minSectionX = SectionPos.posToSectionCoord(offsetX - 1);
+        int minSectionZ = SectionPos.posToSectionCoord(offsetZ - 1);
+        int maxSectionX = SectionPos.posToSectionCoord(offsetX + 1);
+        int maxSectionZ = SectionPos.posToSectionCoord(offsetZ + 1);
+        int y = SectionPos.posToSectionCoord(pos.getY());
+        LongSet longSet = new LongArraySet();
+        for (int x = minSectionX; x <= maxSectionX; x++) {
+            for (int z = minSectionZ; z <= maxSectionZ; z++) {
+                longSet.add(SectionPos.asLong(x, y, z));
+            }
+        }
+        sectionCollector.sections(longSet);
     }
 
     @Override
@@ -170,20 +190,10 @@ public class ChainConveyorVisual extends SingleAxisRotatingVisual<ChainConveyorB
     private void setupGuards() {
         deleteGuards();
 
-        var wheelInstancer = instancerProvider().instancer(
-            InstanceTypes.TRANSFORMED,
-            SpecialModels.chunkDiffuse(AllPartialModels.CHAIN_CONVEYOR_WHEEL)
-        );
         var guardInstancer = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            SpecialModels.chunkDiffuse(AllPartialModels.CHAIN_CONVEYOR_GUARD)
+            Models.chunkPartial(AllPartialModels.CHAIN_CONVEYOR_GUARD)
         );
-
-        TransformedInstance wheel = wheelInstancer.createInstance();
-
-        wheel.translate(getVisualPosition()).light(rotatingModel.light).setChanged();
-
-        guards.add(wheel);
 
         for (BlockPos blockPos : blockEntity.connections) {
             ChainConveyorBlockEntity.ConnectionStats stats = blockEntity.connectionStats.get(blockPos);
@@ -205,9 +215,7 @@ public class ChainConveyorVisual extends SingleAxisRotatingVisual<ChainConveyorB
     @Override
     public void updateLight(float partialTick) {
         super.updateLight(partialTick);
-        for (TransformedInstance guard : guards) {
-            relight(guard);
-        }
+        relight(guards);
     }
 
     @Override

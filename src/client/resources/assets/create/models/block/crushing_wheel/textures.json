@@ -1,6 +1,5 @@
 {
 	"parent": "block/block",
-	"ambientocclusion": false,
 	"textures": {
 		"axis": "create:block/axis",
 		"axis_top": "create:block/axis_top",

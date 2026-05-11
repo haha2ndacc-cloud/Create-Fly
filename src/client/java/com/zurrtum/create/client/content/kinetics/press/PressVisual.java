@@ -27,7 +27,7 @@ public class PressVisual extends ShaftVisual<MechanicalPressBlockEntity> impleme
 
         pressHead = instancerProvider().instancer(
             InstanceTypes.ORIENTED,
-            Models.partial(AllPartialModels.MECHANICAL_PRESS_HEAD)
+            Models.chunkPartial(AllPartialModels.MECHANICAL_PRESS_HEAD)
         ).createInstance();
 
         Quaternionf q = Axis.YP.rotationDegrees(AngleHelper.horizontalAngle(blockState.getValue(MechanicalPressBlock.HORIZONTAL_FACING)));
@@ -35,6 +35,11 @@ public class PressVisual extends ShaftVisual<MechanicalPressBlockEntity> impleme
         pressHead.rotation(q);
 
         transformModels(partialTick);
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        setSectionCollector(sectionCollector, 0, -2, 0, 0, 1, 0);
     }
 
     @Override

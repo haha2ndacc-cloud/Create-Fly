@@ -6,12 +6,14 @@ import com.zurrtum.create.client.content.kinetics.waterwheel.WaterWheelRenderer.
 import com.zurrtum.create.client.flywheel.api.instance.Instance;
 import com.zurrtum.create.client.flywheel.api.model.Model;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
+import com.zurrtum.create.client.flywheel.lib.model.ModelUtil;
 import com.zurrtum.create.client.flywheel.lib.model.baked.BakedModelBuilder;
 import com.zurrtum.create.client.flywheel.lib.util.RendererReloadCache;
 import com.zurrtum.create.client.foundation.render.AllInstanceTypes;
 import com.zurrtum.create.content.kinetics.waterwheel.WaterWheelBlockEntity;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.function.Consumer;
 
@@ -27,6 +29,23 @@ public class WaterWheelVisual<T extends WaterWheelBlockEntity> extends KineticBl
         this.large = large;
 
         setupInstance();
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        if (large) {
+            switch (blockState.getValue(BlockStateProperties.AXIS)) {
+                case X -> setSectionCollector(sectionCollector, 0, -2, -2, 0, 2, 2);
+                case Y -> setSectionCollector(sectionCollector, -2, 0, -2, 2, 0, 2);
+                default -> setSectionCollector(sectionCollector, -2, -2, 0, 2, 2, 0);
+            }
+        } else {
+            switch (blockState.getValue(BlockStateProperties.FACING).getAxis()) {
+                case X -> setSectionCollector(sectionCollector, 0, -1, -1, 0, 1, 1);
+                case Y -> setSectionCollector(sectionCollector, -1, 0, -1, 1, 0, 1);
+                default -> setSectionCollector(sectionCollector, -1, -1, 0, 1, 1, 0);
+            }
+        }
     }
 
     public static <T extends WaterWheelBlockEntity> WaterWheelVisual<T> standard(
@@ -81,10 +100,9 @@ public class WaterWheelVisual<T extends WaterWheelBlockEntity> extends KineticBl
 
     private static Model createModel(ModelKey key) {
         BlockStateModel model = WaterWheelRenderer.generateModel(key.variant(), key.material());
-        return new BakedModelBuilder(model).build();
+        return new BakedModelBuilder(model).materialFunc(ModelUtil::getChunkMaterial).build();
     }
 
     public record ModelKey(WaterWheelRenderer.Variant variant, BlockState material) {
-
     }
 }

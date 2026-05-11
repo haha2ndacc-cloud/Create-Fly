@@ -1,7 +1,6 @@
 {
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
-	"ambientocclusion": false,
 	"textures": {
 		"18": "create:block/deployer",
 		"mechanical_press_head": "create:block/mechanical_press_head",

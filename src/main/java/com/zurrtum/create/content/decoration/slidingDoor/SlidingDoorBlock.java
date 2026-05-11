@@ -1,7 +1,6 @@
 package com.zurrtum.create.content.decoration.slidingDoor;
 
 import com.zurrtum.create.AllBlockEntityTypes;
-import com.zurrtum.create.content.contraptions.ContraptionWorld;
 import com.zurrtum.create.content.equipment.wrench.IWrenchable;
 import com.zurrtum.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
@@ -14,13 +13,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -84,7 +84,6 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
         SoundEvents.STONE_BUTTON_CLICK_ON
     );
 
-    public static final BooleanProperty VISIBLE = BooleanProperty.create("visible");
     private final boolean folds;
 
     public static SlidingDoorBlock metal_fold(Properties settings) {
@@ -117,13 +116,8 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        super.createBlockStateDefinition(pBuilder.add(VISIBLE));
-    }
-
-    @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        if (!pState.getValue(OPEN) && (pState.getValue(VISIBLE) || pLevel instanceof ContraptionWorld)) {
+        if (!pState.getValue(OPEN)) {
             return super.getShape(pState, pLevel, pPos, pContext);
         }
 
@@ -184,10 +178,7 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
         }
         DoubleBlockHalf doubleblockhalf = blockState.getValue(HALF);
         if (pFacing.getAxis() == Direction.Axis.Y && doubleblockhalf == DoubleBlockHalf.LOWER == (pFacing == Direction.UP)) {
-            return pFacingState.is(this) && pFacingState.getValue(HALF) != doubleblockhalf ? blockState.setValue(
-                VISIBLE,
-                pFacingState.getValue(VISIBLE)
-            ) : Blocks.AIR.defaultBlockState();
+            return pFacingState.is(this) && pFacingState.getValue(HALF) != doubleblockhalf ? blockState : Blocks.AIR.defaultBlockState();
         }
         return blockState;
     }
@@ -201,9 +192,6 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
             return;
         }
         BlockState changedState = state.setValue(OPEN, open);
-        if (open) {
-            changedState = changedState.setValue(VISIBLE, false);
-        }
         level.setBlock(pos, changedState, Block.UPDATE_CLIENTS | Block.UPDATE_IMMEDIATE);
 
         DoorHingeSide hinge = changedState.getValue(HINGE);
@@ -242,9 +230,6 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
         }
 
         BlockState changedState = pState.setValue(POWERED, isPowered).setValue(OPEN, isPowered);
-        if (isPowered) {
-            changedState = changedState.setValue(VISIBLE, false);
-        }
 
         if (isPowered != pState.getValue(OPEN)) {
             this.playSound(null, pLevel, pPos, isPowered);
@@ -257,9 +242,6 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
 
             if (isDoubleDoor(changedState, hinge, facing, otherDoor)) {
                 otherDoor = otherDoor.setValue(POWERED, isPowered).setValue(OPEN, isPowered);
-                if (isPowered) {
-                    otherDoor = otherDoor.setValue(VISIBLE, false);
-                }
                 pLevel.setBlock(otherPos, otherDoor, Block.UPDATE_CLIENTS);
             }
         }
@@ -296,9 +278,6 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
     ) {
         state = state.cycle(OPEN);
         boolean isOpen = state.getValue(OPEN);
-        if (isOpen) {
-            state = state.setValue(VISIBLE, false);
-        }
         level.setBlock(pos, state, Block.UPDATE_CLIENTS | Block.UPDATE_IMMEDIATE);
         level.gameEvent(player, isOpen(state) ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
 
@@ -324,11 +303,6 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
         return otherDoor.getBlock() == pState.getBlock() && otherDoor.getValue(HINGE) != hinge && otherDoor.getValue(
             FACING) == facing && otherDoor.getValue(OPEN) != pState.getValue(OPEN) && otherDoor.getValue(HALF) == pState.getValue(
             HALF);
-    }
-
-    @Override
-    public RenderShape getRenderShape(BlockState pState) {
-        return pState.getValue(VISIBLE) ? RenderShape.MODEL : RenderShape.INVISIBLE;
     }
 
     private void playSound(@Nullable Entity pSource, Level pLevel, BlockPos pPos, boolean pIsOpening) {

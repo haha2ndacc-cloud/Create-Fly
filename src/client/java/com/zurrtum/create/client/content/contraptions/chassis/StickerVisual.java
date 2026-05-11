@@ -15,6 +15,7 @@ import com.zurrtum.create.content.contraptions.chassis.StickerBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.function.Consumer;
 
@@ -30,14 +31,28 @@ public class StickerVisual extends AbstractBlockEntityVisual<StickerBlockEntity>
     public StickerVisual(VisualizationContext context, StickerBlockEntity blockEntity, float partialTick) {
         super(context, blockEntity, partialTick);
 
-        head = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.STICKER_HEAD))
-            .createInstance();
+        head = instancerProvider().instancer(
+            InstanceTypes.TRANSFORMED,
+            Models.chunkPartial(AllPartialModels.STICKER_HEAD)
+        ).createInstance();
 
         fakeWorld = blockEntity.getLevel() != Minecraft.getInstance().level;
         facing = blockState.getValue(StickerBlock.FACING);
         offset = blockState.getValue(StickerBlock.EXTENDED) ? 1 : 0;
 
         animateHead(offset);
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        switch (blockState.getValue(BlockStateProperties.FACING)) {
+            case UP -> setSectionCollector(sectionCollector, 0, 0, 0, 0, 1, 0);
+            case DOWN -> setSectionCollector(sectionCollector, 0, -1, 0, 0, 0, 0);
+            case NORTH -> setSectionCollector(sectionCollector, 0, 0, -1, 0, 0, 0);
+            case SOUTH -> setSectionCollector(sectionCollector, 0, 0, 0, 0, 0, 1);
+            case WEST -> setSectionCollector(sectionCollector, -1, 0, 0, 0, 0, 0);
+            case EAST -> setSectionCollector(sectionCollector, 0, 0, 0, 1, 0, 0);
+        }
     }
 
     @Override

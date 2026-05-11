@@ -5,6 +5,7 @@ import com.zurrtum.create.client.AllTrackRenders;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.content.trains.track.TrackBlockRenderer;
 import com.zurrtum.create.client.flywheel.api.instance.Instance;
+import com.zurrtum.create.client.flywheel.api.visual.ShaderLightVisual;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.flywheel.lib.instance.InstanceTypes;
 import com.zurrtum.create.client.flywheel.lib.instance.TransformedInstance;
@@ -19,7 +20,10 @@ import com.zurrtum.create.content.trains.signal.SignalBoundary;
 import com.zurrtum.create.content.trains.track.ITrackBlock;
 import com.zurrtum.create.content.trains.track.TrackTargetingBehaviour;
 import com.zurrtum.create.content.trains.track.TrackTargetingBehaviour.RenderedTrackOverlayType;
+import it.unimi.dsi.fastutil.longs.LongArraySet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -28,7 +32,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class SignalVisual extends AbstractBlockEntityVisual<SignalBlockEntity> implements SimpleTickableVisual {
+public class SignalVisual extends AbstractBlockEntityVisual<SignalBlockEntity> implements SimpleTickableVisual, ShaderLightVisual {
     private final TransformedInstance signalLight;
     private final TransformedInstance signalOverlay;
 
@@ -42,10 +46,23 @@ public class SignalVisual extends AbstractBlockEntityVisual<SignalBlockEntity> i
             .instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.SIGNAL_OFF)).createInstance();
 
         signalOverlay = ctx.instancerProvider()
-            .instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.TRACK_SIGNAL_OVERLAY))
+            .instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(AllPartialModels.TRACK_SIGNAL_OVERLAY))
             .createInstance();
 
         setupVisual();
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        if (previousOverlayState != null) {
+            this.lightSections = sectionCollector;
+            LongSet longSet = new LongArraySet();
+            longSet.add(SectionPos.asLong(pos));
+            longSet.add(SectionPos.asLong(blockEntity.edgePoint.getGlobalPosition()));
+            lightSections.sections(longSet);
+        } else {
+            super.setSectionCollector(sectionCollector);
+        }
     }
 
     @Override
@@ -121,7 +138,7 @@ public class SignalVisual extends AbstractBlockEntityVisual<SignalBlockEntity> i
                     partial = AllPartialModels.TRACK_SIGNAL_OVERLAY;
                 }
 
-                instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(partial))
+                instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(partial))
                     .stealInstance(signalOverlay);
 
                 signalOverlay.setIdentityTransform().translate(targetPosition.subtract(renderOrigin()));

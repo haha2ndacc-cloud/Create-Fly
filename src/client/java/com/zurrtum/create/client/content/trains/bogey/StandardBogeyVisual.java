@@ -12,6 +12,8 @@ import com.zurrtum.create.client.flywheel.lib.instance.TransformedInstance;
 import com.zurrtum.create.client.flywheel.lib.model.Models;
 import com.zurrtum.create.client.foundation.render.AllInstanceTypes;
 import com.zurrtum.create.client.foundation.render.SpecialModels;
+import it.unimi.dsi.fastutil.longs.LongSet;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -25,10 +27,15 @@ public class StandardBogeyVisual implements BogeyVisual {
 
     public StandardBogeyVisual(VisualizationContext ctx, float partialTick, boolean inContraption) {
         var shaftInstancer = ctx.instancerProvider()
-            .instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.SHAFT));
+            .instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(AllPartialModels.SHAFT));
 
         shaft1 = shaftInstancer.createInstance();
         shaft2 = shaftInstancer.createInstance();
+    }
+
+    @Override
+    public LongSet createSections(BlockPos pos) {
+        return createSections(pos, -1, -1, -1, 1, 0, 1);
     }
 
     @Override
@@ -71,9 +78,9 @@ public class StandardBogeyVisual implements BogeyVisual {
         public Small(VisualizationContext ctx, float partialTick, boolean inContraption) {
             super(ctx, partialTick, inContraption);
             var wheelInstancer = ctx.instancerProvider()
-                .instancer(InstanceTypes.TRANSFORMED, SpecialModels.smoothLit(AllPartialModels.SMALL_BOGEY_WHEELS));
+                .instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(AllPartialModels.SMALL_BOGEY_WHEELS));
             frame = ctx.instancerProvider()
-                .instancer(InstanceTypes.TRANSFORMED, SpecialModels.smoothLit(AllPartialModels.BOGEY_FRAME))
+                .instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(AllPartialModels.BOGEY_FRAME))
                 .createInstance();
             wheel1 = wheelInstancer.createInstance();
             wheel2 = wheelInstancer.createInstance();

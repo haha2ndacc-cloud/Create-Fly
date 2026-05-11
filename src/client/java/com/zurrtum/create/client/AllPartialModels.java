@@ -94,20 +94,17 @@ public class AllPartialModels {
     MECHANICAL_PUMP_COG = block("mechanical_pump/cog"), FLUID_PIPE_CASING = block("fluid_pipe/casing"), FLUID_VALVE_POINTER = block(
         "fluid_valve/pointer"),
 
-    SPOUT_TOP = block("spout/top"), SPOUT_MIDDLE = block("spout/middle"), SPOUT_BOTTOM = block("spout/bottom"),
+    SPOUT_MIDDLE = block("spout/middle"), SPOUT_BOTTOM = block("spout/bottom"),
 
     PECULIAR_BELL = block("peculiar_bell"), HAUNTED_BELL = block("haunted_bell"),
 
     TOOLBOX_DRAWER = block("toolbox/drawer"),
 
-    SPEED_CONTROLLER_BRACKET = block("rotation_speed_controller/bracket"),
-
     GOGGLES = block("goggles"),
 
     EJECTOR_TOP = block("weighted_ejector/top"),
 
-    CHAIN_CONVEYOR_WHEEL = block("chain_conveyor/wheel"), CHAIN_CONVEYOR_GUARD = block("chain_conveyor/guard"), CHAIN_CONVEYOR_SHAFT = block(
-        "chain_conveyor/shaft"),
+    CHAIN_CONVEYOR_GUARD = block("chain_conveyor/guard"), CHAIN_CONVEYOR_SHAFT = block("chain_conveyor/shaft"),
 
     FROGPORT_BODY = block("package_frogport/body"), FROGPORT_HEAD = block("package_frogport/head"), FROGPORT_HEAD_GOGGLES = block(
         "package_frogport/head_goggles"), FROGPORT_TONGUE = block("package_frogport/tongue"), POSTBOX_FLAG = block(
@@ -209,6 +206,7 @@ public class AllPartialModels {
     public static final Map<DyeColor, PartialModel> TOOLBOX_LIDS = new EnumMap<>(DyeColor.class);
     public static final Map<DyeColor, PartialModel> DYED_VALVE_HANDLES = new EnumMap<>(DyeColor.class);
     public static final Map<Identifier, Couple<PartialModel>> FOLDING_DOORS = new HashMap<>();
+    public static final Map<Identifier, PartialModel> SLIDING_DOORS = new HashMap<>();
     public static final List<PartialModel> CONTRAPTION_CONTROLS_INDICATOR = new ArrayList<>();
 
     public static final Map<Identifier, PartialModel> PACKAGES = new HashMap<>();
@@ -242,6 +240,9 @@ public class AllPartialModels {
 
         putFoldingDoor("andesite_door");
         putFoldingDoor("copper_door");
+        putSlidingDoor("brass_door");
+        putSlidingDoor("train_door");
+        putSlidingDoor("framed_glass_door");
 
         for (PackageStyle style : AllPackageStyles.ALL) {
             Identifier key = style.getItemId();
@@ -284,6 +285,10 @@ public class AllPartialModels {
             Create.asResource(path),
             Couple.create(block(path + "/fold_left"), block(path + "/fold_right"))
         );
+    }
+
+    private static void putSlidingDoor(String path) {
+        SLIDING_DOORS.put(Create.asResource(path), block(path + "/block"));
     }
 
     private static PartialModel block(String path) {

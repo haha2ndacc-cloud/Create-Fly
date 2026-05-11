@@ -74,12 +74,31 @@ public class SawRenderer implements BlockEntityRenderer<SawBlockEntity, SawRende
     ) {
         Level level = SmartBlockEntityRenderer.extractBase(be, state, crumblingOverlay);
         CardinalLighting cardinalLighting = SmartBlockEntityRenderer.getCardinalLighting(level);
-        state.partialTicks = tickProgress;
         float speed = be.getSpeed();
         Direction facing = state.blockState.getValue(FACING);
+        updateItems(facing, speed, be.inventory, level, state, tickProgress);
+        if (!be.isRemoved()) {
+            state.filter = FilteringRenderer.getFilterRenderState(
+                be,
+                state.blockState,
+                itemModelManager,
+                be.isVirtual() ? -1 : cameraPos.distanceToSqr(VecHelper.getCenterOf(state.blockPos))
+            );
+        }
+        if (VisualizationManager.supportsVisualization(level)) {
+            return;
+        }
         Axis axis = facing.getAxis();
         PartialModel partial;
         if (axis == Axis.Y) {
+            if (state.blockState.getValue(AXIS_ALONG_FIRST_COORDINATE)) {
+                state.bladeAngle = new Quaternionf().setAngleAxis(RAD_90, 0, 1, 0);
+                axis = Axis.X;
+            } else {
+                axis = Axis.Z;
+            }
+            state.shaft = CachedBuffers.block(KINETIC_BLOCK, shaft(axis)).cardinalLighting(cardinalLighting)
+                .light(state.lightCoords).color(getTintColor(be)).extractRenderState();
             if (speed > 0) {
                 partial = AllPartialModels.SAW_BLADE_VERTICAL_ACTIVE;
                 QuadRenderHelper.markSpriteActive(sprite);
@@ -89,10 +108,11 @@ public class SawRenderer implements BlockEntityRenderer<SawBlockEntity, SawRende
             } else {
                 partial = AllPartialModels.SAW_BLADE_VERTICAL_INACTIVE;
             }
-            if (state.blockState.getValue(AXIS_ALONG_FIRST_COORDINATE)) {
-                state.bladeAngle = new Quaternionf().setAngleAxis(RAD_90, 0, 1, 0);
-            }
         } else {
+            state.shaft = CachedBuffers.partialFacing(
+                AllPartialModels.SHAFT_HALF,
+                state.blockState.getBlock().rotate(state.blockState, Rotation.CLOCKWISE_180)
+            ).cardinalLighting(cardinalLighting).light(state.lightCoords).color(getTintColor(be)).extractRenderState();
             if (speed > 0) {
                 partial = AllPartialModels.SAW_BLADE_HORIZONTAL_ACTIVE;
                 QuadRenderHelper.markSpriteActive(sprite);
@@ -105,29 +125,6 @@ public class SawRenderer implements BlockEntityRenderer<SawBlockEntity, SawRende
         }
         state.blade = CachedBuffers.partialFacing(partial, state.blockState, facing).cardinalLighting(cardinalLighting)
             .light(state.lightCoords).extractRenderState();
-        updateItems(facing, speed, be.inventory, level, state);
-        if (!be.isRemoved()) {
-            state.filter = FilteringRenderer.getFilterRenderState(
-                be,
-                state.blockState,
-                itemModelManager,
-                be.isVirtual() ? -1 : cameraPos.distanceToSqr(VecHelper.getCenterOf(state.blockPos))
-            );
-        }
-        if (VisualizationManager.supportsVisualization(level)) {
-            return;
-        }
-        int color = getTintColor(be);
-        if (axis == Axis.Y) {
-            axis = state.blockState.getValue(AXIS_ALONG_FIRST_COORDINATE) ? Axis.X : Axis.Z;
-            state.shaft = CachedBuffers.block(KINETIC_BLOCK, shaft(axis)).cardinalLighting(cardinalLighting)
-                .light(state.lightCoords).color(color).extractRenderState();
-        } else {
-            state.shaft = CachedBuffers.partialFacing(
-                AllPartialModels.SHAFT_HALF,
-                state.blockState.getBlock().rotate(state.blockState, Rotation.CLOCKWISE_180)
-            ).cardinalLighting(cardinalLighting).light(state.lightCoords).color(color).extractRenderState();
-        }
         state.angle = getRotateAngleWithoutBeOffset(axis, be, state, level);
     }
 
@@ -138,13 +135,15 @@ public class SawRenderer implements BlockEntityRenderer<SawBlockEntity, SawRende
         SubmitNodeCollector queue,
         CameraRenderState cameraState
     ) {
-        if (state.bladeAngle != null) {
-            matrices.pushPose();
-            matrices.rotateAround(state.bladeAngle, 0.5f, 0.5f, 0.5f);
-            state.blade.submit(matrices, queue);
-            matrices.popPose();
-        } else {
-            state.blade.submit(matrices, queue);
+        if (state.blade != null) {
+            if (state.bladeAngle != null) {
+                matrices.pushPose();
+                matrices.rotateAround(state.bladeAngle, 0.5f, 0.5f, 0.5f);
+                state.blade.submit(matrices, queue);
+                matrices.popPose();
+            } else {
+                state.blade.submit(matrices, queue);
+            }
         }
         if (state.shaft != null) {
             if (state.angle != null) {
@@ -169,7 +168,8 @@ public class SawRenderer implements BlockEntityRenderer<SawBlockEntity, SawRende
         float speed,
         ProcessingInventory inventory,
         @Nullable Level world,
-        SawRenderState state
+        SawRenderState state,
+        float partialTicks
     ) {
         if (facing != Direction.UP) {
             return;
@@ -211,7 +211,7 @@ public class SawRenderer implements BlockEntityRenderer<SawBlockEntity, SawRende
             if (duration != 0) {
                 offset = inventory.remainingTime / duration;
                 float processingSpeed = Mth.clamp(Math.abs(speed) / 32, 1, 128);
-                offset = Mth.clamp(offset + (-state.partialTicks + 0.5f) * processingSpeed / duration, 0.125f, 1.0f);
+                offset = Mth.clamp(offset + (-partialTicks + 0.5f) * processingSpeed / duration, 0.125f, 1.0f);
                 if (!inventory.appliedRecipe) {
                     offset += 1;
                 }
@@ -270,8 +270,7 @@ public class SawRenderer implements BlockEntityRenderer<SawBlockEntity, SawRende
     }
 
     public static class SawRenderState extends BlockEntityRenderState {
-        public float partialTicks;
-        public @UnknownNullability SuperByteBufferRenderState blade;
+        public @Nullable SuperByteBufferRenderState blade;
         public @Nullable Quaternionf bladeAngle;
         public @Nullable List<ItemStackRenderState> items;
         public @UnknownNullability BooleanList box;

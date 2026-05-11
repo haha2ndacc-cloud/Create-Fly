@@ -2,6 +2,7 @@ package com.zurrtum.create.client.content.logistics.packager;
 
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.client.flywheel.api.instance.Instance;
+import com.zurrtum.create.client.flywheel.api.visual.ShaderLightVisual;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.flywheel.lib.instance.InstanceTypes;
 import com.zurrtum.create.client.flywheel.lib.instance.TransformedInstance;
@@ -12,12 +13,13 @@ import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
 import com.zurrtum.create.content.logistics.packager.PackagerBlock;
 import com.zurrtum.create.content.logistics.packager.PackagerBlockEntity;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class PackagerVisual<T extends PackagerBlockEntity> extends AbstractBlockEntityVisual<T> implements SimpleDynamicVisual {
+public class PackagerVisual<T extends PackagerBlockEntity> extends AbstractBlockEntityVisual<T> implements SimpleDynamicVisual, ShaderLightVisual {
     public final TransformedInstance hatch;
     public final TransformedInstance tray;
 
@@ -29,12 +31,12 @@ public class PackagerVisual<T extends PackagerBlockEntity> extends AbstractBlock
         super(ctx, blockEntity, partialTick);
 
         lastHatchPartial = PackagerRenderer.getHatchModel(blockEntity);
-        hatch = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(lastHatchPartial))
+        hatch = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(lastHatchPartial))
             .createInstance();
 
         tray = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(PackagerRenderer.getTrayModel(blockState))
+            Models.chunkPartial(PackagerRenderer.getTrayModel(blockState))
         ).createInstance();
 
         Direction facing = blockState.getValue(PackagerBlock.FACING).getOpposite();
@@ -50,6 +52,18 @@ public class PackagerVisual<T extends PackagerBlockEntity> extends AbstractBlock
     }
 
     @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        switch (blockState.getValue(BlockStateProperties.FACING)) {
+            case UP -> setSectionCollector(sectionCollector, 0, -1, 0, 0, 0, 0);
+            case DOWN -> setSectionCollector(sectionCollector, 0, 0, 0, 0, 1, 0);
+            case NORTH -> setSectionCollector(sectionCollector, 0, 0, 0, 0, 0, 1);
+            case SOUTH -> setSectionCollector(sectionCollector, 0, 0, -1, 0, 0, 0);
+            case WEST -> setSectionCollector(sectionCollector, 0, 0, 0, 1, 0, 0);
+            case EAST -> setSectionCollector(sectionCollector, -1, 0, 0, 0, 0, 0);
+        }
+    }
+
+    @Override
     public void beginFrame(Context ctx) {
         animate(ctx.partialTick());
     }
@@ -58,7 +72,8 @@ public class PackagerVisual<T extends PackagerBlockEntity> extends AbstractBlock
         var hatchPartial = PackagerRenderer.getHatchModel(blockEntity);
 
         if (hatchPartial != this.lastHatchPartial) {
-            instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(hatchPartial)).stealInstance(hatch);
+            instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(hatchPartial))
+                .stealInstance(hatch);
 
             this.lastHatchPartial = hatchPartial;
         }

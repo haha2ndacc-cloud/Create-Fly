@@ -8,7 +8,6 @@ import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,7 +18,6 @@ import java.util.List;
 public class SlidingDoorBlockEntity extends SmartBlockEntity {
 
     public LerpedFloat animation;
-    int bridgeTicks;
     boolean deferUpdate;
 
     public SlidingDoorBlockEntity(BlockPos pos, BlockState state) {
@@ -42,35 +40,17 @@ public class SlidingDoorBlockEntity extends SmartBlockEntity {
         animation.tickChaser();
 
         if (level.isClientSide()) {
-            if (bridgeTicks < 2 && open) {
-                bridgeTicks++;
-            } else if (bridgeTicks > 0 && !open && isVisible(getBlockState())) {
-                bridgeTicks--;
-            }
             return;
         }
 
-        if (!open && !wasSettled && animation.settled() && !isVisible(getBlockState())) {
-            showBlockModel();
+        if (!open && !wasSettled && animation.settled()) {
+            level.playSound(null, worldPosition, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, .5f, 1);
         }
     }
 
     @Override
     protected AABB createRenderBoundingBox() {
         return super.createRenderBoundingBox().inflate(1);
-    }
-
-    protected boolean isVisible(BlockState state) {
-        return state.getValueOrElse(SlidingDoorBlock.VISIBLE, true);
-    }
-
-    public boolean shouldRenderSpecial(BlockState state) {
-        return !isVisible(state) || bridgeTicks != 0;
-    }
-
-    protected void showBlockModel() {
-        level.setBlock(worldPosition, getBlockState().setValue(SlidingDoorBlock.VISIBLE, true), Block.UPDATE_ALL);
-        level.playSound(null, worldPosition, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, .5f, 1);
     }
 
     @Override

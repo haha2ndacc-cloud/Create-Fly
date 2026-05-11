@@ -28,18 +28,27 @@ public class HandCrankVisual extends KineticBlockEntityVisual<HandCrankBlockEnti
 
         crank = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.HAND_CRANK_HANDLE)
+            Models.chunkPartial(AllPartialModels.HAND_CRANK_HANDLE)
         ).createInstance();
 
         rotateCrank(partialTick);
 
         rotatingModel = instancerProvider().instancer(
             AllInstanceTypes.ROTATING,
-            Models.partial(AllPartialModels.HAND_CRANK_BASE)
+            Models.chunkPartial(AllPartialModels.HAND_CRANK_BASE)
         ).createInstance();
 
         rotatingModel.setup(HandCrankVisual.this.blockEntity).setPosition(getVisualPosition())
             .rotateToFace(blockState.getValue(BlockStateProperties.FACING)).setChanged();
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        switch (blockState.getValue(BlockStateProperties.FACING).getAxis()) {
+            case X -> setSectionCollector(sectionCollector, 0, -1, -1, 0, 1, 1);
+            case Y -> setSectionCollector(sectionCollector, -1, 0, -1, 1, 0, 1);
+            default -> setSectionCollector(sectionCollector, -1, -1, 0, 1, 1, 0);
+        }
     }
 
     @Override

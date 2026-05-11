@@ -129,7 +129,7 @@ public class CuckooClockBlockEntity extends KineticBlockEntity {
 
     public void startAnimation(Animation animation) {
         animationType = animation;
-        if (animation != null && CuckooClockBlock.containsSurprise(getBlockState())) {
+        if (CuckooClockBlock.containsSurprise(getBlockState())) {
             animationType = Animation.SURPRISE;
         }
         animationProgress.startWithValue(0);

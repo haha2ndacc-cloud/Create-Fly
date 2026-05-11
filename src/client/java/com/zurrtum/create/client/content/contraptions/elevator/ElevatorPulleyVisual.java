@@ -15,7 +15,6 @@ import com.zurrtum.create.client.flywheel.lib.model.Models;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
 import com.zurrtum.create.client.flywheel.lib.visual.util.InstanceRecycler;
 import com.zurrtum.create.client.foundation.render.AllInstanceTypes;
-import com.zurrtum.create.client.foundation.render.SpecialModels;
 import com.zurrtum.create.content.contraptions.elevator.ElevatorPulleyBlock;
 import com.zurrtum.create.content.contraptions.elevator.ElevatorPulleyBlockEntity;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
@@ -57,21 +56,21 @@ public class ElevatorPulleyVisual extends ShaftVisual<ElevatorPulleyBlockEntity>
         topSection = SectionPos.of(pos).asLong();
 
         belt = new InstanceRecycler<>(() -> context.instancerProvider()
-            .instancer(AllInstanceTypes.SCROLLING, SpecialModels.flatLit(AllPartialModels.ELEVATOR_BELT))
-            .createInstance().rotation(rotation).setSpriteShift(AllSpriteShifts.ELEVATOR_BELT));
+            .instancer(AllInstanceTypes.SCROLLING, Models.chunkPartial(AllPartialModels.ELEVATOR_BELT)).createInstance()
+            .rotation(rotation).setSpriteShift(AllSpriteShifts.ELEVATOR_BELT));
 
         halfBelt = context.instancerProvider()
-            .instancer(AllInstanceTypes.SCROLLING, SpecialModels.flatLit(AllPartialModels.ELEVATOR_BELT_HALF))
+            .instancer(AllInstanceTypes.SCROLLING, Models.chunkPartial(AllPartialModels.ELEVATOR_BELT_HALF))
             .createInstance().rotation(rotation).setSpriteShift(AllSpriteShifts.ELEVATOR_BELT);
 
         coil = context.instancerProvider()
-            .instancer(AllInstanceTypes.SCROLLING, Models.partial(AllPartialModels.ELEVATOR_COIL)).createInstance()
+            .instancer(AllInstanceTypes.SCROLLING, Models.chunkPartial(AllPartialModels.ELEVATOR_COIL)).createInstance()
             .position(getVisualPosition()).rotation(rotation).setSpriteShift(AllSpriteShifts.ELEVATOR_COIL);
 
         coil.setChanged();
 
         magnet = context.instancerProvider()
-            .instancer(InstanceTypes.TRANSFORMED, SpecialModels.flatLit(AllPartialModels.ELEVATOR_MAGNET))
+            .instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(AllPartialModels.ELEVATOR_MAGNET))
             .createInstance();
 
         // Cache the magnet's transform to avoid recalculating this unchanging bit every frame
@@ -87,8 +86,7 @@ public class ElevatorPulleyVisual extends ShaftVisual<ElevatorPulleyBlockEntity>
     public void updateLight(float partialTick) {
         super.updateLight(partialTick);
 
-        relight(coil);
-        relight(magnet);
+        relight(coil, magnet);
     }
 
     @Override

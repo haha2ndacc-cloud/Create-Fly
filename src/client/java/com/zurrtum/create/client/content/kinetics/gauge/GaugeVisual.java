@@ -37,7 +37,7 @@ public abstract class GaugeVisual extends ShaftVisual<GaugeBlockEntity> implemen
 
         Instancer<TransformedInstance> dialModel = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.GAUGE_DIAL)
+            Models.chunkPartial(AllPartialModels.GAUGE_DIAL)
         );
         Instancer<TransformedInstance> headModel = getHeadModel();
 
@@ -61,6 +61,23 @@ public abstract class GaugeVisual extends ShaftVisual<GaugeBlockEntity> implemen
 
             face.setupTransform(msr, progress);
         }
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        int minX = 0;
+        int minZ = 0;
+        int maxX = 0;
+        int maxZ = 0;
+        for (DialFace face : faces) {
+            switch (face.face) {
+                case WEST -> minX = -1;
+                case NORTH -> minZ = -1;
+                case EAST -> maxX = 1;
+                case SOUTH -> maxZ = 1;
+            }
+        }
+        setSectionCollector(sectionCollector, minX, 0, minZ, maxX, 0, maxZ);
     }
 
     private DialFace makeFace(
@@ -167,7 +184,7 @@ public abstract class GaugeVisual extends ShaftVisual<GaugeBlockEntity> implemen
         protected Instancer<TransformedInstance> getHeadModel() {
             return instancerProvider().instancer(
                 InstanceTypes.TRANSFORMED,
-                Models.partial(AllPartialModels.GAUGE_HEAD_SPEED)
+                Models.chunkPartial(AllPartialModels.GAUGE_HEAD_SPEED)
             );
         }
     }
@@ -181,7 +198,7 @@ public abstract class GaugeVisual extends ShaftVisual<GaugeBlockEntity> implemen
         protected Instancer<TransformedInstance> getHeadModel() {
             return instancerProvider().instancer(
                 InstanceTypes.TRANSFORMED,
-                Models.partial(AllPartialModels.GAUGE_HEAD_STRESS)
+                Models.chunkPartial(AllPartialModels.GAUGE_HEAD_STRESS)
             );
         }
     }

@@ -51,30 +51,31 @@ public class ArmVisual extends SingleAxisRotatingVisual<ArmBlockEntity> implemen
     private float headAngle = Float.NaN;
 
     public ArmVisual(VisualizationContext context, ArmBlockEntity blockEntity, float partialTick) {
-        super(context, blockEntity, partialTick, Models.partial(AllPartialModels.ARM_COG));
+        super(context, blockEntity, partialTick, Models.chunkPartial(AllPartialModels.ARM_COG));
 
-        base = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.ARM_BASE))
+        base = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(AllPartialModels.ARM_BASE))
             .createInstance();
         lowerBody = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.ARM_LOWER_BODY)
+            Models.chunkPartial(AllPartialModels.ARM_LOWER_BODY)
         ).createInstance();
         upperBody = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.ARM_UPPER_BODY)
+            Models.chunkPartial(AllPartialModels.ARM_UPPER_BODY)
         ).createInstance();
         claw = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(blockEntity.goggles ? AllPartialModels.ARM_CLAW_BASE_GOGGLES : AllPartialModels.ARM_CLAW_BASE)
+            Models.chunkPartial(
+                blockEntity.goggles ? AllPartialModels.ARM_CLAW_BASE_GOGGLES : AllPartialModels.ARM_CLAW_BASE)
         ).createInstance();
 
         TransformedInstance clawGrip1 = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.ARM_CLAW_GRIP_UPPER)
+            Models.chunkPartial(AllPartialModels.ARM_CLAW_GRIP_UPPER)
         ).createInstance();
         TransformedInstance clawGrip2 = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.ARM_CLAW_GRIP_LOWER)
+            Models.chunkPartial(AllPartialModels.ARM_CLAW_GRIP_LOWER)
         ).createInstance();
 
         clawGrips = Lists.newArrayList(clawGrip1, clawGrip2);
@@ -90,6 +91,11 @@ public class ArmVisual extends SingleAxisRotatingVisual<ArmBlockEntity> implemen
         }
 
         animate(partialTick);
+    }
+
+    @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        setSectionCollector(sectionCollector, -2, -2, -2, 2, 3, 2);
     }
 
     @Override
@@ -196,7 +202,8 @@ public class ArmVisual extends SingleAxisRotatingVisual<ArmBlockEntity> implemen
         super.update(pt);
         instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(blockEntity.goggles ? AllPartialModels.ARM_CLAW_BASE_GOGGLES : AllPartialModels.ARM_CLAW_BASE)
+            Models.chunkPartial(
+                blockEntity.goggles ? AllPartialModels.ARM_CLAW_BASE_GOGGLES : AllPartialModels.ARM_CLAW_BASE)
         ).stealInstance(claw);
     }
 

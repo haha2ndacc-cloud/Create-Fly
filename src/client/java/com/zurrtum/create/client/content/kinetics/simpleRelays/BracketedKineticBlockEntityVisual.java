@@ -13,7 +13,8 @@ import com.zurrtum.create.client.flywheel.lib.model.Models;
 import com.zurrtum.create.client.foundation.render.AllInstanceTypes;
 import com.zurrtum.create.content.kinetics.simpleRelays.BracketedKineticBlockEntity;
 import com.zurrtum.create.content.kinetics.simpleRelays.ICogWheel;
-import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.function.Consumer;
 
@@ -26,19 +27,42 @@ public class BracketedKineticBlockEntityVisual {
         if (ICogWheel.isLargeCog(blockEntity.getBlockState())) {
             return new LargeCogVisual(context, blockEntity, partialTick);
         } else {
-            Model model;
             if (blockEntity.getBlockState().is(AllBlocks.COGWHEEL)) {
-                model = Models.partial(AllPartialModels.COGWHEEL);
+                return new CogVisual(context, blockEntity, partialTick, Models.chunkPartial(AllPartialModels.COGWHEEL));
             } else {
-                model = Models.partial(AllPartialModels.SHAFT);
+                return new SingleAxisRotatingVisual<>(
+                    context,
+                    blockEntity,
+                    partialTick,
+                    Models.chunkPartial(AllPartialModels.SHAFT)
+                );
             }
-            return new SingleAxisRotatingVisual<>(context, blockEntity, partialTick, model);
+        }
+    }
+
+    public static class CogVisual extends SingleAxisRotatingVisual<BracketedKineticBlockEntity> {
+        public CogVisual(
+            VisualizationContext context,
+            BracketedKineticBlockEntity blockEntity,
+            float partialTick,
+            Model model
+        ) {
+            super(context, blockEntity, partialTick, model);
+        }
+
+        @Override
+        public void setSectionCollector(SectionCollector sectionCollector) {
+            switch (blockState.getValue(BlockStateProperties.AXIS)) {
+                case X -> setSectionCollector(sectionCollector, 0, -1, -1, 0, 1, 1);
+                case Y -> setSectionCollector(sectionCollector, -1, 0, -1, 1, 0, 1);
+                default -> setSectionCollector(sectionCollector, -1, -1, 0, 1, 1, 0);
+            }
         }
     }
 
     // Large cogs sometimes have to offset their teeth by 11.25 degrees in order to
     // mesh properly
-    public static class LargeCogVisual extends SingleAxisRotatingVisual<BracketedKineticBlockEntity> {
+    public static class LargeCogVisual extends CogVisual {
 
         protected final RotatingInstance additionalShaft;
 
@@ -47,13 +71,13 @@ public class BracketedKineticBlockEntityVisual {
             BracketedKineticBlockEntity blockEntity,
             float partialTick
         ) {
-            super(context, blockEntity, partialTick, Models.partial(AllPartialModels.SHAFTLESS_LARGE_COGWHEEL));
+            super(context, blockEntity, partialTick, Models.chunkPartial(AllPartialModels.SHAFTLESS_LARGE_COGWHEEL));
 
-            Direction.Axis axis = KineticBlockEntityRenderer.getRotationAxisOf(blockEntity);
+            Axis axis = KineticBlockEntityRenderer.getRotationAxisOf(blockEntity);
 
             additionalShaft = instancerProvider().instancer(
                 AllInstanceTypes.ROTATING,
-                Models.partial(AllPartialModels.COGWHEEL_SHAFT)
+                Models.chunkPartial(AllPartialModels.COGWHEEL_SHAFT)
             ).createInstance();
 
             additionalShaft.rotateToFace(axis).setup(blockEntity)

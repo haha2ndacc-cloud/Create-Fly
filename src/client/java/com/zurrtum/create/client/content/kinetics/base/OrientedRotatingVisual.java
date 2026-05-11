@@ -53,7 +53,7 @@ public class OrientedRotatingVisual<T extends KineticBlockEntity> extends Kineti
                 partialTick,
                 Direction.SOUTH,
                 facing,
-                Models.partial(partial)
+                Models.chunkPartial(partial)
             );
         };
     }
@@ -68,7 +68,7 @@ public class OrientedRotatingVisual<T extends KineticBlockEntity> extends Kineti
                 partialTick,
                 Direction.SOUTH,
                 facing,
-                Models.partial(partial)
+                Models.chunkPartial(partial)
             );
         };
     }
@@ -85,7 +85,11 @@ public class OrientedRotatingVisual<T extends KineticBlockEntity> extends Kineti
         boolean isPowered = blockState.getValue(GantryShaftBlock.POWERED);
         boolean isFlipped = blockState.getValue(GantryShaftBlock.FACING).getAxisDirection() == AxisDirection.NEGATIVE;
 
-        var model = Models.partial(AllPartialModels.GANTRY_SHAFTS.get(new GantryShaftKey(part, isPowered, isFlipped)));
+        var model = Models.chunkPartial(AllPartialModels.GANTRY_SHAFTS.get(new GantryShaftKey(
+            part,
+            isPowered,
+            isFlipped
+        )));
 
         return new OrientedRotatingVisual<>(
             visualizationContext,

@@ -92,9 +92,6 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
 
         blockState = Blocks.AIR.defaultBlockState();
         world.blockState(blockState);
-        model = AllPartialModels.SPOUT_TOP.get();
-        output.updateBuffer(model);
-        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
         matrices.pushPose();
         model = AllPartialModels.SPOUT_MIDDLE.get();
         matrices.translate(0, move, 0);

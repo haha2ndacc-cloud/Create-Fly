@@ -35,11 +35,11 @@ public class PIInstance {
 
         middle = instancerProvider.instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(PortableStorageInterfaceRenderer.getMiddleForState(blockState, lit))
+            Models.chunkPartial(PortableStorageInterfaceRenderer.getMiddleForState(blockState, lit))
         ).createInstance();
         top = instancerProvider.instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(PortableStorageInterfaceRenderer.getTopForState(blockState))
+            Models.chunkPartial(PortableStorageInterfaceRenderer.getTopForState(blockState))
         ).createInstance();
     }
 
@@ -62,7 +62,7 @@ public class PIInstance {
             this.lit = lit;
             instancerProvider.instancer(
                 InstanceTypes.TRANSFORMED,
-                Models.partial(PortableStorageInterfaceRenderer.getMiddleForState(blockState, lit))
+                Models.chunkPartial(PortableStorageInterfaceRenderer.getMiddleForState(blockState, lit))
             ).stealInstance(middle);
         }
     }

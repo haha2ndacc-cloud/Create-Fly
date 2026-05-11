@@ -1,10 +1,10 @@
 package com.zurrtum.create.client.content.equipment.toolbox;
 
-import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.flywheel.api.instance.Instance;
 import com.zurrtum.create.client.flywheel.api.instance.Instancer;
 import com.zurrtum.create.client.flywheel.api.visual.DynamicVisual;
+import com.zurrtum.create.client.flywheel.api.visual.ShaderLightVisual;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import com.zurrtum.create.client.flywheel.lib.instance.InstanceTypes;
 import com.zurrtum.create.client.flywheel.lib.instance.TransformedInstance;
@@ -14,14 +14,16 @@ import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
 import com.zurrtum.create.content.equipment.toolbox.ToolboxBlock;
 import com.zurrtum.create.content.equipment.toolbox.ToolboxBlockEntity;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.function.Consumer;
 
-public class ToolBoxVisual extends AbstractBlockEntityVisual<ToolboxBlockEntity> implements SimpleDynamicVisual {
+public class ToolBoxVisual extends AbstractBlockEntityVisual<ToolboxBlockEntity> implements SimpleDynamicVisual, ShaderLightVisual {
 
     private final Direction facing;
     private final TransformedInstance lid;
-    private final TransformedInstance[] drawers;
+    private final TransformedInstance drawer1;
+    private final TransformedInstance drawer2;
 
     private float lastLidAngle = Float.NaN;
     private float lastDrawerOffset = Float.NaN;
@@ -33,25 +35,32 @@ public class ToolBoxVisual extends AbstractBlockEntityVisual<ToolboxBlockEntity>
 
         Instancer<TransformedInstance> drawerModel = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.TOOLBOX_DRAWER)
+            Models.chunkPartial(AllPartialModels.TOOLBOX_DRAWER)
         );
 
-        drawers = new TransformedInstance[]{drawerModel.createInstance(), drawerModel.createInstance()};
+        drawer1 = drawerModel.createInstance();
+        drawer2 = drawerModel.createInstance();
         lid = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.partial(AllPartialModels.TOOLBOX_LIDS.get(blockEntity.getColor()))
+            Models.chunkPartial(AllPartialModels.TOOLBOX_LIDS.get(blockEntity.getColor()))
         ).createInstance();
 
         animate(partialTick);
     }
 
     @Override
+    public void setSectionCollector(SectionCollector sectionCollector) {
+        switch (blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+            case NORTH, SOUTH -> setSectionCollector(sectionCollector, 0, 0, -1, 0, 0, 1);
+            case WEST, EAST -> setSectionCollector(sectionCollector, -1, 0, 0, 0, 1, 0);
+        }
+    }
+
+    @Override
     protected void _delete() {
         lid.delete();
-
-        for (var drawer : drawers) {
-            drawer.delete();
-        }
+        drawer1.delete();
+        drawer2.delete();
     }
 
     @Override
@@ -70,11 +79,10 @@ public class ToolBoxVisual extends AbstractBlockEntityVisual<ToolboxBlockEntity>
         }
 
         if (drawerOffset != lastDrawerOffset) {
-            for (int offset : Iterate.zeroAndOne) {
-                drawers[offset].setIdentityTransform().translate(getVisualPosition()).center()
-                    .rotateYDegrees(-facing.toYRot()).uncenter()
-                    .translate(0, offset / 8f, -drawerOffset * .175f * (2 - offset)).setChanged();
-            }
+            drawer1.setIdentityTransform().translate(getVisualPosition()).center().rotateYDegrees(-facing.toYRot())
+                .uncenter().translate(0, 0, -drawerOffset * .35f).setChanged();
+            drawer2.setIdentityTransform().translate(getVisualPosition()).center().rotateYDegrees(-facing.toYRot())
+                .uncenter().translate(0, 0.125f, -drawerOffset * .175f).setChanged();
         }
 
         lastLidAngle = lidAngle;
@@ -83,15 +91,13 @@ public class ToolBoxVisual extends AbstractBlockEntityVisual<ToolboxBlockEntity>
 
     @Override
     public void updateLight(float partialTick) {
-        relight(drawers);
-        relight(lid);
+        relight(lid, drawer1, drawer2);
     }
 
     @Override
     public void collectCrumblingInstances(Consumer<Instance> consumer) {
         consumer.accept(lid);
-        for (var drawer : drawers) {
-            consumer.accept(drawer);
-        }
+        consumer.accept(drawer1);
+        consumer.accept(drawer2);
     }
 }

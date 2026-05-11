@@ -7,6 +7,6 @@ import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
 
 public class ShaftVisual<T extends KineticBlockEntity> extends SingleAxisRotatingVisual<T> {
     public ShaftVisual(VisualizationContext context, T blockEntity, float partialTick) {
-        super(context, blockEntity, partialTick, Models.partial(AllPartialModels.SHAFT));
+        super(context, blockEntity, partialTick, Models.chunkPartial(AllPartialModels.SHAFT));
     }
 }
