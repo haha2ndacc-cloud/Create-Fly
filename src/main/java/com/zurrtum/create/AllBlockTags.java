@@ -2,12 +2,14 @@ package com.zurrtum.create;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
 import static com.zurrtum.create.Create.MOD_ID;
 
 public class AllBlockTags {
+    public static final TagKey<Block> SAPLINGS = BlockItemTags.SAPLINGS.block();
     public static final TagKey<Block> BRITTLE = register("brittle");
     public static final TagKey<Block> CASING = register("casing");
     public static final TagKey<Block> COPYCAT_ALLOW = register("copycat_allow");

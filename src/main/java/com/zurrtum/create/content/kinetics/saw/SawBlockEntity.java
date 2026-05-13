@@ -1,9 +1,6 @@
 package com.zurrtum.create.content.kinetics.saw;
 
-import com.zurrtum.create.AllAdvancements;
-import com.zurrtum.create.AllBlockEntityTypes;
-import com.zurrtum.create.AllDataComponents;
-import com.zurrtum.create.AllRecipeTypes;
+import com.zurrtum.create.*;
 import com.zurrtum.create.api.behaviour.BlockEntityBehaviour;
 import com.zurrtum.create.catnip.data.Pair;
 import com.zurrtum.create.catnip.math.VecHelper;
@@ -528,7 +525,7 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity implements C
     }
 
     public static boolean isSawable(BlockState stateToBreak) {
-        if (stateToBreak.is(BlockTags.SAPLINGS)) {
+        if (stateToBreak.is(AllBlockTags.SAPLINGS)) {
             return false;
         }
         if (TreeCutter.isLog(stateToBreak) || (stateToBreak.is(BlockTags.LEAVES))) {

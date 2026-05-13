@@ -1,5 +1,6 @@
 package com.zurrtum.create.content.equipment;
 
+import com.zurrtum.create.AllBlockTags;
 import com.zurrtum.create.catnip.levelWrappers.PlacementSimulationServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -26,7 +27,7 @@ public class TreeFertilizerItem extends Item {
         Level world = context.getLevel();
         BlockState state = world.getBlockState(context.getClickedPos());
         Block block = state.getBlock();
-        if (block instanceof BonemealableBlock bonemealableBlock && state.is(BlockTags.SAPLINGS)) {
+        if (block instanceof BonemealableBlock bonemealableBlock && state.is(AllBlockTags.SAPLINGS)) {
 
             if (state.getValueOrElse(BlockStateProperties.HANGING, false)) {
                 return InteractionResult.PASS;
