@@ -1,7 +1,6 @@
 package com.zurrtum.create.content.schematics;
 
 import com.mojang.serialization.MapCodec;
-import com.zurrtum.create.AllStructureProcessorTypes;
 import com.zurrtum.create.catnip.nbt.NBTProcessors;
 import com.zurrtum.create.foundation.blockEntity.EntityControlStructureProcessor;
 import net.minecraft.core.BlockPos;
@@ -14,14 +13,13 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
 import org.jspecify.annotations.Nullable;
 
-public class SchematicProcessor extends StructureProcessor implements EntityControlStructureProcessor {
+public class SchematicProcessor implements StructureProcessor, EntityControlStructureProcessor {
     public static final SchematicProcessor INSTANCE = new SchematicProcessor();
-    public static final MapCodec<SchematicProcessor> CODEC = MapCodec.unit(() -> INSTANCE);
+    public static final MapCodec<SchematicProcessor> MAP_CODEC = MapCodec.unit(() -> INSTANCE);
 
     private SchematicProcessor() {
     }
@@ -29,10 +27,10 @@ public class SchematicProcessor extends StructureProcessor implements EntityCont
     @Nullable
     @Override
     public StructureBlockInfo processBlock(
-        LevelReader world,
-        BlockPos pos,
-        BlockPos anotherPos,
-        StructureBlockInfo rawInfo,
+        LevelReader level,
+        BlockPos targetPosition,
+        BlockPos referencePos,
+        BlockPos templateRelativePos,
         StructureBlockInfo info,
         StructurePlaceSettings settings
     ) {
@@ -55,7 +53,7 @@ public class SchematicProcessor extends StructureProcessor implements EntityCont
     }
 
     @Override
-    protected StructureProcessorType<?> getType() {
-        return AllStructureProcessorTypes.SCHEMATIC;
+    public MapCodec<SchematicProcessor> codec() {
+        return MAP_CODEC;
     }
 }

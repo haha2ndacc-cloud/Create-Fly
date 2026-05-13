@@ -6,22 +6,16 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 
 import static com.zurrtum.create.Create.MOD_ID;
 
 public class AllStructureProcessorTypes {
-    public static final StructureProcessorType<SchematicProcessor> SCHEMATIC = register(
-        "schematic",
-        SchematicProcessor.CODEC
-    );
+    public static final Identifier SCHEMATIC = register("schematic", SchematicProcessor.MAP_CODEC);
 
-    public static <P extends StructureProcessor> StructureProcessorType<P> register(String id, MapCodec<P> codec) {
-        return Registry.register(
-            BuiltInRegistries.STRUCTURE_PROCESSOR,
-            Identifier.fromNamespaceAndPath(MOD_ID, id),
-            () -> codec
-        );
+    public static <P extends StructureProcessor> Identifier register(String name, MapCodec<P> codec) {
+        Identifier id = Identifier.fromNamespaceAndPath(MOD_ID, name);
+        Registry.register(BuiltInRegistries.STRUCTURE_PROCESSOR, id, codec);
+        return id;
     }
 
     public static void register() {
