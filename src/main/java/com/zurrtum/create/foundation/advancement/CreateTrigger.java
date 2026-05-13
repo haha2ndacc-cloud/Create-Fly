@@ -1,59 +1,30 @@
 package com.zurrtum.create.foundation.advancement;
 
-import com.google.common.collect.Maps;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.advancements.CriterionTrigger;
 import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.triggers.CriterionTrigger;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.PlayerAdvancements.TriggerInstanceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.loot.ValidationContextSource;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-public class CreateTrigger implements CriterionTrigger<CreateTrigger.Conditions> {
-    public final Map<PlayerAdvancements, Set<Listener<Conditions>>> listeners = Maps.newHashMap();
-    public final Identifier id;
-
-    public CreateTrigger(Identifier id) {
-        this.id = id;
-    }
-
-    @Override
-    public void addPlayerListener(PlayerAdvancements playerAdvancementsIn, Listener<Conditions> listener) {
-        listeners.computeIfAbsent(playerAdvancementsIn, k -> new HashSet<>()).add(listener);
-    }
-
-    @Override
-    public void removePlayerListener(PlayerAdvancements playerAdvancementsIn, Listener<Conditions> listener) {
-        Set<Listener<Conditions>> playerListeners = this.listeners.get(playerAdvancementsIn);
-        if (playerListeners != null) {
-            playerListeners.remove(listener);
-            if (playerListeners.isEmpty()) {
-                this.listeners.remove(playerAdvancementsIn);
-            }
-        }
-    }
-
-    @Override
-    public void removePlayerListeners(PlayerAdvancements playerAdvancementsIn) {
-        this.listeners.remove(playerAdvancementsIn);
-    }
-
+public record CreateTrigger(Identifier id) implements CriterionTrigger<CreateTrigger.Conditions> {
     @Override
     public Codec<Conditions> codec() {
         return Conditions.CODEC;
     }
 
     public void trigger(ServerPlayer player) {
-        PlayerAdvancements playerAdvancements = player.getAdvancements();
-        Set<Listener<Conditions>> playerListeners = this.listeners.get(playerAdvancements);
-        if (playerListeners != null) {
-            for (Listener<Conditions> listener : playerListeners) {
-                listener.run(playerAdvancements);
+        PlayerAdvancements advancements = player.getAdvancements();
+        Map<TriggerInstanceKey, Conditions> listenersForType = advancements.getTriggerMapForType(this);
+        if (listenersForType != null) {
+            for (Map.Entry<TriggerInstanceKey, Conditions> entry : listenersForType.entrySet()) {
+                TriggerInstanceKey criterion = entry.getKey();
+                advancements.award(criterion.advancement(), criterion.criterion());
             }
         }
     }

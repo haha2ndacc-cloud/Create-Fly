@@ -6,10 +6,10 @@ import com.zurrtum.create.foundation.advancement.CreateTrigger.Conditions;
 import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
 import com.zurrtum.create.foundation.blockEntity.behaviour.BehaviourType;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.CriterionTrigger.Listener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.PlayerAdvancements.TriggerInstanceKey;
 import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,10 +20,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class AdvancementBehaviour extends BlockEntityBehaviour<SmartBlockEntity> {
     public static final BehaviourType<AdvancementBehaviour> TYPE = new BehaviourType<>();
@@ -58,12 +55,17 @@ public class AdvancementBehaviour extends BlockEntityBehaviour<SmartBlockEntity>
         ServerAdvancementManager loader = player.level().getServer().getAdvancements();
         PlayerAdvancements advancementTracker = player.getAdvancements();
         advancements.removeIf(trigger -> {
-            Set<Listener<Conditions>> containers = trigger.listeners.get(advancementTracker);
-            if (containers != null) {
-                return containers.stream()
-                    .allMatch(container -> advancementTracker.getOrStartProgress(container.advancement()).isDone());
+            Map<TriggerInstanceKey, Conditions> listenersForType = advancementTracker.getTriggerMapForType(trigger);
+            if (listenersForType != null) {
+                for (TriggerInstanceKey criterion : listenersForType.keySet()) {
+                    if (advancementTracker.getOrStartProgress(criterion.advancement()).isDone()) {
+                        continue;
+                    }
+                    return false;
+                }
+                return true;
             }
-            AdvancementHolder advancement = loader.get(trigger.id);
+            AdvancementHolder advancement = loader.get(trigger.id());
             if (advancement == null) {
                 return true;
             }
