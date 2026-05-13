@@ -111,8 +111,8 @@ dependencies {
         compileOnly fabricApi.module("fabric-recipe-api-v1", project.fabric_version)
         compileOnly fabricApi.module("fabric-resource-loader-v1", project.fabric_version)
         compileOnly fabricApi.module("fabric-block-api-v1", project.fabric_version)
-        clientCompileOnly fabricApi.module("fabric-renderer-api-v1", project.fabric_version)
-        clientCompileOnly fabricApi.module("fabric-model-loading-api-v1", project.fabric_version)
+//        clientCompileOnly fabricApi.module("fabric-renderer-api-v1", project.fabric_version)
+//        clientCompileOnly fabricApi.module("fabric-model-loading-api-v1", project.fabric_version)
     } else {
         implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     }
@@ -130,10 +130,11 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
+    def version = project.version
+    inputs.property "version", version
 
     filesMatching("fabric.mod.json") {
-        expand "version": inputs.properties.version
+        expand "version": version
     }
 
     exclude "_data"
