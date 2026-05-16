@@ -256,10 +256,10 @@ public class AllPotatoProjectileEntityHitActions {
     }
 
     private static void applyEffect(LivingEntity entity, MobEffectInstance effect) {
-        if (effect.getEffect().value().isInstantenous()) {
+        if (effect.getEffect().value().isInstantaneous()) {
             if (entity.level() instanceof ServerLevel serverWorld) {
                 effect.getEffect().value()
-                    .applyInstantenousEffect(serverWorld, null, null, entity, effect.getDuration(), 1.0);
+                    .applyInstantaneousEffect(serverWorld, null, null, entity, effect.getDuration(), 1.0);
             }
         } else {
             entity.addEffect(effect);

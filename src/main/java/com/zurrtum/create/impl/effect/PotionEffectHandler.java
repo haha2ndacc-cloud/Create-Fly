@@ -34,9 +34,9 @@ public class PotionEffectHandler implements OpenPipeEffectHandler {
             contents.forEachEffect(
                 effectInstance -> {
                     MobEffect effect = effectInstance.getEffect().value();
-                    if (effect.isInstantenous()) {
+                    if (effect.isInstantaneous()) {
                         if (level instanceof ServerLevel serverWorld) {
-                            effect.applyInstantenousEffect(
+                            effect.applyInstantaneousEffect(
                                 serverWorld,
                                 null,
                                 null,
