@@ -44,7 +44,7 @@ public class CopycatPanelBlock extends WaterloggedCopycatBlock {
 
     public CopycatPanelBlock(Properties pProperties) {
         super(pProperties);
-        registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP));
+        registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP).setValue(EMISSIVE, false));
     }
 
     @Override

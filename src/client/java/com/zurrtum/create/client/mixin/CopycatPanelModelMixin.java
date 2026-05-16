@@ -55,7 +55,7 @@ public abstract class CopycatPanelModelMixin extends CopycatModel implements Fab
         CopycatBlockEntity copycat = (CopycatBlockEntity) level.getBlockEntity(pos);
         BlockState material = copycat == null ? AllBlocks.COPYCAT_BASE.defaultBlockState() : copycat.getMaterial();
         TriState defaultAo = TriState.of(material.getLightEmission() == 0);
-        boolean emissive = material.emissiveRendering(level, pos);
+        boolean emissive = material.emissiveRendering();
         if (CopycatSpecialCases.isTrapdoorMaterial(material)) {
             emitter.pushTransform(quad -> {
                 if (quad.ambientOcclusion() == TriState.DEFAULT) {

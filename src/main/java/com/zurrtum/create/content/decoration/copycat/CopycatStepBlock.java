@@ -45,7 +45,8 @@ public class CopycatStepBlock extends WaterloggedCopycatBlock {
 
     public CopycatStepBlock(Properties pProperties) {
         super(pProperties);
-        registerDefaultState(defaultBlockState().setValue(HALF, Half.BOTTOM).setValue(FACING, Direction.SOUTH));
+        registerDefaultState(defaultBlockState().setValue(HALF, Half.BOTTOM).setValue(FACING, Direction.SOUTH)
+            .setValue(EMISSIVE, false));
     }
 
     @Override

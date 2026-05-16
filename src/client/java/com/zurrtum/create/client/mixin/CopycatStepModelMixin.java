@@ -66,7 +66,7 @@ public abstract class CopycatStepModelMixin extends CopycatModel implements Fabr
         CopycatBlockEntity copycat = (CopycatBlockEntity) level.getBlockEntity(pos);
         BlockState material = copycat == null ? AllBlocks.COPYCAT_BASE.defaultBlockState() : copycat.getMaterial();
         TriState defaultAo = TriState.of(material.getLightEmission() == 0);
-        boolean emissive = material.emissiveRendering(level, pos);
+        boolean emissive = material.emissiveRendering();
         Direction facing = state.getValueOrElse(CopycatStepBlock.FACING, Direction.SOUTH);
         Direction opposite = facing.getOpposite();
         boolean upperHalf = state.getValueOrElse(CopycatStepBlock.HALF, Half.BOTTOM) == Half.TOP;

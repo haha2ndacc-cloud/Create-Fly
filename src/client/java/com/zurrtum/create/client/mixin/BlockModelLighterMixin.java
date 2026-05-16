@@ -59,7 +59,7 @@ public class BlockModelLighterMixin {
         }
         scratchPos.setWithOffset(pos, lightFace);
         BlockState nextState = level.getBlockState(scratchPos);
-        if (!(nextState.getBlock() instanceof CopycatBlock) || !nextState.emissiveRendering(level, scratchPos)) {
+        if (!(nextState.getBlock() instanceof CopycatBlock) || !nextState.emissiveRendering()) {
             return;
         }
         MutableBlockPos searchPos = scratchPos;

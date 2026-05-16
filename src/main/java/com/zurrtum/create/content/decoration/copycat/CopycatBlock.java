@@ -27,13 +27,16 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public abstract class CopycatBlock extends Block implements IBE<CopycatBlockEntity>, IWrenchable, ResistanceControlBlock, SlipperinessControlBlock, EnchantingControlBlock, AppearanceControlBlock, SoundControlBlock {
+    public static final BooleanProperty EMISSIVE = BooleanProperty.create("emissive");
 
     public CopycatBlock(Properties pProperties) {
         super(pProperties);
@@ -371,8 +374,13 @@ public abstract class CopycatBlock extends Block implements IBE<CopycatBlockEnti
         return getMaterial(level, pos).getBlock().getExplosionResistance();
     }
 
-    public static boolean hasEmissiveLighting(BlockState state, BlockGetter level, BlockPos pos) {
-        return getMaterial(level, pos).emissiveRendering(level, pos);
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
+        super.createBlockStateDefinition(pBuilder.add(EMISSIVE));
+    }
+
+    public static boolean hasEmissiveLighting(BlockState state) {
+        return state.getValue(EMISSIVE);
     }
 
     @Override

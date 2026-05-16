@@ -74,11 +74,17 @@ public class CopycatBlockEntity extends SmartBlockEntity implements SpecialBlock
         }
 
         material = blockState;
-        if (!level.isClientSide()) {
-            notifyUpdate();
+        boolean emissive = blockState.emissiveRendering();
+        if (emissive != wrapperState.getValue(CopycatBlock.EMISSIVE)) {
+            level.setBlockAndUpdate(worldPosition, wrapperState.setValue(CopycatBlock.EMISSIVE, emissive));
+            if (level.isClientSide()) {
+                return;
+            }
+        } else if (level.isClientSide()) {
+            redraw();
             return;
         }
-        redraw();
+        notifyUpdate();
     }
 
     public boolean cycleMaterial() {
@@ -170,6 +176,9 @@ public class CopycatBlockEntity extends SmartBlockEntity implements SpecialBlock
             }
             consumedItem = ItemStack.EMPTY;
             material = AllBlocks.COPYCAT_BASE.defaultBlockState();
+            if (level != null && blockState.getValue(CopycatBlock.EMISSIVE)) {
+                level.setBlockAndUpdate(worldPosition, blockState.setValue(CopycatBlock.EMISSIVE, false));
+            }
         }
 
         if (clientPacket && prevMaterial != material) {
@@ -207,5 +216,11 @@ public class CopycatBlockEntity extends SmartBlockEntity implements SpecialBlock
     public void clearContent() {
         material = AllBlocks.COPYCAT_BASE.defaultBlockState();
         consumedItem = ItemStack.EMPTY;
+        if (level != null) {
+            BlockState blockState = getBlockState();
+            if (blockState.getValue(CopycatBlock.EMISSIVE)) {
+                level.setBlockAndUpdate(worldPosition, blockState.setValue(CopycatBlock.EMISSIVE, false));
+            }
+        }
     }
 }
