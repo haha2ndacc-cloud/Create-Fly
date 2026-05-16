@@ -265,7 +265,7 @@ public class PotatoProjectileEntity extends AbstractHurtingProjectile {
         if (onServer && knockback > 0) {
             Vec3 appliedMotion = getDeltaMovement().multiply(1.0D, 0.0D, 1.0D).normalize();
             if (appliedMotion.lengthSqr() > 0.0D) {
-                livingentity.knockback(knockback * 0.6, -appliedMotion.x, -appliedMotion.z);
+                livingentity.knockback(knockback * 0.6, -appliedMotion.x, -appliedMotion.z, damageSource, damage);
             }
         }
 
