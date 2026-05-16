@@ -16,6 +16,7 @@ import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityTypes;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -32,13 +33,13 @@ public class VanillaVisuals {
     public static final boolean EXPERIMENTAL = VanillinXplat.INSTANCE.isDevelopmentEnvironment();
 
     public static void init() {
-        builder(BlockEntityType.CHEST).factory(ChestVisual::new).apply(STABLE);
-        builder(BlockEntityType.ENDER_CHEST).factory(ChestVisual::new).apply(STABLE);
-        builder(BlockEntityType.TRAPPED_CHEST).factory(ChestVisual::new).apply(STABLE);
+        builder(BlockEntityTypes.CHEST).factory(ChestVisual::new).apply(STABLE);
+        builder(BlockEntityTypes.ENDER_CHEST).factory(ChestVisual::new).apply(STABLE);
+        builder(BlockEntityTypes.TRAPPED_CHEST).factory(ChestVisual::new).apply(STABLE);
 
-        builder(BlockEntityType.BELL).factory(BellVisual::new).apply(STABLE);
+        builder(BlockEntityTypes.BELL).factory(BellVisual::new).apply(STABLE);
 
-        builder(BlockEntityType.SHULKER_BOX).factory(ShulkerBoxVisual::new).apply(STABLE);
+        builder(BlockEntityTypes.SHULKER_BOX).factory(ShulkerBoxVisual::new).apply(STABLE);
 
         builder(EntityType.BLOCK_DISPLAY).factory(BlockDisplayVisual::new).apply(STABLE);
 
@@ -108,9 +109,9 @@ public class VanillaVisuals {
         Map<BlockEntityType<?>, Configurator.ConfiguredBlockEntity<?>> configurator = CONFIGURATOR.blockEntities;
         Map<String, ConfigBase.ConfigEnum<VisualConfigValue>> blockEntities = VanillinConfig.client().blockEntities;
         Map<String, List<VisualOverride>> blockEntityOverrides = VanillinConfig.overrides().blockEntities();
-        reloadType(BlockEntityType.CHEST, configurator, blockEntities, blockEntityOverrides, supportChest);
-        reloadType(BlockEntityType.ENDER_CHEST, configurator, blockEntities, blockEntityOverrides, supportChest);
-        reloadType(BlockEntityType.TRAPPED_CHEST, configurator, blockEntities, blockEntityOverrides, supportChest);
+        reloadType(BlockEntityTypes.CHEST, configurator, blockEntities, blockEntityOverrides, supportChest);
+        reloadType(BlockEntityTypes.ENDER_CHEST, configurator, blockEntities, blockEntityOverrides, supportChest);
+        reloadType(BlockEntityTypes.TRAPPED_CHEST, configurator, blockEntities, blockEntityOverrides, supportChest);
         MinecartVisual.onReload(blockModelResolver);
     }
 

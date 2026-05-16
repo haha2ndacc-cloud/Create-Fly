@@ -14,7 +14,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.network.Filterable;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WrittenBookContent;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityTypes;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.List;
 public class CreateNBTProcessors {
     public static void register() {
         NBTProcessors.addProcessor(
-            BlockEntityType.LECTERN, data -> {
+            BlockEntityTypes.LECTERN, data -> {
                 if (!data.contains("Book")) {
                     return data;
                 }

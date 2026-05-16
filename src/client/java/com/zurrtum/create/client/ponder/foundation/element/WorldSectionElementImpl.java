@@ -45,6 +45,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityTypes;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -460,7 +461,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
             try {
                 BlockEntityRenderState state = renderer.createRenderState();
                 renderer.extractRenderState(tile, state, pt, cameraPos, null);
-                if (state.blockEntityType != BlockEntityType.TEST_BLOCK) {
+                if (state.blockEntityType != BlockEntityTypes.TEST_BLOCK) {
                     renderer.submit(state, ms, queue, cameraRenderState);
                 }
             } catch (Exception e) {

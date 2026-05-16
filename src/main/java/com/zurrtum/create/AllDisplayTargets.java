@@ -10,6 +10,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityTypes;
 
 import java.util.function.Supplier;
 
@@ -40,8 +41,8 @@ public class AllDisplayTargets {
     }
 
     public static void register() {
-        register(SIGN, BlockEntityType.SIGN);
-        register(LECTERN, BlockEntityType.LECTERN);
+        register(SIGN, BlockEntityTypes.SIGN);
+        register(LECTERN, BlockEntityTypes.LECTERN);
         register(DISPLAY_BOARD, AllBlocks.DISPLAY_BOARD);
         register(NIXIE_TUBE, AllBlockEntityTypes.NIXIE_TUBE);
     }
