@@ -64,17 +64,14 @@ public interface IBE<T extends BlockEntity> extends EntityBlock {
 
     @Nullable
     @SuppressWarnings("unchecked")
-    default T getBlockEntity(BlockGetter worldIn, BlockPos pos) {
-        BlockEntity blockEntity = worldIn.getBlockEntity(pos);
-        Class<T> expectedClass = getBlockEntityClass();
-
+    default T getBlockEntity(BlockGetter level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity == null) {
             return null;
         }
-        if (!expectedClass.isInstance(blockEntity)) {
+        if (!getBlockEntityClass().isInstance(blockEntity)) {
             return null;
         }
-
         return (T) blockEntity;
     }
 

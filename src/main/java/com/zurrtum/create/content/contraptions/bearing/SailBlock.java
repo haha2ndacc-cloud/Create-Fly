@@ -17,7 +17,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
@@ -225,24 +224,6 @@ public class SailBlock extends WrenchableDirectionalBlock {
             super.fallOn(p_152426_, p_152427_, p_152428_, p_152429_, p_152430_);
         }
         super.fallOn(p_152426_, p_152427_, p_152428_, p_152429_, 0);
-    }
-
-    @Override
-    public void updateEntityMovementAfterFallOn(BlockGetter p_176216_1_, Entity p_176216_2_) {
-        if (frame || p_176216_2_.isSuppressingBounce()) {
-            super.updateEntityMovementAfterFallOn(p_176216_1_, p_176216_2_);
-        } else {
-            this.bounce(p_176216_2_);
-        }
-    }
-
-    private void bounce(Entity p_226860_1_) {
-        Vec3 Vector3d = p_226860_1_.getDeltaMovement();
-        if (Vector3d.y < 0.0D) {
-            double d0 = p_226860_1_ instanceof LivingEntity ? 1.0D : 0.8D;
-            p_226860_1_.setDeltaMovement(Vector3d.x, -Vector3d.y * (double) 0.26F * d0, Vector3d.z);
-        }
-
     }
 
     @Override

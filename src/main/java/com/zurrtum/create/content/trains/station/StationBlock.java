@@ -7,6 +7,7 @@ import com.zurrtum.create.AllShapes;
 import com.zurrtum.create.content.equipment.wrench.IWrenchable;
 import com.zurrtum.create.content.logistics.depot.SharedDepotBlockMethods;
 import com.zurrtum.create.foundation.advancement.AdvancementBehaviour;
+import com.zurrtum.create.foundation.block.EntityControlBlock;
 import com.zurrtum.create.foundation.block.IBE;
 import com.zurrtum.create.foundation.block.ProperWaterloggedBlock;
 import com.zurrtum.create.infrastructure.items.ItemInventoryProvider;
@@ -39,7 +40,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public class StationBlock extends Block implements IBE<StationBlockEntity>, ItemInventoryProvider<StationBlockEntity>, IWrenchable, ProperWaterloggedBlock {
+public class StationBlock extends Block implements IBE<StationBlockEntity>, ItemInventoryProvider<StationBlockEntity>, IWrenchable, ProperWaterloggedBlock, EntityControlBlock {
 
     public static final BooleanProperty ASSEMBLING = BooleanProperty.create("assembling");
 
@@ -113,9 +114,8 @@ public class StationBlock extends Block implements IBE<StationBlockEntity>, Item
     }
 
     @Override
-    public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
-        super.updateEntityMovementAfterFallOn(worldIn, entityIn);
-        SharedDepotBlockMethods.onLanded(worldIn, entityIn);
+    public void onEntityMovement(Level level, Entity entity) {
+        SharedDepotBlockMethods.onLanded(level, entity);
     }
 
     @Override

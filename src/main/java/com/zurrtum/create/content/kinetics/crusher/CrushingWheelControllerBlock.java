@@ -146,12 +146,6 @@ public class CrushingWheelControllerBlock extends DirectionalBlock implements IB
     }
 
     @Override
-    public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
-        super.updateEntityMovementAfterFallOn(worldIn, entityIn);
-        // Moved to onEntityCollision to allow for omnidirectional input
-    }
-
-    @Override
     public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand) {
         if (!stateIn.getValue(VALID)) {
             return;

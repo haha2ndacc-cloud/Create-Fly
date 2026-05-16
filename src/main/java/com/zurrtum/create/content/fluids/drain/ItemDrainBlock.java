@@ -7,6 +7,7 @@ import com.zurrtum.create.content.equipment.wrench.IWrenchable;
 import com.zurrtum.create.content.fluids.transfer.GenericItemEmptying;
 import com.zurrtum.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.zurrtum.create.foundation.advancement.AdvancementBehaviour;
+import com.zurrtum.create.foundation.block.EntityControlBlock;
 import com.zurrtum.create.foundation.block.IBE;
 import com.zurrtum.create.foundation.blockEntity.ComparatorUtil;
 import com.zurrtum.create.foundation.fluid.FluidHelper;
@@ -37,7 +38,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public class ItemDrainBlock extends Block implements IWrenchable, IBE<ItemDrainBlockEntity>, ItemInventoryProvider<ItemDrainBlockEntity>, FluidInventoryProvider<ItemDrainBlockEntity> {
+public class ItemDrainBlock extends Block implements IWrenchable, IBE<ItemDrainBlockEntity>, ItemInventoryProvider<ItemDrainBlockEntity>, FluidInventoryProvider<ItemDrainBlockEntity>, EntityControlBlock {
 
     public ItemDrainBlock(Properties p_i48440_1_) {
         super(p_i48440_1_);
@@ -106,27 +107,19 @@ public class ItemDrainBlock extends Block implements IWrenchable, IBE<ItemDrainB
     }
 
     @Override
-    public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
-        super.updateEntityMovementAfterFallOn(worldIn, entityIn);
-        if (!(entityIn instanceof ItemEntity itemEntity)) {
+    public void onEntityMovement(Level level, Entity entity) {
+        if (level.isClientSide() || !(entity instanceof ItemEntity itemEntity) || !entity.isAlive()) {
             return;
         }
-        if (!entityIn.isAlive()) {
-            return;
-        }
-        if (entityIn.level().isClientSide()) {
-            return;
-        }
-
         DirectBeltInputBehaviour inputBehaviour = BlockEntityBehaviour.get(
-            worldIn,
-            entityIn.blockPosition(),
+            level,
+            entity.blockPosition(),
             DirectBeltInputBehaviour.TYPE
         );
         if (inputBehaviour == null) {
             return;
         }
-        Vec3 deltaMovement = entityIn.getDeltaMovement().multiply(1, 0, 1).normalize();
+        Vec3 deltaMovement = entity.getDeltaMovement().multiply(1, 0, 1).normalize();
         Direction nearest = Direction.getApproximateNearest(deltaMovement.x, deltaMovement.y, deltaMovement.z);
         ItemStack remainder = inputBehaviour.handleInsertion(itemEntity.getItem(), nearest, false);
         itemEntity.setItem(remainder);

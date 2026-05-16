@@ -26,7 +26,7 @@ import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public class StickerBlock extends WrenchableDirectionalBlock implements IBE<StickerBlockEntity>, WeakPowerControlBlock, LandingEffectControlBlock, RunningEffectControlBlock {
+public class StickerBlock extends WrenchableDirectionalBlock implements IBE<StickerBlockEntity>, WeakPowerControlBlock, LandingEffectControlBlock, RunningEffectControlBlock, BouncinessControlBlock {
 
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     public static final BooleanProperty EXTENDED = BlockStateProperties.EXTENDED;
@@ -40,8 +40,9 @@ public class StickerBlock extends WrenchableDirectionalBlock implements IBE<Stic
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction nearestLookingDirection = context.getNearestLookingDirection();
         boolean shouldPower = context.getLevel().hasNeighborSignal(context.getClickedPos());
-        Direction facing = context.getPlayer() != null && context.getPlayer()
-            .isShiftKeyDown() ? nearestLookingDirection : nearestLookingDirection.getOpposite();
+        Direction facing =
+            context.getPlayer() != null && context.getPlayer().isShiftKeyDown() ? nearestLookingDirection :
+                nearestLookingDirection.getOpposite();
 
         return defaultBlockState().setValue(FACING, facing).setValue(POWERED, shouldPower);
     }
@@ -105,20 +106,8 @@ public class StickerBlock extends WrenchableDirectionalBlock implements IBE<Stic
     }
 
     @Override
-    public void updateEntityMovementAfterFallOn(BlockGetter p_176216_1_, Entity p_176216_2_) {
-        if (!isUprightSticker(p_176216_1_, p_176216_2_.blockPosition().below()) || p_176216_2_.isSuppressingBounce()) {
-            super.updateEntityMovementAfterFallOn(p_176216_1_, p_176216_2_);
-        } else {
-            this.bounceUp(p_176216_2_);
-        }
-    }
-
-    private void bounceUp(Entity p_226946_1_) {
-        Vec3 Vector3d = p_226946_1_.getDeltaMovement();
-        if (Vector3d.y < 0.0D) {
-            double d0 = p_226946_1_ instanceof LivingEntity ? 1.0D : 0.8D;
-            p_226946_1_.setDeltaMovement(Vector3d.x, -Vector3d.y * d0, Vector3d.z);
-        }
+    public boolean skipBounciness(BlockState state) {
+        return state.getValue(FACING) != Direction.UP;
     }
 
     @Override

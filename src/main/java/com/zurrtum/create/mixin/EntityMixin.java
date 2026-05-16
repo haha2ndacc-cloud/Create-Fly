@@ -12,6 +12,8 @@ import com.zurrtum.create.content.equipment.armor.CardboardArmorHandler;
 import com.zurrtum.create.content.equipment.armor.DivingBootsItem;
 import com.zurrtum.create.content.equipment.toolbox.ToolboxHandler;
 import com.zurrtum.create.content.kinetics.deployer.DeployerPlayer;
+import com.zurrtum.create.foundation.block.BouncinessControlBlock;
+import com.zurrtum.create.foundation.block.EntityControlBlock;
 import com.zurrtum.create.foundation.block.RunningEffectControlBlock;
 import com.zurrtum.create.foundation.block.SoundControlBlock;
 import net.minecraft.core.BlockPos;
@@ -24,6 +26,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -139,5 +142,29 @@ public abstract class EntityMixin implements SyncedDataHolder {
     @WrapOperation(method = "move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getOnPosLegacy()Lnet/minecraft/core/BlockPos;"))
     private BlockPos fixSeatBouncing(Entity instance, Operation<BlockPos> original) {
         return getBlockStateOn().getBlock() instanceof SeatBlock ? getOnPos() : original.call(instance);
+    }
+
+    @WrapOperation(method = "move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;canSimulateMovement()Z"))
+    private boolean onEntityMovement(Entity entity, Operation<Boolean> original, @Local BlockState effectState) {
+        if (original.call(entity)) {
+            if (effectState.getBlock() instanceof EntityControlBlock block) {
+                block.onEntityMovement(level, entity);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @WrapOperation(method = "restituteMovementAfterCollisions(Lnet/minecraft/world/level/block/state/BlockState;ZZLnet/minecraft/world/phys/Vec3;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getBlockBounciness(Lnet/minecraft/world/level/block/Block;)D"))
+    private double getBlockBounciness(
+        Entity instance,
+        Block onBlock,
+        Operation<Double> original,
+        @Local(argsOnly = true) BlockState effectState
+    ) {
+        if (onBlock instanceof BouncinessControlBlock block && block.skipBounciness(effectState)) {
+            return 0;
+        }
+        return original.call(instance, onBlock);
     }
 }

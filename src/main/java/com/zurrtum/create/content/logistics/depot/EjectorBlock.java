@@ -4,6 +4,7 @@ import com.zurrtum.create.*;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.content.kinetics.base.HorizontalKineticBlock;
 import com.zurrtum.create.content.logistics.depot.EjectorBlockEntity.State;
+import com.zurrtum.create.foundation.block.EntityControlBlock;
 import com.zurrtum.create.foundation.block.IBE;
 import com.zurrtum.create.foundation.block.ProperWaterloggedBlock;
 import com.zurrtum.create.foundation.block.SlipperinessControlBlock;
@@ -37,7 +38,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
-public class EjectorBlock extends HorizontalKineticBlock implements IBE<EjectorBlockEntity>, ProperWaterloggedBlock, SlipperinessControlBlock, ItemInventoryProvider<EjectorBlockEntity> {
+public class EjectorBlock extends HorizontalKineticBlock implements IBE<EjectorBlockEntity>, ProperWaterloggedBlock, SlipperinessControlBlock, EntityControlBlock, ItemInventoryProvider<EjectorBlockEntity> {
 
     public EjectorBlock(Properties properties) {
         super(properties);
@@ -98,8 +99,8 @@ public class EjectorBlock extends HorizontalKineticBlock implements IBE<EjectorB
 
     @Override
     public float getSlipperiness(LevelReader world, BlockPos pos) {
-        return getBlockEntityOptional(world, pos).filter(ete -> ete.state == State.LAUNCHING)
-            .isPresent() ? 1f : super.getFriction();
+        return getBlockEntityOptional(world, pos).filter(ete -> ete.state == State.LAUNCHING).isPresent() ? 1f :
+            super.getFriction();
     }
 
     @Override
@@ -131,56 +132,41 @@ public class EjectorBlock extends HorizontalKineticBlock implements IBE<EjectorB
     }
 
     @Override
-    public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
-        super.updateEntityMovementAfterFallOn(worldIn, entityIn);
-        BlockPos position = entityIn.blockPosition();
-        if (!worldIn.getBlockState(position).is(AllBlocks.WEIGHTED_EJECTOR)) {
+    public void onEntityMovement(Level level, Entity entity) {
+        if (!entity.isAlive() || entity.isSuppressingBounce()) {
             return;
         }
-        if (!entityIn.isAlive()) {
+        BlockPos position = entity.blockPosition();
+        if (!level.getBlockState(position).is(AllBlocks.WEIGHTED_EJECTOR)) {
             return;
         }
-        if (entityIn.isSuppressingBounce()) {
+        if (!ItemHelper.fromItemEntity(entity).isEmpty()) {
+            SharedDepotBlockMethods.onLanded(level, entity);
             return;
         }
-        if (!ItemHelper.fromItemEntity(entityIn).isEmpty()) {
-            SharedDepotBlockMethods.onLanded(worldIn, entityIn);
+        EjectorBlockEntity blockEntity = getBlockEntity(level, position);
+        if (blockEntity == null) {
             return;
         }
-
-        Optional<EjectorBlockEntity> teProvider = getBlockEntityOptional(worldIn, position);
-        if (teProvider.isEmpty()) {
+        if (blockEntity.getState() == State.RETRACTING || blockEntity.powered || blockEntity.launcher.getHorizontalDistance() == 0) {
             return;
         }
-
-        EjectorBlockEntity ejectorBlockEntity = teProvider.get();
-        if (ejectorBlockEntity.getState() == State.RETRACTING) {
-            return;
-        }
-        if (ejectorBlockEntity.powered) {
-            return;
-        }
-        if (ejectorBlockEntity.launcher.getHorizontalDistance() == 0) {
-            return;
-        }
-
-        if (entityIn.onGround()) {
-            entityIn.setOnGround(false);
+        if (entity.onGround()) {
+            entity.setOnGround(false);
             Vec3 center = VecHelper.getCenterOf(position).add(0, 7 / 16f, 0);
-            Vec3 positionVec = entityIn.position();
+            Vec3 positionVec = entity.position();
             double diff = center.distanceTo(positionVec);
-            entityIn.setDeltaMovement(0, -0.125, 0);
+            entity.setDeltaMovement(0, -0.125, 0);
             Vec3 vec = center.add(positionVec).scale(.5f);
             if (diff > 4 / 16f) {
-                entityIn.setPos(vec.x, vec.y, vec.z);
+                entity.setPos(vec.x, vec.y, vec.z);
                 return;
             }
         }
-
-        ejectorBlockEntity.activate();
-        ejectorBlockEntity.notifyUpdate();
-        if (entityIn.level().isClientSide()) {
-            AllClientHandle.INSTANCE.sendPacket(new EjectorTriggerPacket(ejectorBlockEntity.getBlockPos()));
+        blockEntity.activate();
+        blockEntity.notifyUpdate();
+        if (level.isClientSide()) {
+            AllClientHandle.INSTANCE.sendPacket(new EjectorTriggerPacket(blockEntity.getBlockPos()));
         }
     }
 

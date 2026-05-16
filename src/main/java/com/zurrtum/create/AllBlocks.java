@@ -424,7 +424,7 @@ public class AllBlocks {
         Blocks::register,
         SailBlock::new,
         color -> Properties.ofFullCopy(Blocks.STRIPPED_SPRUCE_WOOD).sound(SoundType.SCAFFOLDING).noOcclusion()
-            .mapColor(color.getMapColor())
+            .bounceRestitution(0.26f).mapColor(color.getMapColor())
     );
     @SuppressWarnings("deprecation")
     public static final FluidPipeBlock FLUID_PIPE = (FluidPipeBlock) register(
@@ -865,7 +865,7 @@ public class AllBlocks {
     public static final StickerBlock STICKER = (StickerBlock) register(
         AllBlockItemIds.STICKER,
         StickerBlock::new,
-        Properties.ofFullCopy(Blocks.ANDESITE).noOcclusion()
+        Properties.ofFullCopy(Blocks.ANDESITE).noOcclusion().bounceRestitution(1)
     );
     public static final ContraptionControlsBlock CONTRAPTION_CONTROLS = (ContraptionControlsBlock) register(
         AllBlockItemIds.CONTRAPTION_CONTROLS,
@@ -983,6 +983,7 @@ public class AllBlocks {
         Blocks::register,
         SeatBlock::new,
         color -> Properties.ofFullCopy(Blocks.STRIPPED_SPRUCE_WOOD).mapColor(color.getMapColor())
+            .bounceRestitution(0.66f)
     );
     public static final RollerBlock MECHANICAL_ROLLER = (RollerBlock) register(
         AllBlockItemIds.MECHANICAL_ROLLER,

@@ -6,6 +6,7 @@ import com.zurrtum.create.catnip.placement.PlacementHelpers;
 import com.zurrtum.create.catnip.placement.PlacementOffset;
 import com.zurrtum.create.content.kinetics.base.DirectionalAxisKineticBlock;
 import com.zurrtum.create.content.kinetics.drill.DrillBlock;
+import com.zurrtum.create.foundation.block.EntityControlBlock;
 import com.zurrtum.create.foundation.block.IBE;
 import com.zurrtum.create.infrastructure.items.ItemInventoryProvider;
 import net.minecraft.core.BlockPos;
@@ -44,7 +45,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class SawBlock extends DirectionalAxisKineticBlock implements IBE<SawBlockEntity>, ItemInventoryProvider<SawBlockEntity> {
+public class SawBlock extends DirectionalAxisKineticBlock implements IBE<SawBlockEntity>, ItemInventoryProvider<SawBlockEntity>, EntityControlBlock {
     public static final BooleanProperty FLIPPED = BooleanProperty.create("flipped");
 
     private static final int placementHelperId = PlacementHelpers.register(new PlacementHelper());
@@ -207,24 +208,15 @@ public class SawBlock extends DirectionalAxisKineticBlock implements IBE<SawBloc
     }
 
     @Override
-    public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
-        super.updateEntityMovementAfterFallOn(worldIn, entityIn);
-        if (!(entityIn instanceof ItemEntity)) {
+    public void onEntityMovement(Level level, Entity entity) {
+        if (level.isClientSide() || !(entity instanceof ItemEntity itemEntity)) {
             return;
         }
-        if (entityIn.level().isClientSide()) {
+        SawBlockEntity be = getBlockEntity(level, entity.blockPosition());
+        if (be == null || be.getSpeed() == 0) {
             return;
         }
-
-        BlockPos pos = entityIn.blockPosition();
-        withBlockEntityDo(
-            entityIn.level(), pos, be -> {
-                if (be.getSpeed() == 0) {
-                    return;
-                }
-                be.insertItem((ItemEntity) entityIn);
-            }
-        );
+        be.insertItem(itemEntity);
     }
 
     public static boolean isHorizontal(BlockState state) {
@@ -238,12 +230,8 @@ public class SawBlock extends DirectionalAxisKineticBlock implements IBE<SawBloc
 
     @Override
     public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
-        return isHorizontal(state) ? face == state.getValue(FACING).getOpposite() : super.hasShaftTowards(
-            world,
-            pos,
-            state,
-            face
-        );
+        return isHorizontal(state) ? face == state.getValue(FACING).getOpposite() :
+            super.hasShaftTowards(world, pos, state, face);
     }
 
     @Override

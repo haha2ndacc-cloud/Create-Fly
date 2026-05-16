@@ -9,6 +9,7 @@ import com.zurrtum.create.content.fluids.transfer.GenericItemFilling;
 import com.zurrtum.create.content.kinetics.belt.BeltBlockEntity;
 import com.zurrtum.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.zurrtum.create.content.logistics.funnel.FunnelBlock;
+import com.zurrtum.create.foundation.block.EntityControlBlock;
 import com.zurrtum.create.foundation.block.IBE;
 import com.zurrtum.create.foundation.fluid.FluidHelper;
 import com.zurrtum.create.infrastructure.fluids.FluidInventory;
@@ -50,7 +51,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
-public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrenchable, ItemInventoryProvider<BasinBlockEntity>, FluidInventoryProvider<BasinBlockEntity> {
+public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrenchable, ItemInventoryProvider<BasinBlockEntity>, FluidInventoryProvider<BasinBlockEntity>, EntityControlBlock {
 
     public static final EnumProperty<Direction> FACING = EnumProperty.create(
         "facing",
@@ -188,19 +189,15 @@ public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrencha
     }
 
     @Override
-    public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
-        super.updateEntityMovementAfterFallOn(worldIn, entityIn);
-        if (!worldIn.getBlockState(entityIn.blockPosition()).is(this)) {
+    public void onEntityMovement(Level level, Entity entity) {
+        if (!(entity instanceof ItemEntity itemEntity) || !entity.isAlive()) {
             return;
         }
-        if (!(entityIn instanceof ItemEntity itemEntity)) {
-            return;
-        }
-        if (!entityIn.isAlive()) {
+        if (!level.getBlockState(entity.blockPosition()).is(this)) {
             return;
         }
         withBlockEntityDo(
-            worldIn, entityIn.blockPosition(), be -> {
+            level, entity.blockPosition(), be -> {
                 ItemStack stack = itemEntity.getItem();
                 int count = stack.getCount();
                 int insert = be.itemCapability.insert(stack);

@@ -2,11 +2,10 @@ package com.zurrtum.create.content.kinetics.millstone;
 
 import com.zurrtum.create.AllBlockEntityTypes;
 import com.zurrtum.create.AllShapes;
-import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.content.kinetics.base.KineticBlock;
 import com.zurrtum.create.content.kinetics.simpleRelays.ICogWheel;
+import com.zurrtum.create.foundation.block.EntityControlBlock;
 import com.zurrtum.create.foundation.block.IBE;
-import com.zurrtum.create.foundation.item.ItemHelper;
 import com.zurrtum.create.infrastructure.items.ItemInventoryProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,7 +29,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public class MillstoneBlock extends KineticBlock implements IBE<MillstoneBlockEntity>, ICogWheel, ItemInventoryProvider<MillstoneBlockEntity> {
+public class MillstoneBlock extends KineticBlock implements IBE<MillstoneBlockEntity>, ICogWheel, ItemInventoryProvider<MillstoneBlockEntity>, EntityControlBlock {
 
     public MillstoneBlock(Properties properties) {
         super(properties);
@@ -102,43 +101,20 @@ public class MillstoneBlock extends KineticBlock implements IBE<MillstoneBlockEn
     }
 
     @Override
-    public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
-        super.updateEntityMovementAfterFallOn(worldIn, entityIn);
-
-        if (entityIn.level().isClientSide()) {
+    public void onEntityMovement(Level level, Entity entity) {
+        if (level.isClientSide() || !(entity instanceof ItemEntity itemEntity) || !entity.isAlive()) {
             return;
         }
-        if (!(entityIn instanceof ItemEntity itemEntity)) {
-            return;
-        }
-        if (!entityIn.isAlive()) {
-            return;
-        }
-
-        MillstoneBlockEntity millstone = null;
-        for (BlockPos pos : Iterate.hereAndBelow(entityIn.blockPosition())) {
+        BlockPos pos = entity.blockPosition();
+        MillstoneBlockEntity millstone = getBlockEntity(level, pos);
+        if (millstone == null) {
+            millstone = getBlockEntity(level, pos.below());
             if (millstone == null) {
-                millstone = getBlockEntity(worldIn, pos);
+                return;
             }
         }
-
-        if (millstone == null) {
-            return;
-        }
-
-        Container capability = ItemHelper.getInventory(
-            millstone.getLevel(),
-            millstone.getBlockPos(),
-            millstone.getBlockState(),
-            millstone,
-            null
-        );
-        if (capability == null) {
-            return;
-        }
-
         ItemStack stack = itemEntity.getItem();
-        int insert = capability.insert(stack);
+        int insert = millstone.capability.insert(stack);
         if (insert == stack.getCount()) {
             itemEntity.discard();
         } else if (insert != 0) {

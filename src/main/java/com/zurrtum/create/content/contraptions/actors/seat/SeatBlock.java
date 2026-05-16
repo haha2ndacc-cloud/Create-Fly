@@ -6,6 +6,7 @@ import com.zurrtum.create.AllEntityTags;
 import com.zurrtum.create.AllItemTags;
 import com.zurrtum.create.AllShapes;
 import com.zurrtum.create.api.entity.FakePlayerHandler;
+import com.zurrtum.create.foundation.block.EntityControlBlock;
 import com.zurrtum.create.foundation.block.ProperWaterloggedBlock;
 import com.zurrtum.create.foundation.utility.BlockHelper;
 import com.zurrtum.create.infrastructure.config.AllConfigs;
@@ -33,7 +34,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -41,7 +41,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-public class SeatBlock extends Block implements ProperWaterloggedBlock {
+public class SeatBlock extends Block implements ProperWaterloggedBlock, EntityControlBlock {
 
     protected final DyeColor color;
 
@@ -88,31 +88,15 @@ public class SeatBlock extends Block implements ProperWaterloggedBlock {
     }
 
     @Override
-    public void updateEntityMovementAfterFallOn(BlockGetter reader, Entity entity) {
+    public void onEntityMovement(Level level, Entity entity) {
         BlockPos pos = entity.blockPosition();
-        if (entity instanceof Player || !(entity instanceof LivingEntity) || !canBePickedUp(entity) || isSeatOccupied(entity.level(),
-            pos
-        )) {
-            if (entity.isSuppressingBounce()) {
-                super.updateEntityMovementAfterFallOn(reader, entity);
-                return;
-            }
-
-            Vec3 vec3 = entity.getDeltaMovement();
-            if (vec3.y < 0.0D) {
-                double d0 = entity instanceof LivingEntity ? 1.0D : 0.8D;
-                entity.setDeltaMovement(vec3.x, -vec3.y * (double) 0.66F * d0, vec3.z);
-            }
-
+        if (isSeatOccupied(level, pos) || level.getBlockState(pos)
+            .getBlock() != this || entity instanceof Leashable leashable && leashable.isLeashed()) {
             return;
         }
-        if (reader.getBlockState(pos).getBlock() != this) {
-            return;
+        if (canBePickedUp(entity)) {
+            sitDown(level, pos, entity);
         }
-        if (entity instanceof Leashable leashable && leashable.isLeashed()) {
-            return;
-        }
-        sitDown(entity.level(), pos, entity);
     }
 
     //TODO

@@ -24,6 +24,7 @@ import com.zurrtum.create.content.logistics.funnel.FunnelBlock;
 import com.zurrtum.create.content.logistics.tunnel.BeltTunnelBlock;
 import com.zurrtum.create.content.schematics.requirement.ItemRequirement;
 import com.zurrtum.create.content.schematics.requirement.ItemRequirement.ItemUseType;
+import com.zurrtum.create.foundation.block.EntityControlBlock;
 import com.zurrtum.create.foundation.block.IBE;
 import com.zurrtum.create.foundation.block.ProperWaterloggedBlock;
 import com.zurrtum.create.foundation.item.ItemHelper;
@@ -75,7 +76,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BeltBlock extends HorizontalKineticBlock implements IBE<BeltBlockEntity>, SpecialBlockItemRequirement, TransformableBlock, ProperWaterloggedBlock, ItemInventoryProvider<BeltBlockEntity> {
+public class BeltBlock extends HorizontalKineticBlock implements IBE<BeltBlockEntity>, SpecialBlockItemRequirement, TransformableBlock, ProperWaterloggedBlock, ItemInventoryProvider<BeltBlockEntity>, EntityControlBlock {
 
     public static final EnumProperty<BeltSlope> SLOPE = EnumProperty.create("slope", BeltSlope.class);
     public static final EnumProperty<BeltPart> PART = EnumProperty.create("part", BeltPart.class);
@@ -150,24 +151,17 @@ public class BeltBlock extends HorizontalKineticBlock implements IBE<BeltBlockEn
     }
 
     @Override
-    public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
-        super.updateEntityMovementAfterFallOn(worldIn, entityIn);
-        BlockPos entityPosition = entityIn.blockPosition();
-        BlockPos beltPos = null;
-
-        if (worldIn.getBlockState(entityPosition).is(AllBlocks.BELT)) {
+    public void onEntityMovement(Level level, Entity entity) {
+        BlockPos entityPosition = entity.blockPosition();
+        BlockPos beltPos;
+        if (level.getBlockState(entityPosition).is(AllBlocks.BELT)) {
             beltPos = entityPosition;
-        } else if (worldIn.getBlockState(entityPosition.below()).is(AllBlocks.BELT)) {
+        } else if (level.getBlockState(entityPosition.below()).is(AllBlocks.BELT)) {
             beltPos = entityPosition.below();
-        }
-        if (beltPos == null) {
+        } else {
             return;
         }
-        if (!(worldIn instanceof Level world)) {
-            return;
-        }
-
-        entityInside(worldIn.getBlockState(beltPos), world, beltPos, entityIn, InsideBlockEffectApplier.NOOP, false);
+        entityInside(level.getBlockState(beltPos), level, beltPos, entity, InsideBlockEffectApplier.NOOP, false);
     }
 
     @Override
@@ -280,7 +274,8 @@ public class BeltBlock extends HorizontalKineticBlock implements IBE<BeltBlockEn
             return onBlockEntityUseItemOn(
                 level,
                 pos,
-                be -> be.applyColor(AllItemTags.getDyeColor(stack)) ? InteractionResult.SUCCESS : InteractionResult.TRY_WITH_EMPTY_HAND
+                be -> be.applyColor(AllItemTags.getDyeColor(stack)) ? InteractionResult.SUCCESS :
+                    InteractionResult.TRY_WITH_EMPTY_HAND
             );
         }
 
@@ -809,7 +804,8 @@ public class BeltBlock extends HorizontalKineticBlock implements IBE<BeltBlockEn
             if (diagonal) {
                 state = state.setValue(
                     SLOPE,
-                    slope == BeltSlope.UPWARD ? BeltSlope.DOWNWARD : slope == BeltSlope.DOWNWARD ? BeltSlope.UPWARD : slope
+                    slope == BeltSlope.UPWARD ? BeltSlope.DOWNWARD :
+                        slope == BeltSlope.DOWNWARD ? BeltSlope.UPWARD : slope
                 );
             } else if (vertical) {
                 state = state.setValue(HORIZONTAL_FACING, newDirection);

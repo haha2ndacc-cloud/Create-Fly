@@ -7,6 +7,7 @@ import com.zurrtum.create.content.equipment.wrench.IWrenchable;
 import com.zurrtum.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.zurrtum.create.content.logistics.box.PackageEntity;
 import com.zurrtum.create.foundation.advancement.AdvancementBehaviour;
+import com.zurrtum.create.foundation.block.EntityControlBlock;
 import com.zurrtum.create.foundation.block.IBE;
 import com.zurrtum.create.foundation.block.NeighborUpdateListeningBlock;
 import com.zurrtum.create.foundation.item.ItemHelper;
@@ -33,7 +34,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public abstract class AbstractChuteBlock extends Block implements IWrenchable, IBE<ChuteBlockEntity>, ItemInventoryProvider<ChuteBlockEntity>, NeighborUpdateListeningBlock {
+public abstract class AbstractChuteBlock extends Block implements IWrenchable, IBE<ChuteBlockEntity>, ItemInventoryProvider<ChuteBlockEntity>, NeighborUpdateListeningBlock, EntityControlBlock {
 
     public AbstractChuteBlock(Properties p_i48440_1_) {
         super(p_i48440_1_);
@@ -92,39 +93,32 @@ public abstract class AbstractChuteBlock extends Block implements IWrenchable, I
     }
 
     @Override
-    public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
-        super.updateEntityMovementAfterFallOn(worldIn, entityIn);
-        ItemStack stack = ItemHelper.fromItemEntity(entityIn);
+    public void onEntityMovement(Level level, Entity entity) {
+        if (level.isClientSide() || !entity.isAlive()) {
+            return;
+        }
+        ItemStack stack = ItemHelper.fromItemEntity(entity);
         if (stack.isEmpty()) {
             return;
         }
-        if (entityIn.level().isClientSide()) {
+        BlockPos pos = BlockPos.containing(entity.position().add(0, 0.5f, 0)).below();
+        DirectBeltInputBehaviour input = BlockEntityBehaviour.get(level, pos, DirectBeltInputBehaviour.TYPE);
+        if (input == null || !input.canInsertFromSide(Direction.UP)) {
             return;
         }
-        if (!entityIn.isAlive()) {
-            return;
-        }
-        BlockPos pos = BlockPos.containing(entityIn.position().add(0, 0.5f, 0)).below();
-        DirectBeltInputBehaviour input = BlockEntityBehaviour.get(entityIn.level(), pos, DirectBeltInputBehaviour.TYPE);
-        if (input == null) {
-            return;
-        }
-        if (!input.canInsertFromSide(Direction.UP)) {
-            return;
-        }
-        if (!PackageEntity.centerPackage(entityIn, Vec3.atBottomCenterOf(pos.above()))) {
+        if (!PackageEntity.centerPackage(entity, Vec3.atBottomCenterOf(pos.above()))) {
             return;
         }
         ItemStack remainder = input.handleInsertion(stack, Direction.UP, false);
         if (remainder.isEmpty()) {
-            entityIn.discard();
-            if (entityIn instanceof PackageEntity box) {
+            entity.discard();
+            if (entity instanceof PackageEntity box) {
                 Player player = box.tossedBy.get();
                 if (player instanceof ServerPlayer serverPlayer) {
                     AllAdvancements.PACKAGE_CHUTE_THROW.trigger(serverPlayer);
                 }
             }
-        } else if (remainder.getCount() < stack.getCount() && entityIn instanceof ItemEntity itemEntity) {
+        } else if (remainder.getCount() < stack.getCount() && entity instanceof ItemEntity itemEntity) {
             itemEntity.setItem(remainder);
         }
     }
