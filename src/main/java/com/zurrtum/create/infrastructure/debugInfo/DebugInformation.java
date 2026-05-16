@@ -8,6 +8,7 @@ import com.zurrtum.create.infrastructure.debugInfo.element.InfoElement;
 import com.zurrtum.create.infrastructure.debugInfo.element.InfoEntry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.ModMetadata;
+import net.minecraft.CrashReportCategory;
 import net.minecraft.SharedConstants;
 import net.minecraft.SystemReport;
 import net.minecraft.util.Util;
@@ -15,6 +16,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,7 +33,12 @@ public class DebugInformation {
 
     private static final ImmutableMap<String, String> mcSystemInfo = Util.make(() -> {
         SystemReport systemReport = new SystemReport();
-        return ImmutableMap.copyOf(systemReport.entries);
+        List<CrashReportCategory.Entry> entries = systemReport.entries;
+        ImmutableMap.Builder<String, String> builder = ImmutableMap.builderWithExpectedSize(entries.size());
+        for (CrashReportCategory.Entry entry : entries) {
+            builder.put(entry.key(), entry.value());
+        }
+        return builder.build();
     });
 
     public static void registerClientInfo(DebugInfoSection section) {
