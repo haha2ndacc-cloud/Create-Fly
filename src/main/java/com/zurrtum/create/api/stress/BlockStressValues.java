@@ -4,6 +4,7 @@ import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.api.registry.SimpleRegistry;
 import net.minecraft.world.level.block.Block;
 
+import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
 public class BlockStressValues {
@@ -30,11 +31,15 @@ public class BlockStressValues {
         return supplier == null ? 0 : supplier.getAsDouble();
     }
 
+    public static void setGeneratorSpeed(Block block, int value) {
+        RPM.register(block, new GeneratedRpm(value, false));
+    }
+
     /**
      * Shortcut for when a generator always generates the same RPM.
      */
-    public static void setGeneratorSpeed(Block block, int value) {
-        RPM.register(block, new GeneratedRpm(value, false));
+    public static <T extends Block> Consumer<T> setGeneratorSpeed(int value) {
+        return block -> setGeneratorSpeed(block, value);
     }
 
     /**
@@ -57,22 +62,7 @@ public class BlockStressValues {
         BlockStressValues.setGeneratorSpeed(AllBlocks.WINDMILL_BEARING, 16, true);
         BlockStressValues.setGeneratorSpeed(AllBlocks.HAND_CRANK, 32);
         BlockStressValues.setGeneratorSpeed(AllBlocks.COPPER_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.WHITE_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.ORANGE_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.MAGENTA_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.LIGHT_BLUE_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.YELLOW_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.LIME_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.PINK_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.GRAY_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.LIGHT_GRAY_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.CYAN_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.PURPLE_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.BLUE_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.BROWN_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.GREEN_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.RED_VALVE_HANDLE, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.BLACK_VALVE_HANDLE, 32);
+        AllBlocks.VALVE_HANDLE.forEach(BlockStressValues.setGeneratorSpeed(32));
         BlockStressValues.setGeneratorSpeed(AllBlocks.STEAM_ENGINE, 64, true);
         BlockStressValues.setGeneratorSpeed(AllBlocks.CREATIVE_MOTOR, 256, true);
     }

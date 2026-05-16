@@ -10,6 +10,8 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTab.ItemDisplayParameters;
 import net.minecraft.world.item.CreativeModeTab.Output;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.ColorCollection;
 
 import static com.zurrtum.create.Create.MOD_ID;
 
@@ -23,6 +25,7 @@ public class AllCreativeModeTabs {
         Identifier.fromNamespaceAndPath(MOD_ID, "palettes")
     );
 
+    @SuppressWarnings("DataFlowIssue")
     public static void register() {
         Registry.register(
             BuiltInRegistries.CREATIVE_MODE_TAB,
@@ -155,18 +158,18 @@ public class AllCreativeModeTabs {
         entries.accept(AllItems.CARDBOARD_PACKAGE_12X12);
         entries.accept(AllItems.REPACKAGER);
         entries.accept(AllItems.PACKAGE_FROGPORT);
-        entries.accept(AllItems.WHITE_POSTBOX);
+        entries.accept(AllItems.POSTBOX.white());
         entries.accept(AllItems.STOCK_LINK);
         entries.accept(AllItems.STOCK_TICKER);
         entries.accept(AllItems.REDSTONE_REQUESTER);
         entries.accept(AllItems.FACTORY_GAUGE);
-        entries.accept(AllItems.RED_TABLE_CLOTH);
+        entries.accept(AllItems.TABLE_CLOTH.red());
         entries.accept(AllItems.ANDESITE_TABLE_CLOTH);
         entries.accept(AllItems.BRASS_TABLE_CLOTH);
         entries.accept(AllItems.COPPER_TABLE_CLOTH);
         entries.accept(AllItems.DISPLAY_LINK);
         entries.accept(AllItems.DISPLAY_BOARD);
-        entries.accept(AllItems.ORANGE_NIXIE_TUBE);
+        entries.accept(AllItems.NIXIE_TUBE);
         entries.accept(AllItems.ROSE_QUARTZ_LAMP);
         entries.accept(AllItems.REDSTONE_LINK);
         entries.accept(AllItems.ANALOG_LEVER);
@@ -179,7 +182,7 @@ public class AllCreativeModeTabs {
         entries.accept(AllItems.PECULIAR_BELL);
         entries.accept(AllItems.HAUNTED_BELL);
         entries.accept(AllItems.DESK_BELL);
-        entries.accept(AllItems.BROWN_TOOLBOX);
+        entries.accept(AllItems.TOOLBOX.brown());
         entries.accept(AllItems.CLIPBOARD);
         entries.accept(AllItems.WHEAT_FLOUR);
         entries.accept(AllItems.DOUGH);
@@ -252,54 +255,10 @@ public class AllCreativeModeTabs {
         entries.accept(AllItems.HONEY_BUCKET);
         entries.accept(AllItems.CHOCOLATE_BUCKET);
 
+        searchTabOnly(AllItems.VALVE_HANDLE, entries);
         entries.accept(AllItems.BLAZE_CAKE_BASE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.WHITE_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.ORANGE_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.MAGENTA_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIGHT_BLUE_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.YELLOW_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIME_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.PINK_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.GRAY_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIGHT_GRAY_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.CYAN_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.PURPLE_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BLUE_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BROWN_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.GREEN_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.RED_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BLACK_VALVE_HANDLE, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.WHITE_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.ORANGE_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.MAGENTA_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIGHT_BLUE_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.YELLOW_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIME_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.PINK_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.GRAY_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIGHT_GRAY_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.CYAN_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.PURPLE_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BLUE_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BROWN_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.GREEN_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.RED_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BLACK_TOOLBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.ORANGE_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.MAGENTA_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIGHT_BLUE_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.YELLOW_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIME_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.PINK_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.GRAY_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIGHT_GRAY_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.CYAN_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.PURPLE_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BLUE_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BROWN_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.GREEN_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.RED_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BLACK_POSTBOX, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
+        searchTabOnlySkipMain(AllItems.TOOLBOX.brown(), AllItems.TOOLBOX, entries);
+        searchTabOnlySkipMain(AllItems.POSTBOX.white(), AllItems.POSTBOX, entries);
     }
 
     private static void palettes(ItemDisplayParameters displayContext, Output entries) {
@@ -315,7 +274,7 @@ public class AllCreativeModeTabs {
         entries.accept(AllItems.METAL_GIRDER);
         entries.accept(AllItems.COPYCAT_STEP);
         entries.accept(AllItems.COPYCAT_PANEL);
-        entries.accept(AllItems.RED_SEAT);
+        entries.accept(AllItems.SEAT.red());
         entries.accept(AllItems.ANDESITE_DOOR);
         entries.accept(AllItems.BRASS_DOOR);
         entries.accept(AllItems.COPPER_DOOR);
@@ -337,54 +296,18 @@ public class AllCreativeModeTabs {
         entries.accept(AllItems.ROSE_QUARTZ_BLOCK);
         entries.accept(AllItems.ROSE_QUARTZ_TILES);
         entries.accept(AllItems.SMALL_ROSE_QUARTZ_TILES);
-        entries.accept(AllItems.COPPER_SHINGLES);
-        entries.accept(AllItems.EXPOSED_COPPER_SHINGLES);
-        entries.accept(AllItems.WEATHERED_COPPER_SHINGLES);
-        entries.accept(AllItems.OXIDIZED_COPPER_SHINGLES);
-        entries.accept(AllItems.COPPER_SHINGLE_SLAB);
-        entries.accept(AllItems.EXPOSED_COPPER_SHINGLE_SLAB);
-        entries.accept(AllItems.WEATHERED_COPPER_SHINGLE_SLAB);
-        entries.accept(AllItems.OXIDIZED_COPPER_SHINGLE_SLAB);
-        entries.accept(AllItems.COPPER_SHINGLE_STAIRS);
-        entries.accept(AllItems.EXPOSED_COPPER_SHINGLE_STAIRS);
-        entries.accept(AllItems.WEATHERED_COPPER_SHINGLE_STAIRS);
-        entries.accept(AllItems.OXIDIZED_COPPER_SHINGLE_STAIRS);
-        entries.accept(AllItems.WAXED_COPPER_SHINGLES);
-        entries.accept(AllItems.WAXED_EXPOSED_COPPER_SHINGLES);
-        entries.accept(AllItems.WAXED_WEATHERED_COPPER_SHINGLES);
-        entries.accept(AllItems.WAXED_OXIDIZED_COPPER_SHINGLES);
-        entries.accept(AllItems.WAXED_COPPER_SHINGLE_SLAB);
-        entries.accept(AllItems.WAXED_EXPOSED_COPPER_SHINGLE_SLAB);
-        entries.accept(AllItems.WAXED_WEATHERED_COPPER_SHINGLE_SLAB);
-        entries.accept(AllItems.WAXED_OXIDIZED_COPPER_SHINGLE_SLAB);
-        entries.accept(AllItems.WAXED_COPPER_SHINGLE_STAIRS);
-        entries.accept(AllItems.WAXED_EXPOSED_COPPER_SHINGLE_STAIRS);
-        entries.accept(AllItems.WAXED_WEATHERED_COPPER_SHINGLE_STAIRS);
-        entries.accept(AllItems.WAXED_OXIDIZED_COPPER_SHINGLE_STAIRS);
-        entries.accept(AllItems.COPPER_TILES);
-        entries.accept(AllItems.EXPOSED_COPPER_TILES);
-        entries.accept(AllItems.WEATHERED_COPPER_TILES);
-        entries.accept(AllItems.OXIDIZED_COPPER_TILES);
-        entries.accept(AllItems.COPPER_TILE_SLAB);
-        entries.accept(AllItems.EXPOSED_COPPER_TILE_SLAB);
-        entries.accept(AllItems.WEATHERED_COPPER_TILE_SLAB);
-        entries.accept(AllItems.OXIDIZED_COPPER_TILE_SLAB);
-        entries.accept(AllItems.COPPER_TILE_STAIRS);
-        entries.accept(AllItems.EXPOSED_COPPER_TILE_STAIRS);
-        entries.accept(AllItems.WEATHERED_COPPER_TILE_STAIRS);
-        entries.accept(AllItems.OXIDIZED_COPPER_TILE_STAIRS);
-        entries.accept(AllItems.WAXED_COPPER_TILES);
-        entries.accept(AllItems.WAXED_EXPOSED_COPPER_TILES);
-        entries.accept(AllItems.WAXED_WEATHERED_COPPER_TILES);
-        entries.accept(AllItems.WAXED_OXIDIZED_COPPER_TILES);
-        entries.accept(AllItems.WAXED_COPPER_TILE_SLAB);
-        entries.accept(AllItems.WAXED_EXPOSED_COPPER_TILE_SLAB);
-        entries.accept(AllItems.WAXED_WEATHERED_COPPER_TILE_SLAB);
-        entries.accept(AllItems.WAXED_OXIDIZED_COPPER_TILE_SLAB);
-        entries.accept(AllItems.WAXED_COPPER_TILE_STAIRS);
-        entries.accept(AllItems.WAXED_EXPOSED_COPPER_TILE_STAIRS);
-        entries.accept(AllItems.WAXED_WEATHERED_COPPER_TILE_STAIRS);
-        entries.accept(AllItems.WAXED_OXIDIZED_COPPER_TILE_STAIRS);
+        AllItems.COPPER_SHINGLES.weathering().forEach(entries::accept);
+        AllItems.COPPER_SHINGLE_SLAB.weathering().forEach(entries::accept);
+        AllItems.COPPER_SHINGLE_STAIRS.weathering().forEach(entries::accept);
+        AllItems.COPPER_SHINGLES.waxed().forEach(entries::accept);
+        AllItems.COPPER_SHINGLE_SLAB.waxed().forEach(entries::accept);
+        AllItems.COPPER_SHINGLE_STAIRS.waxed().forEach(entries::accept);
+        AllItems.COPPER_TILES.weathering().forEach(entries::accept);
+        AllItems.COPPER_TILE_SLAB.weathering().forEach(entries::accept);
+        AllItems.COPPER_TILE_STAIRS.weathering().forEach(entries::accept);
+        AllItems.COPPER_TILES.waxed().forEach(entries::accept);
+        AllItems.COPPER_TILE_SLAB.waxed().forEach(entries::accept);
+        AllItems.COPPER_TILE_STAIRS.waxed().forEach(entries::accept);
         entries.accept(AllItems.TILED_GLASS);
         entries.accept(AllItems.FRAMED_GLASS);
         entries.accept(AllItems.HORIZONTAL_FRAMED_GLASS);
@@ -681,35 +604,23 @@ public class AllCreativeModeTabs {
         entries.accept(AllItems.LAYERED_VERIDIUM);
         entries.accept(AllItems.VERIDIUM_PILLAR);
 
-        entries.accept(AllItems.WHITE_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.ORANGE_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.MAGENTA_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIGHT_BLUE_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.YELLOW_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIME_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.PINK_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.GRAY_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIGHT_GRAY_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.CYAN_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.PURPLE_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BLUE_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BROWN_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.GREEN_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BLACK_SEAT, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.WHITE_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.ORANGE_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.MAGENTA_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIGHT_BLUE_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.YELLOW_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIME_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.PINK_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.GRAY_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.LIGHT_GRAY_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.CYAN_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.PURPLE_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BLUE_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BROWN_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.GREEN_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        entries.accept(AllItems.BLACK_TABLE_CLOTH, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
+        searchTabOnlySkipMain(AllItems.SEAT.red(), AllItems.SEAT, entries);
+        searchTabOnlySkipMain(AllItems.TABLE_CLOTH.red(), AllItems.TABLE_CLOTH, entries);
+    }
+
+    public static <T extends ItemLike> void searchTabOnly(ColorCollection<T> collection, Output entries) {
+        collection.forEach(item -> entries.accept(item, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY));
+    }
+
+    public static <T extends ItemLike> void searchTabOnlySkipMain(
+        T main,
+        ColorCollection<T> collection,
+        Output entries
+    ) {
+        collection.forEach(item -> {
+            if (item != main) {
+                entries.accept(item, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
+            }
+        });
     }
 }

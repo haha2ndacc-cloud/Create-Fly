@@ -59,22 +59,7 @@ public class AllExtensions {
         BIG_OUTLINE.add(AllBlocks.TRAIN_DOOR);
         BIG_OUTLINE.add(AllBlocks.FRAMED_GLASS_DOOR);
         BIG_OUTLINE.add(AllBlocks.TRACK);
-        BIG_OUTLINE.add(AllBlocks.WHITE_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.ORANGE_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.MAGENTA_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.LIGHT_BLUE_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.YELLOW_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.LIME_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.PINK_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.GRAY_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.LIGHT_GRAY_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.CYAN_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.PURPLE_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.BLUE_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.BROWN_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.GREEN_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.RED_TABLE_CLOTH);
-        BIG_OUTLINE.add(AllBlocks.BLACK_TABLE_CLOTH);
+        AllBlocks.TABLE_CLOTH.forEach(BIG_OUTLINE::add);
         ARM_POSE.put(AllItems.POTATO_CANNON, ArmPose.CROSSBOW_HOLD);
         ARM_POSE.put(AllItems.WORLDSHAPER, ArmPose.CROSSBOW_HOLD);
     }

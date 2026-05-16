@@ -139,7 +139,7 @@ public class TableClothScenes {
             .pointAt(util.vector().of(4, 3, 4)).placeNearTarget();
         scene.idle(80);
 
-        ItemStack clothItem = AllItems.LIGHT_GRAY_TABLE_CLOTH.getDefaultInstance();
+        ItemStack clothItem = AllItems.TABLE_CLOTH.lightGray().getDefaultInstance();
         scene.overlay().showControls(util.vector().of(3, 3, 1.75), Pointing.DOWN, 120).rightClick().withItem(clothItem);
         scene.idle(30);
 

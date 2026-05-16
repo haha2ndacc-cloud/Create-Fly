@@ -26,6 +26,7 @@ import com.zurrtum.create.content.processing.burner.BlazeBurnerMovementBehaviour
 import com.zurrtum.create.content.redstone.contact.ContactMovementBehaviour;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ColorCollection;
 
 public class AllMovementBehaviours {
     public static final BasinMovementBehaviour BASIN = new BasinMovementBehaviour();
@@ -60,6 +61,10 @@ public class AllMovementBehaviours {
         }
     }
 
+    public static void register(MovementBehaviour behaviour, ColorCollection<? extends Block> collection) {
+        collection.forEach(block -> MovementBehaviour.REGISTRY.register(block, behaviour));
+    }
+
     public static void register() {
         register(BASIN, AllBlocks.BASIN);
         register(FLUID_TANK, AllBlocks.FLUID_TANK);
@@ -88,25 +93,7 @@ public class AllMovementBehaviours {
             AllBlocks.TRAIN_DOOR,
             AllBlocks.FRAMED_GLASS_DOOR
         );
-        register(
-            SEAT,
-            AllBlocks.WHITE_SEAT,
-            AllBlocks.ORANGE_SEAT,
-            AllBlocks.MAGENTA_SEAT,
-            AllBlocks.LIGHT_BLUE_SEAT,
-            AllBlocks.YELLOW_SEAT,
-            AllBlocks.LIME_SEAT,
-            AllBlocks.PINK_SEAT,
-            AllBlocks.GRAY_SEAT,
-            AllBlocks.LIGHT_GRAY_SEAT,
-            AllBlocks.CYAN_SEAT,
-            AllBlocks.PURPLE_SEAT,
-            AllBlocks.BLUE_SEAT,
-            AllBlocks.BROWN_SEAT,
-            AllBlocks.GREEN_SEAT,
-            AllBlocks.RED_SEAT,
-            AllBlocks.BLACK_SEAT
-        );
+        register(SEAT, AllBlocks.SEAT);
         register(CAMPFIRE, Blocks.CAMPFIRE, Blocks.SOUL_CAMPFIRE);
         register(DISPENSER, Blocks.DISPENSER);
         register(DROPPER, Blocks.DROPPER);

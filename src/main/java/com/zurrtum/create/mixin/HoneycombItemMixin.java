@@ -16,30 +16,12 @@ public class HoneycombItemMixin {
         ImmutableBiMap.Builder<Block, Block> builder,
         Operation<ImmutableBiMap<Block, Block>> original
     ) {
-        builder.put(AllBlocks.COPPER_SHINGLES, AllBlocks.WAXED_COPPER_SHINGLES);
-        builder.put(AllBlocks.EXPOSED_COPPER_SHINGLES, AllBlocks.WAXED_EXPOSED_COPPER_SHINGLES);
-        builder.put(AllBlocks.WEATHERED_COPPER_SHINGLES, AllBlocks.WAXED_WEATHERED_COPPER_SHINGLES);
-        builder.put(AllBlocks.OXIDIZED_COPPER_SHINGLES, AllBlocks.WAXED_OXIDIZED_COPPER_SHINGLES);
-        builder.put(AllBlocks.COPPER_SHINGLE_SLAB, AllBlocks.WAXED_COPPER_SHINGLE_SLAB);
-        builder.put(AllBlocks.EXPOSED_COPPER_SHINGLE_SLAB, AllBlocks.WAXED_EXPOSED_COPPER_SHINGLE_SLAB);
-        builder.put(AllBlocks.WEATHERED_COPPER_SHINGLE_SLAB, AllBlocks.WAXED_WEATHERED_COPPER_SHINGLE_SLAB);
-        builder.put(AllBlocks.OXIDIZED_COPPER_SHINGLE_SLAB, AllBlocks.WAXED_OXIDIZED_COPPER_SHINGLE_SLAB);
-        builder.put(AllBlocks.COPPER_SHINGLE_STAIRS, AllBlocks.WAXED_COPPER_SHINGLE_STAIRS);
-        builder.put(AllBlocks.EXPOSED_COPPER_SHINGLE_STAIRS, AllBlocks.WAXED_EXPOSED_COPPER_SHINGLE_STAIRS);
-        builder.put(AllBlocks.WEATHERED_COPPER_SHINGLE_STAIRS, AllBlocks.WAXED_WEATHERED_COPPER_SHINGLE_STAIRS);
-        builder.put(AllBlocks.OXIDIZED_COPPER_SHINGLE_STAIRS, AllBlocks.WAXED_OXIDIZED_COPPER_SHINGLE_STAIRS);
-        builder.put(AllBlocks.COPPER_TILES, AllBlocks.WAXED_COPPER_TILES);
-        builder.put(AllBlocks.EXPOSED_COPPER_TILES, AllBlocks.WAXED_EXPOSED_COPPER_TILES);
-        builder.put(AllBlocks.WEATHERED_COPPER_TILES, AllBlocks.WAXED_WEATHERED_COPPER_TILES);
-        builder.put(AllBlocks.OXIDIZED_COPPER_TILES, AllBlocks.WAXED_OXIDIZED_COPPER_TILES);
-        builder.put(AllBlocks.COPPER_TILE_SLAB, AllBlocks.WAXED_COPPER_TILE_SLAB);
-        builder.put(AllBlocks.EXPOSED_COPPER_TILE_SLAB, AllBlocks.WAXED_EXPOSED_COPPER_TILE_SLAB);
-        builder.put(AllBlocks.WEATHERED_COPPER_TILE_SLAB, AllBlocks.WAXED_WEATHERED_COPPER_TILE_SLAB);
-        builder.put(AllBlocks.OXIDIZED_COPPER_TILE_SLAB, AllBlocks.WAXED_OXIDIZED_COPPER_TILE_SLAB);
-        builder.put(AllBlocks.COPPER_TILE_STAIRS, AllBlocks.WAXED_COPPER_TILE_STAIRS);
-        builder.put(AllBlocks.EXPOSED_COPPER_TILE_STAIRS, AllBlocks.WAXED_EXPOSED_COPPER_TILE_STAIRS);
-        builder.put(AllBlocks.WEATHERED_COPPER_TILE_STAIRS, AllBlocks.WAXED_WEATHERED_COPPER_TILE_STAIRS);
-        builder.put(AllBlocks.OXIDIZED_COPPER_TILE_STAIRS, AllBlocks.WAXED_OXIDIZED_COPPER_TILE_STAIRS);
+        AllBlocks.COPPER_SHINGLES.zipUnwaxedWaxed(builder::put);
+        AllBlocks.COPPER_SHINGLE_SLAB.zipUnwaxedWaxed(builder::put);
+        AllBlocks.COPPER_SHINGLE_STAIRS.zipUnwaxedWaxed(builder::put);
+        AllBlocks.COPPER_TILES.zipUnwaxedWaxed(builder::put);
+        AllBlocks.COPPER_TILE_SLAB.zipUnwaxedWaxed(builder::put);
+        AllBlocks.COPPER_TILE_STAIRS.zipUnwaxedWaxed(builder::put);
         return original.call(builder);
     }
 }

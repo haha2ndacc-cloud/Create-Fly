@@ -39,7 +39,7 @@ public class ChuteScenes {
         scene.world().moveSection(top, util.vector().of(0, 0, -1), 0);
         scene.idle(20);
 
-        ItemStack stack = new ItemStack(Items.COPPER_BLOCK);
+        ItemStack stack = new ItemStack(Items.COPPER_BLOCK.weathering().unaffected());
         scene.world()
             .createItemEntity(util.vector().centerOf(util.grid().at(3, 3, 2)), util.vector().of(0, -0.1, 0), stack);
         scene.idle(20);
@@ -167,7 +167,7 @@ public class ChuteScenes {
 
         scene.world()
             .showSection(util.select().fromTo(2, 2, 2, 4, 1, 5).add(util.select().position(3, 0, 5)), Direction.DOWN);
-        ItemStack stack = new ItemStack(Items.COPPER_BLOCK);
+        ItemStack stack = new ItemStack(Items.COPPER_BLOCK.weathering().unaffected());
         scene.world().createItemOnBelt(util.grid().at(4, 1, 2), Direction.EAST, stack);
         scene.idle(10);
         scene.rotateCameraY(60);

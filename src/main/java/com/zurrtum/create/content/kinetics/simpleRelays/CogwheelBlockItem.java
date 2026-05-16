@@ -18,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
@@ -34,12 +35,13 @@ public class CogwheelBlockItem extends BlockItem {
     private final int placementHelperId;
     private final int integratedCogHelperId;
 
-    public CogwheelBlockItem(CogWheelBlock block, Properties builder) {
+    public CogwheelBlockItem(Block block, Properties builder) {
         super(block, builder);
-        large = block.isLarge;
+        large = ((CogWheelBlock) block).isLarge;
 
         placementHelperId = PlacementHelpers.register(large ? new LargeCogHelper() : new SmallCogHelper());
-        integratedCogHelperId = PlacementHelpers.register(large ? new IntegratedLargeCogHelper() : new IntegratedSmallCogHelper());
+        integratedCogHelperId = PlacementHelpers.register(
+            large ? new IntegratedLargeCogHelper() : new IntegratedSmallCogHelper());
     }
 
     @Nullable

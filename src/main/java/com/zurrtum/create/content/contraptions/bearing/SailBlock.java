@@ -40,28 +40,26 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class SailBlock extends WrenchableDirectionalBlock {
-
-    public static SailBlock frame(Properties properties) {
-        return new SailBlock(properties, true, null);
-    }
-
-    public static Function<Properties, SailBlock> withCanvas(DyeColor color) {
-        return properties -> new SailBlock(properties, false, color);
-    }
-
     private static final int placementHelperId = PlacementHelpers.register(new PlacementHelper());
 
     protected final boolean frame;
     protected final @Nullable DyeColor color;
 
+    public SailBlock(DyeColor color, Properties properties) {
+        this(properties, false, color);
+    }
+
     protected SailBlock(Properties properties, boolean frame, @Nullable DyeColor color) {
         super(properties);
         this.frame = frame;
         this.color = color;
+    }
+
+    public static SailBlock frame(Properties properties) {
+        return new SailBlock(properties, true, null);
     }
 
     @Override
@@ -121,29 +119,8 @@ public class SailBlock extends WrenchableDirectionalBlock {
         return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
-    public SailBlock getColorBlock(DyeColor color) {
-        return switch (color) {
-            case ORANGE -> AllBlocks.ORANGE_SAIL;
-            case MAGENTA -> AllBlocks.MAGENTA_SAIL;
-            case LIGHT_BLUE -> AllBlocks.LIGHT_BLUE_SAIL;
-            case YELLOW -> AllBlocks.YELLOW_SAIL;
-            case LIME -> AllBlocks.LIME_SAIL;
-            case PINK -> AllBlocks.PINK_SAIL;
-            case GRAY -> AllBlocks.GRAY_SAIL;
-            case LIGHT_GRAY -> AllBlocks.LIGHT_GRAY_SAIL;
-            case CYAN -> AllBlocks.CYAN_SAIL;
-            case PURPLE -> AllBlocks.PURPLE_SAIL;
-            case BLUE -> AllBlocks.BLUE_SAIL;
-            case BROWN -> AllBlocks.BROWN_SAIL;
-            case GREEN -> AllBlocks.GREEN_SAIL;
-            case RED -> AllBlocks.RED_SAIL;
-            case BLACK -> AllBlocks.BLACK_SAIL;
-            default -> AllBlocks.SAIL;
-        };
-    }
-
     public void applyDye(BlockState state, Level world, BlockPos pos, Vec3 hit, @Nullable DyeColor color) {
-        BlockState newState = (color == null ? AllBlocks.SAIL_FRAME : getColorBlock(color)).defaultBlockState();
+        BlockState newState = (color == null ? AllBlocks.SAIL_FRAME : AllBlocks.SAIL.pick(color)).defaultBlockState();
         newState = BlockHelper.copyProperties(state, newState);
 
         // Dye the block itself
@@ -237,7 +214,7 @@ public class SailBlock extends WrenchableDirectionalBlock {
     protected ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData) {
         ItemStack pickBlock = super.getCloneItemStack(world, pos, state, includeData);
         if (pickBlock.isEmpty()) {
-            return AllBlocks.SAIL.getCloneItemStack(world, pos, state, includeData);
+            return AllBlocks.SAIL.white().getCloneItemStack(world, pos, state, includeData);
         }
         return pickBlock;
     }

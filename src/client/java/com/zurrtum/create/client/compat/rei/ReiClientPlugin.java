@@ -1,5 +1,6 @@
 package com.zurrtum.create.client.compat.rei;
 
+import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.AllItemTags;
 import com.zurrtum.create.AllItems;
 import com.zurrtum.create.client.compat.rei.category.*;
@@ -8,7 +9,6 @@ import com.zurrtum.create.client.content.logistics.stockTicker.StockKeeperReques
 import com.zurrtum.create.client.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.zurrtum.create.compat.rei.display.DrainingDisplay;
 import com.zurrtum.create.compat.rei.display.SpoutFillingDisplay;
-import com.zurrtum.create.content.equipment.toolbox.ToolboxBlock;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.REIRuntime;
 import me.shedaniel.rei.api.client.gui.widgets.TextField;
@@ -108,7 +108,7 @@ public class ReiClientPlugin implements REIClientPlugin {
         for (DyeColor color : DyeColor.values()) {
             registry.add(new ClientsidedCraftingDisplay.Shapeless(
                 List.of(ingredient, EntryIngredients.of(DyeItem.byColor(color))),
-                List.of(EntryIngredients.of(ToolboxBlock.getColorBlock(color))),
+                List.of(EntryIngredients.of(AllBlocks.TOOLBOX.pick(color))),
                 Optional.empty()
             ));
         }

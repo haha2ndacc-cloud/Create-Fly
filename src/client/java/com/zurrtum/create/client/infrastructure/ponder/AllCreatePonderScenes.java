@@ -90,24 +90,7 @@ public class AllCreatePonderScenes {
             KineticsScenes::valveHandle,
             AllCreatePonderTags.KINETIC_SOURCES
         );
-        HELPER.forComponents(
-            AllItems.WHITE_VALVE_HANDLE,
-            AllItems.ORANGE_VALVE_HANDLE,
-            AllItems.MAGENTA_VALVE_HANDLE,
-            AllItems.LIGHT_BLUE_VALVE_HANDLE,
-            AllItems.YELLOW_VALVE_HANDLE,
-            AllItems.LIME_VALVE_HANDLE,
-            AllItems.PINK_VALVE_HANDLE,
-            AllItems.GRAY_VALVE_HANDLE,
-            AllItems.LIGHT_GRAY_VALVE_HANDLE,
-            AllItems.CYAN_VALVE_HANDLE,
-            AllItems.PURPLE_VALVE_HANDLE,
-            AllItems.BLUE_VALVE_HANDLE,
-            AllItems.BROWN_VALVE_HANDLE,
-            AllItems.GREEN_VALVE_HANDLE,
-            AllItems.RED_VALVE_HANDLE,
-            AllItems.BLACK_VALVE_HANDLE
-        ).addStoryBoard("valve_handle", KineticsScenes::valveHandle);
+        HELPER.forComponents(AllItems.VALVE_HANDLE).addStoryBoard("valve_handle", KineticsScenes::valveHandle);
 
         HELPER.addStoryBoard(
             AllItems.ENCASED_CHAIN_DRIVE,
@@ -374,7 +357,7 @@ public class AllCreatePonderScenes {
         HELPER.forComponents(AllItems.POWERED_TOGGLE_LATCH)
             .addStoryBoard("powered_toggle_latch", RedstoneScenes::poweredToggleLatch);
         HELPER.forComponents(AllItems.ANALOG_LEVER).addStoryBoard("analog_lever", RedstoneScenes::analogLever);
-        HELPER.forComponents(AllItems.ORANGE_NIXIE_TUBE).addStoryBoard("nixie_tube", RedstoneScenes::nixieTube);
+        HELPER.forComponents(AllItems.NIXIE_TUBE).addStoryBoard("nixie_tube", RedstoneScenes::nixieTube);
         HELPER.forComponents(AllItems.REDSTONE_LINK).addStoryBoard("redstone_link", RedstoneScenes::redstoneLink);
         HELPER.forComponents(AllItems.ROSE_QUARTZ_LAMP)
             .addStoryBoard("rose_quartz_lamp", RedstoneScenes2::roseQuartzLamp);
@@ -389,24 +372,7 @@ public class AllCreatePonderScenes {
             .addStoryBoard("high_logistics/chain_conveyor", FrogAndConveyorScenes::conveyor);
         HELPER.forComponents(AllItems.PACKAGE_FROGPORT)
             .addStoryBoard("high_logistics/package_frogport", FrogAndConveyorScenes::frogPort);
-        HELPER.forComponents(
-            AllItems.WHITE_POSTBOX,
-            AllItems.ORANGE_POSTBOX,
-            AllItems.MAGENTA_POSTBOX,
-            AllItems.LIGHT_BLUE_POSTBOX,
-            AllItems.YELLOW_POSTBOX,
-            AllItems.LIME_POSTBOX,
-            AllItems.PINK_POSTBOX,
-            AllItems.GRAY_POSTBOX,
-            AllItems.LIGHT_GRAY_POSTBOX,
-            AllItems.CYAN_POSTBOX,
-            AllItems.PURPLE_POSTBOX,
-            AllItems.BLUE_POSTBOX,
-            AllItems.BROWN_POSTBOX,
-            AllItems.GREEN_POSTBOX,
-            AllItems.RED_POSTBOX,
-            AllItems.BLACK_POSTBOX
-        ).addStoryBoard("high_logistics/package_postbox", PostboxScenes::postbox);
+        HELPER.forComponents(AllItems.POSTBOX).addStoryBoard("high_logistics/package_postbox", PostboxScenes::postbox);
         HELPER.forComponents(AllItems.PACKAGER).addStoryBoard("high_logistics/packager", PackagerScenes::packager)
             .addStoryBoard("high_logistics/packager_address", PackagerScenes::packagerAddress);
         HELPER.forComponents(AllItems.STOCK_LINK)
@@ -419,22 +385,7 @@ public class AllCreatePonderScenes {
         HELPER.forComponents(AllItems.REPACKAGER)
             .addStoryBoard("high_logistics/repackager", RepackagerScenes::repackager);
         HELPER.forComponents(
-            AllItems.WHITE_TABLE_CLOTH,
-            AllItems.ORANGE_TABLE_CLOTH,
-            AllItems.MAGENTA_TABLE_CLOTH,
-            AllItems.LIGHT_BLUE_TABLE_CLOTH,
-            AllItems.YELLOW_TABLE_CLOTH,
-            AllItems.LIME_TABLE_CLOTH,
-            AllItems.PINK_TABLE_CLOTH,
-            AllItems.GRAY_TABLE_CLOTH,
-            AllItems.LIGHT_GRAY_TABLE_CLOTH,
-            AllItems.CYAN_TABLE_CLOTH,
-            AllItems.PURPLE_TABLE_CLOTH,
-            AllItems.BLUE_TABLE_CLOTH,
-            AllItems.BROWN_TABLE_CLOTH,
-            AllItems.GREEN_TABLE_CLOTH,
-            AllItems.RED_TABLE_CLOTH,
-            AllItems.BLACK_TABLE_CLOTH,
+            AllItems.TABLE_CLOTH,
             AllItems.ANDESITE_TABLE_CLOTH,
             AllItems.BRASS_TABLE_CLOTH,
             AllItems.COPPER_TABLE_CLOTH

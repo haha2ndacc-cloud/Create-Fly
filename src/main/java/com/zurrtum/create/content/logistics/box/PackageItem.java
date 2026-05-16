@@ -53,7 +53,7 @@ public class PackageItem extends Item implements EntityItem {
         (style.rare() ? PackageStyles.RARE_BOXES : PackageStyles.STANDARD_BOXES).add(this);
     }
 
-    public static Function<Properties, PackageItem> styled(PackageStyle style) {
+    public static Function<Properties, Item> styled(PackageStyle style) {
         return properties -> new PackageItem(properties, style);
     }
 

@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.ItemModels;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ColorCollection;
+import net.minecraft.world.level.block.WeatheringCopperCollection;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
@@ -19,6 +21,32 @@ public class AllModels {
 
     public static void register(Block block, BiFunction<BlockState, UnbakedRoot, UnbakedRoot> resolver) {
         ALL.put(block, resolver);
+    }
+
+    private static void register(
+        WeatheringCopperCollection<? extends Block> states,
+        BiFunction<BlockState, UnbakedRoot, UnbakedRoot> unaffected,
+        BiFunction<BlockState, UnbakedRoot, UnbakedRoot> exposed,
+        BiFunction<BlockState, UnbakedRoot, UnbakedRoot> weathered,
+        BiFunction<BlockState, UnbakedRoot, UnbakedRoot> oxidized
+    ) {
+        WeatheringCopperCollection.ByState<? extends Block> weathering = states.weathering();
+        ALL.put(weathering.unaffected(), unaffected);
+        ALL.put(weathering.exposed(), exposed);
+        ALL.put(weathering.weathered(), weathered);
+        ALL.put(weathering.oxidized(), oxidized);
+        WeatheringCopperCollection.ByState<? extends Block> waxed = states.waxed();
+        ALL.put(waxed.unaffected(), unaffected);
+        ALL.put(waxed.exposed(), exposed);
+        ALL.put(waxed.weathered(), weathered);
+        ALL.put(waxed.oxidized(), oxidized);
+    }
+
+    public static void register(
+        ColorCollection<? extends Block> colors,
+        BiFunction<BlockState, UnbakedRoot, UnbakedRoot> resolver
+    ) {
+        ColorCollection.zipApply(colors, ColorCollection.create(resolver), ALL::put);
     }
 
     public static <T extends ItemModel.Unbaked> void register(Identifier id, MapCodec<T> codec) {
@@ -76,54 +104,42 @@ public class AllModels {
         register(AllBlocks.BRASS_SCAFFOLD, CTModel.of(AllCTBehaviours.BRASS_SCAFFOLD));
         register(AllBlocks.COPPER_SCAFFOLD, CTModel.of(AllCTBehaviours.COPPER_SCAFFOLD));
         register(AllBlocks.FRAMED_GLASS_TRAPDOOR, CTModel.of(AllCTBehaviours.FRAMED_GLASS_TRAPDOOR));
-        register(AllBlocks.COPPER_SHINGLES, copperShingles);
-        register(AllBlocks.EXPOSED_COPPER_SHINGLES, exposedCopperShingles);
-        register(AllBlocks.WEATHERED_COPPER_SHINGLES, weatheredCopperShingles);
-        register(AllBlocks.OXIDIZED_COPPER_SHINGLES, oxidizedCopperShingles);
-        register(AllBlocks.WAXED_COPPER_SHINGLES, copperShingles);
-        register(AllBlocks.WAXED_EXPOSED_COPPER_SHINGLES, exposedCopperShingles);
-        register(AllBlocks.WAXED_WEATHERED_COPPER_SHINGLES, weatheredCopperShingles);
-        register(AllBlocks.WAXED_OXIDIZED_COPPER_SHINGLES, oxidizedCopperShingles);
-        register(AllBlocks.COPPER_SHINGLE_SLAB, copperShingles);
-        register(AllBlocks.EXPOSED_COPPER_SHINGLE_SLAB, exposedCopperShingles);
-        register(AllBlocks.WEATHERED_COPPER_SHINGLE_SLAB, weatheredCopperShingles);
-        register(AllBlocks.OXIDIZED_COPPER_SHINGLE_SLAB, oxidizedCopperShingles);
-        register(AllBlocks.WAXED_COPPER_SHINGLE_SLAB, copperShingles);
-        register(AllBlocks.WAXED_EXPOSED_COPPER_SHINGLE_SLAB, exposedCopperShingles);
-        register(AllBlocks.WAXED_WEATHERED_COPPER_SHINGLE_SLAB, weatheredCopperShingles);
-        register(AllBlocks.WAXED_OXIDIZED_COPPER_SHINGLE_SLAB, oxidizedCopperShingles);
-        register(AllBlocks.COPPER_SHINGLE_STAIRS, copperShingles);
-        register(AllBlocks.EXPOSED_COPPER_SHINGLE_STAIRS, exposedCopperShingles);
-        register(AllBlocks.WEATHERED_COPPER_SHINGLE_STAIRS, weatheredCopperShingles);
-        register(AllBlocks.OXIDIZED_COPPER_SHINGLE_STAIRS, oxidizedCopperShingles);
-        register(AllBlocks.WAXED_COPPER_SHINGLE_STAIRS, copperShingles);
-        register(AllBlocks.WAXED_EXPOSED_COPPER_SHINGLE_STAIRS, exposedCopperShingles);
-        register(AllBlocks.WAXED_WEATHERED_COPPER_SHINGLE_STAIRS, weatheredCopperShingles);
-        register(AllBlocks.WAXED_OXIDIZED_COPPER_SHINGLE_STAIRS, oxidizedCopperShingles);
-        register(AllBlocks.COPPER_TILES, copperTiles);
-        register(AllBlocks.EXPOSED_COPPER_TILES, exposedcopperTiles);
-        register(AllBlocks.WEATHERED_COPPER_TILES, weatheredcopperTiles);
-        register(AllBlocks.OXIDIZED_COPPER_TILES, oxidizedcopperTiles);
-        register(AllBlocks.WAXED_COPPER_TILES, copperTiles);
-        register(AllBlocks.WAXED_EXPOSED_COPPER_TILES, exposedcopperTiles);
-        register(AllBlocks.WAXED_WEATHERED_COPPER_TILES, weatheredcopperTiles);
-        register(AllBlocks.WAXED_OXIDIZED_COPPER_TILES, oxidizedcopperTiles);
-        register(AllBlocks.COPPER_TILE_SLAB, copperTiles);
-        register(AllBlocks.EXPOSED_COPPER_TILE_SLAB, exposedcopperTiles);
-        register(AllBlocks.WEATHERED_COPPER_TILE_SLAB, weatheredcopperTiles);
-        register(AllBlocks.OXIDIZED_COPPER_TILE_SLAB, oxidizedcopperTiles);
-        register(AllBlocks.WAXED_COPPER_TILE_SLAB, copperTiles);
-        register(AllBlocks.WAXED_EXPOSED_COPPER_TILE_SLAB, exposedcopperTiles);
-        register(AllBlocks.WAXED_WEATHERED_COPPER_TILE_SLAB, weatheredcopperTiles);
-        register(AllBlocks.WAXED_OXIDIZED_COPPER_TILE_SLAB, oxidizedcopperTiles);
-        register(AllBlocks.COPPER_TILE_STAIRS, copperTiles);
-        register(AllBlocks.EXPOSED_COPPER_TILE_STAIRS, exposedcopperTiles);
-        register(AllBlocks.WEATHERED_COPPER_TILE_STAIRS, weatheredcopperTiles);
-        register(AllBlocks.OXIDIZED_COPPER_TILE_STAIRS, oxidizedcopperTiles);
-        register(AllBlocks.WAXED_COPPER_TILE_STAIRS, copperTiles);
-        register(AllBlocks.WAXED_EXPOSED_COPPER_TILE_STAIRS, exposedcopperTiles);
-        register(AllBlocks.WAXED_WEATHERED_COPPER_TILE_STAIRS, weatheredcopperTiles);
-        register(AllBlocks.WAXED_OXIDIZED_COPPER_TILE_STAIRS, oxidizedcopperTiles);
+        register(
+            AllBlocks.COPPER_SHINGLES,
+            copperShingles,
+            exposedCopperShingles,
+            weatheredCopperShingles,
+            oxidizedCopperShingles
+        );
+        register(
+            AllBlocks.COPPER_SHINGLE_SLAB,
+            copperShingles,
+            exposedCopperShingles,
+            weatheredCopperShingles,
+            oxidizedCopperShingles
+        );
+        register(
+            AllBlocks.COPPER_SHINGLE_STAIRS,
+            copperShingles,
+            exposedCopperShingles,
+            weatheredCopperShingles,
+            oxidizedCopperShingles
+        );
+        register(AllBlocks.COPPER_TILES, copperTiles, exposedcopperTiles, weatheredcopperTiles, oxidizedcopperTiles);
+        register(
+            AllBlocks.COPPER_TILE_SLAB,
+            copperTiles,
+            exposedcopperTiles,
+            weatheredcopperTiles,
+            oxidizedcopperTiles
+        );
+        register(
+            AllBlocks.COPPER_TILE_STAIRS,
+            copperTiles,
+            exposedcopperTiles,
+            weatheredcopperTiles,
+            oxidizedcopperTiles
+        );
         register(AllBlocks.FRAMED_GLASS, CTModel.of(AllCTBehaviours.FRAMED_GLASS));
         register(AllBlocks.HORIZONTAL_FRAMED_GLASS, CTModel.of(AllCTBehaviours.HORIZONTAL_FRAMED_GLASS));
         register(AllBlocks.VERTICAL_FRAMED_GLASS, CTModel.of(AllCTBehaviours.VERTICAL_FRAMED_GLASS));
@@ -199,22 +215,7 @@ public class AllModels {
         register(AllBlocks.CREATIVE_FLUID_TANK, FluidTankModel::creative);
         register(AllBlocks.METAL_GIRDER, ConnectedGirderModel::new);
         register(AllBlocks.METAL_GIRDER_ENCASED_SHAFT, ConnectedGirderModel::new);
-        register(AllBlocks.WHITE_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.ORANGE_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.MAGENTA_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.LIGHT_BLUE_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.YELLOW_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.LIME_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.PINK_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.GRAY_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.LIGHT_GRAY_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.CYAN_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.PURPLE_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.BLUE_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.BROWN_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.GREEN_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.RED_TABLE_CLOTH, TableClothModel::new);
-        register(AllBlocks.BLACK_TABLE_CLOTH, TableClothModel::new);
+        register(AllBlocks.TABLE_CLOTH, TableClothModel::new);
         register(AllBlocks.ANDESITE_TABLE_CLOTH, TableClothModel::new);
         register(AllBlocks.BRASS_TABLE_CLOTH, TableClothModel::new);
         register(AllBlocks.COPPER_TABLE_CLOTH, TableClothModel::new);

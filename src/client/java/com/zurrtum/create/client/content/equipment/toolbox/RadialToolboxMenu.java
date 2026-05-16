@@ -97,7 +97,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
 
             ms.pushMatrix();
             AllGuiTextures.TOOLBELT_INACTIVE_SLOT.render(graphics, -12, -12);
-            graphics.item(AllItems.BROWN_TOOLBOX.getDefaultInstance(), -9, -9);
+            graphics.item(AllItems.TOOLBOX.brown().getDefaultInstance(), -9, -9);
 
             ms.translate(0, -40 + (10 * (1 - fade) * (1 - fade)));
             AllGuiTextures.TOOLBELT_SLOT.render(graphics, -12, -12);
@@ -124,7 +124,8 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
             ms.translate(0.5F, -0.5F);
             if (!scrollMode && hoveredSlot == DEPOSIT) {
                 AllGuiTextures.TOOLBELT_SLOT_HIGHLIGHT.render(graphics, -13, -13);
-                tip = CreateLang.translateDirect(state == State.SELECT_BOX ? "toolbox.depositAll" : "toolbox.depositBox")
+                tip = CreateLang.translateDirect(
+                        state == State.SELECT_BOX ? "toolbox.depositAll" : "toolbox.depositBox")
                     .withStyle(ChatFormatting.GOLD);
             }
             ms.popMatrix();

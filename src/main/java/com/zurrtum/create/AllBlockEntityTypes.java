@@ -1,5 +1,6 @@
 package com.zurrtum.create;
 
+import com.google.common.collect.ImmutableSet;
 import com.zurrtum.create.content.contraptions.actors.contraptionControls.ContraptionControlsBlockEntity;
 import com.zurrtum.create.content.contraptions.actors.harvester.HarvesterBlockEntity;
 import com.zurrtum.create.content.contraptions.actors.psi.PortableFluidInterfaceBlockEntity;
@@ -116,7 +117,9 @@ import com.zurrtum.create.content.trains.track.TrackMaterial;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ColorCollection;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -243,23 +246,8 @@ public class AllBlockEntityTypes {
     public static final BlockEntityType<ValveHandleBlockEntity> VALVE_HANDLE = register(
         "valve_handle",
         ValveHandleBlockEntity::new,
-        AllBlocks.COPPER_VALVE_HANDLE,
-        AllBlocks.WHITE_VALVE_HANDLE,
-        AllBlocks.ORANGE_VALVE_HANDLE,
-        AllBlocks.MAGENTA_VALVE_HANDLE,
-        AllBlocks.LIGHT_BLUE_VALVE_HANDLE,
-        AllBlocks.YELLOW_VALVE_HANDLE,
-        AllBlocks.LIME_VALVE_HANDLE,
-        AllBlocks.PINK_VALVE_HANDLE,
-        AllBlocks.GRAY_VALVE_HANDLE,
-        AllBlocks.LIGHT_GRAY_VALVE_HANDLE,
-        AllBlocks.CYAN_VALVE_HANDLE,
-        AllBlocks.PURPLE_VALVE_HANDLE,
-        AllBlocks.BLUE_VALVE_HANDLE,
-        AllBlocks.BROWN_VALVE_HANDLE,
-        AllBlocks.GREEN_VALVE_HANDLE,
-        AllBlocks.RED_VALVE_HANDLE,
-        AllBlocks.BLACK_VALVE_HANDLE
+        AllBlocks.VALVE_HANDLE,
+        AllBlocks.COPPER_VALVE_HANDLE
     );
     public static final BlockEntityType<ChassisBlockEntity> CHASSIS = register(
         "chassis",
@@ -503,22 +491,7 @@ public class AllBlockEntityTypes {
     public static final BlockEntityType<NixieTubeBlockEntity> NIXIE_TUBE = register(
         "nixie_tube",
         NixieTubeBlockEntity::new,
-        AllBlocks.ORANGE_NIXIE_TUBE,
-        AllBlocks.WHITE_NIXIE_TUBE,
-        AllBlocks.MAGENTA_NIXIE_TUBE,
-        AllBlocks.LIGHT_BLUE_NIXIE_TUBE,
-        AllBlocks.YELLOW_NIXIE_TUBE,
-        AllBlocks.LIME_NIXIE_TUBE,
-        AllBlocks.PINK_NIXIE_TUBE,
-        AllBlocks.GRAY_NIXIE_TUBE,
-        AllBlocks.LIGHT_GRAY_NIXIE_TUBE,
-        AllBlocks.CYAN_NIXIE_TUBE,
-        AllBlocks.PURPLE_NIXIE_TUBE,
-        AllBlocks.BLUE_NIXIE_TUBE,
-        AllBlocks.BROWN_NIXIE_TUBE,
-        AllBlocks.GREEN_NIXIE_TUBE,
-        AllBlocks.RED_NIXIE_TUBE,
-        AllBlocks.BLACK_NIXIE_TUBE
+        AllBlocks.NIXIE_TUBE
     );
     public static final BlockEntityType<FluidValveBlockEntity> FLUID_VALVE = register(
         "fluid_valve",
@@ -682,22 +655,7 @@ public class AllBlockEntityTypes {
     public static final BlockEntityType<TableClothBlockEntity> TABLE_CLOTH = register(
         "table_cloth",
         TableClothBlockEntity::new,
-        AllBlocks.WHITE_TABLE_CLOTH,
-        AllBlocks.ORANGE_TABLE_CLOTH,
-        AllBlocks.MAGENTA_TABLE_CLOTH,
-        AllBlocks.LIGHT_BLUE_TABLE_CLOTH,
-        AllBlocks.YELLOW_TABLE_CLOTH,
-        AllBlocks.LIME_TABLE_CLOTH,
-        AllBlocks.PINK_TABLE_CLOTH,
-        AllBlocks.GRAY_TABLE_CLOTH,
-        AllBlocks.LIGHT_GRAY_TABLE_CLOTH,
-        AllBlocks.CYAN_TABLE_CLOTH,
-        AllBlocks.PURPLE_TABLE_CLOTH,
-        AllBlocks.BLUE_TABLE_CLOTH,
-        AllBlocks.BROWN_TABLE_CLOTH,
-        AllBlocks.GREEN_TABLE_CLOTH,
-        AllBlocks.RED_TABLE_CLOTH,
-        AllBlocks.BLACK_TABLE_CLOTH,
+        AllBlocks.TABLE_CLOTH,
         AllBlocks.ANDESITE_TABLE_CLOTH,
         AllBlocks.BRASS_TABLE_CLOTH,
         AllBlocks.COPPER_TABLE_CLOTH
@@ -705,22 +663,7 @@ public class AllBlockEntityTypes {
     public static final BlockEntityType<PostboxBlockEntity> PACKAGE_POSTBOX = register(
         "package_postbox",
         PostboxBlockEntity::new,
-        AllBlocks.WHITE_POSTBOX,
-        AllBlocks.ORANGE_POSTBOX,
-        AllBlocks.MAGENTA_POSTBOX,
-        AllBlocks.LIGHT_BLUE_POSTBOX,
-        AllBlocks.YELLOW_POSTBOX,
-        AllBlocks.LIME_POSTBOX,
-        AllBlocks.PINK_POSTBOX,
-        AllBlocks.GRAY_POSTBOX,
-        AllBlocks.LIGHT_GRAY_POSTBOX,
-        AllBlocks.CYAN_POSTBOX,
-        AllBlocks.PURPLE_POSTBOX,
-        AllBlocks.BLUE_POSTBOX,
-        AllBlocks.BROWN_POSTBOX,
-        AllBlocks.GREEN_POSTBOX,
-        AllBlocks.RED_POSTBOX,
-        AllBlocks.BLACK_POSTBOX
+        AllBlocks.POSTBOX
     );
     public static final BlockEntityType<FrogportBlockEntity> PACKAGE_FROGPORT = register(
         "package_frogport",
@@ -750,22 +693,7 @@ public class AllBlockEntityTypes {
     public static final BlockEntityType<ToolboxBlockEntity> TOOLBOX = register(
         "toolbox",
         ToolboxBlockEntity::new,
-        AllBlocks.WHITE_TOOLBOX,
-        AllBlocks.ORANGE_TOOLBOX,
-        AllBlocks.MAGENTA_TOOLBOX,
-        AllBlocks.LIGHT_BLUE_TOOLBOX,
-        AllBlocks.YELLOW_TOOLBOX,
-        AllBlocks.LIME_TOOLBOX,
-        AllBlocks.PINK_TOOLBOX,
-        AllBlocks.GRAY_TOOLBOX,
-        AllBlocks.LIGHT_GRAY_TOOLBOX,
-        AllBlocks.CYAN_TOOLBOX,
-        AllBlocks.PURPLE_TOOLBOX,
-        AllBlocks.BLUE_TOOLBOX,
-        AllBlocks.BROWN_TOOLBOX,
-        AllBlocks.GREEN_TOOLBOX,
-        AllBlocks.RED_TOOLBOX,
-        AllBlocks.BLACK_TOOLBOX
+        AllBlocks.TOOLBOX
     );
     public static final BlockEntityType<SchematicTableBlockEntity> SCHEMATIC_TABLE = register(
         "schematic_table",
@@ -787,12 +715,32 @@ public class AllBlockEntityTypes {
     private static <T extends BlockEntity> BlockEntityType<T> register(
         String id,
         BlockEntityType.BlockEntitySupplier<T> factory,
+        ColorCollection<? extends Block> collection,
         Block... blocks
+    ) {
+        ImmutableSet.Builder<Block> builder = ImmutableSet.builderWithExpectedSize(DyeColor.VALUES.size() + blocks.length);
+        collection.forEach(builder::add);
+        builder.add(blocks);
+        return register(id, factory, builder.build());
+    }
+
+    private static <T extends BlockEntity> BlockEntityType<T> register(
+        String id,
+        BlockEntityType.BlockEntitySupplier<T> factory,
+        Block... blocks
+    ) {
+        return register(id, factory, Set.of(blocks));
+    }
+
+    private static <T extends BlockEntity> BlockEntityType<T> register(
+        String id,
+        BlockEntityType.BlockEntitySupplier<T> factory,
+        Set<Block> blocks
     ) {
         return Registry.register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
             Identifier.fromNamespaceAndPath(MOD_ID, id),
-            new BlockEntityType<>(factory, Set.of(blocks))
+            new BlockEntityType<>(factory, blocks)
         );
     }
 

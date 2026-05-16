@@ -12,6 +12,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
 public class CStress extends ConfigBase {
@@ -36,6 +37,10 @@ public class CStress extends ConfigBase {
 
     public static void setCapacity(Block block, double value) {
         DEFAULT_CAPACITIES.put(BuiltInRegistries.BLOCK.getKey(block), value);
+    }
+
+    public static <T extends Block> Consumer<T> setCapacity(double value) {
+        return block -> setCapacity(block, value);
     }
 
     @Override

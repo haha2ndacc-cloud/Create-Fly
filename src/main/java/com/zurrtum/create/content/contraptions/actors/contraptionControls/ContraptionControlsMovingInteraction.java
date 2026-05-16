@@ -1,6 +1,7 @@
 package com.zurrtum.create.content.contraptions.actors.contraptionControls;
 
 import com.zurrtum.create.AllClientHandle;
+import com.zurrtum.create.AllItemTags;
 import com.zurrtum.create.AllSoundEvents;
 import com.zurrtum.create.api.behaviour.interaction.MovingInteractionBehaviour;
 import com.zurrtum.create.api.behaviour.movement.MovementBehaviour;
@@ -16,7 +17,6 @@ import com.zurrtum.create.infrastructure.packet.c2s.ElevatorTargetFloorPacket;
 import com.zurrtum.create.infrastructure.packet.s2c.ContraptionDisableActorPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -127,7 +127,7 @@ public class ContraptionControlsMovingInteraction extends MovingInteractionBehav
         if (!(contraptionEntity instanceof CarriageContraptionEntity cce)) {
             return true;
         }
-        if (!filter.is(ItemTags.DOORS)) {
+        if (!filter.is(AllItemTags.DOORS)) {
             return true;
         }
 

@@ -21,6 +21,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ColorCollection;
 
 import static com.zurrtum.create.Create.MOD_ID;
 
@@ -79,6 +80,10 @@ public class AllMountedStorageTypes {
         }
     }
 
+    public static void register(MountedItemStorageType<?> type, ColorCollection<? extends Block> blocks) {
+        blocks.forEach(block -> MountedItemStorageType.REGISTRY.register(block, type));
+    }
+
     @SuppressWarnings("deprecation")
     public static void register(MountedItemStorageType<?> type, TagKey<Block> tag) {
         MountedItemStorageType.REGISTRY.registerProvider(block -> block.builtInRegistryHolder().is(tag) ? type : null);
@@ -94,25 +99,7 @@ public class AllMountedStorageTypes {
         register(DEPOT, AllBlocks.DEPOT);
         register(CREATIVE_CRATE, AllBlocks.CREATIVE_CRATE);
         register(VAULT, AllBlocks.ITEM_VAULT);
-        register(
-            TOOLBOX,
-            AllBlocks.WHITE_TOOLBOX,
-            AllBlocks.ORANGE_TOOLBOX,
-            AllBlocks.MAGENTA_TOOLBOX,
-            AllBlocks.LIGHT_BLUE_TOOLBOX,
-            AllBlocks.YELLOW_TOOLBOX,
-            AllBlocks.LIME_TOOLBOX,
-            AllBlocks.PINK_TOOLBOX,
-            AllBlocks.GRAY_TOOLBOX,
-            AllBlocks.LIGHT_GRAY_TOOLBOX,
-            AllBlocks.CYAN_TOOLBOX,
-            AllBlocks.PURPLE_TOOLBOX,
-            AllBlocks.BLUE_TOOLBOX,
-            AllBlocks.BROWN_TOOLBOX,
-            AllBlocks.GREEN_TOOLBOX,
-            AllBlocks.RED_TOOLBOX,
-            AllBlocks.BLACK_TOOLBOX
-        );
+        register(TOOLBOX, AllBlocks.TOOLBOX);
         register(CHEST, Blocks.CHEST, Blocks.TRAPPED_CHEST);
         register(DISPENSER, Blocks.DISPENSER, Blocks.DROPPER);
         register(SIMPLE, AllBlockTags.SIMPLE_MOUNTED_STORAGE);

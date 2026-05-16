@@ -7,6 +7,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ColorCollection;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.function.Supplier;
@@ -87,6 +88,10 @@ public class AllDisplaySources {
         }
     }
 
+    public static void register(DisplaySource display, ColorCollection<? extends Block> collection) {
+        collection.forEach(block -> DisplaySource.BY_BLOCK.add(block, display));
+    }
+
     public static void register(DisplaySource display, BlockEntityType<?> type) {
         DisplaySource.BY_BLOCK_ENTITY.add(type, display);
     }
@@ -111,25 +116,7 @@ public class AllDisplaySources {
         register(READ_PACKAGE_ADDRESS, AllBlocks.SMART_OBSERVER);
         register(FILL_LEVEL, AllBlocks.THRESHOLD_SWITCH);
         register(GAUGE_STATUS, AllBlocks.FACTORY_GAUGE);
-        register(
-            ENTITY_NAME,
-            AllBlocks.WHITE_SEAT,
-            AllBlocks.ORANGE_SEAT,
-            AllBlocks.MAGENTA_SEAT,
-            AllBlocks.LIGHT_BLUE_SEAT,
-            AllBlocks.YELLOW_SEAT,
-            AllBlocks.LIME_SEAT,
-            AllBlocks.PINK_SEAT,
-            AllBlocks.GRAY_SEAT,
-            AllBlocks.LIGHT_GRAY_SEAT,
-            AllBlocks.CYAN_SEAT,
-            AllBlocks.PURPLE_SEAT,
-            AllBlocks.BLUE_SEAT,
-            AllBlocks.BROWN_SEAT,
-            AllBlocks.GREEN_SEAT,
-            AllBlocks.RED_SEAT,
-            AllBlocks.BLACK_SEAT
-        );
+        register(ENTITY_NAME, AllBlocks.SEAT);
         register(DEATH_COUNT, Blocks.RESPAWN_ANCHOR);
         register(SCOREBOARD, Blocks.COMMAND_BLOCK);
         register(ENCHANT_POWER, Blocks.ENCHANTING_TABLE);

@@ -38,7 +38,7 @@ public class BearingScenes {
         scene.world().showSection(util.select().fromTo(1, 0, 1, 5, 0, 5), Direction.UP);
         scene.world().setBlock(
             util.grid().at(2, -1, 0),
-            AllBlocks.SAIL.defaultBlockState().setValue(SailBlock.FACING, Direction.NORTH),
+            AllBlocks.SAIL.white().defaultBlockState().setValue(SailBlock.FACING, Direction.NORTH),
             false
         );
         scene.idle(5);
@@ -647,7 +647,7 @@ public class BearingScenes {
             scene.idle(7);
             scene.world().setBlock(
                 util.grid().at(2, 3, 1),
-                AllBlocks.BLUE_SAIL.defaultBlockState().setValue(SailBlock.FACING, Direction.WEST),
+                AllBlocks.SAIL.blue().defaultBlockState().setValue(SailBlock.FACING, Direction.WEST),
                 false
             );
             scene.idle(10);
@@ -661,7 +661,7 @@ public class BearingScenes {
             scene.idle(7);
             scene.world().replaceBlocks(
                 util.select().fromTo(2, 2, 1, 2, 4, 1),
-                AllBlocks.BLUE_SAIL.defaultBlockState().setValue(SailBlock.FACING, Direction.WEST),
+                AllBlocks.SAIL.blue().defaultBlockState().setValue(SailBlock.FACING, Direction.WEST),
                 false
             );
 

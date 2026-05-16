@@ -43,30 +43,21 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
 public class NixieTubeBlock extends DoubleFaceAttachedBlock implements IBE<NixieTubeBlockEntity>, IWrenchable, SimpleWaterloggedBlock, SpecialBlockItemRequirement, RedStoneConnectBlock {
     protected final DyeColor color;
 
-    public NixieTubeBlock(Properties properties, DyeColor color) {
+    public NixieTubeBlock(DyeColor color, Properties properties) {
         super(properties);
         this.color = color;
         registerDefaultState(defaultBlockState().setValue(FACE, DoubleAttachFace.FLOOR).setValue(WATERLOGGED, false));
     }
 
-    public NixieTubeBlock(Properties properties) {
-        this(properties, DyeColor.ORANGE);
-    }
-
     @Override
     protected boolean shouldChangedStateKeepBlockEntity(BlockState blockState) {
         return AllBlockEntityTypes.NIXIE_TUBE.isValid(blockState);
-    }
-
-    public static Function<Properties, NixieTubeBlock> dyed(DyeColor color) {
-        return properties -> new NixieTubeBlock(properties, color);
     }
 
     @Override
@@ -113,10 +104,8 @@ public class NixieTubeBlock extends DoubleFaceAttachedBlock implements IBE<Nixie
 
         if (stack.is(AllItems.CLIPBOARD)) {
             List<ClipboardEntry> entries = ClipboardEntry.getLastViewedEntries(stack);
-            component = entries.isEmpty() ? stack.getOrDefault(
-                DataComponents.CUSTOM_NAME,
-                CommonComponents.EMPTY
-            ) : entries.getFirst().text;
+            component = entries.isEmpty() ? stack.getOrDefault(DataComponents.CUSTOM_NAME, CommonComponents.EMPTY) :
+                entries.getFirst().text;
         } else {
             component = stack.getOrDefault(DataComponents.CUSTOM_NAME, CommonComponents.EMPTY);
         }
@@ -254,12 +243,12 @@ public class NixieTubeBlock extends DoubleFaceAttachedBlock implements IBE<Nixie
 
     @Override
     protected ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData) {
-        return AllItems.ORANGE_NIXIE_TUBE.getDefaultInstance();
+        return AllItems.NIXIE_TUBE.getDefaultInstance();
     }
 
     @Override
     public ItemRequirement getRequiredItems(BlockState state, @Nullable BlockEntity be) {
-        return new ItemRequirement(ItemUseType.CONSUME, AllItems.ORANGE_NIXIE_TUBE);
+        return new ItemRequirement(ItemUseType.CONSUME, AllItems.NIXIE_TUBE);
     }
 
     @Override
@@ -409,27 +398,6 @@ public class NixieTubeBlock extends DoubleFaceAttachedBlock implements IBE<Nixie
         return color;
     }
 
-    public static NixieTubeBlock getColorBlock(DyeColor color) {
-        return switch (color) {
-            case WHITE -> AllBlocks.WHITE_NIXIE_TUBE;
-            case ORANGE -> AllBlocks.ORANGE_NIXIE_TUBE;
-            case MAGENTA -> AllBlocks.MAGENTA_NIXIE_TUBE;
-            case LIGHT_BLUE -> AllBlocks.LIGHT_BLUE_NIXIE_TUBE;
-            case YELLOW -> AllBlocks.YELLOW_NIXIE_TUBE;
-            case LIME -> AllBlocks.LIME_NIXIE_TUBE;
-            case PINK -> AllBlocks.PINK_NIXIE_TUBE;
-            case GRAY -> AllBlocks.GRAY_NIXIE_TUBE;
-            case LIGHT_GRAY -> AllBlocks.LIGHT_GRAY_NIXIE_TUBE;
-            case CYAN -> AllBlocks.CYAN_NIXIE_TUBE;
-            case PURPLE -> AllBlocks.PURPLE_NIXIE_TUBE;
-            case BLUE -> AllBlocks.BLUE_NIXIE_TUBE;
-            case BROWN -> AllBlocks.BROWN_NIXIE_TUBE;
-            case GREEN -> AllBlocks.GREEN_NIXIE_TUBE;
-            case RED -> AllBlocks.RED_NIXIE_TUBE;
-            case BLACK -> AllBlocks.BLACK_NIXIE_TUBE;
-        };
-    }
-
     public static boolean areNixieBlocksEqual(BlockState blockState, BlockState otherState) {
         if (!(blockState.getBlock() instanceof NixieTubeBlock)) {
             return false;
@@ -441,13 +409,13 @@ public class NixieTubeBlock extends DoubleFaceAttachedBlock implements IBE<Nixie
     }
 
     public static BlockState withColor(BlockState state, DyeColor color) {
-        return (color == DyeColor.ORANGE ? AllBlocks.ORANGE_NIXIE_TUBE : getColorBlock(color)).defaultBlockState()
-            .setValue(FACING, state.getValue(FACING)).setValue(WATERLOGGED, state.getValue(WATERLOGGED))
-            .setValue(FACE, state.getValue(FACE));
+        return AllBlocks.NIXIE_TUBE.pick(color).defaultBlockState().setValue(FACING, state.getValue(FACING))
+            .setValue(WATERLOGGED, state.getValue(WATERLOGGED)).setValue(FACE, state.getValue(FACE));
     }
 
     public static DyeColor colorOf(BlockState blockState) {
-        return blockState.getBlock() instanceof NixieTubeBlock ? ((NixieTubeBlock) blockState.getBlock()).color : DyeColor.ORANGE;
+        return blockState.getBlock() instanceof NixieTubeBlock ? ((NixieTubeBlock) blockState.getBlock()).color :
+            DyeColor.ORANGE;
     }
 
     public static Direction getFacing(BlockState sideState) {

@@ -16,7 +16,6 @@ import com.zurrtum.create.client.content.redstone.link.controller.LinkedControll
 import com.zurrtum.create.client.content.trains.schedule.ScheduleScreen;
 import com.zurrtum.create.client.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.zurrtum.create.content.equipment.sandPaper.SandPaperPolishingRecipe;
-import com.zurrtum.create.content.equipment.toolbox.ToolboxBlock;
 import com.zurrtum.create.content.fluids.transfer.EmptyingRecipe;
 import com.zurrtum.create.content.fluids.transfer.FillingRecipe;
 import com.zurrtum.create.content.kinetics.crafter.MechanicalCraftingRecipe;
@@ -218,7 +217,7 @@ public class JeiClientPlugin implements IModPlugin {
                 new ShapelessRecipe(
                     group,
                     CraftingBookCategory.MISC,
-                    ToolboxBlock.getColorBlock(color).asItem().getDefaultInstance(),
+                    AllItems.TOOLBOX.pick(color).getDefaultInstance(),
                     List.of(Ingredient.of(DyeItem.byColor(color)), ingredient)
                 )
             ));

@@ -8,10 +8,10 @@ import net.minecraft.tags.TagKey;
 import static com.zurrtum.create.Create.MOD_ID;
 
 public class AllContraptionTypeTags {
-    public static final TagKey<ContraptionType> OPENS_CONTROLS = register("opens_controls");
-    public static final TagKey<ContraptionType> REQUIRES_VEHICLE_FOR_RENDER = register("requires_vehicle_for_render");
+    public static final TagKey<ContraptionType> OPENS_CONTROLS = create("opens_controls");
+    public static final TagKey<ContraptionType> REQUIRES_VEHICLE_FOR_RENDER = create("requires_vehicle_for_render");
 
-    private static TagKey<ContraptionType> register(String name) {
+    private static TagKey<ContraptionType> create(String name) {
         return TagKey.create(CreateRegistryKeys.CONTRAPTION_TYPE, Identifier.fromNamespaceAndPath(MOD_ID, name));
     }
 

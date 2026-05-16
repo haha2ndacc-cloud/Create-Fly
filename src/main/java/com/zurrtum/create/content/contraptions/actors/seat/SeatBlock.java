@@ -40,20 +40,15 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Function;
 
 public class SeatBlock extends Block implements ProperWaterloggedBlock {
 
     protected final DyeColor color;
 
-    public SeatBlock(Properties properties, DyeColor color) {
+    public SeatBlock(DyeColor color, Properties properties) {
         super(properties);
         this.color = color;
         registerDefaultState(defaultBlockState().setValue(WATERLOGGED, false));
-    }
-
-    public static Function<Properties, SeatBlock> dyed(DyeColor color) {
-        return properties -> new SeatBlock(properties, color);
     }
 
     @Override
@@ -149,27 +144,6 @@ public class SeatBlock extends Block implements ProperWaterloggedBlock {
         return AllShapes.SEAT_COLLISION;
     }
 
-    public static SeatBlock getColorBlock(DyeColor color) {
-        return switch (color) {
-            case WHITE -> AllBlocks.WHITE_SEAT;
-            case ORANGE -> AllBlocks.ORANGE_SEAT;
-            case MAGENTA -> AllBlocks.MAGENTA_SEAT;
-            case LIGHT_BLUE -> AllBlocks.LIGHT_BLUE_SEAT;
-            case YELLOW -> AllBlocks.YELLOW_SEAT;
-            case LIME -> AllBlocks.LIME_SEAT;
-            case PINK -> AllBlocks.PINK_SEAT;
-            case GRAY -> AllBlocks.GRAY_SEAT;
-            case LIGHT_GRAY -> AllBlocks.LIGHT_GRAY_SEAT;
-            case CYAN -> AllBlocks.CYAN_SEAT;
-            case PURPLE -> AllBlocks.PURPLE_SEAT;
-            case BLUE -> AllBlocks.BLUE_SEAT;
-            case BROWN -> AllBlocks.BROWN_SEAT;
-            case GREEN -> AllBlocks.GREEN_SEAT;
-            case RED -> AllBlocks.RED_SEAT;
-            case BLACK -> AllBlocks.BLACK_SEAT;
-        };
-    }
-
     @Override
     protected InteractionResult useItemOn(
         ItemStack stack,
@@ -189,7 +163,7 @@ public class SeatBlock extends Block implements ProperWaterloggedBlock {
             if (level.isClientSide()) {
                 return InteractionResult.SUCCESS;
             }
-            BlockState newState = BlockHelper.copyProperties(state, getColorBlock(color).defaultBlockState());
+            BlockState newState = BlockHelper.copyProperties(state, AllBlocks.SEAT.pick(color).defaultBlockState());
             level.setBlockAndUpdate(pos, newState);
             return InteractionResult.SUCCESS;
         }

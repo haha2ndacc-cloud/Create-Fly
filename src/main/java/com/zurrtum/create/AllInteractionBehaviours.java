@@ -14,6 +14,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ColorCollection;
 
 public class AllInteractionBehaviours {
     public static final ConductorBlockInteractionBehavior.BlazeBurner BLAZE_BURNER = new ConductorBlockInteractionBehavior.BlazeBurner();
@@ -32,10 +33,14 @@ public class AllInteractionBehaviours {
         }
     }
 
+    public static void register(MovingInteractionBehaviour behaviour, ColorCollection<? extends Block> collection) {
+        collection.forEach(block -> MovingInteractionBehaviour.REGISTRY.register(block, behaviour));
+    }
+
     @SuppressWarnings("deprecation")
     public static void register(MovingInteractionBehaviour behaviour, TagKey<Block> tag) {
-        MovingInteractionBehaviour.REGISTRY.registerProvider(block -> block.builtInRegistryHolder()
-            .is(tag) ? behaviour : null);
+        MovingInteractionBehaviour.REGISTRY.registerProvider(block -> block.builtInRegistryHolder().is(tag) ?
+            behaviour : null);
     }
 
     public static void register() {
@@ -53,25 +58,7 @@ public class AllInteractionBehaviours {
             AllBlocks.FRAMED_GLASS_DOOR
         );
         register(DOOR, BlockTags.WOODEN_DOORS);
-        register(
-            SEAT,
-            AllBlocks.WHITE_SEAT,
-            AllBlocks.ORANGE_SEAT,
-            AllBlocks.MAGENTA_SEAT,
-            AllBlocks.LIGHT_BLUE_SEAT,
-            AllBlocks.YELLOW_SEAT,
-            AllBlocks.LIME_SEAT,
-            AllBlocks.PINK_SEAT,
-            AllBlocks.GRAY_SEAT,
-            AllBlocks.LIGHT_GRAY_SEAT,
-            AllBlocks.CYAN_SEAT,
-            AllBlocks.PURPLE_SEAT,
-            AllBlocks.BLUE_SEAT,
-            AllBlocks.BROWN_SEAT,
-            AllBlocks.GREEN_SEAT,
-            AllBlocks.RED_SEAT,
-            AllBlocks.BLACK_SEAT
-        );
+        register(SEAT, AllBlocks.SEAT);
         register(LEVER, Blocks.LEVER);
         register(TRAPDOOR, AllBlocks.TRAIN_TRAPDOOR, AllBlocks.FRAMED_GLASS_TRAPDOOR);
         register(TRAPDOOR, BlockTags.WOODEN_TRAPDOORS);

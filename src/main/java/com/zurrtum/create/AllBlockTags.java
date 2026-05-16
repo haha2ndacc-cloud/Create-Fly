@@ -9,55 +9,55 @@ import net.minecraft.world.level.block.Block;
 import static com.zurrtum.create.Create.MOD_ID;
 
 public class AllBlockTags {
+    public static final TagKey<Block> CASING = AllBlockItemTags.CASING.block();
+    public static final TagKey<Block> SEATS = AllBlockItemTags.SEATS.block();
+    public static final TagKey<Block> POSTBOXES = AllBlockItemTags.POSTBOXES.block();
+    public static final TagKey<Block> TABLE_CLOTHS = AllBlockItemTags.TABLE_CLOTHS.block();
+    public static final TagKey<Block> TOOLBOXES = AllBlockItemTags.TOOLBOXES.block();
+    public static final TagKey<Block> TRACKS = AllBlockItemTags.TRACKS.block();
+    public static final TagKey<Block> VALVE_HANDLES = AllBlockItemTags.VALVE_HANDLES.block();
     public static final TagKey<Block> SAPLINGS = BlockItemTags.SAPLINGS.block();
-    public static final TagKey<Block> BRITTLE = register("brittle");
-    public static final TagKey<Block> CASING = register("casing");
-    public static final TagKey<Block> COPYCAT_ALLOW = register("copycat_allow");
-    public static final TagKey<Block> COPYCAT_DENY = register("copycat_deny");
-    public static final TagKey<Block> FAN_PROCESSING_CATALYSTS_BLASTING = register("fan_processing_catalysts/blasting");
-    public static final TagKey<Block> FAN_PROCESSING_CATALYSTS_HAUNTING = register("fan_processing_catalysts/haunting");
-    public static final TagKey<Block> FAN_PROCESSING_CATALYSTS_SMOKING = register("fan_processing_catalysts/smoking");
-    public static final TagKey<Block> FAN_PROCESSING_CATALYSTS_SPLASHING = register("fan_processing_catalysts/splashing");
-    public static final TagKey<Block> FAN_TRANSPARENT = register("fan_transparent");
-    public static final TagKey<Block> GIRDABLE_TRACKS = register("girdable_tracks");
-    public static final TagKey<Block> MOVABLE_EMPTY_COLLIDER = register("movable_empty_collider");
-    public static final TagKey<Block> NON_MOVABLE = register("non_movable");
-    public static final TagKey<Block> NON_BREAKABLE = register("non_breakable");
-    public static final TagKey<Block> PASSIVE_BOILER_HEATERS = register("passive_boiler_heaters");
-    public static final TagKey<Block> SAFE_NBT = register("safe_nbt");
-    public static final TagKey<Block> SEATS = register("seats");
-    public static final TagKey<Block> POSTBOXES = register("postboxes");
-    public static final TagKey<Block> TABLE_CLOTHS = register("table_cloths");
-    public static final TagKey<Block> TOOLBOXES = register("toolboxes");
-    public static final TagKey<Block> TRACKS = register("tracks");
-    public static final TagKey<Block> TREE_ATTACHMENTS = register("tree_attachments");
-    public static final TagKey<Block> VALVE_HANDLES = register("valve_handles");
-    public static final TagKey<Block> WINDMILL_SAILS = register("windmill_sails");
-    public static final TagKey<Block> WRENCH_PICKUP = register("wrench_pickup");
-    public static final TagKey<Block> CHEST_MOUNTED_STORAGE = register("chest_mounted_storage");
-    public static final TagKey<Block> SIMPLE_MOUNTED_STORAGE = register("simple_mounted_storage");
-    public static final TagKey<Block> FALLBACK_MOUNTED_STORAGE_BLACKLIST = register("fallback_mounted_storage_blacklist");
-    public static final TagKey<Block> ROOTS = register("roots");
-    public static final TagKey<Block> SUGAR_CANE_VARIANTS = register("sugar_cane_variants");
-    public static final TagKey<Block> NON_HARVESTABLE = register("non_harvestable");
-    public static final TagKey<Block> SINGLE_BLOCK_INVENTORIES = register("single_block_inventories");
-    public static final TagKey<Block> PLOUGH_WHITELIST = register("plough_whitelist");
-    public static final TagKey<Block> PLOUGH_BLACKLIST = register("plough_blacklist");
+    public static final TagKey<Block> BRITTLE = create("brittle");
+    public static final TagKey<Block> COPYCAT_ALLOW = create("copycat_allow");
+    public static final TagKey<Block> COPYCAT_DENY = create("copycat_deny");
+    public static final TagKey<Block> FAN_PROCESSING_CATALYSTS_BLASTING = create("fan_processing_catalysts/blasting");
+    public static final TagKey<Block> FAN_PROCESSING_CATALYSTS_HAUNTING = create("fan_processing_catalysts/haunting");
+    public static final TagKey<Block> FAN_PROCESSING_CATALYSTS_SMOKING = create("fan_processing_catalysts/smoking");
+    public static final TagKey<Block> FAN_PROCESSING_CATALYSTS_SPLASHING = create("fan_processing_catalysts/splashing");
+    public static final TagKey<Block> FAN_TRANSPARENT = create("fan_transparent");
+    public static final TagKey<Block> GIRDABLE_TRACKS = create("girdable_tracks");
+    public static final TagKey<Block> MOVABLE_EMPTY_COLLIDER = create("movable_empty_collider");
+    public static final TagKey<Block> NON_MOVABLE = create("non_movable");
+    public static final TagKey<Block> NON_BREAKABLE = create("non_breakable");
+    public static final TagKey<Block> PASSIVE_BOILER_HEATERS = create("passive_boiler_heaters");
+    public static final TagKey<Block> SAFE_NBT = create("safe_nbt");
+    public static final TagKey<Block> TREE_ATTACHMENTS = create("tree_attachments");
+    public static final TagKey<Block> WINDMILL_SAILS = create("windmill_sails");
+    public static final TagKey<Block> WRENCH_PICKUP = create("wrench_pickup");
+    public static final TagKey<Block> CHEST_MOUNTED_STORAGE = create("chest_mounted_storage");
+    public static final TagKey<Block> SIMPLE_MOUNTED_STORAGE = create("simple_mounted_storage");
+    public static final TagKey<Block> FALLBACK_MOUNTED_STORAGE_BLACKLIST = create("fallback_mounted_storage_blacklist");
+    public static final TagKey<Block> ROOTS = create("roots");
+    public static final TagKey<Block> SUGAR_CANE_VARIANTS = create("sugar_cane_variants");
+    public static final TagKey<Block> NON_HARVESTABLE = create("non_harvestable");
+    public static final TagKey<Block> SINGLE_BLOCK_INVENTORIES = create("single_block_inventories");
+    public static final TagKey<Block> PLOUGH_WHITELIST = create("plough_whitelist");
+    public static final TagKey<Block> PLOUGH_BLACKLIST = create("plough_blacklist");
 
-    public static final TagKey<Block> CORALS = register("corals");
+    public static final TagKey<Block> CORALS = create("corals");
 
-    public static final TagKey<Block> RELOCATION_NOT_SUPPORTED = register("c", "relocation_not_supported");
-    public static final TagKey<Block> CARDBOARD_STORAGE_BLOCKS = register("c", "storage_blocks/cardboard");
-    public static final TagKey<Block> ANDESITE_ALLOY_STORAGE_BLOCKS = register("c", "storage_blocks/andesite_alloy");
+    public static final TagKey<Block> RELOCATION_NOT_SUPPORTED = create("c", "relocation_not_supported");
+    public static final TagKey<Block> CARDBOARD_STORAGE_BLOCKS = create("c", "storage_blocks/cardboard");
+    public static final TagKey<Block> ANDESITE_ALLOY_STORAGE_BLOCKS = create("c", "storage_blocks/andesite_alloy");
 
-    public static final TagKey<Block> SLIMY_LOGS = register("tconstruct", "slimy_logs");
-    public static final TagKey<Block> NON_DOUBLE_DOOR = register("quark", "non_double_door");
+    public static final TagKey<Block> SLIMY_LOGS = create("tconstruct", "slimy_logs");
+    public static final TagKey<Block> NON_DOUBLE_DOOR = create("quark", "non_double_door");
 
-    private static TagKey<Block> register(String name) {
+    private static TagKey<Block> create(String name) {
         return TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(MOD_ID, name));
     }
 
-    private static TagKey<Block> register(String namespace, String name) {
+    private static TagKey<Block> create(String namespace, String name) {
         return TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(namespace, name));
     }
 

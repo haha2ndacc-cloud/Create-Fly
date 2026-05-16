@@ -6,6 +6,7 @@ import com.zurrtum.create.client.Create;
 import com.zurrtum.create.client.ponder.api.registration.PonderTagRegistrationHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
@@ -157,23 +158,22 @@ public class AllCreatePonderTags {
             .add(AllItems.SMART_OBSERVER).add(AllItems.THRESHOLD_SWITCH).add(AllItems.CREATIVE_CRATE)
             .add(AllItems.PORTABLE_STORAGE_INTERFACE);
 
-        HELPER.addToTag(DECORATION).add(AllItems.ORANGE_NIXIE_TUBE).add(AllItems.DISPLAY_BOARD)
-            .add(AllItems.CUCKOO_CLOCK).add(AllItems.WOODEN_BRACKET).add(AllItems.METAL_BRACKET)
-            .add(AllItems.METAL_GIRDER).add(AllItems.ANDESITE_CASING).add(AllItems.BRASS_CASING)
-            .add(AllItems.COPPER_CASING).add(AllItems.RAILWAY_CASING);
+        HELPER.addToTag(DECORATION).add(AllItems.NIXIE_TUBE).add(AllItems.DISPLAY_BOARD).add(AllItems.CUCKOO_CLOCK)
+            .add(AllItems.WOODEN_BRACKET).add(AllItems.METAL_BRACKET).add(AllItems.METAL_GIRDER)
+            .add(AllItems.ANDESITE_CASING).add(AllItems.BRASS_CASING).add(AllItems.COPPER_CASING)
+            .add(AllItems.RAILWAY_CASING);
 
         HELPER.addToTag(CREATIVE).add(AllItems.CREATIVE_CRATE).add(AllItems.CREATIVE_FLUID_TANK)
             .add(AllItems.CREATIVE_MOTOR);
 
         HELPER.addToTag(SAILS).add(AllItems.SAIL).add(AllItems.SAIL_FRAME);
 
-        itemHelper.addToTag(SAILS).add(Blocks.WHITE_WOOL);
+        itemHelper.addToTag(SAILS).add(Blocks.WOOL.pick(DyeColor.WHITE));
 
-        HELPER.addToTag(REDSTONE).add(AllItems.SMART_OBSERVER).add(AllItems.THRESHOLD_SWITCH)
-            .add(AllItems.ORANGE_NIXIE_TUBE).add(AllItems.REDSTONE_CONTACT).add(AllItems.ANALOG_LEVER)
-            .add(AllItems.REDSTONE_LINK).add(AllItems.PULSE_EXTENDER).add(AllItems.PULSE_REPEATER)
-            .add(AllItems.PULSE_TIMER).add(AllItems.POWERED_LATCH).add(AllItems.POWERED_TOGGLE_LATCH)
-            .add(AllItems.ROSE_QUARTZ_LAMP);
+        HELPER.addToTag(REDSTONE).add(AllItems.SMART_OBSERVER).add(AllItems.THRESHOLD_SWITCH).add(AllItems.NIXIE_TUBE)
+            .add(AllItems.REDSTONE_CONTACT).add(AllItems.ANALOG_LEVER).add(AllItems.REDSTONE_LINK)
+            .add(AllItems.PULSE_EXTENDER).add(AllItems.PULSE_REPEATER).add(AllItems.PULSE_TIMER)
+            .add(AllItems.POWERED_LATCH).add(AllItems.POWERED_TOGGLE_LATCH).add(AllItems.ROSE_QUARTZ_LAMP);
 
         HELPER.addToTag(MOVEMENT_ANCHOR).add(AllItems.MECHANICAL_PISTON).add(AllItems.WINDMILL_BEARING)
             .add(AllItems.MECHANICAL_BEARING).add(AllItems.CLOCKWORK_BEARING).add(AllItems.ROPE_PULLEY)
@@ -186,20 +186,20 @@ public class AllCreatePonderTags {
         itemHelper.addToTag(CONTRAPTION_ASSEMBLY).add(Blocks.SLIME_BLOCK).add(Blocks.HONEY_BLOCK);
 
         HELPER.addToTag(HIGH_LOGISTICS).add(AllItems.PACKAGER).add(AllItems.STOCK_LINK).add(AllItems.STOCK_TICKER)
-            .add(AllItems.PACKAGE_FROGPORT).add(AllItems.WHITE_POSTBOX).add(AllItems.REDSTONE_REQUESTER)
-            .add(AllItems.RED_TABLE_CLOTH).add(AllItems.FACTORY_GAUGE).add(AllItems.REPACKAGER)
+            .add(AllItems.PACKAGE_FROGPORT).add(AllItems.POSTBOX.white()).add(AllItems.REDSTONE_REQUESTER)
+            .add(AllItems.TABLE_CLOTH.red()).add(AllItems.FACTORY_GAUGE).add(AllItems.REPACKAGER)
             .add(AllItems.PACKAGE_FILTER);
 
         HELPER.addToTag(CONTRAPTION_ACTOR).add(AllItems.MECHANICAL_HARVESTER).add(AllItems.MECHANICAL_PLOUGH)
             .add(AllItems.MECHANICAL_DRILL).add(AllItems.MECHANICAL_SAW).add(AllItems.DEPLOYER)
             .add(AllItems.PORTABLE_STORAGE_INTERFACE).add(AllItems.PORTABLE_FLUID_INTERFACE)
             .add(AllItems.MECHANICAL_BEARING).add(AllItems.ANDESITE_FUNNEL).add(AllItems.BRASS_FUNNEL)
-            .add(AllItems.WHITE_SEAT).add(AllItems.TRAIN_CONTROLS).add(AllItems.CONTRAPTION_CONTROLS)
+            .add(AllItems.SEAT.white()).add(AllItems.TRAIN_CONTROLS).add(AllItems.CONTRAPTION_CONTROLS)
             .add(AllItems.REDSTONE_CONTACT);
 
         itemHelper.addToTag(CONTRAPTION_ACTOR).add(Blocks.BELL).add(Blocks.DISPENSER).add(Blocks.DROPPER);
 
-        HELPER.addToTag(DISPLAY_SOURCES).add(AllItems.WHITE_SEAT).add(AllItems.ORANGE_NIXIE_TUBE)
+        HELPER.addToTag(DISPLAY_SOURCES).add(AllItems.SEAT.white()).add(AllItems.NIXIE_TUBE)
             .add(AllItems.THRESHOLD_SWITCH).add(AllItems.SMART_OBSERVER).add(AllItems.ANDESITE_TUNNEL)
             .add(AllItems.TRACK_OBSERVER).add(AllItems.TRACK_STATION).add(AllItems.DISPLAY_LINK)
             .add(AllItems.BRASS_TUNNEL).add(AllItems.CUCKOO_CLOCK).add(AllItems.STRESSOMETER).add(AllItems.SPEEDOMETER)
@@ -220,7 +220,7 @@ public class AllCreatePonderTags {
         //                itemHelper.addToTag(DISPLAY_SOURCES).add(computer);
         //        });
 
-        HELPER.addToTag(DISPLAY_TARGETS).add(AllItems.ORANGE_NIXIE_TUBE).add(AllItems.DISPLAY_BOARD)
+        HELPER.addToTag(DISPLAY_TARGETS).add(AllItems.NIXIE_TUBE).add(AllItems.DISPLAY_BOARD)
             .add(AllItems.DISPLAY_LINK);
 
         itemHelper.addToTag(DISPLAY_TARGETS).add(Blocks.OAK_SIGN).add(Blocks.LECTERN);

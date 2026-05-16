@@ -2,6 +2,7 @@ package com.zurrtum.create.content.equipment.toolbox;
 
 import com.mojang.serialization.MapCodec;
 import com.zurrtum.create.AllItemTags;
+import com.zurrtum.create.AllItems;
 import com.zurrtum.create.AllRecipeSerializers;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -69,7 +70,7 @@ public class ToolboxDyeingRecipe extends CustomRecipe {
             }
         }
 
-        ItemStack dyedToolbox = ToolboxBlock.getColorBlock(color).asItem().getDefaultInstance();
+        ItemStack dyedToolbox = AllItems.TOOLBOX.pick(color).getDefaultInstance();
         DataComponentPatch componentChanges = toolbox.getComponentsPatch();
         if (!componentChanges.isEmpty()) {
             dyedToolbox.applyComponents(componentChanges);

@@ -8,10 +8,10 @@ import net.minecraft.tags.TagKey;
 import static com.zurrtum.create.Create.MOD_ID;
 
 public class AllMountedItemStorageTypeTags {
-    public static final TagKey<MountedItemStorageType<?>> INTERNAL = register("internal");
-    public static final TagKey<MountedItemStorageType<?>> FUEL_BLACKLIST = register("fuel_blacklist");
+    public static final TagKey<MountedItemStorageType<?>> INTERNAL = create("internal");
+    public static final TagKey<MountedItemStorageType<?>> FUEL_BLACKLIST = create("fuel_blacklist");
 
-    private static TagKey<MountedItemStorageType<?>> register(String name) {
+    private static TagKey<MountedItemStorageType<?>> create(String name) {
         return TagKey.create(
             CreateRegistryKeys.MOUNTED_ITEM_STORAGE_TYPE,
             Identifier.fromNamespaceAndPath(MOD_ID, name)

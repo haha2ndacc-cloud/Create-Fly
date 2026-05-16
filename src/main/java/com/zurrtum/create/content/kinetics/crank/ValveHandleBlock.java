@@ -20,21 +20,15 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-import java.util.function.Function;
-
 public class ValveHandleBlock extends HandCrankBlock {
 
     public final @Nullable DyeColor color;
 
     public static ValveHandleBlock copper(Properties properties) {
-        return new ValveHandleBlock(properties, null);
+        return new ValveHandleBlock(null, properties);
     }
 
-    public static Function<Properties, ValveHandleBlock> dyed(DyeColor color) {
-        return properties -> new ValveHandleBlock(properties, color);
-    }
-
-    private ValveHandleBlock(Properties properties, @Nullable DyeColor color) {
+    public ValveHandleBlock(@Nullable DyeColor color, Properties properties) {
         super(properties);
         this.color = color;
     }
@@ -50,25 +44,10 @@ public class ValveHandleBlock extends HandCrankBlock {
     }
 
     public static ValveHandleBlock getColorBlock(@Nullable DyeColor color) {
-        return switch (color) {
-            case null -> AllBlocks.COPPER_VALVE_HANDLE;
-            case WHITE -> AllBlocks.WHITE_VALVE_HANDLE;
-            case ORANGE -> AllBlocks.ORANGE_VALVE_HANDLE;
-            case MAGENTA -> AllBlocks.MAGENTA_VALVE_HANDLE;
-            case LIGHT_BLUE -> AllBlocks.LIGHT_BLUE_VALVE_HANDLE;
-            case YELLOW -> AllBlocks.YELLOW_VALVE_HANDLE;
-            case LIME -> AllBlocks.LIME_VALVE_HANDLE;
-            case PINK -> AllBlocks.PINK_VALVE_HANDLE;
-            case GRAY -> AllBlocks.GRAY_VALVE_HANDLE;
-            case LIGHT_GRAY -> AllBlocks.LIGHT_GRAY_VALVE_HANDLE;
-            case CYAN -> AllBlocks.CYAN_VALVE_HANDLE;
-            case PURPLE -> AllBlocks.PURPLE_VALVE_HANDLE;
-            case BLUE -> AllBlocks.BLUE_VALVE_HANDLE;
-            case BROWN -> AllBlocks.BROWN_VALVE_HANDLE;
-            case GREEN -> AllBlocks.GREEN_VALVE_HANDLE;
-            case RED -> AllBlocks.RED_VALVE_HANDLE;
-            case BLACK -> AllBlocks.BLACK_VALVE_HANDLE;
-        };
+        if (color == null) {
+            return AllBlocks.COPPER_VALVE_HANDLE;
+        }
+        return AllBlocks.VALVE_HANDLE.pick(color);
     }
 
     public void clicked(Level level, BlockPos pos, BlockState state, Player player, InteractionHand hand) {
@@ -101,7 +80,8 @@ public class ValveHandleBlock extends HandCrankBlock {
         onBlockEntityUse(
             level,
             pos,
-            hcbe -> (hcbe instanceof ValveHandleBlockEntity vhbe) && vhbe.activate(player.isShiftKeyDown()) ? InteractionResult.SUCCESS : InteractionResult.PASS
+            hcbe -> (hcbe instanceof ValveHandleBlockEntity vhbe) && vhbe.activate(player.isShiftKeyDown()) ?
+                InteractionResult.SUCCESS : InteractionResult.PASS
         );
         return InteractionResult.SUCCESS;
     }

@@ -617,7 +617,7 @@ public class RedstoneScenes {
         scene.idle(7);
         scene.world().setBlocks(
             util.select().fromTo(1, 1, 3, 3, 1, 3),
-            AllBlocks.BLUE_NIXIE_TUBE.defaultBlockState().setValue(NixieTubeBlock.FACING, Direction.WEST),
+            AllBlocks.NIXIE_TUBE.blue().defaultBlockState().setValue(NixieTubeBlock.FACING, Direction.WEST),
             false
         );
         scene.idle(10);

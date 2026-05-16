@@ -99,7 +99,7 @@ public class EjectorScenes {
             .pointAt(util.vector().topOf(4, 1, 3)).placeNearTarget();
         scene.idle(60);
 
-        ItemStack copperBlock = new ItemStack(Items.COPPER_BLOCK);
+        ItemStack copperBlock = new ItemStack(Items.COPPER_BLOCK.weathering().unaffected());
         ItemStack copperIngot = new ItemStack(Items.COPPER_INGOT);
         scene.overlay().showControls(util.vector().topOf(ejectorPos).add(0.5, 0, 0), Pointing.RIGHT, 30)
             .withItem(copperBlock);

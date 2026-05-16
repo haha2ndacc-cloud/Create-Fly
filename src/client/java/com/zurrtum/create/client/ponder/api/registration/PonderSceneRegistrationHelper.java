@@ -2,6 +2,7 @@ package com.zurrtum.create.client.ponder.api.registration;
 
 import com.zurrtum.create.client.ponder.api.scene.PonderStoryBoard;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.ColorCollection;
 
 import java.util.function.Function;
 
@@ -21,6 +22,8 @@ public interface PonderSceneRegistrationHelper<T> {
     MultiSceneBuilder forComponents(T... components);
 
     MultiSceneBuilder forComponents(Iterable<? extends T> components);
+
+    MultiSceneBuilder forComponents(ColorCollection<? extends T> colorComponents, T... components);
 
     Identifier asLocation(String path);
 }

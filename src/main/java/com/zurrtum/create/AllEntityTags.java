@@ -8,10 +8,10 @@ import net.minecraft.world.entity.EntityType;
 import static com.zurrtum.create.Create.MOD_ID;
 
 public class AllEntityTags {
-    public static final TagKey<EntityType<?>> BLAZE_BURNER_CAPTURABLE = register("blaze_burner_capturable");
-    public static final TagKey<EntityType<?>> IGNORE_SEAT = register("ignore_seat");
+    public static final TagKey<EntityType<?>> BLAZE_BURNER_CAPTURABLE = create("blaze_burner_capturable");
+    public static final TagKey<EntityType<?>> IGNORE_SEAT = create("ignore_seat");
 
-    private static TagKey<EntityType<?>> register(String name) {
+    private static TagKey<EntityType<?>> create(String name) {
         return TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MOD_ID, name));
     }
 

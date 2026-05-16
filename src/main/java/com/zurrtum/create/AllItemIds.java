@@ -1,0 +1,123 @@
+package com.zurrtum.create;
+
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
+
+import static com.zurrtum.create.Create.MOD_ID;
+
+public class AllItemIds {
+    public static final ResourceKey<Item> ANDESITE_ALLOY = create("andesite_alloy");
+    public static final ResourceKey<Item> ATTRIBUTE_FILTER = create("attribute_filter");
+    public static final ResourceKey<Item> BAR_OF_CHOCOLATE = create("bar_of_chocolate");
+    public static final ResourceKey<Item> BELT_CONNECTOR = create("belt_connector");
+    public static final ResourceKey<Item> BLAZE_CAKE = create("blaze_cake");
+    public static final ResourceKey<Item> BLAZE_CAKE_BASE = create("blaze_cake_base");
+    public static final ResourceKey<Item> BRASS_HAND = create("brass_hand");
+    public static final ResourceKey<Item> BRASS_INGOT = create("brass_ingot");
+    public static final ResourceKey<Item> BRASS_NUGGET = create("brass_nugget");
+    public static final ResourceKey<Item> BRASS_SHEET = create("brass_sheet");
+    public static final ResourceKey<Item> BUILDERS_TEA = create("builders_tea");
+    public static final ResourceKey<Item> CARDBOARD = create("cardboard");
+    public static final ResourceKey<Item> CARDBOARD_BOOTS = create("cardboard_boots");
+    public static final ResourceKey<Item> CARDBOARD_CHESTPLATE = create("cardboard_chestplate");
+    public static final ResourceKey<Item> CARDBOARD_HELMET = create("cardboard_helmet");
+    public static final ResourceKey<Item> CARDBOARD_LEGGINGS = create("cardboard_leggings");
+    public static final ResourceKey<Item> CARDBOARD_PACKAGE_10X12 = create("cardboard_package_10x12");
+    public static final ResourceKey<Item> CARDBOARD_PACKAGE_10X8 = create("cardboard_package_10x8");
+    public static final ResourceKey<Item> CARDBOARD_PACKAGE_12X10 = create("cardboard_package_12x10");
+    public static final ResourceKey<Item> CARDBOARD_PACKAGE_12X12 = create("cardboard_package_12x12");
+    public static final ResourceKey<Item> CARDBOARD_SWORD = create("cardboard_sword");
+    public static final ResourceKey<Item> CHEST_MINECART_CONTRAPTION = create("chest_minecart_contraption");
+    public static final ResourceKey<Item> CHOCOLATE_BERRIES = create("chocolate_glazed_berries");
+    public static final ResourceKey<Item> CHOCOLATE_BUCKET = create("chocolate_bucket");
+    public static final ResourceKey<Item> CINDER_FLOUR = create("cinder_flour");
+    public static final ResourceKey<Item> COPPER_BACKTANK = create("copper_backtank");
+    public static final ResourceKey<Item> COPPER_DIVING_BOOTS = create("copper_diving_boots");
+    public static final ResourceKey<Item> COPPER_DIVING_HELMET = create("copper_diving_helmet");
+    public static final ResourceKey<Item> COPPER_SHEET = create("copper_sheet");
+    public static final ResourceKey<Item> CRAFTER_SLOT_COVER = create("crafter_slot_cover");
+    public static final ResourceKey<Item> CRAFTING_BLUEPRINT = create("crafting_blueprint");
+    public static final ResourceKey<Item> CREATIVE_BLAZE_CAKE = create("creative_blaze_cake");
+    public static final ResourceKey<Item> CRUSHED_COPPER = create("crushed_raw_copper");
+    public static final ResourceKey<Item> CRUSHED_GOLD = create("crushed_raw_gold");
+    public static final ResourceKey<Item> CRUSHED_IRON = create("crushed_raw_iron");
+    public static final ResourceKey<Item> CRUSHED_RAW_ALUMINUM = create("crushed_raw_aluminum");
+    public static final ResourceKey<Item> CRUSHED_RAW_LEAD = create("crushed_raw_lead");
+    public static final ResourceKey<Item> CRUSHED_RAW_NICKEL = create("crushed_raw_nickel");
+    public static final ResourceKey<Item> CRUSHED_RAW_OSMIUM = create("crushed_raw_osmium");
+    public static final ResourceKey<Item> CRUSHED_RAW_PLATINUM = create("crushed_raw_platinum");
+    public static final ResourceKey<Item> CRUSHED_RAW_QUICKSILVER = create("crushed_raw_quicksilver");
+    public static final ResourceKey<Item> CRUSHED_RAW_SILVER = create("crushed_raw_silver");
+    public static final ResourceKey<Item> CRUSHED_RAW_TIN = create("crushed_raw_tin");
+    public static final ResourceKey<Item> CRUSHED_RAW_URANIUM = create("crushed_raw_uranium");
+    public static final ResourceKey<Item> CRUSHED_ZINC = create("crushed_raw_zinc");
+    public static final ResourceKey<Item> DOUGH = create("dough");
+    public static final ResourceKey<Item> ELECTRON_TUBE = create("electron_tube");
+    public static final ResourceKey<Item> EMPTY_BLAZE_BURNER = create("empty_blaze_burner");
+    public static final ResourceKey<Item> EMPTY_SCHEMATIC = create("empty_schematic");
+    public static final ResourceKey<Item> EXP_NUGGET = create("experience_nugget");
+    public static final ResourceKey<Item> EXTENDO_GRIP = create("extendo_grip");
+    public static final ResourceKey<Item> FILTER = create("filter");
+    public static final ResourceKey<Item> FURNACE_MINECART_CONTRAPTION = create("furnace_minecart_contraption");
+    public static final ResourceKey<Item> GOGGLES = create("goggles");
+    public static final ResourceKey<Item> GOLDEN_SHEET = create("golden_sheet");
+    public static final ResourceKey<Item> HONEYED_APPLE = create("honeyed_apple");
+    public static final ResourceKey<Item> HONEY_BUCKET = create("honey_bucket");
+    public static final ResourceKey<Item> INCOMPLETE_PRECISION_MECHANISM = create("incomplete_precision_mechanism");
+    public static final ResourceKey<Item> INCOMPLETE_REINFORCED_SHEET = create("unprocessed_obsidian_sheet");
+    public static final ResourceKey<Item> INCOMPLETE_TRACK = create("incomplete_track");
+    public static final ResourceKey<Item> IRON_SHEET = create("iron_sheet");
+    public static final ResourceKey<Item> LINKED_CONTROLLER = create("linked_controller");
+    public static final ResourceKey<Item> MINECART_CONTRAPTION = create("minecart_contraption");
+    public static final ResourceKey<Item> MINECART_COUPLING = create("minecart_coupling");
+    public static final ResourceKey<Item> NETHERITE_BACKTANK = create("netherite_backtank");
+    public static final ResourceKey<Item> NETHERITE_DIVING_BOOTS = create("netherite_diving_boots");
+    public static final ResourceKey<Item> NETHERITE_DIVING_HELMET = create("netherite_diving_helmet");
+    public static final ResourceKey<Item> PACKAGE_FILTER = create("package_filter");
+    public static final ResourceKey<Item> POLISHED_ROSE_QUARTZ = create("polished_rose_quartz");
+    public static final ResourceKey<Item> POTATO_CANNON = create("potato_cannon");
+    public static final ResourceKey<Item> POWDERED_OBSIDIAN = create("powdered_obsidian");
+    public static final ResourceKey<Item> PRECISION_MECHANISM = create("precision_mechanism");
+    public static final ResourceKey<Item> PROPELLER = create("propeller");
+    public static final ResourceKey<Item> PULP = create("pulp");
+    public static final ResourceKey<Item> RARE_CREEPER_PACKAGE = create("rare_creeper_package");
+    public static final ResourceKey<Item> RARE_DARCY_PACKAGE = create("rare_darcy_package");
+    public static final ResourceKey<Item> RARE_EVAN_PACKAGE = create("rare_evan_package");
+    public static final ResourceKey<Item> RARE_JINX_PACKAGE = create("rare_jinx_package");
+    public static final ResourceKey<Item> RARE_KRYPPERS_PACKAGE = create("rare_kryppers_package");
+    public static final ResourceKey<Item> RARE_SIMI_PACKAGE = create("rare_simi_package");
+    public static final ResourceKey<Item> RARE_STARLOTTE_PACKAGE = create("rare_starlotte_package");
+    public static final ResourceKey<Item> RARE_THUNDER_PACKAGE = create("rare_thunder_package");
+    public static final ResourceKey<Item> RARE_UP_PACKAGE = create("rare_up_package");
+    public static final ResourceKey<Item> RARE_VECTOR_PACKAGE = create("rare_vector_package");
+    public static final ResourceKey<Item> RAW_ZINC = create("raw_zinc");
+    public static final ResourceKey<Item> RED_SAND_PAPER = create("red_sand_paper");
+    public static final ResourceKey<Item> ROSE_QUARTZ = create("rose_quartz");
+    public static final ResourceKey<Item> SAND_PAPER = create("sand_paper");
+    public static final ResourceKey<Item> SCHEDULE = create("schedule");
+    public static final ResourceKey<Item> SCHEMATIC = create("schematic");
+    public static final ResourceKey<Item> SCHEMATIC_AND_QUILL = create("schematic_and_quill");
+    public static final ResourceKey<Item> SHOPPING_LIST = create("shopping_list");
+    public static final ResourceKey<Item> STURDY_SHEET = create("sturdy_sheet");
+    public static final ResourceKey<Item> SUPER_GLUE = create("super_glue");
+    public static final ResourceKey<Item> SWEET_ROLL = create("sweet_roll");
+    public static final ResourceKey<Item> TRANSMITTER = create("transmitter");
+    public static final ResourceKey<Item> TREE_FERTILIZER = create("tree_fertilizer");
+    public static final ResourceKey<Item> VERTICAL_GEARBOX = create("vertical_gearbox");
+    public static final ResourceKey<Item> WAND_OF_SYMMETRY = create("wand_of_symmetry");
+    public static final ResourceKey<Item> WHEAT_FLOUR = create("wheat_flour");
+    public static final ResourceKey<Item> WHISK = create("whisk");
+    public static final ResourceKey<Item> WORLDSHAPER = create("handheld_worldshaper");
+    public static final ResourceKey<Item> WRENCH = create("wrench");
+    public static final ResourceKey<Item> ZINC_INGOT = create("zinc_ingot");
+    public static final ResourceKey<Item> ZINC_NUGGET = create("zinc_nugget");
+
+    private static ResourceKey<Item> create(final String name) {
+        return ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MOD_ID, name));
+    }
+
+    public static void register() {
+    }
+}

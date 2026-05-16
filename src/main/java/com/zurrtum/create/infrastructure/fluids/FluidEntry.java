@@ -1,11 +1,113 @@
 package com.zurrtum.create.infrastructure.fluids;
 
 import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 import org.jspecify.annotations.Nullable;
 
 public class FluidEntry {
-    public FlowableFluid flowing = null;
-    public FlowableFluid still = null;
+    public FlowableFluid flowing = new Flowing();
+    public FlowableFluid still = new Still();
     public @Nullable BucketItem bucket = null;
     public @Nullable FluidBlock block = null;
+
+    private class Flowing extends FlowableFluid {
+        public FluidEntry getEntry() {
+            return FluidEntry.this;
+        }
+
+        @Override
+        public Fluid getFlowing() {
+            return this;
+        }
+
+        @Override
+        public Fluid getSource() {
+            return still;
+        }
+
+        @Override
+        public Item getBucket() {
+            return bucket != null ? bucket : Items.AIR;
+        }
+
+        @Override
+        public BlockState createLegacyBlock(FluidState state) {
+            if (block != null) {
+                return block.defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(state));
+            }
+            return Blocks.AIR.defaultBlockState();
+        }
+
+        @Override
+        public boolean isSame(Fluid fluid) {
+            return fluid == this || fluid == still;
+        }
+
+        @Override
+        protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
+            super.createFluidStateDefinition(builder);
+            builder.add(LEVEL);
+        }
+
+        @Override
+        public int getAmount(FluidState state) {
+            return state.getValue(LEVEL);
+        }
+
+        @Override
+        public boolean isSource(FluidState state) {
+            return false;
+        }
+    }
+
+    private class Still extends FlowableFluid {
+        public FluidEntry getEntry() {
+            return FluidEntry.this;
+        }
+
+        @Override
+        public Fluid getFlowing() {
+            return flowing;
+        }
+
+        @Override
+        public Fluid getSource() {
+            return this;
+        }
+
+        @Override
+        public Item getBucket() {
+            return bucket != null ? bucket : Items.AIR;
+        }
+
+        @Override
+        public BlockState createLegacyBlock(FluidState state) {
+            if (block == null) {
+                return Blocks.AIR.defaultBlockState();
+            }
+            return block.defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(state));
+        }
+
+        @Override
+        public boolean isSame(Fluid fluid) {
+            return fluid == this || fluid == flowing;
+        }
+
+        @Override
+        public int getAmount(FluidState state) {
+            return 8;
+        }
+
+        @Override
+        public boolean isSource(FluidState state) {
+            return true;
+        }
+    }
 }

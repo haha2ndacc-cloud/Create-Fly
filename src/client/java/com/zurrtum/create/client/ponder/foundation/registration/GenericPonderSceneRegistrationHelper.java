@@ -5,8 +5,12 @@ import com.zurrtum.create.client.ponder.api.registration.PonderSceneRegistration
 import com.zurrtum.create.client.ponder.api.registration.StoryBoardEntry;
 import com.zurrtum.create.client.ponder.api.scene.PonderStoryBoard;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.ColorCollection;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 
 public class GenericPonderSceneRegistrationHelper<T> implements PonderSceneRegistrationHelper<T> {
@@ -54,6 +58,15 @@ public class GenericPonderSceneRegistrationHelper<T> implements PonderSceneRegis
     @SafeVarargs
     public final MultiSceneBuilder forComponents(T... components) {
         return new GenericMultiSceneBuilder<>(this, Arrays.asList(components));
+    }
+
+    @Override
+    @SafeVarargs
+    public final MultiSceneBuilder forComponents(ColorCollection<? extends T> colorComponents, T... components) {
+        List<T> list = new ArrayList<>(16 + components.length);
+        colorComponents.forEach(list::add);
+        Collections.addAll(list, components);
+        return new GenericMultiSceneBuilder<>(this, list);
     }
 
     @Override

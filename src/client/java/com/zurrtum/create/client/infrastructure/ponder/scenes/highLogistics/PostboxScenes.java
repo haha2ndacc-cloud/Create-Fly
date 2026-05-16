@@ -72,7 +72,7 @@ public class PostboxScenes {
 
         Vec3 fromTarget = util.vector().topOf(station);
 
-        ItemStack postboxItem = AllItems.WHITE_POSTBOX.getDefaultInstance();
+        ItemStack postboxItem = AllItems.POSTBOX.white().getDefaultInstance();
         scene.overlay().showControls(fromTarget, Pointing.DOWN, 50).rightClick().withItem(postboxItem);
         scene.idle(5);
 

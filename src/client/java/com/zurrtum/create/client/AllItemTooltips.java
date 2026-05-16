@@ -5,7 +5,11 @@ import com.zurrtum.create.client.catnip.lang.FontHelper;
 import com.zurrtum.create.client.foundation.item.ItemDescription;
 import com.zurrtum.create.client.foundation.item.KineticStats;
 import com.zurrtum.create.client.foundation.item.TooltipModifier;
+import com.zurrtum.create.content.logistics.packagePort.PackagePortItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.ColorCollection;
+
+import java.util.function.Supplier;
 
 public class AllItemTooltips {
     public static void register(Item item) {
@@ -24,6 +28,14 @@ public class AllItemTooltips {
     public static void register(Item item, String id) {
         register(item);
         ItemDescription.useKey(item, id);
+    }
+
+    public static void register(ColorCollection<? extends Item> collection, String id) {
+        Supplier<String> supplier = () -> id;
+        collection.forEach(item -> {
+            register(item);
+            ItemDescription.useKey(item, supplier);
+        });
     }
 
     public static void register() {
@@ -106,21 +118,6 @@ public class AllItemTooltips {
         register(AllItems.CARDBOARD_CHESTPLATE, "item.create.cardboard_armor");
         register(AllItems.CARDBOARD_LEGGINGS, "item.create.cardboard_armor");
         register(AllItems.CARDBOARD_BOOTS, "item.create.cardboard_armor");
-        register(AllItems.WHITE_TOOLBOX, "block.create.toolbox");
-        register(AllItems.ORANGE_TOOLBOX, "block.create.toolbox");
-        register(AllItems.MAGENTA_TOOLBOX, "block.create.toolbox");
-        register(AllItems.LIGHT_BLUE_TOOLBOX, "block.create.toolbox");
-        register(AllItems.YELLOW_TOOLBOX, "block.create.toolbox");
-        register(AllItems.LIME_TOOLBOX, "block.create.toolbox");
-        register(AllItems.PINK_TOOLBOX, "block.create.toolbox");
-        register(AllItems.GRAY_TOOLBOX, "block.create.toolbox");
-        register(AllItems.LIGHT_GRAY_TOOLBOX, "block.create.toolbox");
-        register(AllItems.CYAN_TOOLBOX, "block.create.toolbox");
-        register(AllItems.PURPLE_TOOLBOX, "block.create.toolbox");
-        register(AllItems.BLUE_TOOLBOX, "block.create.toolbox");
-        register(AllItems.BROWN_TOOLBOX, "block.create.toolbox");
-        register(AllItems.GREEN_TOOLBOX, "block.create.toolbox");
-        register(AllItems.RED_TOOLBOX, "block.create.toolbox");
-        register(AllItems.BLACK_TOOLBOX, "block.create.toolbox");
+        register(AllItems.TOOLBOX, "block.create.toolbox");
     }
 }

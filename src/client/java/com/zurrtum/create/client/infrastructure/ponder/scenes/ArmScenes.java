@@ -139,7 +139,7 @@ public class ArmScenes {
 
         inputDepot = util.grid().at(1, 3, 4);
         outputDepot = util.grid().at(1, 1, 0);
-        copper = new ItemStack(Items.COPPER_BLOCK);
+        copper = new ItemStack(Items.COPPER_BLOCK.weathering().unaffected());
         scene.world().createItemOnBeltLike(inputDepot, Direction.SOUTH, copper);
         scene.idle(20);
         scene.world().instructArm(armPos, Phase.MOVE_TO_INPUT, ItemStack.EMPTY, 2);

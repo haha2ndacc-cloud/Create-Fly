@@ -36,7 +36,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
@@ -44,9 +43,9 @@ public class ToolboxBlock extends HorizontalDirectionalBlock implements SimpleWa
 
     protected final DyeColor color;
 
-    public static final MapCodec<ToolboxBlock> CODEC = simpleCodec(p -> new ToolboxBlock(p, DyeColor.WHITE));
+    public static final MapCodec<ToolboxBlock> CODEC = simpleCodec(p -> new ToolboxBlock(DyeColor.WHITE, p));
 
-    public ToolboxBlock(Properties properties, DyeColor color) {
+    public ToolboxBlock(DyeColor color, Properties properties) {
         super(properties);
         this.color = color;
         registerDefaultState(defaultBlockState().setValue(WATERLOGGED, false));
@@ -66,31 +65,6 @@ public class ToolboxBlock extends HorizontalDirectionalBlock implements SimpleWa
         @Nullable Direction context
     ) {
         return blockEntity.inventory;
-    }
-
-    public static Function<Properties, ToolboxBlock> dyed(DyeColor color) {
-        return settings -> new ToolboxBlock(settings, color);
-    }
-
-    public static ToolboxBlock getColorBlock(DyeColor color) {
-        return switch (color) {
-            case WHITE -> AllBlocks.WHITE_TOOLBOX;
-            case ORANGE -> AllBlocks.ORANGE_TOOLBOX;
-            case MAGENTA -> AllBlocks.MAGENTA_TOOLBOX;
-            case LIGHT_BLUE -> AllBlocks.LIGHT_BLUE_TOOLBOX;
-            case YELLOW -> AllBlocks.YELLOW_TOOLBOX;
-            case LIME -> AllBlocks.LIME_TOOLBOX;
-            case PINK -> AllBlocks.PINK_TOOLBOX;
-            case GRAY -> AllBlocks.GRAY_TOOLBOX;
-            case LIGHT_GRAY -> AllBlocks.LIGHT_GRAY_TOOLBOX;
-            case CYAN -> AllBlocks.CYAN_TOOLBOX;
-            case PURPLE -> AllBlocks.PURPLE_TOOLBOX;
-            case BLUE -> AllBlocks.BLUE_TOOLBOX;
-            case BROWN -> AllBlocks.BROWN_TOOLBOX;
-            case GREEN -> AllBlocks.GREEN_TOOLBOX;
-            case RED -> AllBlocks.RED_TOOLBOX;
-            case BLACK -> AllBlocks.BLACK_TOOLBOX;
-        };
     }
 
     @Override
@@ -209,7 +183,7 @@ public class ToolboxBlock extends HorizontalDirectionalBlock implements SimpleWa
             if (level.isClientSide()) {
                 return InteractionResult.SUCCESS;
             }
-            BlockState newState = BlockHelper.copyProperties(state, getColorBlock(color).defaultBlockState());
+            BlockState newState = BlockHelper.copyProperties(state, AllBlocks.TOOLBOX.pick(color).defaultBlockState());
             level.setBlockAndUpdate(pos, newState);
             return InteractionResult.SUCCESS;
         }

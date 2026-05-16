@@ -37,7 +37,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class TableClothBlock extends Block implements IWrenchable, IBE<TableClothBlockEntity> {
@@ -48,22 +47,14 @@ public class TableClothBlock extends Block implements IWrenchable, IBE<TableClot
 
     private @Nullable DyeColor colour;
 
-    public TableClothBlock(Properties pProperties, DyeColor colour) {
+    public TableClothBlock(DyeColor colour, Properties pProperties) {
         super(pProperties);
         this.colour = colour;
         registerDefaultState(defaultBlockState().setValue(HAS_BE, false));
     }
 
-    public TableClothBlock(Properties pProperties, String type) {
+    public TableClothBlock(Properties pProperties) {
         super(pProperties);
-    }
-
-    public static Function<Properties, TableClothBlock> dyed(DyeColor color) {
-        return settings -> new TableClothBlock(settings, color);
-    }
-
-    public static Function<Properties, TableClothBlock> styled(String type) {
-        return settings -> new TableClothBlock(settings, type);
     }
 
     @Override

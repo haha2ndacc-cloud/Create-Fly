@@ -18,10 +18,10 @@ public class PlayerPassengerConditionRender implements IScheduleInput<PlayerPass
     public Pair<ItemStack, Component> getSummary(PlayerPassengerCondition input) {
         int target = input.getTarget();
         return Pair.of(
-            AllItems.YELLOW_SEAT.getDefaultInstance(),
+            AllItems.SEAT.yellow().getDefaultInstance(),
             CreateLang.translateDirect(
-                "schedule.condition.player_count." + (target == 1 ? "summary" : "summary_plural"),
-                target
+                "schedule.condition.player_count." + (target == 1 ? "summary" :
+                    "summary_plural"), target
             )
         );
     }

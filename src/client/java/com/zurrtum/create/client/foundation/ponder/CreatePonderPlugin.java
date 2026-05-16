@@ -55,7 +55,7 @@ public class CreatePonderPlugin implements PonderPlugin {
     @Override
     public void indexExclusions(IndexExclusionHelper helper) {
         helper.excludeBlockVariants(ValveHandleBlock.class, AllBlocks.COPPER_VALVE_HANDLE);
-        helper.excludeBlockVariants(PostboxBlock.class, AllBlocks.WHITE_POSTBOX);
-        helper.excludeBlockVariants(TableClothBlock.class, AllBlocks.WHITE_TABLE_CLOTH);
+        helper.excludeBlockVariants(PostboxBlock.class, AllBlocks.POSTBOX.white());
+        helper.excludeBlockVariants(TableClothBlock.class, AllBlocks.TABLE_CLOTH.white());
     }
 }

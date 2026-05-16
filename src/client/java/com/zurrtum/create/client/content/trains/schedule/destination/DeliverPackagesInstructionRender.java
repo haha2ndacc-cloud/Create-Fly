@@ -20,7 +20,7 @@ public class DeliverPackagesInstructionRender implements IScheduleInput<DeliverP
 
     @Override
     public ItemStack getSecondLineIcon() {
-        return AllItems.WHITE_POSTBOX.getDefaultInstance();
+        return AllItems.POSTBOX.white().getDefaultInstance();
     }
 
     @Override

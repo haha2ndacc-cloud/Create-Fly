@@ -16,24 +16,12 @@ public interface WeatheringCopperMixin {
         ImmutableBiMap.Builder<Block, Block> builder,
         Operation<ImmutableBiMap<Block, Block>> original
     ) {
-        builder.put(AllBlocks.COPPER_SHINGLES, AllBlocks.EXPOSED_COPPER_SHINGLES);
-        builder.put(AllBlocks.EXPOSED_COPPER_SHINGLES, AllBlocks.WEATHERED_COPPER_SHINGLES);
-        builder.put(AllBlocks.WEATHERED_COPPER_SHINGLES, AllBlocks.OXIDIZED_COPPER_SHINGLES);
-        builder.put(AllBlocks.COPPER_SHINGLE_SLAB, AllBlocks.EXPOSED_COPPER_SHINGLE_SLAB);
-        builder.put(AllBlocks.EXPOSED_COPPER_SHINGLE_SLAB, AllBlocks.WEATHERED_COPPER_SHINGLE_SLAB);
-        builder.put(AllBlocks.WEATHERED_COPPER_SHINGLE_SLAB, AllBlocks.OXIDIZED_COPPER_SHINGLE_SLAB);
-        builder.put(AllBlocks.COPPER_SHINGLE_STAIRS, AllBlocks.EXPOSED_COPPER_SHINGLE_STAIRS);
-        builder.put(AllBlocks.EXPOSED_COPPER_SHINGLE_STAIRS, AllBlocks.WEATHERED_COPPER_SHINGLE_STAIRS);
-        builder.put(AllBlocks.WEATHERED_COPPER_SHINGLE_STAIRS, AllBlocks.OXIDIZED_COPPER_SHINGLE_STAIRS);
-        builder.put(AllBlocks.COPPER_TILES, AllBlocks.EXPOSED_COPPER_TILES);
-        builder.put(AllBlocks.EXPOSED_COPPER_TILES, AllBlocks.WEATHERED_COPPER_TILES);
-        builder.put(AllBlocks.WEATHERED_COPPER_TILES, AllBlocks.OXIDIZED_COPPER_TILES);
-        builder.put(AllBlocks.COPPER_TILE_SLAB, AllBlocks.EXPOSED_COPPER_TILE_SLAB);
-        builder.put(AllBlocks.EXPOSED_COPPER_TILE_SLAB, AllBlocks.WEATHERED_COPPER_TILE_SLAB);
-        builder.put(AllBlocks.WEATHERED_COPPER_TILE_SLAB, AllBlocks.OXIDIZED_COPPER_TILE_SLAB);
-        builder.put(AllBlocks.COPPER_TILE_STAIRS, AllBlocks.EXPOSED_COPPER_TILE_STAIRS);
-        builder.put(AllBlocks.EXPOSED_COPPER_TILE_STAIRS, AllBlocks.WEATHERED_COPPER_TILE_STAIRS);
-        builder.put(AllBlocks.WEATHERED_COPPER_TILE_STAIRS, AllBlocks.OXIDIZED_COPPER_TILE_STAIRS);
+        AllBlocks.COPPER_SHINGLES.weathering().progressMapping(builder::put);
+        AllBlocks.COPPER_SHINGLE_SLAB.weathering().progressMapping(builder::put);
+        AllBlocks.COPPER_SHINGLE_STAIRS.weathering().progressMapping(builder::put);
+        AllBlocks.COPPER_TILES.weathering().progressMapping(builder::put);
+        AllBlocks.COPPER_TILE_SLAB.weathering().progressMapping(builder::put);
+        AllBlocks.COPPER_TILE_STAIRS.weathering().progressMapping(builder::put);
         return original.call(builder);
     }
 }

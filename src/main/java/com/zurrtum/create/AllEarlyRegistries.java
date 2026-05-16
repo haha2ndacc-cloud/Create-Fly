@@ -5,12 +5,16 @@ import com.zurrtum.create.api.registry.CreateRegisterPlugin;
 public class AllEarlyRegistries implements CreateRegisterPlugin {
     @Override
     public void onBlockRegister() {
-        AllBlocks.register();
+        AllBlockIds.init();
+        AllBlockItemIds.init();
+        AllBlocks.init();
     }
 
     @Override
     public void onFluidRegister() {
-        AllFluids.register();
+        AllFluidIds.init();
+        AllFluidEntries.init();
+        AllFluids.init();
     }
 
     @Override

@@ -1,10 +1,10 @@
 package com.zurrtum.create.compat.eiv;
 
 import com.zurrtum.create.AllItemTags;
+import com.zurrtum.create.AllItems;
 import com.zurrtum.create.AllRecipeTypes;
 import com.zurrtum.create.compat.eiv.display.*;
 import com.zurrtum.create.content.equipment.sandPaper.SandPaperPolishingRecipe;
-import com.zurrtum.create.content.equipment.toolbox.ToolboxBlock;
 import com.zurrtum.create.content.kinetics.deployer.ManualApplicationRecipe;
 import com.zurrtum.create.content.kinetics.millstone.MillingRecipe;
 import de.crafty.eiv.common.api.IExtendedItemViewIntegration;
@@ -155,7 +155,7 @@ public class EivCommonPlugin implements IExtendedItemViewIntegration {
         for (DyeColor color : DyeColor.values()) {
             recipes.add(new ShapelessServerRecipe(
                 List.of(Ingredient.of(DyeItem.byColor(color)), ingredient),
-                ToolboxBlock.getColorBlock(color).asItem().getDefaultInstance()
+                AllItems.TOOLBOX.pick(color).getDefaultInstance()
             ));
         }
     }

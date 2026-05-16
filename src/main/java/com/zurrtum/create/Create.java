@@ -74,9 +74,11 @@ public class Create implements ModInitializer {
         AllArmorMaterials.register();
         EncasingRegistry.register();
         BlockStressValues.register();
-        AllItems.register();
+        AllItemIds.register();
+        AllItems.init();
         AllFlowCollision.register();
         AllFluidTags.register();
+        AllBlockItemTags.register();
         AllBlockTags.register();
         AllItemTags.register();
         AllMountedItemStorageTypeTags.register();

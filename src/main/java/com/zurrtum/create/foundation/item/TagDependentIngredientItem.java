@@ -19,7 +19,7 @@ public class TagDependentIngredientItem extends Item {
         this.tag = tag;
     }
 
-    public static Function<Properties, TagDependentIngredientItem> tag(String path) {
+    public static Function<Properties, Item> tag(String path) {
         return settings -> new TagDependentIngredientItem(
             settings,
             TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("c", path))

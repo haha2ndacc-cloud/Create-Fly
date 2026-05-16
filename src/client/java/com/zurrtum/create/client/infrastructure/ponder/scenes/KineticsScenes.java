@@ -928,7 +928,7 @@ public class KineticsScenes {
         scene.idle(7);
         scene.world().modifyBlock(
             valvePos,
-            _ -> AllBlocks.BLUE_VALVE_HANDLE.defaultBlockState().setValue(ValveHandleBlock.FACING, Direction.NORTH),
+            _ -> AllBlocks.VALVE_HANDLE.blue().defaultBlockState().setValue(ValveHandleBlock.FACING, Direction.NORTH),
             true
         );
         scene.idle(10);
@@ -1186,8 +1186,9 @@ public class KineticsScenes {
         scene.idle(10);
 
         scene.overlay().showText(80)
-            .text("The " + component + " displays the current " + (speed ? "Speed" : "Stress Capacity") + (speed ? " of attached components" : " of the attached kinetic network"))
-            .attachKeyFrame().pointAt(util.vector().topOf(gaugePos)).placeNearTarget();
+            .text("The " + component + " displays the current " + (speed ? "Speed" : "Stress Capacity") + (speed ?
+                " of attached components" : " of the attached kinetic network")).attachKeyFrame()
+            .pointAt(util.vector().topOf(gaugePos)).placeNearTarget();
         scene.idle(90);
 
         if (speed) {

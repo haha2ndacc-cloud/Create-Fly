@@ -332,7 +332,7 @@ public class ElevatorScenes {
 
         scene.world().setBlock(
             nixiePos,
-            AllBlocks.GREEN_NIXIE_TUBE.defaultBlockState().setValue(NixieTubeBlock.FACING, Direction.WEST),
+            AllBlocks.NIXIE_TUBE.green().defaultBlockState().setValue(NixieTubeBlock.FACING, Direction.WEST),
             false
         );
 
