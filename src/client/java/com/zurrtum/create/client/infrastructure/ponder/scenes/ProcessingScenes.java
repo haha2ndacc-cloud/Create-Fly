@@ -35,6 +35,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.item.ItemStack;
@@ -545,7 +546,7 @@ public class ProcessingScenes {
         BlockPos center = util.grid().at(2, 0, 2);
 
         scene.world().createEntity(w -> {
-            Blaze blazeEntity = EntityType.BLAZE.create(w, EntitySpawnReason.LOAD);
+            Blaze blazeEntity = EntityTypes.BLAZE.create(w, EntitySpawnReason.LOAD);
             Vec3 v = util.vector().topOf(center);
             blazeEntity.setPosRaw(v.x, v.y, v.z);
             blazeEntity.setYRot(blazeEntity.yRotO = 180);

@@ -20,6 +20,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -69,7 +70,7 @@ public class CartAssemblerScenes {
         scene.idle(80);
 
         ElementLink<MinecartElement> cart = scene.special()
-            .createCart(util.vector().topOf(2, 0, 4), 90, EntityType.MINECART::create);
+            .createCart(util.vector().topOf(2, 0, 4), 90, EntityTypes.MINECART::create);
         scene.world().showSection(util.select().position(assemblerPos.above()), Direction.DOWN);
         scene.idle(10);
         scene.special().moveCart(cart, util.vector().of(0, 0, -2), 20);
@@ -206,7 +207,7 @@ public class CartAssemblerScenes {
         scene.idle(10);
 
         ElementLink<MinecartElement> cart = scene.special()
-            .createCart(util.vector().topOf(util.grid().at(4, 0, 3)), 0, EntityType.MINECART::create);
+            .createCart(util.vector().topOf(util.grid().at(4, 0, 3)), 0, EntityTypes.MINECART::create);
         scene.idle(20);
         scene.special().moveCart(cart, util.vector().of(-1, 0, 0), 10);
         scene.idle(10);
@@ -258,7 +259,8 @@ public class CartAssemblerScenes {
         scene.idle(70);
 
         contraption = scene.world().showIndependentSection(util.select().fromTo(3, 2, 3, 2, 2, 3), Direction.DOWN);
-        cart = scene.special().createCart(util.vector().topOf(util.grid().at(4, 0, 3)), 0, EntityType.MINECART::create);
+        cart = scene.special()
+            .createCart(util.vector().topOf(util.grid().at(4, 0, 3)), 0, EntityTypes.MINECART::create);
         scene.idle(10);
         scene.special().moveCart(cart, util.vector().of(-1, 0, 0), 10);
         scene.idle(10);
@@ -314,9 +316,9 @@ public class CartAssemblerScenes {
         scene.world().showSection(util.select().fromTo(2, 1, 3, 2, 1, 2), Direction.SOUTH);
         scene.idle(5);
         ElementLink<MinecartElement> cart = scene.special()
-            .createCart(util.vector().topOf(assembler1.below()), 0, EntityType.MINECART::create);
+            .createCart(util.vector().topOf(assembler1.below()), 0, EntityTypes.MINECART::create);
         ElementLink<MinecartElement> cart2 = scene.special()
-            .createCart(util.vector().topOf(assembler2.below()), 0, EntityType.CHEST_MINECART::create);
+            .createCart(util.vector().topOf(assembler2.below()), 0, EntityTypes.CHEST_MINECART::create);
         scene.idle(15);
         scene.world().setBlock(
             assembler1,
@@ -431,7 +433,7 @@ public class CartAssemblerScenes {
         scene.idle(70);
 
         ElementLink<MinecartElement> cart = scene.special()
-            .createCart(util.vector().topOf(assembler.east(2).below()), 0, EntityType.MINECART::create);
+            .createCart(util.vector().topOf(assembler.east(2).below()), 0, EntityTypes.MINECART::create);
         ElementLink<WorldSectionElement> anchor = scene.world()
             .showIndependentSection(util.select().position(assembler.south()), Direction.DOWN);
         ElementLink<WorldSectionElement> contraption = scene.world()
@@ -463,7 +465,7 @@ public class CartAssemblerScenes {
 
         scene.world().hideIndependentSection(anchor, Direction.DOWN);
         cart = scene.special()
-            .createCart(util.vector().topOf(assembler.east(2).below()), 0, EntityType.MINECART::create);
+            .createCart(util.vector().topOf(assembler.east(2).below()), 0, EntityTypes.MINECART::create);
         anchor = scene.world().showIndependentSection(util.select().position(assembler.south()), Direction.DOWN);
         contraption = scene.world()
             .showIndependentSection(util.select().position(assembler.south().above()), Direction.DOWN);
@@ -491,7 +493,7 @@ public class CartAssemblerScenes {
         scene.idle(20);
 
         cart = scene.special()
-            .createCart(util.vector().topOf(assembler.east(2).below()), 0, EntityType.FURNACE_MINECART::create);
+            .createCart(util.vector().topOf(assembler.east(2).below()), 0, EntityTypes.FURNACE_MINECART::create);
         scene.idle(10);
         scene.overlay().showText(50).attachKeyFrame().pointAt(util.vector().topOf(assembler.east(2))).placeNearTarget()
             .text("Other types of Minecarts can be used as the anchor");

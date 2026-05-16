@@ -12,6 +12,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -41,31 +42,31 @@ public class VanillaVisuals {
 
         builder(BlockEntityTypes.SHULKER_BOX).factory(ShulkerBoxVisual::new).apply(STABLE);
 
-        builder(EntityType.BLOCK_DISPLAY).factory(BlockDisplayVisual::new).apply(STABLE);
+        builder(EntityTypes.BLOCK_DISPLAY).factory(BlockDisplayVisual::new).apply(STABLE);
 
-        composable(EntityType.ITEM_DISPLAY).with(element(VisualElements.ITEM_DISPLAY).build())
+        composable(EntityTypes.ITEM_DISPLAY).with(element(VisualElements.ITEM_DISPLAY).build())
             .shouldVisualize((ctx, e) -> ItemDisplayVisual.shouldVisualize(e)).build()
             .skipVanillaRender(ItemDisplayVisual::shouldVisualize).apply(EXPERIMENTAL);
 
-        minecart(EntityType.CHEST_MINECART, ModelLayers.CHEST_MINECART).apply(STABLE);
-        minecart(EntityType.COMMAND_BLOCK_MINECART, ModelLayers.COMMAND_BLOCK_MINECART).apply(STABLE);
-        minecart(EntityType.FURNACE_MINECART, ModelLayers.FURNACE_MINECART).apply(STABLE);
-        minecart(EntityType.HOPPER_MINECART, ModelLayers.HOPPER_MINECART).apply(STABLE);
-        minecart(EntityType.MINECART, ModelLayers.MINECART).apply(STABLE);
-        minecart(EntityType.SPAWNER_MINECART, ModelLayers.SPAWNER_MINECART).apply(STABLE);
+        minecart(EntityTypes.CHEST_MINECART, ModelLayers.CHEST_MINECART).apply(STABLE);
+        minecart(EntityTypes.COMMAND_BLOCK_MINECART, ModelLayers.COMMAND_BLOCK_MINECART).apply(STABLE);
+        minecart(EntityTypes.FURNACE_MINECART, ModelLayers.FURNACE_MINECART).apply(STABLE);
+        minecart(EntityTypes.HOPPER_MINECART, ModelLayers.HOPPER_MINECART).apply(STABLE);
+        minecart(EntityTypes.MINECART, ModelLayers.MINECART).apply(STABLE);
+        minecart(EntityTypes.SPAWNER_MINECART, ModelLayers.SPAWNER_MINECART).apply(STABLE);
 
-        composable(EntityType.TNT_MINECART).apply(VanillaVisuals::commonElements)
+        composable(EntityTypes.TNT_MINECART).apply(VanillaVisuals::commonElements)
             .with(element(VisualElements.SHADOW).configure(new ShadowElement.Config(
                 0.7f,
                 ShadowElement.Config.DEFAULT_STRENGTH
             )).build()).with(element(VisualElements.FIRE).build()).with(element(VisualElements.TNT_MINECART).build())
             .build().skipVanillaRender(MinecartVisual::shouldSkipRender).apply(STABLE);
 
-        itemFrame(EntityType.ITEM_FRAME).apply(EXPERIMENTAL);
-        itemFrame(EntityType.GLOW_ITEM_FRAME).apply(EXPERIMENTAL);
+        itemFrame(EntityTypes.ITEM_FRAME).apply(EXPERIMENTAL);
+        itemFrame(EntityTypes.GLOW_ITEM_FRAME).apply(EXPERIMENTAL);
 
         //TODO FRAPI
-        //        composable(EntityType.ITEM).apply(VanillaVisuals::commonElements).with(element(VisualElements.FIRE).build())
+        //        composable(EntityTypes.ITEM).apply(VanillaVisuals::commonElements).with(element(VisualElements.FIRE).build())
         //            .with(element(VisualElements.SHADOW).configure(new ShadowElement.Config(0.15f, 0.75f)).build())
         //            .with(element(VisualElements.ITEM_ENTITY).build())
         //            .shouldVisualize(((ctx, entity) -> ItemVisual.isSupported(entity))).build()

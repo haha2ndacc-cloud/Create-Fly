@@ -5,6 +5,7 @@ import com.zurrtum.create.AllParticleTypes;
 import com.zurrtum.create.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -82,7 +83,7 @@ public class SoulPulseEffect {
     }
 
     public static boolean canSpawnSoulAt(@Nullable Level world, BlockPos at, boolean ignoreLight) {
-        EntityType<?> dummy = EntityType.ZOMBIE;
+        EntityType<?> dummy = EntityTypes.ZOMBIE;
         double dummyWidth = 0.2, dummyHeight = 0.75;
         double w2 = dummyWidth / 2;
 
@@ -110,8 +111,8 @@ public class SoulPulseEffect {
         Vec3 p = Vec3.atLowerCornerOf(at);
         if (canOverlap()) {
             world.addAlwaysVisibleParticle(
-                ((int) Math.round(VecHelper.getCenterOf(pos)
-                    .distanceTo(VecHelper.getCenterOf(at)))) >= distance ? AllParticleTypes.SOUL_PERIMETER : AllParticleTypes.SOUL_EXPANDING_PERIMETER,
+                ((int) Math.round(VecHelper.getCenterOf(pos).distanceTo(VecHelper.getCenterOf(at)))) >= distance ?
+                    AllParticleTypes.SOUL_PERIMETER : AllParticleTypes.SOUL_EXPANDING_PERIMETER,
                 p.x + 0.5,
                 p.y + 0.5,
                 p.z + 0.5,

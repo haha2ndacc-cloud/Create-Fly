@@ -33,6 +33,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.item.Item;
@@ -61,15 +62,15 @@ public class MinecartContraptionItem extends Item {
     private final EntityType<? extends AbstractMinecart> minecartType;
 
     public static MinecartContraptionItem rideable(Properties builder) {
-        return new MinecartContraptionItem(EntityType.MINECART, builder);
+        return new MinecartContraptionItem(EntityTypes.MINECART, builder);
     }
 
     public static MinecartContraptionItem furnace(Properties builder) {
-        return new MinecartContraptionItem(EntityType.FURNACE_MINECART, builder);
+        return new MinecartContraptionItem(EntityTypes.FURNACE_MINECART, builder);
     }
 
     public static MinecartContraptionItem chest(Properties builder) {
-        return new MinecartContraptionItem(EntityType.CHEST_MINECART, builder);
+        return new MinecartContraptionItem(EntityTypes.CHEST_MINECART, builder);
     }
 
     @Override
@@ -97,8 +98,8 @@ public class MinecartContraptionItem extends Item {
             double d2 = vec3.z() + (double) direction.getStepZ() * 1.125D;
             BlockPos blockpos = source.pos().relative(direction);
             BlockState blockstate = world.getBlockState(blockpos);
-            RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock abstractRailBlock ? blockstate.getValue(
-                abstractRailBlock.getShapeProperty()) : RailShape.NORTH_SOUTH;
+            RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock abstractRailBlock ?
+                blockstate.getValue(abstractRailBlock.getShapeProperty()) : RailShape.NORTH_SOUTH;
             double d3;
             if (blockstate.is(BlockTags.RAILS)) {
                 if (railshape.isSlope()) {
@@ -112,8 +113,8 @@ public class MinecartContraptionItem extends Item {
                 }
 
                 BlockState blockstate1 = world.getBlockState(blockpos.below());
-                RailShape railshape1 = blockstate1.getBlock() instanceof BaseRailBlock abstractRailBlock ? blockstate1.getValue(
-                    abstractRailBlock.getShapeProperty()) : RailShape.NORTH_SOUTH;
+                RailShape railshape1 = blockstate1.getBlock() instanceof BaseRailBlock abstractRailBlock ?
+                    blockstate1.getValue(abstractRailBlock.getShapeProperty()) : RailShape.NORTH_SOUTH;
                 if (direction != Direction.DOWN && railshape1.isSlope()) {
                     d3 = -0.4D;
                 } else {
@@ -158,8 +159,8 @@ public class MinecartContraptionItem extends Item {
         } else {
             ItemStack itemstack = context.getItemInHand();
             if (world instanceof ServerLevel serverlevel) {
-                RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock abstractRailBlock ? blockstate.getValue(
-                    abstractRailBlock.getShapeProperty()) : RailShape.NORTH_SOUTH;
+                RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock abstractRailBlock ?
+                    blockstate.getValue(abstractRailBlock.getShapeProperty()) : RailShape.NORTH_SOUTH;
                 double d0 = 0.0D;
                 if (railshape.isSlope()) {
                     d0 = 0.5D;
@@ -214,16 +215,14 @@ public class MinecartContraptionItem extends Item {
                     TagValueInput.create(logging, world.registryAccess(), contraptionTag),
                     false
                 );
-                OrientedContraptionEntity contraptionEntity = newFacing == null ? OrientedContraptionEntity.create(
-                    world,
-                    mountedContraption,
-                    intialOrientation
-                ) : OrientedContraptionEntity.createAtYaw(
-                    world,
-                    mountedContraption,
-                    intialOrientation,
-                    newFacing.toYRot()
-                );
+                OrientedContraptionEntity contraptionEntity =
+                    newFacing == null ? OrientedContraptionEntity.create(world, mountedContraption, intialOrientation) :
+                        OrientedContraptionEntity.createAtYaw(
+                            world,
+                            mountedContraption,
+                            intialOrientation,
+                            newFacing.toYRot()
+                        );
 
                 contraptionEntity.startRiding(cart);
                 contraptionEntity.setPos(cart.getX(), cart.getY(), cart.getZ());
@@ -261,7 +260,7 @@ public class MinecartContraptionItem extends Item {
             return null;
         }
         EntityType<?> type = cart.getType();
-        if (type != EntityType.MINECART && type != EntityType.FURNACE_MINECART && type != EntityType.CHEST_MINECART) {
+        if (type != EntityTypes.MINECART && type != EntityTypes.FURNACE_MINECART && type != EntityTypes.CHEST_MINECART) {
             return null;
         }
         List<Entity> passengers = cart.getPassengers();
@@ -317,11 +316,11 @@ public class MinecartContraptionItem extends Item {
     public static ItemStack create(EntityType<?> type, OrientedContraptionEntity entity) {
         ItemStack stack = ItemStack.EMPTY;
 
-        if (type == EntityType.MINECART) {
+        if (type == EntityTypes.MINECART) {
             stack = AllItems.MINECART_CONTRAPTION.getDefaultInstance();
-        } else if (type == EntityType.FURNACE_MINECART) {
+        } else if (type == EntityTypes.FURNACE_MINECART) {
             stack = AllItems.FURNACE_MINECART_CONTRAPTION.getDefaultInstance();
-        } else if (type == EntityType.CHEST_MINECART) {
+        } else if (type == EntityTypes.CHEST_MINECART) {
             stack = AllItems.CHEST_MINECART_CONTRAPTION.getDefaultInstance();
         }
 

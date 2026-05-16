@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.parrot.Parrot;
 import net.minecraft.world.phys.Vec3;
 
@@ -21,7 +22,7 @@ public abstract class ParrotPose {
     public abstract void tick(PonderScene scene, Parrot entity, Vec3 location);
 
     public Parrot create(PonderLevel world) {
-        Parrot entity = new Parrot(EntityType.PARROT, world);
+        Parrot entity = new Parrot(EntityTypes.PARROT, world);
         int nextInt = world.getRandom().nextInt(VARIANTS.length);
         entity.setVariant(VARIANTS[nextInt]);
         return entity;

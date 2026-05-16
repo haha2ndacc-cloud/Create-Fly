@@ -18,6 +18,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -141,7 +142,7 @@ public class ItemFrameVisual extends AbstractVisual implements EntityVisual<Item
     }
 
     private int getLightVal(int regularLightVal) {
-        return entity.getType() == EntityType.GLOW_ITEM_FRAME ? 15728880 : regularLightVal;
+        return entity.getType() == EntityTypes.GLOW_ITEM_FRAME ? 15728880 : regularLightVal;
     }
 
     protected int getSkyLightLevel(BlockPos pos) {
@@ -153,14 +154,12 @@ public class ItemFrameVisual extends AbstractVisual implements EntityVisual<Item
     }
 
     protected int getBlockLightLevel(BlockPos pos) {
-        return entity.getType() == EntityType.GLOW_ITEM_FRAME ? Math.max(
-            5,
-            getBlockLightLevelBase(pos)
-        ) : getBlockLightLevelBase(pos);
+        return entity.getType() == EntityTypes.GLOW_ITEM_FRAME ? Math.max(5, getBlockLightLevelBase(pos)) :
+            getBlockLightLevelBase(pos);
     }
 
     public BlockStateModel getFrameModel() {
-        boolean bl = entity.getType() == EntityType.GLOW_ITEM_FRAME;
+        boolean bl = entity.getType() == EntityTypes.GLOW_ITEM_FRAME;
         BlockState state = BlockStateDefinitions.getItemFrameFakeState(bl, false);
         return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state);
     }

@@ -25,10 +25,7 @@ import net.minecraft.util.ProblemReporter;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.animal.equine.Horse;
 import net.minecraft.world.entity.animal.equine.SkeletonHorse;
 import net.minecraft.world.entity.monster.EnderMan;
@@ -310,7 +307,7 @@ public class AllFanProcessingTypes {
                     0.65f
                 );
 
-                SkeletonHorse skeletonHorse = EntityType.SKELETON_HORSE.create(level, EntitySpawnReason.NATURAL);
+                SkeletonHorse skeletonHorse = EntityTypes.SKELETON_HORSE.create(level, EntitySpawnReason.NATURAL);
                 RegistryAccess registryManager = level.registryAccess();
                 try (ProblemReporter.ScopedCollector logging = new ProblemReporter.ScopedCollector(
                     skeletonHorse.problemPath(),
@@ -481,7 +478,7 @@ public class AllFanProcessingTypes {
                 return;
             }
 
-            if (entity instanceof EnderMan || entity.getType() == EntityType.SNOW_GOLEM || entity.getType() == EntityType.BLAZE) {
+            if (entity instanceof EnderMan || entity.getType() == EntityTypes.SNOW_GOLEM || entity.getType() == EntityTypes.BLAZE) {
                 entity.hurtServer((ServerLevel) level, entity.damageSources().drown(), 2);
             }
             if (entity.isOnFire()) {
