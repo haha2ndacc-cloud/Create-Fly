@@ -85,6 +85,18 @@ sourceSets {
             exclude 'com/zurrtum/create/client/mixin/RecipeViewMenuMixin.java'
             exclude 'com/zurrtum/create/client/mixin/RecipeViewScreenMixin.java'
             exclude 'com/zurrtum/create/client/mixin/ViewTypeButtonMixin.java'
+            exclude 'com/zurrtum/create/client/flywheel/lib/model/baked/FabricEmitterSupplier.java'
+            exclude 'com/zurrtum/create/client/mixin/BufferAoPoseEmitterMixin.java'
+            exclude 'com/zurrtum/create/client/mixin/BufferPoseEmitterMixin.java'
+            exclude 'com/zurrtum/create/client/mixin/BufferColorPoseEmitterMixin.java'
+            exclude 'com/zurrtum/create/client/mixin/BufferEmitterMixin.java'
+            exclude 'com/zurrtum/create/client/mixin/CopycatModelMixin.java'
+            exclude 'com/zurrtum/create/client/mixin/CopycatPanelModelMixin.java'
+            exclude 'com/zurrtum/create/client/mixin/CopycatStepModelMixin.java'
+            exclude 'com/zurrtum/create/client/mixin/ItemModelRenderHelperMixin.java'
+            exclude 'com/zurrtum/create/client/mixin/ModelRenderHelperMixin.java'
+            exclude 'com/zurrtum/create/client/mixin/WrapperBlockStateModelAccessor.java'
+            exclude 'com/zurrtum/create/client/mixin/WrapperBlockStateModelMixin.java'
         }
     }
 }
