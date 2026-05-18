@@ -323,7 +323,7 @@ public class BlueprintOverlayRenderer {
                         cycle++;
                         continue;
                     }
-                    if ((mc.gui.getGuiTicks() / 40) % cycle != i) {
+                    if ((mc.gui.hud.getGuiTicks() / 40) % cycle != i) {
                         continue;
                     }
                     Window window = mc.getWindow();
