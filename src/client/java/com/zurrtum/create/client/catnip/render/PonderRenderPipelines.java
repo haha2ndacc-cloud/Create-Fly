@@ -1,5 +1,6 @@
 package com.zurrtum.create.client.catnip.render;
 
+import com.mojang.blaze3d.PrimitiveTopology;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.DepthStencilState;
@@ -7,7 +8,6 @@ import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.pipeline.RenderPipeline.Snippet;
 import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.BindGroupLayouts;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
@@ -22,14 +22,12 @@ public class PonderRenderPipelines {
     private static final Identifier ENTITY_BLOCK_ID = Identifier.fromNamespaceAndPath(MOD_ID, "entity_block");
     public static final Snippet ENTITY_BLOCK_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
         .withVertexShader(ENTITY_BLOCK_ID).withFragmentShader(ENTITY_BLOCK_ID)
-        .withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER2)
-        .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.QUADS)
-        .withDepthStencilState(DepthStencilState.DEFAULT).buildSnippet();
+        .withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER2).withVertexBinding(0, DefaultVertexFormat.ENTITY)
+        .withPrimitiveTopology(PrimitiveTopology.QUADS).withDepthStencilState(DepthStencilState.DEFAULT).buildSnippet();
     public static final Snippet ENTITY_BLOCK_LIGHT_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
         .withVertexShader(ENTITY_BLOCK_ID).withFragmentShader(ENTITY_BLOCK_ID)
-        .withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER2)
-        .withVertexFormat(DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS)
-        .withDepthStencilState(DepthStencilState.DEFAULT).buildSnippet();
+        .withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER2).withVertexBinding(0, DefaultVertexFormat.BLOCK)
+        .withPrimitiveTopology(PrimitiveTopology.QUADS).withDepthStencilState(DepthStencilState.DEFAULT).buildSnippet();
     public static final RenderPipeline ENTITY_BLOCK_SOLID = register(
         "entity_block_solid",
         RenderPipeline.builder(ENTITY_BLOCK_SNIPPET).withShaderDefine("OVERWORLD")
@@ -107,19 +105,22 @@ public class PonderRenderPipelines {
     public static final RenderPipeline TRIANGLE_FAN = wrapSequential(register(
         "triangle_fan",
         RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
-            .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLE_FAN)
+            .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
+            .withPrimitiveTopology(PrimitiveTopology.TRIANGLE_FAN)
     ));
     public static final RenderPipeline POSITION_COLOR_TRIANGLES = wrapSequential(register(
         "position_color_triangles",
         RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET).withVertexShader("core/position_color")
             .withFragmentShader("core/position_color")
             .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
-            .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLES).withCull(false)
+            .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR).withPrimitiveTopology(PrimitiveTopology.TRIANGLES)
+            .withCull(false)
     ));
     public static final RenderPipeline POSITION_COLOR_STRIP = wrapSequential(register(
         "position_color_strip",
         RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
-            .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLE_STRIP)
+            .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
+            .withPrimitiveTopology(PrimitiveTopology.TRIANGLE_STRIP)
     ));
 
     public static RenderPipeline wrapSequential(RenderPipeline pipeline) {

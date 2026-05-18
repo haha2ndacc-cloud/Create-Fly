@@ -1,12 +1,12 @@
 package com.zurrtum.create.client.foundation.render;
 
+import com.mojang.blaze3d.PrimitiveTopology;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.BlendFactor;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.zurrtum.create.client.catnip.render.PonderRenderPipelines;
 import net.minecraft.client.renderer.BindGroupLayouts;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -18,9 +18,8 @@ public class AllRenderPipelines {
     public static final Identifier GLOWING_ID = Identifier.fromNamespaceAndPath(MOD_ID, "core/glowing_shader");
     public static final RenderPipeline.Snippet GLOWING_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
         .withVertexShader(GLOWING_ID).withFragmentShader(GLOWING_ID)
-        .withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER2)
-        .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.QUADS)
-        .withDepthStencilState(DepthStencilState.DEFAULT).buildSnippet();
+        .withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER2).withVertexBinding(0, DefaultVertexFormat.ENTITY)
+        .withPrimitiveTopology(PrimitiveTopology.QUADS).withDepthStencilState(DepthStencilState.DEFAULT).buildSnippet();
     public static final RenderPipeline ADDITIVE = register(
         "additive",
         RenderPipeline.builder(RenderPipelines.BLOCK_SNIPPET)
