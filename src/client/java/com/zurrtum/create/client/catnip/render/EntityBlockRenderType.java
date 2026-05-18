@@ -6,15 +6,15 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 
 public enum EntityBlockRenderType {
     SOLID(
-        Sheets.cutoutBlockSheet(),
+        Sheets.cutoutBlockItemSheet(),
         PonderRenderTypes.getEntityBlockSolid(),
         PonderRenderTypes.getNetherEntityBlockSolid()
     ), CUTOUT(
-        Sheets.cutoutBlockSheet(),
+        Sheets.cutoutBlockItemSheet(),
         PonderRenderTypes.getEntityBlockCutout(),
         PonderRenderTypes.getNetherEntityBlockCutout()
     ), TRANSLUCENT(
-        Sheets.translucentBlockSheet(),
+        Sheets.translucentBlockItemSheet(),
         PonderRenderTypes.getEntityBlockTranslucent(),
         PonderRenderTypes.getNetherEntityBlockTranslucent()
     ), SOLID_LIGHT(
