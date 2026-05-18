@@ -139,7 +139,7 @@ public class TrackBlockOutline {
     }
 
     public static void drawCurveSelection(Minecraft mc, PoseStack ms, MultiBufferSource buffer, Vec3 camera) {
-        if (mc.options.hideGui || mc.gameMode.getPlayerMode() == GameType.SPECTATOR) {
+        if (mc.gui.hud.isHidden() || mc.gameMode.getPlayerMode() == GameType.SPECTATOR) {
             return;
         }
 
