@@ -59,7 +59,7 @@ public class OitFramebuffer {
         Minecraft mc = Minecraft.getInstance();
         GameRenderer gameRenderer = mc.gameRenderer;
         if (gameRenderer.gameRenderState().useShaderTransparency()) {
-            renderTarget = mc.levelRenderer.getItemEntityTarget();
+            renderTarget = mc.levelRenderer.itemEntityTarget();
 
             renderTarget.copyDepthFrom(gameRenderer.mainRenderTarget());
         } else {
@@ -189,7 +189,7 @@ public class OitFramebuffer {
         GameRenderer gameRenderer = mc.gameRenderer;
         RenderTarget mainTarget = gameRenderer.mainRenderTarget();
         if (gameRenderer.gameRenderState().useShaderTransparency()) {
-            bindRenderTarget(mc.levelRenderer.getItemEntityTarget(), access);
+            bindRenderTarget(mc.levelRenderer.itemEntityTarget(), access);
         } else {
             bindRenderTarget(mainTarget, access);
         }
