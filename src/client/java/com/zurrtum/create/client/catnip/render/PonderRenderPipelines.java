@@ -110,7 +110,8 @@ public class PonderRenderPipelines {
     ));
     public static final RenderPipeline POSITION_COLOR_TRIANGLES = wrapSequential(register(
         "position_color_triangles",
-        RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET).withVertexShader("core/position_color")
+        RenderPipeline.builder(RenderPipelines.GLOBALS_SNIPPET)
+            .withBindGroupLayout(BindGroupLayouts.MATRICES_PROJECTION).withVertexShader("core/position_color")
             .withFragmentShader("core/position_color")
             .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
             .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR).withPrimitiveTopology(PrimitiveTopology.TRIANGLES)
