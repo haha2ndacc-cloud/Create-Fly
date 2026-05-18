@@ -47,7 +47,7 @@ public final class FlwCommands {
                     backend.set(FlwConfig.DEFAULT_BACKEND_STR);
 
                     // Reload renderers so we can report the actual backend.
-                    Minecraft.getInstance().levelRenderer.allChanged();
+                    Minecraft.getInstance().levelExtractor.allChanged();
 
                     Backend actualBackend = BackendManager.currentBackend();
                     String actualIdStr = Backend.REGISTRY.getIdOrThrow(actualBackend).toString();
@@ -67,7 +67,7 @@ public final class FlwCommands {
                     backend.set(requestedIdStr);
 
                     // Reload renderers so we can report the actual backend.
-                    Minecraft.getInstance().levelRenderer.allChanged();
+                    Minecraft.getInstance().levelExtractor.allChanged();
 
                     ChatListener chatListener = context.getSource().minecraft.gui.chatListener();
                     Backend actualBackend = BackendManager.currentBackend();
@@ -109,7 +109,7 @@ public final class FlwCommands {
                     limitUpdates.set(true);
                     context.getSource().minecraft.gui.chatListener()
                         .handleSystemMessage(Component.translatable("command.flywheel.limit_updates.set.on"), false);
-                    Minecraft.getInstance().levelRenderer.allChanged();
+                    Minecraft.getInstance().levelExtractor.allChanged();
                 }
                 return Command.SINGLE_SUCCESS;
             }
@@ -120,7 +120,7 @@ public final class FlwCommands {
                     limitUpdates.set(false);
                     context.getSource().minecraft.gui.chatListener()
                         .handleSystemMessage(Component.translatable("command.flywheel.limit_updates.set.off"), false);
-                    Minecraft.getInstance().levelRenderer.allChanged();
+                    Minecraft.getInstance().levelExtractor.allChanged();
                 }
                 return Command.SINGLE_SUCCESS;
             }

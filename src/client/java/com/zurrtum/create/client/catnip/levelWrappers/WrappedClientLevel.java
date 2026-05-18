@@ -32,7 +32,7 @@ public class WrappedClientLevel extends ClientLevel {
             level.dimensionTypeRegistration(),
             mc.getConnection().serverChunkRadius,
             mc.level.getServerSimulationDistance(),
-            mc.levelRenderer,
+            mc.levelExtractor,
             level.isDebug(),
             level.getBiomeManager().biomeZoomSeed,
             level.getSeaLevel()
