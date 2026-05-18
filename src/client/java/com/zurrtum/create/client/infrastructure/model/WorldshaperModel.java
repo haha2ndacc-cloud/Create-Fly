@@ -15,7 +15,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockModelRenderState;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
@@ -284,15 +283,15 @@ public class WorldshaperModel implements ItemModel {
 
         private static class Flat extends UsedItemRenderState {
             private final Lighting diffuseLighting;
-            private final BufferSource entityVertexConsumers;
-            private final FeatureRenderDispatcher entityRenderDispatcher;
+            //            private final BufferSource entityVertexConsumers;
+            //            private final FeatureRenderDispatcher entityRenderDispatcher;
 
             public Flat(Minecraft mc, ItemStackRenderState state) {
                 super(state);
                 GameRenderer gameRenderer = mc.gameRenderer;
                 diffuseLighting = gameRenderer.lighting();
-                entityVertexConsumers = mc.renderBuffers().bufferSource();
-                entityRenderDispatcher = gameRenderer.getFeatureRenderDispatcher();
+                //                entityVertexConsumers = mc.renderBuffers().bufferSource();
+                //                entityRenderDispatcher = gameRenderer.getFeatureRenderDispatcher();
             }
 
             @Override
@@ -305,8 +304,8 @@ public class WorldshaperModel implements ItemModel {
                 boolean hasFoil,
                 int outlineColor
             ) {
-                entityRenderDispatcher.renderAllFeatures();
-                entityVertexConsumers.endBatch();
+                //                entityRenderDispatcher.renderAllFeatures();
+                //                entityVertexConsumers.endBatch();
                 diffuseLighting.setupFor(Entry.ITEMS_FLAT);
                 super.submit(argument, matrices, queue, lightCoords, overlayCoords, hasFoil, outlineColor);
             }

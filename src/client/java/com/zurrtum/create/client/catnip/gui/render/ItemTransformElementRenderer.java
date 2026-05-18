@@ -8,9 +8,8 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
@@ -24,10 +23,6 @@ public class ItemTransformElementRenderer extends PictureInPictureRenderer<ItemT
     private final PoseStack matrices = new PoseStack();
     private int windowScaleFactor;
 
-    public ItemTransformElementRenderer(BufferSource vertexConsumers) {
-        super(vertexConsumers);
-    }
-
     public static void clear(ItemTransformRenderKey key) {
         GpuTexture texture = TEXTURES.remove(key);
         if (texture != null) {
@@ -36,7 +31,12 @@ public class ItemTransformElementRenderer extends PictureInPictureRenderer<ItemT
     }
 
     @Override
-    public void prepare(ItemTransformRenderState item, GuiRenderState state, int windowScaleFactor) {
+    public void prepare(
+        ItemTransformRenderState item,
+        GuiRenderState state,
+        FeatureRenderDispatcher featureRenderDispatcher,
+        int windowScaleFactor
+    ) {
         if (this.windowScaleFactor != windowScaleFactor) {
             this.windowScaleFactor = windowScaleFactor;
             TEXTURES.values().forEach(GpuTexture::close);
@@ -83,23 +83,21 @@ public class ItemTransformElementRenderer extends PictureInPictureRenderer<ItemT
             if (key.yRot != 0) {
                 matrices.mulPose(Axis.YP.rotation(key.yRot));
             }
-            Lighting lighting = Minecraft.getInstance().gameRenderer.getLighting();
+            Lighting lighting = Minecraft.getInstance().gameRenderer.lighting();
             if (key.state.usesBlockLight()) {
                 lighting.setupFor(Lighting.Entry.ITEMS_3D);
             } else {
                 lighting.setupFor(Lighting.Entry.ITEMS_FLAT);
             }
-            FeatureRenderDispatcher renderDispatcher = Minecraft.getInstance().gameRenderer.getFeatureRenderDispatcher();
-            SubmitNodeStorage queue = renderDispatcher.getSubmitNodeStorage();
-            key.state.submit(matrices, queue, 0, OverlayTexture.NO_OVERLAY, 0);
-            renderDispatcher.renderAllFeatures();
-            bufferSource.endBatch();
+            key.state.submit(matrices, submitNodeStorage, 0, OverlayTexture.NO_OVERLAY, 0);
             matrices.popPose();
+            featureRenderDispatcher.renderAllFeatures(submitNodeStorage);
             texture.clear();
         }
         state.addBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-            TextureSetup.singleTexture(texture.textureView(),
+            TextureSetup.singleTexture(
+                texture.textureView(),
                 RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)
             ),
             item.pose(),
@@ -118,7 +116,11 @@ public class ItemTransformElementRenderer extends PictureInPictureRenderer<ItemT
     }
 
     @Override
-    protected void renderToTexture(ItemTransformRenderState item, PoseStack matrices) {
+    protected void renderToTexture(
+        ItemTransformRenderState item,
+        PoseStack matrices,
+        SubmitNodeCollector submitNodeCollector
+    ) {
     }
 
     @Override

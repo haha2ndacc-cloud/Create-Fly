@@ -18,6 +18,8 @@ public class CachedBuffers {
     public static final Compartment<BlockState> GENERIC_BLOCK = new Compartment<>();
     public static final Compartment<PartialModel> PARTIAL = new Compartment<>();
     public static final Compartment<Pair<Direction, PartialModel>> DIRECTIONAL_PARTIAL = new Compartment<>();
+    public static final Compartment<Pair<Direction, PartialModel>> DIRECTIONAL_PARTIAL_VERTICAL = new Compartment<>();
+    public static final Compartment<Pair<Direction, PartialModel>> DIRECTIONAL_PARTIAL_CUSTOM = new Compartment<>();
     private static final Function<Direction, Pose> ROTATE_TO_FACE = Util.memoize((facing) -> {
         Pose pose = new Pose();
         switch (facing) {
@@ -90,21 +92,18 @@ public class CachedBuffers {
         );
     }
 
-    public static SuperByteBuffer partial(PartialModel partial, BlockState referenceState, Pose modelTransform) {
-        return SuperByteBufferCache.getInstance().get(
-            PARTIAL,
-            partial,
-            () -> SuperBufferFactory.getInstance().createForBlock(partial.get(), referenceState, modelTransform)
-        );
-    }
-
     public static SuperByteBuffer partialFacing(PartialModel partial, BlockState referenceState) {
         Direction facing = referenceState.getValue(BlockStateProperties.FACING);
         return partialFacing(partial, referenceState, facing);
     }
 
     public static SuperByteBuffer partialFacing(PartialModel partial, BlockState referenceState, Direction facing) {
-        return partialDirectional(partial, referenceState, facing, ROTATE_TO_FACE);
+        return SuperByteBufferCache.getInstance().get(
+            DIRECTIONAL_PARTIAL,
+            Pair.of(facing, partial),
+            () -> SuperBufferFactory.getInstance()
+                .createForBlock(partial.get(), referenceState, ROTATE_TO_FACE.apply(facing))
+        );
     }
 
     public static SuperByteBuffer partialFacingVertical(
@@ -112,9 +111,26 @@ public class CachedBuffers {
         BlockState referenceState,
         Direction facing
     ) {
-        return partialDirectional(partial, referenceState, facing, ROTATE_TO_FACE_VERTICAL);
+        return SuperByteBufferCache.getInstance().get(
+            DIRECTIONAL_PARTIAL_VERTICAL,
+            Pair.of(facing, partial),
+            () -> SuperBufferFactory.getInstance()
+                .createForBlock(partial.get(), referenceState, ROTATE_TO_FACE_VERTICAL.apply(facing))
+        );
     }
 
+    /**
+     * Creates a SuperByteBuffer for a partial model oriented in a specific direction <br />
+     * and caches it in the DIRECTIONAL_PARTIAL_CUSTOM Compartment
+     *
+     * @param partial        the PartialModel to be rendered
+     * @param referenceState the BlockState used as reference for lighting or other properties
+     * @param dir            the Direction the partial model is facing
+     * @param modelTransform the Function to compute the Pose for the given Direction. <br />
+     *                       <b>NOTE:</b> Must remain consistent across calls for the same inputs,
+     *                       as an inconsistent transform will result in retrieving incorrect cache results.
+     * @return the cached SuperByteBuffer
+     */
     public static SuperByteBuffer partialDirectional(
         PartialModel partial,
         BlockState referenceState,
@@ -122,7 +138,7 @@ public class CachedBuffers {
         Function<Direction, Pose> modelTransform
     ) {
         return SuperByteBufferCache.getInstance().get(
-            DIRECTIONAL_PARTIAL,
+            DIRECTIONAL_PARTIAL_CUSTOM,
             Pair.of(dir, partial),
             () -> SuperBufferFactory.getInstance()
                 .createForBlock(partial.get(), referenceState, modelTransform.apply(dir))

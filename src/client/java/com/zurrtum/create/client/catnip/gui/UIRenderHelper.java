@@ -1,6 +1,5 @@
 package com.zurrtum.create.client.catnip.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.catnip.data.Couple;
 import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.catnip.gui.render.BreadcrumbArrowRenderState;
@@ -13,7 +12,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
 import org.joml.Matrix3x2f;
 import org.joml.Matrix3x2fStack;
-import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -458,9 +456,5 @@ public class UIRenderHelper {
             v2,
             graphics.scissorStack.peek()
         ));
-    }
-
-    public static void flipForGuiRender(PoseStack poseStack) {
-        poseStack.mulPose(new Matrix4f().scaling(1, -1, 1));
     }
 }

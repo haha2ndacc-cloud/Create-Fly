@@ -8,8 +8,7 @@ import com.zurrtum.create.AllItems;
 import com.zurrtum.create.infrastructure.component.SandPaperItemComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.LightCoordsUtil;
@@ -27,12 +26,8 @@ public class SandPaperRenderer extends PictureInPictureRenderer<SandPaperRenderS
         return stack;
     });
 
-    public SandPaperRenderer(BufferSource vertexConsumers) {
-        super(vertexConsumers);
-    }
-
     @Override
-    protected void renderToTexture(SandPaperRenderState state, PoseStack matrices) {
+    protected void renderToTexture(SandPaperRenderState state, PoseStack matrices, SubmitNodeCollector queue) {
         matrices.translate(0, -0.35f, 0);
         matrices.scale(1, -1, -1);
         Minecraft mc = Minecraft.getInstance();
@@ -40,16 +35,8 @@ public class SandPaperRenderer extends PictureInPictureRenderer<SandPaperRenderS
         lighting.setupFor(Lighting.Entry.ITEMS_FLAT);
         ItemStack renderStack = stack.get();
         renderStack.set(AllDataComponents.SAND_PAPER_POLISHING, new SandPaperItemComponent(state.stack()));
-        FeatureRenderDispatcher renderDispatcher = mc.gameRenderer.getFeatureRenderDispatcher();
         mc.getItemModelResolver().updateForTopItem(renderState, renderStack, ItemDisplayContext.GUI, null, null, 0);
-        renderState.submit(
-            matrices,
-            renderDispatcher.getSubmitNodeStorage(),
-            LightCoordsUtil.FULL_BRIGHT,
-            OverlayTexture.NO_OVERLAY,
-            0
-        );
-        renderDispatcher.renderAllFeatures();
+        renderState.submit(matrices, queue, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 0);
     }
 
     @Override

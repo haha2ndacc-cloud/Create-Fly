@@ -29,7 +29,8 @@ public class ItemMeshEmitter implements VertexConsumer {
 
     ItemMeshEmitter(RenderType renderType) {
         this.renderType = renderType;
-        this.byteBufferBuilder = new ByteBufferBuilder(renderType.bufferSize());
+        //TODO
+        this.byteBufferBuilder = new ByteBufferBuilder(0);
     }
 
     public void prepare(BakedItemModelBufferer.ResultConsumer resultConsumer, MeshResultConsumer meshResultConsumer) {

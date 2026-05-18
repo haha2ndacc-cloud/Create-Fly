@@ -8,6 +8,7 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import net.minecraft.world.phys.Vec2;
 import org.joml.Matrix3x2f;
+import org.joml.Vector2f;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -16,6 +17,8 @@ import static com.zurrtum.create.client.catnip.render.PonderRenderPipelines.POSI
 
 public record RadialSectorRenderState(Matrix3x2f pose, List<Vec2> innerPoints, List<Vec2> outerPoints, int outerColor,
                                       int innerColor, ScreenRectangle bounds) implements GuiElementRenderState {
+    private static final Vector2f temp = new Vector2f();
+
     public RadialSectorRenderState(
         Matrix3x2f pose,
         double minX,
@@ -45,13 +48,28 @@ public record RadialSectorRenderState(Matrix3x2f pose, List<Vec2> innerPoints, L
 
     @Override
     public void buildVertices(VertexConsumer vertexConsumer) {
-        for (int i = 0; i < innerPoints.size(); i++) {
-            Vec2 point = outerPoints.get(i);
-            vertexConsumer.addVertexWith2DPose(pose, point.x, point.y).setColor(outerColor);
-
-            point = innerPoints.get(i);
-            vertexConsumer.addVertexWith2DPose(pose, point.x, point.y).setColor(innerColor);
+        startVertex(vertexConsumer, outerPoints.getFirst(), outerColor);
+        addVertex(vertexConsumer, innerPoints.getFirst(), innerColor);
+        for (int i = 1; i < innerPoints.size(); i++) {
+            addVertex(vertexConsumer, outerPoints.get(i), outerColor);
+            addVertex(vertexConsumer, innerPoints.get(i), innerColor);
         }
+        endVertex(vertexConsumer);
+    }
+
+    private void startVertex(VertexConsumer vertexConsumer, Vec2 point, int color) {
+        pose.transformPosition(point.x, point.y, temp);
+        vertexConsumer.addVertex(temp.x, temp.y, 0).setColor(-1);
+        vertexConsumer.addVertex(temp.x, temp.y, 0).setColor(color);
+    }
+
+    private void addVertex(VertexConsumer vertexConsumer, Vec2 point, int color) {
+        pose.transformPosition(point.x, point.y, temp);
+        vertexConsumer.addVertex(temp.x, temp.y, 0).setColor(color);
+    }
+
+    private void endVertex(VertexConsumer vertexConsumer) {
+        vertexConsumer.addVertex(temp.x, temp.y, 0).setColor(-1);
     }
 
     @Override

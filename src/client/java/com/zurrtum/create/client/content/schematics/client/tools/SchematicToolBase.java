@@ -6,7 +6,6 @@ import com.zurrtum.create.client.AllSpecialTextures;
 import com.zurrtum.create.client.Create;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.outliner.AABBOutline;
-import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.content.schematics.client.SchematicHandler;
 import com.zurrtum.create.client.content.schematics.client.SchematicTransformation;
 import com.zurrtum.create.client.foundation.utility.RaycastHelper;
@@ -15,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
@@ -117,7 +117,7 @@ public abstract class SchematicToolBase implements ISchematicTool {
     }
 
     @Override
-    public void renderTool(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer, Vec3 camera) {
+    public void renderTool(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, Vec3 camera) {
     }
 
     @Override
@@ -125,7 +125,7 @@ public abstract class SchematicToolBase implements ISchematicTool {
     }
 
     @Override
-    public void renderOnSchematic(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer) {
+    public void renderOnSchematic(Minecraft mc, PoseStack ms, SubmitNodeCollector queue) {
         if (!schematicHandler.isDeployed()) {
             return;
         }
@@ -139,7 +139,7 @@ public abstract class SchematicToolBase implements ISchematicTool {
             );
         }
         outline.getParams().colored(0x6886c5).withFaceTexture(AllSpecialTextures.CHECKERED).lineWidth(1 / 16f);
-        outline.render(Minecraft.getInstance(), ms, buffer, Vec3.ZERO, AnimationTickHolder.getPartialTicks());
+        outline.submit(Minecraft.getInstance(), ms, queue, Vec3.ZERO, AnimationTickHolder.getPartialTicks());
         outline.getParams().clearTextures();
         ms.popPose();
     }

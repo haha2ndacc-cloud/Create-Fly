@@ -10,6 +10,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
@@ -107,7 +108,7 @@ public class PonderWorldParticles {
     }
 
     public void renderParticles(
-        SubmitNodeStorage queue,
+        SubmitNodeCollector queue,
         Camera camera,
         CameraRenderState cameraRenderState,
         float tickProgress

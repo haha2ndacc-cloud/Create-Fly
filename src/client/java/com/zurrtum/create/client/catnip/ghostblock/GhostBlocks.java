@@ -1,8 +1,8 @@
 package com.zurrtum.create.client.catnip.ghostblock;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.GameType;
@@ -66,7 +66,7 @@ public class GhostBlocks {
         ghosts.entrySet().removeIf(e -> !e.getValue().isAlive());
     }
 
-    public void renderAll(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer, Vec3 camera) {
+    public void renderAll(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, Vec3 camera) {
         if (mc.gameMode.getPlayerMode() == GameType.SPECTATOR) {
             return;
         }
@@ -75,7 +75,7 @@ public class GhostBlocks {
         }
         BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
         for (Entry entry : ghosts.values()) {
-            entry.ghost.render(blockStateModelSet, ms, buffer, camera, entry.params);
+            entry.ghost.render(blockStateModelSet, ms, queue, camera, entry.params);
         }
     }
 

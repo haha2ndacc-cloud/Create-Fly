@@ -30,6 +30,10 @@ public class Ponder {
         PonderKeybinds.register();
         SuperByteBufferCache cache = SuperByteBufferCache.getInstance();
         cache.registerCompartment(CachedBuffers.GENERIC_BLOCK);
+        cache.registerCompartment(CachedBuffers.PARTIAL);
+        cache.registerCompartment(CachedBuffers.DIRECTIONAL_PARTIAL);
+        cache.registerCompartment(CachedBuffers.DIRECTIONAL_PARTIAL_VERTICAL);
+        cache.registerCompartment(CachedBuffers.DIRECTIONAL_PARTIAL_CUSTOM);
         cache.registerCompartment(WorldSectionElementImpl.PONDER_WORLD_SECTION);
         SuperByteBuffer.register();
     }

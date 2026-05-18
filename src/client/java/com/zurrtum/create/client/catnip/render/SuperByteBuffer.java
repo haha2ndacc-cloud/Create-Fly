@@ -7,6 +7,7 @@ import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.flywheel.lib.transform.Transform;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.CardinalLighting;
@@ -102,6 +103,10 @@ public class SuperByteBuffer implements Transform<SuperByteBuffer> {
 
     public void submit(PoseStack matrices, OrderedSubmitNodeCollector queue) {
         extractRenderState().submit(matrices, queue);
+    }
+
+    public void submit(RenderType type, PoseStack matrices, OrderedSubmitNodeCollector queue) {
+        extractRenderState().submit(type, matrices, queue);
     }
 
     @Deprecated

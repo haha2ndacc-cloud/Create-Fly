@@ -4,8 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.client.ponder.api.element.AnimatedSceneElement;
 import com.zurrtum.create.client.ponder.api.level.PonderLevel;
-import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -46,9 +44,7 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
         BlockEntityRenderDispatcher blockEntityRenderDispatcher,
         ModelManager modelManager,
         PonderLevel world,
-        MultiBufferSource buffer,
         SubmitNodeCollector queue,
-        Camera camera,
         CameraRenderState cameraRenderState,
         PoseStack poseStack,
         float pt
@@ -59,9 +55,7 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
             blockEntityRenderDispatcher,
             modelManager,
             world,
-            buffer,
             queue,
-            camera,
             cameraRenderState,
             poseStack,
             currentFade,
@@ -75,27 +69,14 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
         EntityRenderDispatcher entityRenderManager,
         ItemModelResolver itemModelManager,
         PonderLevel world,
-        MultiBufferSource buffer,
         SubmitNodeCollector queue,
-        Camera camera,
         CameraRenderState cameraRenderState,
         PoseStack poseStack,
         float pt
     ) {
         poseStack.pushPose();
         float currentFade = applyFade(poseStack, pt);
-        renderLast(
-            entityRenderManager,
-            itemModelManager,
-            world,
-            buffer,
-            queue,
-            camera,
-            cameraRenderState,
-            poseStack,
-            currentFade,
-            pt
-        );
+        renderLast(entityRenderManager, itemModelManager, world, queue, cameraRenderState, poseStack, currentFade, pt);
         poseStack.popPose();
     }
 
@@ -113,9 +94,7 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
         BlockEntityRenderDispatcher blockEntityRenderDispatcher,
         ModelManager modelManager,
         PonderLevel world,
-        MultiBufferSource buffer,
         SubmitNodeCollector queue,
-        Camera camera,
         CameraRenderState cameraRenderState,
         PoseStack ms,
         float fade,
@@ -127,9 +106,7 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
         EntityRenderDispatcher entityRenderManager,
         ItemModelResolver itemModelManager,
         PonderLevel world,
-        MultiBufferSource buffer,
         SubmitNodeCollector queue,
-        Camera camera,
         CameraRenderState cameraRenderState,
         PoseStack ms,
         float fade,

@@ -1,21 +1,18 @@
 package com.zurrtum.create.client.content.trains.track;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.AllItemTags;
 import com.zurrtum.create.AllShapes;
-import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.catnip.data.WorldAttached;
 import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
-import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
 import com.zurrtum.create.client.foundation.utility.RaycastHelper;
 import com.zurrtum.create.content.trains.track.*;
 import com.zurrtum.create.infrastructure.component.BezierTrackPointLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,19 +27,27 @@ import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.apache.commons.lang3.mutable.MutableBoolean;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 public class TrackBlockOutline {
-
+    public static final int BLACK_COLOR = 0x66000000;
+    public static final int WHITE_COLOR = 0x66ffffff;
+    public static final int RED_COLOR = 0x66ff1f3f;
     public static WorldAttached<Map<BlockPos, TrackBlockEntity>> TRACKS_WITH_TURNS = new WorldAttached<>(w -> new HashMap<>());
-
     public static @Nullable BezierPointSelection result;
+
+    private static final VoxelShape LONG_CROSS = Shapes.or(
+        TrackVoxelShapes.longOrthogonalZ(),
+        TrackVoxelShapes.longOrthogonalX()
+    );
+    private static final VoxelShape LONG_ORTHO = TrackVoxelShapes.longOrthogonalZ();
+    private static final VoxelShape LONG_ORTHO_OFFSET = TrackVoxelShapes.longOrthogonalZOffset();
+    private static final float ANGLE_45 = Mth.PI / 4;
 
     public static void pickCurves(Minecraft mc) {
         if (!(mc.getCameraEntity() instanceof LocalPlayer player)) {
@@ -138,151 +143,137 @@ public class TrackBlockOutline {
         }
     }
 
-    public static void drawCurveSelection(Minecraft mc, PoseStack ms, MultiBufferSource buffer, Vec3 camera) {
+    public static void drawCurveSelection(
+        Minecraft mc,
+        PoseStack ms,
+        SubmitNodeCollector queue,
+        Vec3 camera,
+        float lineWidth
+    ) {
         if (mc.gui.hud.isHidden() || mc.gameMode.getPlayerMode() == GameType.SPECTATOR) {
             return;
         }
-
         BezierPointSelection result = TrackBlockOutline.result;
         if (result == null) {
             return;
         }
-
-        VertexConsumer vb = buffer.getBuffer(RenderTypes.lines());
         Vec3 vec = result.vec().subtract(camera);
         Vec3 angles = result.angles();
-        TransformStack.of(ms).pushPose().translate(vec.x, vec.y + .125f, vec.z).rotateY((float) angles.y)
-            .rotateX((float) angles.x).translate(-.5, -.125f, -.5);
-
-        boolean holdingTrack = mc.player.getMainHandItem().is(AllItemTags.TRACKS);
-        renderShape(AllShapes.TRACK_ORTHO.get(Direction.SOUTH), ms, vb, holdingTrack ? false : null);
+        ms.pushPose();
+        ms.translate(vec.x, vec.y + .125f, vec.z);
+        ms.mulPose(new Quaternionf().rotationY((float) angles.y));
+        ms.mulPose(new Quaternionf().rotationX((float) angles.x));
+        ms.translate(-.5, -.125f, -.5);
+        int color = mc.player.getMainHandItem().is(AllItemTags.TRACKS) ? RED_COLOR : BLACK_COLOR;
+        submitShape(AllShapes.TRACK_ORTHO.get(Direction.SOUTH), ms, queue, color, lineWidth);
         ms.popPose();
     }
 
     public static boolean drawCustomBlockSelection(
         Minecraft mc,
         BlockPos pos,
-        MultiBufferSource vertexConsumers,
-        Vec3 camPos,
+        float width,
+        SubmitNodeCollector queue,
         PoseStack ms
     ) {
         BlockState blockstate = mc.level.getBlockState(pos);
-
         if (!(blockstate.getBlock() instanceof TrackBlock)) {
             return false;
         }
         if (!mc.level.getWorldBorder().isWithinBounds(pos)) {
             return false;
         }
-
-        VertexConsumer vb = vertexConsumers.getBuffer(RenderTypes.lines());
-
-        ms.pushPose();
-        ms.translate(pos.getX() - camPos.x, pos.getY() - camPos.y, pos.getZ() - camPos.z);
-
-        boolean holdingTrack = mc.player.getMainHandItem().is(AllItemTags.TRACKS);
         TrackShape shape = blockstate.getValue(TrackBlock.SHAPE);
-        boolean canConnectFrom = !shape.isJunction() && !(mc.level.getBlockEntity(pos) instanceof TrackBlockEntity tbe && tbe.isTilted());
-
-        MutableBoolean cancel = new MutableBoolean();
-        walkShapes(
-            shape, TransformStack.of(ms), s -> {
-                renderShape(s, ms, vb, holdingTrack ? canConnectFrom : null);
-                cancel.setTrue();
+        if (shape == TrackShape.NONE) {
+            return false;
+        }
+        int color;
+        if (mc.player.getMainHandItem().is(AllItemTags.TRACKS)) {
+            if (!shape.isJunction() && !(mc.level.getBlockEntity(pos) instanceof TrackBlockEntity tbe && tbe.isTilted())) {
+                color = WHITE_COLOR;
+            } else {
+                color = RED_COLOR;
             }
-        );
-
-        ms.popPose();
-        return cancel.isTrue();
+        } else {
+            color = BLACK_COLOR;
+        }
+        submitShape(shape, ms, queue, color, width);
+        return true;
     }
 
-    public static void renderShape(VoxelShape s, PoseStack ms, VertexConsumer vb, @Nullable Boolean valid) {
-        PoseStack.Pose transform = ms.last();
-        s.forAllEdges((x1, y1, z1, x2, y2, z2) -> {
-            float xDiff = (float) (x2 - x1);
-            float yDiff = (float) (y2 - y1);
-            float zDiff = (float) (z2 - z1);
-            float length = Mth.sqrt(xDiff * xDiff + yDiff * yDiff + zDiff * zDiff);
-
-            xDiff /= length;
-            yDiff /= length;
-            zDiff /= length;
-
-            float r = 0f;
-            float g = 0f;
-            float b = 0f;
-
-            if (valid != null && valid) {
-                g = 1f;
-                b = 1f;
-                r = 1f;
-            }
-
-            if (valid != null && !valid) {
-                r = 1f;
-                b = 0.125f;
-                g = 0.25f;
-            }
-
-            vb.addVertex(transform.pose(), (float) x1, (float) y1, (float) z1).setColor(r, g, b, .4f)
-                .setNormal(transform.copy(), xDiff, yDiff, zDiff).setLineWidth(1);
-            vb.addVertex(transform.pose(), (float) x2, (float) y2, (float) z2).setColor(r, g, b, .4f)
-                .setNormal(transform.copy(), xDiff, yDiff, zDiff).setLineWidth(1);
-
-        });
+    public static void submitShape(VoxelShape shape, PoseStack ms, SubmitNodeCollector queue, int color, float width) {
+        queue.submitShapeOutline(ms, shape, RenderTypes.lines(), color, width, true);
     }
 
-    private static final VoxelShape LONG_CROSS = Shapes.or(
-        TrackVoxelShapes.longOrthogonalZ(),
-        TrackVoxelShapes.longOrthogonalX()
-    );
-    private static final VoxelShape LONG_ORTHO = TrackVoxelShapes.longOrthogonalZ();
-    private static final VoxelShape LONG_ORTHO_OFFSET = TrackVoxelShapes.longOrthogonalZOffset();
+    private static void submitShape(
+        VoxelShape shape,
+        float angle,
+        PoseStack ms,
+        SubmitNodeCollector queue,
+        int color,
+        float width
+    ) {
+        ms.rotateAround(new Quaternionf().setAngleAxis(angle, 0, 1, 0), 0.5f, 0.5f, 0.5f);
+        queue.submitShapeOutline(ms, shape, RenderTypes.lines(), color, width, true);
+    }
 
-    private static void walkShapes(TrackShape shape, TransformStack<?> msr, Consumer<VoxelShape> renderer) {
-        float angle45 = Mth.PI / 4;
+    public static void submitShape(
+        VoxelShape first,
+        VoxelShape second,
+        float angle,
+        PoseStack ms,
+        SubmitNodeCollector queue,
+        int color,
+        float width
+    ) {
+        submitShape(first, ms, queue, color, width);
+        submitShape(second, angle, ms, queue, color, width);
+    }
 
-        if (shape == TrackShape.XO || shape == TrackShape.CR_NDX || shape == TrackShape.CR_PDX) {
-            renderer.accept(AllShapes.TRACK_ORTHO.get(Direction.EAST));
-        } else if (shape == TrackShape.ZO || shape == TrackShape.CR_NDZ || shape == TrackShape.CR_PDZ) {
-            renderer.accept(AllShapes.TRACK_ORTHO.get(Direction.SOUTH));
-        }
+    private static void submitAscendingShape(
+        float angle,
+        PoseStack ms,
+        SubmitNodeCollector queue,
+        int color,
+        float width
+    ) {
+        ms.translate(0, 1, 0);
+        ms.rotateAround(new Quaternionf().setAngleAxis(angle, 0, 1, 0), 0.5f, 0.5f, 0.5f);
+        ms.mulPose(new Quaternionf().rotationX(ANGLE_45));
+        ms.translate(0, -0.1875f, 0.0625f);
+        submitShape(LONG_ORTHO, ms, queue, color, width);
+    }
 
-        if (shape.isPortal()) {
-            for (Direction d : Iterate.horizontalDirections) {
-                if (TrackShape.asPortal(d) != shape) {
-                    continue;
-                }
-                msr.rotateCentered(AngleHelper.rad(AngleHelper.horizontalAngle(d)), Direction.UP);
-                renderer.accept(LONG_ORTHO_OFFSET);
-                return;
+    public static void submitShape(TrackShape shape, PoseStack ms, SubmitNodeCollector queue, int color, float width) {
+        switch (shape) {
+            case ZO -> submitShape(AllShapes.TRACK_ORTHO.get(Direction.SOUTH), ms, queue, color, width);
+            case XO -> submitShape(AllShapes.TRACK_ORTHO.get(Direction.EAST), ms, queue, color, width);
+            case PD -> submitShape(LONG_ORTHO, ANGLE_45, ms, queue, color, width);
+            case ND -> submitShape(LONG_ORTHO, -ANGLE_45, ms, queue, color, width);
+            case AN -> {
+                ms.translate(0, 1, 0);
+                ms.mulPose(new Quaternionf().rotationX(ANGLE_45));
+                ms.translate(0, -0.1875f, 0.0625f);
+                submitShape(LONG_ORTHO, ms, queue, color, width);
             }
+            case AS -> submitAscendingShape(Mth.DEG_TO_RAD * 180, ms, queue, color, width);
+            case AE -> submitAscendingShape(Mth.DEG_TO_RAD * -90, ms, queue, color, width);
+            case AW -> submitAscendingShape(Mth.DEG_TO_RAD * 90, ms, queue, color, width);
+            case TN -> submitShape(LONG_ORTHO_OFFSET, Mth.DEG_TO_RAD * 180, ms, queue, color, width);
+            case TS -> submitShape(LONG_ORTHO_OFFSET, ms, queue, color, width);
+            case TE -> submitShape(LONG_ORTHO_OFFSET, Mth.DEG_TO_RAD * -270, ms, queue, color, width);
+            case TW -> submitShape(LONG_ORTHO_OFFSET, Mth.DEG_TO_RAD * -90, ms, queue, color, width);
+            case CR_O -> submitShape(AllShapes.TRACK_CROSS, ms, queue, color, width);
+            case CR_D -> submitShape(LONG_CROSS, ANGLE_45, ms, queue, color, width);
+            case CR_PDX ->
+                submitShape(AllShapes.TRACK_ORTHO.get(Direction.EAST), LONG_ORTHO, ANGLE_45, ms, queue, color, width);
+            case CR_PDZ ->
+                submitShape(AllShapes.TRACK_ORTHO.get(Direction.SOUTH), LONG_ORTHO, ANGLE_45, ms, queue, color, width);
+            case CR_NDX ->
+                submitShape(AllShapes.TRACK_ORTHO.get(Direction.EAST), LONG_ORTHO, -ANGLE_45, ms, queue, color, width);
+            case CR_NDZ ->
+                submitShape(AllShapes.TRACK_ORTHO.get(Direction.SOUTH), LONG_ORTHO, -ANGLE_45, ms, queue, color, width);
         }
-
-        if (shape == TrackShape.PD || shape == TrackShape.CR_PDX || shape == TrackShape.CR_PDZ) {
-            msr.rotateCentered(angle45, Direction.UP);
-            renderer.accept(LONG_ORTHO);
-        } else if (shape == TrackShape.ND || shape == TrackShape.CR_NDX || shape == TrackShape.CR_NDZ) {
-            msr.rotateCentered(-Mth.PI / 4, Direction.UP);
-            renderer.accept(LONG_ORTHO);
-        }
-
-        if (shape == TrackShape.CR_O) {
-            renderer.accept(AllShapes.TRACK_CROSS);
-        } else if (shape == TrackShape.CR_D) {
-            msr.rotateCentered(angle45, Direction.UP);
-            renderer.accept(LONG_CROSS);
-        }
-
-        if (!(shape == TrackShape.AE || shape == TrackShape.AN || shape == TrackShape.AW || shape == TrackShape.AS)) {
-            return;
-        }
-
-        msr.translate(0, 1, 0);
-        msr.rotateCentered(Mth.PI - AngleHelper.rad(shape.getModelRotation()), Direction.UP);
-        msr.rotateX(angle45);
-        msr.translate(0, -3 / 16f, 1 / 16f);
-        renderer.accept(LONG_ORTHO);
     }
 
     public record BezierPointSelection(TrackBlockEntity blockEntity, BezierTrackPointLocation loc, Vec3 vec,

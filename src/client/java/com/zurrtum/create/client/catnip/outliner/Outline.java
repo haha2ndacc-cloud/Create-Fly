@@ -1,27 +1,25 @@
 package com.zurrtum.create.client.catnip.outliner;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.zurrtum.create.catnip.math.AngleHelper;
 import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.catnip.render.BindableTexture;
-import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
-import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.util.LightCoordsUtil;
-import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import org.joml.*;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.jspecify.annotations.Nullable;
 
 public abstract class Outline {
-
     protected final OutlineParams params;
 
-    protected final Vector4f colorTemp = new Vector4f();
-    protected final Vector3f diffPosTemp = new Vector3f();
     protected final Vector3f minPosTemp = new Vector3f();
     protected final Vector3f maxPosTemp = new Vector3f();
     protected final Vector4f posTransformTemp = new Vector4f();
@@ -35,55 +33,19 @@ public abstract class Outline {
         return params;
     }
 
-    public abstract void render(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer, Vec3 camera, float pt);
+    public abstract void submit(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, Vec3 camera, float pt);
 
     public void tick() {
     }
 
     public void bufferCuboidLine(
-        PoseStack poseStack,
-        VertexConsumer consumer,
-        Vec3 camera,
-        Vector3d start,
-        Vector3d end,
-        float width,
-        Vector4f color,
-        int lightmap,
-        boolean disableNormals
-    ) {
-        Vector3f diff = this.diffPosTemp;
-        diff.set((float) (end.x - start.x), (float) (end.y - start.y), (float) (end.z - start.z));
-
-        float length = Mth.sqrt(diff.x() * diff.x() + diff.y() * diff.y() + diff.z() * diff.z());
-        float hAngle = AngleHelper.deg(Mth.atan2(diff.x(), diff.z()));
-        float hDistance = Mth.sqrt(diff.x() * diff.x() + diff.z() * diff.z());
-        float vAngle = AngleHelper.deg(Mth.atan2(hDistance, diff.y())) - 90;
-
-        poseStack.pushPose();
-        TransformStack.of(poseStack).translate(start.x - camera.x, start.y - camera.y, start.z - camera.z)
-            .rotateYDegrees(hAngle).rotateXDegrees(vAngle);
-        bufferCuboidLine(
-            poseStack.last(),
-            consumer,
-            new Vector3f(),
-            Direction.SOUTH,
-            length,
-            width,
-            color,
-            lightmap,
-            disableNormals
-        );
-        poseStack.popPose();
-    }
-
-    public void bufferCuboidLine(
-        PoseStack.Pose pose,
+        Pose pose,
         VertexConsumer consumer,
         Vector3f origin,
         Direction direction,
         float length,
         float width,
-        Vector4f color,
+        int color,
         int lightmap,
         boolean disableNormals
     ) {
@@ -119,11 +81,11 @@ public abstract class Outline {
     }
 
     public void bufferCuboid(
-        PoseStack.Pose pose,
+        Pose pose,
         VertexConsumer consumer,
         Vector3f minPos,
         Vector3f maxPos,
-        Vector4f color,
+        int color,
         int lightmap,
         boolean disableNormals
     ) {
@@ -187,11 +149,6 @@ public abstract class Outline {
         float y7 = posTransformTemp.y();
         float z7 = posTransformTemp.z();
 
-        float r = color.x();
-        float g = color.y();
-        float b = color.z();
-        float a = color.w();
-
         Matrix3f normalMatrix = pose.normal();
 
         // down
@@ -206,17 +163,10 @@ public abstract class Outline {
         float ny0 = normalTransformTemp.y();
         float nz0 = normalTransformTemp.z();
 
-        consumer.addVertex(x0, y0, z0).setColor(r, g, b, a).setUv(0, 0).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx0, ny0, nz0);
-
-        consumer.addVertex(x1, y1, z1).setColor(r, g, b, a).setUv(0, 1).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx0, ny0, nz0);
-
-        consumer.addVertex(x2, y2, z2).setColor(r, g, b, a).setUv(1, 1).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx0, ny0, nz0);
-
-        consumer.addVertex(x3, y3, z3).setColor(r, g, b, a).setUv(1, 0).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx0, ny0, nz0);
+        consumer.addVertex(x0, y0, z0, color, 0, 0, OverlayTexture.NO_OVERLAY, lightmap, nx0, ny0, nz0);
+        consumer.addVertex(x1, y1, z1, color, 0, 1, OverlayTexture.NO_OVERLAY, lightmap, nx0, ny0, nz0);
+        consumer.addVertex(x2, y2, z2, color, 1, 1, OverlayTexture.NO_OVERLAY, lightmap, nx0, ny0, nz0);
+        consumer.addVertex(x3, y3, z3, color, 1, 0, OverlayTexture.NO_OVERLAY, lightmap, nx0, ny0, nz0);
 
         // up
 
@@ -226,17 +176,10 @@ public abstract class Outline {
         float ny1 = normalTransformTemp.y();
         float nz1 = normalTransformTemp.z();
 
-        consumer.addVertex(x4, y4, z4).setColor(r, g, b, a).setUv(0, 0).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx1, ny1, nz1);
-
-        consumer.addVertex(x5, y5, z5).setColor(r, g, b, a).setUv(0, 1).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx1, ny1, nz1);
-
-        consumer.addVertex(x6, y6, z6).setColor(r, g, b, a).setUv(1, 1).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx1, ny1, nz1);
-
-        consumer.addVertex(x7, y7, z7).setColor(r, g, b, a).setUv(1, 0).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx1, ny1, nz1);
+        consumer.addVertex(x4, y4, z4, color, 0, 0, OverlayTexture.NO_OVERLAY, lightmap, nx1, ny1, nz1);
+        consumer.addVertex(x5, y5, z5, color, 0, 1, OverlayTexture.NO_OVERLAY, lightmap, nx1, ny1, nz1);
+        consumer.addVertex(x6, y6, z6, color, 1, 1, OverlayTexture.NO_OVERLAY, lightmap, nx1, ny1, nz1);
+        consumer.addVertex(x7, y7, z7, color, 1, 0, OverlayTexture.NO_OVERLAY, lightmap, nx1, ny1, nz1);
 
         // north
 
@@ -250,17 +193,10 @@ public abstract class Outline {
         float ny2 = normalTransformTemp.y();
         float nz2 = normalTransformTemp.z();
 
-        consumer.addVertex(x7, y7, z7).setColor(r, g, b, a).setUv(0, 0).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx2, ny2, nz2);
-
-        consumer.addVertex(x2, y2, z2).setColor(r, g, b, a).setUv(0, 1).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx2, ny2, nz2);
-
-        consumer.addVertex(x1, y1, z1).setColor(r, g, b, a).setUv(1, 1).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx2, ny2, nz2);
-
-        consumer.addVertex(x4, y4, z4).setColor(r, g, b, a).setUv(1, 0).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx2, ny2, nz2);
+        consumer.addVertex(x7, y7, z7, color, 0, 0, OverlayTexture.NO_OVERLAY, lightmap, nx2, ny2, nz2);
+        consumer.addVertex(x2, y2, z2, color, 0, 1, OverlayTexture.NO_OVERLAY, lightmap, nx2, ny2, nz2);
+        consumer.addVertex(x1, y1, z1, color, 1, 1, OverlayTexture.NO_OVERLAY, lightmap, nx2, ny2, nz2);
+        consumer.addVertex(x4, y4, z4, color, 1, 0, OverlayTexture.NO_OVERLAY, lightmap, nx2, ny2, nz2);
 
         // south
 
@@ -274,17 +210,10 @@ public abstract class Outline {
         float ny3 = normalTransformTemp.y();
         float nz3 = normalTransformTemp.z();
 
-        consumer.addVertex(x5, y5, z5).setColor(r, g, b, a).setUv(0, 0).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx3, ny3, nz3);
-
-        consumer.addVertex(x0, y0, z0).setColor(r, g, b, a).setUv(0, 1).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx3, ny3, nz3);
-
-        consumer.addVertex(x3, y3, z3).setColor(r, g, b, a).setUv(1, 1).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx3, ny3, nz3);
-
-        consumer.addVertex(x6, y6, z6).setColor(r, g, b, a).setUv(1, 0).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx3, ny3, nz3);
+        consumer.addVertex(x5, y5, z5, color, 0, 0, OverlayTexture.NO_OVERLAY, lightmap, nx3, ny3, nz3);
+        consumer.addVertex(x0, y0, z0, color, 0, 1, OverlayTexture.NO_OVERLAY, lightmap, nx3, ny3, nz3);
+        consumer.addVertex(x3, y3, z3, color, 1, 1, OverlayTexture.NO_OVERLAY, lightmap, nx3, ny3, nz3);
+        consumer.addVertex(x6, y6, z6, color, 1, 0, OverlayTexture.NO_OVERLAY, lightmap, nx3, ny3, nz3);
 
         // west
 
@@ -298,17 +227,10 @@ public abstract class Outline {
         float ny4 = normalTransformTemp.y();
         float nz4 = normalTransformTemp.z();
 
-        consumer.addVertex(x4, y4, z4).setColor(r, g, b, a).setUv(0, 0).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx4, ny4, nz4);
-
-        consumer.addVertex(x1, y1, z1).setColor(r, g, b, a).setUv(0, 1).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx4, ny4, nz4);
-
-        consumer.addVertex(x0, y0, z0).setColor(r, g, b, a).setUv(1, 1).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx4, ny4, nz4);
-
-        consumer.addVertex(x5, y5, z5).setColor(r, g, b, a).setUv(1, 0).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx4, ny4, nz4);
+        consumer.addVertex(x4, y4, z4, color, 0, 0, OverlayTexture.NO_OVERLAY, lightmap, nx4, ny4, nz4);
+        consumer.addVertex(x1, y1, z1, color, 0, 1, OverlayTexture.NO_OVERLAY, lightmap, nx4, ny4, nz4);
+        consumer.addVertex(x0, y0, z0, color, 1, 1, OverlayTexture.NO_OVERLAY, lightmap, nx4, ny4, nz4);
+        consumer.addVertex(x5, y5, z5, color, 1, 0, OverlayTexture.NO_OVERLAY, lightmap, nx4, ny4, nz4);
 
         // east
 
@@ -322,27 +244,20 @@ public abstract class Outline {
         float ny5 = normalTransformTemp.y();
         float nz5 = normalTransformTemp.z();
 
-        consumer.addVertex(x6, y6, z6).setColor(r, g, b, a).setUv(0, 0).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx5, ny5, nz5);
-
-        consumer.addVertex(x3, y3, z3).setColor(r, g, b, a).setUv(0, 1).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx5, ny5, nz5);
-
-        consumer.addVertex(x2, y2, z2).setColor(r, g, b, a).setUv(1, 1).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx5, ny5, nz5);
-
-        consumer.addVertex(x7, y7, z7).setColor(r, g, b, a).setUv(1, 0).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx5, ny5, nz5);
+        consumer.addVertex(x6, y6, z6, color, 0, 0, OverlayTexture.NO_OVERLAY, lightmap, nx5, ny5, nz5);
+        consumer.addVertex(x3, y3, z3, color, 0, 1, OverlayTexture.NO_OVERLAY, lightmap, nx5, ny5, nz5);
+        consumer.addVertex(x2, y2, z2, color, 1, 1, OverlayTexture.NO_OVERLAY, lightmap, nx5, ny5, nz5);
+        consumer.addVertex(x7, y7, z7, color, 1, 0, OverlayTexture.NO_OVERLAY, lightmap, nx5, ny5, nz5);
     }
 
     public void bufferQuad(
-        PoseStack.Pose pose,
+        Pose pose,
         VertexConsumer consumer,
         Vector3f pos0,
         Vector3f pos1,
         Vector3f pos2,
         Vector3f pos3,
-        Vector4f color,
+        int color,
         int lightmap,
         Vector3f normal
     ) {
@@ -350,13 +265,13 @@ public abstract class Outline {
     }
 
     public void bufferQuad(
-        PoseStack.Pose pose,
+        Pose pose,
         VertexConsumer consumer,
         Vector3f pos0,
         Vector3f pos1,
         Vector3f pos2,
         Vector3f pos3,
-        Vector4f color,
+        int color,
         float minU,
         float minV,
         float maxU,
@@ -393,28 +308,16 @@ public abstract class Outline {
         float y3 = posTransformTemp.y();
         float z3 = posTransformTemp.z();
 
-        float r = color.x();
-        float g = color.y();
-        float b = color.z();
-        float a = color.w();
-
         normalTransformTemp.set(normal);
         normalTransformTemp.mul(pose.normal());
         float nx = normalTransformTemp.x();
         float ny = normalTransformTemp.y();
         float nz = normalTransformTemp.z();
 
-        consumer.addVertex(x0, y0, z0).setColor(r, g, b, a).setUv(minU, minV).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx, ny, nz);
-
-        consumer.addVertex(x1, y1, z1).setColor(r, g, b, a).setUv(minU, maxV).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx, ny, nz);
-
-        consumer.addVertex(x2, y2, z2).setColor(r, g, b, a).setUv(maxU, maxV).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx, ny, nz);
-
-        consumer.addVertex(x3, y3, z3).setColor(r, g, b, a).setUv(maxU, minV).setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(lightmap).setNormal(nx, ny, nz);
+        consumer.addVertex(x0, y0, z0, color, minU, minV, OverlayTexture.NO_OVERLAY, lightmap, nx, ny, nz);
+        consumer.addVertex(x1, y1, z1, color, minU, maxV, OverlayTexture.NO_OVERLAY, lightmap, nx, ny, nz);
+        consumer.addVertex(x2, y2, z2, color, maxU, maxV, OverlayTexture.NO_OVERLAY, lightmap, nx, ny, nz);
+        consumer.addVertex(x3, y3, z3, color, maxU, minV, OverlayTexture.NO_OVERLAY, lightmap, nx, ny, nz);
     }
 
     public static class OutlineParams {
@@ -428,7 +331,7 @@ public abstract class Outline {
         protected boolean disableLineNormals;
         protected float alpha;
         protected int lightmap;
-        protected Color rgb;
+        protected int color;
         private float lineWidth;
 
         public OutlineParams() {
@@ -436,19 +339,19 @@ public abstract class Outline {
             alpha = 1;
             lineWidth = 1 / 32f;
             fadeLineWidth = true;
-            rgb = Color.WHITE;
+            color = 0xFFFFFFFF;
             lightmap = LightCoordsUtil.FULL_BRIGHT;
         }
 
         // builder
 
         public OutlineParams colored(int color) {
-            rgb = new Color(color, false);
+            this.color = color | 0xFF000000;
             return this;
         }
 
         public OutlineParams colored(Color c) {
-            rgb = c.copy();
+            color = c.getRGB();
             return this;
         }
 
@@ -506,9 +409,8 @@ public abstract class Outline {
             return highlightedFace;
         }
 
-        public void loadColor(Vector4f vec) {
-            vec.set(rgb.getRedAsFloat(), rgb.getGreenAsFloat(), rgb.getBlueAsFloat(), rgb.getAlphaAsFloat() * alpha);
+        public int getColor() {
+            return color;
         }
     }
-
 }

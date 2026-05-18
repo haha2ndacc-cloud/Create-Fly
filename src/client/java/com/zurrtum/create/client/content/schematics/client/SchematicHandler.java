@@ -11,7 +11,6 @@ import com.zurrtum.create.client.AllKeys;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.levelWrappers.SchematicRenderLevel;
 import com.zurrtum.create.client.catnip.outliner.AABBOutline;
-import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.content.schematics.client.tools.ToolType;
 import com.zurrtum.create.client.foundation.utility.CreateLang;
 import com.zurrtum.create.content.contraptions.StructureTransform;
@@ -26,7 +25,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
@@ -237,7 +236,7 @@ public class SchematicHandler {
         }
     }
 
-    public void render(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer, SubmitNodeStorage queue, CameraRenderState camera) {
+    public void render(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, CameraRenderState camera) {
         if (!active) {
             return;
         }
@@ -248,7 +247,7 @@ public class SchematicHandler {
         Vec3 cameraPos = camera.pos;
 
         ms.pushPose();
-        currentTool.getTool().renderTool(mc, ms, buffer, cameraPos);
+        currentTool.getTool().renderTool(mc, ms, queue, cameraPos);
         ms.popPose();
 
         ms.pushPose();
@@ -259,15 +258,15 @@ public class SchematicHandler {
             boolean lr = transformation.getScaleLR().getValue(pt) < 0;
             boolean fb = transformation.getScaleFB().getValue(pt) < 0;
             if (lr && !fb && renderers[2] != null) {
-                renderers[2].render(mc, ms, buffer, queue, transformation, camera);
+                renderers[2].render(mc, ms, queue, transformation, camera);
             } else if (fb && !lr && renderers[1] != null) {
-                renderers[1].render(mc, ms, buffer, queue, transformation, camera);
+                renderers[1].render(mc, ms, queue, transformation, camera);
             } else if (renderers[0] != null) {
-                renderers[0].render(mc, ms, buffer, queue, transformation, camera);
+                renderers[0].render(mc, ms, queue, transformation, camera);
             }
         }
 
-        currentTool.getTool().renderOnSchematic(mc, ms, buffer);
+        currentTool.getTool().renderOnSchematic(mc, ms, queue);
 
         ms.popPose();
     }

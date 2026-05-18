@@ -1,10 +1,11 @@
 package com.zurrtum.create.client.catnip.gui.render;
 
+import com.mojang.blaze3d.GpuFormat;
 import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.GpuTextureView;
-import com.mojang.blaze3d.textures.TextureFormat;
+import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.renderer.Projection;
 import net.minecraft.client.renderer.ProjectionMatrixBuffer;
 
@@ -24,7 +25,7 @@ public record GpuTexture(int width, int height, com.mojang.blaze3d.textures.GpuT
         com.mojang.blaze3d.textures.GpuTexture texture = gpuDevice.createTexture(
             () -> "UI Item Transform texture",
             13,
-            TextureFormat.RGBA8,
+            GpuFormat.RGBA8_UNORM,
             width * factor,
             height * factor,
             1,
@@ -34,7 +35,7 @@ public record GpuTexture(int width, int height, com.mojang.blaze3d.textures.GpuT
         com.mojang.blaze3d.textures.GpuTexture depthTexture = gpuDevice.createTexture(
             () -> "UI Item Transform depth texture",
             9,
-            TextureFormat.DEPTH32,
+            GpuFormat.D32_FLOAT,
             texture.getWidth(0),
             texture.getHeight(0),
             1,
@@ -45,7 +46,8 @@ public record GpuTexture(int width, int height, com.mojang.blaze3d.textures.GpuT
     }
 
     public void prepare(Projection projection, ProjectionMatrixBuffer projectionMatrixBuffer) {
-        RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(texture, 0, depthTexture, 1.0);
+        RenderSystem.getDevice().createCommandEncoder()
+            .clearColorAndDepthTextures(texture, GuiRenderer.CLEAR_COLOR, depthTexture, 0);
         projection.setupOrtho(-1000.0F, 1000.0F, width, height, true);
         RenderSystem.setProjectionMatrix(projectionMatrixBuffer.getBuffer(projection), ProjectionType.ORTHOGRAPHIC);
         RenderSystem.outputColorTextureOverride = textureView;

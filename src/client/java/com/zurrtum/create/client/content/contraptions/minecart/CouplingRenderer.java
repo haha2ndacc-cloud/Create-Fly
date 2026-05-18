@@ -17,7 +17,7 @@ import com.zurrtum.create.content.contraptions.minecart.CouplingHandler;
 import com.zurrtum.create.content.contraptions.minecart.capability.MinecartController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.LightCoordsUtil;
@@ -34,7 +34,7 @@ import java.util.Objects;
 
 public class CouplingRenderer {
 
-    public static void renderAll(Minecraft mc, PoseStack ms, SubmitNodeStorage queue, Vec3 camera) {
+    public static void renderAll(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, Vec3 camera) {
         ClientLevel world = mc.level;
         CouplingHandler.forEachLoadedCoupling(
             world, c -> {
@@ -55,7 +55,7 @@ public class CouplingRenderer {
     public static void renderCoupling(
         ClientLevel world,
         PoseStack ms,
-        SubmitNodeStorage queue,
+        SubmitNodeCollector queue,
         Vec3 camera,
         Couple<AbstractMinecart> carts
     ) {

@@ -1,13 +1,15 @@
 package com.zurrtum.create.client.ponder.foundation.element;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.zurrtum.create.catnip.data.Pair;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.catnip.registry.RegisteredObjectsHelper;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.outliner.AABBOutline;
-import com.zurrtum.create.client.catnip.render.*;
+import com.zurrtum.create.client.catnip.render.EntityBlockLevelSbbBuilder;
+import com.zurrtum.create.client.catnip.render.QuadRenderHelper;
+import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
+import com.zurrtum.create.client.catnip.render.SuperByteBufferCache;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferCache.Compartment;
 import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
 import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
@@ -18,9 +20,7 @@ import com.zurrtum.create.client.ponder.api.element.WorldSectionElement;
 import com.zurrtum.create.client.ponder.api.level.PonderLevel;
 import com.zurrtum.create.client.ponder.api.scene.Selection;
 import com.zurrtum.create.client.ponder.foundation.PonderScene;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockModelLighter;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
@@ -46,7 +46,6 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.BlockEntityTypes;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -333,9 +332,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
         BlockEntityRenderDispatcher blockEntityRenderDispatcher,
         ModelManager modelManager,
         PonderLevel world,
-        MultiBufferSource buffer,
         SubmitNodeCollector queue,
-        Camera camera,
         CameraRenderState cameraRenderState,
         PoseStack poseStack,
         float fade,
@@ -353,7 +350,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
         poseStack.pushPose();
         transformMS(poseStack, pt);
         world.pushFakeLight(light);
-        renderBlockEntities(blockEntityRenderDispatcher, world, poseStack, queue, camera, cameraRenderState, pt);
+        renderBlockEntities(blockEntityRenderDispatcher, world, poseStack, queue, cameraRenderState, pt);
         world.popLight();
 
         Map<BlockPos, Integer> blockBreakingProgressions = world.getBlockBreakingProgressions();
@@ -401,9 +398,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
         EntityRenderDispatcher entityRenderManager,
         ItemModelResolver itemModelManager,
         PonderLevel world,
-        MultiBufferSource buffer,
         SubmitNodeCollector queue,
-        Camera camera,
         CameraRenderState cameraRenderState,
         PoseStack poseStack,
         float fade,
@@ -429,7 +424,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 
         AABBOutline aabbOutline = new AABBOutline(shape.bounds().inflate(1 / 128.0f));
         aabbOutline.getParams().lineWidth(1 / 64.0f).colored(0xefefef).disableLineNormals();
-        aabbOutline.render(mc, poseStack, (SuperRenderTypeBuffer) buffer, Vec3.ZERO, pt);
+        aabbOutline.submit(mc, poseStack, queue, Vec3.ZERO, pt);
 
         poseStack.popPose();
     }
@@ -439,14 +434,13 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
         PonderLevel world,
         PoseStack ms,
         SubmitNodeCollector queue,
-        Camera camera,
         CameraRenderState cameraRenderState,
         float pt
     ) {
         loadBEsIfMissing(world, true);
 
         Iterator<BlockEntity> iterator = renderedBlockEntities.iterator();
-        Vec3 cameraPos = camera.position();
+        Vec3 cameraPos = cameraRenderState.pos;
         while (iterator.hasNext()) {
             BlockEntity tile = iterator.next();
             BlockEntityRenderer<BlockEntity, BlockEntityRenderState> renderer = dispatcher.getRenderer(tile);

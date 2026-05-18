@@ -1,14 +1,13 @@
 package com.zurrtum.create.client.catnip.outliner;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class ChasingAABBOutline extends AABBOutline {
-
     AABB targetBB;
     AABB prevBB;
 
@@ -29,11 +28,16 @@ public class ChasingAABBOutline extends AABBOutline {
     }
 
     @Override
-    public void render(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer, Vec3 camera, float pt) {
-        params.loadColor(colorTemp);
-        int lightmap = params.lightmap;
-        boolean disableLineNormals = params.disableLineNormals;
-        renderBox(ms, buffer, camera, interpolateBBs(prevBB, bb, pt), colorTemp, lightmap, disableLineNormals);
+    public void submit(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, Vec3 camera, float pt) {
+        submitBox(
+            ms,
+            queue,
+            camera,
+            interpolateBBs(prevBB, bb, pt),
+            params.color,
+            params.lightmap,
+            params.disableLineNormals
+        );
     }
 
     private static AABB interpolateBBs(AABB current, AABB target, float pt) {
@@ -46,5 +50,4 @@ public class ChasingAABBOutline extends AABBOutline {
             Mth.lerp(pt, current.maxZ, target.maxZ)
         );
     }
-
 }

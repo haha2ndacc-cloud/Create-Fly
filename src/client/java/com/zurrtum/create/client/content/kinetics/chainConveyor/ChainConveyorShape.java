@@ -1,11 +1,10 @@
 package com.zurrtum.create.client.content.kinetics.chainConveyor;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.AllShapes;
 import com.zurrtum.create.catnip.math.VecHelper;
-import com.zurrtum.create.client.content.trains.track.TrackBlockOutline;
-import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
@@ -13,6 +12,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
 public abstract class ChainConveyorShape {
@@ -22,7 +22,7 @@ public abstract class ChainConveyorShape {
 
     public abstract float getChainPosition(Vec3 intersection);
 
-    protected abstract void drawOutline(BlockPos anchor, PoseStack ms, VertexConsumer vb);
+    protected abstract void submitOutline(BlockPos anchor, PoseStack ms, SubmitNodeCollector queue, float width);
 
     public abstract Vec3 getVec(BlockPos anchor, float position);
 
@@ -78,10 +78,16 @@ public abstract class ChainConveyorShape {
         }
 
         @Override
-        public void drawOutline(BlockPos anchor, PoseStack ms, VertexConsumer vb) {
-            TransformStack.of(ms).translate(pivot).rotateYDegrees((float) yaw).rotateXDegrees((float) pitch)
-                .translateBack(pivot);
-            TrackBlockOutline.renderShape(voxelShape, ms, vb, null);
+        public void submitOutline(BlockPos anchor, PoseStack ms, SubmitNodeCollector queue, float width) {
+            ms.translate(pivot.x, pivot.y, pivot.z);
+            if (yaw != 0) {
+                ms.mulPose(new Quaternionf().rotationY(Mth.DEG_TO_RAD * (float) yaw));
+            }
+            if (pitch != 0) {
+                ms.mulPose(new Quaternionf().rotationX(Mth.DEG_TO_RAD * (float) pitch));
+            }
+            ms.translate(-pivot.x, -pivot.y, -pivot.z);
+            queue.submitShapeOutline(ms, voxelShape, RenderTypes.lines(), 0x66000000, width, true);
         }
 
         @Override
@@ -128,8 +134,15 @@ public abstract class ChainConveyorShape {
         }
 
         @Override
-        public void drawOutline(BlockPos anchor, PoseStack ms, VertexConsumer vb) {
-            TrackBlockOutline.renderShape(AllShapes.CHAIN_CONVEYOR_INTERACTION, ms, vb, null);
+        public void submitOutline(BlockPos anchor, PoseStack ms, SubmitNodeCollector queue, float width) {
+            queue.submitShapeOutline(
+                ms,
+                AllShapes.CHAIN_CONVEYOR_INTERACTION,
+                RenderTypes.lines(),
+                0x66000000,
+                width,
+                true
+            );
         }
 
         @Override

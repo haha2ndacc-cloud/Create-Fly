@@ -28,6 +28,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.util.LightCoordsUtil.BrightnessGetter;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HopperBlock;
@@ -258,6 +260,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 
         poseStack.pushMatrix();
 
+        int light = LightCoordsUtil.getLightCoords(BrightnessGetter.DEFAULT, level, state, pos);
         for (int i = 0; i < sectors; i++) {
             Color innerColor = Color.WHITE.setAlpha(0.05f);
             Color outerColor = Color.WHITE.setAlpha(0.3f);
@@ -311,6 +314,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
                 pos,
                 blockEntity,
                 blockState,
+                light,
                 -21,
                 -21,
                 1.5f,

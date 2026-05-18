@@ -4,11 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.AllItems;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
-import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
-import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
-import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
+import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
+import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.equipment.symmetryWand.SymmetryWandItem;
 import com.zurrtum.create.content.equipment.symmetryWand.mirror.CrossPlaneMirror;
 import com.zurrtum.create.content.equipment.symmetryWand.mirror.EmptyMirror;
@@ -18,8 +17,7 @@ import com.zurrtum.create.infrastructure.component.SymmetryMirror;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -34,11 +32,10 @@ import org.jspecify.annotations.Nullable;
 public class SymmetryHandlerClient {
     private static int tickCounter = 0;
 
-    public static void onRenderWorld(Minecraft mc, PoseStack ms, MultiBufferSource buffer, Vec3 cameraPos) {
+    public static void onRenderWorld(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, Vec3 cameraPos) {
         LocalPlayer player = mc.player;
+        ClientLevel level = mc.level;
         Inventory inventory = player.getInventory();
-        BlockBakedQuadOutput output = null;
-        ModelConsumer blockRenderer = null;
         for (int i = 0, size = Inventory.getSelectionSize(); i < size; i++) {
             ItemStack stackInSlot = inventory.getItem(i);
             if (!stackInSlot.is(AllItems.WAND_OF_SYMMETRY)) {
@@ -48,7 +45,8 @@ public class SymmetryHandlerClient {
                 continue;
             }
             SymmetryMirror mirror = SymmetryWandItem.getMirror(stackInSlot);
-            if (mirror instanceof EmptyMirror) {
+            PartialModel model = getModel(mirror);
+            if (model == null) {
                 continue;
             }
 
@@ -61,34 +59,24 @@ public class SymmetryHandlerClient {
             ms.translate(pos.getX() - cameraPos.x(), pos.getY() - cameraPos.y(), pos.getZ() - cameraPos.z());
             ms.translate(0, yShift + .2f, 0);
             applyModelTransform(mirror, ms);
-            BlockStateModel model = getModel(mirror).get();
-            if (output == null) {
-                output = new BlockBakedQuadOutput(buffer, ms);
-                blockRenderer = ModelRenderHelper.getCullHelper(output);
-            }
-            output.updateBuffer(model);
-            blockRenderer.tesselateBlock(
-                0,
-                0,
-                0,
-                mc.level,
-                pos,
-                Blocks.AIR.defaultBlockState(),
-                model,
-                Mth.getSeed(pos)
-            );
+            int light = SmartBlockEntityRenderer.getLightCoords(level, pos);
+            CachedBuffers.partial(model, Blocks.AIR.defaultBlockState()).light(light).submit(ms, queue);
             ms.popPose();
         }
     }
 
     @Nullable
     public static PartialModel getModel(SymmetryMirror mirror) {
-        return switch (mirror) {
-            case PlaneMirror planeMirror -> AllPartialModels.SYMMETRY_PLANE;
-            case CrossPlaneMirror crossPlaneMirror -> AllPartialModels.SYMMETRY_CROSSPLANE;
-            case TriplePlaneMirror triplePlaneMirror -> AllPartialModels.SYMMETRY_TRIPLEPLANE;
-            default -> throw new IllegalArgumentException("Unknown mirror type: " + mirror.getClass().getName());
-        };
+        if (mirror instanceof PlaneMirror) {
+            return AllPartialModels.SYMMETRY_PLANE;
+        }
+        if (mirror instanceof CrossPlaneMirror) {
+            return AllPartialModels.SYMMETRY_CROSSPLANE;
+        }
+        if (mirror instanceof TriplePlaneMirror) {
+            return AllPartialModels.SYMMETRY_TRIPLEPLANE;
+        }
+        return null;
     }
 
     public static void applyModelTransform(SymmetryMirror mirror, PoseStack ms) {

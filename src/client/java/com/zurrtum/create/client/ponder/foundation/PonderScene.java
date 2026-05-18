@@ -6,9 +6,7 @@ import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.catnip.data.Pair;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
-import com.zurrtum.create.client.catnip.gui.UIRenderHelper;
 import com.zurrtum.create.client.catnip.outliner.Outliner;
-import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.ponder.api.element.*;
 import com.zurrtum.create.client.ponder.api.level.PonderLevel;
 import com.zurrtum.create.client.ponder.api.registration.StoryBoardEntry.SceneOrderingEntry;
@@ -24,7 +22,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemModelResolver;
@@ -242,13 +240,7 @@ public class PonderScene {
         activeSchedule.add(new HideAllInstruction(10, null));
     }
 
-    public void renderScene(
-        Minecraft mc,
-        SuperRenderTypeBuffer buffer,
-        SubmitNodeStorage queue,
-        PoseStack ms,
-        float pt
-    ) {
+    public void renderScene(Minecraft mc, SubmitNodeCollector queue, PoseStack ms, float pt) {
         ms.pushPose();
         camera.set(transform.xRotation.getValue(pt) + 90, transform.yRotation.getValue(pt) + 180);
         cameraRenderState.initialized = true;
@@ -262,38 +254,17 @@ public class PonderScene {
         ItemModelResolver itemModelManager = mc.getItemModelResolver();
         forEachVisible(
             PonderSceneElement.class,
-            e -> e.renderFirst(
-                blockEntityRenderManager,
-                modelManager,
-                world,
-                buffer,
-                queue,
-                camera,
-                cameraRenderState,
-                ms,
-                pt
-            )
+            e -> e.renderFirst(blockEntityRenderManager, modelManager, world, queue, cameraRenderState, ms, pt)
         );
         renderViewEntity.swap(mc);
 
         forEachVisible(
             PonderSceneElement.class,
-            e -> e.renderLast(
-                entityRenderDispatcher,
-                itemModelManager,
-                world,
-                buffer,
-                queue,
-                camera,
-                cameraRenderState,
-                ms,
-                pt
-            )
+            e -> e.renderLast(entityRenderDispatcher, itemModelManager, world, queue, cameraRenderState, ms, pt)
         );
-        world.renderEntities(ms, queue, camera, cameraRenderState, pt);
-        world.renderParticles(queue, camera, cameraRenderState, pt);
-        outliner.renderOutlines(mc, ms, buffer, Vec3.ZERO, pt);
-
+        world.submitEntities(ms, queue, cameraRenderState, pt);
+        world.submitParticles(queue, camera, cameraRenderState, pt);
+        outliner.submitOutlines(mc, ms, queue, Vec3.ZERO, pt);
         ms.popPose();
     }
 
@@ -617,9 +588,8 @@ public class PonderScene {
             ms.mulPose(Axis.XP.rotationDegrees(xRotation.getValue(pt)));
             ms.mulPose(Axis.YP.rotationDegrees(yRotation.getValue(pt)));
 
-            UIRenderHelper.flipForGuiRender(ms);
             float f = 30 * scaleFactor;
-            ms.scale(f, f, f);
+            ms.scale(f, -f, f);
             ms.translate(basePlateSize / -2f - basePlateOffsetX, -1f + yOffset, basePlateSize / -2f - basePlateOffsetZ);
 
             return ms;

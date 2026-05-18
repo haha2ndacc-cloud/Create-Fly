@@ -2,7 +2,6 @@ package com.zurrtum.create.client.content.kinetics.chainConveyor;
 
 import com.google.common.cache.Cache;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.AllItemTags;
 import com.zurrtum.create.AllItems;
 import com.zurrtum.create.catnip.data.WorldAttached;
@@ -17,8 +16,7 @@ import com.zurrtum.create.infrastructure.packet.c2s.ChainConveyorConnectionPacke
 import com.zurrtum.create.infrastructure.packet.c2s.ChainPackageInteractionPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
@@ -160,15 +158,13 @@ public class ChainConveyorInteractionHandler {
         return true;
     }
 
-    public static void drawCustomBlockSelection(PoseStack ms, MultiBufferSource buffer, Vec3 camera) {
+    public static void drawCustomBlockSelection(PoseStack ms, SubmitNodeCollector queue, Vec3 camera, float lineWidth) {
         if (selectedLift == null || selectedShape == null) {
             return;
         }
-
-        VertexConsumer vb = buffer.getBuffer(RenderTypes.lines());
         ms.pushPose();
         ms.translate(selectedLift.getX() - camera.x, selectedLift.getY() - camera.y, selectedLift.getZ() - camera.z);
-        selectedShape.drawOutline(selectedLift, ms, vb);
+        selectedShape.submitOutline(selectedLift, ms, queue, lineWidth);
         ms.popPose();
     }
 

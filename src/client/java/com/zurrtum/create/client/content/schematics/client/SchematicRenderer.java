@@ -6,13 +6,13 @@ import com.zurrtum.create.client.catnip.levelWrappers.SchematicRenderLevel;
 import com.zurrtum.create.client.catnip.render.EntityBlockSbbBuilder;
 import com.zurrtum.create.client.catnip.render.SuperByteBuffer;
 import com.zurrtum.create.client.catnip.render.SuperByteBufferRenderState;
-import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
 import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper;
 import com.zurrtum.create.client.foundation.render.BlockEntityRenderHelper.BlockEntityListRenderState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.block.BlockModelLighter;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
@@ -61,8 +61,7 @@ public class SchematicRenderer {
     public void render(
         Minecraft mc,
         PoseStack ms,
-        SuperRenderTypeBuffer buffers,
-        SubmitNodeStorage queue,
+        SubmitNodeCollector queue,
         SchematicTransformation transformation,
         CameraRenderState camera
     ) {

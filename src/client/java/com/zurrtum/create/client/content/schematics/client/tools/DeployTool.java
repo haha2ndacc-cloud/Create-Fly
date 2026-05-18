@@ -5,10 +5,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.AllDataComponents;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.outliner.AABBOutline;
-import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.content.schematics.client.SchematicTransformation;
 import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -35,8 +35,8 @@ public class DeployTool extends PlacementToolBase {
     }
 
     @Override
-    public void renderTool(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer, Vec3 camera) {
-        super.renderTool(mc, ms, buffer, camera);
+    public void renderTool(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, Vec3 camera) {
+        super.renderTool(mc, ms, queue, camera);
 
         if (selectedPos == null) {
             return;
@@ -63,7 +63,7 @@ public class DeployTool extends PlacementToolBase {
             .rotateYDegrees(transformation.getCurrentRotation()).translateBack(rotationOffset).translateBack(origin);
 
         AABBOutline outline = schematicHandler.getOutline();
-        outline.render(mc, ms, buffer, Vec3.ZERO, pt);
+        outline.submit(mc, ms, queue, Vec3.ZERO, pt);
         outline.getParams().clearTextures();
         ms.popPose();
     }

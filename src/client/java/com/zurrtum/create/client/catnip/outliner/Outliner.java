@@ -3,8 +3,8 @@ package com.zurrtum.create.client.catnip.outliner;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.catnip.outliner.LineOutline.EndChasingLineOutline;
 import com.zurrtum.create.client.catnip.outliner.Outline.OutlineParams;
-import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -154,7 +154,7 @@ public class Outliner {
         }
     }
 
-    public void renderOutlines(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer, Vec3 camera, float pt) {
+    public void submitOutlines(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, Vec3 camera, float pt) {
         outlines.forEach((key, entry) -> {
             Outline outline = entry.getOutline();
             OutlineParams params = outline.getParams();
@@ -171,7 +171,7 @@ public class Outliner {
                     return;
                 }
             }
-            outline.render(mc, ms, buffer, camera, pt);
+            outline.submit(mc, ms, queue, camera, pt);
         });
     }
 

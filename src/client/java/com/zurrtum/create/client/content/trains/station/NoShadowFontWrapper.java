@@ -2,11 +2,8 @@ package com.zurrtum.create.client.content.trains.station;
 
 import net.minecraft.client.StringSplitter;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.FormattedCharSequence;
-import org.joml.Matrix4fc;
 
 import java.util.List;
 
@@ -19,54 +16,6 @@ public class NoShadowFontWrapper extends Font {
     }
 
     @Override
-    public void drawInBatch(
-        Component text,
-        float x,
-        float y,
-        int color,
-        boolean shadow,
-        Matrix4fc matrix,
-        MultiBufferSource vertexConsumers,
-        DisplayMode layerType,
-        int backgroundColor,
-        int light
-    ) {
-        wrapped.drawInBatch(text, x, y, color, false, matrix, vertexConsumers, layerType, backgroundColor, light);
-    }
-
-    @Override
-    public void drawInBatch(
-        String string,
-        float x,
-        float y,
-        int color,
-        boolean shadow,
-        Matrix4fc matrix,
-        MultiBufferSource vertexConsumers,
-        DisplayMode layerType,
-        int backgroundColor,
-        int light
-    ) {
-        wrapped.drawInBatch(string, x, y, color, false, matrix, vertexConsumers, layerType, backgroundColor, light);
-    }
-
-    @Override
-    public void drawInBatch(
-        FormattedCharSequence text,
-        float x,
-        float y,
-        int color,
-        boolean shadow,
-        Matrix4fc matrix,
-        MultiBufferSource vertexConsumers,
-        DisplayMode layerType,
-        int backgroundColor,
-        int light
-    ) {
-        wrapped.drawInBatch(text, x, y, color, false, matrix, vertexConsumers, layerType, backgroundColor, light);
-    }
-
-    @Override
     public int wordWrapHeight(FormattedText text, int maxWidth) {
         return wrapped.wordWrapHeight(text, maxWidth);
     }
@@ -74,20 +23,6 @@ public class NoShadowFontWrapper extends Font {
     @Override
     public String bidirectionalShaping(String text) {
         return wrapped.bidirectionalShaping(text);
-    }
-
-    @Override
-    public void drawInBatch8xOutline(
-        FormattedCharSequence text,
-        float x,
-        float y,
-        int color,
-        int outlineColor,
-        Matrix4fc matrix,
-        MultiBufferSource vertexConsumers,
-        int light
-    ) {
-        wrapped.drawInBatch8xOutline(text, x, y, color, outlineColor, matrix, vertexConsumers, light);
     }
 
     @Override

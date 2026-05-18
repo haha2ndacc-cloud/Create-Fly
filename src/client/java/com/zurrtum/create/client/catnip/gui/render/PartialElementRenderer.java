@@ -3,15 +3,14 @@ package com.zurrtum.create.client.catnip.gui.render;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
-import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
+import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 
 import java.util.IdentityHashMap;
@@ -20,13 +19,7 @@ import java.util.Map;
 public class PartialElementRenderer extends PictureInPictureRenderer<PartialRenderState> {
     private static final Map<PartialRenderState, GpuTexture> TEXTURES = new IdentityHashMap<>();
     private final PoseStack matrices = new PoseStack();
-    private final BlockBakedQuadOutput output;
     private int windowScaleFactor;
-
-    public PartialElementRenderer(BufferSource vertexConsumers) {
-        super(vertexConsumers);
-        output = new BlockBakedQuadOutput(vertexConsumers, matrices);
-    }
 
     public static void clear(PartialRenderState block) {
         GpuTexture texture = TEXTURES.remove(block);
@@ -36,7 +29,12 @@ public class PartialElementRenderer extends PictureInPictureRenderer<PartialRend
     }
 
     @Override
-    public void prepare(PartialRenderState partial, GuiRenderState state, int windowScaleFactor) {
+    public void prepare(
+        PartialRenderState partial,
+        GuiRenderState state,
+        FeatureRenderDispatcher featureRenderDispatcher,
+        int windowScaleFactor
+    ) {
         if (partial.model == null) {
             return;
         }
@@ -67,13 +65,9 @@ public class PartialElementRenderer extends PictureInPictureRenderer<PartialRend
             }
             matrices.scale(size, size, size);
             partial.transform(matrices);
-            SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullDark();
-            output.updateBuffer(partial.model);
-            ModelRenderHelper.getHelper(output)
-                .tesselateBlock(0, 0, 0, world, BlockPos.ZERO, Blocks.AIR.defaultBlockState(), partial.model, 42L);
-            output.clearBuffer();
-            bufferSource.endBatch();
+            CachedBuffers.partial(partial.model, Blocks.AIR.defaultBlockState()).submit(matrices, submitNodeStorage);
             matrices.popPose();
+            featureRenderDispatcher.renderAllFeatures(submitNodeStorage);
             texture.clear();
         }
         state.addBlitToCurrentLayer(new BlitRenderState(
@@ -98,7 +92,11 @@ public class PartialElementRenderer extends PictureInPictureRenderer<PartialRend
     }
 
     @Override
-    protected void renderToTexture(PartialRenderState partial, PoseStack matrices) {
+    protected void renderToTexture(
+        PartialRenderState partial,
+        PoseStack matrices,
+        SubmitNodeCollector submitNodeCollector
+    ) {
     }
 
     @Override

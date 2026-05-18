@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import org.joml.Matrix3x2f;
 import org.joml.Matrix3x2fc;
@@ -13,7 +12,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.function.BiConsumer;
 
 public class PartialRenderState implements PictureInPictureRenderState {
-    public @Nullable BlockStateModel model;
+    public @Nullable PartialModel model;
     public boolean dirty;
     public Matrix3x2fc pose = IDENTITY_POSE;
     public @Nullable ScreenRectangle bounds;
@@ -42,9 +41,9 @@ public class PartialRenderState implements PictureInPictureRenderState {
         @Nullable BiConsumer<PoseStack, Float> transform
     ) {
         float size = scale * 16 + padding;
-        if (model != partial.get()) {
+        if (model != partial) {
             dirty = model != null;
-            model = partial.get();
+            model = partial;
         } else if (size != this.size || partialTicks != this.partialTicks) {
             dirty = true;
         }

@@ -2,8 +2,6 @@ package com.zurrtum.create.client.ponder.api.element;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.ponder.api.level.PonderLevel;
-import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -16,9 +14,7 @@ public interface PonderSceneElement extends PonderElement {
         BlockEntityRenderDispatcher blockEntityRenderDispatcher,
         ModelManager modelManager,
         PonderLevel world,
-        MultiBufferSource buffer,
         SubmitNodeCollector queue,
-        Camera camera,
         CameraRenderState cameraRenderState,
         PoseStack ms,
         float pt
@@ -28,9 +24,7 @@ public interface PonderSceneElement extends PonderElement {
         EntityRenderDispatcher entityRenderManager,
         ItemModelResolver itemModelManager,
         PonderLevel world,
-        MultiBufferSource buffer,
         SubmitNodeCollector queue,
-        Camera camera,
         CameraRenderState cameraRenderState,
         PoseStack ms,
         float pt

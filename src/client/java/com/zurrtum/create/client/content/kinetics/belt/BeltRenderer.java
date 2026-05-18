@@ -17,7 +17,6 @@ import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.client.flywheel.lib.transform.TransformStack;
 import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
-import com.zurrtum.create.client.foundation.render.ShadowRenderHelper;
 import com.zurrtum.create.client.ponder.api.level.PonderLevel;
 import com.zurrtum.create.content.kinetics.belt.*;
 import com.zurrtum.create.content.kinetics.belt.transport.BeltInventory;
@@ -27,6 +26,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.entity.state.EntityRenderState.ShadowPiece;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
@@ -47,10 +47,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
 import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
@@ -58,6 +60,13 @@ import java.util.function.Function;
 import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.*;
 
 public class BeltRenderer implements BlockEntityRenderer<BeltBlockEntity, BeltRenderState> {
+    private static final List<ShadowPiece> SHADOW = Collections.singletonList(new ShadowPiece(
+        0,
+        0,
+        0,
+        Shapes.create(-0.2, 0, -0.2, 0.2, 0.2, 0.2),
+        0.375f
+    ));
     protected static final Function<Direction, Pose> PULLEY_POSE = Util.memoize(facing -> {
         Pose pose = new Pose();
         pose.translate(0.5f, 0.5f, 0.5f);
@@ -391,7 +400,7 @@ public class BeltRenderer implements BlockEntityRenderer<BeltBlockEntity, BeltRe
         }
         ms.pushPose();
         ms.translate(0, -0.12f, 0);
-        ShadowRenderHelper.renderShadow(ms, queue, 0.75f, 0.2f);
+        queue.submitShadow(ms, 0.2f, SHADOW);
         ms.popPose();
         if (slopeShadowOnly) {
             ms.popPose();

@@ -12,20 +12,14 @@ import com.zurrtum.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.SubmitNodeStorage;
-import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.Direction;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 
 public class BlazeBurnerElementRenderer extends PictureInPictureRenderer<BlazeBurnerRenderState> {
-    public BlazeBurnerElementRenderer(BufferSource vertexConsumers) {
-        super(vertexConsumers);
-    }
-
     @Override
-    protected void renderToTexture(BlazeBurnerRenderState state, PoseStack matrices) {
+    protected void renderToTexture(BlazeBurnerRenderState state, PoseStack matrices, SubmitNodeCollector queue) {
         GameRenderer gameRenderer = Minecraft.getInstance().gameRenderer;
         gameRenderer.lighting().setupFor(Entry.ENTITY_IN_UI);
         matrices.scale(1, 1, -1);
@@ -36,8 +30,6 @@ public class BlazeBurnerElementRenderer extends PictureInPictureRenderer<BlazeBu
         boolean canDrawFlame = state.heatLevel().isAtLeast(HeatLevel.FADING);
         PartialModel drawHat = AllPartialModels.LOGISTICS_HAT;
 
-        FeatureRenderDispatcher renderDispatcher = gameRenderer.getFeatureRenderDispatcher();
-        SubmitNodeStorage queue = renderDispatcher.getSubmitNodeStorage();
         CachedBuffers.partial(AllPartialModels.BLAZE_CAGE, state.block())
             .rotateCentered(horizontalAngle + Mth.PI, Direction.UP).light(LightCoordsUtil.FULL_BRIGHT)
             .submit(matrices, queue);
@@ -52,7 +44,6 @@ public class BlazeBurnerElementRenderer extends PictureInPictureRenderer<BlazeBu
             drawHat,
             state.hash()
         ).submit(matrices, queue);
-        renderDispatcher.renderAllFeatures();
     }
 
     @Override

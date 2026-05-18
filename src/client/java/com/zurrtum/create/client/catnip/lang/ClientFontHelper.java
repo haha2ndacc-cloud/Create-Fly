@@ -4,10 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.LightCoordsUtil;
-import org.joml.Matrix4f;
-import org.jspecify.annotations.Nullable;
 
 import java.text.BreakIterator;
 import java.util.LinkedList;
@@ -55,7 +55,7 @@ public class ClientFontHelper {
         return lines;
     }
 
-    public static void drawSplitString(
+    public static void submitSplitString(
         GuiGraphicsExtractor graphics,
         Font font,
         String text,
@@ -65,7 +65,6 @@ public class ClientFontHelper {
         int color
     ) {
         List<String> list = cutString(font, text, width);
-
         boolean rightToLeft = font.isBidirectional();
         for (String s : list) {
             int f = x;
@@ -73,20 +72,13 @@ public class ClientFontHelper {
                 int i = font.width(font.bidirectionalShaping(s));
                 f += width - i;
             }
-
-            draw(graphics, font, s, f, y, color);
+            graphics.text(font, s, f, y, color, false);
             y += 9;
         }
     }
 
-    private static void draw(GuiGraphicsExtractor graphics, Font font, @Nullable String text, int x, int y, int color) {
-        if (text != null) {
-            graphics.text(font, text, x, y, color, false);
-        }
-    }
-
-    public static void drawSplitString(
-        MultiBufferSource buffer,
+    public static void submitSplitString(
+        SubmitNodeCollector queue,
         PoseStack matrixStack,
         Font font,
         String text,
@@ -96,41 +88,27 @@ public class ClientFontHelper {
         int color
     ) {
         List<String> list = cutString(font, text, width);
-        Matrix4f matrix4f = matrixStack.last().pose();
-
         boolean rightToLeft = font.isBidirectional();
+        Language language = Language.getInstance();
         for (String s : list) {
             int f = x;
             if (rightToLeft) {
                 int i = font.width(font.bidirectionalShaping(s));
                 f += width - i;
             }
-
-            draw(buffer, font, s, f, y, color, matrix4f);
+            queue.submitText(
+                matrixStack,
+                f,
+                y,
+                language.getVisualOrder(FormattedText.of(s)),
+                false,
+                Font.DisplayMode.NORMAL,
+                LightCoordsUtil.FULL_BRIGHT,
+                color,
+                0,
+                0
+            );
             y += 9;
         }
-    }
-
-    private static void draw(
-        MultiBufferSource buffer,
-        Font font,
-        String text,
-        int x,
-        int y,
-        int color,
-        Matrix4f matrix4f
-    ) {
-        font.drawInBatch(
-            text,
-            x,
-            y,
-            color,
-            false,
-            matrix4f,
-            buffer,
-            Font.DisplayMode.NORMAL,
-            0,
-            LightCoordsUtil.FULL_BRIGHT
-        );
     }
 }

@@ -1,6 +1,5 @@
 package com.zurrtum.create.client.foundation.gui.render;
 
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -8,46 +7,38 @@ import com.mojang.math.Axis;
 import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
-import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
 import com.zurrtum.create.client.catnip.gui.render.GpuTexture;
+import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
-import com.zurrtum.create.client.flywheel.lib.model.baked.ModelConsumer;
-import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
-import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.block.BlockStateModelSet;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.FluidStateModelSet;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
     private static final Int2ObjectMap<GpuTexture> TEXTURES = new Int2ObjectArrayMap<>();
     private final PoseStack matrices = new PoseStack();
-    private final BlockBakedQuadOutput output;
     private int windowScaleFactor;
 
-    public SpoutRenderer(BufferSource vertexConsumers) {
-        super(vertexConsumers);
-        output = new BlockBakedQuadOutput(vertexConsumers, matrices);
-    }
-
     @Override
-    public void prepare(SpoutRenderState item, GuiRenderState state, int windowScaleFactor) {
+    public void prepare(
+        SpoutRenderState item,
+        GuiRenderState state,
+        FeatureRenderDispatcher featureRenderDispatcher,
+        int windowScaleFactor
+    ) {
         if (this.windowScaleFactor != windowScaleFactor) {
             this.windowScaleFactor = windowScaleFactor;
             TEXTURES.values().forEach(GpuTexture::close);
@@ -66,54 +57,32 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
         float scale = 20 * windowScaleFactor;
         matrices.scale(scale, scale, scale);
 
-        Minecraft mc = Minecraft.getInstance();
-        mc.gameRenderer.lighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
         matrices.mulPose(Axis.XP.rotationDegrees(-15.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(22.5f));
         matrices.translate(-0.5f, -0.5f, -0.5f);
         matrices.scale(1, -1, 1);
 
-        BlockState blockState;
-        BlockStateModel model;
-        BlockStateModelSet blockStateModelSet = mc.getModelManager().getBlockStateModelSet();
-        SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
         float time = AnimationTickHolder.getRenderTime();
-
-        blockState = AllBlocks.SPOUT.defaultBlockState();
-        world.blockState(blockState);
-        model = blockStateModelSet.get(blockState);
-        output.updateBuffer(model);
-        ModelConsumer blockRenderer = ModelRenderHelper.getHelper(output);
-        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        CachedBuffers.block(AllBlocks.SPOUT.defaultBlockState()).submit(matrices, submitNodeStorage);
 
         float cycle = (time - item.offset() * 8) % 30;
         float squeeze = cycle < 20 ? -Mth.sin((float) (cycle / 20f * Math.PI)) : 0;
         float move = -3 * squeeze / 32f;
 
-        blockState = Blocks.AIR.defaultBlockState();
-        world.blockState(blockState);
         matrices.pushPose();
-        model = AllPartialModels.SPOUT_MIDDLE.get();
         matrices.translate(0, move, 0);
-        output.updateBuffer(model);
-        blockRenderer.updateOutput(output);
-        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
-        model = AllPartialModels.SPOUT_BOTTOM.get();
+        CachedBuffers.partial(AllPartialModels.SPOUT_MIDDLE, Blocks.AIR.defaultBlockState())
+            .submit(matrices, submitNodeStorage);
         matrices.translate(0, move, 0);
-        output.updateBuffer(model);
-        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        CachedBuffers.partial(AllPartialModels.SPOUT_BOTTOM, Blocks.AIR.defaultBlockState())
+            .submit(matrices, submitNodeStorage);
         matrices.popPose();
 
         matrices.pushPose();
-        blockState = AllBlocks.DEPOT.defaultBlockState();
-        world.blockState(blockState);
-        model = blockStateModelSet.get(blockState);
         matrices.translate(0.07f, -2, -0.14f);
-        output.updateBuffer(model);
-        blockRenderer.tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
+        CachedBuffers.block(AllBlocks.DEPOT.defaultBlockState()).submit(matrices, submitNodeStorage);
         matrices.popPose();
         matrices.popPose();
-        output.clearBuffer();
 
         Fluid fluid = item.fluid();
         if (fluid != Fluids.EMPTY) {
@@ -126,7 +95,7 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
             matrices.translate(0, -1.4f, 0);
             float from = 3f / 16f;
             float to = 17f / 16f;
-            FluidStateModelSet fluidStateModelSet = mc.getModelManager().getFluidStateModelSet();
+            FluidStateModelSet fluidStateModelSet = Minecraft.getInstance().getModelManager().getFluidStateModelSet();
             FluidRenderHelper.extractFluidRenderState(
                 null,
                 null,
@@ -139,10 +108,10 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
                 to,
                 to,
                 to,
-                LightCoordsUtil.FULL_BRIGHT,
+                0,
                 false,
                 true
-            ).render(matrices, bufferSource);
+            ).submit(matrices, submitNodeStorage);
             matrices.popPose();
 
             matrices.pushPose();
@@ -166,14 +135,14 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
                 to,
                 2,
                 to,
-                LightCoordsUtil.FULL_BRIGHT,
+                0,
                 false,
                 true
-            ).render(matrices, bufferSource);
+            ).submit(matrices, submitNodeStorage);
             matrices.popPose();
         }
 
-        bufferSource.endBatch();
+        featureRenderDispatcher.renderAllFeatures(submitNodeStorage);
         texture.clear();
         state.addBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
@@ -197,7 +166,11 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
     }
 
     @Override
-    protected void renderToTexture(SpoutRenderState state, PoseStack matrices) {
+    protected void renderToTexture(
+        SpoutRenderState state,
+        PoseStack matrices,
+        SubmitNodeCollector submitNodeCollector
+    ) {
     }
 
     @Override

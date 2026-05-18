@@ -2,14 +2,14 @@ package com.zurrtum.create.client.foundation.blockEntity.behaviour;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.catnip.outliner.ChasingAABBOutline;
-import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.ValueBoxTransform.Sided;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.scrollValue.INamedIconOptions;
 import com.zurrtum.create.client.foundation.gui.AllIcons;
 import com.zurrtum.create.content.logistics.filter.FilterItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.gui.Font.DisplayMode;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.core.BlockPos;
@@ -29,7 +29,7 @@ public class ValueBox extends ChasingAABBOutline {
     public int overrideColor = -1;
     public boolean isPassive;
 
-    protected ValueBoxTransform transform;
+    protected @Nullable ValueBoxTransform transform;
 
     protected BlockPos pos;
     protected BlockState blockState;
@@ -70,34 +70,35 @@ public class ValueBox extends ChasingAABBOutline {
     }
 
     @Override
-    public void render(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer, Vec3 camera, float pt) {
+    public void submit(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, Vec3 camera, float pt) {
         boolean hasTransform = transform != null;
         if (transform instanceof Sided && params.getHighlightedFace() != null) {
             ((Sided) transform).fromSide(params.getHighlightedFace());
         }
-
         if (hasTransform && !transform.shouldRender(blockState)) {
             return;
         }
-
         ms.pushPose();
         ms.translate(pos.getX() - camera.x, pos.getY() - camera.y, pos.getZ() - camera.z);
+        float fontScale;
+        int color;
         if (hasTransform) {
             transform.transform(blockState, ms);
+            fontScale = -transform.getFontScale();
+            color = transform.getOverrideColor();
+        } else {
+            fontScale = -1 / 64f;
+            color = overrideColor;
         }
-
         if (!isPassive) {
             ms.pushPose();
             ms.scale(-2.01f, -2.01f, 2.01f);
             ms.translate(-8 / 16.0, -8 / 16.0, -.5 / 16.0);
-            getOutline().render(ms, buffer, 0xffffff);
+            getOutline().submit(ms, queue, 0xffffffff);
             ms.popPose();
         }
-
-        float fontScale = hasTransform ? -transform.getFontScale() : -1 / 64f;
         ms.scale(fontScale, fontScale, fontScale);
-        renderContents(mc, ms, buffer);
-
+        submitContents(mc, ms, queue, color);
         ms.popPose();
     }
 
@@ -105,7 +106,7 @@ public class ValueBox extends ChasingAABBOutline {
         return outline;
     }
 
-    public void renderContents(Minecraft mc, PoseStack ms, MultiBufferSource buffer) {
+    public void submitContents(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, int color) {
     }
 
     public static class ItemValueBox extends ValueBox {
@@ -127,16 +128,13 @@ public class ValueBox extends ChasingAABBOutline {
         }
 
         @Override
-        public void renderContents(Minecraft mc, PoseStack ms, MultiBufferSource buffer) {
+        public void submitContents(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, int color) {
             if (count == null) {
                 return;
             }
 
             Font font = mc.font;
             ms.translate(17.5, -5, 7);
-
-            boolean isFilter = stack.getItem() instanceof FilterItem;
-            boolean isEmpty = stack.isEmpty();
 
             ItemModelResolver itemModelManager = mc.getItemModelResolver();
             itemModelManager.updateForTopItem(state, stack, ItemDisplayContext.GUI, mc.level, mc.player, 0);
@@ -145,13 +143,16 @@ public class ValueBox extends ChasingAABBOutline {
             float scale = 1.5f;
             ms.translate(-font.width(count), 0, 0);
 
-            if (isFilter) {
+            if (stack.getItem() instanceof FilterItem) {
                 ms.translate(-5, 8, 0);
-            } else if (isEmpty) {
+                color = 0xFFFFFFFF;
+            } else if (stack.isEmpty()) {
                 ms.translate(-15, -1, -2.75);
                 scale = 1.65f;
+                color = 0xFFEDEDED;
             } else {
                 ms.translate(-7, 10, blockItem ? 10 + 1 / 4f : 0);
+                color = 0xFFEDEDED;
             }
 
             if (count.getString().equals("*")) {
@@ -159,7 +160,7 @@ public class ValueBox extends ChasingAABBOutline {
             }
 
             ms.scale(scale, scale, scale);
-            drawString8x(ms, buffer, count, 0, 0, isFilter ? 0xFFFFFFFF : 0xFFEDEDED);
+            submitText(ms, queue, count, color, 0xff333333);
         }
 
     }
@@ -178,7 +179,7 @@ public class ValueBox extends ChasingAABBOutline {
         }
 
         @Override
-        public void renderContents(Minecraft mc, PoseStack ms, MultiBufferSource buffer) {
+        public void submitContents(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, int color) {
             Font font = mc.font;
             float scale = 3;
             ms.scale(scale, scale, 1);
@@ -195,11 +196,10 @@ public class ValueBox extends ChasingAABBOutline {
             ms.scale(numberScale, numberScale, numberScale);
             ms.translate(singleDigit ? stringWidth / 2 : 0, singleDigit ? -verticalMargin : verticalMargin, 0);
 
-            int overrideColor = transform.getOverrideColor();
-            if (overrideColor == -1) {
-                drawString8x(ms, buffer, text, 0, 0, 0xFFEDEDED);
+            if (color == -1) {
+                submitText(ms, queue, text, 0xFFEDEDED, 0xff333333);
             } else {
-                drawString(ms, buffer, text, 0, 0, overrideColor);
+                submitText(ms, queue, text, color, 0);
             }
         }
 
@@ -214,57 +214,33 @@ public class ValueBox extends ChasingAABBOutline {
         }
 
         @Override
-        public void renderContents(Minecraft mc, PoseStack ms, MultiBufferSource buffer) {
+        public void submitContents(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, int color) {
             float scale = 2 * 16;
             ms.scale(scale, scale, scale);
             ms.translate(-.5f, -.5f, 5 / 32f);
-
-            int overrideColor = transform.getOverrideColor();
-            icon.render(ms, buffer, overrideColor != -1 ? overrideColor : 0xFFFFFF);
+            icon.submit(ms, queue, color);
         }
 
     }
 
-    private static void drawString(
+    private static void submitText(
         PoseStack ms,
-        MultiBufferSource buffer,
+        SubmitNodeCollector queue,
         Component text,
-        float x,
-        float y,
-        int color
+        int color,
+        int outlineColor
     ) {
-        Minecraft.getInstance().font.drawInBatch(
-            text,
-            x,
-            y,
-            color,
-            false,
-            ms.last().pose(),
-            buffer,
-            Font.DisplayMode.NORMAL,
+        queue.submitText(
+            ms,
             0,
-            LightCoordsUtil.FULL_BRIGHT
-        );
-    }
-
-    private static void drawString8x(
-        PoseStack ms,
-        MultiBufferSource buffer,
-        Component text,
-        float x,
-        float y,
-        int color
-    ) {
-        Minecraft.getInstance().font.drawInBatch8xOutline(
+            0,
             text.getVisualOrderText(),
-            x,
-            y,
+            false,
+            DisplayMode.NORMAL,
+            LightCoordsUtil.FULL_BRIGHT,
             color,
-            0xff333333,
-            ms.last().pose(),
-            buffer,
-            LightCoordsUtil.FULL_BRIGHT
+            0,
+            outlineColor
         );
     }
-
 }

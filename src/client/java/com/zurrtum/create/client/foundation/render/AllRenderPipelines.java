@@ -25,20 +25,20 @@ public class AllRenderPipelines {
         RenderPipeline.builder(RenderPipelines.BLOCK_SNIPPET)
             .withColorTargetState(new ColorTargetState(BlendFunction.ADDITIVE)).withCull(false)
     );
-    public static final RenderPipeline ADDITIVE2 = register(
+    public static final RenderPipeline ADDITIVE2 = CustomRenderPipeline.markSolidBlend(register(
         "additive2",
         RenderPipeline.builder(RenderPipelines.BLOCK_SNIPPET)
             .withColorTargetState(new ColorTargetState(BlendFunction.ADDITIVE)).withCull(false)
             .withDepthStencilState(PonderRenderPipelines.DEFAULT_TEST_NOT_WRITE)
-    );
-    public static final RenderPipeline GLOWING = register(
+    ));
+    public static final RenderPipeline GLOWING = CustomRenderPipeline.markSolidBlend(register(
         "glowing", RenderPipeline.builder(GLOWING_SNIPPET).withColorTargetState(new ColorTargetState(new BlendFunction(
             BlendFactor.SRC_ALPHA,
             BlendFactor.ONE_MINUS_SRC_ALPHA,
             BlendFactor.SRC_ALPHA,
             BlendFactor.ONE_MINUS_SRC_ALPHA
         )))
-    );
+    ));
     public static final RenderPipeline GLOWING_TRANSLUCENT = register(
         "glowing_translucent",
         RenderPipeline.builder(GLOWING_SNIPPET).withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))

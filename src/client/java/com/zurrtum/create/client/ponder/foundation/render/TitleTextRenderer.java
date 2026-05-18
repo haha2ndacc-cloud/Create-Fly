@@ -7,15 +7,11 @@ import com.zurrtum.create.client.catnip.lang.ClientFontHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 
 public class TitleTextRenderer extends PictureInPictureRenderer<TitleTextRenderState> {
-    public TitleTextRenderer(BufferSource vertexConsumers) {
-        super(vertexConsumers);
-    }
-
     @Override
-    protected void renderToTexture(TitleTextRenderState state, PoseStack matrices) {
+    protected void renderToTexture(TitleTextRenderState state, PoseStack matrices, SubmitNodeCollector queue) {
         matrices.scale(1, 1, -1);
         matrices.translate(-90, -20, 0);
         Font font = Minecraft.getInstance().font;
@@ -26,8 +22,8 @@ public class TitleTextRenderer extends PictureInPictureRenderer<TitleTextRenderS
         matrices.pushPose();
         matrices.mulPose(Axis.XN.rotationDegrees(angle + Math.signum(indexDiff) * 90));
         matrices.translate(0, -6, 5);
-        ClientFontHelper.drawSplitString(
-            bufferSource,
+        ClientFontHelper.submitSplitString(
+            queue,
             matrices,
             font,
             state.otherTitle(),
@@ -40,8 +36,8 @@ public class TitleTextRenderer extends PictureInPictureRenderer<TitleTextRenderS
 
         matrices.mulPose(Axis.XN.rotationDegrees(angle));
         matrices.translate(0, -6, 5);
-        ClientFontHelper.drawSplitString(
-            bufferSource,
+        ClientFontHelper.submitSplitString(
+            queue,
             matrices,
             font,
             state.title(),

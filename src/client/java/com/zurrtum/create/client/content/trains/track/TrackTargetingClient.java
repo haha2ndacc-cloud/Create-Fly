@@ -15,6 +15,7 @@ import com.zurrtum.create.content.trains.track.TrackTargetingBlockItem.OverlapRe
 import com.zurrtum.create.infrastructure.component.BezierTrackPointLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.AxisDirection;
@@ -114,7 +115,7 @@ public class TrackTargetingClient {
         );
     }
 
-    public static void render(Minecraft mc, PoseStack ms, SubmitNodeStorage queue, Vec3 camera) {
+    public static void render(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, Vec3 camera) {
         if (lastLocation == null || lastResult.feedback != null) {
             return;
         }
@@ -122,7 +123,8 @@ public class TrackTargetingClient {
         BlockPos pos = lastHovered;
         AxisDirection direction = lastDirection ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE;
 
-        RenderedTrackOverlayType type = lastType == EdgePointType.SIGNAL ? RenderedTrackOverlayType.SIGNAL : lastType == EdgePointType.OBSERVER ? RenderedTrackOverlayType.OBSERVER : RenderedTrackOverlayType.STATION;
+        RenderedTrackOverlayType type = lastType == EdgePointType.SIGNAL ? RenderedTrackOverlayType.SIGNAL :
+            lastType == EdgePointType.OBSERVER ? RenderedTrackOverlayType.OBSERVER : RenderedTrackOverlayType.STATION;
 
         BlockState state = mc.level.getBlockState(pos);
         if (!(state.getBlock() instanceof ITrackBlock track)) {
@@ -130,7 +132,7 @@ public class TrackTargetingClient {
         }
         TrackBlockRenderer renderer = AllTrackRenders.get(track);
         if (renderer != null) {
-            renderer.getRenderState(
+            TrackBlockRenderState renderState = renderer.getRenderState(
                 mc.level,
                 new Vec3(pos.getX() - camera.x(), pos.getY() - camera.y(), pos.getZ() - camera.z()),
                 state,
@@ -139,7 +141,10 @@ public class TrackTargetingClient {
                 lastHoveredBezierSegment,
                 type,
                 1 + 1 / 16.0f
-            ).submit(ms, queue);
+            );
+            if (renderState != null) {
+                renderState.submit(ms, queue);
+            }
         }
     }
 

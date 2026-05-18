@@ -582,24 +582,16 @@ public class PonderUI extends AbstractPonderScreen {
     }
 
     protected void renderVisibleScenes(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
-        Window window = graphics.minecraft.getWindow();
         float uiTicks = lazyIndex.getValue(AnimationTickHolder.getPartialTicksUI(minecraft.getDeltaTracker()));// TODO - Checkover
-        renderScene(graphics, 0, window, index, partialTicks, uiTicks);
+        renderScene(graphics, 0, index, partialTicks, uiTicks);
         float lazyIndexValue = lazyIndex.getValue(partialTicks);
         if (Math.abs(lazyIndexValue - index) > 1 / 512.0f) {
             finishingFlashWarmup = 0;
-            renderScene(graphics, 1, window, lazyIndexValue < index ? index - 1 : index + 1, partialTicks, uiTicks);
+            renderScene(graphics, 1, lazyIndexValue < index ? index - 1 : index + 1, partialTicks, uiTicks);
         }
     }
 
-    protected void renderScene(
-        GuiGraphicsExtractor graphics,
-        int id,
-        Window window,
-        int i,
-        float partialTicks,
-        float uiTicks
-    ) {
+    protected void renderScene(GuiGraphicsExtractor graphics, int id, int i, float partialTicks, float uiTicks) {
         double diff = i - uiTicks;
         double slide = Mth.lerp(diff * diff, 200, 600) * diff;
         PonderScene scene = scenes.get(i);
@@ -612,7 +604,6 @@ public class PonderUI extends AbstractPonderScreen {
             userViewMode,
             finishingFlash,
             partialTicks,
-            window,
             new Matrix3x2f(graphics.pose())
         ));
     }
@@ -916,7 +907,7 @@ public class PonderUI extends AbstractPonderScreen {
 
         // short version for single scene views
         if (scenes.size() == 1 || absoluteIndexDiff < 0.01) {
-            ClientFontHelper.drawSplitString(
+            ClientFontHelper.submitSplitString(
                 graphics,
                 font,
                 title,

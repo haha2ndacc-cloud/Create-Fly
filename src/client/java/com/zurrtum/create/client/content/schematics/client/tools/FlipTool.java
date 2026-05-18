@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.zurrtum.create.client.AllSpecialTextures;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.outliner.AABBOutline;
-import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.AxisDirection;
@@ -47,9 +47,9 @@ public class FlipTool extends PlacementToolBase {
     }
 
     @Override
-    public void renderOnSchematic(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer) {
+    public void renderOnSchematic(Minecraft mc, PoseStack ms, SubmitNodeCollector queue) {
         if (!schematicSelected || !selectedFace.getAxis().isHorizontal()) {
-            super.renderOnSchematic(mc, ms, buffer);
+            super.renderOnSchematic(mc, ms, queue);
             return;
         }
 
@@ -67,9 +67,9 @@ public class FlipTool extends PlacementToolBase {
         outline.setBounds(bounds);
         AllSpecialTextures tex = AllSpecialTextures.CHECKERED;
         outline.getParams().lineWidth(1 / 16f).disableLineNormals().colored(0xdddddd).withFaceTextures(tex, tex);
-        outline.render(mc, ms, buffer, Vec3.ZERO, AnimationTickHolder.getPartialTicks());
+        outline.submit(mc, ms, queue, Vec3.ZERO, AnimationTickHolder.getPartialTicks());
 
-        super.renderOnSchematic(mc, ms, buffer);
+        super.renderOnSchematic(mc, ms, queue);
     }
 
 }

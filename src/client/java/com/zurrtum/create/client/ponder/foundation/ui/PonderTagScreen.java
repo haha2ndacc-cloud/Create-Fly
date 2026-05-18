@@ -86,9 +86,8 @@ public class PonderTagScreen extends AbstractPonderScreen {
                     ScreenOpener.transitionTo(PonderUI.of(new ItemStack(entry.item), tag));
                 });
             } else {
-                b.withBorderColors(entry.key.getNamespace()
-                        .equals("minecraft") ? PonderUI.MISSING_VANILLA_ENTRY : PonderUI.MISSING_MODDED_ENTRY)
-                    .animateColors(false);
+                b.withBorderColors(entry.key.getNamespace().equals("minecraft") ? PonderUI.MISSING_VANILLA_ENTRY :
+                    PonderUI.MISSING_MODDED_ENTRY).animateColors(false);
             }
 
             addRenderableWidget(b);
@@ -108,9 +107,8 @@ public class PonderTagScreen extends AbstractPonderScreen {
                     ScreenOpener.transitionTo(PonderUI.of(tag.getMainItem(), tag));
                 });
             } else {
-                b.withBorderColors(registryName.getNamespace()
-                        .equals("minecraft") ? PonderUI.MISSING_VANILLA_ENTRY : PonderUI.MISSING_MODDED_ENTRY)
-                    .animateColors(false);
+                b.withBorderColors(registryName.getNamespace().equals("minecraft") ? PonderUI.MISSING_VANILLA_ENTRY :
+                    PonderUI.MISSING_MODDED_ENTRY).animateColors(false);
             }
 
             addRenderableWidget(b);
@@ -201,7 +199,15 @@ public class PonderTagScreen extends AbstractPonderScreen {
         new BoxElement().withBackground(PonderUI.BACKGROUND_FLAT).gradientBorder(PonderUI.COLOR_IDLE)
             .at(x - 3, y - 3, 90).withBounds(w + 6, h + 6).render(graphics);
 
-        ClientFontHelper.drawSplitString(graphics, font, desc, x, y, w, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
+        ClientFontHelper.submitSplitString(
+            graphics,
+            font,
+            desc,
+            x,
+            y,
+            w,
+            UIRenderHelper.COLOR_TEXT.getFirst().getRGB()
+        );
         poseStack.popMatrix();
     }
 

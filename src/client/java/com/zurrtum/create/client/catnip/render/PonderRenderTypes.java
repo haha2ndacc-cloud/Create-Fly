@@ -1,7 +1,9 @@
 package com.zurrtum.create.client.catnip.render;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.zurrtum.create.client.ponder.enums.PonderSpecialTextures;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.rendertype.LayeringTransform;
 import net.minecraft.client.renderer.rendertype.OutputTarget;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderSetup.OutlineProperty;
@@ -16,12 +18,12 @@ import static com.zurrtum.create.client.ponder.Ponder.MOD_ID;
 
 public class PonderRenderTypes {
     @SuppressWarnings("deprecation")
-    private static final RenderType ENTITY_BLOCK_SOLID = RenderType.create(
+    private static final RenderType ENTITY_BLOCK_SOLID = CustomRenderType.markPriority(RenderType.create(
         createLayerName("entity_block_solid"),
         RenderSetup.builder(PonderRenderPipelines.ENTITY_BLOCK_SOLID)
             .withTexture("Sampler0", TextureAtlas.LOCATION_BLOCKS).useLightmap().affectsCrumbling()
             .setOutline(OutlineProperty.AFFECTS_OUTLINE).createRenderSetup()
-    );
+    ));
     @SuppressWarnings("deprecation")
     private static final RenderType ENTITY_BLOCK_CUTOUT = RenderType.create(
         createLayerName("entity_block_cutout"),
@@ -38,12 +40,12 @@ public class PonderRenderTypes {
             .createRenderSetup()
     );
     @SuppressWarnings("deprecation")
-    private static final RenderType ENTITY_BLOCK_LIGHT_SOLID = RenderType.create(
+    private static final RenderType ENTITY_BLOCK_LIGHT_SOLID = CustomRenderType.markPriority(RenderType.create(
         createLayerName("entity_block_light_solid"),
         RenderSetup.builder(PonderRenderPipelines.ENTITY_BLOCK_LIGHT_SOLID)
             .withTexture("Sampler0", TextureAtlas.LOCATION_BLOCKS).useLightmap().affectsCrumbling()
             .setOutline(OutlineProperty.AFFECTS_OUTLINE).createRenderSetup()
-    );
+    ));
     @SuppressWarnings("deprecation")
     private static final RenderType ENTITY_BLOCK_LIGHT_CUTOUT = RenderType.create(
         createLayerName("entity_block_light_cutout"),
@@ -60,12 +62,12 @@ public class PonderRenderTypes {
             .createRenderSetup()
     );
     @SuppressWarnings("deprecation")
-    private static final RenderType NETHER_ENTITY_BLOCK_SOLID = RenderType.create(
+    private static final RenderType NETHER_ENTITY_BLOCK_SOLID = CustomRenderType.markPriority(RenderType.create(
         createLayerName("nether_entity_block_solid"),
         RenderSetup.builder(PonderRenderPipelines.NETHER_ENTITY_BLOCK_SOLID)
             .withTexture("Sampler0", TextureAtlas.LOCATION_BLOCKS).useLightmap().affectsCrumbling()
             .setOutline(OutlineProperty.AFFECTS_OUTLINE).createRenderSetup()
-    );
+    ));
     @SuppressWarnings("deprecation")
     private static final RenderType NETHER_ENTITY_BLOCK_CUTOUT = RenderType.create(
         createLayerName("nether_entity_block_cutout"),
@@ -82,12 +84,12 @@ public class PonderRenderTypes {
             .createRenderSetup()
     );
     @SuppressWarnings("deprecation")
-    private static final RenderType NETHER_ENTITY_BLOCK_LIGHT_SOLID = RenderType.create(
+    private static final RenderType NETHER_ENTITY_BLOCK_LIGHT_SOLID = CustomRenderType.markPriority(RenderType.create(
         createLayerName("nether_entity_block_light_solid"),
         RenderSetup.builder(PonderRenderPipelines.NETHER_ENTITY_BLOCK_LIGHT_SOLID)
             .withTexture("Sampler0", TextureAtlas.LOCATION_BLOCKS).useLightmap().affectsCrumbling()
             .setOutline(OutlineProperty.AFFECTS_OUTLINE).createRenderSetup()
-    );
+    ));
     @SuppressWarnings("deprecation")
     private static final RenderType NETHER_ENTITY_BLOCK_LIGHT_CUTOUT = RenderType.create(
         createLayerName("nether_entity_block_light_cutout"),
@@ -105,20 +107,23 @@ public class PonderRenderTypes {
     );
     private static final RenderType GUI = RenderType.create(
         createLayerName("gui"),
-        RenderSetup.builder(PonderRenderPipelines.GUI).createRenderSetup()
+        RenderSetup.builder(PonderRenderPipelines.GUI).setLayeringTransform(new LayeringTransform(
+            "view_offset_z_layering_gui",
+            modelViewMatrix -> RenderSystem.getProjectionType().applyLayeringTransform(modelViewMatrix, -6F)
+        )).createRenderSetup()
     );
     private static final RenderType OUTLINE_SOLID = RenderType.create(
         createLayerName("outline_solid"),
-        RenderSetup.builder(RenderPipelines.ENTITY_SOLID).bufferSize(256)
+        RenderSetup.builder(RenderPipelines.ENTITY_SOLID)
             .withTexture("Sampler0", PonderSpecialTextures.BLANK.getLocation()).useLightmap().useOverlay()
-            .createRenderSetup()
+            .setOutline(OutlineProperty.IS_OUTLINE).createRenderSetup()
     );
     private static final BiFunction<Identifier, Boolean, RenderType> OUTLINE_TRANSLUCENT = Util.memoize((texture, cull) -> RenderType.create(
         createLayerName("outline_translucent" + (cull ? "_cull" : "")),
         RenderSetup.builder(
                 cull ? PonderRenderPipelines.ENTITY_TRANSLUCENT_CULL : PonderRenderPipelines.ENTITY_TRANSLUCENT)
-            .bufferSize(256).sortOnUpload().withTexture("Sampler0", texture).useLightmap().useOverlay()
-            .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET).createRenderSetup()
+            .sortOnUpload().withTexture("Sampler0", texture).useLightmap().useOverlay()
+            .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET).setOutline(OutlineProperty.IS_OUTLINE).createRenderSetup()
     ));
 
     public static RenderType getEntityBlockSolid() {

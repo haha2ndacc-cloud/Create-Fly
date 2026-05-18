@@ -17,6 +17,7 @@ import com.zurrtum.create.content.trains.entity.Train;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.LightCoordsUtil;
@@ -35,7 +36,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class CarriageCouplingRenderer {
-    public static void renderAll(Minecraft client, PoseStack ms, SubmitNodeStorage queue, Vec3 camera) {
+    public static void renderAll(Minecraft client, PoseStack ms, SubmitNodeCollector queue, Vec3 camera) {
         Collection<Train> trains = Create.RAILWAYS.trains.values();
         CouplingRenderer render = null;
         for (Train train : trains) {

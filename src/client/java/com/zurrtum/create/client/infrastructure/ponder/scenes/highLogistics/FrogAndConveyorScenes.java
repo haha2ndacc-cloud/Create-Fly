@@ -25,8 +25,6 @@ import com.zurrtum.create.content.logistics.box.PackageItem;
 import com.zurrtum.create.content.logistics.box.PackageStyles;
 import com.zurrtum.create.content.logistics.packagePort.frogport.FrogportBlockEntity;
 import com.zurrtum.create.content.logistics.packager.PackagerBlockEntity;
-import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
@@ -229,9 +227,7 @@ public class FrogAndConveyorScenes {
             EntityRenderDispatcher entityRenderManager,
             ItemModelResolver itemModelManager,
             PonderLevel world,
-            MultiBufferSource buffer,
             SubmitNodeCollector queue,
-            Camera camera,
             CameraRenderState cameraRenderState,
             PoseStack poseStack,
             float fade,

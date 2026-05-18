@@ -1,19 +1,17 @@
 package com.zurrtum.create.client.foundation.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.zurrtum.create.catnip.theme.Color;
 import com.zurrtum.create.client.Create;
-import com.zurrtum.create.client.catnip.gui.element.DelegatedStencilElement;
 import com.zurrtum.create.client.catnip.gui.element.ScreenElement;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.SubmitNodeCollector.CustomGeometryRenderer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public class AllIcons implements ScreenElement {
@@ -71,10 +69,6 @@ public class AllIcons implements ScreenElement {
         return new AllIcons(x = 0, ++y);
     }
 
-    public RenderType bind() {
-        return RenderTypes.text(ICON_ATLAS);
-    }
-
     @Override
     public void render(GuiGraphicsExtractor graphics, int x, int y) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, ICON_ATLAS, x, y, iconX, iconY, 16, 16, 256, 256);
@@ -84,36 +78,23 @@ public class AllIcons implements ScreenElement {
         graphics.blit(RenderPipelines.GUI_TEXTURED, ICON_ATLAS, x, y, iconX, iconY, 16, 16, 16, 16, 256, 256, color);
     }
 
-    public void render(PoseStack ms, MultiBufferSource buffer, int color) {
-        VertexConsumer builder = buffer.getBuffer(RenderTypes.text(ICON_ATLAS));
-        Matrix4f matrix = ms.last().pose();
-        Color rgb = new Color(color);
-        int light = LightCoordsUtil.FULL_BRIGHT;
-
-        Vec3 vec1 = new Vec3(0, 0, 0);
-        Vec3 vec2 = new Vec3(0, 1, 0);
-        Vec3 vec3 = new Vec3(1, 1, 0);
-        Vec3 vec4 = new Vec3(1, 0, 0);
-
-        float u1 = iconX * 1f / ICON_ATLAS_SIZE;
-        float u2 = (iconX + 16) * 1f / ICON_ATLAS_SIZE;
-        float v1 = iconY * 1f / ICON_ATLAS_SIZE;
-        float v2 = (iconY + 16) * 1f / ICON_ATLAS_SIZE;
-
-        vertex(builder, matrix, vec1, rgb, u1, v1, light);
-        vertex(builder, matrix, vec2, rgb, u1, v2, light);
-        vertex(builder, matrix, vec3, rgb, u2, v2, light);
-        vertex(builder, matrix, vec4, rgb, u2, v1, light);
+    public void submit(PoseStack ms, SubmitNodeCollector queue, int color) {
+        queue.submitCustomGeometry(ms, RenderTypes.text(ICON_ATLAS), new IconRenderState(iconX, iconY, color));
     }
 
-    private void vertex(VertexConsumer builder, Matrix4f matrix, Vec3 vec, Color rgb, float u, float v, int light) {
-        builder.addVertex(matrix, (float) vec.x, (float) vec.y, (float) vec.z)
-            .setColor(rgb.getRed(), rgb.getGreen(), rgb.getBlue(), 255).setUv(u, v).setLight(light);
+    private record IconRenderState(int iconX, int iconY, int color) implements CustomGeometryRenderer {
+        @Override
+        public void render(Pose pose, VertexConsumer buffer) {
+            Matrix4f matrix = pose.pose();
+            int light = LightCoordsUtil.FULL_BRIGHT;
+            float u1 = iconX * 1f / ICON_ATLAS_SIZE;
+            float u2 = (iconX + 16) * 1f / ICON_ATLAS_SIZE;
+            float v1 = iconY * 1f / ICON_ATLAS_SIZE;
+            float v2 = (iconY + 16) * 1f / ICON_ATLAS_SIZE;
+            buffer.addVertex(matrix, 0, 0, 0).setColor(color).setUv(u1, v1).setLight(light);
+            buffer.addVertex(matrix, 0, 1f, 0).setColor(color).setUv(u1, v2).setLight(light);
+            buffer.addVertex(matrix, 1f, 1f, 0).setColor(color).setUv(u2, v2).setLight(light);
+            buffer.addVertex(matrix, 1f, 0, 0).setColor(color).setUv(u2, v1).setLight(light);
+        }
     }
-
-    public DelegatedStencilElement asStencil() {
-        return new DelegatedStencilElement().withStencilRenderer((ms, w, h, alpha) -> this.render(ms, 0, 0))
-            .withBounds(16, 16);
-    }
-
 }

@@ -4,15 +4,12 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.zurrtum.create.catnip.theme.Color;
-import com.zurrtum.create.client.catnip.gui.UIRenderHelper;
+import com.zurrtum.create.catnip.animation.LerpedFloat;
 import com.zurrtum.create.client.catnip.gui.render.GpuTexture;
-import com.zurrtum.create.client.catnip.render.DefaultSuperRenderTypeBuffer;
-import com.zurrtum.create.client.catnip.render.DefaultSuperRenderTypeBuffer.Dispatcher;
 import com.zurrtum.create.client.catnip.render.PonderRenderTypes;
-import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import com.zurrtum.create.client.ponder.foundation.PonderScene;
 import com.zurrtum.create.client.ponder.foundation.PonderScene.SceneTransform;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
@@ -22,10 +19,15 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.SubmitNodeCollector.CustomGeometryRenderer;
+import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
+import net.minecraft.client.renderer.feature.QuadParticleFeatureRenderer;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
@@ -35,13 +37,13 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
     private final PoseStack matrices = new PoseStack();
     private int windowScaleFactor;
 
-    @SuppressWarnings("DataFlowIssue")
-    public SceneRenderer() {
-        super(null);
-    }
-
     @Override
-    public void prepare(SceneRenderState renderState, GuiRenderState state, int windowScaleFactor) {
+    public void prepare(
+        SceneRenderState renderState,
+        GuiRenderState state,
+        FeatureRenderDispatcher featureRenderDispatcher,
+        int windowScaleFactor
+    ) {
         if (this.windowScaleFactor != windowScaleFactor) {
             this.windowScaleFactor = windowScaleFactor;
             TEXTURES.values().forEach(GpuTexture::close);
@@ -61,7 +63,31 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
         Lighting lighting = gameRenderer.lighting();
         lighting.updateBuffer(Lighting.Entry.LEVEL, DIFFUSE_LIGHT_0, DIFFUSE_LIGHT_1);
         lighting.setupFor(Lighting.Entry.LEVEL);
-        renderScene(mc, DefaultSuperRenderTypeBuffer.Dispatcher.getInstance(), renderState, matrices);
+        PonderScene scene = renderState.scene();
+        renderScene(
+            mc,
+            submitNodeStorage,
+            matrices,
+            scene,
+            renderState.partialTicks(),
+            renderState.width(),
+            renderState.height(),
+            renderState.slide(),
+            renderState.finishingFlash()
+        );
+        DynamicTransformsHolder particle = (DynamicTransformsHolder) featureRenderDispatcher.featureRenderers.get(
+            QuadParticleFeatureRenderer.TYPE);
+        Matrix4f particleTransforms = RenderSystem.getModelViewMatrixCopy().mul(matrices.last().pose());
+        particle.ponder$updateTransforms(RenderSystem.getDynamicUniforms().writeTransform(particleTransforms));
+        try (FeatureRenderDispatcher.PreparedFrame frame = featureRenderDispatcher.prepareFrame(submitNodeStorage)) {
+            frame.executeSolid();
+            frame.executeTranslucent();
+            frame.executeOutline();
+            frame.executeTranslucentAfterTerrain();
+            frame.executeAlwaysOnTop();
+        }
+        particle.ponder$updateTransforms(null);
+        scene.resetParticles();
         lighting.updateLevel(mc.level.dimensionType().cardinalLightType());
         gameRenderer.useUiLightmap = lightOption;
         matrices.popPose();
@@ -87,72 +113,39 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
         ));
     }
 
-    private static void renderScene(Minecraft mc, Dispatcher dispatcher, SceneRenderState state, PoseStack poseStack) {
-        float partialTicks = state.partialTicks();
-        SuperRenderTypeBuffer buffer = dispatcher.getBuffer();
-        PonderScene scene = state.scene();
+    private static void renderScene(
+        Minecraft mc,
+        SubmitNodeCollector queue,
+        PoseStack poseStack,
+        PonderScene scene,
+        float partialTicks,
+        int width,
+        int height,
+        double slide,
+        LerpedFloat finishingFlash
+    ) {
         poseStack.translate(0, 0, -800);
         SceneTransform transform = scene.getTransform();
-        transform.updateScreenParams(state.width(), state.height(), state.slide());
+        transform.updateScreenParams(width, height, slide);
         transform.apply(poseStack, partialTicks);
         transform.updateSceneRVE(partialTicks);
-        scene.renderScene(mc, buffer, dispatcher.getSubmitNodeStorage(), poseStack, partialTicks);
-        dispatcher.draw(poseStack);
-        scene.resetParticles();
-
-        // kool shadow fx
         if (!scene.shouldHidePlatformShadow()) {
             poseStack.pushPose();
-            poseStack.translate(scene.getBasePlateOffsetX(), 0, scene.getBasePlateOffsetZ());
-            UIRenderHelper.flipForGuiRender(poseStack);
-
-            float flash = state.finishingFlash().getValue(partialTicks) * .9f;
-            float alpha = flash;
-            flash *= flash;
-            flash = ((flash * 2) - 1);
-            flash *= flash;
-            flash = 1 - flash;
-
-            RenderType layer = PonderRenderTypes.getGui();
-            VertexConsumer consumer = buffer.getBuffer(layer);
-            for (int f = 0; f < 4; f++) {
-                poseStack.translate(scene.getBasePlateSize(), 0, 0);
-                poseStack.pushPose();
-                poseStack.translate(0, 0, -1 / 1024f);
-                if (flash > 0) {
-                    poseStack.pushPose();
-                    poseStack.scale(1, .5f + flash * .75f, 1);
-                    fillGradient(
-                        consumer,
-                        poseStack,
-                        0,
-                        -1,
-                        -scene.getBasePlateSize(),
-                        0,
-                        0,
-                        new Color(0x00_c6ffc9).getRGB(),
-                        new Color(0xaa_c6ffc9).scaleAlpha(alpha).getRGB()
-                    );
-                    poseStack.popPose();
-                }
-                poseStack.translate(0, 0, 2 / 1024f);
-                fillGradient(
-                    consumer,
-                    poseStack,
-                    0,
-                    0,
-                    -scene.getBasePlateSize(),
-                    4,
-                    0,
-                    new Color(0x66_000000).getRGB(),
-                    new Color(0x00_000000).getRGB()
-                );
-                poseStack.popPose();
-                poseStack.mulPose(Axis.YP.rotationDegrees(-90));
-            }
+            poseStack.scale(1, -1, 1);
+            int basePlateSize = scene.getBasePlateSize();
+            poseStack.translate(scene.getBasePlateOffsetX() + basePlateSize, 0, scene.getBasePlateOffsetZ());
+            queue.submitCustomGeometry(
+                poseStack,
+                PonderRenderTypes.getGui(),
+                new ShadowRenderState(
+                    basePlateSize,
+                    ShadowFlashRenderState.create(finishingFlash.getValue(partialTicks)),
+                    new Vector3f()
+                )
+            );
             poseStack.popPose();
-            buffer.draw();
         }
+        scene.renderScene(mc, queue, poseStack, partialTicks);
 
         //TODO
         // coords for debug
@@ -225,7 +218,11 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
     }
 
     @Override
-    protected void renderToTexture(SceneRenderState state, PoseStack matrices) {
+    protected void renderToTexture(
+        SceneRenderState state,
+        PoseStack matrices,
+        SubmitNodeCollector submitNodeCollector
+    ) {
     }
 
     @Override
@@ -236,5 +233,86 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
     @Override
     public Class<SceneRenderState> getRenderStateClass() {
         return SceneRenderState.class;
+    }
+
+    private record ShadowRenderState(float basePlateSize, @Nullable ShadowFlashRenderState flash,
+                                     Vector3f pos) implements CustomGeometryRenderer {
+        private static final Quaternionf ROTATE = Axis.YP.rotationDegrees(-90);
+
+        @Override
+        public void render(Pose stack, VertexConsumer buffer) {
+            Matrix4f pose = stack.pose();
+            float x2 = -basePlateSize;
+            if (flash == null) {
+                addBlackVertex(buffer, pose, pos, x2);
+                for (int i = 0; i < 3; i++) {
+                    move(pose);
+                    addBlackVertex(buffer, pose, pos, x2);
+                }
+            } else {
+                addBlackVertex(buffer, pose, pos, x2);
+                flash.addVertex(buffer, pose, pos, x2);
+                for (int i = 0; i < 3; i++) {
+                    move(pose);
+                    addBlackVertex(buffer, pose, pos, x2);
+                    flash.addVertex(buffer, pose, pos, x2);
+                }
+            }
+        }
+
+        private void move(Matrix4f pose) {
+            pose.rotate(ROTATE);
+            pose.translate(basePlateSize, 0, 0);
+        }
+
+        private static void addBlackVertex(VertexConsumer buffer, Matrix4f pose, Vector3f pos, float x2) {
+            addVertex(buffer, pose, pos, -0.5f, x2, 4f, 0x66_000000, 0x00_000000);
+        }
+
+        private static void addVertex(
+            VertexConsumer buffer,
+            Matrix4f pose,
+            Vector3f pos,
+            float y1,
+            float x2,
+            float y2,
+            int colorFrom,
+            int colorTo
+        ) {
+            addVertex(buffer, pose, pos, 0f, y1, colorFrom);
+            addVertex(buffer, pose, pos, 0f, y2, colorTo);
+            addVertex(buffer, pose, pos, x2, y2, colorTo);
+            addVertex(buffer, pose, pos, x2, y1, colorFrom);
+        }
+
+        private static void addVertex(VertexConsumer buffer, Matrix4f pose, Vector3f pos, float x, float y, int color) {
+            pos.set(x, y, 0).mulPosition(pose);
+            buffer.addVertex(pos.x, pos.y, pos.z).setColor(color);
+        }
+    }
+
+    private record ShadowFlashRenderState(int flashColor, float scaleY, Matrix4f save) {
+        @Nullable
+        public static ShadowFlashRenderState create(float progress) {
+            float alpha = progress * .9f;
+            progress = alpha * alpha;
+            progress = 4 * progress * (1 - progress);
+            if (progress <= 0) {
+                return null;
+            }
+            return new ShadowFlashRenderState(
+                0xc6ffc9 | ((int) (0xaa * alpha) << 24),
+                Math.fma(progress, .75f, .5f),
+                new Matrix4f()
+            );
+        }
+
+        public void addVertex(VertexConsumer buffer, Matrix4f pose, Vector3f pos, float x2) {
+            save.set(pose);
+            pose.translate(0, 0, -1 / 1024f);
+            pose.scale(1, scaleY, 1);
+            ShadowRenderState.addVertex(buffer, pose, pos, -1f, x2, 0, 0x00_c6ffc9, flashColor);
+            pose.set(save);
+        }
     }
 }

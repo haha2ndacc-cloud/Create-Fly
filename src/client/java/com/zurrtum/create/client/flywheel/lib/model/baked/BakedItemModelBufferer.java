@@ -13,8 +13,6 @@ import com.zurrtum.create.client.flywheel.lib.material.Materials;
 import com.zurrtum.create.client.flywheel.lib.material.SimpleMaterial;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.OutlineBufferSource;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
@@ -41,7 +39,7 @@ public class BakedItemModelBufferer {
         Transparency.TRANSLUCENT
     );
     static final List<RenderType> CHUNK_LAYERS = List.of(
-        Sheets.cutoutBlockSheet(),
+        Sheets.cutoutBlockItemSheet(),
         Sheets.translucentItemSheet(),
         RenderTypes.glint(),
         RenderTypes.glintTranslucent(),
@@ -55,106 +53,106 @@ public class BakedItemModelBufferer {
         ResultConsumer resultConsumer,
         MeshResultConsumer meshResultConsumer
     ) {
-        ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
-        PoseStack poseStack = objects.identityPoseStack;
-        ClientLevel world = level instanceof ClientLevel clientWorld ? clientWorld : null;
-        ItemMeshEmitterProvider provider = objects.provider;
-        provider.setResultConsumer(resultConsumer, meshResultConsumer);
-        ItemStackRenderState state = objects.state;
-        FeatureRenderDispatcher dispatcher = objects.featureRenderDispatcher;
-        Minecraft.getInstance().getItemModelResolver().updateForTopItem(state, stack, displayContext, world, null, 0);
-        state.submit(poseStack, dispatcher.getSubmitNodeStorage(), 0, OverlayTexture.NO_OVERLAY, 0);
-        dispatcher.renderAllFeatures();
-        provider.endBatch();
+        //        ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
+        //        PoseStack poseStack = objects.identityPoseStack;
+        //        ClientLevel world = level instanceof ClientLevel clientWorld ? clientWorld : null;
+        //        ItemMeshEmitterProvider provider = objects.provider;
+        //        provider.setResultConsumer(resultConsumer, meshResultConsumer);
+        //        ItemStackRenderState state = objects.state;
+        //        FeatureRenderDispatcher dispatcher = objects.featureRenderDispatcher;
+        //        Minecraft.getInstance().getItemModelResolver().updateForTopItem(state, stack, displayContext, world, null, 0);
+        //        state.submit(poseStack, dispatcher.getSubmitNodeStorage(), 0, OverlayTexture.NO_OVERLAY, 0);
+        //        dispatcher.renderAllFeatures();
+        //        provider.endBatch();
     }
 
-    public static class ItemMeshEmitterProvider extends MultiBufferSource.BufferSource {
-        private final ThreadLocalObjects objects;
-        private ResultConsumer resultConsumer;
-        private MeshResultConsumer meshResultConsumer;
-
-        @SuppressWarnings("DataFlowIssue")
-        private ItemMeshEmitterProvider(ThreadLocalObjects objects) {
-            super(null, null);
-            this.objects = objects;
-        }
-
-        public void setResultConsumer(ResultConsumer resultConsumer, MeshResultConsumer meshResultConsumer) {
-            this.resultConsumer = resultConsumer;
-            this.meshResultConsumer = meshResultConsumer;
-        }
-
-        private void emitMesh(RenderType renderType, Mesh mesh, boolean translucent) {
-            Material material = objects.materials.computeIfAbsent(renderType, ItemMeshEmitterProvider::createMaterial);
-            meshResultConsumer.accept(renderType, material, mesh, translucent);
-        }
-
-        private static Material createMaterial(RenderType renderLayer) {
-            RenderSetup state = renderLayer.state;
-            Map<String, RenderSetup.TextureBinding> textures = state.textures;
-            RenderSetup.TextureBinding texture = textures.get("Sampler0");
-            if (texture != null) {
-                SimpleMaterial.Builder builder = SimpleMaterial.builder().texture(texture.location()).mipmap(false);
-                if (!state.useLightmap) {
-                    builder.useLight(false);
-                }
-                if (!state.useOverlay) {
-                    builder.useOverlay(false);
-                }
-                RenderPipeline pipeline = renderLayer.pipeline();
-                Optional<BlendFunction> blendFunction = pipeline.getColorTargetState().blendFunction();
-                if (blendFunction.isPresent()) {
-                    Transparency transparency = TRANSPARENCY.get(blendFunction.get());
-                    if (transparency != null) {
-                        builder.transparency(transparency);
-                    }
-                }
-                String cutout = pipeline.getShaderDefines().values().get("ALPHA_CUTOUT");
-                if (cutout != null) {
-                    if (cutout.equals("0.1")) {
-                        builder.cutout(CutoutShaders.ONE_TENTH);
-                    } else if (cutout.equals("0.5")) {
-                        builder.cutout(CutoutShaders.HALF);
-                    }
-                }
-                return builder.build();
-            }
-            return Materials.TRANSLUCENT_ITEM_ENTITY_ITEM;
-        }
-
-        @Override
-        public VertexConsumer getBuffer(RenderType layer) {
-            Integer index = objects.chunkLayers.get(layer);
-            ItemMeshEmitter emitter;
-            if (index == null) {
-                objects.chunkLayers.put(layer, objects.chunkLayers.size());
-                emitter = new ItemMeshEmitter(layer);
-                emitter.prepare(resultConsumer, this::emitMesh);
-                objects.emitters.add(emitter);
-            } else {
-                emitter = objects.emitters.get(index);
-                if (emitter.isEnd()) {
-                    emitter.prepare(resultConsumer, this::emitMesh);
-                }
-            }
-            return emitter;
-        }
-
-        @Override
-        public void endBatch() {
-            for (ItemMeshEmitter emitter : objects.emitters) {
-                emitter.end();
-            }
-        }
-
-        @Override
-        public void endLastBatch() {
-        }
-
-        @Override
-        public void endBatch(RenderType type) {
-        }
-    }
+    //    public static class ItemMeshEmitterProvider extends MultiBufferSource.BufferSource {
+    //        private final ThreadLocalObjects objects;
+    //        private ResultConsumer resultConsumer;
+    //        private MeshResultConsumer meshResultConsumer;
+    //
+    //        @SuppressWarnings("DataFlowIssue")
+    //        private ItemMeshEmitterProvider(ThreadLocalObjects objects) {
+    //            super(null, null);
+    //            this.objects = objects;
+    //        }
+    //
+    //        public void setResultConsumer(ResultConsumer resultConsumer, MeshResultConsumer meshResultConsumer) {
+    //            this.resultConsumer = resultConsumer;
+    //            this.meshResultConsumer = meshResultConsumer;
+    //        }
+    //
+    //        private void emitMesh(RenderType renderType, Mesh mesh, boolean translucent) {
+    //            Material material = objects.materials.computeIfAbsent(renderType, ItemMeshEmitterProvider::createMaterial);
+    //            meshResultConsumer.accept(renderType, material, mesh, translucent);
+    //        }
+    //
+    //        private static Material createMaterial(RenderType renderLayer) {
+    //            RenderSetup state = renderLayer.state;
+    //            Map<String, RenderSetup.TextureBinding> textures = state.textures;
+    //            RenderSetup.TextureBinding texture = textures.get("Sampler0");
+    //            if (texture != null) {
+    //                SimpleMaterial.Builder builder = SimpleMaterial.builder().texture(texture.location()).mipmap(false);
+    //                if (!state.useLightmap) {
+    //                    builder.useLight(false);
+    //                }
+    //                if (!state.useOverlay) {
+    //                    builder.useOverlay(false);
+    //                }
+    //                RenderPipeline pipeline = renderLayer.pipeline();
+    //                Optional<BlendFunction> blendFunction = pipeline.getColorTargetState().blendFunction();
+    //                if (blendFunction.isPresent()) {
+    //                    Transparency transparency = TRANSPARENCY.get(blendFunction.get());
+    //                    if (transparency != null) {
+    //                        builder.transparency(transparency);
+    //                    }
+    //                }
+    //                String cutout = pipeline.getShaderDefines().values().get("ALPHA_CUTOUT");
+    //                if (cutout != null) {
+    //                    if (cutout.equals("0.1")) {
+    //                        builder.cutout(CutoutShaders.ONE_TENTH);
+    //                    } else if (cutout.equals("0.5")) {
+    //                        builder.cutout(CutoutShaders.HALF);
+    //                    }
+    //                }
+    //                return builder.build();
+    //            }
+    //            return Materials.TRANSLUCENT_ITEM_ENTITY_ITEM;
+    //        }
+    //
+    //        @Override
+    //        public VertexConsumer getBuffer(RenderType layer) {
+    //            Integer index = objects.chunkLayers.get(layer);
+    //            ItemMeshEmitter emitter;
+    //            if (index == null) {
+    //                objects.chunkLayers.put(layer, objects.chunkLayers.size());
+    //                emitter = new ItemMeshEmitter(layer);
+    //                emitter.prepare(resultConsumer, this::emitMesh);
+    //                objects.emitters.add(emitter);
+    //            } else {
+    //                emitter = objects.emitters.get(index);
+    //                if (emitter.isEnd()) {
+    //                    emitter.prepare(resultConsumer, this::emitMesh);
+    //                }
+    //            }
+    //            return emitter;
+    //        }
+    //
+    //        @Override
+    //        public void endBatch() {
+    //            for (ItemMeshEmitter emitter : objects.emitters) {
+    //                emitter.end();
+    //            }
+    //        }
+    //
+    //        @Override
+    //        public void endLastBatch() {
+    //        }
+    //
+    //        @Override
+    //        public void endBatch(RenderType type) {
+    //        }
+    //    }
 
     public interface ResultConsumer {
         void accept(RenderType renderType, boolean shaded, MeshData data);
@@ -174,24 +172,24 @@ public class BakedItemModelBufferer {
     private static class ThreadLocalObjects {
         public final PoseStack identityPoseStack = new PoseStack();
         public final ItemStackRenderState state = new ItemStackRenderState();
-        public final ItemMeshEmitterProvider provider = new ItemMeshEmitterProvider(this);
+        //        public final ItemMeshEmitterProvider provider = new ItemMeshEmitterProvider(this);
         public final Map<RenderType, Material> materials = new HashMap<>();
         public final Map<RenderType, Integer> chunkLayers = new HashMap<>();
         public final List<ItemMeshEmitter> emitters = new ArrayList<>();
-        public final FeatureRenderDispatcher featureRenderDispatcher;
+        //        public final FeatureRenderDispatcher featureRenderDispatcher;
 
         {
             Minecraft mc = Minecraft.getInstance();
-            featureRenderDispatcher = new FeatureRenderDispatcher(
-                new SubmitNodeStorage(),
-                mc.getModelManager(),
-                provider,
-                mc.getAtlasManager(),
-                EmptyOutlineBufferSource.INSTANCE,
-                EmptyBufferSource.INSTANCE,
-                mc.font,
-                mc.gameRenderer.gameRenderState()
-            );
+            //            featureRenderDispatcher = new FeatureRenderDispatcher(
+            //                new SubmitNodeStorage(),
+            //                mc.getModelManager(),
+            //                provider,
+            //                mc.getAtlasManager(),
+            //                EmptyOutlineBufferSource.INSTANCE,
+            //                EmptyBufferSource.INSTANCE,
+            //                mc.font,
+            //                mc.gameRenderer.gameRenderState()
+            //            );
             for (int i = 0, size = CHUNK_LAYERS.size(); i < size; i++) {
                 RenderType renderType = CHUNK_LAYERS.get(i);
                 chunkLayers.put(renderType, i);
@@ -200,46 +198,46 @@ public class BakedItemModelBufferer {
         }
     }
 
-    private static class EmptyOutlineBufferSource extends OutlineBufferSource {
-        public static final EmptyOutlineBufferSource INSTANCE = new EmptyOutlineBufferSource();
+    //    private static class EmptyOutlineBufferSource extends OutlineBufferSource {
+    //        public static final EmptyOutlineBufferSource INSTANCE = new EmptyOutlineBufferSource();
+    //
+    //        @Override
+    //        public VertexConsumer getBuffer(RenderType renderType) {
+    //            return EmptyVertexConsumer.INSTANCE;
+    //        }
+    //
+    //        @Override
+    //        public void setColor(int color) {
+    //        }
+    //
+    //        @Override
+    //        public void endOutlineBatch() {
+    //        }
+    //    }
 
-        @Override
-        public VertexConsumer getBuffer(RenderType renderType) {
-            return EmptyVertexConsumer.INSTANCE;
-        }
-
-        @Override
-        public void setColor(int color) {
-        }
-
-        @Override
-        public void endOutlineBatch() {
-        }
-    }
-
-    private static class EmptyBufferSource extends MultiBufferSource.BufferSource {
-        public static final EmptyBufferSource INSTANCE = new EmptyBufferSource();
-
-        @SuppressWarnings("DataFlowIssue")
-        public EmptyBufferSource() {
-            super(null, null);
-        }
-
-        @Override
-        public VertexConsumer getBuffer(RenderType renderType) {
-            return EmptyVertexConsumer.INSTANCE;
-        }
-
-        @Override
-        public void endLastBatch() {
-        }
-
-        @Override
-        public void endBatch() {
-        }
-
-        @Override
-        public void endBatch(RenderType type) {
-        }
-    }
+    //    private static class EmptyBufferSource extends MultiBufferSource.BufferSource {
+    //        public static final EmptyBufferSource INSTANCE = new EmptyBufferSource();
+    //
+    //        @SuppressWarnings("DataFlowIssue")
+    //        public EmptyBufferSource() {
+    //            super(null, null);
+    //        }
+    //
+    //        @Override
+    //        public VertexConsumer getBuffer(RenderType renderType) {
+    //            return EmptyVertexConsumer.INSTANCE;
+    //        }
+    //
+    //        @Override
+    //        public void endLastBatch() {
+    //        }
+    //
+    //        @Override
+    //        public void endBatch() {
+    //        }
+    //
+    //        @Override
+    //        public void endBatch(RenderType type) {
+    //        }
+    //    }
 }

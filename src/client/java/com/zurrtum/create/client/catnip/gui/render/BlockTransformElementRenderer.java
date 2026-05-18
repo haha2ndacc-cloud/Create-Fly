@@ -4,17 +4,14 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
-import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
+import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RedstoneTorchBlock;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,14 +19,9 @@ import java.util.Map;
 public class BlockTransformElementRenderer extends PictureInPictureRenderer<BlockTransformRenderState> {
     private static final Map<Object, GpuTexture> TEXTURES = new HashMap<>();
     private final PoseStack matrices = new PoseStack();
-    private final BlockBakedQuadOutput output;
-    private final TerrainBakedQuadOutput terrainOutput;
     private int windowScaleFactor;
 
-    public BlockTransformElementRenderer(BufferSource vertexConsumers) {
-        super(vertexConsumers);
-        output = new BlockBakedQuadOutput(vertexConsumers, matrices);
-        terrainOutput = new TerrainBakedQuadOutput(vertexConsumers, matrices);
+    public BlockTransformElementRenderer() {
     }
 
     public static void clear(Object key) {
@@ -40,7 +32,12 @@ public class BlockTransformElementRenderer extends PictureInPictureRenderer<Bloc
     }
 
     @Override
-    public void prepare(BlockTransformRenderState block, GuiRenderState state, int windowScaleFactor) {
+    public void prepare(
+        BlockTransformRenderState block,
+        GuiRenderState state,
+        FeatureRenderDispatcher featureRenderDispatcher,
+        int windowScaleFactor
+    ) {
         if (this.windowScaleFactor != windowScaleFactor) {
             this.windowScaleFactor = windowScaleFactor;
             TEXTURES.values().forEach(GpuTexture::close);
@@ -79,24 +76,15 @@ public class BlockTransformElementRenderer extends PictureInPictureRenderer<Bloc
             }
             matrices.scale(1, -1, 1);
             matrices.translate(-0.5F, -0.5F, -0.5F);
-            SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullDark();
-            world.blockState(key.state);
-            if (key.state.is(Blocks.REDSTONE_TORCH) && key.state.getValue(RedstoneTorchBlock.LIT)) {
-                ModelRenderHelper.getHelper(terrainOutput)
-                    .tesselateBlock(0, 0, 0, world, BlockPos.ZERO, key.state, key.model, 42L);
-            } else {
-                output.updateBuffer(key.model);
-                ModelRenderHelper.getHelper(output)
-                    .tesselateBlock(0, 0, 0, world, BlockPos.ZERO, key.state, key.model, 42L);
-                output.clearBuffer();
-            }
-            bufferSource.endBatch();
+            CachedBuffers.block(key.state).submit(matrices, submitNodeStorage);
             matrices.popPose();
+            featureRenderDispatcher.renderAllFeatures(submitNodeStorage);
             texture.clear();
         }
         state.addBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-            TextureSetup.singleTexture(texture.textureView(),
+            TextureSetup.singleTexture(
+                texture.textureView(),
                 RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)
             ),
             block.pose(),
@@ -115,7 +103,11 @@ public class BlockTransformElementRenderer extends PictureInPictureRenderer<Bloc
     }
 
     @Override
-    protected void renderToTexture(BlockTransformRenderState block, PoseStack matrices) {
+    protected void renderToTexture(
+        BlockTransformRenderState block,
+        PoseStack matrices,
+        SubmitNodeCollector submitNodeCollector
+    ) {
     }
 
     @Override

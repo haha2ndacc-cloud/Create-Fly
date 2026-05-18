@@ -11,6 +11,7 @@ import com.zurrtum.create.client.ponder.foundation.PonderIndex;
 import com.zurrtum.create.client.ponder.foundation.PonderScene;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.ParticleResources;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -97,10 +98,12 @@ public class PonderSceneRegistry implements SceneRegistryAccess {
 
         List<PonderScene> scenes = new ArrayList<>();
 
-        ClientLevel world = Minecraft.getInstance().level;
+        Minecraft mc = Minecraft.getInstance();
+        ClientLevel clientLevel = mc.level;
+        ParticleResources particleResources = mc.particleEngine.resourceManager;
         for (StoryBoardEntry storyBoard : entries) {
             StructureTemplate activeTemplate = loadSchematic(storyBoard.getSchematicLocation());
-            PonderLevel level = new PonderLevel(BlockPos.ZERO, world);
+            PonderLevel level = new PonderLevel(BlockPos.ZERO, clientLevel, particleResources);
             activeTemplate.placeInWorld(
                 level,
                 BlockPos.ZERO,

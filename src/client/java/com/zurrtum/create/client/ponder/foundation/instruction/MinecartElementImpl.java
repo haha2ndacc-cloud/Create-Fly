@@ -7,8 +7,6 @@ import com.zurrtum.create.client.ponder.api.element.MinecartElement;
 import com.zurrtum.create.client.ponder.api.level.PonderLevel;
 import com.zurrtum.create.client.ponder.foundation.PonderScene;
 import com.zurrtum.create.client.ponder.foundation.element.AnimatedSceneElementBase;
-import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
@@ -106,9 +104,7 @@ public class MinecartElementImpl extends AnimatedSceneElementBase implements Min
         EntityRenderDispatcher entityRenderManager,
         ItemModelResolver itemModelManager,
         PonderLevel world,
-        MultiBufferSource buffer,
         SubmitNodeCollector queue,
-        Camera camera,
         CameraRenderState cameraRenderState,
         PoseStack poseStack,
         float fade,

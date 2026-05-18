@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.client.AllFluidConfigs;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.FluidModel;
@@ -246,10 +245,6 @@ public class FluidRenderHelper {
                                    boolean invertGasses) implements SubmitNodeCollector.CustomGeometryRenderer {
         public void submit(PoseStack poseStack, SubmitNodeCollector queue) {
             queue.submitCustomGeometry(poseStack, layer, this);
-        }
-
-        public void render(PoseStack matrices, MultiBufferSource bufferSource) {
-            render(matrices.last(), bufferSource.getBuffer(layer));
         }
 
         @Override

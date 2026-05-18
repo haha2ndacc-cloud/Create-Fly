@@ -103,7 +103,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
         String modName = FabricLoader.getInstance().getModContainer(entry.getKey())
             .map(mod -> mod.getMetadata().getName()).orElseGet(entry::getKey);
         //TODO
-//                .orElse(ConfigScreen.toHumanReadable(modId));
+        //                .orElse(ConfigScreen.toHumanReadable(modId));
         List<PonderTag> tags = entry.getValue();
 
         int size = tags.size();
@@ -211,7 +211,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
         new BoxElement().withBackground(PonderUI.BACKGROUND_FLAT).gradientBorder(PonderUI.COLOR_IDLE).at(-3, -3, 0)
             .withBounds(maxWidth + 6, descHeight + 5).render(graphics);
 
-        ClientFontHelper.drawSplitString(
+        ClientFontHelper.submitSplitString(
             graphics,
             font,
             desc,

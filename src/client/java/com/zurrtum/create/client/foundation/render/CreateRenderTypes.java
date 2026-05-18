@@ -31,34 +31,34 @@ public class CreateRenderTypes {
                     FilterMode.NEAREST,
                     true
                 )
-            ).useLightmap().affectsCrumbling().setOutline(OutlineProperty.AFFECTS_OUTLINE).sortOnUpload().bufferSize(256)
+            ).useLightmap().affectsCrumbling().setOutline(OutlineProperty.AFFECTS_OUTLINE).sortOnUpload()
             .createRenderSetup()
     );
 
     private static final RenderType ADDITIVE = RenderType.create(
         createLayerName("additive"),
-        RenderSetup.builder(AllRenderPipelines.ADDITIVE).bufferSize(256).affectsCrumbling().sortOnUpload()
+        RenderSetup.builder(AllRenderPipelines.ADDITIVE).affectsCrumbling().sortOnUpload()
             .withTexture("Sampler0", TextureAtlas.LOCATION_BLOCKS).useLightmap().useOverlay()
             .setOutline(OutlineProperty.AFFECTS_OUTLINE).createRenderSetup()
     );
 
     private static final RenderType ADDITIVE2 = RenderType.create(
         createLayerName("additive2"),
-        RenderSetup.builder(AllRenderPipelines.ADDITIVE2).bufferSize(256).affectsCrumbling().sortOnUpload()
+        RenderSetup.builder(AllRenderPipelines.ADDITIVE2).affectsCrumbling().sortOnUpload()
             .withTexture("Sampler0", TextureAtlas.LOCATION_BLOCKS).useLightmap().useOverlay()
             .setOutline(OutlineProperty.AFFECTS_OUTLINE).createRenderSetup()
     );
 
     private static final RenderType ITEM_GLOWING_SOLID = RenderType.create(
         createLayerName("item_glowing_solid"),
-        RenderSetup.builder(AllRenderPipelines.GLOWING).bufferSize(256).affectsCrumbling()
+        RenderSetup.builder(AllRenderPipelines.GLOWING).affectsCrumbling()
             .withTexture("Sampler0", TextureAtlas.LOCATION_BLOCKS).useLightmap().useOverlay()
             .setOutline(OutlineProperty.AFFECTS_OUTLINE).createRenderSetup()
     );
 
     private static final RenderType ITEM_GLOWING_TRANSLUCENT = RenderType.create(
         createLayerName("item_glowing_translucent"),
-        RenderSetup.builder(AllRenderPipelines.GLOWING_TRANSLUCENT).bufferSize(256).affectsCrumbling().sortOnUpload()
+        RenderSetup.builder(AllRenderPipelines.GLOWING_TRANSLUCENT).affectsCrumbling().sortOnUpload()
             .withTexture("Sampler0", TextureAtlas.LOCATION_BLOCKS).useLightmap().useOverlay()
             .setOutline(OutlineProperty.AFFECTS_OUTLINE).createRenderSetup()
     );
@@ -87,8 +87,7 @@ public class CreateRenderTypes {
 
     private static RenderType getTrainMap(Identifier locationIn, boolean linearFiltering) {
         return RenderType.create(
-            "create_train_map",
-            RenderSetup.builder(RenderPipelines.TEXT).bufferSize(256).sortOnUpload().useLightmap().withTexture(
+            "create_train_map", RenderSetup.builder(RenderPipelines.TEXT).sortOnUpload().useLightmap().withTexture(
                 "Sampler0",
                 locationIn,
                 () -> RenderSystem.getSamplerCache()

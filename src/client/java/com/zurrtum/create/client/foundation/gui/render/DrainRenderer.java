@@ -1,28 +1,22 @@
 package com.zurrtum.create.client.foundation.gui.render;
 
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.zurrtum.create.AllBlocks;
-import com.zurrtum.create.client.catnip.gui.render.BlockBakedQuadOutput;
 import com.zurrtum.create.client.catnip.gui.render.GpuTexture;
+import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
-import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
-import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.FluidStateModelSet;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.LightCoordsUtil;
-import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -32,16 +26,15 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
     private int allocate = MAX;
     private static final Deque<GpuTexture> TEXTURES = new ArrayDeque<>(MAX);
     private final PoseStack matrices = new PoseStack();
-    private final BlockBakedQuadOutput output;
     private int windowScaleFactor;
 
-    public DrainRenderer(BufferSource vertexConsumers) {
-        super(vertexConsumers);
-        output = new BlockBakedQuadOutput(vertexConsumers, matrices);
-    }
-
     @Override
-    public void prepare(DrainRenderState element, GuiRenderState state, int windowScaleFactor) {
+    public void prepare(
+        DrainRenderState element,
+        GuiRenderState state,
+        FeatureRenderDispatcher featureRenderDispatcher,
+        int windowScaleFactor
+    ) {
         if (this.windowScaleFactor != windowScaleFactor) {
             this.windowScaleFactor = windowScaleFactor;
             TEXTURES.forEach(GpuTexture::close);
@@ -64,25 +57,16 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
         float scale = 20 * windowScaleFactor;
         matrices.scale(scale, scale, scale);
 
-        Minecraft mc = Minecraft.getInstance();
-        mc.gameRenderer.lighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
         matrices.mulPose(Axis.XP.rotationDegrees(-15.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(22.5f));
         matrices.scale(1, -1, 1);
         matrices.translate(-0.5f, 0.2f, -0.5f);
 
-        SinglePosVirtualBlockGetter world = SinglePosVirtualBlockGetter.createFullBright();
-
-        BlockState blockState = AllBlocks.ITEM_DRAIN.defaultBlockState();
-        world.blockState(blockState);
-        BlockStateModel model = mc.getModelManager().getBlockStateModelSet().get(blockState);
-        output.updateBuffer(model);
-        ModelRenderHelper.getHelper(output).tesselateBlock(0, 0, 0, world, BlockPos.ZERO, blockState, model, 42L);
-        output.clearBuffer();
+        CachedBuffers.block(AllBlocks.ITEM_DRAIN.defaultBlockState()).submit(matrices, submitNodeStorage);
 
         float from = 2 / 16f;
         float to = 1f - from;
-        FluidStateModelSet fluidStateModelSet = mc.getModelManager().getFluidStateModelSet();
+        FluidStateModelSet fluidStateModelSet = Minecraft.getInstance().getModelManager().getFluidStateModelSet();
         FluidRenderHelper.extractFluidRenderState(
             null,
             null,
@@ -95,17 +79,18 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
             to,
             3 / 4f,
             to,
-            LightCoordsUtil.FULL_BRIGHT,
+            0,
             false,
             true
-        ).render(matrices, bufferSource);
+        ).submit(matrices, submitNodeStorage);
 
-        bufferSource.endBatch();
         matrices.popPose();
+        featureRenderDispatcher.renderAllFeatures(submitNodeStorage);
         texture.clear();
         state.addBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-            TextureSetup.singleTexture(texture.textureView(),
+            TextureSetup.singleTexture(
+                texture.textureView(),
                 RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)
             ),
             element.pose(),
@@ -125,7 +110,11 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
     }
 
     @Override
-    protected void renderToTexture(DrainRenderState state, PoseStack matrices) {
+    protected void renderToTexture(
+        DrainRenderState state,
+        PoseStack matrices,
+        SubmitNodeCollector submitNodeCollector
+    ) {
     }
 
     @Override

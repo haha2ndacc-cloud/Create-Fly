@@ -1,11 +1,9 @@
 package com.zurrtum.create.client.content.equipment.clipboard;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.AllDataComponents;
 import com.zurrtum.create.AllItems;
 import com.zurrtum.create.client.Create;
-import com.zurrtum.create.client.content.trains.track.TrackBlockOutline;
 import com.zurrtum.create.client.foundation.utility.CreateLang;
 import com.zurrtum.create.content.equipment.clipboard.ClipboardBlockEntity;
 import com.zurrtum.create.content.equipment.clipboard.ClipboardCloneable;
@@ -17,7 +15,7 @@ import com.zurrtum.create.infrastructure.component.ClipboardContent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,11 +25,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.ArrayList;
@@ -44,8 +40,8 @@ public class ClipboardValueSettingsClientHandler {
     public static boolean drawCustomBlockSelection(
         Minecraft mc,
         BlockPos pos,
-        MultiBufferSource vertexConsumerProvider,
-        Vec3 camPos,
+        float width,
+        SubmitNodeCollector queue,
         PoseStack ms
     ) {
         LocalPlayer player = mc.player;
@@ -59,8 +55,6 @@ public class ClipboardValueSettingsClientHandler {
         if (!world.getWorldBorder().isWithinBounds(pos)) {
             return false;
         }
-        BlockState blockstate = world.getBlockState(pos);
-
         if (!(world.getBlockEntity(pos) instanceof SmartBlockEntity smartBE)) {
             return false;
         }
@@ -77,18 +71,11 @@ public class ClipboardValueSettingsClientHandler {
                 }
             }
         }
-
-        VoxelShape shape = blockstate.getShape(world, pos);
+        VoxelShape shape = world.getBlockState(pos).getShape(world, pos);
         if (shape.isEmpty()) {
             return false;
         }
-
-        VertexConsumer vb = vertexConsumerProvider.getBuffer(RenderTypes.lines());
-
-        ms.pushPose();
-        ms.translate(pos.getX() - camPos.x, pos.getY() - camPos.y, pos.getZ() - camPos.z);
-        TrackBlockOutline.renderShape(shape, ms, vb, true);
-        ms.popPose();
+        queue.submitShapeOutline(ms, shape, RenderTypes.lines(), 0x66ffffff, width, true);
         return true;
     }
 

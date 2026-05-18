@@ -1,12 +1,14 @@
 package com.zurrtum.create.client.catnip.outliner;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.client.catnip.render.BindableTexture;
 import com.zurrtum.create.client.catnip.render.PonderRenderTypes;
-import com.zurrtum.create.client.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.SubmitNodeCollector.CustomGeometryRenderer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,7 +16,6 @@ import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
@@ -23,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class BlockClusterOutline extends Outline {
-
     private final Cluster cluster;
 
     protected final Vector3f pos0Temp = new Vector3f();
@@ -39,61 +39,35 @@ public class BlockClusterOutline extends Outline {
     }
 
     @Override
-    public void render(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer, Vec3 camera, float pt) {
-        params.loadColor(colorTemp);
-        Vector4f color = colorTemp;
+    public void submit(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, Vec3 camera, float pt) {
+        if (cluster.isEmpty()) {
+            return;
+        }
+        int color = params.color;
         int lightmap = params.lightmap;
         boolean disableLineNormals = params.disableLineNormals;
-
-        renderFaces(ms, buffer, camera, pt, color, lightmap);
-        renderEdges(ms, buffer, camera, pt, color, lightmap, disableLineNormals);
+        submitFaces(ms, queue, camera, color, lightmap);
+        submitEdges(ms, queue, camera, color, lightmap, disableLineNormals);
     }
 
-    protected void renderFaces(
-        PoseStack ms,
-        SuperRenderTypeBuffer buffer,
-        Vec3 camera,
-        float pt,
-        Vector4f color,
-        int lightmap
-    ) {
+    protected void submitFaces(PoseStack ms, SubmitNodeCollector queue, Vec3 camera, int color, int lightmap) {
         BindableTexture faceTexture = params.faceTexture;
         if (faceTexture == null) {
             return;
         }
-        if (cluster.isEmpty()) {
-            return;
-        }
-
+        RenderType layer = PonderRenderTypes.outlineTranslucent(faceTexture.getLocation(), true);
         ms.pushPose();
-        ms.translate(
-            cluster.anchor.getX() - camera.x,
-            cluster.anchor.getY() - camera.y,
-            cluster.anchor.getZ() - camera.z
-        );
-
-        PoseStack.Pose pose = ms.last();
-        RenderType renderType = PonderRenderTypes.outlineTranslucent(faceTexture.getLocation(), true);
-        VertexConsumer consumer = buffer.getLateBuffer(renderType);
-
-        cluster.visibleFaces.forEach((face, axisDirection) -> {
-            Direction direction = Direction.get(axisDirection, face.axis);
-            BlockPos pos = face.pos;
-            if (axisDirection == AxisDirection.POSITIVE) {
-                pos = pos.relative(direction.getOpposite());
-            }
-            bufferBlockFace(pose, consumer, pos, direction, color, lightmap);
-        });
-
+        BlockPos anchor = cluster.anchor;
+        ms.translate(anchor.getX() - camera.x, anchor.getY() - camera.y, anchor.getZ() - camera.z);
+        queue.submitCustomGeometry(ms, layer, new FacesRenderState(this, cluster.visibleFaces, color, lightmap));
         ms.popPose();
     }
 
-    protected void renderEdges(
+    protected void submitEdges(
         PoseStack ms,
-        SuperRenderTypeBuffer buffer,
+        SubmitNodeCollector queue,
         Vec3 camera,
-        float pt,
-        Vector4f color,
+        int color,
         int lightmap,
         boolean disableNormals
     ) {
@@ -101,28 +75,14 @@ public class BlockClusterOutline extends Outline {
         if (lineWidth == 0) {
             return;
         }
-        if (cluster.isEmpty()) {
-            return;
-        }
-
         ms.pushPose();
-        ms.translate(
-            cluster.anchor.getX() - camera.x,
-            cluster.anchor.getY() - camera.y,
-            cluster.anchor.getZ() - camera.z
+        BlockPos anchor = cluster.anchor;
+        ms.translate(anchor.getX() - camera.x, anchor.getY() - camera.y, anchor.getZ() - camera.z);
+        queue.submitCustomGeometry(
+            ms,
+            PonderRenderTypes.outlineSolid(),
+            new EdgesRenderState(this, cluster.visibleEdges, lineWidth, color, lightmap, disableNormals)
         );
-
-        PoseStack.Pose pose = ms.last();
-        VertexConsumer consumer = buffer.getBuffer(PonderRenderTypes.outlineSolid());
-
-        cluster.visibleEdges.forEach(edge -> {
-            BlockPos pos = edge.pos;
-            Vector3f origin = originTemp;
-            origin.set(pos.getX(), pos.getY(), pos.getZ());
-            Direction direction = Direction.get(AxisDirection.POSITIVE, edge.axis);
-            bufferCuboidLine(pose, consumer, origin, direction, 1, lineWidth, color, lightmap, disableNormals);
-        });
-
         ms.popPose();
     }
 
@@ -194,11 +154,11 @@ public class BlockClusterOutline extends Outline {
     }
 
     protected void bufferBlockFace(
-        PoseStack.Pose pose,
+        Pose pose,
         VertexConsumer consumer,
         BlockPos pos,
         Direction face,
-        Vector4f color,
+        int color,
         int lightmap
     ) {
         Vector3f pos0 = pos0Temp;
@@ -319,4 +279,42 @@ public class BlockClusterOutline extends Outline {
         }
     }
 
+    protected record FacesRenderState(BlockClusterOutline outline, Map<MergeEntry, AxisDirection> visibleFaces,
+                                      int color, int lightmap) implements CustomGeometryRenderer {
+        @Override
+        public void render(Pose pose, VertexConsumer buffer) {
+            visibleFaces.forEach((face, axisDirection) -> {
+                Direction direction =
+                    axisDirection == AxisDirection.POSITIVE ? face.axis.getPositive() : face.axis.getNegative();
+                BlockPos pos = face.pos;
+                if (axisDirection == AxisDirection.POSITIVE) {
+                    pos = pos.relative(direction.getOpposite());
+                }
+                outline.bufferBlockFace(pose, buffer, pos, direction, color, lightmap);
+            });
+        }
+    }
+
+    protected record EdgesRenderState(BlockClusterOutline outline, Set<MergeEntry> visibleEdges, float lineWidth,
+                                      int color, int lightmap,
+                                      boolean disableNormals) implements CustomGeometryRenderer {
+        @Override
+        public void render(Pose pose, VertexConsumer buffer) {
+            Vector3f origin = outline.originTemp;
+            for (MergeEntry edge : visibleEdges) {
+                BlockPos pos = edge.pos;
+                outline.bufferCuboidLine(
+                    pose,
+                    buffer,
+                    origin.set(pos.getX(), pos.getY(), pos.getZ()),
+                    edge.axis.getPositive(),
+                    1,
+                    lineWidth,
+                    color,
+                    lightmap,
+                    disableNormals
+                );
+            }
+        }
+    }
 }

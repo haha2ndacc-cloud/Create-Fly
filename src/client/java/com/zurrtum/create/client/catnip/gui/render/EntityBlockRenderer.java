@@ -5,17 +5,15 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.zurrtum.create.client.flywheel.lib.model.baked.ModelRenderHelper;
-import com.zurrtum.create.client.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
+import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
@@ -32,13 +30,7 @@ public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRen
     private static final Int2ObjectMap<GpuTexture> TEXTURES = new Int2ObjectArrayMap<>();
     private final CameraRenderState camera = new CameraRenderState();
     private final PoseStack matrices = new PoseStack();
-    private final BlockBakedQuadOutput output;
     private int windowScaleFactor;
-
-    public EntityBlockRenderer(BufferSource vertexConsumers) {
-        super(vertexConsumers);
-        output = new BlockBakedQuadOutput(vertexConsumers, matrices);
-    }
 
     public static void clear(int key) {
         GpuTexture texture = TEXTURES.remove(key);
@@ -49,7 +41,12 @@ public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRen
 
     @SuppressWarnings("deprecation")
     @Override
-    public void prepare(EntityBlockRenderState block, GuiRenderState state, int windowScaleFactor) {
+    public void prepare(
+        EntityBlockRenderState block,
+        GuiRenderState state,
+        FeatureRenderDispatcher featureRenderDispatcher,
+        int windowScaleFactor
+    ) {
         if (this.windowScaleFactor != windowScaleFactor) {
             this.windowScaleFactor = windowScaleFactor;
             TEXTURES.values().forEach(GpuTexture::close);
@@ -84,13 +81,7 @@ public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRen
         Level world = block.world();
         BlockState blockState = block.state();
         BlockEntity blockEntity = block.entity();
-        SinglePosVirtualBlockGetter lightWorld = SinglePosVirtualBlockGetter.createFullBright();
-        lightWorld.blockState(blockState);
-        lightWorld.blockEntity(blockEntity);
-        BlockStateModel model = mc.getModelManager().getBlockStateModelSet().get(blockState);
-        output.updateBuffer(model);
-        ModelRenderHelper.getHelper(output).tesselateBlock(0, 0, 0, lightWorld, BlockPos.ZERO, blockState, model, 42L);
-        output.clearBuffer();
+        CachedBuffers.block(blockState).light(block.light()).submit(matrices, submitNodeStorage);
         if (blockEntity != null) {
             BlockEntityRenderer<BlockEntity, BlockEntityRenderState> renderer = mc.getBlockEntityRenderDispatcher()
                 .getRenderer(blockEntity);
@@ -98,23 +89,21 @@ public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRen
                 BlockPos pos = blockEntity.getBlockPos();
                 Vec3 cameraPos = camera.pos = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
                 if (renderer.shouldRender(blockEntity, cameraPos)) {
-                    FeatureRenderDispatcher renderDispatcher = gameRenderer.getFeatureRenderDispatcher();
                     Level previousLevel = blockEntity.getLevel();
                     BlockState stateBefore = blockEntity.getBlockState();
                     blockEntity.setLevel(world);
                     blockEntity.setBlockState(blockState);
                     BlockEntityRenderState renderState = renderer.createRenderState();
                     renderer.extractRenderState(blockEntity, renderState, 0, cameraPos, null);
-                    renderer.submit(renderState, matrices, renderDispatcher.getSubmitNodeStorage(), camera);
-                    renderDispatcher.renderAllFeatures();
+                    renderer.submit(renderState, matrices, submitNodeStorage, camera);
                     blockEntity.setBlockState(stateBefore);
                     blockEntity.setLevel(previousLevel);
                 }
             }
         }
-        bufferSource.endBatch();
-        gameRenderer.useUiLightmap = lightOption;
         matrices.popPose();
+        featureRenderDispatcher.renderAllFeatures(submitNodeStorage);
+        gameRenderer.useUiLightmap = lightOption;
         texture.clear();
         state.addBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
@@ -138,7 +127,11 @@ public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRen
     }
 
     @Override
-    protected void renderToTexture(EntityBlockRenderState state, PoseStack matrices) {
+    protected void renderToTexture(
+        EntityBlockRenderState state,
+        PoseStack matrices,
+        SubmitNodeCollector submitNodeCollector
+    ) {
     }
 
     @Override

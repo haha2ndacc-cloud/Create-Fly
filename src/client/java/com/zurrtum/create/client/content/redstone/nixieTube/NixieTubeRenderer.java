@@ -22,12 +22,10 @@ import com.zurrtum.create.content.redstone.nixieTube.NixieTubeBlock;
 import com.zurrtum.create.content.redstone.nixieTube.NixieTubeBlockEntity;
 import com.zurrtum.create.content.redstone.nixieTube.NixieTubeBlockEntity.ComputerSignal.TubeDisplay;
 import com.zurrtum.create.content.trains.signal.SignalBlockEntity.SignalState;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.gui.font.TextRenderable;
 import net.minecraft.client.gui.font.glyphs.BakedGlyph;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeCollector.CustomGeometryRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -52,7 +50,6 @@ import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntity
 import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getZRotateAngle;
 
 public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEntity, NixieTubeRenderState> {
-    private static final boolean IRIS = FabricLoader.getInstance().isModLoaded("iris");
     protected final Font textRenderer;
 
     public NixieTubeRenderer(Context context) {
@@ -332,27 +329,6 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
         state.data.submit(matrices, queue);
     }
 
-    public static void drawInWorldString(
-        Font fontRenderer,
-        PoseStack ms,
-        MultiBufferSource buffer,
-        String c,
-        int color
-    ) {
-        fontRenderer.drawInBatch(
-            c,
-            0,
-            0,
-            color,
-            false,
-            ms.last().pose(),
-            buffer,
-            DisplayMode.NORMAL,
-            0,
-            LightCoordsUtil.FULL_BRIGHT
-        );
-    }
-
     @Override
     public int getViewDistance() {
         return 128;
@@ -387,10 +363,10 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
             if (zRot2 != null) {
                 matrices.pushPose();
                 matrices.mulPose(zRot2);
-                tube.submit(matrices, (IRIS ? queue.order(1) : queue));
+                tube.submit(matrices, queue.order(1));
                 matrices.popPose();
             } else {
-                tube.submit(matrices, (IRIS ? queue.order(1) : queue));
+                tube.submit(matrices, queue.order(1));
             }
             if (left != null) {
                 matrices.pushPose();
@@ -479,13 +455,13 @@ public class NixieTubeRenderer implements BlockEntityRenderer<NixieTubeBlockEnti
                 matrices.pushPose();
                 matrices.scale(1.0625f, 1.0625f, 1.0625f);
                 signal.submit(CreateRenderTypes.additive2(), matrices, queue);
-                signal.submit(CreateRenderTypes.additive(), matrices, queue);
+                signal.submit(CreateRenderTypes.additive(), matrices, queue.order(1));
                 matrices.popPose();
                 if (glow != null) {
                     matrices.pushPose();
                     matrices.scale(glowX, glowY, 2);
                     glow.submit(CreateRenderTypes.additive2(), matrices, queue);
-                    glow.submit(CreateRenderTypes.additive(), matrices, queue);
+                    glow.submit(CreateRenderTypes.additive(), matrices, queue.order(1));
                     matrices.popPose();
                 }
             } else {

@@ -9,7 +9,6 @@ import com.zurrtum.create.client.content.redstone.displayLink.LinkBulbRenderer.L
 import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.client.foundation.render.CreateRenderTypes;
 import com.zurrtum.create.content.redstone.displayLink.LinkWithBulbBlockEntity;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
@@ -29,8 +28,6 @@ import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntity
 import static com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRenderer.getYRotateAngle;
 
 public class LinkBulbRenderer implements BlockEntityRenderer<LinkWithBulbBlockEntity, LinkBulbRenderState> {
-    private static final boolean IRIS = FabricLoader.getInstance().isModLoaded("iris");
-
     public LinkBulbRenderer(Context context) {
     }
 
@@ -93,7 +90,7 @@ public class LinkBulbRenderer implements BlockEntityRenderer<LinkWithBulbBlockEn
             state.tube.submit(matrices, queue);
         } else {
             state.tube.submit(CreateRenderTypes.translucent(), matrices, queue);
-            state.glow.submit(CreateRenderTypes.additive(), matrices, (IRIS ? queue.order(1) : queue));
+            state.glow.submit(CreateRenderTypes.additive(), matrices, queue.order(1));
         }
     }
 
