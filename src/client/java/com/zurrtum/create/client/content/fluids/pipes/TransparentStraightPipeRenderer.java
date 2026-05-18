@@ -11,7 +11,6 @@ import com.zurrtum.create.content.fluids.FluidTransportBehaviour;
 import com.zurrtum.create.content.fluids.PipeConnection.Flow;
 import com.zurrtum.create.content.fluids.pipes.StraightPipeBlockEntity;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.FluidStateModelSet;
@@ -57,7 +56,7 @@ public class TransparentStraightPipeRenderer implements BlockEntityRenderer<Stra
         List<FluidStreamRenderState> fluids = new ArrayList<>(directions.length);
         BlockAndTintGetter level = (BlockAndTintGetter) be.getLevel();
         BlockPos blockPos = be.getBlockPos();
-        int lightCoords = level != null ? LevelRenderer.getLightCoords(level, blockPos) : LightCoordsUtil.FULL_BRIGHT;
+        int lightCoords = level != null ? LightCoordsUtil.getLightCoords(level, blockPos) : LightCoordsUtil.FULL_BRIGHT;
         float radius = 0.1875f;
         for (Direction side : directions) {
             Flow flow = pipe.getFlow(side);

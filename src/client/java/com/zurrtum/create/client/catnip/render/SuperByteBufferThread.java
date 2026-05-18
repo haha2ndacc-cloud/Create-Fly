@@ -1,7 +1,6 @@
 package com.zurrtum.create.client.catnip.render;
 
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.util.ARGB;
@@ -321,7 +320,7 @@ public class SuperByteBufferThread extends Thread {
         }
 
         private int getLevelLight(long pos) {
-            return LevelRenderer.getLightCoords(blockAndLightGetter, blockPos);
+            return LightCoordsUtil.getLightCoords(blockAndLightGetter, blockPos);
         }
 
         public LightFunction update(

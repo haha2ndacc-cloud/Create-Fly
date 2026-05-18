@@ -16,9 +16,9 @@ import com.zurrtum.create.client.foundation.virtualWorld.VirtualRenderWorld;
 import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
 import com.zurrtum.create.content.kinetics.drill.DrillBlock;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -60,7 +60,7 @@ public class DrillMovementRenderBehaviour implements MovementRenderBehaviour {
         float yRot = Mth.DEG_TO_RAD * AngleHelper.horizontalAngle(facing);
         float xRot = Mth.DEG_TO_RAD * AngleHelper.verticalAngle(facing);
         float zRot = Mth.DEG_TO_RAD * ((time * speed) % 360);
-        int light = LevelRenderer.getLightCoords(renderWorld, pos);
+        int light = LightCoordsUtil.getLightCoords(renderWorld, pos);
         SuperByteBufferRenderState head = CachedBuffers.partial(AllPartialModels.DRILL_HEAD, blockState)
             .transform(transform).translate(pos).center().rotateY(yRot).rotateX(xRot).rotateZ(zRot).uncenter()
             .light(light).useLevelLight(context.world, worldMatrix4f).extractRenderState();

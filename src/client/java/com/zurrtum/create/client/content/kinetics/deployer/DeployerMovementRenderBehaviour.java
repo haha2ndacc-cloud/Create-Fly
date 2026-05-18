@@ -20,10 +20,10 @@ import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
 import com.zurrtum.create.content.kinetics.base.IRotate;
 import com.zurrtum.create.content.kinetics.deployer.DeployerBlockEntity.Mode;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -85,10 +85,11 @@ public class DeployerMovementRenderBehaviour implements MovementRenderBehaviour 
         float angle = (time * speed) % 360;
         float yRot = axis == Direction.Axis.Z ? Mth.DEG_TO_RAD * 90 : 0;
         float zRot = axis.isHorizontal() ? Mth.DEG_TO_RAD * 90 : 0;
-        int light = LevelRenderer.getLightCoords(renderWorld, pos);
+        int light = LightCoordsUtil.getLightCoords(renderWorld, pos);
         float upAngle = Mth.DEG_TO_RAD * AngleHelper.horizontalAngle(facing);
         float eastAngle = Mth.DEG_TO_RAD * (facing == Direction.UP ? 270 : facing == Direction.DOWN ? 90 : 0);
-        float southAngle = Mth.DEG_TO_RAD * ((blockState.getValue(AXIS_ALONG_FIRST_COORDINATE) ^ facing.getAxis() == Direction.Axis.Z) ? 90 : 0);
+        float southAngle = Mth.DEG_TO_RAD * (
+            (blockState.getValue(AXIS_ALONG_FIRST_COORDINATE) ^ facing.getAxis() == Direction.Axis.Z) ? 90 : 0);
         SuperByteBuffer hand = CachedBuffers.partial(handPose, blockState).transform(transform).translate(pos);
         SuperByteBuffer shaft = CachedBuffers.block(AllBlocks.SHAFT.defaultBlockState());
         SuperByteBuffer.copyTransform(hand, shaft);

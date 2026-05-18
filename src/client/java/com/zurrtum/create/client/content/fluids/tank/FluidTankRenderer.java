@@ -13,7 +13,6 @@ import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRendere
 import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.fluids.tank.FluidTankBlockEntity;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.FluidStateModelSet;
@@ -88,10 +87,8 @@ public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEnti
         state.blockPos = be.getBlockPos();
         state.blockState = be.getBlockState();
         state.blockEntityType = be.getType();
-        state.lightCoords = world != null ? LevelRenderer.getLightCoords(
-            world,
-            state.blockPos
-        ) : LightCoordsUtil.FULL_BRIGHT;
+        state.lightCoords =
+            world != null ? LightCoordsUtil.getLightCoords(world, state.blockPos) : LightCoordsUtil.FULL_BRIGHT;
         state.breakProgress = crumblingOverlay;
         float clampedLevel = Mth.clamp(level * totalHeight, 0, totalHeight);
         state.translate = clampedLevel - totalHeight;

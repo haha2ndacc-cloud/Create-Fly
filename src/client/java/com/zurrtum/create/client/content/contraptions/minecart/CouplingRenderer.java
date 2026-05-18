@@ -17,10 +17,10 @@ import com.zurrtum.create.content.contraptions.minecart.CouplingHandler;
 import com.zurrtum.create.content.contraptions.minecart.capability.MinecartController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.minecart.MinecartBehavior;
@@ -63,7 +63,7 @@ public class CouplingRenderer {
             return;
         }
 
-        Couple<Integer> lightValues = carts.map(c -> LevelRenderer.getLightCoords(
+        Couple<Integer> lightValues = carts.map(c -> LightCoordsUtil.getLightCoords(
             world,
             BlockPos.containing(c.getBoundingBox().getCenter())
         ));

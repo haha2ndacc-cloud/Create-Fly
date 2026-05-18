@@ -9,7 +9,6 @@ import com.zurrtum.create.client.foundation.blockEntity.behaviour.filtering.Filt
 import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer.SmartRenderState;
 import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -96,7 +95,7 @@ public class SmartBlockEntityRenderer<T extends SmartBlockEntity, S extends Smar
     }
 
     public static int getLightCoords(@Nullable Level level, BlockPos pos) {
-        return level != null ? LevelRenderer.getLightCoords(level, pos) : LightCoordsUtil.FULL_BRIGHT;
+        return level != null ? LightCoordsUtil.getLightCoords(level, pos) : LightCoordsUtil.FULL_BRIGHT;
     }
 
     @Nullable

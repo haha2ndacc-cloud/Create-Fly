@@ -17,9 +17,9 @@ import com.zurrtum.create.content.contraptions.ControlledContraptionEntity;
 import com.zurrtum.create.content.contraptions.OrientedContraptionEntity;
 import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -61,7 +61,7 @@ public class StabilizedBearingMovementRenderBehaviour implements MovementRenderB
         ) * facing.getAxisDirection().getStep();
         Quaternionf rotation = Axis.of(facing.step()).rotationDegrees(angle).mul(orientation);
         BlockPos pos = context.localPos;
-        int light = LevelRenderer.getLightCoords(renderWorld, pos);
+        int light = LightCoordsUtil.getLightCoords(renderWorld, pos);
         SuperByteBufferRenderState top = CachedBuffers.partial(AllPartialModels.BEARING_TOP, context.state)
             .transform(transform).translate(pos).rotateCentered(rotation).light(light)
             .useLevelLight(context.world, worldMatrix4f).extractRenderState();

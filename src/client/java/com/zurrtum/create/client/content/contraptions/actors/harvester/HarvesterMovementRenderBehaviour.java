@@ -15,8 +15,8 @@ import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager
 import com.zurrtum.create.client.foundation.virtualWorld.VirtualRenderWorld;
 import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
@@ -49,15 +49,13 @@ public class HarvesterMovementRenderBehaviour implements MovementRenderBehaviour
         }
         BlockState blockState = context.state;
         Direction facing = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING);
-        int light = LevelRenderer.getLightCoords(renderWorld, context.localPos);
+        int light = LightCoordsUtil.getLightCoords(renderWorld, context.localPos);
         SuperByteBuffer model = CachedBuffers.partial(AllPartialModels.HARVESTER_BLADE, blockState).transform(transform)
             .translate(context.localPos)
             .rotateCentered(AngleHelper.rad(AngleHelper.horizontalAngle(facing)), Direction.UP);
         float time = AnimationTickHolder.getRenderTime(context.world) / 20;
-        float speed = !VecHelper.isVecPointingTowards(
-            context.relativeMotion,
-            facing.getOpposite()
-        ) ? context.getAnimationSpeed() : 0;
+        float speed = !VecHelper.isVecPointingTowards(context.relativeMotion, facing.getOpposite()) ?
+            context.getAnimationSpeed() : 0;
         if (context.contraption.stalled) {
             speed = 0;
         }

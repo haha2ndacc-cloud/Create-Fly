@@ -73,7 +73,8 @@ public class ChestVisual<T extends BlockEntity & LidBlockEntity> extends Abstrac
 
         Block block = blockState.getBlock();
         if (block instanceof AbstractChestBlock<?> chestBlock) {
-            ChestType chestType = blockState.hasProperty(ChestBlock.TYPE) ? blockState.getValue(ChestBlock.TYPE) : ChestType.SINGLE;
+            ChestType chestType =
+                blockState.hasProperty(ChestBlock.TYPE) ? blockState.getValue(ChestBlock.TYPE) : ChestType.SINGLE;
             SpriteId texture = Sheets.chooseSprite(
                 ChestRenderer.getChestMaterial(blockEntity, isChristmas()),
                 chestType
@@ -203,8 +204,8 @@ public class ChestVisual<T extends BlockEntity & LidBlockEntity> extends Abstrac
     private class BrightnessCombiner implements DoubleBlockCombiner.Combiner<BlockEntity, Integer> {
         @Override
         public Integer acceptDouble(BlockEntity first, BlockEntity second) {
-            int firstLight = LevelRenderer.getLightCoords(first.getLevel(), first.getBlockPos());
-            int secondLight = LevelRenderer.getLightCoords(second.getLevel(), second.getBlockPos());
+            int firstLight = LightCoordsUtil.getLightCoords(first.getLevel(), first.getBlockPos());
+            int secondLight = LightCoordsUtil.getLightCoords(second.getLevel(), second.getBlockPos());
             int firstBlockLight = LightCoordsUtil.block(firstLight);
             int secondBlockLight = LightCoordsUtil.block(secondLight);
             int firstSkyLight = LightCoordsUtil.sky(firstLight);
@@ -217,12 +218,12 @@ public class ChestVisual<T extends BlockEntity & LidBlockEntity> extends Abstrac
 
         @Override
         public Integer acceptSingle(BlockEntity single) {
-            return LevelRenderer.getLightCoords(single.getLevel(), single.getBlockPos());
+            return LightCoordsUtil.getLightCoords(single.getLevel(), single.getBlockPos());
         }
 
         @Override
         public Integer acceptNone() {
-            return LevelRenderer.getLightCoords(level, pos);
+            return LightCoordsUtil.getLightCoords(level, pos);
         }
     }
 }

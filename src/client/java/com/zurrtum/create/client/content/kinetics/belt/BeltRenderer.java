@@ -23,7 +23,6 @@ import com.zurrtum.create.content.kinetics.belt.*;
 import com.zurrtum.create.content.kinetics.belt.transport.BeltInventory;
 import com.zurrtum.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.zurrtum.create.content.logistics.box.PackageItem;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
@@ -293,8 +292,8 @@ public class BeltRenderer implements BlockEntityRenderer<BeltBlockEntity, BeltRe
 
     public static SpriteShiftEntry getSpriteShiftEntry(@Nullable DyeColor color, boolean diagonal, boolean bottom) {
         if (color != null) {
-            return (diagonal ? AllSpriteShifts.DYED_DIAGONAL_BELTS : bottom ? AllSpriteShifts.DYED_OFFSET_BELTS : AllSpriteShifts.DYED_BELTS).get(
-                color);
+            return (diagonal ? AllSpriteShifts.DYED_DIAGONAL_BELTS :
+                bottom ? AllSpriteShifts.DYED_OFFSET_BELTS : AllSpriteShifts.DYED_BELTS).get(color);
         }
         return diagonal ? AllSpriteShifts.BELT_DIAGONAL : bottom ? AllSpriteShifts.BELT_OFFSET : AllSpriteShifts.BELT;
     }
@@ -500,7 +499,7 @@ public class BeltRenderer implements BlockEntityRenderer<BeltBlockEntity, BeltRe
                     state.verticality * segment,
                     state.directionVec.getZ() * segment
                 );
-                light = world != null ? LevelRenderer.getLightCoords(world, mutablePos) : LightCoordsUtil.FULL_BRIGHT;
+                light = world != null ? LightCoordsUtil.getLightCoords(world, mutablePos) : LightCoordsUtil.FULL_BRIGHT;
             }
             ItemStack stack = transported.stack;
             ItemStackRenderState renderState = new ItemStackRenderState();

@@ -19,11 +19,11 @@ import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
 import com.zurrtum.create.content.kinetics.base.DirectionalAxisKineticBlock;
 import com.zurrtum.create.content.kinetics.saw.SawBlock;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
@@ -77,7 +77,7 @@ public class SawMovementRenderBehaviour implements MovementRenderBehaviour {
             zRot = blockState.getValue(SawBlock.AXIS_ALONG_FIRST_COORDINATE) ? Mth.DEG_TO_RAD * 90 : 0;
         }
         BlockPos pos = context.localPos;
-        int light = LevelRenderer.getLightCoords(renderWorld, pos);
+        int light = LightCoordsUtil.getLightCoords(renderWorld, pos);
         saw.transform(transform).translate(pos);
         if (!VisualizationManager.supportsVisualization(context.world)) {
             Axis axis = facing.getAxis();

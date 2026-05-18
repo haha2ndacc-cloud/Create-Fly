@@ -19,12 +19,12 @@ import com.zurrtum.create.content.trains.track.TrackTargetingBehaviour.RenderedT
 import com.zurrtum.create.infrastructure.component.BezierTrackPointLocation;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.AxisDirection;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.CardinalLighting;
@@ -164,7 +164,7 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
             case SIGNAL -> AllPartialModels.TRACK_SIGNAL_OVERLAY;
             case STATION -> AllPartialModels.TRACK_STATION_OVERLAY;
         };
-        int light = LevelRenderer.getLightCoords(world, pos);
+        int light = LightCoordsUtil.getLightCoords(world, pos);
         state.model = CachedBuffers.partial(partial, trackState).cardinalLighting(world).light(light)
             .extractRenderState();
         state.scale = scale;
@@ -215,7 +215,7 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
             for (; i < index; i++) {
                 if (be.isValidBogeyOffset(i)) {
                     states[i] = valid.computeIfAbsent(
-                        LevelRenderer.getLightCoords(
+                        LightCoordsUtil.getLightCoords(
                             world,
                             currentPos.move(direction, 1)
                         ), validGetter
@@ -223,7 +223,7 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
                 }
             }
             states[i] = carriage.computeIfAbsent(
-                LevelRenderer.getLightCoords(world, currentPos.move(direction, 1)),
+                LightCoordsUtil.getLightCoords(world, currentPos.move(direction, 1)),
                 carriageGetter
             );
             index++;
@@ -231,7 +231,7 @@ public class StandardTrackBlockRenderer implements TrackBlockRenderer {
         for (; index < length; index++) {
             if (be.isValidBogeyOffset(index)) {
                 states[index] = valid.computeIfAbsent(
-                    LevelRenderer.getLightCoords(
+                    LightCoordsUtil.getLightCoords(
                         world,
                         currentPos.move(direction, 1)
                     ), validGetter

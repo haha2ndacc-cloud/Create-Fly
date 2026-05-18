@@ -17,10 +17,10 @@ import com.zurrtum.create.content.contraptions.actors.trainControls.ControlsMove
 import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
 import com.zurrtum.create.content.trains.entity.CarriageContraptionEntity;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -66,7 +66,7 @@ public class ControlsMovementRenderBehaviour implements MovementRenderBehaviour 
         }
         float pt = AnimationTickHolder.getPartialTicks(context.world);
         ControlsMovementRenderState state = new ControlsMovementRenderState();
-        int light = LevelRenderer.getLightCoords(renderWorld, pos);
+        int light = LightCoordsUtil.getLightCoords(renderWorld, pos);
         float yRot = Mth.DEG_TO_RAD * (180 + AngleHelper.horizontalAngle(facing));
         float equipAnimation = angles.equipAnimation.getValue(pt);
         float firstLever = angles.speed.getValue(pt);

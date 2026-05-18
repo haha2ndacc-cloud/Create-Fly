@@ -17,10 +17,10 @@ import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager
 import com.zurrtum.create.client.foundation.virtualWorld.VirtualRenderWorld;
 import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -57,10 +57,8 @@ public class RollerMovementRenderBehaviour implements MovementRenderBehaviour {
         RollerMovementRenderState state = new RollerMovementRenderState();
         BlockState blockState = context.state;
         Direction facing = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING);
-        float speed = !VecHelper.isVecPointingTowards(
-            context.relativeMotion,
-            facing.getOpposite()
-        ) ? context.getAnimationSpeed() : -context.getAnimationSpeed();
+        float speed = !VecHelper.isVecPointingTowards(context.relativeMotion, facing.getOpposite()) ?
+            context.getAnimationSpeed() : -context.getAnimationSpeed();
         if (context.contraption.stalled) {
             speed = 0;
         }
@@ -68,7 +66,7 @@ public class RollerMovementRenderBehaviour implements MovementRenderBehaviour {
         float wheelAngle = AngleHelper.rad(angle);
         float time = AnimationTickHolder.getRenderTime(context.world) / 20;
         float rotate = AngleHelper.rad(time * speed % 360);
-        int light = LevelRenderer.getLightCoords(renderWorld, pos);
+        int light = LightCoordsUtil.getLightCoords(renderWorld, pos);
         float yRot = Mth.DEG_TO_RAD * 90;
         float frameAngle = AngleHelper.rad(angle + 180);
         SuperByteBuffer frame = CachedBuffers.partial(AllPartialModels.ROLLER_FRAME, blockState).transform(transform)

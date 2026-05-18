@@ -4,11 +4,11 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
@@ -95,7 +95,7 @@ public class SteamJetParticle extends SimpleAnimatedParticle {
     @Override
     public int getLightCoords(float partialTick) {
         BlockPos blockpos = BlockPos.containing(this.x, this.y, this.z);
-        return this.level.isLoaded(blockpos) ? LevelRenderer.getLightCoords(level, blockpos) : 0;
+        return this.level.isLoaded(blockpos) ? LightCoordsUtil.getLightCoords(level, blockpos) : 0;
     }
 
     public static class Factory implements ParticleProvider<SimpleParticleType> {

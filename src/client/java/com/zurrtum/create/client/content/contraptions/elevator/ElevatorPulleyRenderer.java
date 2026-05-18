@@ -16,7 +16,6 @@ import com.zurrtum.create.content.contraptions.elevator.ElevatorPulleyBlock;
 import com.zurrtum.create.content.contraptions.elevator.ElevatorPulleyBlockEntity;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
@@ -27,6 +26,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -68,7 +68,7 @@ public class ElevatorPulleyRenderer implements BlockEntityRenderer<ElevatorPulle
         BlockPos blockPos = state.blockPos;
         if (running || offset == 0) {
             state.magnetOffset = -offset;
-            int magnetLight = LevelRenderer.getLightCoords(level, blockPos.below((int) offset));
+            int magnetLight = LightCoordsUtil.getLightCoords(level, blockPos.below((int) offset));
             state.magnet = CachedBuffers.partial(AllPartialModels.ELEVATOR_MAGNET, state.blockState)
                 .cardinalLighting(cardinalLighting).light(magnetLight).extractRenderState();
         }
@@ -91,7 +91,7 @@ public class ElevatorPulleyRenderer implements BlockEntityRenderer<ElevatorPulle
             halfScroll = getHalfShift(offset);
             float down = f > 0.75f ? f - 1 : f;
             state.halfRopeOffset = -down;
-            int halfRopeLight = LevelRenderer.getLightCoords(level, blockPos.below((int) down));
+            int halfRopeLight = LightCoordsUtil.getLightCoords(level, blockPos.below((int) down));
             state.halfRope = CachedBuffers.partial(AllPartialModels.ELEVATOR_BELT_HALF, state.blockState)
                 .cardinalLighting(cardinalLighting).light(halfRopeLight).shiftUVScrolling(halfShift, halfScroll)
                 .extractRenderState();
@@ -110,7 +110,7 @@ public class ElevatorPulleyRenderer implements BlockEntityRenderer<ElevatorPulle
         state.ropeOffset = -offset - 1;
         for (int i = 0, down = (int) offset; i < size; i++, down--) {
             ropes[i] = cache.computeIfAbsent(
-                LevelRenderer.getLightCoords(level, blockPos.below(down)),
+                LightCoordsUtil.getLightCoords(level, blockPos.below(down)),
                 l -> rope.cardinalLighting(cardinalLighting).light(l).shiftUVScrolling(halfShift, halfScroll)
                     .extractRenderState()
             );

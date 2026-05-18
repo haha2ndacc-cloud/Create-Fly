@@ -7,9 +7,9 @@ import com.zurrtum.create.client.flywheel.lib.instance.FlatLit;
 import com.zurrtum.create.client.flywheel.lib.math.MoreMath;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.UnknownNullability;
@@ -123,11 +123,11 @@ public abstract class AbstractBlockEntityVisual<T extends BlockEntity> extends A
     }
 
     protected int computePackedLight() {
-        return LevelRenderer.getLightCoords(level, pos);
+        return LightCoordsUtil.getLightCoords(level, pos);
     }
 
     protected void relight(BlockPos pos, @Nullable FlatLit... instances) {
-        FlatLit.relight(LevelRenderer.getLightCoords(level, pos), instances);
+        FlatLit.relight(LightCoordsUtil.getLightCoords(level, pos), instances);
     }
 
     protected void relight(@Nullable FlatLit... instances) {
@@ -135,7 +135,7 @@ public abstract class AbstractBlockEntityVisual<T extends BlockEntity> extends A
     }
 
     protected void relight(BlockPos pos, Iterator<? extends @Nullable FlatLit> instances) {
-        FlatLit.relight(LevelRenderer.getLightCoords(level, pos), instances);
+        FlatLit.relight(LightCoordsUtil.getLightCoords(level, pos), instances);
     }
 
     protected void relight(Iterator<? extends @Nullable FlatLit> instances) {
@@ -143,7 +143,7 @@ public abstract class AbstractBlockEntityVisual<T extends BlockEntity> extends A
     }
 
     protected void relight(BlockPos pos, Iterable<? extends @Nullable FlatLit> instances) {
-        FlatLit.relight(LevelRenderer.getLightCoords(level, pos), instances);
+        FlatLit.relight(LightCoordsUtil.getLightCoords(level, pos), instances);
     }
 
     protected void relight(Iterable<? extends @Nullable FlatLit> instances) {

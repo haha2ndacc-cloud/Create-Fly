@@ -10,9 +10,9 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SimpleAnimatedParticle;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -113,7 +113,7 @@ public class AirFlowParticle extends SimpleAnimatedParticle {
     @Override
     public int getLightCoords(float partialTick) {
         BlockPos blockpos = BlockPos.containing(this.x, this.y, this.z);
-        return this.level.isLoaded(blockpos) ? LevelRenderer.getLightCoords(level, blockpos) : 0;
+        return this.level.isLoaded(blockpos) ? LightCoordsUtil.getLightCoords(level, blockpos) : 0;
     }
 
     private void selectSprite(int index) {

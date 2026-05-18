@@ -20,7 +20,6 @@ import com.zurrtum.create.content.contraptions.actors.contraptionControls.Contra
 import com.zurrtum.create.content.contraptions.actors.contraptionControls.ContraptionControlsMovement;
 import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -77,7 +76,7 @@ public class ContraptionControlsMovementRender implements MovementRenderBehaviou
                 blockState,
                 facing.getOpposite()
             ).transform(transform).translate(pos).translate(0, buttondepth, 0)
-            .light(LevelRenderer.getLightCoords(renderWorld, pos)).useLevelLight(context.world, worldMatrix4f)
+            .light(LightCoordsUtil.getLightCoords(renderWorld, pos)).useLevelLight(context.world, worldMatrix4f)
             .extractRenderState();
         String text = efs.currentShortName;
         String description = efs.currentLongName;

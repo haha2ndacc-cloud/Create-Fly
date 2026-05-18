@@ -9,7 +9,6 @@ import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRendere
 import com.zurrtum.create.client.content.kinetics.fan.EncasedFanRenderer.EncasedFanRenderState;
 import com.zurrtum.create.client.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.zurrtum.create.content.kinetics.fan.EncasedFanBlockEntity;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
@@ -55,8 +54,8 @@ public class EncasedFanRenderer implements BlockEntityRenderer<EncasedFanBlockEn
         Direction opposite = facing.getOpposite();
         int lightBehind, lightInFront;
         if (level != null) {
-            lightBehind = LevelRenderer.getLightCoords(level, state.blockPos.relative(opposite));
-            lightInFront = LevelRenderer.getLightCoords(level, state.blockPos.relative(facing));
+            lightBehind = LightCoordsUtil.getLightCoords(level, state.blockPos.relative(opposite));
+            lightInFront = LightCoordsUtil.getLightCoords(level, state.blockPos.relative(facing));
         } else {
             lightBehind = lightInFront = LightCoordsUtil.FULL_BRIGHT;
         }

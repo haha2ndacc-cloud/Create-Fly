@@ -13,7 +13,6 @@ import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
 import com.zurrtum.create.infrastructure.config.AllConfigs;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
@@ -23,6 +22,7 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -80,11 +80,9 @@ public abstract class AbstractPulleyRenderer<T extends KineticBlockEntity> imple
         state.coil = coil.cardinalLighting(cardinalLighting).light(state.lightCoords).extractRenderState();
         BlockPos blockPos = state.blockPos;
         if (running || offset == 0) {
-            SuperByteBuffer magnet = offset > 0.25f ? renderMagnet(be) : CachedBuffers.partial(
-                halfMagnet,
-                state.blockState
-            );
-            int magnetLight = LevelRenderer.getLightCoords(level, blockPos.below((int) offset));
+            SuperByteBuffer magnet =
+                offset > 0.25f ? renderMagnet(be) : CachedBuffers.partial(halfMagnet, state.blockState);
+            int magnetLight = LightCoordsUtil.getLightCoords(level, blockPos.below((int) offset));
             state.magnet = magnet.cardinalLighting(cardinalLighting).light(magnetLight).extractRenderState();
             state.magnetOffset = -offset;
         }
@@ -92,7 +90,7 @@ public abstract class AbstractPulleyRenderer<T extends KineticBlockEntity> imple
             float f = offset % 1;
             if (f < 0.25f || f > 0.75f) {
                 float down = f > 0.75f ? f - 1 : f;
-                int halfRopeLight = LevelRenderer.getLightCoords(level, blockPos.below((int) down));
+                int halfRopeLight = LightCoordsUtil.getLightCoords(level, blockPos.below((int) down));
                 state.halfRope = CachedBuffers.partial(halfRope, state.blockState).cardinalLighting(cardinalLighting)
                     .light(halfRopeLight).extractRenderState();
                 state.halfRopeOffset = -down;
@@ -107,7 +105,7 @@ public abstract class AbstractPulleyRenderer<T extends KineticBlockEntity> imple
         state.ropeOffset = -offset;
         for (int i = 0, down = (int) offset - 1; i < size; i++, down--) {
             ropes[i] = cache.computeIfAbsent(
-                LevelRenderer.getLightCoords(level, blockPos.below(down)),
+                LightCoordsUtil.getLightCoords(level, blockPos.below(down)),
                 l -> rope.cardinalLighting(cardinalLighting).light(l).extractRenderState()
             );
         }

@@ -17,10 +17,10 @@ import com.zurrtum.create.content.contraptions.actors.psi.PortableStorageInterfa
 import com.zurrtum.create.content.contraptions.actors.psi.PortableStorageInterfaceMovement;
 import com.zurrtum.create.content.contraptions.behaviour.MovementContext;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -62,7 +62,7 @@ public class PortableStorageInterfaceMovementRender implements MovementRenderBeh
         float xRot = Mth.DEG_TO_RAD * (facing == Direction.UP ? 0 : facing == Direction.DOWN ? 180 : 90);
         float topOffset = animation.getValue(renderPartialTicks);
         float middleOffset = topOffset * 0.5f + 0.375f;
-        int light = LevelRenderer.getLightCoords(renderWorld, pos);
+        int light = LightCoordsUtil.getLightCoords(renderWorld, pos);
         SuperByteBuffer middle = CachedBuffers.partial(
             PortableStorageInterfaceRenderer.getMiddleForState(
                 blockState,

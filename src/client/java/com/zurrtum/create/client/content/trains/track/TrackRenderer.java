@@ -23,7 +23,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
@@ -32,6 +31,7 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverl
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.Level;
@@ -79,7 +79,7 @@ public class TrackRenderer implements BlockEntityRenderer<TrackBlockEntity, Trac
                     }
                     for (int i = 0; i < length; i++) {
                         girder.add(
-                            LevelRenderer.getLightCoords(level, segment.lightPosition[i].offset(bePosition)),
+                            LightCoordsUtil.getLightCoords(level, segment.lightPosition[i].offset(bePosition)),
                             segment.beams[i],
                             segment.beamCaps[i]
                         );
@@ -96,7 +96,7 @@ public class TrackRenderer implements BlockEntityRenderer<TrackBlockEntity, Trac
                 for (int i = 0; i < length; i++) {
                     track.add(
                         buffers,
-                        LevelRenderer.getLightCoords(level, segment.lightPosition[i].offset(bePosition)),
+                        LightCoordsUtil.getLightCoords(level, segment.lightPosition[i].offset(bePosition)),
                         segment.tieTransform[i],
                         segment.railTransforms[i]
                     );
