@@ -7,6 +7,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import org.joml.Matrix3x2f;
+import org.joml.Matrix3x2fc;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.BiConsumer;
@@ -14,7 +15,7 @@ import java.util.function.BiConsumer;
 public class PartialRenderState implements PictureInPictureRenderState {
     public @Nullable BlockStateModel model;
     public boolean dirty;
-    public Matrix3x2f pose = IDENTITY_POSE;
+    public Matrix3x2fc pose = IDENTITY_POSE;
     public @Nullable ScreenRectangle bounds;
     public int x1, y1, x2, y2, padding;
     public float size;
@@ -47,8 +48,7 @@ public class PartialRenderState implements PictureInPictureRenderState {
         } else if (size != this.size || partialTicks != this.partialTicks) {
             dirty = true;
         }
-        pose = new Matrix3x2f(graphics.pose());
-        pose.translate(xLocal, yLocal);
+        pose = new Matrix3x2f(graphics.pose()).translate(xLocal, yLocal);
         x1 = (int) x;
         y1 = (int) y;
         x2 = (int) (x + size);
@@ -89,7 +89,7 @@ public class PartialRenderState implements PictureInPictureRenderState {
     }
 
     @Override
-    public Matrix3x2f pose() {
+    public Matrix3x2fc pose() {
         return pose;
     }
 
