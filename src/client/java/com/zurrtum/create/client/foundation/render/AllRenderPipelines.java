@@ -4,8 +4,7 @@ import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.platform.DestFactor;
-import com.mojang.blaze3d.platform.SourceFactor;
+import com.mojang.blaze3d.platform.BlendFactor;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.zurrtum.create.client.catnip.render.PonderRenderPipelines;
@@ -33,10 +32,10 @@ public class AllRenderPipelines {
     );
     public static final RenderPipeline GLOWING = register(
         "glowing", RenderPipeline.builder(GLOWING_SNIPPET).withColorTargetState(new ColorTargetState(new BlendFunction(
-            SourceFactor.SRC_ALPHA,
-            DestFactor.ONE_MINUS_SRC_ALPHA,
-            SourceFactor.SRC_ALPHA,
-            DestFactor.ONE_MINUS_SRC_ALPHA
+            BlendFactor.SRC_ALPHA,
+            BlendFactor.ONE_MINUS_SRC_ALPHA,
+            BlendFactor.SRC_ALPHA,
+            BlendFactor.ONE_MINUS_SRC_ALPHA
         )))
     );
     public static final RenderPipeline GLOWING_TRANSLUCENT = register(
@@ -47,10 +46,10 @@ public class AllRenderPipelines {
         "cube",
         RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET)
             .withColorTargetState(new ColorTargetState(new BlendFunction(
-                SourceFactor.SRC_ALPHA,
-                DestFactor.ONE_MINUS_SRC_ALPHA,
-                SourceFactor.SRC_ALPHA,
-                DestFactor.ONE_MINUS_SRC_ALPHA
+                BlendFactor.SRC_ALPHA,
+                BlendFactor.ONE_MINUS_SRC_ALPHA,
+                BlendFactor.SRC_ALPHA,
+                BlendFactor.ONE_MINUS_SRC_ALPHA
             ))).withDepthStencilState(PonderRenderPipelines.DEFAULT_TEST_NOT_WRITE)
     );
 
