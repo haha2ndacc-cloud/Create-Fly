@@ -15,7 +15,7 @@ public class ToggleDebugCommand {
             "rainbowDebug", context -> {
                 Component text = Component.literal("Rainbow Debug Utility is currently: ")
                     .append(boolToText(KineticDebugger.rainbowDebug));
-                context.getSource().minecraft.getChatListener().handleSystemMessage(text, false);
+                context.getSource().minecraft.gui.chatListener().handleSystemMessage(text, false);
                 return Command.SINGLE_SUCCESS;
             }
         ).then(ClientCommand.argument(
@@ -23,7 +23,7 @@ public class ToggleDebugCommand {
                 KineticDebugger.rainbowDebug = BoolArgumentType.getBool(context, "status");
                 Component text = boolToText(KineticDebugger.rainbowDebug).append(Component.literal(
                     " Rainbow Debug Utility").withStyle(ChatFormatting.WHITE));
-                context.getSource().minecraft.getChatListener().handleSystemMessage(text, false);
+                context.getSource().minecraft.gui.chatListener().handleSystemMessage(text, false);
                 return Command.SINGLE_SUCCESS;
             }
         ));

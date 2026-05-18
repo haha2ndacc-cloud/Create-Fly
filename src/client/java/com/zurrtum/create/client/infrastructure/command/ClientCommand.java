@@ -21,7 +21,7 @@ public interface ClientCommand extends Command<ClientSuggestionProvider> {
         } catch (CommandSyntaxException e) {
             CommandExceptionType type = e.getType();
             if (type != CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand() && type != CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherParseException()) {
-                command.getContext().getSource().minecraft.getChatListener()
+                command.getContext().getSource().minecraft.gui.chatListener()
                     .handleSystemMessage(
                         Component.empty().append(ComponentUtils.fromMessage(e.getRawMessage()))
                             .withStyle(ChatFormatting.RED), false
@@ -41,15 +41,15 @@ public interface ClientCommand extends Command<ClientSuggestionProvider> {
                     }
                     context.append(Component.translatable("command.context.here")
                         .withStyle(ChatFormatting.RED, ChatFormatting.ITALIC));
-                    command.getContext().getSource().minecraft.getChatListener()
+                    command.getContext().getSource().minecraft.gui.chatListener()
                         .handleSystemMessage(Component.empty().append(context).withStyle(ChatFormatting.RED), false);
                 }
             }
         } catch (Exception e) {
             String message = e.getMessage();
-            Component text = message == null ? CommonComponents.EMPTY : Component.literal(message)
-                .withStyle(ChatFormatting.RED);
-            command.getContext().getSource().minecraft.getChatListener().handleSystemMessage(text, false);
+            Component text =
+                message == null ? CommonComponents.EMPTY : Component.literal(message).withStyle(ChatFormatting.RED);
+            command.getContext().getSource().minecraft.gui.chatListener().handleSystemMessage(text, false);
         }
     }
 

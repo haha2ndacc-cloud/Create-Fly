@@ -13,7 +13,7 @@ public class ClearBufferCacheCommand {
             "clearRenderBuffers", context -> {
                 Ponder.invalidateRenderers();
                 Create.invalidateRenderers();
-                context.getSource().minecraft.getChatListener()
+                context.getSource().minecraft.gui.chatListener()
                     .handleSystemMessage(Component.literal("Cleared rendering buffers."), false);
                 return Command.SINGLE_SUCCESS;
             }

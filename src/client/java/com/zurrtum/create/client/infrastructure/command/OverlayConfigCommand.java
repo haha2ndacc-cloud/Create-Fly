@@ -21,7 +21,7 @@ public class OverlayConfigCommand {
                 CClient client = AllConfigs.client();
                 client.overlayOffsetX.set(0);
                 client.overlayOffsetY.set(0);
-                context.getSource().minecraft.getChatListener()
+                context.getSource().minecraft.gui.chatListener()
                     .handleSystemMessage(
                         Component.literal("Create Goggle Overlay has been reset to default position"),
                         false

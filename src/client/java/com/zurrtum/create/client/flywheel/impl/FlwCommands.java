@@ -36,7 +36,7 @@ public final class FlwCommands {
             "backend", context -> {
                 Backend backend = BackendManager.currentBackend();
                 String idStr = Backend.REGISTRY.getIdOrThrow(backend).toString();
-                context.getSource().minecraft.getChatListener()
+                context.getSource().minecraft.gui.chatListener()
                     .handleSystemMessage(Component.translatable("command.flywheel.backend.get", idStr), false);
                 return Command.SINGLE_SUCCESS;
             }
@@ -51,7 +51,7 @@ public final class FlwCommands {
 
                     Backend actualBackend = BackendManager.currentBackend();
                     String actualIdStr = Backend.REGISTRY.getIdOrThrow(actualBackend).toString();
-                    context.getSource().minecraft.getChatListener().handleSystemMessage(
+                    context.getSource().minecraft.gui.chatListener().handleSystemMessage(
                         Component.translatable("command.flywheel.backend.set", actualIdStr),
                         false
                     );
@@ -69,7 +69,7 @@ public final class FlwCommands {
                     // Reload renderers so we can report the actual backend.
                     Minecraft.getInstance().levelRenderer.allChanged();
 
-                    ChatListener chatListener = context.getSource().minecraft.getChatListener();
+                    ChatListener chatListener = context.getSource().minecraft.gui.chatListener();
                     Backend actualBackend = BackendManager.currentBackend();
                     if (actualBackend != requestedBackend) {
                         chatListener.handleSystemMessage(
@@ -94,10 +94,10 @@ public final class FlwCommands {
         command.then(ClientCommand.literal(
             "limitUpdates", context -> {
                 if (FabricFlwConfig.INSTANCE.client.limitUpdates.get()) {
-                    context.getSource().minecraft.getChatListener()
+                    context.getSource().minecraft.gui.chatListener()
                         .handleSystemMessage(Component.translatable("command.flywheel.limit_updates.get.on"), false);
                 } else {
-                    context.getSource().minecraft.getChatListener()
+                    context.getSource().minecraft.gui.chatListener()
                         .handleSystemMessage(Component.translatable("command.flywheel.limit_updates.get.off"), false);
                 }
                 return Command.SINGLE_SUCCESS;
@@ -107,7 +107,7 @@ public final class FlwCommands {
                 ConfigBool limitUpdates = FabricFlwConfig.INSTANCE.client.limitUpdates;
                 if (!limitUpdates.get()) {
                     limitUpdates.set(true);
-                    context.getSource().minecraft.getChatListener()
+                    context.getSource().minecraft.gui.chatListener()
                         .handleSystemMessage(Component.translatable("command.flywheel.limit_updates.set.on"), false);
                     Minecraft.getInstance().levelRenderer.allChanged();
                 }
@@ -118,7 +118,7 @@ public final class FlwCommands {
                 ConfigBool limitUpdates = FabricFlwConfig.INSTANCE.client.limitUpdates;
                 if (limitUpdates.get()) {
                     limitUpdates.set(false);
-                    context.getSource().minecraft.getChatListener()
+                    context.getSource().minecraft.gui.chatListener()
                         .handleSystemMessage(Component.translatable("command.flywheel.limit_updates.set.off"), false);
                     Minecraft.getInstance().levelRenderer.allChanged();
                 }
@@ -222,7 +222,7 @@ public final class FlwCommands {
 
         debug.then(ClientCommand.literal(
             "info", context -> {
-                context.getSource().minecraft.getChatListener()
+                context.getSource().minecraft.gui.chatListener()
                     .handleSystemMessage(FlwDebugInfo.getDebugCommandInfo(), false);
                 return Command.SINGLE_SUCCESS;
             }
