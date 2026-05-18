@@ -13,6 +13,7 @@ import com.zurrtum.create.client.flywheel.backend.compile.OitPrograms;
 import com.zurrtum.create.client.flywheel.backend.gl.GlCompat;
 import com.zurrtum.create.client.flywheel.backend.gl.GlTextureUnit;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL32;
@@ -55,12 +56,14 @@ public class OitFramebuffer {
     public void prepare() {
         RenderTarget renderTarget;
 
-        if (Minecraft.useShaderTransparency()) {
-            renderTarget = Minecraft.getInstance().levelRenderer.getItemEntityTarget();
+        Minecraft mc = Minecraft.getInstance();
+        GameRenderer gameRenderer = mc.gameRenderer;
+        if (gameRenderer.gameRenderState().useShaderTransparency()) {
+            renderTarget = mc.levelRenderer.getItemEntityTarget();
 
-            renderTarget.copyDepthFrom(Minecraft.getInstance().gameRenderer.mainRenderTarget());
+            renderTarget.copyDepthFrom(gameRenderer.mainRenderTarget());
         } else {
-            renderTarget = Minecraft.getInstance().gameRenderer.mainRenderTarget();
+            renderTarget = gameRenderer.mainRenderTarget();
         }
 
         maybeResizeFBO(renderTarget.width, renderTarget.height);
@@ -183,8 +186,9 @@ public class OitFramebuffer {
     public void composite() {
         DirectStateAccess access = ((GlDevice) RenderSystem.getDevice().backend).directStateAccess();
         Minecraft mc = Minecraft.getInstance();
-        RenderTarget mainTarget = mc.gameRenderer.mainRenderTarget();
-        if (Minecraft.useShaderTransparency()) {
+        GameRenderer gameRenderer = mc.gameRenderer;
+        RenderTarget mainTarget = gameRenderer.mainRenderTarget();
+        if (gameRenderer.gameRenderState().useShaderTransparency()) {
             bindRenderTarget(mc.levelRenderer.getItemEntityTarget(), access);
         } else {
             bindRenderTarget(mainTarget, access);
