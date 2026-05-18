@@ -95,7 +95,7 @@ public class OitFramebuffer {
         // No depth writes, but we'll still use the depth test.
         GlStateManager._depthMask(false);
         GlStateManager._colorMask(ColorTargetState.WRITE_ALL);
-        GlStateManager._enableBlend();
+        GlStateManager._enableBlend(0);
         GlStateManager._blendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
         GL14.glBlendEquation(GL32.GL_MAX);
 
@@ -118,7 +118,7 @@ public class OitFramebuffer {
         // No depth writes, but we'll still use the depth test
         GlStateManager._depthMask(false);
         GlStateManager._colorMask(ColorTargetState.WRITE_ALL);
-        GlStateManager._enableBlend();
+        GlStateManager._enableBlend(0);
         GlStateManager._blendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
         GL14.glBlendEquation(GL32.GL_FUNC_ADD);
 
@@ -144,7 +144,7 @@ public class OitFramebuffer {
         // Only write to depth, not color.
         GlStateManager._depthMask(true);
         GlStateManager._colorMask(ColorTargetState.WRITE_NONE);
-        GlStateManager._disableBlend();
+        GlStateManager._disableBlend(0);
         GlStateManager._depthFunc(GL32.GL_ALWAYS);
 
         if (GlCompat.SUPPORTS_DSA) {
@@ -165,7 +165,7 @@ public class OitFramebuffer {
         // No depth writes, but we'll still use the depth test
         GlStateManager._depthMask(false);
         GlStateManager._colorMask(ColorTargetState.WRITE_ALL);
-        GlStateManager._enableBlend();
+        GlStateManager._enableBlend(0);
         GlStateManager._blendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
         GL14.glBlendEquation(GL32.GL_FUNC_ADD);
 
@@ -200,7 +200,7 @@ public class OitFramebuffer {
         // If Neo gets wavelet OIT we can use their hooks to be correct with everything.
         GlStateManager._depthMask(true);
         GlStateManager._colorMask(ColorTargetState.WRITE_ALL);
-        GlStateManager._enableBlend();
+        GlStateManager._enableBlend(0);
 
         // We rely on the blend func to achieve:
         // final color = (1 - transmittance_total) * sum(color_f * alpha_f * transmittance_f) / sum(alpha_f * transmittance_f)

@@ -136,26 +136,26 @@ public final class MaterialRenderState {
     private static void setupTransparency(Transparency transparency) {
         switch (transparency) {
             case OPAQUE -> {
-                GlStateManager._disableBlend();
+                GlStateManager._disableBlend(0);
             }
             case ADDITIVE -> {
-                GlStateManager._enableBlend();
+                GlStateManager._enableBlend(0);
                 GlStateManager._blendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
             }
             case LIGHTNING -> {
-                GlStateManager._enableBlend();
+                GlStateManager._enableBlend(0);
                 GlStateManager._blendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_SRC_ALPHA, GL_ONE);
             }
             case GLINT -> {
-                GlStateManager._enableBlend();
+                GlStateManager._enableBlend(0);
                 GlStateManager._blendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ZERO, GL_ONE);
             }
             case CRUMBLING -> {
-                GlStateManager._enableBlend();
+                GlStateManager._enableBlend(0);
                 GlStateManager._blendFuncSeparate(GL_DST_COLOR, GL_SRC_COLOR, GL_ONE, GL_ZERO);
             }
             case TRANSLUCENT -> {
-                GlStateManager._enableBlend();
+                GlStateManager._enableBlend(0);
                 GlStateManager._blendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             }
         }
@@ -209,7 +209,7 @@ public final class MaterialRenderState {
     }
 
     private static void resetTransparency() {
-        GlStateManager._disableBlend();
+        GlStateManager._disableBlend(0);
         GlStateManager._blendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
     }
 
