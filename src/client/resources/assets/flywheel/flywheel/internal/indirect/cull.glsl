@@ -113,7 +113,7 @@ bool _flw_isVisible(uint instanceIndex, uint modelIndex) {
 
             float depthSphere = 1. + _flw_cullData.znear / (center.z + radius);
 
-            isVisible = isVisible && depthSphere <= depth;
+            isVisible = isVisible && depthSphere >= depth;
         }
     }
 

@@ -12,13 +12,16 @@ import net.minecraft.client.renderer.BindGroupLayouts;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
+import java.util.Optional;
+
 import static com.zurrtum.create.client.ponder.Ponder.MOD_ID;
 
 public class PonderRenderPipelines {
-    public static final DepthStencilState DEFAULT_TEST_NOT_WRITE = new DepthStencilState(
-        CompareOp.LESS_THAN_OR_EQUAL,
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public static final Optional<DepthStencilState> DEFAULT_TEST_NOT_WRITE = Optional.of(new DepthStencilState(
+        CompareOp.GREATER_THAN_OR_EQUAL,
         false
-    );
+    ));
     private static final Identifier ENTITY_BLOCK_ID = Identifier.fromNamespaceAndPath(MOD_ID, "entity_block");
     public static final Snippet ENTITY_BLOCK_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
         .withVertexShader(ENTITY_BLOCK_ID).withFragmentShader(ENTITY_BLOCK_ID)

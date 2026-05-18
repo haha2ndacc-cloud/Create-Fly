@@ -205,7 +205,7 @@ public final class MaterialRenderState {
 
     private static void resetDepthTest() {
         GlStateManager._disableDepthTest();
-        GlStateManager._depthFunc(GL11.GL_LEQUAL);
+        GlStateManager._depthFunc(GL11.GL_GEQUAL);
     }
 
     private static void resetTransparency() {
