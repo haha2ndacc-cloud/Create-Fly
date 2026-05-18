@@ -29,7 +29,7 @@ public class MillstoneRenderer extends PictureInPictureRenderer<MillstoneRenderS
     @Override
     protected void renderToTexture(MillstoneRenderState state, PoseStack matrices) {
         Minecraft mc = Minecraft.getInstance();
-        mc.gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+        mc.gameRenderer.lighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
         matrices.translate(-0.5f, -0.21f, -0.5f);
         matrices.scale(1, -1, -1);
         BlockState blockState;

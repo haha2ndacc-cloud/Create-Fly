@@ -30,7 +30,7 @@ public class CrushWheelRenderer extends PictureInPictureRenderer<CrushWheelRende
     @Override
     protected void renderToTexture(CrushWheelRenderState state, PoseStack matrices) {
         Minecraft mc = Minecraft.getInstance();
-        mc.gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+        mc.gameRenderer.lighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
         matrices.scale(1, 1, -1);
         matrices.mulPose(com.mojang.math.Axis.YP.rotationDegrees(-22.5f));
         matrices.translate(-1.5f, -0.6f, -0.5f);

@@ -58,7 +58,7 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
         GameRenderer gameRenderer = mc.gameRenderer;
         boolean lightOption = gameRenderer.useUiLightmap;
         gameRenderer.useUiLightmap = false;
-        Lighting lighting = gameRenderer.getLighting();
+        Lighting lighting = gameRenderer.lighting();
         lighting.updateBuffer(Lighting.Entry.LEVEL, DIFFUSE_LIGHT_0, DIFFUSE_LIGHT_1);
         lighting.setupFor(Lighting.Entry.LEVEL);
         renderScene(mc, DefaultSuperRenderTypeBuffer.Dispatcher.getInstance(), renderState, matrices);

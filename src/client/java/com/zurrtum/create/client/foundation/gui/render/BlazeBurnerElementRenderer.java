@@ -27,7 +27,7 @@ public class BlazeBurnerElementRenderer extends PictureInPictureRenderer<BlazeBu
     @Override
     protected void renderToTexture(BlazeBurnerRenderState state, PoseStack matrices) {
         GameRenderer gameRenderer = Minecraft.getInstance().gameRenderer;
-        gameRenderer.getLighting().setupFor(Entry.ENTITY_IN_UI);
+        gameRenderer.lighting().setupFor(Entry.ENTITY_IN_UI);
         matrices.scale(1, 1, -1);
         matrices.mulPose(Axis.XP.rotationDegrees(-22.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(-45));

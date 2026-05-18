@@ -65,7 +65,7 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
         matrices.scale(scale, scale, scale);
 
         Minecraft mc = Minecraft.getInstance();
-        mc.gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+        mc.gameRenderer.lighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
         matrices.mulPose(Axis.XP.rotationDegrees(-15.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(22.5f));
         matrices.scale(1, -1, 1);

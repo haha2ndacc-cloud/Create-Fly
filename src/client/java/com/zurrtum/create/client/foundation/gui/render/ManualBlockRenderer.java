@@ -59,7 +59,7 @@ public class ManualBlockRenderer extends PictureInPictureRenderer<ManualBlockRen
         matrices.scale(scale, scale, scale);
 
         Minecraft mc = Minecraft.getInstance();
-        mc.gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+        mc.gameRenderer.lighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
         matrices.mulPose(Axis.XP.rotationDegrees(-15.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(22.5f));
         matrices.translate(-0.5f, -0.2f, -0.5f);
@@ -77,7 +77,8 @@ public class ManualBlockRenderer extends PictureInPictureRenderer<ManualBlockRen
         texture.clear();
         state.addBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-            TextureSetup.singleTexture(texture.textureView(),
+            TextureSetup.singleTexture(
+                texture.textureView(),
                 RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)
             ),
             block.pose(),

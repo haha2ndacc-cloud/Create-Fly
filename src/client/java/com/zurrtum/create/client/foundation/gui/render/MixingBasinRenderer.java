@@ -31,7 +31,7 @@ public class MixingBasinRenderer extends PictureInPictureRenderer<MixingBasinRen
     @Override
     protected void renderToTexture(MixingBasinRenderState state, PoseStack matrices) {
         Minecraft mc = Minecraft.getInstance();
-        mc.gameRenderer.getLighting().setupFor(Entry.ENTITY_IN_UI);
+        mc.gameRenderer.lighting().setupFor(Entry.ENTITY_IN_UI);
         matrices.scale(1, 1, -1);
         matrices.mulPose(Axis.XP.rotationDegrees(-15.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(22.5f));

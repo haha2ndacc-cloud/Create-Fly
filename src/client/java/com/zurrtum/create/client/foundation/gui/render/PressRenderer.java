@@ -62,7 +62,7 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
         matrices.scale(scale, scale, scale);
 
         Minecraft mc = Minecraft.getInstance();
-        mc.gameRenderer.getLighting().setupFor(Entry.ENTITY_IN_UI);
+        mc.gameRenderer.lighting().setupFor(Entry.ENTITY_IN_UI);
         matrices.mulPose(Axis.XP.rotationDegrees(-15.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(22.5f));
         matrices.translate(-0.5f, -1.14f, -0.5f);
@@ -106,7 +106,8 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
         texture.clear();
         state.addBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-            TextureSetup.singleTexture(texture.textureView(),
+            TextureSetup.singleTexture(
+                texture.textureView(),
                 RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)
             ),
             item.pose(),

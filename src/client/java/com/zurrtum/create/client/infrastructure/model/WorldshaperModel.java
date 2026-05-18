@@ -290,7 +290,7 @@ public class WorldshaperModel implements ItemModel {
             public Flat(Minecraft mc, ItemStackRenderState state) {
                 super(state);
                 GameRenderer gameRenderer = mc.gameRenderer;
-                diffuseLighting = gameRenderer.getLighting();
+                diffuseLighting = gameRenderer.lighting();
                 entityVertexConsumers = mc.renderBuffers().bufferSource();
                 entityRenderDispatcher = gameRenderer.getFeatureRenderDispatcher();
             }

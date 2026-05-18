@@ -70,7 +70,7 @@ public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRen
         GameRenderer gameRenderer = mc.gameRenderer;
         boolean lightOption = gameRenderer.useUiLightmap;
         gameRenderer.useUiLightmap = false;
-        gameRenderer.getLighting().setupFor(Entry.ENTITY_IN_UI);
+        gameRenderer.lighting().setupFor(Entry.ENTITY_IN_UI);
         if (block.zRot() != 0) {
             matrices.mulPose(Axis.ZP.rotation(block.zRot()));
         }
@@ -118,7 +118,8 @@ public class EntityBlockRenderer extends PictureInPictureRenderer<EntityBlockRen
         texture.clear();
         state.addBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-            TextureSetup.singleTexture(texture.textureView(),
+            TextureSetup.singleTexture(
+                texture.textureView(),
                 RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)
             ),
             block.pose(),

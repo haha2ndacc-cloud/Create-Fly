@@ -36,7 +36,7 @@ public class SandPaperRenderer extends PictureInPictureRenderer<SandPaperRenderS
         matrices.translate(0, -0.35f, 0);
         matrices.scale(1, -1, -1);
         Minecraft mc = Minecraft.getInstance();
-        Lighting lighting = mc.gameRenderer.getLighting();
+        Lighting lighting = mc.gameRenderer.lighting();
         lighting.setupFor(Lighting.Entry.ITEMS_FLAT);
         ItemStack renderStack = stack.get();
         renderStack.set(AllDataComponents.SAND_PAPER_POLISHING, new SandPaperItemComponent(state.stack()));
