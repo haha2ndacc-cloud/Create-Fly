@@ -83,7 +83,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
     @Override
     protected void init() {
         int sizeX = FACTORY_GAUGE_BOTTOM.getWidth();
-        int sizeY = (restocker ? FACTORY_GAUGE_RESTOCK : FACTORY_GAUGE_RECIPE).getHeight() + FACTORY_GAUGE_BOTTOM.getHeight();
+        int sizeY = (restocker ? FACTORY_GAUGE_RESTOCK :
+            FACTORY_GAUGE_RECIPE).getHeight() + FACTORY_GAUGE_BOTTOM.getHeight();
 
         setWindowSize(sizeX, sizeY);
         super.init();
@@ -112,14 +113,14 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
         addRenderableWidget(addressBox);
 
         confirmButton = new IconButton(x + sizeX - 33, y + sizeY - 25, AllIcons.I_CONFIRM);
-        confirmButton.withCallback(() -> minecraft.setScreen(null));
+        confirmButton.withCallback(() -> minecraft.gui.setScreen(null));
         confirmButton.setToolTip(CreateLang.translate("gui.factory_panel.save_and_close").component());
         addRenderableWidget(confirmButton);
 
         deleteButton = new IconButton(x + sizeX - 55, y + sizeY - 25, AllIcons.I_TRASH);
         deleteButton.withCallback(() -> {
             sendReset = true;
-            minecraft.setScreen(null);
+            minecraft.gui.setScreen(null);
         });
         deleteButton.setToolTip(CreateLang.translate("gui.factory_panel.reset").component());
         addRenderableWidget(deleteButton);
@@ -132,14 +133,14 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
         newInputButton = new IconButton(x + 31, y + 47, AllIcons.I_ADD);
         newInputButton.withCallback(() -> {
             FactoryPanelConnectionHandler.startConnection(behaviour);
-            minecraft.setScreen(null);
+            minecraft.gui.setScreen(null);
         });
         newInputButton.setToolTip(CreateLang.translate("gui.factory_panel.connect_input").component());
 
         relocateButton = new IconButton(x + 31, y + 67, AllIcons.I_MOVE_GAUGE);
         relocateButton.withCallback(() -> {
             FactoryPanelConnectionHandler.startRelocating(behaviour);
-            minecraft.setScreen(null);
+            minecraft.gui.setScreen(null);
         });
         relocateButton.setToolTip(CreateLang.translate("gui.factory_panel.relocate").component());
 
@@ -202,8 +203,9 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
             activateCraftingButton.green = craftingActive;
         }
         addressBox.tick();
-        promiseExpiration.titled(CreateLang.translate(promiseExpiration.getState() == -1 ? "gui.factory_panel.promises_do_not_expire" : "gui.factory_panel.promises_expire_title")
-            .component());
+        promiseExpiration.titled(CreateLang.translate(
+            promiseExpiration.getState() == -1 ? "gui.factory_panel.promises_do_not_expire" :
+                "gui.factory_panel.promises_expire_title").component());
     }
 
     @Override
@@ -288,8 +290,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
         }
 
         // TITLE
-        Component title = CreateLang.translate(restocker ? "gui.factory_panel.title_as_restocker" : "gui.factory_panel.title_as_recipe")
-            .component();
+        Component title = CreateLang.translate(
+            restocker ? "gui.factory_panel.title_as_restocker" : "gui.factory_panel.title_as_recipe").component();
         graphics.text(font, title, x + 97 - font.width(title) / 2, y + (restocker ? -12 : 4), 0xFF3D3C48, false);
 
         // REDSTONE LINKS
@@ -336,10 +338,10 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
                 promiseTip = List.of(
                     CreateLang.translate("gui.factory_panel.no_open_promises").color(ScrollInput.HEADER_RGB)
                         .component(),
-                    CreateLang.translate(restocker ? "gui.factory_panel.restocker_promises_tip" : "gui.factory_panel.recipe_promises_tip")
-                        .style(ChatFormatting.GRAY).component(),
-                    CreateLang.translate(restocker ? "gui.factory_panel.restocker_promises_tip_1" : "gui.factory_panel.recipe_promises_tip_1")
-                        .style(ChatFormatting.GRAY).component(),
+                    CreateLang.translate(restocker ? "gui.factory_panel.restocker_promises_tip" :
+                        "gui.factory_panel.recipe_promises_tip").style(ChatFormatting.GRAY).component(),
+                    CreateLang.translate(restocker ? "gui.factory_panel.restocker_promises_tip_1" :
+                        "gui.factory_panel.recipe_promises_tip_1").style(ChatFormatting.GRAY).component(),
                     CreateLang.translate("gui.factory_panel.promise_prevents_oversending").style(ChatFormatting.GRAY)
                         .component()
                 );
@@ -463,8 +465,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
         } else {
             graphics.setComponentTooltipForNextFrame(
                 font, List.of(
-                    CreateLang.translate(restocker ? "gui.factory_panel.restocker_address_given" : "gui.factory_panel.recipe_address_given")
-                        .color(ScrollInput.HEADER_RGB).component(),
+                    CreateLang.translate(restocker ? "gui.factory_panel.restocker_address_given" :
+                        "gui.factory_panel.recipe_address_given").color(ScrollInput.HEADER_RGB).component(),
                     CreateLang.text("'" + addressBox.getValue() + "'").style(ChatFormatting.GRAY).component()
                 ), mouseX, mouseY
             );
@@ -545,9 +547,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
                     return true;
                 }
                 itemStack.count = Mth.clamp(
-                    (int) (itemStack.count + Math.signum(scrollY) * (minecraft.hasShiftDown() ? 10 : 1)),
-                    1,
-                    64
+                    (int) (itemStack.count + Math.signum(scrollY) * (minecraft.hasShiftDown() ?
+                        10 : 1)), 1, 64
                 );
                 return true;
             }
@@ -559,9 +560,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
             if (mouseX >= outputX && mouseX < outputX + 16 && mouseY >= outputY && mouseY < outputY + 16) {
                 BigItemStack itemStack = outputConfig;
                 itemStack.count = Mth.clamp(
-                    (int) (itemStack.count + Math.signum(scrollY) * (minecraft.hasShiftDown() ? 10 : 1)),
-                    1,
-                    64
+                    (int) (itemStack.count + Math.signum(scrollY) * (minecraft.hasShiftDown() ?
+                        10 : 1)), 1, 64
                 );
                 return true;
             }
@@ -593,8 +593,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
             }
         }
 
-        List<ItemStack> craftingArrangement = craftingActive ? behaviour.craftingList.stream().skip(1).map(b -> b.stack)
-            .toList() : List.of();
+        List<ItemStack> craftingArrangement =
+            craftingActive ? behaviour.craftingList.stream().skip(1).map(b -> b.stack).toList() : List.of();
 
         FactoryPanelPosition pos = behaviour.getPanelPosition();
         int promiseExp = promiseExpiration.getState();

@@ -62,7 +62,7 @@ public class BlueprintOverlayRenderer {
         noOutput = false;
         shopContext = null;
 
-        if (mc.gameMode.getPlayerMode() == GameType.SPECTATOR || mc.screen != null) {
+        if (mc.gameMode.getPlayerMode() == GameType.SPECTATOR || mc.gui.screen() != null) {
             return;
         }
 
@@ -228,7 +228,7 @@ public class BlueprintOverlayRenderer {
     }
 
     public static void renderOverlay(Minecraft mc, GuiGraphicsExtractor guiGraphics) {
-        if (mc.screen != null) {
+        if (mc.gui.screen() != null) {
             return;
         }
 
@@ -271,7 +271,8 @@ public class BlueprintOverlayRenderer {
         for (Pair<ItemStack, Boolean> pair : ingredients) {
             (pair.getSecond() ? AllGuiTextures.HOTSLOT_ACTIVE : AllGuiTextures.HOTSLOT).render(guiGraphics, x, y);
             ItemStack itemStack = pair.getFirst();
-            String count = shopContext != null && !shopContext.checkout() || pair.getSecond() ? null : ChatFormatting.GOLD.toString() + itemStack.getCount();
+            String count = shopContext != null && !shopContext.checkout() || pair.getSecond() ? null :
+                ChatFormatting.GOLD.toString() + itemStack.getCount();
             drawItemStack(guiGraphics, mc, x, y, itemStack, count);
             x += 21;
         }

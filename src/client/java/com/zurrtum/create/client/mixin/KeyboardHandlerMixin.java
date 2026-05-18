@@ -32,7 +32,7 @@ public class KeyboardHandlerMixin {
 
     @Unique
     private void onKey(KeyEvent input, boolean pressed) {
-        if (minecraft.screen != null) {
+        if (minecraft.gui.screen() != null) {
             return;
         }
         if (Create.SCHEMATIC_HANDLER.onKeyInput(input, pressed)) {

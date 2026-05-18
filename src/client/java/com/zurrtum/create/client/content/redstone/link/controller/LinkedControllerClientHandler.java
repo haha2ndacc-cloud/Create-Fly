@@ -162,7 +162,7 @@ public class LinkedControllerClientHandler {
             }
         }
 
-        if (mc.screen != null || InputConstants.isKeyDown(mc.getWindow(), GLFW.GLFW_KEY_ESCAPE)) {
+        if (mc.gui.screen() != null || InputConstants.isKeyDown(mc.getWindow(), GLFW.GLFW_KEY_ESCAPE)) {
             MODE = Mode.IDLE;
             onReset(mc, player);
             return;

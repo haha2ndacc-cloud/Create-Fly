@@ -136,7 +136,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
             x + 234,
             y + 175,
             AllIcons.I_PRIORITY_VERY_LOW
-        ).withCallback(() -> minecraft.setScreen(null));
+        ).withCallback(() -> minecraft.gui.setScreen(null));
         closeBtn.setToolTip(CreateLang.translateDirect("station.close"));
         addRenderableWidget(closeBtn);
         addRenderableWidget(clearBtn);
@@ -300,11 +300,8 @@ public class ClipboardScreen extends AbstractSimiScreen {
             boolean isAddress = string.startsWith("#") && !string.substring(1).isBlank();
 
             if (isAddress) {
-                (checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS).render(
-                    graphics,
-                    x + 44,
-                    y + 50
-                );
+                (checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE :
+                    AllGuiTextures.CLIPBOARD_ADDRESS).render(graphics, x + 44, y + 50);
                 text = Component.literal(string.substring(1).stripLeading());
             } else {
                 graphics.text(font, "\u25A1", x + 45, y + 51, checked ? 0x668D7F6B : 0xff8D7F6B, false);

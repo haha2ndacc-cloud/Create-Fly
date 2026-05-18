@@ -34,7 +34,7 @@ public class BeltConnectorHandler {
         if (player == null || world == null) {
             return;
         }
-        if (mc.screen != null) {
+        if (mc.gui.screen() != null) {
             return;
         }
 

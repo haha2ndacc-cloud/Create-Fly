@@ -15,7 +15,7 @@ public class ScreenOpener {
     private static final Deque<Screen> backStack = new ArrayDeque<>();
 
     public static void open(@Nullable Screen screen) {
-        open(Minecraft.getInstance().screen, screen);
+        open(Minecraft.getInstance().gui.screen(), screen);
     }
 
     public static void open(@Nullable Screen current, @Nullable Screen toOpen) {
@@ -90,7 +90,7 @@ public class ScreenOpener {
 
     private static void openScreen(@Nullable Screen screen) {
         Minecraft.getInstance().schedule(() -> {
-            Minecraft.getInstance().setScreen(screen);
+            Minecraft.getInstance().gui.setScreen(screen);
         });
     }
 

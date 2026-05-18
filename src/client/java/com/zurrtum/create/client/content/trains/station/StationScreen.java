@@ -97,7 +97,7 @@ public class StationScreen extends AbstractStationScreen {
 
         Runnable assemblyCallback = () -> {
             switchingToAssemblyMode = true;
-            minecraft.setScreen(new AssemblyScreen(blockEntity, station));
+            minecraft.gui.setScreen(new AssemblyScreen(blockEntity, station));
         };
 
         newTrainButton = new WideIconButton(x + 84, y + 65, AllGuiTextures.I_NEW_TRAIN);
@@ -175,7 +175,9 @@ public class StationScreen extends AbstractStationScreen {
 
         super.tick();
 
-        updateAssemblyTooltip(blockEntity.edgePoint.isOnCurve() ? "no_assembly_curve" : !blockEntity.edgePoint.isOrthogonal() ? "no_assembly_diagonal" : trainPresent() && !blockEntity.trainCanDisassemble ? "train_not_aligned" : null);
+        updateAssemblyTooltip(blockEntity.edgePoint.isOnCurve() ? "no_assembly_curve" :
+            !blockEntity.edgePoint.isOrthogonal() ? "no_assembly_diagonal" :
+                trainPresent() && !blockEntity.trainCanDisassemble ? "train_not_aligned" : null);
     }
 
     private void tickTrainDisplay() {
@@ -260,7 +262,8 @@ public class StationScreen extends AbstractStationScreen {
         dropScheduleButton.active = blockEntity.trainHasSchedule;
 
         if (blockEntity.trainHasSchedule) {
-            dropScheduleButton.setToolTip(CreateLang.translateDirect(blockEntity.trainHasAutoSchedule ? "station.remove_auto_schedule" : "station.remove_schedule"));
+            dropScheduleButton.setToolTip(CreateLang.translateDirect(
+                blockEntity.trainHasAutoSchedule ? "station.remove_auto_schedule" : "station.remove_schedule"));
         } else {
             dropScheduleButton.getToolTip().clear();
         }
@@ -491,7 +494,8 @@ public class StationScreen extends AbstractStationScreen {
 
     @Override
     protected PartialModel getFlag(float partialTicks) {
-        return blockEntity.flag.getValue(partialTicks) > 0.75f ? AllPartialModels.STATION_ON : AllPartialModels.STATION_OFF;
+        return blockEntity.flag.getValue(partialTicks) > 0.75f ? AllPartialModels.STATION_ON :
+            AllPartialModels.STATION_OFF;
     }
 
 }

@@ -50,7 +50,7 @@ public class SequencedGearshiftScreen extends AbstractSimiScreen implements Addi
         renderedItem = GuiGameElement.of(AllItems.SEQUENCED_GEARSHIFT.getDefaultInstance()).scale(5);
         AbstractComputerBehaviour computer = be.getBehaviour(AbstractComputerBehaviour.TYPE);
         if (computer != null && computer.hasAttachedComputer()) {
-            minecraft.setScreen(new ComputerScreen(title, this, this, computer::hasAttachedComputer));
+            minecraft.gui.setScreen(new ComputerScreen(title, this, this, computer::hasAttachedComputer));
         }
 
         setWindowSize(background.getWidth(), background.getHeight());
@@ -242,7 +242,7 @@ public class SequencedGearshiftScreen extends AbstractSimiScreen implements Addi
         super.tick();
         AbstractComputerBehaviour computer = be.getBehaviour(AbstractComputerBehaviour.TYPE);
         if (computer != null && computer.hasAttachedComputer()) {
-            minecraft.setScreen(new ComputerScreen(title, this, this, computer::hasAttachedComputer));
+            minecraft.gui.setScreen(new ComputerScreen(title, this, this, computer::hasAttachedComputer));
         }
     }
 

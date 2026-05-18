@@ -83,7 +83,7 @@ public class AssemblyScreen extends AbstractStationScreen {
                 station.name,
                 null
             ));
-            minecraft.setScreen(new StationScreen(blockEntity, station));
+            minecraft.gui.setScreen(new StationScreen(blockEntity, station));
         });
 
         addRenderableWidget(toggleAssemblyButton);
@@ -106,7 +106,7 @@ public class AssemblyScreen extends AbstractStationScreen {
                 station.name,
                 null
             ));
-            minecraft.setScreen(new StationScreen(blockEntity, station));
+            minecraft.gui.setScreen(new StationScreen(blockEntity, station));
             for (Carriage carriage : train.carriages) {
                 carriage.updateConductors();
             }
@@ -130,7 +130,7 @@ public class AssemblyScreen extends AbstractStationScreen {
                 station.name,
                 null
             ));
-            minecraft.setScreen(new StationScreen(blockEntity, station));
+            minecraft.gui.setScreen(new StationScreen(blockEntity, station));
         }
     }
 

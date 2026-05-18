@@ -57,7 +57,7 @@ public abstract class AbstractStationScreen extends AbstractSimiScreen implement
             .rotate(-22, 63, 0).scale(2.5F).padding(17);
         AbstractComputerBehaviour computer = blockEntity.getBehaviour(AbstractComputerBehaviour.TYPE);
         if (computer != null && computer.hasAttachedComputer()) {
-            minecraft.setScreen(new ComputerScreen(
+            minecraft.gui.setScreen(new ComputerScreen(
                 title,
                 () -> Component.literal(station.name),
                 this,
@@ -136,7 +136,7 @@ public abstract class AbstractStationScreen extends AbstractSimiScreen implement
         super.tick();
         AbstractComputerBehaviour computer = blockEntity.getBehaviour(AbstractComputerBehaviour.TYPE);
         if (computer != null && computer.hasAttachedComputer()) {
-            minecraft.setScreen(new ComputerScreen(
+            minecraft.gui.setScreen(new ComputerScreen(
                 title,
                 () -> Component.literal(station.name),
                 this,

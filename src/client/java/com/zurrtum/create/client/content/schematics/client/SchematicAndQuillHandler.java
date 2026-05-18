@@ -194,16 +194,14 @@ public class SchematicAndQuillHandler {
             if (firstPos == null) {
                 return selectedPos == null ? null : new AABB(selectedPos);
             }
-            return selectedPos == null ? new AABB(firstPos) : new AABB(
-                Vec3.atLowerCornerOf(firstPos),
-                Vec3.atLowerCornerOf(selectedPos)
-            ).expandTowards(1, 1, 1);
+            return selectedPos == null ? new AABB(firstPos) :
+                new AABB(Vec3.atLowerCornerOf(firstPos), Vec3.atLowerCornerOf(selectedPos)).expandTowards(1, 1, 1);
         }
         return new AABB(Vec3.atLowerCornerOf(firstPos), Vec3.atLowerCornerOf(secondPos)).expandTowards(1, 1, 1);
     }
 
     private boolean isActive(@Nullable Minecraft mc) {
-        return mc != null && mc.level != null && mc.screen == null && mc.player.getMainHandItem()
+        return mc != null && mc.level != null && mc.gui.screen() == null && mc.player.getMainHandItem()
             .is(AllItems.SCHEMATIC_AND_QUILL);
     }
 

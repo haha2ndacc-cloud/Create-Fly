@@ -138,7 +138,7 @@ public class RecipeButton extends Button.Plain {
         @Override
         public void onPress(Button button) {
             if (context.handler().handle(context.screen(), view, (RecipeButton) button, true)) {
-                Minecraft.getInstance().setScreen(context.screen());
+                Minecraft.getInstance().gui.setScreen(context.screen());
             }
         }
 

@@ -1184,7 +1184,7 @@ public class AllHandle extends AllClientHandle {
     @Override
     public void updateClipboardScreen(UUID lastEdit, BlockPos pos, ClipboardContent content) {
         Minecraft mc = Minecraft.getInstance();
-        if (!(mc.screen instanceof ClipboardScreen cs)) {
+        if (!(mc.gui.screen() instanceof ClipboardScreen cs)) {
             return;
         }
         if (lastEdit != null && mc.player.getUUID().equals(lastEdit)) {

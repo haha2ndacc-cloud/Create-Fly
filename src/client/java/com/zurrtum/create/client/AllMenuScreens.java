@@ -46,7 +46,7 @@ public class AllMenuScreens {
             U screen = factory.create(client, type, id, inventory, name, extraData);
             if (screen != null) {
                 client.player.containerMenu = screen.getMenu();
-                client.setScreen(screen);
+                client.gui.setScreen(screen);
                 return;
             }
         }

@@ -213,7 +213,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
             return;
         }
 
-        history.addFirst(minecraft.screen);
+        history.addFirst(minecraft.gui.screen());
         int spacing = 20;
 
         List<String> names = new ArrayList<>();

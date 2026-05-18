@@ -53,7 +53,7 @@ public class PonderTooltipHandler {
     public static void deferredTick() {
         deferTick = false;
         Minecraft instance = Minecraft.getInstance();
-        Screen currentScreen = instance.screen;
+        Screen currentScreen = instance.gui.screen();
 
         if (hoveredStack.isEmpty() || trackingStack.isEmpty()) {
             trackingStack = ItemStack.EMPTY;
@@ -104,11 +104,8 @@ public class PonderTooltipHandler {
 
         // TODO - Checkover
         float renderPartialTicks = AnimationTickHolder.getPartialTicksUI(mc.getDeltaTracker());
-        Component component = subject ? Ponder.lang().translate(SUBJECT).component()
-            .withStyle(ChatFormatting.GREEN) : makeProgressBar(Math.min(
-            1,
-            holdKeyProgress.getValue(renderPartialTicks) * 8 / 7f
-        ));
+        Component component = subject ? Ponder.lang().translate(SUBJECT).component().withStyle(ChatFormatting.GREEN) :
+            makeProgressBar(Math.min(1, holdKeyProgress.getValue(renderPartialTicks) * 8 / 7f));
         if (toolTip.size() < 2) {
             toolTip.add(component);
         } else {
@@ -117,7 +114,7 @@ public class PonderTooltipHandler {
     }
 
     protected static void updateHovered(Minecraft instance, ItemStack stack) {
-        Screen currentScreen = instance.screen;
+        Screen currentScreen = instance.gui.screen();
         boolean inPonderUI = currentScreen instanceof PonderUI;
 
         ItemStack prevStack = trackingStack;

@@ -114,7 +114,7 @@ public class ValueSettingsClient {
     }
 
     public void showHoverTip(Minecraft mc, List<MutableComponent> tip) {
-        if (mc.screen != null) {
+        if (mc.gui.screen() != null) {
             return;
         }
         if (hoverWarmup < 6) {

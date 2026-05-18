@@ -1116,7 +1116,7 @@ public class PonderUI extends AbstractPonderScreen {
         Minecraft mc = Minecraft.getInstance();
         float renderPartialTicks = AnimationTickHolder.getPartialTicksUI(mc.getDeltaTracker());
 
-        if (mc.screen instanceof PonderUI ui) {
+        if (mc.gui.screen() instanceof PonderUI ui) {
             if (ui.identifyMode) {
                 return ponderPartialTicksPaused;
             }

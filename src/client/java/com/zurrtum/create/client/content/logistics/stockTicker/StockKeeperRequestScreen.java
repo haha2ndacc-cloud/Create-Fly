@@ -494,7 +494,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractBackground(graphics, mouseX, mouseY, partialTicks);
-        if (this != minecraft.screen) {
+        if (this != minecraft.gui.screen()) {
             return; // stencil buffer does not cooperate with ponders gui fade out
         }
 
@@ -616,8 +616,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         MutableComponent headerTitle = CreateLang.translate("gui.stock_keeper.title").component();
         graphics.text(font, headerTitle, x + imageWidth / 2 - font.width(headerTitle) / 2, y + 4, 0xFF714A40, false);
-        MutableComponent component = CreateLang.translate(encodeRequester ? "gui.stock_keeper.configure" : "gui.stock_keeper.send")
-            .component();
+        MutableComponent component = CreateLang.translate(
+            encodeRequester ? "gui.stock_keeper.configure" : "gui.stock_keeper.send").component();
 
         if (justSent) {
             float alpha = Mth.clamp((successTicks + partialTicks - 5f) / 5f, 0f, 1f);
@@ -747,10 +747,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             }
 
             if (!categories.isEmpty()) {
-                (categoryEntry.hidden ? AllGuiTextures.STOCK_KEEPER_CATEGORY_HIDDEN : AllGuiTextures.STOCK_KEEPER_CATEGORY_SHOWN).render(graphics,
-                    itemsX,
-                    itemsY + categoryY + 6
-                );
+                (categoryEntry.hidden ? AllGuiTextures.STOCK_KEEPER_CATEGORY_HIDDEN :
+                    AllGuiTextures.STOCK_KEEPER_CATEGORY_SHOWN).render(graphics, itemsX, itemsY + categoryY + 6);
                 graphics.text(font, categoryEntry.name, itemsX + 10, itemsY + categoryY + 8, 0xFF4A2D31, false);
                 graphics.text(font, categoryEntry.name, itemsX + 9, itemsY + categoryY + 7, 0xFFF8F8EC, false);
                 if (categoryEntry.hidden) {
@@ -781,10 +779,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         // Render lock option
         if (isAdmin) {
-            (isLocked ? AllGuiTextures.STOCK_KEEPER_REQUEST_LOCKED : AllGuiTextures.STOCK_KEEPER_REQUEST_UNLOCKED).render(graphics,
-                lockX,
-                lockY
-            );
+            (isLocked ? AllGuiTextures.STOCK_KEEPER_REQUEST_LOCKED :
+                AllGuiTextures.STOCK_KEEPER_REQUEST_UNLOCKED).render(graphics, lockX, lockY);
         }
 
         ms.popMatrix();
@@ -861,8 +857,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             int slot = hoveredSlot.getSecond();
             boolean recipeHovered = hoveredSlot.getFirst() == -2;
             boolean orderHovered = hoveredSlot.getFirst() == -1;
-            BigItemStack entry = recipeHovered ? recipesToOrder.get(slot) : orderHovered ? itemsToOrder.get(slot) : displayedItems.get(
-                hoveredSlot.getFirst()).get(slot);
+            BigItemStack entry = recipeHovered ? recipesToOrder.get(slot) :
+                orderHovered ? itemsToOrder.get(slot) : displayedItems.get(hoveredSlot.getFirst()).get(slot);
 
             if (recipeHovered) {
                 ArrayList<Component> lines = new ArrayList<>(entry.stack.getTooltipLines(
@@ -958,7 +954,10 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
     }
 
     private void drawItemCount(GuiGraphicsExtractor graphics, int customCount) {
-        String text = customCount >= 1000000 ? (customCount / 1000000) + "m" : customCount >= 10000 ? (customCount / 1000) + "k" : customCount >= 1000 ? ((customCount * 10) / 1000) / 10f + "k" : customCount >= 100 ? customCount + "" : " " + customCount;
+        String text = customCount >= 1000000 ? (customCount / 1000000) + "m" :
+            customCount >= 10000 ? (customCount / 1000) + "k" :
+                customCount >= 1000 ? ((customCount * 10) / 1000) / 10f + "k" :
+                    customCount >= 100 ? customCount + "" : " " + customCount;
 
         if (customCount >= BigItemStack.INF) {
             text = "+";
@@ -1077,7 +1076,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
                 continue;
             }
 
-            int row = Mth.floor((localY - (categories.isEmpty() ? 4 : rowHeight) - entry.y) / (float) rowHeight + itemScroll.getChaseTarget());
+            int row = Mth.floor((localY - (categories.isEmpty() ? 4 :
+                rowHeight) - entry.y) / (float) rowHeight + itemScroll.getChaseTarget());
 
             int col = (x - itemsX) / colWidth;
             int slot = row * cols + col;
@@ -1181,8 +1181,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
             return CreateLang.translate("gui.stock_keeper.inventories_empty").component();
         }
         if (isSchematicListMode()) {
-            return CreateLang.translate(itemsToOrder.isEmpty() ? "gui.stock_keeper.schematic_list.no_results" : "gui.stock_keeper.schematic_list.requesting")
-                .component();
+            return CreateLang.translate(itemsToOrder.isEmpty() ? "gui.stock_keeper.schematic_list.no_results" :
+                "gui.stock_keeper.schematic_list.requesting").component();
         }
         return CreateLang.translate("gui.stock_keeper.no_search_results").component();
     }
@@ -1283,8 +1283,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
         // Items
         boolean orderClicked = hoveredSlot.getFirst() == -1;
         boolean recipeClicked = hoveredSlot.getFirst() == -2;
-        BigItemStack entry = recipeClicked ? recipesToOrder.get(hoveredSlot.getSecond()) : orderClicked ? itemsToOrder.get(
-            hoveredSlot.getSecond()) : displayedItems.get(hoveredSlot.getFirst()).get(hoveredSlot.getSecond());
+        BigItemStack entry = recipeClicked ? recipesToOrder.get(hoveredSlot.getSecond()) :
+            orderClicked ? itemsToOrder.get(hoveredSlot.getSecond()) :
+                displayedItems.get(hoveredSlot.getFirst()).get(hoveredSlot.getSecond());
 
         ItemStack itemStack = entry.stack;
         int transfer = click.hasShiftDown() ? itemStack.getMaxStackSize() : click.hasControlDown() ? 10 : 1;
@@ -1358,8 +1359,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
         boolean orderClicked = hoveredSlot.getFirst() == -1;
         boolean recipeClicked = hoveredSlot.getFirst() == -2;
-        BigItemStack entry = recipeClicked ? recipesToOrder.get(hoveredSlot.getSecond()) : orderClicked ? itemsToOrder.get(
-            hoveredSlot.getSecond()) : displayedItems.get(hoveredSlot.getFirst()).get(hoveredSlot.getSecond());
+        BigItemStack entry = recipeClicked ? recipesToOrder.get(hoveredSlot.getSecond()) :
+            orderClicked ? itemsToOrder.get(hoveredSlot.getSecond()) :
+                displayedItems.get(hoveredSlot.getFirst()).get(hoveredSlot.getSecond());
 
         boolean remove = scrollY < 0;
         int transfer = Mth.ceil(Math.abs(scrollY)) * (mc.hasControlDown() ? 10 : 1);

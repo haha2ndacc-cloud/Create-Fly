@@ -173,7 +173,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
     public void tick() {
         ticksOpen++;
         if (minecraft != null && !level.getBlockState(pos).is(state.getBlock())) {
-            minecraft.setScreen(null);
+            minecraft.gui.setScreen(null);
         }
         super.tick();
     }
