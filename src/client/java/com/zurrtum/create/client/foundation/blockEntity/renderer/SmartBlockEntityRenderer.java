@@ -134,7 +134,7 @@ public class SmartBlockEntityRenderer<T extends SmartBlockEntity, S extends Smar
             return null;
         }
         Vec3 labelPos = new Vec3(0.5, yOffset - 0.25, 0.5);
-        return new NameplateRenderState(labelPos, tag, light, distance);
+        return new NameplateRenderState(labelPos, tag, light);
     }
 
     public static class SmartRenderState extends BlockEntityRenderState {
@@ -142,9 +142,9 @@ public class SmartBlockEntityRenderer<T extends SmartBlockEntity, S extends Smar
         public @Nullable LinkRenderState link;
     }
 
-    public record NameplateRenderState(Vec3 pos, Component label, int light, double distance) {
+    public record NameplateRenderState(Vec3 pos, Component label, int light) {
         public void submit(PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
-            queue.submitNameTag(matrices, pos, 0, label, true, light, distance, cameraState);
+            queue.submitNameTag(matrices, pos, 0, label, true, light, cameraState);
         }
     }
 }
