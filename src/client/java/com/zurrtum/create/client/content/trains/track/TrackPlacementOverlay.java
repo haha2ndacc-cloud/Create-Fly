@@ -23,7 +23,7 @@ public class TrackPlacementOverlay {
             return;
         }
 
-        if (mc.gui.toolHighlightTimer > 0) {
+        if (mc.gui.hud.toolHighlightTimer > 0) {
             return;
         }
 
