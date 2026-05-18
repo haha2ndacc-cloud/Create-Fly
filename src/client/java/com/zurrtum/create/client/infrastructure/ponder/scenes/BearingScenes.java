@@ -643,7 +643,7 @@ public class BearingScenes {
             scene.idle(10);
             scene.overlay()
                 .showControls(util.vector().blockSurface(util.grid().at(2, 3, 1), Direction.NORTH), Pointing.RIGHT, 30)
-                .withItem(new ItemStack(Items.BLUE_DYE));
+                .withItem(new ItemStack(Items.DYE.blue()));
             scene.idle(7);
             scene.world().setBlock(
                 util.grid().at(2, 3, 1),
@@ -657,7 +657,7 @@ public class BearingScenes {
             scene.idle(20);
             scene.overlay()
                 .showControls(util.vector().blockSurface(util.grid().at(2, 3, 1), Direction.NORTH), Pointing.RIGHT, 30)
-                .withItem(new ItemStack(Items.BLUE_DYE));
+                .withItem(new ItemStack(Items.DYE.blue()));
             scene.idle(7);
             scene.world().replaceBlocks(
                 util.select().fromTo(2, 2, 1, 2, 4, 1),

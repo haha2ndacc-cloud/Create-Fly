@@ -613,7 +613,7 @@ public class RedstoneScenes {
 
         scene.overlay()
             .showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP), Pointing.DOWN, 30)
-            .withItem(new ItemStack(Items.BLUE_DYE));
+            .withItem(new ItemStack(Items.DYE.blue()));
         scene.idle(7);
         scene.world().setBlocks(
             util.select().fromTo(1, 1, 3, 3, 1, 3),

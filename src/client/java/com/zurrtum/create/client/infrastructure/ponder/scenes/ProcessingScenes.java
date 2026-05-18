@@ -377,9 +377,9 @@ public class ProcessingScenes {
         BlockPos pressPos = util.grid().at(1, 4, 2);
         Vec3 basinSide = util.vector().blockSurface(basin, Direction.WEST);
 
-        ItemStack blue = new ItemStack(Items.BLUE_DYE);
-        ItemStack red = new ItemStack(Items.RED_DYE);
-        ItemStack purple = new ItemStack(Items.PURPLE_DYE);
+        ItemStack blue = new ItemStack(Items.DYE.blue());
+        ItemStack red = new ItemStack(Items.DYE.red());
+        ItemStack purple = new ItemStack(Items.DYE.purple());
 
         scene.overlay().showText(60).pointAt(basinSide).placeNearTarget().attachKeyFrame()
             .text("With a Mixer and Basin, some Crafting Recipes can be automated");

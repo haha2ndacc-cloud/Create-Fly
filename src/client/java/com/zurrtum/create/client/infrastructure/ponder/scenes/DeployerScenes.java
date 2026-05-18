@@ -207,7 +207,7 @@ public class DeployerScenes {
         scene.world().modifyEntity(sheep, e -> ((Sheep) e).setSheared(true));
         scene.effects().emitParticles(
             util.vector().topOf(deployerPos.west(2)).add(0, -.25, 0), scene.effects().particleEmitterWithinBlockSpace(
-                new BlockParticleOption(ParticleTypes.BLOCK, Blocks.PINK_WOOL.defaultBlockState()),
+                new BlockParticleOption(ParticleTypes.BLOCK, Blocks.WOOL.pink().defaultBlockState()),
                 util.vector().of(0, 0, 0)
             ), 25, 1
         );
@@ -221,7 +221,7 @@ public class DeployerScenes {
         scene.world().createItemEntity(
             util.vector().centerOf(deployerPos.north()).subtract(0, .45, 0),
             util.vector().of(0, 0, -0.1),
-            new ItemStack(Items.PINK_WOOL)
+            new ItemStack(Items.WOOL.pink())
         );
 
         scene.markAsFinished();

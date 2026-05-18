@@ -924,7 +924,7 @@ public class KineticsScenes {
         scene.idle(90);
 
         scene.addKeyframe();
-        scene.overlay().showControls(topOf, Pointing.DOWN, 40).rightClick().withItem(new ItemStack(Items.BLUE_DYE));
+        scene.overlay().showControls(topOf, Pointing.DOWN, 40).rightClick().withItem(new ItemStack(Items.DYE.blue()));
         scene.idle(7);
         scene.world().modifyBlock(
             valvePos,

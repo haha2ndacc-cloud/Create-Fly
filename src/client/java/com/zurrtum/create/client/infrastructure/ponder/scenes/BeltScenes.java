@@ -130,7 +130,7 @@ public class BeltScenes {
         scene.idle(70);
 
         scene.overlay().showControls(util.vector().topOf(shaftLocation.east()), Pointing.DOWN, 50).rightClick()
-            .withItem(new ItemStack(Items.BLUE_DYE));
+            .withItem(new ItemStack(Items.DYE.blue()));
         scene.idle(7);
         scene.world().modifyBlockEntityNBT(
             util.select().fromTo(0, 1, 2, 4, 1, 2),

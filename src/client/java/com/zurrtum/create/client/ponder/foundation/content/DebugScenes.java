@@ -79,7 +79,7 @@ public class DebugScenes {
         scene.overlay().showText(1000).independent(10).text("Blocks can be modified");
         scene.idle(20);
         scene.world()
-            .replaceBlocks(util.select().fromTo(1, 1, 3, 2, 2, 4), Blocks.WHITE_CONCRETE.defaultBlockState(), true);
+            .replaceBlocks(util.select().fromTo(1, 1, 3, 2, 2, 4), Blocks.CONCRETE.white().defaultBlockState(), true);
         scene.idle(10);
         scene.addKeyframe();
         scene.world().replaceBlocks(
@@ -337,7 +337,7 @@ public class DebugScenes {
 
         scene.world().hideSection(hiddenReplaceArea, Direction.UP);
         scene.idle(20);
-        scene.world().setBlocks(hiddenReplaceArea, Blocks.BLACK_CONCRETE.defaultBlockState(), false);
+        scene.world().setBlocks(hiddenReplaceArea, Blocks.CONCRETE.black().defaultBlockState(), false);
         scene.world().showSection(hiddenReplaceArea, Direction.DOWN);
         scene.idle(20);
         scene.overlay().showOutlineWithText(hiddenReplaceArea, 30).colored(PonderPalette.BLUE)

@@ -316,7 +316,7 @@ public class DisplayScenes {
         scene.world().flashDisplayLink(linkPos);
         scene.idle(50);
 
-        scene.overlay().showControls(target, Pointing.RIGHT, 40).withItem(new ItemStack(Items.PINK_DYE)).rightClick();
+        scene.overlay().showControls(target, Pointing.RIGHT, 40).withItem(new ItemStack(Items.DYE.pink())).rightClick();
         scene.idle(6);
         scene.world().dyeDisplayBoard(board, 0, DyeColor.PINK);
         scene.idle(25);
@@ -325,8 +325,8 @@ public class DisplayScenes {
             .pointAt(target.add(-2, 0, 0)).attachKeyFrame().placeNearTarget();
         scene.idle(25);
 
-        scene.overlay().showControls(target.add(0, -.5f, 0), Pointing.RIGHT, 40).withItem(new ItemStack(Items.LIME_DYE))
-            .rightClick();
+        scene.overlay().showControls(target.add(0, -.5f, 0), Pointing.RIGHT, 40)
+            .withItem(new ItemStack(Items.DYE.lime())).rightClick();
         scene.idle(6);
         scene.world().dyeDisplayBoard(board, 1, DyeColor.LIME);
         scene.idle(55);

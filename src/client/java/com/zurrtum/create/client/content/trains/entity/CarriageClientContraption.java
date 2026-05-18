@@ -35,7 +35,7 @@ public class CarriageClientContraption extends ClientContraption {
             if (contraption.withinVisible(pos)) {
                 values.put(pos, info.state());
             } else if (contraption.atSeam(pos)) {
-                values.put(pos, Blocks.PURPLE_STAINED_GLASS.defaultBlockState());
+                values.put(pos, Blocks.STAINED_GLASS.purple().defaultBlockState());
             }
         });
         return new RenderedBlocks(pos -> values.getOrDefault(pos, Blocks.AIR.defaultBlockState()), values.keySet());
