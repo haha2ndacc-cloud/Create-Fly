@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.block.BlockModelLighter;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.world.level.block.RenderShape;
@@ -63,7 +64,7 @@ public class SchematicRenderer {
         SuperRenderTypeBuffer buffers,
         SubmitNodeStorage queue,
         SchematicTransformation transformation,
-        Vec3 camera
+        CameraRenderState camera
     ) {
         if (mc.level == null || mc.player == null) {
             return;
@@ -86,11 +87,11 @@ public class SchematicRenderer {
             schematic,
             null,
             null,
-            transformation.toLocalSpace(camera),
+            transformation.toLocalSpace(camera.pos),
             AnimationTickHolder.getPartialTicks()
         );
         if (renderState != null) {
-            renderState.submit(ms, queue, mc.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState);
+            renderState.submit(ms, queue, camera);
         }
 
         // Don't bother looping over errored BEs again.

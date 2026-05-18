@@ -190,7 +190,7 @@ public class BakedItemModelBufferer {
                 EmptyOutlineBufferSource.INSTANCE,
                 EmptyBufferSource.INSTANCE,
                 mc.font,
-                mc.gameRenderer.getGameRenderState()
+                mc.gameRenderer.gameRenderState()
             );
             for (int i = 0, size = CHUNK_LAYERS.size(); i < size; i++) {
                 RenderType renderType = CHUNK_LAYERS.get(i);

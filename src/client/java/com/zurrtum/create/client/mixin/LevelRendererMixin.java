@@ -45,6 +45,7 @@ import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionsToRender;
 import net.minecraft.client.renderer.state.level.BlockBreakingRenderState;
 import net.minecraft.client.renderer.state.level.BlockOutlineRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.BlockDestructionProgress;
@@ -125,6 +126,7 @@ public abstract class LevelRendererMixin {
         @Local Vec3 cameraPos,
         @Local PoseStack ms
     ) {
+        CameraRenderState cameraRenderState = levelRenderState.cameraRenderState;
         Dispatcher dispatcher = Dispatcher.getInstance();
         SuperRenderTypeBuffer buffer = dispatcher.getBuffer();
         SubmitNodeStorage queue = dispatcher.getSubmitNodeStorage();
@@ -134,7 +136,7 @@ public abstract class LevelRendererMixin {
         TrackTargetingClient.render(minecraft, ms, queue, cameraPos);
         CouplingRenderer.renderAll(minecraft, ms, queue, cameraPos);
         CarriageCouplingRenderer.renderAll(minecraft, ms, queue, cameraPos);
-        Create.SCHEMATIC_HANDLER.render(minecraft, ms, buffer, queue, cameraPos);
+        Create.SCHEMATIC_HANDLER.render(minecraft, ms, buffer, queue, cameraRenderState);
         ChainConveyorInteractionHandler.drawCustomBlockSelection(ms, buffer, cameraPos);
         SymmetryHandlerClient.onRenderWorld(minecraft, ms, buffer, cameraPos);
         dispatcher.draw(ms);

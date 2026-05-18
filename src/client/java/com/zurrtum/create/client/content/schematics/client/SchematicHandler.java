@@ -27,6 +27,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Vec3i;
@@ -236,7 +237,7 @@ public class SchematicHandler {
         }
     }
 
-    public void render(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer, SubmitNodeStorage queue, Vec3 camera) {
+    public void render(Minecraft mc, PoseStack ms, SuperRenderTypeBuffer buffer, SubmitNodeStorage queue, CameraRenderState camera) {
         if (!active) {
             return;
         }
@@ -244,13 +245,14 @@ public class SchematicHandler {
         if (!present) {
             return;
         }
+        Vec3 cameraPos = camera.pos;
 
         ms.pushPose();
-        currentTool.getTool().renderTool(mc, ms, buffer, camera);
+        currentTool.getTool().renderTool(mc, ms, buffer, cameraPos);
         ms.popPose();
 
         ms.pushPose();
-        transformation.applyTransformations(ms, camera);
+        transformation.applyTransformations(ms, cameraPos);
 
         if (deployed) {
             float pt = AnimationTickHolder.getPartialTicks();
