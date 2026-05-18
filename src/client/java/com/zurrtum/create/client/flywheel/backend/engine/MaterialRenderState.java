@@ -177,7 +177,7 @@ public final class MaterialRenderState {
     }
 
     public static void setupFrameBuffer() {
-        RenderTarget target = Minecraft.getInstance().getMainRenderTarget();
+        RenderTarget target = Minecraft.getInstance().gameRenderer.mainRenderTarget();
         DirectStateAccess access = ((GlDevice) RenderSystem.getDevice().backend).directStateAccess();
         int i = ((GlTexture) target.getColorTexture()).getFbo(
             access,

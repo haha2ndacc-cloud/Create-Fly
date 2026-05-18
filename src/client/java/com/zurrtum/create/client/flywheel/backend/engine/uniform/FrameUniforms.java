@@ -191,7 +191,7 @@ public final class FrameUniforms extends UniformWriter {
 
     private static long writeCullData(long ptr) {
         var mc = Minecraft.getInstance();
-        var mainRenderTarget = mc.getMainRenderTarget();
+        var mainRenderTarget = mc.gameRenderer.mainRenderTarget();
 
         int pyramidWidth = DepthPyramid.mip0Size(mainRenderTarget.width);
         int pyramidHeight = DepthPyramid.mip0Size(mainRenderTarget.height);

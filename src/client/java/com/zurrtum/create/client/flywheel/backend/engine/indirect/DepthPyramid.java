@@ -23,7 +23,7 @@ public class DepthPyramid {
     }
 
     public void generate() {
-        var mainRenderTarget = Minecraft.getInstance().getMainRenderTarget();
+        var mainRenderTarget = Minecraft.getInstance().gameRenderer.mainRenderTarget();
 
         int width = mip0Size(mainRenderTarget.width);
         int height = mip0Size(mainRenderTarget.height);

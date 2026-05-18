@@ -58,9 +58,9 @@ public class OitFramebuffer {
         if (Minecraft.useShaderTransparency()) {
             renderTarget = Minecraft.getInstance().levelRenderer.getItemEntityTarget();
 
-            renderTarget.copyDepthFrom(Minecraft.getInstance().getMainRenderTarget());
+            renderTarget.copyDepthFrom(Minecraft.getInstance().gameRenderer.mainRenderTarget());
         } else {
-            renderTarget = Minecraft.getInstance().getMainRenderTarget();
+            renderTarget = Minecraft.getInstance().gameRenderer.mainRenderTarget();
         }
 
         maybeResizeFBO(renderTarget.width, renderTarget.height);
@@ -183,7 +183,7 @@ public class OitFramebuffer {
     public void composite() {
         DirectStateAccess access = ((GlDevice) RenderSystem.getDevice().backend).directStateAccess();
         Minecraft mc = Minecraft.getInstance();
-        RenderTarget mainTarget = mc.getMainRenderTarget();
+        RenderTarget mainTarget = mc.gameRenderer.mainRenderTarget();
         if (Minecraft.useShaderTransparency()) {
             bindRenderTarget(mc.levelRenderer.getItemEntityTarget(), access);
         } else {
