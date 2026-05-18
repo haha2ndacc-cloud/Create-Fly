@@ -20,7 +20,7 @@ public class VecHelper {
          * Result is (dist right of center screen, dist up from center screen, if < 0,
          * then in front of view plane)
          */
-        Camera ari = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera ari = Minecraft.getInstance().gameRenderer.mainCamera();
         Vec3 camera_pos = ari.position();
         Quaternionf camera_rotation_conj = new Quaternionf(ari.rotation());
         camera_rotation_conj.conjugate();

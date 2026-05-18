@@ -63,7 +63,7 @@ public class SchematicAndQuillHandler {
 
         AABB bb = new AABB(Vec3.atLowerCornerOf(firstPos), Vec3.atLowerCornerOf(secondPos));
         Vec3i vec = selectedFace.getUnitVec3i();
-        Vec3 projectedView = mc.gameRenderer.getMainCamera().position();
+        Vec3 projectedView = mc.gameRenderer.mainCamera().position();
         if (bb.contains(projectedView)) {
             delta *= -1;
         }
@@ -171,7 +171,7 @@ public class SchematicAndQuillHandler {
         if (secondPos != null) {
             AABB bb = new AABB(Vec3.atLowerCornerOf(firstPos), Vec3.atLowerCornerOf(secondPos)).expandTowards(1, 1, 1)
                 .inflate(.45f);
-            Vec3 projectedView = mc.gameRenderer.getMainCamera().position();
+            Vec3 projectedView = mc.gameRenderer.mainCamera().position();
             boolean inside = bb.contains(projectedView);
             PredicateTraceResult result = RaycastHelper.rayTraceUntil(
                 player,
