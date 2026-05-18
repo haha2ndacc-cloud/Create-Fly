@@ -8,6 +8,7 @@ import com.mojang.blaze3d.pipeline.RenderPipeline.Snippet;
 import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.BindGroupLayouts;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
@@ -20,12 +21,14 @@ public class PonderRenderPipelines {
     );
     private static final Identifier ENTITY_BLOCK_ID = Identifier.fromNamespaceAndPath(MOD_ID, "entity_block");
     public static final Snippet ENTITY_BLOCK_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
-        .withVertexShader(ENTITY_BLOCK_ID).withFragmentShader(ENTITY_BLOCK_ID).withSampler("Sampler0")
-        .withSampler("Sampler2").withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.QUADS)
+        .withVertexShader(ENTITY_BLOCK_ID).withFragmentShader(ENTITY_BLOCK_ID)
+        .withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER2)
+        .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.QUADS)
         .withDepthStencilState(DepthStencilState.DEFAULT).buildSnippet();
     public static final Snippet ENTITY_BLOCK_LIGHT_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
-        .withVertexShader(ENTITY_BLOCK_ID).withFragmentShader(ENTITY_BLOCK_ID).withSampler("Sampler0")
-        .withSampler("Sampler2").withVertexFormat(DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS)
+        .withVertexShader(ENTITY_BLOCK_ID).withFragmentShader(ENTITY_BLOCK_ID)
+        .withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER2)
+        .withVertexFormat(DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS)
         .withDepthStencilState(DepthStencilState.DEFAULT).buildSnippet();
     public static final RenderPipeline ENTITY_BLOCK_SOLID = register(
         "entity_block_solid",
@@ -90,14 +93,16 @@ public class PonderRenderPipelines {
     public static final RenderPipeline ENTITY_TRANSLUCENT_CULL = register(
         "entity_translucent_cull",
         RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET).withShaderDefine("ALPHA_CUTOUT", 0.1F)
-            .withSampler("Sampler1").withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
+            .withBindGroupLayout(BindGroupLayouts.SAMPLER1)
+            .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
             .withDepthStencilState(DEFAULT_TEST_NOT_WRITE)
     );
     public static final RenderPipeline ENTITY_TRANSLUCENT = register(
         "entity_translucent",
         RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET).withShaderDefine("ALPHA_CUTOUT", 0.1F)
-            .withSampler("Sampler1").withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
-            .withCull(false).withDepthStencilState(DEFAULT_TEST_NOT_WRITE)
+            .withBindGroupLayout(BindGroupLayouts.SAMPLER1)
+            .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT)).withCull(false)
+            .withDepthStencilState(DEFAULT_TEST_NOT_WRITE)
     );
     public static final RenderPipeline TRIANGLE_FAN = wrapSequential(register(
         "triangle_fan",

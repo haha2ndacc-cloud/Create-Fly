@@ -8,6 +8,7 @@ import com.mojang.blaze3d.platform.BlendFactor;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.zurrtum.create.client.catnip.render.PonderRenderPipelines;
+import net.minecraft.client.renderer.BindGroupLayouts;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
@@ -16,7 +17,8 @@ import static com.zurrtum.create.Create.MOD_ID;
 public class AllRenderPipelines {
     public static final Identifier GLOWING_ID = Identifier.fromNamespaceAndPath(MOD_ID, "core/glowing_shader");
     public static final RenderPipeline.Snippet GLOWING_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
-        .withVertexShader(GLOWING_ID).withFragmentShader(GLOWING_ID).withSampler("Sampler0").withSampler("Sampler2")
+        .withVertexShader(GLOWING_ID).withFragmentShader(GLOWING_ID)
+        .withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER2)
         .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.QUADS)
         .withDepthStencilState(DepthStencilState.DEFAULT).buildSnippet();
     public static final RenderPipeline ADDITIVE = register(
