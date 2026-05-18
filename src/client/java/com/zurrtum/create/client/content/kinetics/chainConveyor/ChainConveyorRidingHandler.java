@@ -36,7 +36,7 @@ public class ChainConveyorRidingHandler {
         }
 
         Component component = Component.translatable("mount.onboard", mc.options.keyShift.getTranslatedKeyMessage());
-        mc.gui.setOverlayMessage(component, false);
+        mc.gui.hud.setOverlayMessage(component, false);
         mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.CHAIN_HIT, 1f, 0.5f));
     }
 
