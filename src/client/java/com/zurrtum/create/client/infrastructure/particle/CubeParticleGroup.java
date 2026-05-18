@@ -14,17 +14,17 @@ import net.minecraft.client.particle.SingleQuadParticle.Layer;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.state.level.ParticleGroupRenderState;
 
-public class CubeParticleRenderer extends ParticleGroup<CubeParticle> {
+public class CubeParticleGroup extends ParticleGroup<CubeParticle> {
     public static final ParticleRenderType SHEET = new ParticleRenderType("create:cube");
     public static final Layer RENDER_TYPE = new Layer(
         false,
         PonderSpecialTextures.BLANK.getLocation(),
         AllRenderPipelines.CUBE
     );
-    public CubeParticleSubmittable submittable = new CubeParticleSubmittable();
+    public QuadParticleRenderState particleTypeRenderState = new QuadParticleRenderState();
 
-    public CubeParticleRenderer(ParticleEngine particleManager) {
-        super(particleManager);
+    public CubeParticleGroup(ParticleEngine engine) {
+        super(engine);
         Minecraft.getInstance().getTextureManager().getTexture(PonderSpecialTextures.BLANK.getLocation());
     }
 
@@ -33,7 +33,7 @@ public class CubeParticleRenderer extends ParticleGroup<CubeParticle> {
         for (CubeParticle particle : particles) {
             if (particle.shouldRender(frustum)) {
                 try {
-                    particle.render(submittable, camera, tickProgress);
+                    particle.extract(particleTypeRenderState, camera, tickProgress);
                 } catch (Throwable var9) {
                     CrashReport crashReport = CrashReport.forThrowable(var9, "Rendering Particle");
                     CrashReportCategory crashReportSection = crashReport.addCategory("Particle being rendered");
@@ -43,6 +43,6 @@ public class CubeParticleRenderer extends ParticleGroup<CubeParticle> {
                 }
             }
         }
-        return submittable;
+        return particleTypeRenderState;
     }
 }

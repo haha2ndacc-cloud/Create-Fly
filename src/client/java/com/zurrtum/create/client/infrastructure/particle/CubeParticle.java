@@ -84,7 +84,7 @@ public class CubeParticle extends Particle {
         super.tick();
     }
 
-    public void render(CubeParticleSubmittable submittable, Camera camera, float tickProgress) {
+    public void extract(QuadParticleRenderState submittable, Camera camera, float tickProgress) {
         Vec3 projectedView = camera.position();
         float lerpedX = (float) (Mth.lerp(tickProgress, this.xo, this.x) - projectedView.x());
         float lerpedY = (float) (Mth.lerp(tickProgress, this.yo, this.y) - projectedView.y());
@@ -92,12 +92,12 @@ public class CubeParticle extends Particle {
         double ageMultiplier = 1 - Math.pow(Mth.clamp(age + tickProgress, 0, lifetime), 3) / Math.pow(lifetime, 3);
         float scale = (float) (this.scale * ageMultiplier);
         int color = ARGB.colorFromFloat(alpha, red, green, blue);
-        submittable.render(lerpedX, lerpedY, lerpedZ, scale, color);
+        submittable.add(lerpedX, lerpedY, lerpedZ, scale, color);
     }
 
     @Override
     public ParticleRenderType getGroup() {
-        return CubeParticleRenderer.SHEET;
+        return CubeParticleGroup.SHEET;
     }
 
     public boolean shouldRender(Frustum frustum) {

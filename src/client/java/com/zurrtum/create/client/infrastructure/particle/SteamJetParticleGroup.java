@@ -7,15 +7,15 @@ import net.minecraft.client.particle.QuadParticleGroup;
 import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
 import org.joml.Quaternionf;
 
-public class SteamJetParticleRenderer extends QuadParticleGroup {
+public class SteamJetParticleGroup extends QuadParticleGroup {
     public static final ParticleRenderType SHEET = new ParticleRenderType("create:steam_jet");
 
-    public SteamJetParticleRenderer(ParticleEngine manager) {
+    public SteamJetParticleGroup(ParticleEngine manager) {
         super(manager, SHEET);
-        particleTypeRenderState = new SteamJetParticleSubmittable();
+        particleTypeRenderState = new SteamJetParticleRenderState();
     }
 
-    public static class SteamJetParticleSubmittable extends QuadParticleRenderState {
+    public static class SteamJetParticleRenderState extends QuadParticleRenderState {
         @Override
         protected void renderRotatedQuad(
             VertexConsumer vertexConsumer,

@@ -2,8 +2,8 @@ package com.zurrtum.create.client.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.zurrtum.create.client.infrastructure.particle.CubeParticleRenderer;
-import com.zurrtum.create.client.infrastructure.particle.SteamJetParticleRenderer;
+import com.zurrtum.create.client.infrastructure.particle.CubeParticleGroup;
+import com.zurrtum.create.client.infrastructure.particle.SteamJetParticleGroup;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.particle.ParticleGroup;
 import net.minecraft.client.particle.ParticleRenderType;
@@ -18,11 +18,11 @@ import java.util.List;
 @Mixin(ParticleEngine.class)
 public class ParticleEngineMixin {
     @Inject(method = "createParticleGroup(Lnet/minecraft/client/particle/ParticleRenderType;)Lnet/minecraft/client/particle/ParticleGroup;", at = @At("TAIL"), cancellable = true)
-    private void createParticleRenderer(ParticleRenderType textureSheet, CallbackInfoReturnable<ParticleGroup<?>> cir) {
-        if (textureSheet == SteamJetParticleRenderer.SHEET) {
-            cir.setReturnValue(new SteamJetParticleRenderer((ParticleEngine) (Object) this));
-        } else if (textureSheet == CubeParticleRenderer.SHEET) {
-            cir.setReturnValue(new CubeParticleRenderer((ParticleEngine) (Object) this));
+    private void createParticleGroup(ParticleRenderType textureSheet, CallbackInfoReturnable<ParticleGroup<?>> cir) {
+        if (textureSheet == SteamJetParticleGroup.SHEET) {
+            cir.setReturnValue(new SteamJetParticleGroup((ParticleEngine) (Object) this));
+        } else if (textureSheet == CubeParticleGroup.SHEET) {
+            cir.setReturnValue(new CubeParticleGroup((ParticleEngine) (Object) this));
         }
     }
 
@@ -32,8 +32,8 @@ public class ParticleEngineMixin {
         if (!(list instanceof ArrayList<ParticleRenderType>)) {
             list = new ArrayList<>(list);
         }
-        list.add(SteamJetParticleRenderer.SHEET);
-        list.add(CubeParticleRenderer.SHEET);
+        list.add(SteamJetParticleGroup.SHEET);
+        list.add(CubeParticleGroup.SHEET);
         return list;
     }
 }

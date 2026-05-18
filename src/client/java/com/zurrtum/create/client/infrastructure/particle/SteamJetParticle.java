@@ -50,7 +50,7 @@ public class SteamJetParticle extends SimpleAnimatedParticle {
 
     @Override
     public ParticleRenderType getGroup() {
-        return SteamJetParticleRenderer.SHEET;
+        return SteamJetParticleGroup.SHEET;
     }
 
     @Override
