@@ -340,7 +340,7 @@ public class CarriageAudioBehaviour extends EntityBehaviour<CarriageContraptionE
     }
 
     static class LoopingSound extends AbstractTickableSoundInstance {
-        private static final SubtitleOverlay OVERLAY = Minecraft.getInstance().gui.subtitleOverlay;
+        private static final SubtitleOverlay OVERLAY = Minecraft.getInstance().gui.hud.subtitleOverlay;
 
         private final boolean repeatSubtitle;
         private final WeighedSoundEvents weighedSoundEvents = resolve(Minecraft.getInstance().getSoundManager());
