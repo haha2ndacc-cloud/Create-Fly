@@ -105,13 +105,13 @@ public class PonderRenderPipelines {
             .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT)).withCull(false)
             .withDepthStencilState(DEFAULT_TEST_NOT_WRITE)
     );
-    public static final RenderPipeline TRIANGLE_FAN = wrapSequential(register(
+    public static final RenderPipeline TRIANGLE_FAN = register(
         "triangle_fan",
         RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
             .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
             .withPrimitiveTopology(PrimitiveTopology.TRIANGLE_FAN)
-    ));
-    public static final RenderPipeline POSITION_COLOR_TRIANGLES = wrapSequential(register(
+    );
+    public static final RenderPipeline POSITION_COLOR_TRIANGLES = register(
         "position_color_triangles",
         RenderPipeline.builder(RenderPipelines.GLOBALS_SNIPPET)
             .withBindGroupLayout(BindGroupLayouts.MATRICES_PROJECTION).withVertexShader("core/position_color")
@@ -119,18 +119,13 @@ public class PonderRenderPipelines {
             .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
             .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR).withPrimitiveTopology(PrimitiveTopology.TRIANGLES)
             .withCull(false)
-    ));
-    public static final RenderPipeline POSITION_COLOR_STRIP = wrapSequential(register(
+    );
+    public static final RenderPipeline POSITION_COLOR_STRIP = register(
         "position_color_strip",
         RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
             .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
             .withPrimitiveTopology(PrimitiveTopology.TRIANGLE_STRIP)
-    ));
-
-    public static RenderPipeline wrapSequential(RenderPipeline pipeline) {
-        ((CustomRenderPipeline) pipeline).create$updateSequential();
-        return pipeline;
-    }
+    );
 
     private static RenderPipeline register(String id, RenderPipeline.Builder builder) {
         Identifier location = Identifier.fromNamespaceAndPath(MOD_ID, "pipeline/" + id);

@@ -9,7 +9,6 @@ import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem.AutoStorageIndexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.zurrtum.create.client.catnip.gui.render.*;
-import com.zurrtum.create.client.catnip.render.CustomRenderPipeline;
 import com.zurrtum.create.client.foundation.gui.render.*;
 import com.zurrtum.create.client.ponder.foundation.render.SceneRenderState;
 import com.zurrtum.create.client.ponder.foundation.render.SceneRenderer;
@@ -52,21 +51,5 @@ public class GuiRendererMixin {
         builder.put(SceneRenderState.class, new SceneRenderer());
         builder.put(FanRenderState.class, new FanRenderer(vertexConsumers));
         return builder;
-    }
-
-    @WrapOperation(method = "executeDraw(Lnet/minecraft/client/gui/render/GuiRenderer$Draw;Lcom/mojang/blaze3d/systems/RenderPass;Lcom/mojang/blaze3d/buffers/GpuBuffer;Lcom/mojang/blaze3d/vertex/VertexFormat$IndexType;)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderPass;setIndexBuffer(Lcom/mojang/blaze3d/buffers/GpuBuffer;Lcom/mojang/blaze3d/vertex/VertexFormat$IndexType;)V"))
-    private void setIndexBuffer(
-        RenderPass instance,
-        GpuBuffer gpuBuffer,
-        VertexFormat.IndexType indexType,
-        Operation<Void> original,
-        @Local(argsOnly = true) GuiRenderer.Draw draw
-    ) {
-        AutoStorageIndexBuffer sequentialBuffer = ((CustomRenderPipeline) draw.pipeline()).create$getSequentialBuffer();
-        if (sequentialBuffer != null) {
-            original.call(instance, sequentialBuffer.getBuffer(draw.indexCount()), sequentialBuffer.type());
-        } else {
-            original.call(instance, gpuBuffer, indexType);
-        }
     }
 }
