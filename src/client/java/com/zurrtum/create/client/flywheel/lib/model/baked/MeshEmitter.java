@@ -1,6 +1,7 @@
 package com.zurrtum.create.client.flywheel.lib.model.baked;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.PrimitiveTopology;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -84,7 +85,7 @@ class MeshEmitter {
         // Trust that the RenderType mode/format don't change out from underneath us.
         BufferBuilder bufferBuilder = new BufferBuilder(
             byteBufferBuilder,
-            VertexFormat.Mode.QUADS,
+            PrimitiveTopology.QUADS,
             DefaultVertexFormat.ENTITY
         );
 

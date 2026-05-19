@@ -1,5 +1,6 @@
 package com.zurrtum.create.client.flywheel.lib.model.baked;
 
+import com.mojang.blaze3d.PrimitiveTopology;
 import com.mojang.blaze3d.vertex.*;
 import com.zurrtum.create.client.flywheel.api.model.Mesh;
 import com.zurrtum.create.client.flywheel.lib.memory.MemoryBlock;
@@ -60,10 +61,10 @@ public class ItemMeshEmitter implements VertexConsumer {
 
     private void prepareForGeometry(boolean shade) {
         if (bufferBuilder == null) {
-            bufferBuilder = new BufferBuilder(byteBufferBuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.ENTITY);
+            bufferBuilder = new BufferBuilder(byteBufferBuilder, PrimitiveTopology.QUADS, DefaultVertexFormat.ENTITY);
         } else if (shade != currentShade) {
             emit();
-            bufferBuilder = new BufferBuilder(byteBufferBuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.ENTITY);
+            bufferBuilder = new BufferBuilder(byteBufferBuilder, PrimitiveTopology.QUADS, DefaultVertexFormat.ENTITY);
         }
 
         currentShade = shade;
