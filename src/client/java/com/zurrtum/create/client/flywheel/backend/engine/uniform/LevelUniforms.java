@@ -15,6 +15,7 @@ import net.minecraft.world.level.MoonPhase;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.timeline.Timelines;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -29,14 +30,14 @@ public final class LevelUniforms extends UniformWriter {
     private LevelUniforms() {
     }
 
-    public static void update(Lighting.Entry type, Vector3f light0Diffusion, Vector3f light1Diffusion) {
+    public static void update(Lighting.Entry type, Vector3fc light0Diffusion, Vector3fc light1Diffusion) {
         float[] diffusions = CACHE.computeIfAbsent(type, t -> new float[6]);
-        diffusions[0] = light0Diffusion.x;
-        diffusions[1] = light0Diffusion.y;
-        diffusions[2] = light0Diffusion.z;
-        diffusions[3] = light1Diffusion.x;
-        diffusions[4] = light1Diffusion.y;
-        diffusions[5] = light1Diffusion.z;
+        diffusions[0] = light0Diffusion.x();
+        diffusions[1] = light0Diffusion.y();
+        diffusions[2] = light0Diffusion.z();
+        diffusions[3] = light1Diffusion.x();
+        diffusions[4] = light1Diffusion.y();
+        diffusions[5] = light1Diffusion.z();
     }
 
     public static void set(Lighting.Entry type) {
