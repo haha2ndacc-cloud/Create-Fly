@@ -316,7 +316,7 @@ public class WorldshaperModel implements ItemModel {
     private record UsedBlockRenderState(BlockModelRenderState model) implements UsedRenderState {
         public static UsedBlockRenderState create(Minecraft mc, BlockState state) {
             BlockModelRenderState model = new BlockModelRenderState();
-            mc.blockModelResolver.update(model, state, BLOCK_DISPLAY_CONTEXT);
+            mc.getBlockEntityRenderDispatcher().blockModelResolver.update(model, state, BLOCK_DISPLAY_CONTEXT);
             return new UsedBlockRenderState(model);
         }
 
