@@ -160,14 +160,14 @@ public final class FrameUniforms extends UniformWriter {
     }
 
     private static long writeTime(long ptr, RenderContext context) {
-        int ticks = context.renderer().ticks;
+        long ticks = context.level().getGameTime();
         float partialTick = context.partialTick();
         float renderTicks = ticks + partialTick;
         float renderSeconds = renderTicks / 20f;
         float systemSeconds = Util.getMillis() / 1000f;
         int systemMillis = (int) (Util.getMillis() % Integer.MAX_VALUE);
 
-        ptr = writeInt(ptr, ticks);
+        ptr = writeInt(ptr, (int) ticks);
         ptr = writeFloat(ptr, partialTick);
         ptr = writeFloat(ptr, renderTicks);
         ptr = writeFloat(ptr, renderSeconds);
