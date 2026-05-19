@@ -19,32 +19,32 @@ public class ExperimentalRedstoneWireEvaluatorMixin {
     private void updateNeighbor(
         Level world,
         BlockState state,
-        BlockPos neighborPos,
-        Block sourceBlock,
+        BlockPos pos,
+        Block changedBlock,
         Orientation orientation,
-        boolean notify,
+        boolean movedByPiston,
         Operation<Void> original,
-        @Local(argsOnly = true) BlockPos pos
+        @Local(argsOnly = true) BlockPos wirePos
     ) {
         if (state.getBlock() instanceof NeighborUpdateListeningBlock block) {
-            block.neighborUpdate(state, world, neighborPos, sourceBlock, pos, notify);
+            block.neighborUpdate(state, world, pos, changedBlock, wirePos, movedByPiston);
         }
-        original.call(world, state, neighborPos, sourceBlock, orientation, notify);
+        original.call(world, state, pos, changedBlock, orientation, movedByPiston);
     }
 
     @WrapOperation(method = "lambda$causeNeighborUpdates$0(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;neighborChanged(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/level/redstone/Orientation;)V"))
     private void updateNeighbor(
         Level world,
-        BlockPos neighborPos,
-        Block sourceBlock,
+        BlockPos pos,
+        Block changedBlock,
         Orientation orientation,
         Operation<Void> original,
-        @Local(ordinal = 1) BlockPos pos
+        @Local(ordinal = 1) BlockPos neighborPos
     ) {
-        BlockState state = world.getBlockState(neighborPos);
+        BlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof NeighborUpdateListeningBlock block) {
-            block.neighborUpdate(state, world, neighborPos, sourceBlock, pos, false);
+            block.neighborUpdate(state, world, pos, changedBlock, neighborPos, false);
         }
-        original.call(world, neighborPos, sourceBlock, orientation);
+        original.call(world, pos, changedBlock, orientation);
     }
 }

@@ -26,7 +26,7 @@ public class OptionsMixin {
     public KeyMapping[] keyMappings;
 
     @Inject(method = "<init>(Lnet/minecraft/client/Minecraft;Ljava/io/File;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Options;load()V"))
-    private void wrapAddAll(Minecraft client, File optionsFile, CallbackInfo ci) {
+    private void wrapAddAll(Minecraft minecraft, File workingDirectory, CallbackInfo ci) {
         List<KeyMapping> keys = Lists.newArrayList(keyMappings);
         keys.removeAll(AllKeys.ALL);
         keys.addAll(AllKeys.ALL);

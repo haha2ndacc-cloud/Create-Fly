@@ -20,9 +20,9 @@ public abstract class AbstractBoatMixin extends Entity {
     }
 
     @WrapOperation(method = "getGroundFriction()F", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;getFriction()F"))
-    private float getSlipperiness(Block block, Operation<Float> original, @Local BlockPos.MutableBlockPos mutable) {
+    private float getSlipperiness(Block block, Operation<Float> original, @Local BlockPos.MutableBlockPos blockPos) {
         if (block instanceof SlipperinessControlBlock controlBlock) {
-            return controlBlock.getSlipperiness(level(), mutable);
+            return controlBlock.getSlipperiness(level(), blockPos);
         }
         return original.call(block);
     }

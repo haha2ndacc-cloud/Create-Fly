@@ -30,17 +30,17 @@ public class StructureTemplateMixin {
 
     @Inject(method = "placeInWorld(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings;Lnet/minecraft/util/RandomSource;I)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate;placeEntities(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Mirror;Lnet/minecraft/world/level/block/Rotation;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/levelgen/structure/BoundingBox;ZLnet/minecraft/util/ProblemReporter;)V"))
     private void setProcessors(
-        ServerLevelAccessor world,
-        BlockPos pos,
-        BlockPos pivot,
-        StructurePlaceSettings placementData,
+        ServerLevelAccessor level,
+        BlockPos position,
+        BlockPos referencePos,
+        StructurePlaceSettings settings,
         RandomSource random,
-        int flags,
+        int updateMode,
         CallbackInfoReturnable<Boolean> cir
     ) {
-        if (world instanceof Level) {
+        if (level instanceof Level) {
             List<EntityControlStructureProcessor> controls = new ArrayList<>();
-            for (StructureProcessor processor : placementData.getProcessors()) {
+            for (StructureProcessor processor : settings.getProcessors()) {
                 if (processor instanceof EntityControlStructureProcessor control) {
                     controls.add(control);
                 }
@@ -55,14 +55,14 @@ public class StructureTemplateMixin {
     private Iterator<StructureTemplate.StructureEntityInfo> getIterator(
         List<StructureTemplate.StructureEntityInfo> instance,
         Operation<Iterator<StructureTemplate.StructureEntityInfo>> original,
-        @Local(argsOnly = true) ServerLevelAccessor access
+        @Local(argsOnly = true) ServerLevelAccessor level
     ) {
         Iterator<StructureTemplate.StructureEntityInfo> iterator = original.call(instance);
         List<EntityControlStructureProcessor> controls = list.get();
         if (controls == null) {
             return iterator;
         }
-        return new StructureEntityInfoIterator((Level) access, controls, iterator);
+        return new StructureEntityInfoIterator((Level) level, controls, iterator);
     }
 
     @Inject(method = "placeEntities(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Mirror;Lnet/minecraft/world/level/block/Rotation;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/levelgen/structure/BoundingBox;ZLnet/minecraft/util/ProblemReporter;)V", at = @At("TAIL"))

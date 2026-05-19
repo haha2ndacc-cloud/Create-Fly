@@ -58,7 +58,7 @@ public abstract class EntityMixin {
     private EntityFluidInteraction fluidInteraction;
 
     @Shadow
-    protected abstract void playStepSound(BlockPos pos, BlockState state);
+    protected abstract void playStepSound(BlockPos pos, BlockState blockState);
 
     @Shadow
     protected abstract float nextStep();
@@ -72,8 +72,8 @@ public abstract class EntityMixin {
 
     @Unique
     private Stream<AbstractContraptionEntity> create$getIntersectionContraptionsStream() {
-        return (level.isClientSide() ? ContraptionHandlerClient.loadedContraptions : ContraptionHandler.loadedContraptions).get(
-                level).values().stream().map(Reference::get)
+        return (level.isClientSide() ? ContraptionHandlerClient.loadedContraptions :
+            ContraptionHandler.loadedContraptions).get(level).values().stream().map(Reference::get)
             .filter(cEntity -> cEntity != null && cEntity.collidingEntities.containsKey((Entity) (Object) this));
     }
 
@@ -109,10 +109,10 @@ public abstract class EntityMixin {
     // `if (this.moveDist > this.nextStep && !blockstate1.isAir())
     @Inject(method = "applyMovementEmissionAndPlaySound(Lnet/minecraft/world/entity/Entity$MovementEmission;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isAir()Z", ordinal = 0))
     private void create$contraptionStepSounds(
-        Entity.MovementEmission moveEffect,
-        Vec3 movement,
-        BlockPos landingPos,
-        BlockState landingState,
+        Entity.MovementEmission emission,
+        Vec3 clippedMovement,
+        BlockPos effectPos,
+        BlockState effectState,
         CallbackInfo ci
     ) {
         Vec3 worldPos = position.add(0, -0.2, 0);
@@ -132,7 +132,7 @@ public abstract class EntityMixin {
 
     // involves client-side view bobbing animation on contraptions
     @Inject(method = "move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V", at = @At(value = "TAIL"))
-    private void create$onMove(MoverType type, Vec3 movement, CallbackInfo ci) {
+    private void create$onMove(MoverType moverType, Vec3 delta, CallbackInfo ci) {
         if (!level.isClientSide()) {
             return;
         }
@@ -201,17 +201,17 @@ public abstract class EntityMixin {
 
     @Inject(method = "startRiding(Lnet/minecraft/world/entity/Entity;ZZ)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;isPassenger()Z"))
     private void onMount(
-        Entity entity,
+        Entity entityToRide,
         boolean force,
         boolean sendEventAndTriggers,
         CallbackInfoReturnable<Boolean> cir
     ) {
-        CameraDistanceModifier.onMount((Entity) (Object) this, entity, true);
+        CameraDistanceModifier.onMount((Entity) (Object) this, entityToRide, true);
     }
 
     @WrapOperation(method = "removeVehicle()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;removePassenger(Lnet/minecraft/world/entity/Entity;)V"))
-    private void onDismount(Entity instance, Entity entity, Operation<Void> original) {
-        CameraDistanceModifier.onMount(entity, instance, false);
-        original.call(instance, entity);
+    private void onDismount(Entity instance, Entity passenger, Operation<Void> original) {
+        CameraDistanceModifier.onMount(passenger, instance, false);
+        original.call(instance, passenger);
     }
 }

@@ -19,7 +19,7 @@ public abstract class ServerConfigurationPacketListenerImplMixin {
     private Queue<ConfigurationTask> configurationTasks;
 
     @Shadow
-    protected abstract void finishCurrentTask(ConfigurationTask.Type key);
+    protected abstract void finishCurrentTask(ConfigurationTask.Type taskTypeToFinish);
 
     @Inject(method = "addOptionalTasks()V", at = @At("TAIL"))
     private void queueSendResourcePackTask(CallbackInfo ci) {

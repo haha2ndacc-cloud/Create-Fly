@@ -23,16 +23,16 @@ public class ClientChunkCacheMixin {
     private ClientLevel level;
 
     @Inject(method = "onLightUpdate", at = @At("HEAD"))
-    private void flywheel$onLightUpdate(LightLayer type, SectionPos pos, CallbackInfo ci) {
+    private void flywheel$onLightUpdate(LightLayer layer, SectionPos pos, CallbackInfo ci) {
         var manager = VisualizationManagerImpl.get(level);
 
         if (manager != null) {
-            manager.onLightUpdate(pos, type);
+            manager.onLightUpdate(pos, layer);
         }
     }
 
     @Inject(method = "drop(Lnet/minecraft/world/level/ChunkPos;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientChunkCache$Storage;drop(ILnet/minecraft/world/level/chunk/LevelChunk;)V"))
-    private void unload(ChunkPos pos, CallbackInfo ci, @Local LevelChunk chunk) {
-        CapabilityMinecartController.onChunkUnloaded(chunk);
+    private void unload(ChunkPos pos, CallbackInfo ci, @Local LevelChunk currentChunk) {
+        CapabilityMinecartController.onChunkUnloaded(currentChunk);
     }
 }

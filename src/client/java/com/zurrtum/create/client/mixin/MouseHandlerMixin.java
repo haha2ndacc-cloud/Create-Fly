@@ -20,12 +20,12 @@ public class MouseHandlerMixin {
     @Final
     private Minecraft minecraft;
 
-    @Inject(method = "onButton(JLnet/minecraft/client/input/MouseButtonInfo;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getOverlay()Lnet/minecraft/client/gui/screens/Overlay;", ordinal = 0), cancellable = true)
-    private void onMouseButton(long window, MouseButtonInfo input, int action, CallbackInfo ci) {
+    @Inject(method = "onButton(JLnet/minecraft/client/input/MouseButtonInfo;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;overlay()Lnet/minecraft/client/gui/screens/Overlay;", ordinal = 0), cancellable = true)
+    private void onMouseButton(long handle, MouseButtonInfo rawButtonInfo, int action, CallbackInfo ci) {
         if (action == 0) {
             return;
         }
-        int button = input.button();
+        int button = rawButtonInfo.button();
         if (Create.SCHEMATIC_HANDLER.onMouseInput(minecraft, button) || Create.SCHEMATIC_AND_QUILL_HANDLER.onMouseInput(minecraft,
             button
         )) {
@@ -35,19 +35,17 @@ public class MouseHandlerMixin {
 
     @Inject(method = "onScroll(JDD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getInventory()Lnet/minecraft/world/entity/player/Inventory;"), cancellable = true)
     private void onMouseScroll(
-        long window,
-        double horizontal,
-        double vertical,
+        long handle,
+        double xoffset,
+        double yoffset,
         CallbackInfo ci,
-        @Local(ordinal = 4) double delta
+        @Local(ordinal = 4) double scaledYOffset
     ) {
         if (Create.SCHEMATIC_HANDLER.mouseScrolled(
             minecraft,
-            delta
-        ) || Create.SCHEMATIC_AND_QUILL_HANDLER.mouseScrolled(
-            minecraft,
-            delta
-        ) || TrainHUD.onScroll(delta) || ElevatorControlsHandler.onScroll(minecraft, delta)) {
+            scaledYOffset
+        ) || Create.SCHEMATIC_AND_QUILL_HANDLER.mouseScrolled(minecraft, scaledYOffset) || TrainHUD.onScroll(
+            scaledYOffset) || ElevatorControlsHandler.onScroll(minecraft, scaledYOffset)) {
             ci.cancel();
         }
     }

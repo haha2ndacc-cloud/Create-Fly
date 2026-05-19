@@ -30,7 +30,7 @@ import static com.zurrtum.create.Create.MOD_ID;
 @Mixin(BuiltInPackSource.class)
 public class BuiltInPackSourceMixin {
     @Inject(method = "loadPacks(Ljava/util/function/Consumer;)V", at = @At("TAIL"))
-    private void addDataPack(Consumer<Pack> consumer, CallbackInfo ci) {
+    private void addDataPack(Consumer<Pack> result, CallbackInfo ci) {
         if ((Object) this instanceof ServerPacksSource) {
             FabricLoader loader = FabricLoader.getInstance();
             if (!loader.isModLoaded("fabric-api")) {
@@ -38,7 +38,7 @@ public class BuiltInPackSourceMixin {
                 ModContainer mod = loader.getModContainer(MOD_ID).orElseThrow();
                 List<Path> paths = mod.getRootPaths();
                 addDataPack(
-                    consumer,
+                    result,
                     createInfo("fabric-convention-tags-v2", "Fabric Convention Tags (v2)", "2.15.2+d9a8963096"),
                     paths,
                     Component.nullToEmpty("fabric-convention-tags-v2-2.15.2+d9a8963096"),
@@ -47,7 +47,7 @@ public class BuiltInPackSourceMixin {
                 );
                 ModMetadata metadata = mod.getMetadata();
                 addDataPack(
-                    consumer,
+                    result,
                     createInfo(MOD_ID, metadata.getName(), metadata.getVersion().getFriendlyString()),
                     paths,
                     Component.translatable("advancement.create.root"),
@@ -64,7 +64,7 @@ public class BuiltInPackSourceMixin {
             );
             RuntimeDataGenerator.insertIntoPack(dynamicPack);
             if (!dynamicPack.isEmpty()) {
-                addDataPack(consumer, false, dynamicPack);
+                addDataPack(result, false, dynamicPack);
             }
         }
     }

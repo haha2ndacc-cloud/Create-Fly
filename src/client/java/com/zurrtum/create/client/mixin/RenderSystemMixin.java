@@ -17,7 +17,7 @@ public class RenderSystemMixin {
     }
 
     @Inject(method = "setShaderFog(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V", at = @At("RETURN"))
-    private static void flywheel$onSetShaderFog(GpuBufferSlice shaderFog, CallbackInfo ci) {
-        FogUniforms.update(shaderFog);
+    private static void flywheel$onSetShaderFog(GpuBufferSlice fog, CallbackInfo ci) {
+        FogUniforms.update(fog);
     }
 }

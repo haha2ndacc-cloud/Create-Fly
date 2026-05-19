@@ -36,9 +36,9 @@ public class PersistentEntitySectionManagerMixin {
     }
 
     @Inject(method = "addEntity(Lnet/minecraft/world/level/entity/EntityAccess;Z)Z", at = @At("HEAD"))
-    private void addEntity(EntityAccess entity, boolean existing, CallbackInfoReturnable<Boolean> cir) {
+    private void addEntity(EntityAccess entity, boolean loaded, CallbackInfoReturnable<Boolean> cir) {
         ContraptionHandler.addSpawnedContraptionsToCollisionList(entity);
-        if (!existing) {
+        if (!loaded) {
             CapabilityMinecartController.attach(entity);
         }
     }

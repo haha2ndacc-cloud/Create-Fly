@@ -30,70 +30,70 @@ public class ItemInHandRendererMixin {
     @Final
     private EntityRenderDispatcher entityRenderDispatcher;
 
-    @WrapOperation(method = "renderHandsWithItems(FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/player/LocalPlayer;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;renderArmWithItem(Lnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/InteractionHand;FLnet/minecraft/world/item/ItemStack;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;I)V"))
+    @WrapOperation(method = "submitHandsWithItems(FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/player/LocalPlayer;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;submitArmWithItem(Lnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/InteractionHand;FLnet/minecraft/world/item/ItemStack;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;I)V"))
     private void renderItem(
         ItemInHandRenderer instance,
         AbstractClientPlayer player,
-        float tickProgress,
-        float pitch,
+        float frameInterp,
+        float xRot,
         InteractionHand hand,
-        float swingProgress,
-        ItemStack item,
-        float equipProgress,
-        PoseStack matrices,
-        SubmitNodeCollector queue,
-        int light,
+        float attack,
+        ItemStack itemStack,
+        float inverseArmHeight,
+        PoseStack poseStack,
+        SubmitNodeCollector submitNodeCollector,
+        int lightCoords,
         Operation<Void> original
     ) {
         if (Create.ZAPPER_RENDER_HANDLER.onRenderPlayerHand(
-            item,
+            itemStack,
             minecraft,
             entityRenderDispatcher,
             instance,
-            matrices,
-            queue,
-            light,
-            tickProgress,
+            poseStack,
+            submitNodeCollector,
+            lightCoords,
+            frameInterp,
             hand,
-            equipProgress,
-            swingProgress
+            inverseArmHeight,
+            attack
         ) || Create.POTATO_CANNON_RENDER_HANDLER.onRenderPlayerHand(
-            item,
+            itemStack,
             minecraft,
             entityRenderDispatcher,
             instance,
-            matrices,
-            queue,
-            light,
-            tickProgress,
+            poseStack,
+            submitNodeCollector,
+            lightCoords,
+            frameInterp,
             hand,
-            equipProgress,
-            swingProgress
+            inverseArmHeight,
+            attack
         ) || ExtendoGripRenderHandler.onRenderPlayerHand(
-            item,
+            itemStack,
             minecraft,
             entityRenderDispatcher,
-            matrices,
-            queue,
-            light,
+            poseStack,
+            submitNodeCollector,
+            lightCoords,
             hand,
-            equipProgress,
-            swingProgress
+            inverseArmHeight,
+            attack
         )) {
             return;
         }
         original.call(
             instance,
             player,
-            tickProgress,
-            pitch,
+            frameInterp,
+            xRot,
             hand,
-            swingProgress,
-            item,
-            equipProgress,
-            matrices,
-            queue,
-            light
+            attack,
+            itemStack,
+            inverseArmHeight,
+            poseStack,
+            submitNodeCollector,
+            lightCoords
         );
     }
 

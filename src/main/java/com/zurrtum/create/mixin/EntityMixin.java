@@ -73,8 +73,13 @@ public abstract class EntityMixin implements SyncedDataHolder {
     }
 
     @Inject(method = "startRiding(Lnet/minecraft/world/entity/Entity;ZZ)Z", at = @At(value = "HEAD"), cancellable = true)
-    private void startRiding(Entity entity, boolean force, boolean emitEvent, CallbackInfoReturnable<Boolean> cir) {
-        if (CouplingHandler.preventEntitiesFromMoutingOccupiedCart((Entity) (Object) this, entity)) {
+    private void startRiding(
+        Entity entityToRide,
+        boolean force,
+        boolean sendEventAndTriggers,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        if (CouplingHandler.preventEntitiesFromMoutingOccupiedCart((Entity) (Object) this, entityToRide)) {
             cir.setReturnValue(false);
         }
     }
@@ -95,24 +100,24 @@ public abstract class EntityMixin implements SyncedDataHolder {
     }
 
     @WrapOperation(method = "spawnAtLocation(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private boolean captureDrops(ServerLevel world, Entity item, Operation<Boolean> original) {
-        Entity entity = (Entity) (Object) this;
-        if (AllSynchedDatas.CRUSH_DROP.get(entity)) {
-            item.setDeltaMovement(Vec3.ZERO);
+    private boolean captureDrops(ServerLevel world, Entity entity, Operation<Boolean> original) {
+        Entity self = (Entity) (Object) this;
+        if (AllSynchedDatas.CRUSH_DROP.get(self)) {
+            entity.setDeltaMovement(Vec3.ZERO);
         } else {
-            Optional<List<ItemStack>> value = AllSynchedDatas.CAPTURE_DROPS.get(entity);
+            Optional<List<ItemStack>> value = AllSynchedDatas.CAPTURE_DROPS.get(self);
             if (value.isPresent()) {
-                value.get().add(((ItemEntity) item).getItem());
+                value.get().add(((ItemEntity) entity).getItem());
                 return true;
             }
         }
-        return original.call(world, item);
+        return original.call(world, entity);
     }
 
     @Inject(method = "spawnSprintParticle()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getDeltaMovement()Lnet/minecraft/world/phys/Vec3;"), cancellable = true)
-    private void onRunningEffect(CallbackInfo ci, @Local BlockState state, @Local BlockPos pos) {
-        if (state.getBlock() instanceof RunningEffectControlBlock block) {
-            if (block.addRunningEffects(state, level, pos, (Entity) (Object) this)) {
+    private void onRunningEffect(CallbackInfo ci, @Local BlockState blockState, @Local BlockPos pos) {
+        if (blockState.getBlock() instanceof RunningEffectControlBlock block) {
+            if (block.addRunningEffects(blockState, level, pos, (Entity) (Object) this)) {
                 ci.cancel();
             }
         }

@@ -19,14 +19,18 @@ public abstract class TerrainParticleMixin {
     @WrapOperation(method = "<init>(Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDDLnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockStateModelSet;getParticleMaterial(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/resources/model/sprite/Material$Baked;"))
     private static Material.Baked onParticle(
         BlockStateModelSet models,
-        BlockState state,
+        BlockState blockState,
         Operation<Material.Baked> original,
-        @Local(argsOnly = true) ClientLevel world,
+        @Local(argsOnly = true) ClientLevel level,
         @Local(argsOnly = true) BlockPos pos
     ) {
-        BlockStateModel model = models.get(state);
+        BlockStateModel model = models.get(blockState);
         if (model instanceof WrapperBlockStateModel wrapper && wrapper.needUpdateTerrainParticle()) {
-            return wrapper.particleMaterialWithInfo(world, WrapperBlockStateModel.findPos(world, pos, state), state);
+            return wrapper.particleMaterialWithInfo(
+                level,
+                WrapperBlockStateModel.findPos(level, pos, blockState),
+                blockState
+            );
         } else {
             return model.particleMaterial();
         }

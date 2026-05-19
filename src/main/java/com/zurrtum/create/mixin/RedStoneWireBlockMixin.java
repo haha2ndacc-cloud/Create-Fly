@@ -12,9 +12,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(RedStoneWireBlock.class)
 public class RedStoneWireBlockMixin {
     @Inject(method = "shouldConnectTo(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z", at = @At("HEAD"), cancellable = true)
-    private static void connectsTo(BlockState state, Direction dir, CallbackInfoReturnable<Boolean> cir) {
-        if (state.getBlock() instanceof RedStoneConnectBlock block) {
-            cir.setReturnValue(block.canConnectRedstone(state, dir));
+    private static void connectsTo(BlockState blockState, Direction direction, CallbackInfoReturnable<Boolean> cir) {
+        if (blockState.getBlock() instanceof RedStoneConnectBlock block) {
+            cir.setReturnValue(block.canConnectRedstone(blockState, direction));
         }
     }
 }

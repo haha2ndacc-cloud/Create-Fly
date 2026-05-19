@@ -10,8 +10,10 @@ import net.minecraft.server.packs.*;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.KnownPack;
 import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.Pack.Metadata;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.ResourceMetadata;
+import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,14 +31,14 @@ import static com.zurrtum.create.Create.MOD_ID;
 @Mixin(ClientPackSource.class)
 public abstract class ClientPackSourceMixin {
     @Inject(method = "populatePackList(Ljava/util/function/BiConsumer;)V", at = @At("TAIL"))
-    private void loadResourcePack(BiConsumer<String, Function<String, Pack>> consumer, CallbackInfo ci) {
+    private void loadResourcePack(BiConsumer<String, Function<String, Pack>> discoveredPacks, CallbackInfo ci) {
         FabricLoader loader = FabricLoader.getInstance();
         ModContainer mod = loader.getModContainer(MOD_ID).orElseThrow();
         List<Path> rootPaths = mod.getRootPaths();
         ModMetadata metadata = mod.getMetadata();
         String version = metadata.getVersion().getFriendlyString();
         if (!loader.isModLoaded("fabric-api")) {
-            consumer.accept(
+            discoveredPacks.accept(
                 MOD_ID, id -> {
                     String directory = PackType.CLIENT_RESOURCES.getDirectory();
                     PackLocationInfo info = createInfo(id, metadata.getName(), id, directory, version);
@@ -59,7 +61,7 @@ public abstract class ClientPackSourceMixin {
             );
         }
         if (loader.isModLoaded("holdmyitems")) {
-            consumer.accept(
+            discoveredPacks.accept(
                 MOD_ID + "_holdmyitems", id -> {
                     String directory = "holdmyitems";
                     PackLocationInfo info = createInfo(id, "Create & Hold My Items", MOD_ID, directory, version);
@@ -69,7 +71,7 @@ public abstract class ClientPackSourceMixin {
                 }
             );
         }
-        consumer.accept(
+        discoveredPacks.accept(
             MOD_ID + "_legacy_copper", id -> {
                 String directory = "legacy_copper";
                 PackLocationInfo info = createInfo(id, "Create legacy copper", MOD_ID, directory, version);
@@ -118,12 +120,12 @@ public abstract class ClientPackSourceMixin {
         VanillaPackResources pack = builder.build(info);
         Pack.ResourcesSupplier packFactory = new Pack.ResourcesSupplier() {
             @Override
-            public PackResources openPrimary(PackLocationInfo info) {
+            public @NonNull PackResources openPrimary(@NonNull PackLocationInfo info) {
                 return pack;
             }
 
             @Override
-            public PackResources openFull(PackLocationInfo info, Pack.Metadata metadata) {
+            public @NonNull PackResources openFull(@NonNull PackLocationInfo info, @NonNull Metadata metadata) {
                 return pack;
             }
         };

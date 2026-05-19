@@ -27,10 +27,10 @@ public class ItemStackMixin {
     private void cacheState(
         UseOnContext context,
         CallbackInfoReturnable<InteractionResult> cir,
-        @Local Item item,
+        @Local Item usedItem,
         @Share("place") LocalRef<BlockPlaceContext> place
     ) {
-        if (item instanceof BlockItem) {
+        if (usedItem instanceof BlockItem) {
             Level world = context.getLevel();
             if (!world.isClientSide()) {
                 place.set(new BlockPlaceContext(context));

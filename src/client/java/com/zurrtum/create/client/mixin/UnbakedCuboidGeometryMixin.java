@@ -26,7 +26,7 @@ public class UnbakedCuboidGeometryMixin {
     private static BakedQuad bakeQuad(
         ModelBaker modelBaker,
         Vector3fc from,
-        Vector3fc to,
+        Vector3fc _to,
         CuboidFace face,
         Material.Baked material,
         Direction facing,
@@ -40,7 +40,7 @@ public class UnbakedCuboidGeometryMixin {
         BakedQuad quad = original.call(
             modelBaker,
             from,
-            to,
+            _to,
             face,
             material,
             facing,

@@ -1,14 +1,15 @@
 package com.zurrtum.create.client.flywheel.backend.engine.uniform;
 
+import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.zurrtum.create.client.flywheel.api.backend.RenderContext;
-import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.client.flywheel.backend.engine.indirect.DepthPyramid;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.Util;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.FogType;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Math;
 import org.joml.Matrix4f;
@@ -60,25 +61,28 @@ public final class FrameUniforms extends UniformWriter {
     }
 
     public static void update(RenderContext context) {
+        Minecraft mc = Minecraft.getInstance();
         long ptr = BUFFER.ptr();
         setPrev();
 
-        Vec3i renderOrigin = VisualizationManager.getOrThrow(context.level()).renderOrigin();
-        var camera = context.camera();
-        Vec3 cameraPos = camera.position();
+        Vec3i renderOrigin = context.visualizationManager().renderOrigin();
+        LevelRenderState levelRenderState = context.levelRenderState();
+        LevelInfoHolder levelInfoHolder = (LevelInfoHolder) levelRenderState;
+        CameraRenderState camera = levelRenderState.cameraRenderState;
+        Vec3 cameraPos = camera.pos;
         var camX = (float) (cameraPos.x - renderOrigin.getX());
         var camY = (float) (cameraPos.y - renderOrigin.getY());
         var camZ = (float) (cameraPos.z - renderOrigin.getZ());
 
-        VIEW.set(context.modelView());
+        VIEW.set(camera.viewRotationMatrix);
         VIEW.translate(-camX, -camY, -camZ);
         PROJECTION.set(context.projection());
         VIEW_PROJECTION.set(context.viewProjection());
         VIEW_PROJECTION.translate(-camX, -camY, -camZ);
 
         CAMERA_POS.set(camX, camY, camZ);
-        CAMERA_LOOK.set(camera.forwardVector());
-        CAMERA_ROT.set(camera.xRot(), camera.yRot());
+        CAMERA_LOOK.set(((CameraInfoHolder) camera).flywheel$forwardVector());
+        CAMERA_ROT.set(camera.xRot, camera.yRot);
 
         if (firstWrite) {
             setPrev();
@@ -91,7 +95,7 @@ public final class FrameUniforms extends UniformWriter {
 
         ptr += 96;
 
-        ptr = writeCullData(ptr);
+        ptr = writeCullData(ptr, mc.gameRenderer.mainRenderTarget(), camera);
 
         ptr = writeMatrices(ptr);
 
@@ -99,17 +103,14 @@ public final class FrameUniforms extends UniformWriter {
 
         ptr = writeCamera(ptr);
 
-        var window = Minecraft.getInstance().getWindow();
+        var window = mc.getWindow();
         ptr = writeVec2(ptr, window.getWidth(), window.getHeight());
         ptr = writeFloat(ptr, (float) window.getWidth() / (float) window.getHeight());
         // default line width: net.minecraft.client.renderer.RenderStateShard.LineStateShard
         ptr = writeFloat(ptr, Math.max(2.5F, (float) window.getWidth() / 1920.0F * 2.5F));
-        ptr = writeFloat(
-            ptr,
-            Minecraft.getInstance().gameRenderer.gameRenderState().levelRenderState.cameraRenderState.depthFar
-        );
+        ptr = writeFloat(ptr, camera.depthFar);
 
-        ptr = writeTime(ptr, context);
+        ptr = writeTime(ptr, levelInfoHolder.flywheel$ticks(), context.partialTick());
 
         ptr = writeCameraIn(ptr, camera);
 
@@ -159,9 +160,7 @@ public final class FrameUniforms extends UniformWriter {
         return ptr;
     }
 
-    private static long writeTime(long ptr, RenderContext context) {
-        long ticks = context.level().getGameTime();
-        float partialTick = context.partialTick();
+    private static long writeTime(long ptr, int ticks, float partialTick) {
         float renderTicks = ticks + partialTick;
         float renderSeconds = renderTicks / 20f;
         float systemSeconds = Util.getMillis() / 1000f;
@@ -176,29 +175,31 @@ public final class FrameUniforms extends UniformWriter {
         return ptr;
     }
 
-    private static long writeCameraIn(long ptr, Camera camera) {
-        if (!camera.isInitialized()) {
-            ptr = writeInt(ptr, 0);
-            ptr = writeInt(ptr, 0);
-            return ptr;
+    private static long writeCameraIn(long ptr, CameraRenderState camera) {
+        switch (camera.initialized ? camera.fogType : FogType.NONE) {
+            case WATER -> {
+                ptr = writeInt(ptr, 1);
+                ptr = writeInt(ptr, -1);
+            }
+            case LAVA -> {
+                ptr = writeInt(ptr, 2);
+                ptr = writeInt(ptr, -1);
+            }
+            default -> {
+                ptr = writeInt(ptr, 0);
+                ptr = writeInt(ptr, 0);
+            }
         }
-
-        Level level = camera.entity().level();
-        BlockPos blockPos = camera.blockPosition();
-        Vec3 cameraPos = camera.position();
-        return writeInFluidAndBlock(ptr, level, blockPos, cameraPos);
+        return ptr;
     }
 
-    private static long writeCullData(long ptr) {
-        var mc = Minecraft.getInstance();
-        var mainRenderTarget = mc.gameRenderer.mainRenderTarget();
-
+    private static long writeCullData(long ptr, RenderTarget mainRenderTarget, CameraRenderState camera) {
         int pyramidWidth = DepthPyramid.mip0Size(mainRenderTarget.width);
         int pyramidHeight = DepthPyramid.mip0Size(mainRenderTarget.height);
         int pyramidDepth = DepthPyramid.getImageMipLevels(pyramidWidth, pyramidHeight);
 
-        ptr = writeFloat(ptr, 0.05F); // zNear
-        ptr = writeFloat(ptr, mc.gameRenderer.gameRenderState().levelRenderState.cameraRenderState.depthFar); // zFar
+        ptr = writeFloat(ptr, Camera.PROJECTION_Z_NEAR); // zNear
+        ptr = writeFloat(ptr, camera.depthFar); // zFar
         ptr = writeFloat(ptr, PROJECTION.m00()); // P00
         ptr = writeFloat(ptr, PROJECTION.m11()); // P11
         ptr = writeFloat(ptr, pyramidWidth); // pyramidWidth

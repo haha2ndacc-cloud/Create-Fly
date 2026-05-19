@@ -1,17 +1,11 @@
 package com.zurrtum.create.client.flywheel.impl.event;
 
-import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
-import org.joml.Matrix4f;
+import net.minecraft.client.multiplayer.ClientLevel;
 import org.joml.Matrix4fc;
+import org.jspecify.annotations.Nullable;
 
 public interface RenderContextHolder {
-    void flywheel$updateRenderContext(
-        Matrix4fc modelView,
-        Matrix4f projection,
-        Camera camera,
-        DeltaTracker deltaTracker
-    );
+    void flywheel$updateRenderContext(@Nullable ClientLevel level, float partialTick);
 
-    void flywheel$resetRenderContext();
+    void flywheel$updateProjection(Matrix4fc projection);
 }

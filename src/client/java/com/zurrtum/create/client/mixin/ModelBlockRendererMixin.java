@@ -30,11 +30,11 @@ public class ModelBlockRendererMixin {
     private int getLuminance(
         BlockState state,
         Operation<Integer> original,
-        @Local(argsOnly = true) BlockAndTintGetter world,
+        @Local(argsOnly = true) BlockAndTintGetter level,
         @Local(argsOnly = true) BlockPos pos
     ) {
         if (state.getBlock() instanceof CopycatBlock block) {
-            return block.getLuminance(world, pos);
+            return block.getLuminance(level, pos);
         }
         return original.call(state);
     }
@@ -104,10 +104,10 @@ public class ModelBlockRendererMixin {
         Operation<Void> original,
         @Local(argsOnly = true) BlockAndTintGetter level,
         @Local(argsOnly = true) BlockPos pos,
-        @Local(argsOnly = true) BlockState state
+        @Local(argsOnly = true) BlockState blockState
     ) {
         if (model instanceof WrapperBlockStateModel wrapper) {
-            wrapper.addPartsWithInfo(level, pos, state, random, output);
+            wrapper.addPartsWithInfo(level, pos, blockState, random, output);
         } else {
             original.call(model, random, output);
         }

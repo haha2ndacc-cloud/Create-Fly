@@ -1,25 +1,22 @@
 package com.zurrtum.create.client.flywheel.api.backend;
 
-import net.minecraft.client.Camera;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.RenderBuffers;
+import com.zurrtum.create.client.flywheel.api.backend.Engine.CrumblingBlock;
+import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 import org.joml.Matrix4fc;
 
+import java.util.List;
+
 public interface RenderContext {
-    LevelRenderer renderer();
-
-    ClientLevel level();
-
-    RenderBuffers buffers();
-
-    Matrix4fc modelView();
+    LevelRenderState levelRenderState();
 
     Matrix4fc projection();
 
     Matrix4fc viewProjection();
 
-    Camera camera();
-
     float partialTick();
+
+    VisualizationManager visualizationManager();
+
+    List<CrumblingBlock> crumblingBlocks();
 }

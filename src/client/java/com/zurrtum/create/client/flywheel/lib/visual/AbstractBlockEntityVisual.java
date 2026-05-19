@@ -119,7 +119,7 @@ public abstract class AbstractBlockEntityVisual<T extends BlockEntity> extends A
      * @return {@code true} if this visual shouldn't be updated this frame based on its distance from the camera.
      */
     public boolean doDistanceLimitThisFrame(DynamicVisual.Context context) {
-        return !context.limiter().shouldUpdate(pos.distToCenterSqr(context.camera().position()));
+        return !context.limiter().shouldUpdate(pos.distToCenterSqr(context.camera().pos));
     }
 
     protected int computePackedLight() {

@@ -25,11 +25,11 @@ public abstract class NewMinecartBehaviorMixin extends MinecartBehavior {
         ServerLevel level,
         CallbackInfo ci,
         @Local TrackIteration trackIteration,
-        @Local BlockPos pos,
-        @Local BlockState state
+        @Local BlockPos currentPos,
+        @Local BlockState currentState
     ) {
-        if (trackIteration.firstIteration && state.getBlock() instanceof MinecartPassBlock block) {
-            block.onMinecartPass(state, level, pos, minecart);
+        if (trackIteration.firstIteration && currentState.getBlock() instanceof MinecartPassBlock block) {
+            block.onMinecartPass(currentState, level, currentPos, minecart);
         }
     }
 }

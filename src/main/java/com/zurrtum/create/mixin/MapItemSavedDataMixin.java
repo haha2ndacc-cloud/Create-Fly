@@ -93,13 +93,13 @@ public abstract class MapItemSavedDataMixin implements StationMapData {
     }
 
     @Shadow
-    protected abstract void removeDecoration(String id);
+    protected abstract void removeDecoration(String string);
 
     @Shadow
     protected abstract void setDecorationsDirty();
 
     @Shadow
-    public abstract boolean isTrackedCountOverLimit(int trackedCount);
+    public abstract boolean isTrackedCountOverLimit(int limit);
 
     @Override
     public boolean create$toggleStation(
@@ -137,8 +137,8 @@ public abstract class MapItemSavedDataMixin implements StationMapData {
     }
 
     @Inject(method = "checkBanners(Lnet/minecraft/world/level/BlockGetter;II)V", at = @At("RETURN"))
-    public void create$onCheckBanners(BlockGetter blockGetter, int x, int z, CallbackInfo ci) {
-        create$checkStations(blockGetter, x, z);
+    public void create$onCheckBanners(BlockGetter level, int x, int z, CallbackInfo ci) {
+        create$checkStations(level, x, z);
     }
 
     @Unique

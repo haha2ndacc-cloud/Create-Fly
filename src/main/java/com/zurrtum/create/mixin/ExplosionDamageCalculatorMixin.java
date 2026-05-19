@@ -17,11 +17,11 @@ public class ExplosionDamageCalculatorMixin {
     private float getBlastResistance(
         Block block,
         Operation<Float> original,
-        @Local(argsOnly = true) BlockGetter world,
+        @Local(argsOnly = true) BlockGetter level,
         @Local(argsOnly = true) BlockPos pos
     ) {
         if (block instanceof ResistanceControlBlock controlBlock) {
-            return controlBlock.getResistance(world, pos);
+            return controlBlock.getResistance(level, pos);
         }
         return original.call(block);
     }

@@ -30,10 +30,10 @@ public class BlockItemMixin {
     private SoundType checkSound(
         BlockState instance,
         Operation<SoundType> original,
-        @Local(argsOnly = true) BlockPlaceContext ctx,
+        @Local(argsOnly = true) BlockPlaceContext placeContext,
         @Share("group") LocalRef<ItemPlacementSoundContext> group
     ) {
-        if (ctx instanceof ItemPlacementSoundContext context) {
+        if (placeContext instanceof ItemPlacementSoundContext context) {
             group.set(context);
             return null;
         }
@@ -43,7 +43,7 @@ public class BlockItemMixin {
     @WrapOperation(method = "place(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/InteractionResult;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/BlockItem;getPlaceSound(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/sounds/SoundEvent;"))
     private SoundEvent getGroup(
         BlockItem instance,
-        BlockState state,
+        BlockState blockState,
         Operation<SoundEvent> original,
         @Share("group") LocalRef<ItemPlacementSoundContext> group
     ) {
@@ -54,7 +54,7 @@ public class BlockItemMixin {
                 return sound;
             }
         }
-        return original.call(instance, state);
+        return original.call(instance, blockState);
     }
 
     @WrapOperation(method = "place(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/InteractionResult;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/SoundType;getVolume()F"))

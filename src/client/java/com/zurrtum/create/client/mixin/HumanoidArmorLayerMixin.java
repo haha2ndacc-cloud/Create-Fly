@@ -28,17 +28,17 @@ public abstract class HumanoidArmorLayerMixin<S extends HumanoidRenderState, M e
         PoseStack poseStack,
         SubmitNodeCollector submitNodeCollector,
         ItemStack itemStack,
-        EquipmentSlot equipmentSlot,
-        int light,
-        S humanoidRenderState,
+        EquipmentSlot slot,
+        int lightCoords,
+        S state,
         CallbackInfo ci
     ) {
         if (itemStack.getItem() instanceof LayeredArmorItem item) {
             M model = getParentModel();
             LayerRenderState<S, M> layer = new LayerRenderState<>();
             layer.model = model;
-            layer.state = humanoidRenderState;
-            layer.light = light;
+            layer.state = state;
+            layer.light = lightCoords;
             submitNodeCollector.order(0)
                 .submitCustomGeometry(poseStack, RenderTypes.armorCutoutNoCull(item.getLayerTexture()), layer);
             if (itemStack.hasFoil()) {

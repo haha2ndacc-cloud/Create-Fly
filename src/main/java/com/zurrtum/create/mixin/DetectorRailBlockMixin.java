@@ -19,16 +19,16 @@ public class DetectorRailBlockMixin {
     private void updateNeighbor(
         Level world,
         BlockState state,
-        BlockPos neighborPos,
-        Block sourceBlock,
+        BlockPos pos,
+        Block changedBlock,
         Orientation orientation,
-        boolean notify,
+        boolean movedByPiston,
         Operation<Void> original,
-        @Local(argsOnly = true) BlockPos pos
+        @Local(argsOnly = true) BlockPos fromPos
     ) {
         if (state.getBlock() instanceof NeighborUpdateListeningBlock block) {
-            block.neighborUpdate(state, world, neighborPos, sourceBlock, pos, notify);
+            block.neighborUpdate(state, world, pos, changedBlock, fromPos, movedByPiston);
         }
-        original.call(world, state, neighborPos, sourceBlock, orientation, notify);
+        original.call(world, state, pos, changedBlock, orientation, movedByPiston);
     }
 }

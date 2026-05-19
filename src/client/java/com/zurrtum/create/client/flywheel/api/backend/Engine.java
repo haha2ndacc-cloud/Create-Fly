@@ -4,7 +4,7 @@ import com.zurrtum.create.client.flywheel.api.instance.Instance;
 import com.zurrtum.create.client.flywheel.api.task.Plan;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationContext;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import net.minecraft.client.Camera;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.Vec3i;
@@ -42,7 +42,7 @@ public interface Engine {
      *
      * @return {@code true} if the render origin changed, {@code false} otherwise.
      */
-    boolean updateRenderOrigin(Camera camera);
+    boolean updateRenderOrigin(CameraRenderState camera);
 
     /**
      * Assign the set of sections that visuals have requested GPU light for.
@@ -72,10 +72,9 @@ public interface Engine {
      * <p>This method is guaranteed to be called after {@link #render} for the current
      * level render. This method is guaranteed to be called on the render thread.
      *
-     * @param context         The context for the current level render.
-     * @param crumblingBlocks The instances to render. This list is never empty.
+     * @param context The context for the current level render.
      */
-    void renderCrumbling(RenderContext context, List<CrumblingBlock> crumblingBlocks);
+    void renderCrumbling(RenderContext context);
 
     /**
      * Free all resources associated with this engine.

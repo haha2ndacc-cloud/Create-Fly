@@ -81,7 +81,7 @@ public class ServerPlayerGameModeMixin {
         BlockPos pos,
         ServerboundPlayerActionPacket.Action action,
         Direction direction,
-        int worldHeight,
+        int maxY,
         int sequence,
         CallbackInfo ci
     ) {
@@ -122,15 +122,15 @@ public class ServerPlayerGameModeMixin {
     @WrapOperation(method = "destroyBlock(Lnet/minecraft/core/BlockPos;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;mineBlock(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)V"))
     private void postMine(
         ItemStack stack,
-        Level world,
+        Level level,
         BlockState state,
         BlockPos pos,
-        Player miner,
+        Player owner,
         Operation<Void> original
     ) {
-        original.call(stack, world, state, pos, miner);
-        if (!world.isClientSide() && state.getDestroySpeed(world, pos) != 0) {
-            ExtendoGripItem.postMine(miner, stack);
+        original.call(stack, level, state, pos, owner);
+        if (!level.isClientSide() && state.getDestroySpeed(level, pos) != 0) {
+            ExtendoGripItem.postMine(owner, stack);
         }
     }
 
@@ -153,11 +153,11 @@ public class ServerPlayerGameModeMixin {
         BlockPos pos,
         boolean move,
         Operation<Boolean> original,
-        @Local(ordinal = 0) BlockState state,
+        @Local(ordinal = 0) BlockState adjustedState,
         @Local Block block
     ) {
         if (block instanceof BreakControlBlock controlBlock && !controlBlock.onDestroyedByPlayer(
-            state,
+            adjustedState,
             world,
             pos,
             player
@@ -166,7 +166,7 @@ public class ServerPlayerGameModeMixin {
         }
         boolean remove = original.call(world, pos, move);
         if (remove) {
-            SymmetryHandler.onBlockDestroyed(player, pos, state);
+            SymmetryHandler.onBlockDestroyed(player, pos, adjustedState);
         }
         return remove;
     }

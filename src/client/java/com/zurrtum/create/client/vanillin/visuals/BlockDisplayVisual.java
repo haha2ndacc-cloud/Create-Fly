@@ -8,7 +8,7 @@ import com.zurrtum.create.client.flywheel.lib.model.Models;
 import com.zurrtum.create.client.flywheel.lib.visual.AbstractEntityVisual;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
 import com.zurrtum.create.client.flywheel.lib.visual.component.ShadowComponent;
-import net.minecraft.client.Camera;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
@@ -77,7 +77,7 @@ public class BlockDisplayVisual extends AbstractEntityVisual<Display.BlockDispla
         );
 
         float partialTick = ctx.partialTick();
-        Camera camera = ctx.camera();
+        CameraRenderState camera = ctx.camera();
         switch (renderState.billboardConstraints()) {
             case FIXED:
                 instance.pose.rotateYXZ(
@@ -113,12 +113,12 @@ public class BlockDisplayVisual extends AbstractEntityVisual<Display.BlockDispla
         instance.mul(transformation.getMatrix()).light(j).setChanged();
     }
 
-    private static float cameraYrot(Camera camera) {
-        return camera.yRot() - 180.0F;
+    private static float cameraYrot(CameraRenderState camera) {
+        return camera.yRot - 180.0F;
     }
 
-    private static float cameraXRot(Camera camera) {
-        return -camera.xRot();
+    private static float cameraXRot(CameraRenderState camera) {
+        return -camera.xRot;
     }
 
     private static float entityYRot(Entity entity, float partialTick) {

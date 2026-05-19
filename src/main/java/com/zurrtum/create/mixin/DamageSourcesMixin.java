@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(DamageSources.class)
 public class DamageSourcesMixin {
     @Inject(method = "<init>(Lnet/minecraft/core/RegistryAccess;)V", at = @At("TAIL"))
-    private void register(RegistryAccess registryManager, CallbackInfo ci) {
-        AllDamageSources.register(registryManager);
+    private void register(RegistryAccess registries, CallbackInfo ci) {
+        AllDamageSources.register(registries);
     }
 }

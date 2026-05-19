@@ -49,18 +49,18 @@ public class ClientPacketListenerMixin {
     }
 
     @Inject(method = "sendCommand(Ljava/lang/String;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/chat/SignableCommand;arguments()Ljava/util/List;"), cancellable = true)
-    private void checkCommand(CallbackInfo ci, @Local SignableCommand<ClientSuggestionProvider> command) {
-        if (command == null) {
+    private void checkCommand(CallbackInfo ci, @Local SignableCommand<ClientSuggestionProvider> signableCommand) {
+        if (signableCommand == null) {
             ci.cancel();
         }
     }
 
     @WrapOperation(method = "lambda$handleBlockEntityData$0(Lnet/minecraft/network/protocol/game/ClientboundBlockEntityDataPacket;Lnet/minecraft/world/level/block/entity/BlockEntity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;loadWithComponents(Lnet/minecraft/world/level/storage/ValueInput;)V"))
-    private void onDataPacket(BlockEntity blockEntity, ValueInput view, Operation<Void> original) {
+    private void onDataPacket(BlockEntity blockEntity, ValueInput input, Operation<Void> original) {
         if (blockEntity instanceof SyncedBlockEntity syncedBlockEntity) {
-            syncedBlockEntity.onDataPacket(view);
+            syncedBlockEntity.onDataPacket(input);
         } else {
-            original.call(blockEntity, view);
+            original.call(blockEntity, input);
         }
     }
 }

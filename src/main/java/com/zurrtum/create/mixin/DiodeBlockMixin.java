@@ -15,15 +15,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class DiodeBlockMixin {
     @Inject(method = "updateNeighborsInFront(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;neighborChanged(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/level/redstone/Orientation;)V"))
     private void updateNeighbor(
-        Level world,
+        Level level,
         BlockPos pos,
-        BlockState sourceState,
+        BlockState state,
         CallbackInfo ci,
-        @Local(ordinal = 1) BlockPos neighborPos
+        @Local(ordinal = 1) BlockPos oppositePos
     ) {
-        BlockState state = world.getBlockState(neighborPos);
-        if (state.getBlock() instanceof NeighborUpdateListeningBlock block) {
-            block.neighborUpdate(state, world, neighborPos, (DiodeBlock) (Object) this, pos, false);
+        BlockState neighborState = level.getBlockState(oppositePos);
+        if (neighborState.getBlock() instanceof NeighborUpdateListeningBlock block) {
+            block.neighborUpdate(neighborState, level, oppositePos, (DiodeBlock) (Object) this, pos, false);
         }
     }
 }

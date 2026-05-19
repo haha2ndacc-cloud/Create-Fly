@@ -27,12 +27,12 @@ public class SignBlockEntityMixin implements DisplayHolder {
     }
 
     @Inject(method = "saveAdditional(Lnet/minecraft/world/level/storage/ValueOutput;)V", at = @At("TAIL"))
-    private void writeData(ValueOutput view, CallbackInfo ci) {
-        writeDisplayLink(view);
+    private void writeData(ValueOutput output, CallbackInfo ci) {
+        writeDisplayLink(output);
     }
 
     @Inject(method = "loadAdditional(Lnet/minecraft/world/level/storage/ValueInput;)V", at = @At("TAIL"))
-    private void readData(ValueInput view, CallbackInfo ci) {
-        readDisplayLink(view);
+    private void readData(ValueInput input, CallbackInfo ci) {
+        readDisplayLink(input);
     }
 }

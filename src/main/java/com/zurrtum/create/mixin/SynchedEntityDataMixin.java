@@ -21,10 +21,10 @@ public class SynchedEntityDataMixin {
 
     @Inject(method = "assignValues(Ljava/util/List;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/syncher/SyncedDataHolder;onSyncedDataUpdated(Lnet/minecraft/network/syncher/EntityDataAccessor;)V"))
     private void onTrackedDataSet(
-        List<SynchedEntityData.DataValue<?>> entries,
+        List<SynchedEntityData.DataValue<?>> items,
         CallbackInfo ci,
-        @Local SynchedEntityData.DataValue<?> serializedEntry
+        @Local SynchedEntityData.DataValue<?> item
     ) {
-        AllSynchedDatas.onData(entity, serializedEntry);
+        AllSynchedDatas.onData(entity, item);
     }
 }

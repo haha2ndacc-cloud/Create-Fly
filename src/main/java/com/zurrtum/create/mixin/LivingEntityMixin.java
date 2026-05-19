@@ -64,9 +64,9 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     @WrapOperation(method = "travelInAir(Lnet/minecraft/world/phys/Vec3;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;getFriction()F"))
-    private float getSlipperiness(Block block, Operation<Float> original, @Local BlockPos pos) {
+    private float getSlipperiness(Block block, Operation<Float> original, @Local BlockPos posBelow) {
         if (block instanceof SlipperinessControlBlock controlBlock) {
-            return controlBlock.getSlipperiness(level(), pos);
+            return controlBlock.getSlipperiness(level(), posBelow);
         }
         return original.call(block);
     }
@@ -76,33 +76,29 @@ public abstract class LivingEntityMixin extends Entity {
         LivingEntity entity,
         TagKey<Fluid> tagKey,
         Operation<Boolean> original,
-        @Local ServerLevel serverWorld
+        @Local ServerLevel level
     ) {
         if (original.call(entity, tagKey)) {
             return true;
         }
         if (entity instanceof ServerPlayer serverPlayer && !serverPlayer.getAbilities().invulnerable && entity.isInLava()) {
-            DivingHelmetItem.breatheInLava(serverPlayer, serverWorld);
+            DivingHelmetItem.breatheInLava(serverPlayer, level);
         }
         return false;
     }
 
     @WrapOperation(method = "baseTick()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffectUtil;hasWaterBreathing(Lnet/minecraft/world/entity/LivingEntity;)Z"))
-    private boolean canBreatheInWater(
-        LivingEntity entity,
-        Operation<Boolean> original,
-        @Local ServerLevel serverWorld
-    ) {
-        if (original.call(entity)) {
+    private boolean canBreatheInWater(LivingEntity mob, Operation<Boolean> original, @Local ServerLevel level) {
+        if (original.call(mob)) {
             return true;
         }
-        if (entity instanceof ServerPlayer serverPlayer && !serverPlayer.getAbilities().invulnerable) {
-            return DivingHelmetItem.breatheUnderwater(serverPlayer, serverWorld);
+        if (mob instanceof ServerPlayer serverPlayer && !serverPlayer.getAbilities().invulnerable) {
+            return DivingHelmetItem.breatheUnderwater(serverPlayer, level);
         }
         return false;
     }
 
-    @Inject(method = "collectEquipmentChanges()Ljava/util/Map;", at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;"))
+    @Inject(method = "collectEquipmentChanges(Ljava/util/Map;)Ljava/util/Map;", at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;"))
     private void onLivingEquipmentChange(CallbackInfoReturnable<Map<EquipmentSlot, ItemStack>> cir) {
         if (((Object) this) instanceof Player player) {
             CardboardArmorHandler.playerChangesEquipment(player);
@@ -124,7 +120,7 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @Inject(method = "travelInLava(Lnet/minecraft/world/phys/Vec3;DZD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getFluidHeight(Lnet/minecraft/tags/TagKey;)D"))
+    @Inject(method = "travelInLava(Lnet/minecraft/world/phys/Vec3;DZD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isInShallowFluid(Lnet/minecraft/tags/TagKey;)Z"))
     private void onTravelInFluid(
         Vec3 input,
         double baseGravity,
@@ -153,7 +149,7 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     @Inject(method = "dropExperience(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ExperienceOrb;award(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/phys/Vec3;I)V"), cancellable = true)
-    private void onDropExperience(ServerLevel world, Entity attacker, CallbackInfo ci) {
+    private void onDropExperience(ServerLevel level, Entity killer, CallbackInfo ci) {
         if (getLastHurtByPlayer() instanceof DeployerPlayer) {
             ci.cancel();
         }
@@ -161,15 +157,15 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "dropAllDeathLoot(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;)V", at = @At(value = "HEAD"))
     private void onDropPre(
-        ServerLevel world,
-        DamageSource damageSource,
+        ServerLevel level,
+        DamageSource source,
         CallbackInfo ci,
         @Share("handler") LocalIntRef handler
     ) {
-        if (damageSource.is(AllDamageTypes.CRUSH)) {
+        if (source.is(AllDamageTypes.CRUSH)) {
             AllSynchedDatas.CRUSH_DROP.set(this, true);
             handler.set(1);
-        } else if (damageSource.getEntity() instanceof DeployerPlayer) {
+        } else if (source.getEntity() instanceof DeployerPlayer) {
             AllSynchedDatas.CAPTURE_DROPS.set(this, Optional.of(new ArrayList<>()));
             handler.set(2);
         }
@@ -177,15 +173,15 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "dropAllDeathLoot(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;)V", at = @At(value = "TAIL"))
     private void onDropPost(
-        ServerLevel world,
-        DamageSource damageSource,
+        ServerLevel level,
+        DamageSource source,
         CallbackInfo ci,
         @Share("handler") LocalIntRef handler
     ) {
         switch (handler.get()) {
             case 1 -> AllSynchedDatas.CRUSH_DROP.set(this, false);
             case 2 -> AllSynchedDatas.CAPTURE_DROPS.get(this).ifPresent(drops -> {
-                Inventory inventory = ((DeployerPlayer) damageSource.getEntity()).cast().getInventory();
+                Inventory inventory = ((DeployerPlayer) source.getEntity()).cast().getInventory();
                 drops.forEach(inventory::placeItemBackInInventory);
                 AllSynchedDatas.CAPTURE_DROPS.set(this, Optional.empty());
             });
@@ -197,20 +193,20 @@ public abstract class LivingEntityMixin extends Entity {
         BlockState state,
         Operation<Boolean> original,
         @Local(argsOnly = true) BlockPos pos,
-        @Local ServerLevel world,
-        @Local(ordinal = 1) double distance
+        @Local ServerLevel level,
+        @Local(ordinal = 1) double power
     ) {
         if (original.call(state)) {
             return true;
         }
         if (state.getBlock() instanceof LandingEffectControlBlock block) {
-            return block.addLandingEffects(state, world, pos, (LivingEntity) (Object) this, distance);
+            return block.addLandingEffects(state, level, pos, (LivingEntity) (Object) this, power);
         }
         return false;
     }
 
     @Inject(method = "swing(Lnet/minecraft/world/InteractionHand;Z)V", at = @At("HEAD"), cancellable = true)
-    private void swingHand(InteractionHand hand, boolean fromServerPlayer, CallbackInfo ci) {
+    private void swingHand(InteractionHand hand, boolean sendToSwingingEntity, CallbackInfo ci) {
         ItemStack stack = getItemInHand(hand);
         if (stack.getItem() instanceof SwingControlItem item) {
             if (item.onEntitySwing(stack, (LivingEntity) (Object) this, hand)) {
@@ -220,8 +216,8 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     @Inject(method = "getVisibilityPercent(Lnet/minecraft/world/entity/Entity;)D", at = @At("HEAD"), cancellable = true)
-    private void getAttackDistanceScalingFactor(Entity entity, CallbackInfoReturnable<Double> cir) {
-        if (CardboardArmorHandler.testForStealth(entity)) {
+    private void getAttackDistanceScalingFactor(Entity targetingEntity, CallbackInfoReturnable<Double> cir) {
+        if (CardboardArmorHandler.testForStealth(targetingEntity)) {
             cir.setReturnValue(0d);
         }
     }

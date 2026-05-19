@@ -16,8 +16,8 @@ public class GlStateManagerMixin {
     }
 
     @Inject(method = "_glBindVertexArray(I)V", at = @At("RETURN"))
-    private static void flywheel$onBindVertexArray(int array, CallbackInfo ci) {
-        GlStateTracker._setVertexArray(array);
+    private static void flywheel$onBindVertexArray(int arrayId, CallbackInfo ci) {
+        GlStateTracker._setVertexArray(arrayId);
     }
 
     @Inject(method = "_glUseProgram(I)V", at = @At("RETURN"))

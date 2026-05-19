@@ -21,13 +21,13 @@ public class KeyboardHandlerMixin {
     private Minecraft minecraft;
 
     @Inject(method = "keyPress(JILnet/minecraft/client/input/KeyEvent;)V", at = @At(value = "RETURN", ordinal = 5))
-    private void onKeyReleased(long window, int action, KeyEvent input, CallbackInfo ci) {
-        onKey(input, false);
+    private void onKeyReleased(long handle, int action, KeyEvent event, CallbackInfo ci) {
+        onKey(event, false);
     }
 
     @Inject(method = "keyPress(JILnet/minecraft/client/input/KeyEvent;)V", at = @At(value = "TAIL"))
-    private void onKey(long window, int action, KeyEvent input, CallbackInfo ci) {
-        onKey(input, true);
+    private void onKey(long handle, int action, KeyEvent event, CallbackInfo ci) {
+        onKey(event, true);
     }
 
     @Unique

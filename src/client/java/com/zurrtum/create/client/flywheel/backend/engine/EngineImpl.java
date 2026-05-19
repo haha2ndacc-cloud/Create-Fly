@@ -17,15 +17,13 @@ import com.zurrtum.create.client.flywheel.backend.engine.embed.EnvironmentStorag
 import com.zurrtum.create.client.flywheel.backend.engine.uniform.Uniforms;
 import com.zurrtum.create.client.flywheel.backend.gl.GlStateTracker;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import net.minecraft.client.Camera;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.List;
 
 public class EngineImpl implements Engine {
     private final DrawManager<? extends AbstractInstancer<?>> drawManager;
@@ -62,8 +60,8 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public boolean updateRenderOrigin(Camera camera) {
-        Vec3 cameraPos = camera.position();
+    public boolean updateRenderOrigin(CameraRenderState camera) {
+        Vec3 cameraPos = camera.pos;
         double dx = renderOrigin.getX() - cameraPos.x;
         double dy = renderOrigin.getY() - cameraPos.y;
         double dz = renderOrigin.getZ() - cameraPos.z;
@@ -102,9 +100,9 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public void renderCrumbling(RenderContext context, List<CrumblingBlock> crumblingBlocks) {
+    public void renderCrumbling(RenderContext context) {
         try (var state = GlStateTracker.getRestoreState()) {
-            drawManager.renderCrumbling(crumblingBlocks);
+            drawManager.renderCrumbling(context.crumblingBlocks());
         } catch (Exception e) {
             FlwBackend.LOGGER.error("Falling back", e);
             triggerFallback();

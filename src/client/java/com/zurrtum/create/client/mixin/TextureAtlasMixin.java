@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TextureAtlas.class)
 public class TextureAtlasMixin {
     @Inject(method = "upload(Lnet/minecraft/client/renderer/texture/SpriteLoader$Preparations;)V", at = @At("TAIL"))
-    private void onTextureStitchPost(SpriteLoader.Preparations stitchResult, CallbackInfo ci) {
+    private void onTextureStitchPost(SpriteLoader.Preparations preparations, CallbackInfo ci) {
         StitchedSprite.onTextureStitchPost((TextureAtlas) (Object) this);
     }
 }

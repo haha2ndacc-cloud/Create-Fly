@@ -23,6 +23,7 @@ import net.minecraft.server.WorldStem;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.progress.LevelLoadListener;
+import net.minecraft.server.notifications.NotificationManager;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gamerules.GameRules;
@@ -44,7 +45,7 @@ public abstract class MinecraftServerMixin {
     public abstract RegistryAccess.Frozen registryAccess();
 
     @Inject(method = "tickServer(Ljava/util/function/BooleanSupplier;)V", at = @At("TAIL"))
-    void tick(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
+    void tick(BooleanSupplier haveTime, CallbackInfo ci) {
         MinecraftServer server = (MinecraftServer) (Object) this;
         Create.SCHEMATIC_RECEIVER.tick();
         ServerSpeedProvider.serverTick(server);
@@ -59,14 +60,14 @@ public abstract class MinecraftServerMixin {
     }
 
     @Inject(method = "tickChildren(Ljava/util/function/BooleanSupplier;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;tick(Ljava/util/function/BooleanSupplier;)V", shift = At.Shift.AFTER))
-    private void onServerWorldTick(BooleanSupplier shouldKeepTicking, CallbackInfo ci, @Local ServerLevel world) {
-        ContraptionHandler.tick(world);
-        CapabilityMinecartController.tick(world);
-        CouplingPhysics.tick(world);
-        LinkedControllerServerHandler.tick(world);
-        ControlsServerHandler.tick(world);
-        Create.RAILWAYS.tick(world);
-        Create.LOGISTICS.tick(world);
+    private void onServerWorldTick(BooleanSupplier haveTime, CallbackInfo ci, @Local ServerLevel level) {
+        ContraptionHandler.tick(level);
+        CapabilityMinecartController.tick(level);
+        CouplingPhysics.tick(level);
+        LinkedControllerServerHandler.tick(level);
+        ControlsServerHandler.tick(level);
+        Create.RAILWAYS.tick(level);
+        Create.LOGISTICS.tick(level);
     }
 
     @WrapOperation(method = "createLevels()V", at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"))
@@ -79,18 +80,18 @@ public abstract class MinecraftServerMixin {
     }
 
     @Inject(method = "createLevels()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/ServerLevelData;isInitialized()Z"))
-    private void onLoadOverworld(CallbackInfo ci, @Local ServerLevel world) {
+    private void onLoadOverworld(CallbackInfo ci) {
         MinecraftServer server = (MinecraftServer) (Object) this;
         Create.RAILWAYS.levelLoaded(server);
         Create.LOGISTICS.levelLoaded(server);
     }
 
     @Inject(method = "stopServer()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;close()V"))
-    private void onUnload(CallbackInfo ci, @Local ServerLevel world) {
-        Create.REDSTONE_LINK_NETWORK_HANDLER.onUnloadWorld(world);
-        Create.TORQUE_PROPAGATOR.onUnloadWorld(world);
-        WorldAttached.invalidateWorld(world);
-        CobbleGenOptimisation.invalidateWorld(world);
+    private void onUnload(CallbackInfo ci, @Local ServerLevel level) {
+        Create.REDSTONE_LINK_NETWORK_HANDLER.onUnloadWorld(level);
+        Create.TORQUE_PROPAGATOR.onUnloadWorld(level);
+        WorldAttached.invalidateWorld(level);
+        CobbleGenOptimisation.invalidateWorld(level);
     }
 
     @Inject(method = "runServer()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;onServerExit()V"))
@@ -98,6 +99,7 @@ public abstract class MinecraftServerMixin {
         Create.SERVER = null;
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/LayeredRegistryAccess;compositeAccess()Lnet/minecraft/core/RegistryAccess$Frozen;", ordinal = 0))
     private void addBiomeFeatures(
         Thread serverThread,
@@ -110,6 +112,7 @@ public abstract class MinecraftServerMixin {
         Services services,
         LevelLoadListener levelLoadListener,
         boolean propagatesCrashes,
+        NotificationManager notificationManager,
         CallbackInfo ci
     ) {
         if ((Object) this instanceof DedicatedServer) {

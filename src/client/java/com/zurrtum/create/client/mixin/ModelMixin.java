@@ -20,23 +20,23 @@ public abstract class ModelMixin {
 
     @Inject(method = "renderToBuffer(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V", at = @At("HEAD"), cancellable = true)
     public void render(
-        PoseStack matrices,
-        VertexConsumer vertices,
-        int light,
-        int overlay,
+        PoseStack poseStack,
+        VertexConsumer buffer,
+        int lightCoords,
+        int overlayCoords,
         int color,
         CallbackInfo ci
     ) {
-        if (vertices instanceof ItemMeshEmitter emitter) {
-            emitter.emit(root(), matrices, null, null, light, overlay, color);
+        if (buffer instanceof ItemMeshEmitter emitter) {
+            emitter.emit(root(), poseStack, null, null, lightCoords, overlayCoords, color);
             ci.cancel();
-        } else if (vertices instanceof SpriteCoordinateExpander consumer) {
+        } else if (buffer instanceof SpriteCoordinateExpander consumer) {
             if (consumer.delegate instanceof ItemMeshEmitter emitter) {
-                emitter.emit(root(), matrices, consumer.sprite, null, light, overlay, color);
+                emitter.emit(root(), poseStack, consumer.sprite, null, lightCoords, overlayCoords, color);
                 ci.cancel();
             }
-        } else if (vertices instanceof DualVertexConsumer dual) {
-            dual.emit(root(), matrices, null, light, overlay, color);
+        } else if (buffer instanceof DualVertexConsumer dual) {
+            dual.emit(root(), poseStack, null, lightCoords, overlayCoords, color);
             ci.cancel();
         }
     }

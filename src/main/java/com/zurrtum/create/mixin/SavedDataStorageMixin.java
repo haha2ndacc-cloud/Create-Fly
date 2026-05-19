@@ -14,16 +14,16 @@ public class SavedDataStorageMixin {
     @WrapOperation(method = "readTagFromDisk(Ljava/nio/file/Path;Lnet/minecraft/util/datafix/DataFixTypes;I)Lnet/minecraft/nbt/CompoundTag;", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/datafix/DataFixTypes;update(Lcom/mojang/datafixers/DataFixer;Lnet/minecraft/nbt/CompoundTag;II)Lnet/minecraft/nbt/CompoundTag;"))
     private CompoundTag handleNullDataFixType(
         DataFixTypes dataFixTypes,
-        DataFixer dataFixer,
-        CompoundTag nbt,
-        int oldVersion,
-        int newVersion,
+        DataFixer fixer,
+        CompoundTag tag,
+        int fromVersion,
+        int toVersion,
         Operation<CompoundTag> original
     ) {
         if (dataFixTypes == null) {
-            return nbt;
+            return tag;
         }
 
-        return original.call(dataFixTypes, dataFixer, nbt, oldVersion, newVersion);
+        return original.call(dataFixTypes, fixer, tag, fromVersion, toVersion);
     }
 }

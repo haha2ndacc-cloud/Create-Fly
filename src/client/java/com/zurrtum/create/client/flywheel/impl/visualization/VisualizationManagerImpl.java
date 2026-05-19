@@ -27,18 +27,20 @@ import com.zurrtum.create.client.flywheel.lib.task.MapContextPlan;
 import com.zurrtum.create.client.flywheel.lib.task.NestedPlan;
 import com.zurrtum.create.client.flywheel.lib.task.SimplePlan;
 import com.zurrtum.create.client.flywheel.lib.util.LevelAttached;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.state.level.BlockBreakingRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.Vec3i;
-import net.minecraft.server.level.BlockDestructionProgress;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Contract;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
@@ -46,7 +48,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedSet;
 
 /**
  * A manager class for a single level where visualization is supported.
@@ -113,8 +114,8 @@ public class VisualizationManagerImpl implements VisualizationManager {
                     effects.framePlan(visualizationContext)
                 ));
 
-            framePlan = IfElsePlan.on((RenderContext ctx) -> engine.updateRenderOrigin(ctx.camera())).ifTrue(recreate)
-                .ifFalse(update).plan().then(SimplePlan.of(() -> {
+            framePlan = IfElsePlan.on((RenderContext ctx) -> engine.updateRenderOrigin(ctx.levelRenderState().cameraRenderState))
+                .ifTrue(recreate).ifFalse(update).plan().then(SimplePlan.of(() -> {
                     if (blockEntities.areGpuLightSectionsDirty() || entities.areGpuLightSectionsDirty() || effects.areGpuLightSectionsDirty()) {
                         var out = new LongOpenHashSet();
                         out.addAll(blockEntities.gpuLightSections());
@@ -133,7 +134,8 @@ public class VisualizationManagerImpl implements VisualizationManager {
 
         private DynamicVisual.Context createVisualFrameContext(RenderContext ctx) {
             Vec3i renderOrigin = engine.renderOrigin();
-            var cameraPos = ctx.camera().position();
+            CameraRenderState camera = ctx.levelRenderState().cameraRenderState;
+            var cameraPos = camera.pos;
 
             Matrix4f viewProjection = new Matrix4f(ctx.viewProjection());
             viewProjection.translate(
@@ -143,7 +145,7 @@ public class VisualizationManagerImpl implements VisualizationManager {
             );
             FrustumIntersection frustum = new FrustumIntersection(viewProjection);
 
-            return new DynamicVisualContextImpl(ctx.camera(), frustum, ctx.partialTick(), frameLimiter);
+            return new DynamicVisualContextImpl(camera, frustum, ctx.partialTick(), frameLimiter);
         }
     }
 
@@ -278,55 +280,47 @@ public class VisualizationManagerImpl implements VisualizationManager {
         lateInit().engine.render(context);
     }
 
-    private void renderCrumbling(
-        RenderContext context,
-        Long2ObjectMap<SortedSet<BlockDestructionProgress>> destructionProgress
+    @Override
+    public void collectCrumblingBlocks(
+        List<BlockBreakingRenderState> destructionProgress,
+        List<CrumblingBlock> crumblingBlocks
     ) {
         if (destructionProgress.isEmpty()) {
             return;
         }
+        for (BlockBreakingRenderState entry : destructionProgress) {
+            BlockState state = entry.blockState();
 
-        List<CrumblingBlock> crumblingBlocks = new ArrayList<>();
+            if (state.getRenderShape() == RenderShape.MODEL) {
+                BlockPos pos = entry.blockPos();
 
-        for (var entry : destructionProgress.long2ObjectEntrySet()) {
-            var set = entry.getValue();
-            if (set == null || set.isEmpty()) {
-                // Nothing to do if there's no crumbling.
-                continue;
-            }
+                var visual = blockEntities.getStorage().visualAtPos(pos.asLong());
 
-            var visual = blockEntities.getStorage().visualAtPos(entry.getLongKey());
-
-            if (visual == null) {
-                // The block doesn't have a visual, this is probably the common case.
-                continue;
-            }
-
-            List<Instance> instances = new ArrayList<>();
-
-            visual.collectCrumblingInstances(instance -> {
-                if (instance != null) {
-                    instances.add(instance);
+                if (visual == null) {
+                    // The block doesn't have a visual, this is probably the common case.
+                    continue;
                 }
-            });
 
-            if (instances.isEmpty()) {
-                // The visual doesn't want to render anything crumbling.
-                continue;
+                List<Instance> instances = new ArrayList<>();
+
+                visual.collectCrumblingInstances(instance -> {
+                    if (instance != null) {
+                        instances.add(instance);
+                    }
+                });
+
+                if (instances.isEmpty()) {
+                    // The visual doesn't want to render anything crumbling.
+                    continue;
+                }
+
+                crumblingBlocks.add(new CrumblingBlockImpl(pos, entry.progress(), instances));
             }
-
-            var maxDestruction = set.last();
-
-            crumblingBlocks.add(new CrumblingBlockImpl(
-                maxDestruction.getPos(),
-                maxDestruction.getProgress(),
-                instances
-            ));
         }
+    }
 
-        if (!crumblingBlocks.isEmpty()) {
-            lateInit().engine.renderCrumbling(context, crumblingBlocks);
-        }
+    private void renderCrumbling(RenderContext context) {
+        lateInit().engine.renderCrumbling(context);
     }
 
     public void onLightUpdate(SectionPos sectionPos, LightLayer layer) {
@@ -376,16 +370,13 @@ public class VisualizationManagerImpl implements VisualizationManager {
         }
 
         @Override
-        public void afterEntities(RenderContext ctx) {
+        public void beforeSolid(RenderContext ctx) {
             render(ctx);
         }
 
         @Override
-        public void beforeCrumbling(
-            RenderContext ctx,
-            Long2ObjectMap<SortedSet<BlockDestructionProgress>> destructionProgress
-        ) {
-            renderCrumbling(ctx, destructionProgress);
+        public void beforeTranslucent(RenderContext ctx) {
+            renderCrumbling(ctx);
         }
     }
 

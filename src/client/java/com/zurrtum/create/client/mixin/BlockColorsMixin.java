@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BlockColors.class)
 public class BlockColorsMixin {
     @Inject(method = "createDefault()Lnet/minecraft/client/color/block/BlockColors;", at = @At("TAIL"))
-    private static void addColors(CallbackInfoReturnable<BlockColors> cir, @Local BlockColors blockColors) {
-        AllBlockTints.register(blockColors);
+    private static void addColors(CallbackInfoReturnable<BlockColors> cir, @Local BlockColors colors) {
+        AllBlockTints.register(colors);
     }
 }

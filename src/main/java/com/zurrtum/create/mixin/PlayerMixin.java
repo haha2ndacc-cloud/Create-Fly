@@ -65,22 +65,22 @@ public abstract class PlayerMixin {
     private boolean damage(
         Entity entity,
         DamageSource source,
-        float amount,
+        float damage,
         Operation<Boolean> original,
-        @Local ItemStack stack
+        @Local ItemStack attackingItemStack
     ) {
-        if (stack.getItem() instanceof DamageControlItem item && !item.damage(entity)) {
+        if (attackingItemStack.getItem() instanceof DamageControlItem item && !item.damage(entity)) {
             return true;
         }
-        return original.call(entity, source, amount);
+        return original.call(entity, source, damage);
     }
 
     @WrapOperation(method = "itemAttackInteraction(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/damagesource/DamageSource;Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;postHurtEnemy(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/LivingEntity;)V"))
-    private void postDamageEntity(ItemStack stack, LivingEntity target, LivingEntity user, Operation<Void> original) {
-        if (stack.getItem() instanceof DamageControlItem item && !item.damage(target)) {
+    private void postDamageEntity(ItemStack stack, LivingEntity mob, LivingEntity attacker, Operation<Void> original) {
+        if (stack.getItem() instanceof DamageControlItem item && !item.damage(mob)) {
             return;
         }
-        original.call(stack, target, user);
+        original.call(stack, mob, attacker);
     }
 
     @WrapOperation(method = "attack(Lnet/minecraft/world/entity/Entity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;playServerSideSound(Lnet/minecraft/sounds/SoundEvent;)V"))
@@ -156,16 +156,16 @@ public abstract class PlayerMixin {
     }
 
     @Inject(method = "addAdditionalSaveData(Lnet/minecraft/world/level/storage/ValueOutput;)V", at = @At("TAIL"))
-    private void writeCustomData(ValueOutput view, CallbackInfo ci) {
+    private void writeCustomData(ValueOutput output, CallbackInfo ci) {
         CompoundTag compound = AllSynchedDatas.TOOLBOX.get((Player) (Object) this);
         if (!compound.isEmpty()) {
-            view.store("CreateToolboxData", CompoundTag.CODEC, compound);
+            output.store("CreateToolboxData", CompoundTag.CODEC, compound);
         }
     }
 
     @Inject(method = "readAdditionalSaveData(Lnet/minecraft/world/level/storage/ValueInput;)V", at = @At("TAIL"))
-    private void readCustomData(ValueInput view, CallbackInfo ci) {
-        view.read("CreateToolboxData", CompoundTag.CODEC)
+    private void readCustomData(ValueInput input, CallbackInfo ci) {
+        input.read("CreateToolboxData", CompoundTag.CODEC)
             .ifPresent(compound -> AllSynchedDatas.TOOLBOX.set((Player) (Object) this, compound));
     }
 }

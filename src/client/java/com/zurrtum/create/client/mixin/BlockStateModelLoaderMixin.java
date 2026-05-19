@@ -21,16 +21,16 @@ import java.util.function.BiFunction;
 public class BlockStateModelLoaderMixin {
     @Inject(method = "loadBlockStateDefinitionStack(Lnet/minecraft/resources/Identifier;Lnet/minecraft/world/level/block/state/StateDefinition;Ljava/util/List;)Lnet/minecraft/client/resources/model/BlockStateModelLoader$LoadedModels;", at = @At(value = "NEW", target = "(Ljava/util/Map;)Lnet/minecraft/client/resources/model/BlockStateModelLoader$LoadedModels;"))
     private static void replace(
-        Identifier identifier,
+        Identifier stateDefinitionId,
         StateDefinition<Block, BlockState> stateDefinition,
-        List<BlockStateModelLoader.LoadedBlockStateModelDispatcher> list,
+        List<BlockStateModelLoader.LoadedBlockStateModelDispatcher> definitionStack,
         CallbackInfoReturnable<BlockStateModelLoader.LoadedModels> cir,
-        @Local Map<BlockState, BlockStateModel.UnbakedRoot> models
+        @Local Map<BlockState, BlockStateModel.UnbakedRoot> result
     ) {
         BiFunction<BlockState, BlockStateModel.UnbakedRoot, BlockStateModel.UnbakedRoot> factory = AllModels.ALL.get(
             stateDefinition.getOwner());
         if (factory != null) {
-            models.replaceAll(factory);
+            result.replaceAll(factory);
         }
     }
 }

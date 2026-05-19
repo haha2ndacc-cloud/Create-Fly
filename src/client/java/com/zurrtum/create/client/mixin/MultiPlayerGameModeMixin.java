@@ -68,7 +68,7 @@ public class MultiPlayerGameModeMixin {
     private void interactBlock(
         LocalPlayer player,
         InteractionHand hand,
-        BlockHitResult hitResult,
+        BlockHitResult blockHit,
         CallbackInfoReturnable<InteractionResult> cir
     ) {
         if (localPlayerMode == GameType.SPECTATOR) {
@@ -81,7 +81,7 @@ public class MultiPlayerGameModeMixin {
                 ValueSettingsInputHandler::onBlockActivated,
                 LinkHandler::onBlockActivated,
                 EjectorTargetHandler::rightClickingBlocksSelectsThem
-            ).map(handler -> handler.onRightClickBlock(minecraft.level, player, hand, hitResult)).filter(Objects::nonNull)
+            ).map(handler -> handler.onRightClickBlock(minecraft.level, player, hand, blockHit)).filter(Objects::nonNull)
             .findFirst()
             .ifPresentOrElse(cir::setReturnValue, () -> TrackPlacementClient.sendExtenderPacket(player, hand));
     }
@@ -90,10 +90,10 @@ public class MultiPlayerGameModeMixin {
     private void interactBlockInternal(
         LocalPlayer player,
         InteractionHand hand,
-        BlockHitResult hit,
+        BlockHitResult blockHit,
         CallbackInfoReturnable<InteractionResult> cir,
         @Local BlockPos pos,
-        @Local ItemStack stack
+        @Local ItemStack itemStack
     ) {
         Stream.<ClientRightClickHandle>of(
                 WrenchEventHandler::useOwnWrenchLogicForCreateBlocks,
@@ -102,7 +102,7 @@ public class MultiPlayerGameModeMixin {
                 EdgeInteractionHandler::onBlockActivated,
                 LinkedControllerItem::onItemUseFirst,
                 CogwheelBlockItem::onItemUseFirst
-            ).map(handler -> handler.onRightClickBlock(minecraft.level, player, stack, hand, hit, pos))
+            ).map(handler -> handler.onRightClickBlock(minecraft.level, player, itemStack, hand, blockHit, pos))
             .filter(Objects::nonNull).findFirst().ifPresent(cir::setReturnValue);
     }
 
@@ -210,19 +210,19 @@ public class MultiPlayerGameModeMixin {
         Operation<Boolean> original,
         @Local(argsOnly = true) InteractionHand hand,
         @Local BlockPos pos,
-        @Local ItemStack stack
+        @Local ItemStack itemStack
     ) {
         if (original.call(player)) {
             BlockState state = minecraft.level.getBlockState(pos);
-            return !(HandCrankBlock.onBlockActivated(hand, state, stack) || AnalogLeverBlock.onBlockActivated(
+            return !(HandCrankBlock.onBlockActivated(hand, state, itemStack) || AnalogLeverBlock.onBlockActivated(
                 hand,
                 state,
-                stack
-            ) || ExtendoGripItem.shouldInteraction(player, hand, stack));
+                itemStack
+            ) || ExtendoGripItem.shouldInteraction(player, hand, itemStack));
         }
-        return FunnelItem.funnelItemAlwaysPlacesWhenUsed(stack) || ClickToLinkBlockItem.linkableItemAlwaysPlacesWhenUsed(minecraft.level,
+        return FunnelItem.funnelItemAlwaysPlacesWhenUsed(itemStack) || ClickToLinkBlockItem.linkableItemAlwaysPlacesWhenUsed(minecraft.level,
             pos,
-            stack
+            itemStack
         );
     }
 
@@ -249,21 +249,21 @@ public class MultiPlayerGameModeMixin {
     private boolean breakBlock(
         Level world,
         BlockPos pos,
-        BlockState newState,
-        int flags,
+        BlockState blockState,
+        int updateFlags,
         Operation<Boolean> original,
-        @Local BlockState state,
-        @Local Block block
+        @Local BlockState oldState,
+        @Local Block oldBlock
     ) {
-        if (block instanceof BreakControlBlock controlBlock && !controlBlock.onDestroyedByPlayer(
-            state,
+        if (oldBlock instanceof BreakControlBlock controlBlock && !controlBlock.onDestroyedByPlayer(
+            oldState,
             world,
             pos,
             minecraft.player
         )) {
             return false;
         }
-        return original.call(world, pos, newState, flags);
+        return original.call(world, pos, blockState, updateFlags);
     }
 
     @WrapOperation(method = "continueDestroyBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getSoundType()Lnet/minecraft/world/level/block/SoundType;"))

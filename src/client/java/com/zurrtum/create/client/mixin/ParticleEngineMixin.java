@@ -18,10 +18,10 @@ import java.util.List;
 @Mixin(ParticleEngine.class)
 public class ParticleEngineMixin {
     @Inject(method = "createParticleGroup(Lnet/minecraft/client/particle/ParticleRenderType;)Lnet/minecraft/client/particle/ParticleGroup;", at = @At("TAIL"), cancellable = true)
-    private void createParticleGroup(ParticleRenderType textureSheet, CallbackInfoReturnable<ParticleGroup<?>> cir) {
-        if (textureSheet == SteamJetParticleGroup.SHEET) {
+    private void createParticleGroup(ParticleRenderType type, CallbackInfoReturnable<ParticleGroup<?>> cir) {
+        if (type == SteamJetParticleGroup.SHEET) {
             cir.setReturnValue(new SteamJetParticleGroup((ParticleEngine) (Object) this));
-        } else if (textureSheet == CubeParticleGroup.SHEET) {
+        } else if (type == CubeParticleGroup.SHEET) {
             cir.setReturnValue(new CubeParticleGroup((ParticleEngine) (Object) this));
         }
     }

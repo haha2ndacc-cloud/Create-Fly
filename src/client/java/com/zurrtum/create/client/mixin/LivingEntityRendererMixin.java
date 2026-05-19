@@ -49,7 +49,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity, S extends LivingE
 
     @SuppressWarnings("unchecked")
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void addFeature(EntityRendererProvider.Context ctx, M model, float shadowRadius, CallbackInfo ci) {
+    private void addFeature(EntityRendererProvider.Context context, M model, float shadow, CallbackInfo ci) {
         if (model instanceof HumanoidModel) {
             BacktankFeatureRenderer<?, ?> renderer = new BacktankFeatureRenderer<>((RenderLayerParent<? extends HumanoidRenderState, HumanoidModel<? super HumanoidRenderState>>) this);
             layers.add((RenderLayer<S, M>) renderer);
@@ -61,11 +61,11 @@ public class LivingEntityRendererMixin<T extends LivingEntity, S extends LivingE
     }
 
     @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At("TAIL"))
-    private void addHat(T entity, S renderState, float f, CallbackInfo ci) {
+    private void addHat(T entity, S state, float partialTicks, CallbackInfo ci) {
         if (layers.stream().noneMatch(feature -> feature instanceof HatFeatureRenderer)) {
             return;
         }
-        HatState state = (HatState) renderState;
+        HatState hatState = (HatState) state;
         PartialModel hat = null;
         if (entity.isPassenger()) {
             ItemStack stack = entity.getItemBySlot(EquipmentSlot.HEAD);
@@ -74,7 +74,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity, S extends LivingE
                 BlockPos seatOf = cc.getSeatOf(entity.getUUID());
                 if (seatOf != null && cc.conductorSeats.get(seatOf) != null) {
                     hat = AllPartialModels.TRAIN_HAT;
-                    state.create$updateHatInfo(entity);
+                    hatState.create$updateHatInfo(entity);
                 }
             }
             if (hat == null && vehicle instanceof SeatEntity) {
@@ -96,30 +96,30 @@ public class LivingEntityRendererMixin<T extends LivingEntity, S extends LivingE
                 }
                 if (find) {
                     hat = AllPartialModels.LOGISTICS_HAT;
-                    state.create$updateHatInfo(entity);
+                    hatState.create$updateHatInfo(entity);
                 }
             }
         } else if (entity instanceof Parrot parrot && entity.getItemBySlot(EquipmentSlot.HEAD)
             .isEmpty() && AllSynchedDatas.PARROT_TRAIN_HAT.get(parrot)) {
             hat = AllPartialModels.TRAIN_HAT;
-            state.create$updateHatInfo(entity);
+            hatState.create$updateHatInfo(entity);
         }
-        state.create$setHat(hat);
+        hatState.create$setHat(hat);
     }
 
     @SuppressWarnings("unchecked")
     @Inject(method = "submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V", at = @At("HEAD"), cancellable = true)
     private void render(
         S state,
-        PoseStack matrixStack,
-        SubmitNodeCollector queue,
-        CameraRenderState cameraRenderState,
+        PoseStack poseStack,
+        SubmitNodeCollector submitNodeCollector,
+        CameraRenderState camera,
         CallbackInfo ci
     ) {
         if ((LivingEntityRenderer<T, S, M>) (Object) this instanceof AvatarRenderer<?> renderer && CardboardArmorHandlerClient.playerRendersAsBoxWhenSneaking(renderer,
             (AvatarRenderState) state,
-            matrixStack,
-            queue
+            poseStack,
+            submitNodeCollector
         )) {
             ci.cancel();
         }

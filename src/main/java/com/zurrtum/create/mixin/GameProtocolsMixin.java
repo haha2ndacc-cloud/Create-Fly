@@ -21,13 +21,13 @@ import java.util.function.Consumer;
 public class GameProtocolsMixin {
     @WrapOperation(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/ProtocolInfoBuilder;clientboundProtocol(Lnet/minecraft/network/ConnectionProtocol;Ljava/util/function/Consumer;)Lnet/minecraft/network/protocol/SimpleUnboundProtocol;"))
     private static SimpleUnboundProtocol<ClientGamePacketListener, RegistryFriendlyByteBuf> addS2CPacket(
-        ConnectionProtocol type,
-        Consumer<ProtocolInfoBuilder<ClientGamePacketListener, RegistryFriendlyByteBuf, Unit>> registrar,
+        ConnectionProtocol id,
+        Consumer<ProtocolInfoBuilder<ClientGamePacketListener, RegistryFriendlyByteBuf, Unit>> config,
         Operation<SimpleUnboundProtocol<ClientGamePacketListener, RegistryFriendlyByteBuf>> original
     ) {
         return original.call(
-            type, (Consumer<ProtocolInfoBuilder<ClientGamePacketListener, RegistryFriendlyByteBuf, Unit>>) (builder -> {
-                registrar.accept(builder);
+            id, (Consumer<ProtocolInfoBuilder<ClientGamePacketListener, RegistryFriendlyByteBuf, Unit>>) (builder -> {
+                config.accept(builder);
                 AllPackets.S2C.forEach(builder::addPacket);
             })
         );
@@ -35,14 +35,14 @@ public class GameProtocolsMixin {
 
     @WrapOperation(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/ProtocolInfoBuilder;contextServerboundProtocol(Lnet/minecraft/network/ConnectionProtocol;Ljava/util/function/Consumer;)Lnet/minecraft/network/protocol/UnboundProtocol;"))
     private static UnboundProtocol<ServerGamePacketListener, RegistryFriendlyByteBuf, GameProtocols.Context> addC2SPacket(
-        ConnectionProtocol type,
-        Consumer<ProtocolInfoBuilder<ServerGamePacketListener, RegistryFriendlyByteBuf, GameProtocols.Context>> registrar,
+        ConnectionProtocol id,
+        Consumer<ProtocolInfoBuilder<ServerGamePacketListener, RegistryFriendlyByteBuf, GameProtocols.Context>> config,
         Operation<UnboundProtocol<ServerGamePacketListener, RegistryFriendlyByteBuf, GameProtocols.Context>> original
     ) {
         return original.call(
-            type,
+            id,
             (Consumer<ProtocolInfoBuilder<ServerGamePacketListener, RegistryFriendlyByteBuf, GameProtocols.Context>>) (builder -> {
-                registrar.accept(builder);
+                config.accept(builder);
                 AllPackets.C2S.forEach(builder::addPacket);
             })
         );

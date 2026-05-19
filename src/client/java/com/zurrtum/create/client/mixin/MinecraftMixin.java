@@ -73,6 +73,7 @@ import com.zurrtum.create.content.contraptions.minecart.capability.CapabilityMin
 import com.zurrtum.create.content.kinetics.drill.CobbleGenOptimisation;
 import com.zurrtum.create.content.redstone.link.controller.LinkedControllerItem;
 import com.zurrtum.create.foundation.utility.TickBasedCache;
+import net.minecraft.client.GameLoadCookie;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -121,12 +122,12 @@ public abstract class MinecraftMixin {
     }
 
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/ReloadableResourceManager;createReload(Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Ljava/util/List;)Lnet/minecraft/server/packs/resources/ReloadInstance;"))
-    private void flywheel$onBeginInitialResourceReload(GameConfig args, CallbackInfo ci) {
+    private void flywheel$onBeginInitialResourceReload(GameConfig gameConfig, CallbackInfo ci) {
         FlwImpl.freezeRegistries();
     }
 
-    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;updateVsync(Z)V"))
-    private void register(GameConfig args, CallbackInfo ci) {
+    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;updateRawMouseInput(Z)V"))
+    private void register(GameConfig gameConfig, CallbackInfo ci) {
         resourceManager.registerReloadListener(ObjLoader.INSTANCE);
         resourceManager.registerReloadListener(FlwProgramsReloader.INSTANCE);
         resourceManager.registerReloadListener(Create.RESOURCE_RELOAD_LISTENER);
@@ -134,8 +135,8 @@ public abstract class MinecraftMixin {
         resourceManager.registerReloadListener(Ponder.RESOURCE_RELOAD_LISTENER);
     }
 
-    @Inject(method = "onGameLoadFinished(Lnet/minecraft/client/Minecraft$GameLoadCookie;)V", at = @At("HEAD"))
-    private void endReload(Minecraft.GameLoadCookie cookie, CallbackInfo ci) {
+    @Inject(method = "onGameLoadFinished(Lnet/minecraft/client/GameLoadCookie;)V", at = @At("HEAD"))
+    private void endReload(GameLoadCookie cookie, CallbackInfo ci) {
         BackendManagerImpl.onEndClientResourceReload();
         RendererReloadCache.onReloadLevelRenderer();
     }
@@ -216,7 +217,7 @@ public abstract class MinecraftMixin {
     }
 
     @Inject(method = "renderFrame(Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;render(Lnet/minecraft/client/DeltaTracker;Z)V"))
-    private void render(boolean renderLevel, CallbackInfo ci) {
+    private void render(boolean advanceGameTime, CallbackInfo ci) {
         TurntableHandler.gameRenderFrame((Minecraft) (Object) this);
     }
 
@@ -283,11 +284,11 @@ public abstract class MinecraftMixin {
     }
 
     @Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;ZZ)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/GameNarrator;clear()V"))
-    private void onLeave(Screen screen, boolean bl, boolean bl2, CallbackInfo ci) {
+    private void onLeave(Screen screen, boolean keepResourcePacks, boolean stopSound, CallbackInfo ci) {
         Create.RAILWAYS.cleanUp();
     }
 
-    @Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;ZZ)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;onDisconnected()V"))
+    @Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;ZZ)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Hud;onDisconnected()V"))
     private void onUnloadWorld(CallbackInfo ci) {
         LevelAttached.invalidateLevel(level);
         Create.invalidateRenderers();

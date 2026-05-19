@@ -6,6 +6,7 @@ import com.zurrtum.create.client.content.trains.schedule.hat.TrainHatInfoReloadL
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.entity.Entity;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -19,7 +20,7 @@ public class LivingEntityRenderStateMixin implements HatState {
     private TrainHatInfo hatInfo;
 
     @Override
-    public void create$setHat(PartialModel hat) {
+    public void create$setHat(@NonNull PartialModel hat) {
         this.hat = hat;
     }
 
@@ -30,12 +31,12 @@ public class LivingEntityRenderStateMixin implements HatState {
     }
 
     @Override
-    public void create$updateHatInfo(Entity entity) {
+    public void create$updateHatInfo(@NonNull Entity entity) {
         hatInfo = TrainHatInfoReloadListener.getHatInfoFor(entity);
     }
 
     @Override
-    public TrainHatInfo create$getHatInfo() {
+    public @NonNull TrainHatInfo create$getHatInfo() {
         return hatInfo;
     }
 }

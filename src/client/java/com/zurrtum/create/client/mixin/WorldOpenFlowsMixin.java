@@ -21,27 +21,28 @@ public class WorldOpenFlowsMixin {
     private WorldStem addBiomeFeatures(
         WorldOpenFlows instance,
         LevelStorageSource.LevelStorageAccess worldAccess,
-        Dynamic<?> levelProperties,
+        Dynamic<?> levelDataTag,
         boolean safeMode,
-        PackRepository dataPackManager,
+        PackRepository packRepository,
         Operation<WorldStem> original
     ) {
-        WorldStem loader = original.call(instance, worldAccess, levelProperties, safeMode, dataPackManager);
+        WorldStem loader = original.call(instance, worldAccess, levelDataTag, safeMode, packRepository);
         AllPlacedFeatures.register(loader.registries().compositeAccess());
         return loader;
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     @WrapOperation(method = "createLevelFromExistingSettings(Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;Lnet/minecraft/server/ReloadableServerResources;Lnet/minecraft/core/LayeredRegistryAccess;Lnet/minecraft/world/level/storage/LevelDataAndDimensions$WorldDataAndGenSettings;Ljava/util/Optional;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;doWorldLoad(Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;Lnet/minecraft/server/packs/repository/PackRepository;Lnet/minecraft/server/WorldStem;Ljava/util/Optional;Z)V"))
     private void addBiomeFeatures(
         Minecraft instance,
-        LevelStorageSource.LevelStorageAccess session,
-        PackRepository dataPackManager,
-        WorldStem saveLoader,
+        LevelStorageSource.LevelStorageAccess levelSourceAccess,
+        PackRepository packRepository,
+        WorldStem worldStem,
         Optional<GameRules> gameRules,
         boolean newWorld,
         Operation<Void> original
     ) {
-        AllPlacedFeatures.register(saveLoader.registries().compositeAccess());
-        original.call(instance, session, dataPackManager, saveLoader, gameRules, newWorld);
+        AllPlacedFeatures.register(worldStem.registries().compositeAccess());
+        original.call(instance, levelSourceAccess, packRepository, worldStem, gameRules, newWorld);
     }
 }

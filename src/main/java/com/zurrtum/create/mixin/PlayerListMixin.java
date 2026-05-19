@@ -23,7 +23,7 @@ public class PlayerListMixin {
     private void onPlayerConnect(
         Connection connection,
         ServerPlayer player,
-        CommonListenerCookie clientData,
+        CommonListenerCookie cookie,
         CallbackInfo ci
     ) {
         Create.RAILWAYS.playerLogin(server, player);

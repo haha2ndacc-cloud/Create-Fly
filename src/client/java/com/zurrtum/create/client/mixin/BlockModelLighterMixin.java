@@ -48,23 +48,23 @@ public class BlockModelLighterMixin {
     private void smooth(
         BlockAndTintGetter level,
         BlockState state,
-        BlockPos pos,
+        BlockPos centerPosition,
         BakedQuad quad,
         QuadInstance outputInstance,
         CallbackInfo ci,
-        @Local Direction lightFace
+        @Local Direction direction
     ) {
         if (!faceCubic) {
             return;
         }
-        scratchPos.setWithOffset(pos, lightFace);
+        scratchPos.setWithOffset(centerPosition, direction);
         BlockState nextState = level.getBlockState(scratchPos);
         if (!(nextState.getBlock() instanceof CopycatBlock) || !nextState.emissiveRendering()) {
             return;
         }
         MutableBlockPos searchPos = scratchPos;
-        BlockPos lightPos = faceCubic ? pos.relative(lightFace) : pos;
-        AdjacencyInfo aoFace = AdjacencyInfo.fromFacing(lightFace);
+        BlockPos lightPos = centerPosition.relative(direction);
+        AdjacencyInfo aoFace = AdjacencyInfo.fromFacing(direction);
         searchPos.setWithOffset(lightPos, aoFace.corners[0]);
         BlockState searchState = level.getBlockState(searchPos);
         int light0 = cache.getLightCoords(searchState, level, searchPos);
@@ -132,16 +132,8 @@ public class BlockModelLighterMixin {
             cLight3 = cache.getLightCoords(searchState, level, searchPos);
             cIsClear3 = !searchState.isViewBlocking(level, searchPos) || searchState.getLightDampening() == 0;
         }
-        float aoCenter = faceCubic ? cache.getShadeBrightness(
-            level.getBlockState(lightPos),
-            level,
-            lightPos
-        ) : cache.getShadeBrightness(
-            level.getBlockState(pos),
-            level,
-            pos
-        );
-        AmbientVertexRemap remap = AmbientVertexRemap.fromFacing(lightFace);
+        float aoCenter = cache.getShadeBrightness(level.getBlockState(lightPos), level, lightPos);
+        AmbientVertexRemap remap = AmbientVertexRemap.fromFacing(direction);
         float lightLevel1 = (ao3 + ao0 + cAo1 + aoCenter) * 0.25F;
         float lightLevel2 = (ao2 + ao0 + cAo0 + aoCenter) * 0.25F;
         float lightLevel3 = (ao2 + ao1 + cAo2 + aoCenter) * 0.25F;
@@ -270,8 +262,8 @@ public class BlockModelLighterMixin {
             outputInstance.setColor(remap.vert3, ARGB.gray(lightLevel4));
         }
         CardinalLighting cardinalLighting = level.cardinalLighting();
-        outputInstance.scaleColor(quad.materialInfo()
-            .shade() ? cardinalLighting.byFace(lightFace) : cardinalLighting.up());
+        outputInstance.scaleColor(
+            quad.materialInfo().shade() ? cardinalLighting.byFace(direction) : cardinalLighting.up());
         ci.cancel();
     }
 

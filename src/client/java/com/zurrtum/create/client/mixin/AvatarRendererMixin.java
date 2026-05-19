@@ -20,9 +20,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(AvatarRenderer.class)
 public class AvatarRendererMixin<AvatarlikeEntity extends Avatar & ClientAvatarEntity> {
     @Inject(method = "getArmPose(Lnet/minecraft/world/entity/Avatar;Lnet/minecraft/world/entity/HumanoidArm;)Lnet/minecraft/client/model/HumanoidModel$ArmPose;", at = @At(value = "HEAD"), cancellable = true)
-    private static void getArmPose(Avatar player, HumanoidArm arm, CallbackInfoReturnable<ArmPose> cir) {
-        InteractionHand hand = player.getMainArm() == arm ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-        Item item = player.getItemInHand(hand).getItem();
+    private static void getArmPose(Avatar avatar, HumanoidArm arm, CallbackInfoReturnable<ArmPose> cir) {
+        InteractionHand hand = avatar.getMainArm() == arm ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+        Item item = avatar.getItemInHand(hand).getItem();
         ArmPose pose = AllExtensions.ARM_POSE.get(item);
         if (pose != null) {
             cir.setReturnValue(pose);
@@ -31,14 +31,14 @@ public class AvatarRendererMixin<AvatarlikeEntity extends Avatar & ClientAvatarE
 
     @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/Avatar;Lnet/minecraft/client/renderer/entity/state/AvatarRenderState;F)V", at = @At("TAIL"))
     private void updateRenderState(
-        AvatarlikeEntity player,
+        AvatarlikeEntity entity,
         AvatarRenderState state,
-        float tickProgress,
+        float partialTicks,
         CallbackInfo ci
     ) {
-        ((CardboardRenderState) state).create$update(player, tickProgress);
+        ((CardboardRenderState) state).create$update(entity, partialTicks);
         SkyhookRenderState skyhookRenderState = (SkyhookRenderState) state;
-        skyhookRenderState.create$setUuid(player.getUUID());
-        skyhookRenderState.create$setMainStack(player.getMainHandItem());
+        skyhookRenderState.create$setUuid(entity.getUUID());
+        skyhookRenderState.create$setMainStack(entity.getMainHandItem());
     }
 }

@@ -23,13 +23,13 @@ public class RegistryDataLoaderMixin {
     @SuppressWarnings("SuspiciousSystemArraycopy")
     @WrapOperation(method = "<clinit>", at = @At(value = "INVOKE", target = "Ljava/util/List;of([Ljava/lang/Object;)Ljava/util/List;"))
     private static <E> List<RegistryDataLoader.RegistryData<?>> addEntry(
-        E[] list,
+        E[] elements,
         Operation<List<RegistryDataLoader.RegistryData<?>>> original
     ) {
-        int listSize = list.length;
+        int listSize = elements.length;
         int size = listSize + AllDynamicRegistries.ALL.size();
         RegistryDataLoader.RegistryData<?>[] replaceList = new RegistryDataLoader.RegistryData<?>[size];
-        System.arraycopy(list, 0, replaceList, 0, listSize);
+        System.arraycopy(elements, 0, replaceList, 0, listSize);
         Iterator<RegistryDataLoader.RegistryData<?>> iterator = AllDynamicRegistries.ALL.iterator();
         for (int i = listSize; i < size; i++) {
             replaceList[i] = iterator.next();

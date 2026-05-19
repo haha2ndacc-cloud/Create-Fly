@@ -14,15 +14,15 @@ import java.nio.ByteBuffer;
 public class FogRendererMixin {
     @Inject(method = "updateBuffer(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V", at = @At("TAIL"))
     private void applyFog(
-        ByteBuffer buffer,
-        int bufPos,
+        ByteBuffer byteBuffer,
+        int offset,
         Vector4f fogColor,
         float environmentalStart,
         float environmentalEnd,
         float renderDistanceStart,
         float renderDistanceEnd,
         float skyEnd,
-        float cloudEnd,
+        float endClouds,
         CallbackInfo ci
     ) {
         FogUniforms.update(fogColor, environmentalStart, environmentalEnd, renderDistanceStart, renderDistanceEnd);

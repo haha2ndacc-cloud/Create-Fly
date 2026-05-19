@@ -15,12 +15,12 @@ import java.util.Map;
 public class ModelManagerMixin {
     @Inject(method = "discoverModelDependencies", at = @At(value = "NEW", target = "(Lnet/minecraft/client/resources/model/ResolvedModel;Ljava/util/Map;)Lnet/minecraft/client/resources/model/ModelManager$ResolvedModels;"))
     private static void collect(
-        Map<Identifier, UnbakedModel> modelMap,
-        BlockStateModelLoader.LoadedModels stateDefinition,
-        ClientItemInfoLoader.LoadedClientInfos result,
+        Map<Identifier, UnbakedModel> allModels,
+        BlockStateModelLoader.LoadedModels blockStateModels,
+        ClientItemInfoLoader.LoadedClientInfos itemInfos,
         CallbackInfoReturnable<ModelManager.ResolvedModels> cir,
-        @Local ModelDiscovery collector
+        @Local ModelDiscovery result
     ) {
-        PartialModelEventHandler.getRegisterAdditional().keySet().forEach(collector::getOrCreateModel);
+        PartialModelEventHandler.getRegisterAdditional().keySet().forEach(result::getOrCreateModel);
     }
 }

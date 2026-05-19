@@ -15,25 +15,25 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public interface VertexConsumerMixin {
     @ModifyVariable(method = "putBlockBakedQuad(FFFLnet/minecraft/client/resources/model/geometry/BakedQuad;Lcom/mojang/blaze3d/vertex/QuadInstance;)V", at = @At(value = "INVOKE", target = "Lorg/joml/Vector3fc;x()F", ordinal = 0), name = "normal")
     private Vector3fc applyBakedNormals(
-        Vector3fc origin,
+        Vector3fc normal,
         @Local(argsOnly = true) BakedQuad quad,
         @Local(name = "vertex") int vertex
     ) {
-        Vector3fc normal = ((NormalsBakedQuad) (Object) quad).create$getNormal(vertex);
-        return normal != null ? normal : origin;
+        Vector3fc quadNormal = ((NormalsBakedQuad) (Object) quad).create$getNormal(vertex);
+        return quadNormal != null ? quadNormal : normal;
     }
 
     @ModifyVariable(method = "putBakedQuad(Lcom/mojang/blaze3d/vertex/PoseStack$Pose;Lnet/minecraft/client/resources/model/geometry/BakedQuad;Lcom/mojang/blaze3d/vertex/QuadInstance;)V", at = @At(value = "INVOKE", target = "Lorg/joml/Vector3f;x()F", ordinal = 0), name = "normal")
     private Vector3f applyBakedNormals(
-        Vector3f origin,
+        Vector3f normal,
         @Local(argsOnly = true) PoseStack.Pose pose,
         @Local(argsOnly = true) BakedQuad quad,
         @Local(name = "vertex") int vertex
     ) {
-        Vector3fc normal = ((NormalsBakedQuad) (Object) quad).create$getNormal(vertex);
-        if (normal != null) {
-            pose.transformNormal(normal, origin);
+        Vector3fc quadNormal = ((NormalsBakedQuad) (Object) quad).create$getNormal(vertex);
+        if (quadNormal != null) {
+            pose.transformNormal(quadNormal, normal);
         }
-        return origin;
+        return normal;
     }
 }

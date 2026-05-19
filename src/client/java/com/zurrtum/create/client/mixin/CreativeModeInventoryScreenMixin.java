@@ -27,6 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import org.jspecify.annotations.NonNull;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -49,7 +50,7 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
     }
 
     @Shadow
-    protected abstract void selectTab(CreativeModeTab itemGroup_1);
+    protected abstract void selectTab(CreativeModeTab tab);
 
     @Shadow
     private static CreativeModeTab selectedTab;
@@ -80,28 +81,28 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
     }
 
     @Inject(method = "selectTab", at = @At("HEAD"), cancellable = true)
-    private void setSelectedTab(CreativeModeTab itemGroup, CallbackInfo info) {
-        if (!isGroupVisible(itemGroup)) {
+    private void setSelectedTab(CreativeModeTab tab, CallbackInfo info) {
+        if (!isGroupVisible(tab)) {
             info.cancel();
         }
     }
 
     @Inject(method = "checkTabHovering", at = @At("HEAD"), cancellable = true)
     private void renderTabTooltipIfHovered(
-        GuiGraphicsExtractor drawContext,
-        CreativeModeTab itemGroup,
-        int mx,
-        int my,
+        GuiGraphicsExtractor graphics,
+        CreativeModeTab tab,
+        int xm,
+        int ym,
         CallbackInfoReturnable<Boolean> info
     ) {
-        if (!isGroupVisible(itemGroup)) {
+        if (!isGroupVisible(tab)) {
             info.setReturnValue(false);
         }
     }
 
     @Inject(method = "checkTabClicked", at = @At("HEAD"), cancellable = true)
-    private void isClickInTab(CreativeModeTab itemGroup, double mx, double my, CallbackInfoReturnable<Boolean> info) {
-        if (!isGroupVisible(itemGroup)) {
+    private void isClickInTab(CreativeModeTab tab, double xm, double ym, CallbackInfoReturnable<Boolean> info) {
+        if (!isGroupVisible(tab)) {
             info.setReturnValue(false);
         }
     }
@@ -111,17 +112,17 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
         GuiGraphicsExtractor graphics,
         int mouseX,
         int mouseY,
-        CreativeModeTab itemGroup,
+        CreativeModeTab tab,
         CallbackInfo info
     ) {
-        if (!isGroupVisible(itemGroup)) {
+        if (!isGroupVisible(tab)) {
             info.cancel();
         }
     }
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
-    private void keyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
-        int keyCode = input.key();
+    private void keyPressed(KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
+        int keyCode = event.key();
         if (keyCode == GLFW.GLFW_KEY_PAGE_UP) {
             if (fabric_switchToPreviousPage()) {
                 cir.setReturnValue(true);
@@ -154,7 +155,7 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
     }
 
     @Override
-    public int fabric_getPage(CreativeModeTab itemGroup) {
+    public int fabric_getPage(@NonNull CreativeModeTab itemGroup) {
         if (FabricCreativeGuiComponents.COMMON_GROUPS.contains(itemGroup)) {
             return currentPage;
         }
@@ -165,8 +166,8 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
 
     @Override
     public boolean fabric_hasAdditionalPages() {
-        return CreativeModeTabs.tabs().size() > (Objects.requireNonNull(CreativeModeTabs.CACHED_PARAMETERS)
-            .hasPermissions() ? 14 : 13);
+        return CreativeModeTabs.tabs().size() > (
+            Objects.requireNonNull(CreativeModeTabs.CACHED_PARAMETERS).hasPermissions() ? 14 : 13);
     }
 
     @Override
