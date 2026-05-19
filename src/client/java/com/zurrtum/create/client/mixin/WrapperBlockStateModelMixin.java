@@ -73,17 +73,19 @@ public abstract class WrapperBlockStateModelMixin implements FabricBlockStateMod
     }
 
     @Overwrite(remap = false)
-    public static BlockStateModel getBlockDestroyModel(
+    public static void addPartsWithInfo(
         BlockStateModel model,
         BlockAndTintGetter level,
         BlockPos pos,
         BlockState state,
-        long seed
+        RandomSource random,
+        List<BlockStateModelPart> parts
     ) {
         if (unwrap(model) instanceof WrapperBlockStateModel wrapper) {
-            return extractBlockDestroyModel(wrapper, level, pos, state, seed);
+            wrapper.addPartsWithInfo(level, pos, state, random, parts);
+        } else {
+            model.collectParts(random, parts);
         }
-        return model;
     }
 
     @Overwrite(remap = false)

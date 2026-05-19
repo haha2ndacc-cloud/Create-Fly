@@ -1,5 +1,6 @@
 package com.zurrtum.create.client.infrastructure.model;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
@@ -12,11 +13,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 
 public abstract class WrapperBlockStateModel implements BlockStateModel, BlockStateModel.UnbakedRoot {
-    private static final RandomSource RANDOM = RandomSource.createThreadLocalInstance(0L);
+    private static final RandomSource random = RandomSource.createThreadLocalInstance(0L);
     private static final Vec3i[] DIRECTIONS = new Vec3i[]{
         new Vec3i(0, 0, -1),
         new Vec3i(0, 0, 1),
@@ -53,17 +55,19 @@ public abstract class WrapperBlockStateModel implements BlockStateModel, BlockSt
         return pos;
     }
 
-    public static BlockStateModel getBlockDestroyModel(
+    public static void addPartsWithInfo(
         BlockStateModel model,
         BlockAndTintGetter level,
         BlockPos pos,
         BlockState state,
-        long seed
+        RandomSource random,
+        List<BlockStateModelPart> parts
     ) {
         if (model instanceof WrapperBlockStateModel wrapper) {
-            return extractBlockDestroyModel(wrapper, level, pos, state, seed);
+            wrapper.addPartsWithInfo(level, pos, state, random, parts);
+        } else {
+            model.collectParts(random, parts);
         }
-        return model;
     }
 
     public static BlockStateModel getBlockDestroyModel(
@@ -85,14 +89,10 @@ public abstract class WrapperBlockStateModel implements BlockStateModel, BlockSt
         BlockState state,
         long seed
     ) {
-        RANDOM.setSeed(seed);
-        ArrayList<BlockStateModelPart> parts = new ArrayList<>();
-        model.addPartsWithInfo(world, pos, state, RANDOM, parts);
-        return switch (parts.size()) {
-            case 0 -> BlockStateRenderModel.INSTANCE;
-            case 1 -> new BlockStateRenderModel.Single(parts.getFirst());
-            default -> new BlockStateRenderModel.Multiple(parts);
-        };
+        random.setSeed(seed);
+        BlockStateRenderModel renderModel = BlockStateRenderModel.create();
+        model.addPartsWithInfo(world, pos, state, random, renderModel.parts);
+        return renderModel;
     }
 
     protected @UnknownNullability BlockStateModel model;
@@ -170,10 +170,31 @@ public abstract class WrapperBlockStateModel implements BlockStateModel, BlockSt
     }
 
     private static class BlockStateRenderModel implements BlockStateModel {
-        private static final BlockStateModel INSTANCE = new BlockStateRenderModel();
+        private static final Deque<BlockStateRenderModel> pool = new ArrayDeque<>();
+        private final List<BlockStateModelPart> parts = new ObjectArrayList<>();
+        private boolean recycle = true;
+
+        public static BlockStateRenderModel create() {
+            BlockStateRenderModel model = pool.pollFirst();
+            if (model != null) {
+                model.clear();
+                return model;
+            }
+            return new BlockStateRenderModel();
+        }
+
+        public void clear() {
+            parts.clear();
+            recycle = true;
+        }
 
         @Override
         public void collectParts(RandomSource random, List<BlockStateModelPart> output) {
+            output.addAll(parts);
+            if (recycle) {
+                recycle = false;
+                pool.addLast(this);
+            }
         }
 
         @Override
@@ -185,32 +206,6 @@ public abstract class WrapperBlockStateModel implements BlockStateModel, BlockSt
         @Override
         public int materialFlags() {
             return 0;
-        }
-
-        private static class Single extends BlockStateRenderModel {
-            private final BlockStateModelPart part;
-
-            private Single(BlockStateModelPart part) {
-                this.part = part;
-            }
-
-            @Override
-            public void collectParts(RandomSource random, List<BlockStateModelPart> output) {
-                output.add(part);
-            }
-        }
-
-        private static class Multiple extends BlockStateRenderModel {
-            private final List<BlockStateModelPart> parts;
-
-            private Multiple(List<BlockStateModelPart> parts) {
-                this.parts = parts;
-            }
-
-            @Override
-            public void collectParts(RandomSource random, List<BlockStateModelPart> output) {
-                output.addAll(parts);
-            }
         }
     }
 }

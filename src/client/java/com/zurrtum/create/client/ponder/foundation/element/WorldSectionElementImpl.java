@@ -26,6 +26,7 @@ import net.minecraft.client.renderer.block.BlockModelLighter;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.FluidRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -36,6 +37,7 @@ import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.ClipContext.Fluid;
 import net.minecraft.world.level.Level;
@@ -355,30 +357,32 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
         world.popLight();
 
         Map<BlockPos, Integer> blockBreakingProgressions = world.getBlockBreakingProgressions();
-        PoseStack overlayMS = null;
-
-        BlockStateModelSet blockStateModelSet = modelManager.getBlockStateModelSet();
-        for (Entry<BlockPos, Integer> entry : blockBreakingProgressions.entrySet()) {
-            BlockPos pos = entry.getKey();
-            if (!section.test(pos)) {
-                continue;
+        if (!blockBreakingProgressions.isEmpty()) {
+            BlockStateModelSet blockStateModelSet = modelManager.getBlockStateModelSet();
+            PoseStack overlayMS = null;
+            RandomSource random = null;
+            List<BlockStateModelPart> parts = null;
+            for (Entry<BlockPos, Integer> entry : blockBreakingProgressions.entrySet()) {
+                BlockPos pos = entry.getKey();
+                if (!section.test(pos)) {
+                    continue;
+                }
+                if (overlayMS == null) {
+                    overlayMS = new PoseStack();
+                    overlayMS.last().set(poseStack.last());
+                    random = RandomSource.createThreadLocalInstance();
+                    parts = new ArrayList<>();
+                }
+                poseStack.pushPose();
+                poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
+                BlockState state = world.getBlockState(pos);
+                BlockStateModel model = blockStateModelSet.get(state);
+                random.setSeed(state.getSeed(pos));
+                WrapperBlockStateModel.addPartsWithInfo(model, world, pos, state, random, parts);
+                queue.submitBreakingBlockModel(poseStack, List.copyOf(parts), entry.getValue());
+                parts.clear();
+                poseStack.popPose();
             }
-
-            if (overlayMS == null) {
-                overlayMS = new PoseStack();
-                Pose matrixEntry = poseStack.last();
-                overlayMS.last().pose().set(matrixEntry.pose());
-                overlayMS.last().normal().set(matrixEntry.normal());
-            }
-
-            poseStack.pushPose();
-            poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
-            BlockState state = world.getBlockState(pos);
-            BlockStateModel model = blockStateModelSet.get(state);
-            long seed = state.getSeed(pos);
-            model = WrapperBlockStateModel.getBlockDestroyModel(model, world, pos, state, seed);
-            queue.submitBreakingBlockModel(poseStack, model, seed, entry.getValue());
-            poseStack.popPose();
         }
 
         SuperByteBufferCache bufferCache = SuperByteBufferCache.getInstance();

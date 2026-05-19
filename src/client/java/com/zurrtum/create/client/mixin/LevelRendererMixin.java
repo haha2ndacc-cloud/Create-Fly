@@ -66,8 +66,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Set;
 import java.util.SortedSet;
 
-import static com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel.getBlockDestroyModel;
-
 @Mixin(LevelRenderer.class)
 public abstract class LevelRendererMixin {
     @Shadow
@@ -229,29 +227,6 @@ public abstract class LevelRendererMixin {
     //    private void markSpriteActive(CallbackInfo ci) {
     //        SodiumCompat.markSpriteActive(minecraft);
     //    }
-
-    @Inject(method = "extractBlockDestroyAnimation(Lnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At("HEAD"))
-    private void init(
-        Camera camera,
-        LevelRenderState levelRenderState,
-        CallbackInfo ci,
-        @Share("models") LocalRef<BlockStateModelSet> ref
-    ) {
-        ref.set(minecraft.getModelManager().getBlockStateModelSet());
-    }
-
-    @ModifyArg(method = "extractBlockDestroyAnimation(Lnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
-    private <E> E addInfo(E e, @Share("models") LocalRef<BlockStateModelSet> ref) {
-        BlockBreakingRenderState state = (BlockBreakingRenderState) e;
-        BlockState blockState = state.blockState();
-        ((BreakingRenderStateInfo) e).create$setRenderModel(getBlockDestroyModel(
-            ref.get().get(blockState),
-            level,
-            state.blockPos(),
-            blockState
-        ));
-        return e;
-    }
 
     @WrapOperation(method = "submitBlockDestroyAnimation(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockStateModelSet;get(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/renderer/block/dispatch/BlockStateModel;"))
     private BlockStateModel getRenderModel(

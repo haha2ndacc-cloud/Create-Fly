@@ -94,11 +94,7 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
         BlockStateModel model,
         List<BlockStateModelPart> parts
     ) {
-        if (model instanceof WrapperBlockStateModel wrapper) {
-            wrapper.addPartsWithInfo(world, pos, material, random, parts);
-        } else {
-            model.collectParts(random, parts);
-        }
+        WrapperBlockStateModel.addPartsWithInfo(model, world, pos, material, random, parts);
     }
 
     protected List<BlockStateModelPart> getMaterialParts(
