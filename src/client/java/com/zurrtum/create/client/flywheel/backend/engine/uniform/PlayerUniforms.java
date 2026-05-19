@@ -15,7 +15,10 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.TeamColor;
 import org.jspecify.annotations.Nullable;
+
+import java.util.Optional;
 
 public final class PlayerUniforms extends UniformWriter {
     private static final int SIZE = 16 * 2 + 8 + 4 * 9;
@@ -59,9 +62,9 @@ public final class PlayerUniforms extends UniformWriter {
 
     private static long writeTeamColor(long ptr, @Nullable PlayerTeam team) {
         if (team != null) {
-            Integer color = team.getColor().getColor();
-
-            if (color != null) {
+            Optional<TeamColor> teamColor = team.getColor();
+            if (teamColor.isPresent()) {
+                int color = teamColor.get().rgb();
                 int red = ARGB.red(color);
                 int green = ARGB.green(color);
                 int blue = ARGB.blue(color);
