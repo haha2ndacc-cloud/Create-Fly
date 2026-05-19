@@ -20,6 +20,7 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL33C;
 
+import java.util.Collections;
 import java.util.Comparator;
 
 import static com.mojang.blaze3d.opengl.GlConst.*;
@@ -178,12 +179,13 @@ public final class MaterialRenderState {
 
     public static void setupFrameBuffer() {
         RenderTarget target = Minecraft.getInstance().gameRenderer.mainRenderTarget();
-        DirectStateAccess access = ((GlDevice) RenderSystem.getDevice().backend).directStateAccess();
-        int i = ((GlTexture) target.getColorTexture()).getFbo(
-            access,
-            target.useDepth ? target.getDepthTexture() : null
+        GlDevice device = (GlDevice) RenderSystem.getDevice().backend;
+        int fbo = device.frameBufferCache().getFbo(
+            device.directStateAccess(),
+            Collections.singletonList((GlTexture) target.getColorTexture()),
+            target.useDepth ? (GlTexture) target.getDepthTexture() : null
         );
-        GlStateManager._glBindFramebuffer(GlConst.GL_FRAMEBUFFER, i);
+        GlStateManager._glBindFramebuffer(GlConst.GL_FRAMEBUFFER, fbo);
     }
 
     private static void resetFrameBuffer() {

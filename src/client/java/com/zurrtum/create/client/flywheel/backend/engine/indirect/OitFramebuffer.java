@@ -1,9 +1,6 @@
 package com.zurrtum.create.client.flywheel.backend.engine.indirect;
 
-import com.mojang.blaze3d.opengl.DirectStateAccess;
-import com.mojang.blaze3d.opengl.GlDevice;
-import com.mojang.blaze3d.opengl.GlStateManager;
-import com.mojang.blaze3d.opengl.GlTexture;
+import com.mojang.blaze3d.opengl.*;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -18,6 +15,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.GL46;
+
+import java.util.Collections;
 
 import static com.mojang.blaze3d.opengl.GlConst.*;
 
@@ -184,14 +183,16 @@ public class OitFramebuffer {
      * Composite the accumulated luminance onto the main framebuffer.
      */
     public void composite() {
-        DirectStateAccess access = ((GlDevice) RenderSystem.getDevice().backend).directStateAccess();
+        GlDevice device = (GlDevice) RenderSystem.getDevice().backend;
+        FrameBufferCache frameBufferCache = device.frameBufferCache();
+        DirectStateAccess access = device.directStateAccess();
         Minecraft mc = Minecraft.getInstance();
         GameRenderer gameRenderer = mc.gameRenderer;
         RenderTarget mainTarget = gameRenderer.mainRenderTarget();
         if (gameRenderer.gameRenderState().useShaderTransparency()) {
-            bindRenderTarget(mc.levelRenderer.itemEntityTarget(), access);
+            bindRenderTarget(mc.levelRenderer.itemEntityTarget(), frameBufferCache, access);
         } else {
-            bindRenderTarget(mainTarget, access);
+            bindRenderTarget(mainTarget, frameBufferCache, access);
         }
 
         // The composite shader writes out the closest depth to gl_FragDepth.
@@ -220,12 +221,20 @@ public class OitFramebuffer {
         drawFullscreenQuad();
 
 
-        bindRenderTarget(mainTarget, access);
+        bindRenderTarget(mainTarget, frameBufferCache, access);
     }
 
-    private static void bindRenderTarget(RenderTarget target, DirectStateAccess access) {
-        int i = ((GlTexture) target.getColorTexture()).getFbo(access, target.getDepthTexture());
-        GlStateManager._glBindFramebuffer(GL_FRAMEBUFFER, i);
+    private static void bindRenderTarget(
+        RenderTarget target,
+        FrameBufferCache frameBufferCache,
+        DirectStateAccess access
+    ) {
+        int fbo = frameBufferCache.getFbo(
+            access,
+            Collections.singletonList((GlTexture) target.getColorTexture()),
+            (GlTexture) target.getDepthTexture()
+        );
+        GlStateManager._glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     }
 
     public void delete() {
