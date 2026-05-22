@@ -8,6 +8,7 @@ import com.zurrtum.create.client.content.kinetics.base.KineticBlockEntityRendere
 import com.zurrtum.create.content.kinetics.base.IRotate;
 import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -63,7 +64,12 @@ public class KineticDebugger {
     }
 
     public static boolean isF3DebugModeActive() {
-        return Minecraft.getInstance().getDebugOverlay().showDebugScreen();
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.debugEntries.isOverlayVisible()) {
+            Gui gui = mc.gui;
+            return !gui.hud.isHidden() || gui.screen() != null;
+        }
+        return false;
     }
 
     @Nullable
