@@ -6,10 +6,10 @@ import com.zurrtum.create.client.flywheel.api.visualization.BlockEntityVisualize
 import com.zurrtum.create.client.flywheel.api.visualization.EntityVisualizer;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.client.flywheel.api.visualization.VisualizerRegistry;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jspecify.annotations.Nullable;
@@ -147,9 +147,19 @@ public final class VisualizationHelper {
         return visualizer.skipVanillaRender(entity);
     }
 
-    public static Iterator<Entity> skipVanillaRender(ClientLevel world, Iterator<Entity> iterator) {
-        if (VisualizationManager.supportsVisualization(world)) {
+    public static Iterator<Entity> skipEntityVanillaRender(@Nullable LevelAccessor level, Iterator<Entity> iterator) {
+        if (VisualizationManager.supportsVisualization(level)) {
             return new EntitySkipIterator(iterator);
+        }
+        return iterator;
+    }
+
+    public static Iterator<BlockEntity> skipBlockEntityVanillaRender(
+        @Nullable LevelAccessor level,
+        Iterator<BlockEntity> iterator
+    ) {
+        if (VisualizationManager.supportsVisualization(level)) {
+            return new BlockEntitySkipIterator(iterator);
         }
         return iterator;
     }
@@ -170,13 +180,15 @@ public final class VisualizationHelper {
         return visualizer.skipVanillaRender(blockEntity);
     }
 
-    public static class EntitySkipIterator implements Iterator<Entity> {
-        private final Iterator<Entity> iterator;
-        private @Nullable Entity next;
+    public static abstract class SkipIterator<T> implements Iterator<T> {
+        private final Iterator<T> iterator;
+        private @Nullable T next;
 
-        public EntitySkipIterator(Iterator<Entity> iterator) {
+        public SkipIterator(Iterator<T> iterator) {
             this.iterator = iterator;
         }
+
+        protected abstract boolean skipVanillaRender(T value);
 
         @Override
         public boolean hasNext() {
@@ -184,25 +196,52 @@ public final class VisualizationHelper {
                 return true;
             }
             while (iterator.hasNext()) {
-                Entity entity = iterator.next();
-                if (skipVanillaRender(entity)) {
+                T value = iterator.next();
+                if (skipVanillaRender(value)) {
                     continue;
                 }
-                next = entity;
+                next = value;
                 return true;
             }
             return false;
         }
 
         @Override
-        public Entity next() {
+        public T next() {
             if (hasNext()) {
                 assert next != null;
-                Entity entity = next;
+                T value = next;
                 next = null;
-                return entity;
+                return value;
             }
             throw new NoSuchElementException();
+        }
+
+        @Override
+        public void remove() {
+            iterator.remove();
+        }
+    }
+
+    public static class EntitySkipIterator extends SkipIterator<Entity> {
+        public EntitySkipIterator(Iterator<Entity> iterator) {
+            super(iterator);
+        }
+
+        @Override
+        protected boolean skipVanillaRender(Entity value) {
+            return VisualizationHelper.skipVanillaRender(value);
+        }
+    }
+
+    public static class BlockEntitySkipIterator extends SkipIterator<BlockEntity> {
+        public BlockEntitySkipIterator(Iterator<BlockEntity> iterator) {
+            super(iterator);
+        }
+
+        @Override
+        protected boolean skipVanillaRender(BlockEntity value) {
+            return VisualizationHelper.skipVanillaRender(value);
         }
     }
 }

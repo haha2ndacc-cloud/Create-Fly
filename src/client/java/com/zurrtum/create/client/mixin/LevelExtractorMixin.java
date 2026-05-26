@@ -36,6 +36,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import static com.zurrtum.create.client.infrastructure.model.WrapperBlockStateModel.getBlockDestroyModel;
 
@@ -107,7 +108,15 @@ public class LevelExtractorMixin {
         Iterable<Entity> instance,
         Operation<Iterator<Entity>> original
     ) {
-        return VisualizationHelper.skipVanillaRender(level, original.call(instance));
+        return VisualizationHelper.skipEntityVanillaRender(level, original.call(instance));
+    }
+
+    @WrapOperation(method = "extractVisibleBlockEntities(Lnet/minecraft/client/Camera;FLnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At(value = "INVOKE", target = "Ljava/util/Set;iterator()Ljava/util/Iterator;"))
+    private Iterator<BlockEntity> flywheel$decideNotToRenderBlockEntity(
+        Set<BlockEntity> instance,
+        Operation<Iterator<BlockEntity>> original
+    ) {
+        return VisualizationHelper.skipBlockEntityVanillaRender(level, original.call(instance));
     }
 
     @Inject(method = "extractBlockDestroyAnimation(Lnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", at = @At("HEAD"))

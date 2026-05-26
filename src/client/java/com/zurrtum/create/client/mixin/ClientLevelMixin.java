@@ -7,9 +7,7 @@ import com.zurrtum.create.client.Create;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.levelWrappers.WrappedClientLevel;
 import com.zurrtum.create.client.content.contraptions.ContraptionHandlerClient;
-import com.zurrtum.create.client.flywheel.api.visualization.VisualizationManager;
 import com.zurrtum.create.client.flywheel.impl.visualization.VisualizationEventHandler;
-import com.zurrtum.create.client.flywheel.lib.visualization.VisualizationHelper;
 import com.zurrtum.create.client.foundation.block.render.BlockDestructionProgressExtension;
 import com.zurrtum.create.client.foundation.block.render.MultiPosDestructionHandler;
 import com.zurrtum.create.client.ponder.Ponder;
@@ -25,7 +23,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.BlockDestructionProgress;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.WritableLevelData;
@@ -67,14 +64,6 @@ public abstract class ClientLevelMixin extends Level {
             biomeZoomSeed,
             maxChainedNeighborUpdates
         );
-    }
-
-    @Inject(method = "onBlockEntityAdded(Lnet/minecraft/world/level/block/entity/BlockEntity;)V", at = @At(value = "INVOKE", target = "Ljava/util/Set;add(Ljava/lang/Object;)Z"), cancellable = true)
-    private void flywheel$decideNotToRenderEntity(BlockEntity blockEntity, CallbackInfo ci) {
-        if (VisualizationManager.supportsVisualization(blockEntity.getLevel()) && VisualizationHelper.skipVanillaRender(
-            blockEntity)) {
-            ci.cancel();
-        }
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
