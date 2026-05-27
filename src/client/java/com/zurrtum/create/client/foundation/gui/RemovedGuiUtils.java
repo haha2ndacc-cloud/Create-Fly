@@ -1,9 +1,7 @@
 package com.zurrtum.create.client.foundation.gui;
 
-import com.mojang.blaze3d.opengl.GlStateManager;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -66,77 +64,11 @@ public class RemovedGuiUtils {
         int borderColorEnd,
         Font font
     ) {
-        drawHoveringText(
-            cachedTooltipStack,
-            graphics,
-            textLines,
-            mouseX,
-            mouseY,
-            screenWidth,
-            screenHeight,
-            maxTextWidth,
-            backgroundColor,
-            borderColorStart,
-            borderColorEnd,
-            font
-        );
-    }
-
-    public static void drawHoveringText(
-        final ItemStack stack,
-        GuiGraphicsExtractor graphics,
-        List<? extends FormattedText> textLines,
-        int mouseX,
-        int mouseY,
-        int screenWidth,
-        int screenHeight,
-        int maxTextWidth,
-        Font font
-    ) {
-        drawHoveringText(
-            stack,
-            graphics,
-            textLines,
-            mouseX,
-            mouseY,
-            screenWidth,
-            screenHeight,
-            maxTextWidth,
-            DEFAULT_BACKGROUND_COLOR,
-            DEFAULT_BORDER_COLOR_START,
-            DEFAULT_BORDER_COLOR_END,
-            font
-        );
-    }
-
-    public static void drawHoveringText(
-        final ItemStack stack,
-        GuiGraphicsExtractor graphics,
-        List<? extends FormattedText> textLines,
-        int mouseX,
-        int mouseY,
-        int screenWidth,
-        int screenHeight,
-        int maxTextWidth,
-        int backgroundColor,
-        int borderColorStart,
-        int borderColorEnd,
-        Font font
-    ) {
         if (textLines.isEmpty()) {
             return;
         }
 
-        List<ClientTooltipComponent> list = new ArrayList<>();
-        for (FormattedText textLine : textLines) {
-            FormattedCharSequence charSequence = textLine instanceof Component text ? text.getVisualOrderText() : Language.getInstance()
-                .getVisualOrder(textLine);
-            list.add(ClientTooltipComponent.create(charSequence));
-        }
-
-        GlStateManager._disableDepthTest();
         int tooltipTextWidth = 0;
-
         for (FormattedText textLine : textLines) {
             int textLineWidth = font.width(textLine);
             if (textLineWidth > tooltipTextWidth) {
@@ -284,20 +216,15 @@ public class RemovedGuiUtils {
             borderColorEnd
         );
 
-        for (int lineNumber = 0; lineNumber < list.size(); ++lineNumber) {
-            ClientTooltipComponent line = list.get(lineNumber);
-
-            if (line != null) {
-                line.extractText(graphics, font, tooltipX, tooltipY);
-            }
-
+        for (int lineNumber = 0, size = textLines.size(); lineNumber < size; ++lineNumber) {
+            FormattedText textLine = textLines.get(lineNumber);
+            FormattedCharSequence str = textLine instanceof Component text ? text.getVisualOrderText() :
+                Language.getInstance().getVisualOrder(textLine);
+            graphics.text(font, str, tooltipX, tooltipY, -1, true);
             if (lineNumber + 1 == titleLinesCount) {
                 tooltipY += 2;
             }
-
-            tooltipY += line == null ? 10 : line.getHeight(font);
+            tooltipY += 10;
         }
-
-        GlStateManager._enableDepthTest();
     }
 }

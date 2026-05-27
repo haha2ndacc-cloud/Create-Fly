@@ -3,6 +3,7 @@ package com.zurrtum.create.client.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.zurrtum.create.AllPackets;
 import com.zurrtum.create.catnip.data.WorldAttached;
 import com.zurrtum.create.client.Create;
@@ -128,8 +129,10 @@ public abstract class MinecraftMixin {
 
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;updateRawMouseInput(Z)V"))
     private void register(GameConfig gameConfig, CallbackInfo ci) {
+        if (RenderSystem.getDevice().getDeviceInfo().backendName().equals("OpenGL")) {
+            resourceManager.registerReloadListener(FlwProgramsReloader.INSTANCE);
+        }
         resourceManager.registerReloadListener(ObjLoader.INSTANCE);
-        resourceManager.registerReloadListener(FlwProgramsReloader.INSTANCE);
         resourceManager.registerReloadListener(Create.RESOURCE_RELOAD_LISTENER);
         resourceManager.registerReloadListener(TrainHatInfoReloadListener.LISTENER);
         resourceManager.registerReloadListener(Ponder.RESOURCE_RELOAD_LISTENER);

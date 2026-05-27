@@ -1,5 +1,6 @@
 package com.zurrtum.create.client.flywheel.backend.gl;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.zurrtum.create.client.flywheel.backend.FlwBackend;
 import com.zurrtum.create.client.flywheel.backend.compile.core.Compilation;
 import com.zurrtum.create.client.flywheel.backend.gl.shader.GlProgram;
@@ -40,8 +41,10 @@ public final class GlCompat {
 
     public static final boolean SUPPORTS_DSA = isDsaSupported();
 
-    public static final boolean SUPPORTS_INSTANCING = isInstancingSupported();
-    public static final boolean SUPPORTS_INDIRECT = isIndirectSupported();
+    public static final boolean SUPPORTS_OPENGL = RenderSystem.getDevice().getDeviceInfo().backendName()
+        .equals("OpenGL");
+    public static final boolean SUPPORTS_INSTANCING = SUPPORTS_OPENGL && isInstancingSupported();
+    public static final boolean SUPPORTS_INDIRECT = SUPPORTS_OPENGL && isIndirectSupported();
 
     private GlCompat() {
     }

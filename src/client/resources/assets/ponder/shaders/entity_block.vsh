@@ -8,6 +8,9 @@
 in vec3 Position;
 in vec4 Color;
 in vec2 UV0;
+#if defined(OVERWORLD) || defined(NETHER)
+in ivec2 UV1;
+#endif
 in ivec2 UV2;
 #if defined(OVERWORLD) || defined(NETHER)
 in vec3 Normal;
