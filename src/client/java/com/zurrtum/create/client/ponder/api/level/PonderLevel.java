@@ -73,11 +73,17 @@ public class PonderLevel extends SchematicRenderLevel {
     int overrideLight;
     @Nullable Selection mask;
     boolean currentlyTickingEntities;
+    int entity_counter = 0;
 
     public PonderLevel(BlockPos anchor, Level original, ParticleResources particleResources) {
         super(anchor, original);
         renderMode = true;
         particleEngine = new ParticleEngine(WrappedClientLevel.of(this), particleResources);
+    }
+
+    @Override
+    public int getNextEntityId() {
+        return ++entity_counter;
     }
 
     public void createBackup() {
