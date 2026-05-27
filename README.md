@@ -75,6 +75,8 @@ repositories {
 }
 
 dependencies {
+    // 26.2-pre-1
+    implementation "maven.modrinth:create-fly:26.2-pre-1-6.0.9-1"
     // 26.1.2
     implementation "maven.modrinth:create-fly:26.1.2-6.0.9-1"
     // 1.21.11
@@ -103,6 +105,8 @@ repositories {
 }
 
 dependencies {
+    // 26.2-pre-1
+    implementation "curse.maven:create-fly-1346281:8153763-sources-8153765"
     // 26.1.2
     implementation "curse.maven:create-fly-1346281:8074731-sources-8074735"
     // 1.21.11
