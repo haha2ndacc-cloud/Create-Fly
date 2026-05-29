@@ -1,3 +1,13 @@
+<div align="center">
+
+# Create Fly
+[![Supporters](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dzurrtum%26type%3Dpatrons&style=flat&label=Supporters&color=FF5733)](https://www.patreon.com/cw/ZurrTum)
+[![Discord](https://img.shields.io/discord/1484919833601773629?color=5865F2&label=Discord&style=flat)](https://discord.com/invite/cV2nGWy9eA)
+[![CurseForge](https://img.shields.io/curseforge/dt/1346281?logo=curseforge&label=&suffix=%20&style=flat&color=242629&labelColor=F16436&logoColor=1C1C1C)](https://www.curseforge.com/minecraft/mc-mods/create-fly)
+[![Modrinth](https://img.shields.io/modrinth/dt/create-fly?logo=modrinth&label=&suffix=%20&style=flat&color=242629&labelColor=5CA424&logoColor=1C1C1C)](https://modrinth.com/mod/create-fly)
+
+</div>
+
 ## Higher version Create mod porting to Fabric
 
 ### Download the latest version of Create-Fly:
@@ -78,7 +88,7 @@ dependencies {
     // 26.2-pre-1
     implementation "maven.modrinth:create-fly:26.2-pre-1-6.0.9-1"
     // 26.1.2
-    implementation "maven.modrinth:create-fly:26.1.2-6.0.9-1"
+    implementation "maven.modrinth:create-fly:26.1.2-6.0.9-2"
     // 1.21.11
     modImplementation "maven.modrinth:create-fly:1.21.11-6.0.9-5"
     // 1.21.10
@@ -108,7 +118,7 @@ dependencies {
     // 26.2-pre-1
     implementation "curse.maven:create-fly-1346281:8153763-sources-8153765"
     // 26.1.2
-    implementation "curse.maven:create-fly-1346281:8074731-sources-8074735"
+    implementation "curse.maven:create-fly-1346281:8164149-sources-8164153"
     // 1.21.11
     modImplementation "curse.maven:create-fly-1346281:7658527-sources-7658535"
     // 1.21.10
