@@ -11,10 +11,7 @@ import com.zurrtum.create.client.flywheel.backend.gl.GlCompat;
 import com.zurrtum.create.client.flywheel.backend.gl.GlTextureUnit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
-import org.lwjgl.opengl.GL32;
-import org.lwjgl.opengl.GL46;
+import org.lwjgl.opengl.*;
 
 import java.util.Collections;
 
@@ -77,6 +74,7 @@ public class OitFramebuffer {
 
         Samplers.NOISE.makeActive();
         GlStateManager._bindTexture(((GlTexture) NoiseTextures.BLUE_NOISE.getTexture()).glId());
+        GL33C.glBindSampler(Samplers.NOISE.number, ((GlSampler) NoiseTextures.BLUE_NOISE.getSampler()).getId());
 
         GlStateManager._glBindFramebuffer(GL32.GL_FRAMEBUFFER, fbo);
         GL32.glFramebufferTexture(
