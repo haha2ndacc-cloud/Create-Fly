@@ -14,7 +14,7 @@ public class FluidTank implements FluidInventory {
     protected int capacity;
 
     public FluidTank(int capacity) {
-        this.max = Optional.of(capacity);
+        max = Optional.of(capacity);
         this.capacity = capacity;
     }
 
@@ -67,7 +67,7 @@ public class FluidTank implements FluidInventory {
     }
 
     public void setCapacity(int capacity) {
-        this.max = Optional.of(capacity);
+        max = Optional.of(capacity);
         this.capacity = capacity;
         if (!fluid.isEmpty()) {
             setMaxSize(fluid, max);

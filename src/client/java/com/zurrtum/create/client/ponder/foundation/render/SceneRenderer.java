@@ -211,10 +211,10 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
         int colorTo
     ) {
         Matrix4f matrix4f = matrices.last().pose();
-        buffer.addVertex(matrix4f, (float) x1, (float) y1, (float) z).setColor(colorFrom);
-        buffer.addVertex(matrix4f, (float) x1, (float) y2, (float) z).setColor(colorTo);
-        buffer.addVertex(matrix4f, (float) x2, (float) y2, (float) z).setColor(colorTo);
-        buffer.addVertex(matrix4f, (float) x2, (float) y1, (float) z).setColor(colorFrom);
+        buffer.addVertex(matrix4f, x1, y1, z).setColor(colorFrom);
+        buffer.addVertex(matrix4f, x1, y2, z).setColor(colorTo);
+        buffer.addVertex(matrix4f, x2, y2, z).setColor(colorTo);
+        buffer.addVertex(matrix4f, x2, y1, z).setColor(colorFrom);
     }
 
     @Override
@@ -266,7 +266,7 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
         }
 
         private static void addBlackVertex(VertexConsumer buffer, Matrix4f pose, Vector3f pos, float x2) {
-            addVertex(buffer, pose, pos, -0.5f, x2, 4f, 0x66_000000, 0x00_000000);
+            addVertex(buffer, pose, pos, -0.5f, x2, 4.0f, 0x66_000000, 0x00_000000);
         }
 
         private static void addVertex(
@@ -279,8 +279,8 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
             int colorFrom,
             int colorTo
         ) {
-            addVertex(buffer, pose, pos, 0f, y1, colorFrom);
-            addVertex(buffer, pose, pos, 0f, y2, colorTo);
+            addVertex(buffer, pose, pos, 0.0f, y1, colorFrom);
+            addVertex(buffer, pose, pos, 0.0f, y2, colorTo);
             addVertex(buffer, pose, pos, x2, y2, colorTo);
             addVertex(buffer, pose, pos, x2, y1, colorFrom);
         }
@@ -294,24 +294,24 @@ public class SceneRenderer extends PictureInPictureRenderer<SceneRenderState> {
     private record ShadowFlashRenderState(int flashColor, float scaleY, Matrix4f save) {
         @Nullable
         public static ShadowFlashRenderState create(float progress) {
-            float alpha = progress * .9f;
+            float alpha = progress * 0.9f;
             progress = alpha * alpha;
             progress = 4 * progress * (1 - progress);
             if (progress <= 0) {
                 return null;
             }
             return new ShadowFlashRenderState(
-                0xc6ffc9 | ((int) (0xaa * alpha) << 24),
-                Math.fma(progress, .75f, .5f),
+                0xc6ffc9 | (int) (0xaa * alpha) << 24,
+                Math.fma(progress, 0.75f, 0.5f),
                 new Matrix4f()
             );
         }
 
         public void addVertex(VertexConsumer buffer, Matrix4f pose, Vector3f pos, float x2) {
             save.set(pose);
-            pose.translate(0, 0, -1 / 1024f);
+            pose.translate(0, 0, -1 / 1024.0f);
             pose.scale(1, scaleY, 1);
-            ShadowRenderState.addVertex(buffer, pose, pos, -1f, x2, 0, 0x00_c6ffc9, flashColor);
+            ShadowRenderState.addVertex(buffer, pose, pos, -1.0f, x2, 0, 0x00_c6ffc9, flashColor);
             pose.set(save);
         }
     }

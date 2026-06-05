@@ -21,7 +21,7 @@ public class MillstoneAudioBehaviour extends KineticAudioBehaviour<MillstoneBloc
             return;
         }
 
-        float pitch = Mth.clamp((Math.abs(blockEntity.getSpeed()) / 256f) + .45f, .85f, 1f);
+        float pitch = Mth.clamp(Math.abs(blockEntity.getSpeed()) / 256.0f + 0.45f, 0.85f, 1.0f);
         SoundScapes.play(AmbienceGroup.MILLING, blockEntity.getBlockPos(), pitch);
     }
 }

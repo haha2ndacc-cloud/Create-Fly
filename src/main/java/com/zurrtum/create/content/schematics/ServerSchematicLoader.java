@@ -44,8 +44,8 @@ public class ServerSchematicLoader {
             this.totalBytes = totalBytes;
             this.tablePos = tablePos;
             this.world = world;
-            this.bytesUploaded = 0;
-            this.idleTime = 0;
+            bytesUploaded = 0;
+            idleTime = 0;
         }
     }
 
@@ -69,7 +69,7 @@ public class ServerSchematicLoader {
 
         // Remove Timed out Uploads
         for (String toRemove : deadEntries) {
-            this.cancelUpload(toRemove);
+            cancelUpload(toRemove);
         }
         deadEntries.clear();
     }

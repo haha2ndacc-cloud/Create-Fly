@@ -22,7 +22,7 @@ public class EmptyJsonOps extends RegistryOps<JsonElement> implements HolderOwne
 
     @SuppressWarnings("deprecation")
     public static Ingredient ofTag(TagKey<Item> inputTag) {
-        return Ingredient.of(HolderSet.emptyNamed(EmptyJsonOps.INSTANCE, inputTag));
+        return Ingredient.of(HolderSet.emptyNamed(INSTANCE, inputTag));
     }
 
     @Override

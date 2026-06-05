@@ -123,22 +123,22 @@ public class PotatoCannonItem extends ProjectileWeaponItem implements SwingContr
         Vec3 barrelPos = ShootableGadgetItemMethods.getGunBarrelVec(
             player,
             hand == InteractionHand.MAIN_HAND,
-            new Vec3(.75f, -0.15f, 1.5f)
+            new Vec3(0.75f, -0.15f, 1.5f)
         );
         Vec3 correction = ShootableGadgetItemMethods.getGunBarrelVec(
             player,
             hand == InteractionHand.MAIN_HAND,
-            new Vec3(-.05f, 0, 0)
+            new Vec3(-0.05f, 0, 0)
         ).subtract(player.position().add(0, player.getEyeHeight(), 0));
 
         Vec3 lookVec = player.getLookAngle();
         Vec3 motion = lookVec.add(correction).normalize().scale(2).scale(projectileType.velocityMultiplier());
 
-        float soundPitch = projectileType.soundPitch() + (level.getRandom().nextFloat() - .5f) / 4f;
+        float soundPitch = projectileType.soundPitch() + (level.getRandom().nextFloat() - 0.5f) / 4.0f;
 
         boolean spray = projectileType.split() > 1;
         Vec3 sprayBase = VecHelper.rotate(new Vec3(0, 0.1, 0), 360 * level.getRandom().nextFloat(), Axis.Z);
-        float sprayChange = 360f / projectileType.split();
+        float sprayChange = 360.0f / projectileType.split();
 
         ItemStack ammoStackCopy = ammoStack.copy();
 
@@ -225,8 +225,8 @@ public class PotatoCannonItem extends ProjectileWeaponItem implements SwingContr
         ItemEnchantments enchantments = stack.getEnchantments();
         int power = enchantments.getLevel(lookup.getOrThrow(Enchantments.POWER));
         int punch = enchantments.getLevel(lookup.getOrThrow(Enchantments.PUNCH));
-        final float additionalDamageMult = 1 + power * .2f;
-        final float additionalKnockback = punch * .5f;
+        final float additionalDamageMult = 1 + power * 0.2f;
+        final float additionalKnockback = punch * 0.5f;
 
         String _attack = "create.potato_cannon.ammo.attack_damage";
         String _reload = "create.potato_cannon.ammo.reload_ticks";
@@ -239,7 +239,8 @@ public class PotatoCannonItem extends ProjectileWeaponItem implements SwingContr
         ChatFormatting darkGreen = ChatFormatting.DARK_GREEN;
 
         float damageF = type.damage() * additionalDamageMult;
-        MutableComponent damage = Component.literal(damageF == Mth.floor(damageF) ? "" + Mth.floor(damageF) : "" + damageF);
+        MutableComponent damage = Component.literal(
+            damageF == Mth.floor(damageF) ? "" + Mth.floor(damageF) : "" + damageF);
         MutableComponent reloadTicks = Component.literal("" + type.reloadTicks());
         MutableComponent knockback = Component.literal("" + (type.knockback() + additionalKnockback));
 

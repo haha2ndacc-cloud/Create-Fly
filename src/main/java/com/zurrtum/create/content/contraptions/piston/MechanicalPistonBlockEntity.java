@@ -50,7 +50,8 @@ public class MechanicalPistonBlockEntity extends LinearActuatorBlockEntity {
         }
 
         Direction positive = Direction.get(AxisDirection.POSITIVE, direction.getAxis());
-        Direction movementDirection = getSpeed() > 0 ^ direction.getAxis() != Axis.Z ? positive : positive.getOpposite();
+        Direction movementDirection =
+            getSpeed() > 0 ^ direction.getAxis() != Axis.Z ? positive : positive.getOpposite();
 
         BlockPos anchor = contraption.anchor.relative(direction, contraption.initialExtensionProgress);
         if (ContraptionCollider.isCollidingWithWorld(
@@ -64,7 +65,7 @@ public class MechanicalPistonBlockEntity extends LinearActuatorBlockEntity {
 
         // Check if not at limit already
         extensionLength = contraption.extensionLength;
-        float resultingOffset = contraption.initialExtensionProgress + Math.signum(getMovementSpeed()) * .5f;
+        float resultingOffset = contraption.initialExtensionProgress + Math.signum(getMovementSpeed()) * 0.5f;
         if (resultingOffset <= 0 || resultingOffset >= extensionLength) {
             return;
         }
@@ -125,14 +126,14 @@ public class MechanicalPistonBlockEntity extends LinearActuatorBlockEntity {
 
     @Override
     public float getMovementSpeed() {
-        float movementSpeed = Mth.clamp(convertToLinear(getSpeed()), -.49f, .49f);
+        float movementSpeed = Mth.clamp(convertToLinear(getSpeed()), -0.49f, 0.49f);
         if (level.isClientSide()) {
             movementSpeed *= AllClientHandle.INSTANCE.getServerSpeed();
         }
         Direction pistonDirection = getBlockState().getValue(BlockStateProperties.FACING);
-        int movementModifier = pistonDirection.getAxisDirection()
-            .getStep() * (pistonDirection.getAxis() == Axis.Z ? -1 : 1);
-        movementSpeed = movementSpeed * -movementModifier + clientOffsetDiff / 2f;
+        int movementModifier = pistonDirection.getAxisDirection().getStep() * (pistonDirection.getAxis() == Axis.Z ?
+            -1 : 1);
+        movementSpeed = movementSpeed * -movementModifier + clientOffsetDiff / 2.0f;
 
         int extensionRange = getExtensionRange();
         movementSpeed = Mth.clamp(movementSpeed, 0 - offset, extensionRange - offset);
@@ -162,6 +163,7 @@ public class MechanicalPistonBlockEntity extends LinearActuatorBlockEntity {
 
     @Override
     protected int getInitialOffset() {
-        return movedContraption == null ? 0 : ((PistonContraption) movedContraption.getContraption()).initialExtensionProgress;
+        return movedContraption == null ? 0 :
+            ((PistonContraption) movedContraption.getContraption()).initialExtensionProgress;
     }
 }

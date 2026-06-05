@@ -68,7 +68,7 @@ public abstract class ConductorBlockInteractionBehavior extends MovingInteractio
         }
 
         StructureBlockInfo info = carriageContraption.getBlocks().get(localPos);
-        if (info == null || !this.isValidConductor(info.state())) {
+        if (info == null || !isValidConductor(info.state())) {
             return false;
         }
 
@@ -106,12 +106,14 @@ public abstract class ConductorBlockInteractionBehavior extends MovingInteractio
                     player.blockPosition(),
                     SoundEvents.ITEM_PICKUP,
                     SoundSource.PLAYERS,
-                    .2f,
-                    1f + player.level().getRandom().nextFloat()
+                    0.2f,
+                    1.0f + player.level().getRandom().nextFloat()
                 );
-                player.sendOverlayMessage(Component.translatable(train.runtime.isAutoSchedule ? "create.schedule.auto_removed_from_train" : "create.schedule.removed_from_train"));
+                player.sendOverlayMessage(Component.translatable(
+                    train.runtime.isAutoSchedule ? "create.schedule.auto_removed_from_train" :
+                        "create.schedule.removed_from_train"));
                 player.setItemInHand(activeHand, train.runtime.returnSchedule(player.registryAccess()));
-                this.onScheduleUpdate(
+                onScheduleUpdate(
                     false,
                     info.state(),
                     newBlockState -> setBlockState(localPos, contraptionEntity, newBlockState)
@@ -133,7 +135,7 @@ public abstract class ConductorBlockInteractionBehavior extends MovingInteractio
                 player.sendOverlayMessage(Component.translatable("create.schedule.no_stops"));
                 return true;
             }
-            this.onScheduleUpdate(
+            onScheduleUpdate(
                 true,
                 info.state(),
                 newBlockState -> setBlockState(localPos, contraptionEntity, newBlockState)

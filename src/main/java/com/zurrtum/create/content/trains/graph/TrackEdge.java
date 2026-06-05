@@ -31,8 +31,8 @@ public class TrackEdge {
     TrackMaterial trackMaterial;
 
     public TrackEdge(TrackNode node1, TrackNode node2, @Nullable BezierConnection turn, TrackMaterial trackMaterial) {
-        this.interDimensional = !node1.location.dimension.equals(node2.location.dimension);
-        this.edgeData = new EdgeData(this);
+        interDimensional = !node1.location.dimension.equals(node2.location.dimension);
+        edgeData = new EdgeData(this);
         this.node1 = node1;
         this.node2 = node2;
         this.turn = turn;
@@ -66,7 +66,7 @@ public class TrackEdge {
 
     public Vec3 getDirectionAt(double t) {
         double length = getLength();
-        double step = .5f / length;
+        double step = 0.5f / length;
         t /= length;
         Vec3 ahead = getPosition(null, Math.min(1, t + step));
         Vec3 behind = getPosition(null, Math.max(0, t - step));
@@ -78,12 +78,12 @@ public class TrackEdge {
             return true;
         }
         Vec3 newDirection = other.getDirection(true);
-        return getDirection(false).dot(newDirection) > 7 / 8f;
+        return getDirection(false).dot(newDirection) > 7 / 8.0f;
     }
 
     public double getLength() {
-        return isInterDimensional() ? 0 : isTurn() ? turn.getLength() : node1.location.getLocation()
-            .distanceTo(node2.location.getLocation());
+        return isInterDimensional() ? 0 :
+            isTurn() ? turn.getLength() : node1.location.getLocation().distanceTo(node2.location.getLocation());
     }
 
     public double incrementT(double currentT, double distance) {
@@ -200,7 +200,7 @@ public class TrackEdge {
             Collection<double[]> intersections = new ArrayList<>();
             for (int i = 0; i < turn.getSegmentCount(); i++) {
                 double tOffset = t;
-                t += .5;
+                t += 0.5;
                 seg2 = getPosition(null, t / getLength());
                 double[] intersection = VecHelper.intersectRanged(seg1, w1, seg2, w2, Axis.Y);
                 seg1 = seg2;
@@ -225,7 +225,7 @@ public class TrackEdge {
         Collection<double[]> intersections = new ArrayList<>();
         for (int i = 0; i < turn.getSegmentCount(); i++) {
             double tOffset = t;
-            t += .5;
+            t += 0.5;
             seg2 = getPosition(null, t / getLength());
 
             Vec3 otherSeg1 = w1;
@@ -234,7 +234,7 @@ public class TrackEdge {
 
             for (int j = 0; j < other.turn.getSegmentCount(); j++) {
                 double uOffset = u;
-                u += .5;
+                u += 0.5;
                 otherSeg2 = other.getPosition(null, u / other.getLength());
 
                 double[] intersection = VecHelper.intersectRanged(seg1, otherSeg1, seg2, otherSeg2, Axis.Y);

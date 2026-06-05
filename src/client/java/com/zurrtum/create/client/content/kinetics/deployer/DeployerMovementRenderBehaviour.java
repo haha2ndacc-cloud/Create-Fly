@@ -69,12 +69,12 @@ public class DeployerMovementRenderBehaviour implements MovementRenderBehaviour 
         }
         double factor;
         if (context.contraption.stalled || context.position == null || context.data.contains("StationaryTimer")) {
-            factor = Mth.sin(AnimationTickHolder.getRenderTime() * .5f) * .25f + .25f;
+            factor = Mth.sin(AnimationTickHolder.getRenderTime() * 0.5f) * 0.25f + 0.25f;
         } else {
             Vec3 center = VecHelper.getCenterOf(BlockPos.containing(context.position));
             double distance = context.position.distanceTo(center);
             double nextDistance = context.position.add(context.motion).distanceTo(center);
-            factor = .5f - Mth.clamp(Mth.lerp(AnimationTickHolder.getPartialTicks(), distance, nextDistance), 0, 1);
+            factor = 0.5f - Mth.clamp(Mth.lerp(AnimationTickHolder.getPartialTicks(), distance, nextDistance), 0, 1);
         }
         Direction facing = blockState.getValue(FACING);
         Direction.Axis axis = Direction.Axis.Y;
@@ -82,14 +82,14 @@ public class DeployerMovementRenderBehaviour implements MovementRenderBehaviour 
             axis = def.getRotationAxis(context.state);
         }
         float time = AnimationTickHolder.getRenderTime(context.world) / 20;
-        float angle = (time * speed) % 360;
+        float angle = time * speed % 360;
         float yRot = axis == Direction.Axis.Z ? Mth.DEG_TO_RAD * 90 : 0;
         float zRot = axis.isHorizontal() ? Mth.DEG_TO_RAD * 90 : 0;
         int light = LightCoordsUtil.getLightCoords(renderWorld, pos);
         float upAngle = Mth.DEG_TO_RAD * AngleHelper.horizontalAngle(facing);
         float eastAngle = Mth.DEG_TO_RAD * (facing == Direction.UP ? 270 : facing == Direction.DOWN ? 90 : 0);
         float southAngle = Mth.DEG_TO_RAD * (
-            (blockState.getValue(AXIS_ALONG_FIRST_COORDINATE) ^ facing.getAxis() == Direction.Axis.Z) ? 90 : 0);
+            blockState.getValue(AXIS_ALONG_FIRST_COORDINATE) ^ facing.getAxis() == Direction.Axis.Z ? 90 : 0);
         SuperByteBuffer hand = CachedBuffers.partial(handPose, blockState).transform(transform).translate(pos);
         SuperByteBuffer shaft = CachedBuffers.block(AllBlocks.SHAFT.defaultBlockState());
         SuperByteBuffer.copyTransform(hand, shaft);

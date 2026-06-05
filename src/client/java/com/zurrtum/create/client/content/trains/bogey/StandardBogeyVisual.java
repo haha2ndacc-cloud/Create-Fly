@@ -40,9 +40,9 @@ public class StandardBogeyVisual implements BogeyVisual {
 
     @Override
     public void update(CompoundTag bogeyData, float wheelAngle, PoseStack poseStack) {
-        shaft1.setTransform(poseStack).translate(-.5f, .25f, 0).center().rotateTo(Direction.UP, Direction.SOUTH)
+        shaft1.setTransform(poseStack).translate(-0.5f, 0.25f, 0).center().rotateTo(Direction.UP, Direction.SOUTH)
             .rotateYDegrees(wheelAngle).uncenter().setChanged();
-        shaft2.setTransform(poseStack).translate(-.5f, .25f, -1).center().rotateTo(Direction.UP, Direction.SOUTH)
+        shaft2.setTransform(poseStack).translate(-0.5f, 0.25f, -1).center().rotateTo(Direction.UP, Direction.SOUTH)
             .rotateYDegrees(wheelAngle).uncenter().setChanged();
     }
 
@@ -89,9 +89,9 @@ public class StandardBogeyVisual implements BogeyVisual {
         @Override
         public void update(CompoundTag bogeyData, float wheelAngle, PoseStack poseStack) {
             super.update(bogeyData, wheelAngle, poseStack);
-            wheel1.setTransform(poseStack).translate(0, 12 / 16f, -1).rotateXDegrees(wheelAngle).setChanged();
-            wheel2.setTransform(poseStack).translate(0, 12 / 16f, 1).rotateXDegrees(wheelAngle).setChanged();
-            frame.setTransform(poseStack).scale(1 - 1 / 512f).setChanged();
+            wheel1.setTransform(poseStack).translate(0, 12 / 16.0f, -1).rotateXDegrees(wheelAngle).setChanged();
+            wheel2.setTransform(poseStack).translate(0, 12 / 16.0f, 1).rotateXDegrees(wheelAngle).setChanged();
+            frame.setTransform(poseStack).scale(1 - 1 / 512.0f).setChanged();
         }
 
         @Override
@@ -165,16 +165,17 @@ public class StandardBogeyVisual implements BogeyVisual {
         @Override
         public void update(CompoundTag bogeyData, float wheelAngle, PoseStack poseStack) {
             super.update(bogeyData, wheelAngle, poseStack);
-            secondaryShaft1.setTransform(poseStack).translate(-.5f, .25f, .5f).center()
+            secondaryShaft1.setTransform(poseStack).translate(-0.5f, 0.25f, 0.5f).center()
                 .rotateTo(Direction.UP, Direction.EAST).rotateYDegrees(wheelAngle).uncenter().setChanged();
-            secondaryShaft2.setTransform(poseStack).translate(-.5f, .25f, -1.5f).center()
+            secondaryShaft2.setTransform(poseStack).translate(-0.5f, 0.25f, -1.5f).center()
                 .rotateTo(Direction.UP, Direction.EAST).rotateYDegrees(wheelAngle).uncenter().setChanged();
-            drive.setTransform(poseStack).scale(1 - 1 / 512f).setChanged();
+            drive.setTransform(poseStack).scale(1 - 1 / 512.0f).setChanged();
             belt.offset(0, StandardBogeyRenderer.Large.BELT_RADIUS_IN_UV_SPACE * Mth.DEG_TO_RAD * wheelAngle)
-                .setTransform(poseStack).scale(1 - 1 / 512f).setChanged();
-            piston.setTransform(poseStack).translate(0, 0, 1 / 4f * Math.sin(AngleHelper.rad(wheelAngle))).setChanged();
+                .setTransform(poseStack).scale(1 - 1 / 512.0f).setChanged();
+            piston.setTransform(poseStack).translate(0, 0, 1 / 4.0f * Math.sin(AngleHelper.rad(wheelAngle)))
+                .setChanged();
             wheels.setTransform(poseStack).translate(0, 1, 0).rotateXDegrees(wheelAngle).setChanged();
-            pin.setTransform(poseStack).translate(0, 1, 0).rotateXDegrees(wheelAngle).translate(0, 1 / 4f, 0)
+            pin.setTransform(poseStack).translate(0, 1, 0).rotateXDegrees(wheelAngle).translate(0, 1 / 4.0f, 0)
                 .rotateXDegrees(-wheelAngle).setChanged();
         }
 

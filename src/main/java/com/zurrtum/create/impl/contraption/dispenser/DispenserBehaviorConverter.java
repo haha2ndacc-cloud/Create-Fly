@@ -91,7 +91,7 @@ public enum DispenserBehaviorConverter implements SimpleRegistry.Provider<Item, 
 
         @Override
         protected ItemStack execute(ItemStack stack, MovementContext context, BlockPos pos, Vec3 facing) {
-            if (this.hasErrored) {
+            if (hasErrored) {
                 return stack;
             }
 
@@ -108,13 +108,13 @@ public enum DispenserBehaviorConverter implements SimpleRegistry.Provider<Item, 
 
             try {
                 // use a copy in case of implosion after modifying it
-                return this.wrapped.dispense(source, stack.copy());
+                return wrapped.dispense(source, stack.copy());
             } catch (NullPointerException e) {
                 // likely due to the lack of a BlockEntity
-                Identifier itemId = BuiltInRegistries.ITEM.getKey(this.item);
+                Identifier itemId = BuiltInRegistries.ITEM.getKey(item);
                 String message = "Error dispensing item '" + itemId + "' from contraption, not doing that anymore";
                 Create.LOGGER.error(message, e);
-                this.hasErrored = true;
+                hasErrored = true;
                 return stack;
             }
         }

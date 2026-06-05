@@ -54,7 +54,7 @@ public class ChassisScenes {
         scene.idle(90);
 
         BlockPos bearingPos = util.grid().at(2, 1, 2);
-        scene.world().moveSection(chassis, util.vector().of(0, -1 / 1024f, 0), 0);
+        scene.world().moveSection(chassis, util.vector().of(0, -1 / 1024.0f, 0), 0);
         scene.world().configureCenterOfRotation(chassis, util.vector().centerOf(bearingPos));
         scene.world().rotateBearing(bearingPos, 360, 80);
         scene.world().rotateSection(chassis, 0, 360, 0, 80);
@@ -296,7 +296,7 @@ public class ChassisScenes {
         scene.idle(60);
 
         BlockPos bearingPos = util.grid().at(2, 1, 2);
-        scene.world().moveSection(contraption, util.vector().of(0, -1 / 1024f, 0), 0);
+        scene.world().moveSection(contraption, util.vector().of(0, -1 / 1024.0f, 0), 0);
         scene.world().configureCenterOfRotation(contraption, util.vector().centerOf(bearingPos));
         scene.world().rotateBearing(bearingPos, 360, 80);
         scene.world().rotateSection(contraption, 0, 360, 0, 80);
@@ -371,11 +371,11 @@ public class ChassisScenes {
         scene.world().showSection(util.select().fromTo(0, 3, 3, 1, 3, 4), Direction.DOWN);
         scene.idle(10);
         Vec3 blockSurface = util.vector().blockSurface(chassisPos, Direction.NORTH);
-        AABB bb = new AABB(blockSurface, blockSurface).inflate(.501, .501, 0);
+        AABB bb = new AABB(blockSurface, blockSurface).inflate(0.501, 0.501, 0);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, bb, bb, 60);
         scene.overlay().showOutline(PonderPalette.WHITE, s, s, 80);
         scene.overlay().showText(40).text("Whenever a Block is next to a sticky face...").placeNearTarget()
-            .pointAt(blockSurface.add(0, .5, 0));
+            .pointAt(blockSurface.add(0, 0.5, 0));
         scene.idle(60);
 
         MutableObject<Selection> obj = new MutableObject<>(growing);

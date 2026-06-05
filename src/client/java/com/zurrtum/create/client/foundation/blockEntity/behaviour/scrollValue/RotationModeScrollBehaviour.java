@@ -18,8 +18,9 @@ public class RotationModeScrollBehaviour extends ScrollOptionBehaviour<RotationM
     }
 
     private enum RotationModeIcon implements INamedIconOptions {
-        ROTATE_PLACE(AllIcons.I_ROTATE_PLACE), ROTATE_PLACE_RETURNED(AllIcons.I_ROTATE_PLACE_RETURNED), ROTATE_NEVER_PLACE(
-            AllIcons.I_ROTATE_NEVER_PLACE);
+        ROTATE_PLACE(AllIcons.I_ROTATE_PLACE),
+        ROTATE_PLACE_RETURNED(AllIcons.I_ROTATE_PLACE_RETURNED),
+        ROTATE_NEVER_PLACE(AllIcons.I_ROTATE_NEVER_PLACE);
 
         private final String translationKey;
         private final AllIcons icon;

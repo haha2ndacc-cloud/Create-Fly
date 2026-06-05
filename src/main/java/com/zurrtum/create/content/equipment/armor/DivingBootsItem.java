@@ -47,7 +47,7 @@ public class DivingBootsItem extends Item {
         player.setOnGround(player.onGround() || player.verticalCollision);
 
         if (player.isJumping() && player.onGround()) {
-            motion = motion.add(0, .5f, 0);
+            motion = motion.add(0, 0.5f, 0);
             player.setOnGround(false);
         } else {
             motion = motion.add(0, -0.05f, 0);
@@ -82,7 +82,7 @@ public class DivingBootsItem extends Item {
     }
 
     public static void onLavaTravel(Player player, boolean onGround) {
-        ItemStack bootsStack = DivingBootsItem.getWornItem(player);
+        ItemStack bootsStack = getWornItem(player);
         if (!bootsStack.is(AllItems.NETHERITE_DIVING_BOOTS)) {
             return;
         }

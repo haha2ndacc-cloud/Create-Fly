@@ -75,13 +75,13 @@ public class RoseQuartzLampBlock extends Block implements IWrenchable, WeakPower
             return;
         }
         if (isPowered) {
-            pLevel.setBlock(pPos, pState.cycle(POWERED), Block.UPDATE_CLIENTS);
+            pLevel.setBlock(pPos, pState.cycle(POWERED), UPDATE_CLIENTS);
             return;
         }
 
         forEachInCluster(
             pLevel, pPos, (currentPos, currentState) -> {
-                pLevel.setBlock(currentPos, currentState.setValue(POWERING, false), Block.UPDATE_CLIENTS);
+                pLevel.setBlock(currentPos, currentState.setValue(POWERING, false), UPDATE_CLIENTS);
                 scheduleActivation(pLevel, currentPos);
             }
         );
@@ -89,7 +89,7 @@ public class RoseQuartzLampBlock extends Block implements IWrenchable, WeakPower
         pLevel.setBlock(
             pPos,
             pState.setValue(POWERED, true).setValue(POWERING, true).setValue(ACTIVATE, true),
-            Block.UPDATE_CLIENTS
+            UPDATE_CLIENTS
         );
         pLevel.updateNeighborsAt(pPos, this, null);
         scheduleActivation(pLevel, pPos);
@@ -173,7 +173,7 @@ public class RoseQuartzLampBlock extends Block implements IWrenchable, WeakPower
             pLevel.setBlock(
                 pPos,
                 pState.setValue(ACTIVATE, false).setValue(POWERING, shouldBePowering),
-                Block.UPDATE_CLIENTS
+                UPDATE_CLIENTS
             );
         }
 

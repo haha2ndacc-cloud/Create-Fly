@@ -38,6 +38,7 @@ public class DoubleFaceAttachedBlock extends HorizontalDirectionalBlock {
         super(p_53182_);
     }
 
+    @Override
     @Nullable
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         for (Direction direction : pContext.getNearestLookingDirections()) {
@@ -45,7 +46,8 @@ public class DoubleFaceAttachedBlock extends HorizontalDirectionalBlock {
             if (direction.getAxis() == Direction.Axis.Y) {
                 blockstate = defaultBlockState().setValue(
                     FACE,
-                    direction == Direction.UP ? NixieTubeBlock.DoubleAttachFace.CEILING : NixieTubeBlock.DoubleAttachFace.FLOOR
+                    direction == Direction.UP ? NixieTubeBlock.DoubleAttachFace.CEILING :
+                        NixieTubeBlock.DoubleAttachFace.FLOOR
                 ).setValue(FACING, pContext.getHorizontalDirection());
             } else {
                 Vec3 n = Vec3.atLowerCornerOf(direction.getClockWise().getUnitVec3i());

@@ -135,7 +135,7 @@ public class ItemHelper {
             }
             ItemStack itemstack = inv.getItem(j);
             if (!itemstack.isEmpty()) {
-                f += (float) itemstack.getCount() / (float) Math.min(slotLimit, itemstack.getMaxStackSize());
+                f += (float) itemstack.getCount() / Math.min(slotLimit, itemstack.getMaxStackSize());
                 ++i;
             }
         }
@@ -187,32 +187,32 @@ public class ItemHelper {
         return true;
     }
 
-    public static enum ExtractionCountMode {
+    public enum ExtractionCountMode {
         EXACTLY, UPTO
     }
 
     public static ItemStack extractItem(Container inventory, int slot, int amount, boolean simulate) {
         ItemStack stack = inventory.getItem(slot);
-        if (stack.isEmpty() || (inventory instanceof WorldlyContainer sidedInventory && !sidedInventory.canTakeItemThroughFace(slot,
+        if (stack.isEmpty() || inventory instanceof WorldlyContainer sidedInventory && !sidedInventory.canTakeItemThroughFace(slot,
             stack,
             null
-        ))) {
+        )) {
             return ItemStack.EMPTY;
         }
         int extract = Math.min(amount, stack.getCount());
         if (simulate) {
             return stack.copyWithCount(extract);
-        } else if (extract == amount) {
+        }
+        if (extract == amount) {
             inventory.setItem(slot, ItemStack.EMPTY);
             inventory.setChanged();
             return stack;
-        } else {
-            ItemStack result = stack.copy();
-            result.setCount(extract);
-            stack.shrink(extract);
-            inventory.setChanged();
-            return result;
         }
+        ItemStack result = stack.copy();
+        result.setCount(extract);
+        stack.shrink(extract);
+        inventory.setChanged();
+        return result;
     }
 
     public static boolean canItemStackAmountsStack(ItemStack a, ItemStack b) {
@@ -325,7 +325,7 @@ public class ItemHelper {
     }
 
     public static void invalidateInventoryCache(BlockPos pos) {
-        InventoryCache cache = ItemHelper.INV_CACHE.get(pos);
+        InventoryCache cache = INV_CACHE.get(pos);
         if (cache != null) {
             cache.invalidate();
         }

@@ -18,7 +18,7 @@ public final class StringSubstitutionComponent implements SourceComponent {
     public StringSubstitutionComponent(SourceComponent source, Map<String, String> replacements) {
         this.source = source;
         this.replacements = replacements;
-        this.sourceString = source.source();
+        sourceString = source.source();
     }
 
     public String remapFnName(String name) {

@@ -165,9 +165,8 @@ public class BeltTunnelBlock extends Block implements IBE<BeltTunnelBlockEntity>
         BlockState newTunnel = getTunnelState(world, pos);
         if (tunnel != newTunnel && !world.isClientSide()) {
             world.setBlock(pos, newTunnel, 3);
-            BlockEntity be = world.getBlockEntity(pos);
-            if ((be instanceof BeltTunnelBlockEntity)) {
-                ((BeltTunnelBlockEntity) be).updateTunnelConnections();
+            if (world.getBlockEntity(pos) instanceof BeltTunnelBlockEntity be) {
+                be.updateTunnelConnections();
             }
         }
     }
@@ -242,7 +241,7 @@ public class BeltTunnelBlock extends Block implements IBE<BeltTunnelBlockEntity>
         shape = shape == Shape.CLOSED ? Shape.WINDOW : Shape.CLOSED;
         Level world = context.getLevel();
         if (!world.isClientSide()) {
-            world.setBlock(context.getClickedPos(), state.setValue(SHAPE, shape), Block.UPDATE_CLIENTS);
+            world.setBlock(context.getClickedPos(), state.setValue(SHAPE, shape), UPDATE_CLIENTS);
         }
         return InteractionResult.SUCCESS;
     }

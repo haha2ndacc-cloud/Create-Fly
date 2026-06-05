@@ -228,17 +228,17 @@ public class ClientSchematicLoader {
                 if (aLength > bLength && a.charAt(bLength) >= '0' && a.charAt(bLength) <= '9') // as number
                 {
                     return 1; // a has bigger size, thus b is smaller
-                } else if (bLength > aLength && b.charAt(aLength) >= '0' && b.charAt(aLength) <= '9') // as number
+                }
+                if (bLength > aLength && b.charAt(aLength) >= '0' && b.charAt(aLength) <= '9') // as number
                 {
                     return -1; // b has bigger size, thus a is smaller
-                } else if (lastNumericCompare == 0) {
-                    return aLength - bLength;
-                } else {
-                    return lastNumericCompare;
                 }
-            } else {
-                return aLength - bLength;
+                if (lastNumericCompare == 0) {
+                    return aLength - bLength;
+                }
+                return lastNumericCompare;
             }
+            return aLength - bLength;
         });
     }
 

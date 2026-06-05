@@ -101,11 +101,11 @@ public class BeltConnectorItem extends BlockItem {
     public static void createBelts(Level world, BlockPos start, BlockPos end) {
         world.playSound(
             null,
-            BlockPos.containing(VecHelper.getCenterOf(start.offset(end)).scale(.5f)),
+            BlockPos.containing(VecHelper.getCenterOf(start.offset(end)).scale(0.5f)),
             SoundEvents.WOOL_PLACE,
             SoundSource.BLOCKS,
             0.5F,
-            1F
+            1.0F
         );
 
         BeltSlope slope = getSlopeBetween(start, end);
@@ -173,11 +173,8 @@ public class BeltConnectorItem extends BlockItem {
         if (diff.getX() == 0 && diff.getZ() == 0) {
             axisDirection = diff.getY() > 0 ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE;
         } else {
-            axisDirection = beltAxis.choose(
-                diff.getX(),
-                0,
-                diff.getZ()
-            ) > 0 ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE;
+            axisDirection =
+                beltAxis.choose(diff.getX(), 0, diff.getZ()) > 0 ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE;
         }
 
         return Direction.get(axisDirection, beltAxis);
@@ -238,8 +235,8 @@ public class BeltConnectorItem extends BlockItem {
         int x = diff.getX();
         int y = diff.getY();
         int z = diff.getZ();
-        int sames = ((Math.abs(x) == Math.abs(y)) ? 1 : 0) + ((Math.abs(y) == Math.abs(z)) ? 1 : 0) + ((Math.abs(z) == Math.abs(
-            x)) ? 1 : 0);
+        int sames = (Math.abs(x) == Math.abs(y) ? 1 : 0) + (Math.abs(y) == Math.abs(z) ? 1 : 0) + (
+            Math.abs(z) == Math.abs(x) ? 1 : 0);
 
         if (shaftAxis.choose(x, y, z) != 0) {
             return false;

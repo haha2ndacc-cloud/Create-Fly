@@ -26,11 +26,12 @@ public class StopWatchDisplaySource extends SingleLineDisplaySource {
         long current = context.blockEntity().getLevel().getGameTime();
 
         int diff = (int) (current - started);
-        int hours = (diff / 60 / 60 / 20);
-        int minutes = (diff / 60 / 20) % 60;
-        int seconds = (diff / 20) % 60;
+        int hours = diff / 60 / 60 / 20;
+        int minutes = diff / 60 / 20 % 60;
+        int seconds = diff / 20 % 60;
 
-        return Component.literal((hours == 0 ? "" : (hours < 10 ? " " : "") + hours + ":") + (minutes < 10 ? hours == 0 ? " " : "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
+        return Component.literal((hours == 0 ? "" : (hours < 10 ? " " : "") + hours + ":") + (minutes < 10 ?
+            hours == 0 ? " " : "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
     }
 
     @Override

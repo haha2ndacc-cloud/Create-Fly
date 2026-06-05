@@ -57,13 +57,13 @@ public class BlockStressValues {
     }
 
     public static void register() {
-        BlockStressValues.setGeneratorSpeed(AllBlocks.LARGE_WATER_WHEEL, 4);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.WATER_WHEEL, 8);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.WINDMILL_BEARING, 16, true);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.HAND_CRANK, 32);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.COPPER_VALVE_HANDLE, 32);
-        AllBlocks.VALVE_HANDLE.forEach(BlockStressValues.setGeneratorSpeed(32));
-        BlockStressValues.setGeneratorSpeed(AllBlocks.STEAM_ENGINE, 64, true);
-        BlockStressValues.setGeneratorSpeed(AllBlocks.CREATIVE_MOTOR, 256, true);
+        setGeneratorSpeed(AllBlocks.LARGE_WATER_WHEEL, 4);
+        setGeneratorSpeed(AllBlocks.WATER_WHEEL, 8);
+        setGeneratorSpeed(AllBlocks.WINDMILL_BEARING, 16, true);
+        setGeneratorSpeed(AllBlocks.HAND_CRANK, 32);
+        setGeneratorSpeed(AllBlocks.COPPER_VALVE_HANDLE, 32);
+        AllBlocks.VALVE_HANDLE.forEach(setGeneratorSpeed(32));
+        setGeneratorSpeed(AllBlocks.STEAM_ENGINE, 64, true);
+        setGeneratorSpeed(AllBlocks.CREATIVE_MOTOR, 256, true);
     }
 }

@@ -86,7 +86,7 @@ public class ToolboxMenu extends MenuBase<ToolboxBlockEntity> {
             )) {
                 int subIndex = index % STACKS_PER_COMPARTMENT;
                 if (subIndex != STACKS_PER_COMPARTMENT - 1) {
-                    clicked(index - subIndex + STACKS_PER_COMPARTMENT - 1, flags, type, player);
+                    clicked(index - subIndex + STACKS_PER_COMPARTMENT - 1, flags, ContainerInput.PICKUP, player);
                     return;
                 }
             }

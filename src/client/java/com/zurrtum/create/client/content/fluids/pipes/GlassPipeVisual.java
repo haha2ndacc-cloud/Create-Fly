@@ -83,7 +83,7 @@ public class GlassPipeVisual extends AbstractBlockEntityVisual<StraightPipeBlock
                 if (inbound) {
                     Flow opposite = pipe.getFlow(side.getOpposite());
                     if (opposite == null) {
-                        progress -= 1e-6f;
+                        progress -= 1.0e-6f;
                     }
                 } else {
                     FluidTransportBehaviour adjacent = BlockEntityBehaviour.get(
@@ -92,11 +92,11 @@ public class GlassPipeVisual extends AbstractBlockEntityVisual<StraightPipeBlock
                         FluidTransportBehaviour.TYPE
                     );
                     if (adjacent == null) {
-                        progress -= 1e-6f;
+                        progress -= 1.0e-6f;
                     } else {
                         Flow other = adjacent.getFlow(side.getOpposite());
                         if (other == null || !other.inbound && !other.complete) {
-                            progress -= 1e-6f;
+                            progress -= 1.0e-6f;
                         }
                     }
                 }
@@ -116,16 +116,16 @@ public class GlassPipeVisual extends AbstractBlockEntityVisual<StraightPipeBlock
                 fluid,
                 fluidStack.getComponentChanges()
             ) | 0xff000000;
-            int blockLightIn = (light >> 4) & 0xF;
+            int blockLightIn = light >> 4 & 0xF;
             int luminosity = Math.max(blockLightIn, blockState.getLightEmission());
-            int light = (this.light & 0xF00000) | luminosity << 4;
+            int light = this.light & 0xF00000 | luminosity << 4;
 
             if (inbound) {
                 side = side.getOpposite();
             }
 
-            var yStart = (inbound ? 0 : .5f);
-            var progressOffset = Mth.clamp(progress * .5f, 0, 1);
+            var yStart = inbound ? 0 : 0.5f;
+            var progressOffset = Mth.clamp(progress * 0.5f, 0, 1);
 
             var fluidInstance = stream.get(flowTexture);
 

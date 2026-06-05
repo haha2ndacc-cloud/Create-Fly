@@ -263,19 +263,19 @@ public class PonderSceneBuilder implements SceneBuilder {
         @Override
         public void showScrollInput(Vec3 location, Direction side, int duration) {
             Axis axis = side.getAxis();
-            float s = 1 / 16f;
-            float q = 1 / 4f;
+            float s = 1 / 16.0f;
+            float q = 1 / 4.0f;
             Vec3 expands = new Vec3(axis == Axis.X ? s : q, axis == Axis.Y ? s : q, axis == Axis.Z ? s : q);
             addInstruction(new HighlightValueBoxInstruction(location, expands, duration));
         }
 
         @Override
         public void showRepeaterScrollInput(BlockPos pos, int duration) {
-            float s = 1 / 16f;
-            float q = 1 / 6f;
+            float s = 1 / 16.0f;
+            float q = 1 / 6.0f;
             Vec3 expands = new Vec3(q, s, q);
             addInstruction(new HighlightValueBoxInstruction(
-                scene.getSceneBuildingUtil().vector().blockSurface(pos, Direction.DOWN).add(0, 3 / 16f, 0),
+                scene.getSceneBuildingUtil().vector().blockSurface(pos, Direction.DOWN).add(0, 3 / 16.0f, 0),
                 expands,
                 duration
             ));
@@ -283,15 +283,15 @@ public class PonderSceneBuilder implements SceneBuilder {
 
         @Override
         public void showFilterSlotInput(Vec3 location, int duration) {
-            float s = .1f;
+            float s = 0.1f;
             Vec3 expands = new Vec3(s, s, s);
             addInstruction(new HighlightValueBoxInstruction(location, expands, duration));
         }
 
         @Override
         public void showFilterSlotInput(Vec3 location, Direction side, int duration) {
-            location = location.add(Vec3.atLowerCornerOf(side.getUnitVec3i()).scale(-3 / 128f));
-            Vec3 expands = VecHelper.axisAlingedPlaneOf(side).scale(11 / 128f);
+            location = location.add(Vec3.atLowerCornerOf(side.getUnitVec3i()).scale(-3 / 128.0f));
+            Vec3 expands = VecHelper.axisAlingedPlaneOf(side).scale(11 / 128.0f);
             addInstruction(new HighlightValueBoxInstruction(location, expands, duration));
         }
 

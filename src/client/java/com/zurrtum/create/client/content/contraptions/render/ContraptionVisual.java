@@ -163,7 +163,7 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
             return;
         }
 
-        BlockEntityVisual<? super T> visual = visualizer.createVisual(this.embedding, be, partialTicks);
+        BlockEntityVisual<? super T> visual = visualizer.createVisual(embedding, be, partialTicks);
 
         children.add(visual);
 
@@ -195,7 +195,7 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
             return;
         }
         MovementRenderBehaviour render = (MovementRenderBehaviour) movementBehaviour.attachRender;
-        var visual = render.createVisual(this.embedding, renderLevel, context);
+        var visual = render.createVisual(embedding, renderLevel, context);
 
         if (visual == null) {
             return;
@@ -224,12 +224,12 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 
         var contraption = entity.getContraption();
         var clientContraption = getOrCreateClientContraptionLazy(contraption);
-        if (this.lastStructureVersion != clientContraption.structureVersion()) {
+        if (lastStructureVersion != clientContraption.structureVersion()) {
             // The contraption has changed, we need to set up everything again.
             setupStructure(clientContraption);
         }
 
-        if (this.lastVersionChildren != clientContraption.childrenVersion()) {
+        if (lastVersionChildren != clientContraption.childrenVersion()) {
             setupChildren(contraption, clientContraption, partialTick);
         }
     }
@@ -263,7 +263,7 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 
     @Override
     public void setSectionCollector(SectionCollector collector) {
-        this.sectionCollector = collector;
+        sectionCollector = collector;
         checkAndUpdateLightSections();
     }
 

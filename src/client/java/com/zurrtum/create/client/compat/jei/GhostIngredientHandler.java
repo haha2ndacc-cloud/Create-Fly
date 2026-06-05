@@ -62,7 +62,7 @@ public class GhostIngredientHandler<T extends AbstractSimiContainerScreen<? exte
             this.slotIndex = slotIndex;
             this.isAttributeFilter = isAttributeFilter;
             Slot slot = gui.getMenu().slots.get(slotIndex + 36);
-            this.area = new Rect2i(gui.getGuiLeft() + slot.x, gui.getGuiTop() + slot.y, 16, 16);
+            area = new Rect2i(gui.getGuiLeft() + slot.x, gui.getGuiTop() + slot.y, 16, 16);
         }
 
         @Override

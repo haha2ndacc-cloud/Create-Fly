@@ -25,7 +25,7 @@ public class MetalScaffoldingBlockItem extends ScaffoldingBlockItem {
         BlockPos blockpos = pContext.getClickedPos();
         Level level = pContext.getLevel();
         BlockState blockstate = level.getBlockState(blockpos);
-        Block block = this.getBlock();
+        Block block = getBlock();
         if (!blockstate.is(block)) {
             return pContext;
         }
@@ -54,7 +54,7 @@ public class MetalScaffoldingBlockItem extends ScaffoldingBlockItem {
             }
 
             blockstate = level.getBlockState(blockpos$mutableblockpos);
-            if (!blockstate.is(this.getBlock())) {
+            if (!blockstate.is(getBlock())) {
                 if (blockstate.canBeReplaced(pContext)) {
                     return BlockPlaceContext.at(pContext, blockpos$mutableblockpos, direction);
                 }

@@ -38,10 +38,8 @@ public class SequencedGearshiftBlockEntity extends SplitShaftBlockEntity {
             double kineticSpeed,
             int absoluteValue
         ) {
-            return instruction.needsPropagation() ? new SequenceContext(
-                instruction,
-                kineticSpeed == 0 ? 0 : absoluteValue / kineticSpeed
-            ) : null;
+            return instruction.needsPropagation() ?
+                new SequenceContext(instruction, kineticSpeed == 0 ? 0 : absoluteValue / kineticSpeed) : null;
         }
 
         public double getEffectiveValue(double speedAtTarget) {
@@ -188,7 +186,8 @@ public class SequencedGearshiftBlockEntity extends SplitShaftBlockEntity {
 
     @Nullable
     public Instruction getInstruction(int instructionIndex) {
-        return instructionIndex >= 0 && instructionIndex < instructions.size() ? instructions.get(instructionIndex) : null;
+        return instructionIndex >= 0 && instructionIndex < instructions.size() ? instructions.get(instructionIndex) :
+            null;
     }
 
     @Override
@@ -230,7 +229,7 @@ public class SequencedGearshiftBlockEntity extends SplitShaftBlockEntity {
         if (isVirtual()) {
             return 1;
         }
-        return (!hasSource() || face == getSourceFacing()) ? 1 : getModifier();
+        return !hasSource() || face == getSourceFacing() ? 1 : getModifier();
     }
 
     public int getModifier() {
@@ -241,7 +240,7 @@ public class SequencedGearshiftBlockEntity extends SplitShaftBlockEntity {
     }
 
     public Vector<Instruction> getInstructions() {
-        return this.instructions;
+        return instructions;
     }
 
 }

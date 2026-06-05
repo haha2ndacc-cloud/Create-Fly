@@ -25,10 +25,10 @@ public class PonderChunkSection extends LevelChunkSection {
         super(owner.world.palettedContainerFactory());
         this.owner = owner;
         this.scratchPos = scratchPos;
-        this.xStart = pos.getMinBlockX();
-        this.yStart = yBase;
-        this.zStart = pos.getMinBlockZ();
-        this.empty = !hasBlock;
+        xStart = pos.getMinBlockX();
+        yStart = yBase;
+        zStart = pos.getMinBlockZ();
+        empty = !hasBlock;
     }
 
     @Override

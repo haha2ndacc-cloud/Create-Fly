@@ -33,8 +33,8 @@ public class RedstoneRequesterPeripheral extends SyncedPeripheral<RedstoneReques
     @LuaFunction(mainThread = true)
     public final void setRequest(IArguments arguments) throws LuaException {
         List<BigItemStack> orderStacks = generateOrder(arguments);
-        this.blockEntity.encodedRequest = PackageOrderWithCrafts.simple(orderStacks);
-        this.blockEntity.notifyUpdate();
+        blockEntity.encodedRequest = PackageOrderWithCrafts.simple(orderStacks);
+        blockEntity.notifyUpdate();
     }
 
     @LuaFunction(mainThread = true)
@@ -50,8 +50,8 @@ public class RedstoneRequesterPeripheral extends SyncedPeripheral<RedstoneReques
             orderStacks.stream().map(stack -> new BigItemStack(stack.stack.copyWithCount(1))).toList()), count
         );
 
-        this.blockEntity.encodedRequest = new PackageOrderWithCrafts(order, List.of(orderContext));
-        this.blockEntity.notifyUpdate();
+        blockEntity.encodedRequest = new PackageOrderWithCrafts(order, List.of(orderContext));
+        blockEntity.notifyUpdate();
     }
 
     @LuaFunction(mainThread = true)
@@ -78,9 +78,8 @@ public class RedstoneRequesterPeripheral extends SyncedPeripheral<RedstoneReques
     public final String getConfiguration() throws LuaException {
         if (blockEntity.allowPartialRequests) {
             return "allow_partial";
-        } else {
-            return "strict";
         }
+        return "strict";
     }
 
     @LuaFunction(mainThread = true)
@@ -101,7 +100,7 @@ public class RedstoneRequesterPeripheral extends SyncedPeripheral<RedstoneReques
     @LuaFunction(mainThread = true)
     public final void setAddress(String address) throws LuaException {
         blockEntity.encodedTargetAdress = address;
-        this.blockEntity.notifyUpdate();
+        blockEntity.notifyUpdate();
     }
 
     @LuaFunction(mainThread = true)
@@ -134,7 +133,7 @@ public class RedstoneRequesterPeripheral extends SyncedPeripheral<RedstoneReques
                     int count = 1;
                     if (itemData.get("count") instanceof Number) {
                         Object countObj = itemData.get("count");
-                        count = (countObj instanceof Number) ? ((Number) countObj).intValue() : 1;
+                        count = countObj instanceof Number ? ((Number) countObj).intValue() : 1;
                         if (count > 256) {
                             throw new LuaException("Count for item " + itemName + " exceeds 256");
                         }

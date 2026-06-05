@@ -90,12 +90,12 @@ public class BeltHelper {
     public static Vec3 getVectorForOffset(BeltBlockEntity controller, float offset) {
         BeltSlope slope = controller.getBlockState().getValue(BeltBlock.SLOPE);
         float verticalMovement = slope == BeltSlope.DOWNWARD ? -1 : slope == BeltSlope.UPWARD ? 1 : 0;
-        if (offset < .5) {
+        if (offset < 0.5) {
             verticalMovement = 0;
         }
-        verticalMovement = verticalMovement * (Math.min(offset, controller.beltLength - .5f) - .5f);
+        verticalMovement = verticalMovement * (Math.min(offset, controller.beltLength - 0.5f) - 0.5f);
         Vec3 vec = VecHelper.getCenterOf(controller.getBlockPos());
-        Vec3 horizontalMovement = Vec3.atLowerCornerOf(controller.getBeltFacing().getUnitVec3i()).scale(offset - .5f);
+        Vec3 horizontalMovement = Vec3.atLowerCornerOf(controller.getBeltFacing().getUnitVec3i()).scale(offset - 0.5f);
 
         if (slope == BeltSlope.VERTICAL) {
             horizontalMovement = Vec3.ZERO;
@@ -114,12 +114,12 @@ public class BeltHelper {
         float offset
     ) {
         float verticalMovement = verticality;
-        if (offset < .5) {
+        if (offset < 0.5) {
             verticalMovement = 0;
         }
-        verticalMovement = verticalMovement * (Math.min(offset, beltLength - .5f) - .5f);
+        verticalMovement = verticalMovement * (Math.min(offset, beltLength - 0.5f) - 0.5f);
         Vec3 vec = VecHelper.getCenterOf(pos);
-        Vec3 horizontalMovement = Vec3.atLowerCornerOf(directionVec).scale(offset - .5f);
+        Vec3 horizontalMovement = Vec3.atLowerCornerOf(directionVec).scale(offset - 0.5f);
 
         if (slope == BeltSlope.VERTICAL) {
             horizontalMovement = Vec3.ZERO;

@@ -5,5 +5,6 @@ import net.minecraft.world.item.ItemStack;
 public interface FluidItemInventory extends FluidInventory, AutoCloseable {
     ItemStack getContainer();
 
+    @Override
     void close();
 }

@@ -63,7 +63,7 @@ public class CardboardArmorHandlerClient {
         if (renderState.create$isOnGround()) {
             ms.translate(
                 0, Math.min(
-                    Math.abs(Mth.cos((AnimationTickHolder.getRenderTime() % 256) / 2.0f)) * -renderOffset.y,
+                    Math.abs(Mth.cos(AnimationTickHolder.getRenderTime() % 256 / 2.0f)) * -renderOffset.y,
                     renderState.create$getMovement() * 5
                 ), 0
             );

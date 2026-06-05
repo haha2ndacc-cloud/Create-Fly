@@ -216,6 +216,7 @@ public class SpoutBlockEntity extends SmartBlockEntity {
         }
     }
 
+    @Override
     public void tick() {
         super.tick();
 
@@ -264,13 +265,13 @@ public class SpoutBlockEntity extends SmartBlockEntity {
             return;
         }
         Vec3 vec = VecHelper.getCenterOf(worldPosition);
-        vec = vec.subtract(0, 8 / 16f, 0);
+        vec = vec.subtract(0, 8 / 16.0f, 0);
         ParticleOptions particle = new FluidParticleData(
             AllParticleTypes.FLUID_PARTICLE,
             fluid.getFluid(),
             fluid.getComponentChanges()
         );
-        level.addAlwaysVisibleParticle(particle, vec.x, vec.y, vec.z, 0, -.1f, 0);
+        level.addAlwaysVisibleParticle(particle, vec.x, vec.y, vec.z, 0, -0.1f, 0);
     }
 
     protected static int SPLASH_PARTICLE_COUNT = 20;
@@ -280,7 +281,7 @@ public class SpoutBlockEntity extends SmartBlockEntity {
             return;
         }
         Vec3 vec = VecHelper.getCenterOf(worldPosition);
-        vec = vec.subtract(0, 2 - 5 / 16f, 0);
+        vec = vec.subtract(0, 2 - 5 / 16.0f, 0);
         ParticleOptions particle = new FluidParticleData(
             AllParticleTypes.FLUID_PARTICLE,
             fluid.getFluid(),

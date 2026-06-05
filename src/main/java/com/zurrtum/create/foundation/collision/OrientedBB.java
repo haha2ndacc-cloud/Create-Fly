@@ -18,9 +18,9 @@ public class OrientedBB {
     }
 
     public OrientedBB(Vec3 center, Vec3 extents, Matrix3d rotation) {
-        this.setCenter(center);
+        setCenter(center);
         this.extents = extents;
-        this.setRotation(rotation);
+        setRotation(rotation);
     }
 
     public OrientedBB copy() {

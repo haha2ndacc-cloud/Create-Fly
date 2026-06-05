@@ -18,10 +18,10 @@ import java.util.function.Consumer;
 
 public class ServerScrollValueBehaviour extends BlockEntityBehaviour<SmartBlockEntity> implements ValueSettingsHandleBehaviour {
     public static final BehaviourType<ServerScrollValueBehaviour> TYPE = new BehaviourType<>();
-    protected int value = 0;
+    protected int value;
     protected Consumer<Integer> callback = i -> {
     };
-    protected int min = 0;
+    protected int min;
     protected int max = 1;
 
     public ServerScrollValueBehaviour(SmartBlockEntity be) {

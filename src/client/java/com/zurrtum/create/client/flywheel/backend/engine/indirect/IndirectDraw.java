@@ -32,8 +32,8 @@ public class IndirectDraw {
 
         mesh.acquire();
 
-        this.packedFogAndCutout = MaterialEncoder.packUberShader(material);
-        this.packedMaterialProperties = MaterialEncoder.packProperties(material);
+        packedFogAndCutout = MaterialEncoder.packUberShader(material);
+        packedMaterialProperties = MaterialEncoder.packProperties(material);
     }
 
     public boolean deleted() {

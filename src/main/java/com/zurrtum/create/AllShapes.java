@@ -94,9 +94,15 @@ public class AllShapes {
     public static final VoxelShaper SMART_FLUID_PIPE_CEILING = shape(4, 4, 0, 12, 12, 16).add(3, 3, 3, 13, 13, 13)
         .add(5, 2, 3, 11, 3, 11).add(5, 1, 4, 11, 2, 10).add(5, 0, 5, 11, 1, 9).add(5, -1, 6, 11, 0, 8)
         .forHorizontal(SOUTH);
-    public static final VoxelShaper PUMP = shape(2, 0, 2, 14, 16, 14).forDirectional(Direction.UP);
-    public static final VoxelShaper CRUSHING_WHEEL_CONTROLLER_COLLISION = shape(0, 0, 0, 16, 13, 16).forDirectional(
-        Direction.DOWN);
+    public static final VoxelShaper PUMP = shape(2, 0, 2, 14, 16, 14).forDirectional(UP);
+    public static final VoxelShaper CRUSHING_WHEEL_CONTROLLER_COLLISION = shape(
+        0,
+        0,
+        0,
+        16,
+        13,
+        16
+    ).forDirectional(DOWN);
     public static final VoxelShaper BELL_FLOOR = shape(0, 0, 5, 16, 11, 11).add(3, 1, 3, 13, 13, 13)
         .forHorizontal(SOUTH);
     public static final VoxelShaper BELL_WALL = shape(5, 5, 8, 11, 11, 16).add(3, 1, 3, 13, 13, 13)
@@ -267,7 +273,7 @@ public class AllShapes {
         }
 
         public Builder erase(double x1, double y1, double z1, double x2, double y2, double z2) {
-            this.shape = Shapes.join(shape, cuboid(x1, y1, z1, x2, y2, z2), BooleanOp.ONLY_FIRST);
+            shape = Shapes.join(shape, cuboid(x1, y1, z1, x2, y2, z2), BooleanOp.ONLY_FIRST);
             return this;
         }
 

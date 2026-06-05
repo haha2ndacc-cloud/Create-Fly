@@ -170,7 +170,7 @@ public class SchematicAndQuillHandler {
         selectedFace = null;
         if (secondPos != null) {
             AABB bb = new AABB(Vec3.atLowerCornerOf(firstPos), Vec3.atLowerCornerOf(secondPos)).expandTowards(1, 1, 1)
-                .inflate(.45f);
+                .inflate(0.45f);
             Vec3 projectedView = mc.gameRenderer.mainCamera().position();
             boolean inside = bb.contains(projectedView);
             PredicateTraceResult result = RaycastHelper.rayTraceUntil(
@@ -185,7 +185,7 @@ public class SchematicAndQuillHandler {
         if (currentSelectionBox != null) {
             outliner().chaseAABB(outlineSlot, currentSelectionBox).colored(0x6886c5)
                 .withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
-                .lineWidth(1 / 16f).highlightFace(selectedFace);
+                .lineWidth(1 / 16.0f).highlightFace(selectedFace);
         }
     }
 

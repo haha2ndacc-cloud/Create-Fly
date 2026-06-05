@@ -56,12 +56,12 @@ public abstract class SchematicToolBase implements ISchematicTool {
         }
         lastChasingSelectedPos = chasingSelectedPos;
         Vec3 target = Vec3.atLowerCornerOf(selectedPos);
-        if (target.distanceTo(chasingSelectedPos) < 1 / 512f) {
+        if (target.distanceTo(chasingSelectedPos) < 1 / 512.0f) {
             chasingSelectedPos = target;
             return;
         }
 
-        chasingSelectedPos = chasingSelectedPos.add(target.subtract(chasingSelectedPos).scale(1 / 2f));
+        chasingSelectedPos = chasingSelectedPos.add(target.subtract(chasingSelectedPos).scale(1 / 2.0f));
     }
 
     public void updateTargetPos() {
@@ -85,7 +85,7 @@ public abstract class SchematicToolBase implements ISchematicTool {
             selectedFace = schematicSelected ? result.getFacing() : null;
         }
 
-        boolean snap = this.selectedPos == null;
+        boolean snap = selectedPos == null;
 
         // Select location at distance
         if (selectIgnoreBlocks) {
@@ -138,7 +138,7 @@ public abstract class SchematicToolBase implements ISchematicTool {
                 mc.hasControlDown() ? AllSpecialTextures.HIGHLIGHT_CHECKERED : AllSpecialTextures.CHECKERED
             );
         }
-        outline.getParams().colored(0x6886c5).withFaceTexture(AllSpecialTextures.CHECKERED).lineWidth(1 / 16f);
+        outline.getParams().colored(0x6886c5).withFaceTexture(AllSpecialTextures.CHECKERED).lineWidth(1 / 16.0f);
         outline.submit(Minecraft.getInstance(), ms, queue, Vec3.ZERO, AnimationTickHolder.getPartialTicks());
         outline.getParams().clearTextures();
         ms.popPose();

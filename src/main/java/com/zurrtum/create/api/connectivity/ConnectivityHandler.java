@@ -38,9 +38,9 @@ public class ConnectivityHandler {
         // essentially, if it's a vertical multi then the search won't be restricted by
         // Y
         // alternately, a horizontal multi search shouldn't be restricted by X or Z
-        int minX = (mainAxis == Direction.Axis.Y ? Integer.MAX_VALUE : Integer.MIN_VALUE);
-        int minY = (mainAxis != Direction.Axis.Y ? Integer.MAX_VALUE : Integer.MIN_VALUE);
-        int minZ = (mainAxis == Direction.Axis.Y ? Integer.MAX_VALUE : Integer.MIN_VALUE);
+        int minX = mainAxis == Direction.Axis.Y ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+        int minY = mainAxis != Direction.Axis.Y ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+        int minZ = mainAxis == Direction.Axis.Y ? Integer.MAX_VALUE : Integer.MIN_VALUE;
 
         for (T be : frontier) {
             BlockPos pos = be.getBlockPos();
@@ -363,13 +363,14 @@ public class ConnectivityHandler {
                     }
 
                     T controllerBE = partAt.getControllerBE();
-                    partAt.setExtraData((controllerBE == null ? null : controllerBE.getExtraData()));
+                    partAt.setExtraData(controllerBE == null ? null : controllerBE.getExtraData());
                     partAt.removeController(true);
 
                     if (!toDistribute.isEmpty() && partAt != be) {
                         FluidStack copy = toDistribute.copy();
-                        FluidTank tank = (partAt instanceof IMultiBlockEntityContainer.Fluid ifluidPart ? ifluidPart.getTank(
-                            0) : null);
+                        FluidTank tank =
+                            partAt instanceof IMultiBlockEntityContainer.Fluid ifluidPart ? ifluidPart.getTank(0) :
+                                null;
                         // making this generic would be a rather large mess, unfortunately
                         if (tank instanceof CreativeFluidTankBlockEntity.CreativeFluidTankInventory creativeTank) {
                             if (creativeTank.isEmpty()) {

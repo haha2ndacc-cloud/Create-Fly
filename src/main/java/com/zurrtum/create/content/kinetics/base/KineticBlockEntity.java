@@ -77,7 +77,8 @@ public class KineticBlockEntity extends SmartBlockEntity {
         }
 
         KineticBlockEntity kineticBlockEntity = (KineticBlockEntity) blockEntity;
-        if (state.getBlock() instanceof KineticBlock && !((KineticBlock) state.getBlock()).areStatesKineticallyEquivalent(currentState,
+        if (state.getBlock() instanceof KineticBlock block && !block.areStatesKineticallyEquivalent(
+            currentState,
             state
         )) {
             if (kineticBlockEntity.hasNetwork()) {
@@ -99,13 +100,13 @@ public class KineticBlockEntity extends SmartBlockEntity {
     }
 
     public static float convertToLinear(float speed) {
-        return speed / 512f;
+        return speed / 512.0f;
     }
 
     public static float convertToAngular(float speed) {
         // speed (rpm) * 360 (revolution->deg) / 60 (min->sec) / 20 (sec->tick)
         // rpm -> deg/tick
-        return speed * 360f / 60f / 20f;
+        return speed * 360.0f / 60.0f / 20.0f;
     }
 
     @Override
@@ -165,8 +166,7 @@ public class KineticBlockEntity extends SmartBlockEntity {
             }
 
             BlockEntity blockEntity = level.getBlockEntity(source);
-            KineticBlockEntity sourceBE = blockEntity instanceof KineticBlockEntity ? (KineticBlockEntity) blockEntity : null;
-            if (sourceBE == null || sourceBE.speed == 0) {
+            if (!(blockEntity instanceof KineticBlockEntity kbe) || kbe.speed == 0) {
                 removeSource();
                 detachKinetics();
                 return;
@@ -184,8 +184,8 @@ public class KineticBlockEntity extends SmartBlockEntity {
 
     public void updateFromNetwork(float maxStress, float currentStress, int networkSize) {
         networkDirty = false;
-        this.capacity = maxStress;
-        this.stress = currentStress;
+        capacity = maxStress;
+        stress = currentStress;
         this.networkSize = networkSize;
         boolean overStressed = maxStress < currentStress && StressImpact.isEnabled();
         setChanged();
@@ -204,13 +204,13 @@ public class KineticBlockEntity extends SmartBlockEntity {
 
     public float calculateStressApplied() {
         float impact = (float) BlockStressValues.getImpact(getStressConfigKey());
-        this.lastStressApplied = impact;
+        lastStressApplied = impact;
         return impact;
     }
 
     public float calculateAddedStressCapacity() {
         float capacity = (float) BlockStressValues.getCapacity(getStressConfigKey());
-        this.lastCapacityProvided = capacity;
+        lastCapacityProvided = capacity;
         return capacity;
     }
 
@@ -333,7 +333,7 @@ public class KineticBlockEntity extends SmartBlockEntity {
     }
 
     public float getSpeed() {
-        if (overStressed || (level != null && level.tickRateManager().isFrozen())) {
+        if (overStressed || level != null && level.tickRateManager().isFrozen()) {
             return 0;
         }
         return getTheoreticalSpeed();

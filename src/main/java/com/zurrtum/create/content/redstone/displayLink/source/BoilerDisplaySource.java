@@ -41,7 +41,8 @@ public class BoilerDisplaySource extends DisplaySource {
     public List<MutableComponent> provideText(DisplayLinkContext context, DisplayTargetStats stats) {
         if (stats.maxRows() < 2) {
             return notEnoughSpaceSingle;
-        } else if (stats.maxRows() < 4) {
+        }
+        if (stats.maxRows() < 4) {
             return notEnoughSpaceDouble;
         }
 

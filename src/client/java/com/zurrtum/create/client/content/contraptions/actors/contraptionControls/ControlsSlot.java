@@ -17,7 +17,7 @@ public class ControlsSlot extends ValueBoxTransform.Sided {
     public Vec3 getLocalOffset(BlockState state) {
         Direction facing = state.getValue(ControlsBlock.FACING);
         float yRot = AngleHelper.horizontalAngle(facing);
-        return VecHelper.rotateCentered(VecHelper.voxelSpace(8, 14f, 5.5f), yRot, Axis.Y);
+        return VecHelper.rotateCentered(VecHelper.voxelSpace(8, 14.0f, 5.5f), yRot, Axis.Y);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ControlsSlot extends ValueBoxTransform.Sided {
 
     @Override
     public float getScale() {
-        return .508f;
+        return 0.508f;
     }
 
     @Override

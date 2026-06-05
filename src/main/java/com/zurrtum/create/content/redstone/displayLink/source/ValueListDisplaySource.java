@@ -91,11 +91,8 @@ public abstract class ValueListDisplaySource extends DisplaySource {
 
         if (shortenNumbers(context)) {
             Couple<MutableComponent> shortened = shorten(number);
-            return valueFirst() ? Arrays.asList(shortened.getFirst(), shortened.getSecond(), name) : Arrays.asList(
-                name,
-                shortened.getFirst(),
-                shortened.getSecond()
-            );
+            return valueFirst() ? Arrays.asList(shortened.getFirst(), shortened.getSecond(), name) :
+                Arrays.asList(name, shortened.getFirst(), shortened.getSecond());
         }
 
         MutableComponent formattedNumber = Component.literal(String.valueOf(number)).append(WHITESPACE);
@@ -111,10 +108,8 @@ public abstract class ValueListDisplaySource extends DisplaySource {
 
         boolean valueFirst = valueFirst();
         boolean shortenNumbers = shortenNumbers(context);
-        int valueFormat = shortenNumbers ? 0 : Math.max(
-            4,
-            1 + (int) Math.log10(((MutableInt) context.flapDisplayContext).intValue())
-        );
+        int valueFormat = shortenNumbers ? 0 :
+            Math.max(4, 1 + (int) Math.log10(((MutableInt) context.flapDisplayContext).intValue()));
 
         String layoutKey = "ValueList_" + valueFirst + "_" + valueFormat;
         if (layout.isLayout(layoutKey)) {

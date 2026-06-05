@@ -222,11 +222,11 @@ public class SmartFluidTankBehaviour extends BlockEntityBehaviour<SmartBlockEnti
         @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "OptionalGetWithoutIsPresent"})
         public InternalFluidHandler(SmartFluidTankBehaviour behaviour, boolean enforceVariety, Optional<Integer> max) {
             this.behaviour = behaviour;
-            this.tanks = behaviour.tanks;
+            tanks = behaviour.tanks;
             this.enforceVariety = enforceVariety;
-            this.slots = SlotRangeCache.get(tanks.length);
+            slots = SlotRangeCache.get(tanks.length);
             this.max = max;
-            this.capacity = max.get();
+            capacity = max.get();
         }
 
         @Override
@@ -313,7 +313,7 @@ public class SmartFluidTankBehaviour extends BlockEntityBehaviour<SmartBlockEnti
     }
 
     public class TankSegment implements FluidInventory {
-        protected LerpedFloat fluidLevel = LerpedFloat.linear().startWithValue(0).chase(0, .25, Chaser.EXP);
+        protected LerpedFloat fluidLevel = LerpedFloat.linear().startWithValue(0).chase(0, 0.25, Chaser.EXP);
         protected FluidStack renderedFluid = FluidStack.EMPTY;
         protected FluidStack fluid = FluidStack.EMPTY;
         @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -323,7 +323,7 @@ public class SmartFluidTankBehaviour extends BlockEntityBehaviour<SmartBlockEnti
         @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "OptionalGetWithoutIsPresent"})
         public TankSegment(Optional<Integer> max) {
             this.max = max;
-            this.capacity = max.get();
+            capacity = max.get();
         }
 
         @Override
@@ -372,7 +372,7 @@ public class SmartFluidTankBehaviour extends BlockEntityBehaviour<SmartBlockEnti
             if (!blockEntity.hasLevel()) {
                 return;
             }
-            fluidLevel.chase(fluid.getAmount() / (float) capacity, .25, Chaser.EXP);
+            fluidLevel.chase(fluid.getAmount() / (float) capacity, 0.25, Chaser.EXP);
             if (!getLevel().isClientSide()) {
                 sendDataLazily();
             }

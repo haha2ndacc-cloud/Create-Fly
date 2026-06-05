@@ -150,22 +150,22 @@ public class ToolboxScreen extends AbstractSimiContainerScreen<ToolboxMenu> {
 
     private void transformLid(PoseStack ms, float partialTicks) {
         ms.translate(0.796F, 1.408F, 0);
-        TransformStack.of(ms).rotateXDegrees(-22).rotateYDegrees(-202).translate(0, -6 / 16f, 12 / 16f)
-            .rotateXDegrees(-105 * menu.contentHolder.lid.getValue(partialTicks)).translate(0, 6 / 16f, -12 / 16f);
+        TransformStack.of(ms).rotateXDegrees(-22).rotateYDegrees(-202).translate(0, -6 / 16.0f, 12 / 16.0f)
+            .rotateXDegrees(-105 * menu.contentHolder.lid.getValue(partialTicks)).translate(0, 6 / 16.0f, -12 / 16.0f);
         ms.scale(1, -1, 1);
     }
 
     private void transformTopDrawer(PoseStack ms, float partialTicks) {
         ms.translate(1.02F, 0.384F, 0);
         TransformStack.of(ms).rotateXDegrees(-22).rotateYDegrees(-202)
-            .translate(0, 0, menu.contentHolder.drawers.getValue(partialTicks) * -.175f);
+            .translate(0, 0, menu.contentHolder.drawers.getValue(partialTicks) * -0.175f);
         ms.scale(1, -1, 1);
     }
 
     private void transformBottomDrawer(PoseStack ms, float partialTicks) {
         ms.translate(1.02F, 0.38F, 0);
         TransformStack.of(ms).rotateXDegrees(-22).rotateYDegrees(-202)
-            .translate(0, 0, menu.contentHolder.drawers.getValue(partialTicks) * -.175f * 2);
+            .translate(0, 0, menu.contentHolder.drawers.getValue(partialTicks) * -0.175f * 2);
         ms.scale(1, -1, 1);
     }
 
@@ -191,16 +191,17 @@ public class ToolboxScreen extends AbstractSimiContainerScreen<ToolboxMenu> {
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         partialTicks = AnimationTickHolder.getPartialTicksUI(minecraft.getDeltaTracker());
-        int x = this.leftPos + imageWidth - BG.getWidth();
+        int x = leftPos + imageWidth - BG.getWidth();
 
         BG.render(graphics, x, topPos);
         graphics.text(font, title, x + 15, topPos + 4, 0xFF592424, false);
 
-        int invX = this.leftPos;
+        int invX = leftPos;
         int invY = topPos + imageHeight - PLAYER.getHeight();
         renderPlayerInventory(graphics, invX, invY);
 
-        ((GuiPartialRenderBuilder) renderedLid.getRenderElement()).tick(menu.contentHolder.lid.settled() ? 1 : partialTicks);
+        ((GuiPartialRenderBuilder) renderedLid.getRenderElement()).tick(
+            menu.contentHolder.lid.settled() ? 1 : partialTicks);
         float drawerTicks = menu.contentHolder.drawers.settled() ? 1 : partialTicks;
         ((GuiPartialRenderBuilder) renderedTopDrawer.getRenderElement()).tick(drawerTicks);
         ((GuiPartialRenderBuilder) renderedBottomDrawer.getRenderElement()).tick(drawerTicks);
@@ -212,7 +213,7 @@ public class ToolboxScreen extends AbstractSimiContainerScreen<ToolboxMenu> {
             int baseIndex = compartment * ToolboxInventory.STACKS_PER_COMPARTMENT;
             Slot slot = menu.slots.get(baseIndex);
             ItemStack itemstack = slot.getItem();
-            int i = slot.x + this.leftPos;
+            int i = slot.x + leftPos;
             int j = slot.y + topPos;
 
             if (itemstack.isEmpty()) {

@@ -92,7 +92,7 @@ public class TransportedItemStack implements Comparable<TransportedItemStack> {
     }
 
     public float getTargetSideOffset() {
-        return (angle - 180) / (360 * 3f);
+        return (angle - 180) / (360 * 3.0f);
     }
 
     @Override

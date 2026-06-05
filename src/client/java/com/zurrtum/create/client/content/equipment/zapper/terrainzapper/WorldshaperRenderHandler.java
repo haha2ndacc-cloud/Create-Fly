@@ -36,7 +36,7 @@ public class WorldshaperRenderHandler {
         }
 
         Outliner.getInstance().showCluster("terrainZapper", renderedPositions.get()).colored(0xbfbfbf)
-            .disableLineNormals().lineWidth(1 / 32f).withFaceTexture(AllSpecialTextures.CHECKERED);
+            .disableLineNormals().lineWidth(1 / 32.0f).withFaceTexture(AllSpecialTextures.CHECKERED);
     }
 
     protected static void gatherSelectedBlocks(Minecraft mc) {

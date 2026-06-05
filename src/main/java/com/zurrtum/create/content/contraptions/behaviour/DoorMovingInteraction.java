@@ -23,7 +23,8 @@ public class DoorMovingInteraction extends SimpleBlockMovingInteraction {
         }
 
         boolean trainDoor = currentState.getBlock() instanceof SlidingDoorBlock;
-        SoundEvent sound = currentState.getValue(DoorBlock.OPEN) ? trainDoor ? null : SoundEvents.WOODEN_DOOR_CLOSE : trainDoor ? SoundEvents.IRON_DOOR_OPEN : SoundEvents.WOODEN_DOOR_OPEN;
+        SoundEvent sound = currentState.getValue(DoorBlock.OPEN) ? trainDoor ? null : SoundEvents.WOODEN_DOOR_CLOSE :
+            trainDoor ? SoundEvents.IRON_DOOR_OPEN : SoundEvents.WOODEN_DOOR_OPEN;
 
         BlockPos otherPos = currentState.getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
         StructureBlockInfo info = contraption.getBlocks().get(otherPos);
@@ -43,7 +44,8 @@ public class DoorMovingInteraction extends SimpleBlockMovingInteraction {
             if (trainDoor) {
                 DoorHingeSide hinge = currentState.getValue(SlidingDoorBlock.HINGE);
                 Direction facing = currentState.getValue(SlidingDoorBlock.FACING);
-                BlockPos doublePos = pos.relative(hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
+                BlockPos doublePos = pos.relative(
+                    hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
                 StructureBlockInfo doubleInfo = contraption.getBlocks().get(doublePos);
                 if (doubleInfo != null && SlidingDoorBlock.isDoubleDoor(
                     currentState,

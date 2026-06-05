@@ -35,7 +35,7 @@ public class PortableStorageInterfaceMovement extends MovementBehaviour {
     @Override
     public void visitNewPosition(MovementContext context, BlockPos pos) {
         boolean onCarriage = context.contraption instanceof CarriageContraption;
-        if (onCarriage && context.motion.length() > 1 / 4f) {
+        if (onCarriage && context.motion.length() > 1 / 4.0f) {
             return;
         }
         if (!findInterface(context, pos)) {
@@ -50,7 +50,7 @@ public class PortableStorageInterfaceMovement extends MovementBehaviour {
         }
 
         boolean onCarriage = context.contraption instanceof CarriageContraption;
-        if (onCarriage && context.motion.length() > 1 / 4f) {
+        if (onCarriage && context.motion.length() > 1 / 4.0f) {
             return;
         }
 
@@ -215,7 +215,7 @@ public class PortableStorageInterfaceMovement extends MovementBehaviour {
             .getUnitVec3i());
         directionVec = context.rotation.apply(directionVec);
         Direction facingFromVector = Direction.getApproximateNearest(directionVec.x, directionVec.y, directionVec.z);
-        if (directionVec.distanceTo(Vec3.atLowerCornerOf(facingFromVector.getUnitVec3i())) > 1 / 2f) {
+        if (directionVec.distanceTo(Vec3.atLowerCornerOf(facingFromVector.getUnitVec3i())) > 1 / 2.0f) {
             return Optional.empty();
         }
         return Optional.of(facingFromVector);

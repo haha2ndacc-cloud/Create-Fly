@@ -73,7 +73,7 @@ public class OpenEndedPipe extends FlowSource {
 
     private OpenEndedPipe(FluidStack stack, boolean wasPulling, BlockPos pos, Direction direction) {
         this(new BlockFace(pos, direction));
-        this.fluidHandler.stack = stack;
+        fluidHandler.stack = stack;
         this.wasPulling = wasPulling;
     }
 
@@ -247,7 +247,7 @@ public class OpenEndedPipe extends FlowSource {
         private static final Optional<Integer> MAX = Optional.of(BucketFluidInventory.CAPACITY);
         private static final int[] SLOTS = {0, 1};
         private FluidStack stack = FluidStack.EMPTY;
-        private int previousAmount = 0;
+        private int previousAmount;
 
         @Override
         public FluidStack onExtract(FluidStack stack) {

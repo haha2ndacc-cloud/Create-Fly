@@ -22,13 +22,13 @@ public class ProcessingInventory implements SidedItemInventory {
     public float recipeDuration;
     public boolean appliedRecipe;
     private boolean limit;
-    private byte outputFlag = 0;
+    private byte outputFlag;
     private final Predicate<@Nullable Direction> canInsert;
     private final Consumer<ItemStack> callback;
     private final NonNullList<ItemStack> stacks;
 
     public ProcessingInventory(Consumer<ItemStack> callback, Predicate<@Nullable Direction> canInsert) {
-        this.stacks = NonNullList.withSize(32, ItemStack.EMPTY);
+        stacks = NonNullList.withSize(32, ItemStack.EMPTY);
         this.canInsert = canInsert;
         this.callback = callback;
     }

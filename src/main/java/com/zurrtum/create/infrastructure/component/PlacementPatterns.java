@@ -25,7 +25,7 @@ public enum PlacementPatterns implements StringRepresentable {
     public final String translationKey;
 
     PlacementPatterns() {
-        this.translationKey = name().toLowerCase(Locale.ROOT);
+        translationKey = name().toLowerCase(Locale.ROOT);
     }
 
     public static void applyPattern(List<BlockPos> blocksIn, ItemStack stack, RandomSource random) {

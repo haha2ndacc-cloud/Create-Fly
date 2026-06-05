@@ -54,7 +54,7 @@ public final class ShadowElement extends AbstractVisual implements SimpleDynamic
     private final InstanceRecycler<ShadowInstance> instances = new InstanceRecycler<>(this::createInstance);
 
     // Defaults taken from EntityRenderer.
-    private float radius = 0;
+    private float radius;
     private float strength = 1.0F;
 
     public ShadowElement(VisualizationContext ctx, Entity entity, float partialTick, Config config) {
@@ -121,12 +121,12 @@ public final class ShadowElement extends AbstractVisual implements SimpleDynamic
         double entityY = Mth.lerp(context.partialTick(), entity.yOld, entity.getY());
         double entityZ = Mth.lerp(context.partialTick(), entity.zOld, entity.getZ());
         float castDistance = Math.min(strength * 2, radius);
-        int minXPos = Mth.floor(entityX - (double) radius);
-        int maxXPos = Mth.floor(entityX + (double) radius);
-        int minYPos = Mth.floor(entityY - (double) castDistance);
+        int minXPos = Mth.floor(entityX - radius);
+        int maxXPos = Mth.floor(entityX + radius);
+        int minYPos = Mth.floor(entityY - castDistance);
         int maxYPos = Mth.floor(entityY);
-        int minZPos = Mth.floor(entityZ - (double) radius);
-        int maxZPos = Mth.floor(entityZ + (double) radius);
+        int minZPos = Mth.floor(entityZ - radius);
+        int maxZPos = Mth.floor(entityZ + radius);
 
         for (int z = minZPos; z <= maxZPos; ++z) {
             for (int x = minXPos; x <= maxXPos; ++x) {
@@ -193,7 +193,7 @@ public final class ShadowElement extends AbstractVisual implements SimpleDynamic
         instance.sizeX = (float) (maxX - minX);
         instance.sizeZ = (float) (maxZ - minZ);
         instance.alpha = alpha;
-        instance.radius = this.radius;
+        instance.radius = radius;
         instance.setChanged();
     }
 

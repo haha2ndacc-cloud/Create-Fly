@@ -79,7 +79,7 @@ public class CarriageContraption extends Contraption {
     public CarriageContraption(Direction assemblyDirection) {
         this();
         this.assemblyDirection = assemblyDirection;
-        this.bogeys = 0;
+        bogeys = 0;
     }
 
     @Override

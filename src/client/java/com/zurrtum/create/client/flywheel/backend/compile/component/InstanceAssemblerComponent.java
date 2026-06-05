@@ -40,26 +40,26 @@ public abstract class InstanceAssemblerComponent implements SourceComponent {
         FLOAT_UNPACKING_FUNCS.put(FloatRepr.BYTE, e -> signExtendByte(e).cast("int").cast("float"));
         FLOAT_UNPACKING_FUNCS.put(
             FloatRepr.NORMALIZED_BYTE,
-            e -> signExtendByte(e).cast("int").cast("float").div(127f).clamp(-1, 1)
+            e -> signExtendByte(e).cast("int").cast("float").div(127.0f).clamp(-1, 1)
         );
         FLOAT_UNPACKING_FUNCS.put(FloatRepr.UNSIGNED_BYTE, e -> e.cast("float"));
-        FLOAT_UNPACKING_FUNCS.put(FloatRepr.NORMALIZED_UNSIGNED_BYTE, e -> e.cast("float").div(255f));
+        FLOAT_UNPACKING_FUNCS.put(FloatRepr.NORMALIZED_UNSIGNED_BYTE, e -> e.cast("float").div(255.0f));
 
         FLOAT_UNPACKING_FUNCS.put(FloatRepr.SHORT, e -> signExtendShort(e).cast("int").cast("float"));
         FLOAT_UNPACKING_FUNCS.put(
             FloatRepr.NORMALIZED_SHORT,
-            e -> signExtendShort(e).cast("int").cast("float").div(32767f).clamp(-1, 1)
+            e -> signExtendShort(e).cast("int").cast("float").div(32767.0f).clamp(-1, 1)
         );
         FLOAT_UNPACKING_FUNCS.put(FloatRepr.UNSIGNED_SHORT, e -> e.cast("float"));
-        FLOAT_UNPACKING_FUNCS.put(FloatRepr.NORMALIZED_UNSIGNED_SHORT, e -> e.cast("float").div(65535f));
+        FLOAT_UNPACKING_FUNCS.put(FloatRepr.NORMALIZED_UNSIGNED_SHORT, e -> e.cast("float").div(65535.0f));
 
         FLOAT_UNPACKING_FUNCS.put(FloatRepr.INT, e -> e.cast("int").cast("float"));
         FLOAT_UNPACKING_FUNCS.put(
             FloatRepr.NORMALIZED_INT,
-            e -> e.cast("int").cast("float").div(2147483647f).clamp(-1, 1)
+            e -> e.cast("int").cast("float").div(2147483647.0f).clamp(-1, 1)
         );
         FLOAT_UNPACKING_FUNCS.put(FloatRepr.UNSIGNED_INT, e -> e.cast("float"));
-        FLOAT_UNPACKING_FUNCS.put(FloatRepr.NORMALIZED_UNSIGNED_INT, e -> e.cast("float").div(4294967295f));
+        FLOAT_UNPACKING_FUNCS.put(FloatRepr.NORMALIZED_UNSIGNED_INT, e -> e.cast("float").div(4294967295.0f));
 
         FLOAT_UNPACKING_FUNCS.put(FloatRepr.FLOAT, e -> e.callFunction("uintBitsToFloat"));
     }
@@ -104,11 +104,14 @@ public abstract class InstanceAssemblerComponent implements SourceComponent {
     private GlslExpr unpackElement(ElementType type, int byteOffset) {
         if (type instanceof ScalarElementType scalar) {
             return unpackScalar(scalar, byteOffset);
-        } else if (type instanceof VectorElementType vector) {
+        }
+        if (type instanceof VectorElementType vector) {
             return unpackVector(vector, byteOffset);
-        } else if (type instanceof MatrixElementType matrix) {
+        }
+        if (type instanceof MatrixElementType matrix) {
             return unpackMatrix(matrix, byteOffset);
-        } else if (type instanceof ArrayElementType array) {
+        }
+        if (type instanceof ArrayElementType array) {
             return unpackArray(array, byteOffset);
         }
 
@@ -157,15 +160,15 @@ public abstract class InstanceAssemblerComponent implements SourceComponent {
 
         if (byteSize == Byte.BYTES) {
             return unpackByteBackedScalar(offset, unpackingFunc);
-        } else if (byteSize == Short.BYTES) {
-            return unpackShortBackedScalar(offset, unpackingFunc);
-        } else {
-            return unpackIntBackedScalar(offset, unpackingFunc);
         }
+        if (byteSize == Short.BYTES) {
+            return unpackShortBackedScalar(offset, unpackingFunc);
+        }
+        return unpackIntBackedScalar(offset, unpackingFunc);
     }
 
     private GlslExpr unpackByteBackedScalar(int byteOffset, Function<GlslExpr, GlslExpr> unpackingFunc) {
-        int bitPos = (byteOffset % 4) * 8;
+        int bitPos = byteOffset % 4 * 8;
         if (BIG_ENDIAN) {
             bitPos = 24 - bitPos;
         }
@@ -175,7 +178,7 @@ public abstract class InstanceAssemblerComponent implements SourceComponent {
     }
 
     private GlslExpr unpackShortBackedScalar(int shortOffset, Function<GlslExpr, GlslExpr> unpackingFunc) {
-        int bitPos = (shortOffset % 2) * 16;
+        int bitPos = shortOffset % 2 * 16;
         if (BIG_ENDIAN) {
             bitPos = 16 - bitPos;
         }
@@ -199,11 +202,11 @@ public abstract class InstanceAssemblerComponent implements SourceComponent {
 
         if (byteSize == Byte.BYTES) {
             return unpackByteBackedVector(outType, size, offset, unpackingFunc);
-        } else if (byteSize == Short.BYTES) {
-            return unpackShortBackedVector(outType, size, offset, unpackingFunc);
-        } else {
-            return unpackIntBackedVector(outType, size, offset, unpackingFunc);
         }
+        if (byteSize == Short.BYTES) {
+            return unpackShortBackedVector(outType, size, offset, unpackingFunc);
+        }
+        return unpackIntBackedVector(outType, size, offset, unpackingFunc);
     }
 
     private GlslExpr unpackByteBackedVector(
@@ -248,9 +251,11 @@ public abstract class InstanceAssemblerComponent implements SourceComponent {
     private static Function<GlslExpr, GlslExpr> getUnpackingFunc(ValueRepr repr) {
         if (repr instanceof IntegerRepr intRepr) {
             return INT_UNPACKING_FUNCS.get(intRepr);
-        } else if (repr instanceof UnsignedIntegerRepr uintRepr) {
+        }
+        if (repr instanceof UnsignedIntegerRepr uintRepr) {
             return UINT_UNPACKING_FUNCS.get(uintRepr);
-        } else if (repr instanceof FloatRepr floatRepr) {
+        }
+        if (repr instanceof FloatRepr floatRepr) {
             return FLOAT_UNPACKING_FUNCS.get(floatRepr);
         }
 

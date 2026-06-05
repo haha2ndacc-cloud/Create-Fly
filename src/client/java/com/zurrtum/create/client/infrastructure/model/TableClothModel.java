@@ -75,7 +75,7 @@ public class TableClothModel extends WrapperBlockStateModel {
         for (int i = 0; i < 4; i++) {
             Direction direction = DIRECTIONS[i];
             if (Block.shouldRenderFace(state, world.getBlockState(mutable.setWithOffset(pos, direction)), direction)) {
-                index |= (1 << i);
+                index |= 1 << i;
             }
         }
         BakedCorner cache = corner[index];

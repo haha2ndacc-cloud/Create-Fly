@@ -157,8 +157,8 @@ public class PackagePortScreen extends AbstractSimiContainerScreen<PackagePortMe
     public void extractBackground(GuiGraphicsExtractor graphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.extractBackground(graphics, pMouseX, pMouseY, pPartialTick);
         AllGuiTextures header = frogMode ? AllGuiTextures.FROGPORT_HEADER : AllGuiTextures.POSTBOX_HEADER;
-        int x = this.leftPos;
-        int y = this.topPos;
+        int x = leftPos;
+        int y = topPos;
         header.render(graphics, x, y - header.getHeight());
         background.render(graphics, x, y);
 

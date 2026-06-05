@@ -12,7 +12,7 @@ public class RequestPromise {
         BigItemStack.CODEC.fieldOf("promised_stack").forGetter(i -> i.promisedStack)
     ).apply(instance, RequestPromise::new));
 
-    public int ticksExisted = 0;
+    public int ticksExisted;
     public BigItemStack promisedStack;
 
     public RequestPromise(BigItemStack promisedStack) {

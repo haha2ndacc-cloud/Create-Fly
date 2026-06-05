@@ -46,7 +46,7 @@ public class ItemHandlerBeltSegment implements ItemInventory {
         if (slot != 0) {
             return ItemStack.EMPTY;
         }
-        TransportedItemStack transported = this.beltInventory.getStackAtOffset(offset);
+        TransportedItemStack transported = beltInventory.getStackAtOffset(offset);
         if (transported == null) {
             return ItemStack.EMPTY;
         }
@@ -66,7 +66,7 @@ public class ItemHandlerBeltSegment implements ItemInventory {
         if (slot != 0) {
             return ItemStack.EMPTY;
         }
-        TransportedItemStack transported = this.beltInventory.getStackAtOffset(offset);
+        TransportedItemStack transported = beltInventory.getStackAtOffset(offset);
         if (transported == null) {
             return ItemStack.EMPTY;
         }
@@ -82,7 +82,7 @@ public class ItemHandlerBeltSegment implements ItemInventory {
             return;
         }
         if (stack.isEmpty()) {
-            TransportedItemStack transported = this.beltInventory.getStackAtOffset(offset);
+            TransportedItemStack transported = beltInventory.getStackAtOffset(offset);
             if (transported == null || transported.stack.isEmpty()) {
                 return;
             }
@@ -91,7 +91,7 @@ public class ItemHandlerBeltSegment implements ItemInventory {
         } else {
             TransportedItemStack newStack = new TransportedItemStack(stack);
             newStack.insertedAt = offset;
-            newStack.beltPosition = offset + .5f + (beltInventory.beltMovementPositive ? -1 : 1) / 16f;
+            newStack.beltPosition = offset + 0.5f + (beltInventory.beltMovementPositive ? -1 : 1) / 16.0f;
             newStack.prevBeltPosition = newStack.beltPosition;
             beltInventory.addItem(newStack);
         }

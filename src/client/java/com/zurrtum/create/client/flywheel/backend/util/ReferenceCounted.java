@@ -1,8 +1,8 @@
 package com.zurrtum.create.client.flywheel.backend.util;
 
 public abstract class ReferenceCounted {
-    private int referenceCount = 0;
-    private boolean isDeleted = false;
+    private int referenceCount;
+    private boolean isDeleted;
 
     public int referenceCount() {
         return referenceCount;

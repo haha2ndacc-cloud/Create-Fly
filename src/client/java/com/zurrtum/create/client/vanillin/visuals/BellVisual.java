@@ -26,7 +26,7 @@ public class BellVisual extends AbstractBlockEntityVisual<BellBlockEntity> imple
 
     private final Matrix4fc initialPose;
 
-    private boolean wasShaking = false;
+    private boolean wasShaking;
 
     public BellVisual(VisualizationContext ctx, BellBlockEntity blockEntity, float partialTick) {
         super(ctx, blockEntity, partialTick);
@@ -57,7 +57,7 @@ public class BellVisual extends AbstractBlockEntityVisual<BellBlockEntity> imple
         float zRot = 0;
 
         if (blockEntity.shaking) {
-            float ringTime = (float) blockEntity.ticks + partialTick;
+            float ringTime = blockEntity.ticks + partialTick;
             float angle = Mth.sin(ringTime / (float) Math.PI) / (4.0F + ringTime / 3.0F);
 
             switch (blockEntity.clickDirection) {

@@ -46,7 +46,7 @@ public class PortableItemInterfaceBlockEntity extends PortableStorageInterfaceBl
 
         private int[] slots = SlotRangeCache.EMPTY;
         private Container wrapped = EMPTY;
-        private boolean mark = false;
+        private boolean mark;
 
         @Override
         public int[] getSlotsForFace(Direction side) {

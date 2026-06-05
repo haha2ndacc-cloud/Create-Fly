@@ -84,14 +84,14 @@ public class BlockBreakingMovementBehaviour extends MovementBehaviour {
                 float damage = (float) Mth.clamp(6 * Math.pow(context.relativeMotion.length(), 0.4) + 1, 2, 10);
                 entity.hurtServer((ServerLevel) world, damageSource, damage);
             }
-            if (throwsEntities(world) && (world.isClientSide() == (entity instanceof Player))) {
+            if (throwsEntities(world) && world.isClientSide() == entity instanceof Player) {
                 throwEntity(context, entity);
             }
         }
     }
 
     protected void throwEntity(MovementContext context, Entity entity) {
-        Vec3 motionBoost = context.motion.add(0, context.motion.length() / 4f, 0);
+        Vec3 motionBoost = context.motion.add(0, context.motion.length() / 4.0f, 0);
         int maxBoost = 4;
         if (motionBoost.length() > maxBoost) {
             motionBoost = motionBoost.subtract(motionBoost.normalize().scale(motionBoost.length() - maxBoost));
@@ -199,7 +199,7 @@ public class BlockBreakingMovementBehaviour extends MovementBehaviour {
 
         float breakSpeed = getBlockBreakingSpeed(context);
         destroyProgress += Mth.clamp((int) (breakSpeed / blockHardness), 1, 10 - destroyProgress);
-        world.playSound(null, breakingPos, stateToBreak.getSoundType().getHitSound(), SoundSource.NEUTRAL, .25f, 1);
+        world.playSound(null, breakingPos, stateToBreak.getSoundType().getHitSound(), SoundSource.NEUTRAL, 0.25f, 1);
 
         if (destroyProgress >= 10) {
             world.destroyBlockProgress(id, breakingPos, -1);
@@ -232,18 +232,18 @@ public class BlockBreakingMovementBehaviour extends MovementBehaviour {
     }
 
     protected void destroyBlock(MovementContext context, BlockPos breakingPos) {
-        BlockHelper.destroyBlock(context.world, breakingPos, 1f, stack -> this.collectOrDropItem(context, stack));
+        BlockHelper.destroyBlock(context.world, breakingPos, 1.0f, stack -> collectOrDropItem(context, stack));
     }
 
     protected float getBlockBreakingSpeed(MovementContext context) {
-        float lowerLimit = 1 / 128f;
+        float lowerLimit = 1 / 128.0f;
         if (context.contraption instanceof MountedContraption) {
-            lowerLimit = 1f;
+            lowerLimit = 1.0f;
         }
         if (context.contraption instanceof CarriageContraption) {
-            lowerLimit = 2f;
+            lowerLimit = 2.0f;
         }
-        return Mth.clamp(Math.abs(context.getAnimationSpeed()) / 500f, lowerLimit, 16f);
+        return Mth.clamp(Math.abs(context.getAnimationSpeed()) / 500.0f, lowerLimit, 16.0f);
     }
 
     protected boolean shouldDestroyStartBlock(BlockState stateToBreak) {

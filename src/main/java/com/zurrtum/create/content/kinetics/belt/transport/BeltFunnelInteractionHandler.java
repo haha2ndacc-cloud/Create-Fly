@@ -27,7 +27,8 @@ public class BeltFunnelInteractionHandler {
         int step = beltMovementPositive ? 1 : -1;
         firstUpcomingSegment = Mth.clamp(firstUpcomingSegment, 0, beltInventory.belt.beltLength - 1);
 
-        for (int segment = firstUpcomingSegment; beltMovementPositive ? segment <= nextOffset : segment + 1 >= nextOffset; segment += step) {
+        for (int segment = firstUpcomingSegment;
+             beltMovementPositive ? segment <= nextOffset : segment + 1 >= nextOffset; segment += step) {
             BlockPos funnelPos = BeltHelper.getPositionForOffset(beltInventory.belt, segment).above();
             Level world = beltInventory.belt.getLevel();
             BlockState funnelState = world.getBlockState(funnelPos);
@@ -44,9 +45,9 @@ public class BeltFunnelInteractionHandler {
                 continue;
             }
 
-            float funnelEntry = segment + .5f;
+            float funnelEntry = segment + 0.5f;
             if (funnelState.getValue(BeltFunnelBlock.SHAPE) == Shape.EXTENDED) {
-                funnelEntry += .499f * (beltMovementPositive ? -1 : 1);
+                funnelEntry += 0.499f * (beltMovementPositive ? -1 : 1);
             }
             boolean hasCrossed = nextOffset > funnelEntry && beltMovementPositive || nextOffset < funnelEntry && !beltMovementPositive;
             if (!hasCrossed) {
@@ -59,9 +60,8 @@ public class BeltFunnelInteractionHandler {
             if (world.isClientSide() || funnelState.getValueOrElse(BeltFunnelBlock.POWERED, false)) {
                 if (blocking) {
                     return true;
-                } else {
-                    continue;
                 }
+                continue;
             }
 
             BlockEntity be = world.getBlockEntity(funnelPos);
@@ -75,9 +75,8 @@ public class BeltFunnelInteractionHandler {
             if (inserting == null || filtering != null && !filtering.test(currentItem.stack)) {
                 if (blocking) {
                     return true;
-                } else {
-                    continue;
                 }
+                continue;
             }
 
             if (beltInventory.belt.invVersionTracker.stillWaiting(inserting)) {
@@ -91,9 +90,8 @@ public class BeltFunnelInteractionHandler {
             if (amountToExtract > toInsert.getCount() && modeToExtract != ExtractionCountMode.UPTO) {
                 if (blocking) {
                     return true;
-                } else {
-                    continue;
                 }
+                continue;
             }
 
             if (amountToExtract != -1 && modeToExtract != ExtractionCountMode.UPTO) {
@@ -102,12 +100,10 @@ public class BeltFunnelInteractionHandler {
                 if (!remainder.isEmpty()) {
                     if (blocking) {
                         return true;
-                    } else {
-                        continue;
                     }
-                } else {
-                    beltInventory.belt.invVersionTracker.awaitNewVersion(inserting);
+                    continue;
                 }
+                beltInventory.belt.invVersionTracker.awaitNewVersion(inserting);
             }
 
             ItemStack remainder = inserting.insert(toInsert);
@@ -115,9 +111,8 @@ public class BeltFunnelInteractionHandler {
                 beltInventory.belt.invVersionTracker.awaitNewVersion(inserting);
                 if (blocking) {
                     return true;
-                } else {
-                    continue;
                 }
+                continue;
             }
 
             int notFilled = currentItem.stack.getCount() - toInsert.getCount();

@@ -378,11 +378,10 @@ public class SchematicannonBlockEntity extends SmartBlockEntity implements MenuP
             statusMsg = "targetNotLoaded";
             state = State.PAUSED;
             return;
-        } else {
-            if (positionNotLoaded) {
-                positionNotLoaded = false;
-                state = State.RUNNING;
-            }
+        }
+        if (positionNotLoaded) {
+            positionNotLoaded = false;
+            state = State.RUNNING;
         }
 
         // Get item requirement
@@ -423,7 +422,8 @@ public class SchematicannonBlockEntity extends SmartBlockEntity implements MenuP
 
         // Success
         state = State.RUNNING;
-        ItemStack icon = requirement.isEmpty() || requiredItems.isEmpty() ? ItemStack.EMPTY : requiredItems.get(0).stack;
+        ItemStack icon =
+            requirement.isEmpty() || requiredItems.isEmpty() ? ItemStack.EMPTY : requiredItems.get(0).stack;
         printer.handleCurrentTarget(
             (target, blockState, blockEntity) -> {
                 // Launch block
@@ -602,10 +602,10 @@ public class SchematicannonBlockEntity extends SmartBlockEntity implements MenuP
         @Nullable BlockState toReplaceOther,
         boolean isNormalCube
     ) {
-        if (pos.closerThan(getBlockPos(), 2f)) {
+        if (pos.closerThan(getBlockPos(), 2.0f)) {
             return false;
         }
-        if (!replaceBlockEntities && (toReplace.hasBlockEntity() || (toReplaceOther != null && toReplaceOther.hasBlockEntity()))) {
+        if (!replaceBlockEntities && (toReplace.hasBlockEntity() || toReplaceOther != null && toReplaceOther.hasBlockEntity())) {
             return false;
         }
 
@@ -621,13 +621,13 @@ public class SchematicannonBlockEntity extends SmartBlockEntity implements MenuP
         if (replaceMode == 2 && !placingAir) {
             return true;
         }
-        if (replaceMode == 1 && (isNormalCube || (!toReplace.isRedstoneConductor(
+        if (replaceMode == 1 && (isNormalCube || !toReplace.isRedstoneConductor(
             level,
             pos
         ) && (toReplaceOther == null || !toReplaceOther.isRedstoneConductor(
             level,
             pos
-        )))) && !placingAir) {
+        ))) && !placingAir) {
             return true;
         }
         return replaceMode == 0 && !toReplace.isRedstoneConductor(
@@ -759,7 +759,8 @@ public class SchematicannonBlockEntity extends SmartBlockEntity implements MenuP
 
             dontUpdateChecklist = true;
             inventory.setItem(BookInput, ItemStack.EMPTY);
-            ItemStack stack = paper.is(AllItems.CLIPBOARD) ? checklist.createWrittenClipboard() : checklist.createWrittenBook();
+            ItemStack stack =
+                paper.is(AllItems.CLIPBOARD) ? checklist.createWrittenClipboard() : checklist.createWrittenBook();
             stack.setCount(inventory.getItem(BookOutput).getCount() + 1);
             inventory.setItem(BookOutput, stack);
             inventory.setChanged();

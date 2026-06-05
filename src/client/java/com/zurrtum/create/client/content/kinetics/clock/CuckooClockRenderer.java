@@ -85,7 +85,8 @@ public class CuckooClockRenderer implements BlockEntityRenderer<CuckooClockBlock
             if (state.offset > 0.4f) {
                 return;
             }
-            PartialModel partialModel = be.animationType == Animation.PIG ? AllPartialModels.CUCKOO_PIG : AllPartialModels.CUCKOO_CREEPER;
+            PartialModel partialModel =
+                be.animationType == Animation.PIG ? AllPartialModels.CUCKOO_PIG : AllPartialModels.CUCKOO_CREEPER;
             state.figure = CachedBuffers.partial(partialModel, state.blockState).cardinalLighting(cardinalLighting)
                 .light(state.lightCoords).extractRenderState();
         }

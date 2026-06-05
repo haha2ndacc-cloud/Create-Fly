@@ -23,13 +23,13 @@ public class Builder {
     private final List<JsonObject> stack = new LinkedList<>();
     private final List<String> comments = new LinkedList<>();
     public JsonObject object;
-    public boolean ignoreComments = false;
+    public boolean ignoreComments;
 
     Builder(String id, String type, boolean single) {
         if (single) {
-            this.configDir = FabricLoader.getInstance().getConfigDir().toFile();
+            configDir = FabricLoader.getInstance().getConfigDir().toFile();
         } else {
-            this.configDir = new File(FabricLoader.getInstance().getConfigDir().toFile(), id);
+            configDir = new File(FabricLoader.getInstance().getConfigDir().toFile(), id);
         }
         this.type = single ? id + "-" + type : type;
         if (configDir.exists()) {
@@ -131,7 +131,7 @@ public class Builder {
     }
 
     public void read() {
-        File file = new File(configDir, this.type + ".json");
+        File file = new File(configDir, type + ".json");
         try {
             final String fileContents = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             object = GSON.fromJson(fileContents, JsonObject.class);

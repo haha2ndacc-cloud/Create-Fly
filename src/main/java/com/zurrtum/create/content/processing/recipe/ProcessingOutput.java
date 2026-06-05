@@ -23,7 +23,7 @@ public record ProcessingOutput(Holder<Item> item, int count, DataComponentPatch 
         ExtraCodecs.intRange(1, 99).optionalFieldOf("count", 1).forGetter(ProcessingOutput::count),
         DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY)
             .forGetter(ProcessingOutput::components),
-        Codec.FLOAT.optionalFieldOf("chance", 1F).forGetter(ProcessingOutput::chance)
+        Codec.FLOAT.optionalFieldOf("chance", 1.0F).forGetter(ProcessingOutput::chance)
     ).apply(instance, ProcessingOutput::new));
     public static StreamCodec<RegistryFriendlyByteBuf, ProcessingOutput> STREAM_CODEC = StreamCodec.composite(
         Item.STREAM_CODEC,

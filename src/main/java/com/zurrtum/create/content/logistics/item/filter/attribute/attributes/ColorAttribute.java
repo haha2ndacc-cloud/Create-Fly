@@ -89,7 +89,7 @@ public record ColorAttribute(DyeColor color) implements ItemAttribute {
         public List<ItemAttribute> getAllAttributes(ItemStack stack, Level level) {
             List<ItemAttribute> list = new ArrayList<>();
 
-            for (DyeColor color : ColorAttribute.findMatchingDyeColors(stack)) {
+            for (DyeColor color : findMatchingDyeColors(stack)) {
                 list.add(new ColorAttribute(color));
             }
 

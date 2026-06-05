@@ -180,7 +180,7 @@ public class SteamScenes {
         scene.title("steam_engine", "Setting up Steam Engines");
         scene.configureBasePlate(0, 0, 7);
         scene.setSceneOffsetY(-1);
-        scene.scaleSceneView(.9f);
+        scene.scaleSceneView(0.9f);
         scene.showBasePlate();
 
         Selection fakeGround = util.select().fromTo(4, 0, 0, 2, 0, 0);
@@ -407,7 +407,7 @@ public class SteamScenes {
         for (int y = 4; y < 9; y++) {
             if (y != 6) {
                 for (boolean left : Iterate.trueAndFalse) {
-                    int z = (left ^ y % 2 == 0) ? 3 : 4;
+                    int z = left ^ y % 2 == 0 ? 3 : 4;
                     if (previous != null) {
                         scene.world().setKineticSpeed(previous, previousForward ? 64 : -64);
                     }

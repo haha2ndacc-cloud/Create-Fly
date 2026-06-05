@@ -91,11 +91,12 @@ public class ValveHandleRenderer implements BlockEntityRenderer<ValveHandleBlock
         Direction facing,
         float partialTicks
     ) {
-        return (be.inUse > 0 && be.totalUseTicks > 0 ? Mth.lerp(
-            Math.min(be.totalUseTicks, be.totalUseTicks - be.inUse + partialTicks) / be.totalUseTicks,
-            be.startAngle,
-            be.targetAngle
-        ) : be.targetAngle) * (be.backwards ? -1 : 1) * facing.getAxisDirection().getStep();
+        return (be.inUse > 0 && be.totalUseTicks > 0 ?
+            Mth.lerp(
+                Math.min(be.totalUseTicks, be.totalUseTicks - be.inUse + partialTicks) / be.totalUseTicks,
+                be.startAngle,
+                be.targetAngle
+            ) : be.targetAngle) * (be.backwards ? -1 : 1) * facing.getAxisDirection().getStep();
     }
 
     public static class ValveHandleRenderState extends BlockEntityRenderState {

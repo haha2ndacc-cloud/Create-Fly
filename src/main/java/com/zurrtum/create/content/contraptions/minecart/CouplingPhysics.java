@@ -53,13 +53,13 @@ public class CouplingPhysics {
 
             float stress = (float) (couplingLength - cart.position().distanceTo(otherCart.position()));
 
-            if (Math.abs(stress) < 1 / 8f) {
+            if (Math.abs(stress) < 1 / 8.0f) {
                 continue;
             }
 
             Vec3 pos = cart.position();
             Vec3 link = otherCart.position().subtract(pos);
-            float correctionMagnitude = firstLoop ? -stress / 2f : -stress;
+            float correctionMagnitude = firstLoop ? -stress / 2.0f : -stress;
 
             if (!MinecartSim2020.canAddMotion(cart)) {
                 correctionMagnitude /= 2;
@@ -86,7 +86,7 @@ public class CouplingPhysics {
 
         // Assuming Minecarts will never move faster than 1 block/tick
         Couple<Vec3> motions = carts.map(Entity::getDeltaMovement);
-        motions.replaceWithParams(VecHelper::clamp, Couple.create(1f, 1f));
+        motions.replaceWithParams(VecHelper::clamp, Couple.create(1.0f, 1.0f));
         Couple<Vec3> nextPositions = carts.map(MinecartSim2020::predictNextPositionOf);
 
         Couple<@Nullable RailShape> shapes = carts.mapWithContext((minecart, current) -> {
@@ -106,7 +106,7 @@ public class CouplingPhysics {
         });
 
         float futureStress = (float) (couplingLength - nextPositions.getFirst().distanceTo(nextPositions.getSecond()));
-        if (Mth.equal(futureStress, 0D)) {
+        if (Mth.equal(futureStress, 0.0D)) {
             return;
         }
 
@@ -114,7 +114,7 @@ public class CouplingPhysics {
             Vec3 correction;
             Vec3 pos = nextPositions.get(current);
             Vec3 link = nextPositions.get(!current).subtract(pos);
-            float correctionMagnitude = -futureStress / 2f;
+            float correctionMagnitude = -futureStress / 2.0f;
 
             if (canAddmotion.get(current) != canAddmotion.get(!current)) {
                 correctionMagnitude = !canAddmotion.get(current) ? 0 : correctionMagnitude * 2;

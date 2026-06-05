@@ -38,7 +38,7 @@ public interface ValueSettingsHandleBehaviour extends ClipboardCloneable {
 
     default void playFeedbackSound(BlockEntityBehaviour<?> origin) {
         Level level = origin.getLevel();
-        level.playSound(null, origin.getPos(), SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.25f, 2f);
+        level.playSound(null, origin.getPos(), SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.25f, 2.0f);
         level.playSound(
             null,
             origin.getPos(),

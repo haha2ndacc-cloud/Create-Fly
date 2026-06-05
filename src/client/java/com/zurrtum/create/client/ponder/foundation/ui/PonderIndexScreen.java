@@ -212,7 +212,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
         graphics.text(
             font,
             pageString,
-            (int) (-stringWidth / 2f),
+            (int) (-stringWidth / 2.0f),
             0,
             UIRenderHelper.COLOR_TEXT.getFirst().getRGB(),
             false

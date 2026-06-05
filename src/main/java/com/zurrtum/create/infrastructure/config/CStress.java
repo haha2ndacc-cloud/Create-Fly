@@ -46,11 +46,11 @@ public class CStress extends ConfigBase {
     @Override
     public void registerAll(Builder builder) {
         builder.comment(Comments.su, Comments.impact).push("impact");
-        DEFAULT_IMPACTS.forEach((id, value) -> this.impacts.put(id, builder.define(id.getPath(), value)));
+        DEFAULT_IMPACTS.forEach((id, value) -> impacts.put(id, builder.define(id.getPath(), value)));
         builder.pop();
 
         builder.comment(Comments.su, Comments.capacity).push("capacity");
-        DEFAULT_CAPACITIES.forEach((id, value) -> this.capacities.put(id, builder.define(id.getPath(), value)));
+        DEFAULT_CAPACITIES.forEach((id, value) -> capacities.put(id, builder.define(id.getPath(), value)));
         builder.pop();
     }
 
@@ -62,14 +62,14 @@ public class CStress extends ConfigBase {
     @Nullable
     public DoubleSupplier getImpact(Block block) {
         Identifier id = BuiltInRegistries.BLOCK.getKey(block);
-        DoubleRawValue value = this.impacts.get(id);
+        DoubleRawValue value = impacts.get(id);
         return value == null ? null : value::get;
     }
 
     @Nullable
     public DoubleSupplier getCapacity(Block block) {
         Identifier id = BuiltInRegistries.BLOCK.getKey(block);
-        DoubleRawValue value = this.capacities.get(id);
+        DoubleRawValue value = capacities.get(id);
         return value == null ? null : value::get;
     }
 

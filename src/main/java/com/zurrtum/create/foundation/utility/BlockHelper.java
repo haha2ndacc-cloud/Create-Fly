@@ -616,9 +616,8 @@ public class BlockHelper {
             world.levelEvent(player, LevelEvent.SOUND_EXTINGUISH_FIRE, pos, 0);
             world.removeBlock(pos, false);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public static BlockState copyProperties(BlockState fromState, BlockState toState) {

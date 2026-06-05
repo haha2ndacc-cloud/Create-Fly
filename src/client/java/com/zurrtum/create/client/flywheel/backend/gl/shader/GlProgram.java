@@ -135,7 +135,7 @@ public class GlProgram extends GlObject {
     public int getUniformLocation(String uniform) {
         return uniformLocationCache.computeIfAbsent(
             uniform, s -> {
-                int index = glGetUniformLocation(this.handle(), uniform);
+                int index = glGetUniformLocation(handle(), uniform);
 
                 if (index < 0) {
                     LOGGER.debug("No active uniform '{}' exists. Could be unused.", uniform);

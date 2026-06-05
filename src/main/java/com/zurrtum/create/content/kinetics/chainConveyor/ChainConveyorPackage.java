@@ -21,9 +21,8 @@ public class ChainConveyorPackage {
         instance, (chainPosition, item, netId) -> {
             if (netId > 0) {
                 return new ChainConveyorPackage(chainPosition, item, netId);
-            } else {
-                return new ChainConveyorPackage(chainPosition, item);
             }
+            return new ChainConveyorPackage(chainPosition, item);
         }
     ));
 

@@ -26,9 +26,8 @@ public class LargeWaterWheelModel extends WrapperBlockStateModel {
         if (world.getBlockEntity(pos) instanceof LargeWaterWheelBlockEntity blockEntity) {
             return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(blockEntity.material)
                 .particleMaterial();
-        } else {
-            return model.particleMaterial();
         }
+        return model.particleMaterial();
     }
 
     @Override

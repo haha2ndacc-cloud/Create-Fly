@@ -32,7 +32,7 @@ public class SteamEngineBlockEntity extends SmartBlockEntity {
     public WeakReference<@Nullable PoweredShaftBlockEntity> target;
     public WeakReference<@Nullable FluidTankBlockEntity> source;
 
-    public float prevAngle = 0;
+    public float prevAngle;
 
     public SteamEngineBlockEntity(BlockPos pos, BlockState state) {
         super(AllBlockEntityTypes.STEAM_ENGINE, pos, state);
@@ -102,9 +102,8 @@ public class SteamEngineBlockEntity extends SmartBlockEntity {
             award(AllAdvancements.STEAM_ENGINE);
         }
 
-        int conveyedSpeedLevel = efficiency == 0 ? 1 : verticalTarget ? 1 : (int) GeneratingKineticBlockEntity.convertToDirection(1,
-            facing
-        );
+        int conveyedSpeedLevel =
+            efficiency == 0 ? 1 : verticalTarget ? 1 : (int) GeneratingKineticBlockEntity.convertToDirection(1, facing);
         if (targetAxis == Axis.Z) {
             conveyedSpeedLevel *= -1;
         }
@@ -113,7 +112,7 @@ public class SteamEngineBlockEntity extends SmartBlockEntity {
         }
 
         float shaftSpeed = shaft.getTheoreticalSpeed();
-        if (shaft.hasSource() && shaftSpeed != 0 && conveyedSpeedLevel != 0 && (shaftSpeed > 0) != (conveyedSpeedLevel > 0)) {
+        if (shaft.hasSource() && shaftSpeed != 0 && conveyedSpeedLevel != 0 && shaftSpeed > 0 != conveyedSpeedLevel > 0) {
             movementDirection.setValue(1 - movementDirection.get().ordinal());
             conveyedSpeedLevel *= -1;
         }

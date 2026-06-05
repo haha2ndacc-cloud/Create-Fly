@@ -40,7 +40,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
     protected PonderButton pagePrev;
 
     @Nullable
-    private PonderTag hoveredItem = null;
+    private PonderTag hoveredItem;
 
     // The main ponder entry point from menus.
     public PonderTagIndexScreen() {
@@ -107,7 +107,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
         List<PonderTag> tags = entry.getValue();
 
         int size = tags.size();
-        int row = size / 11d > 1 ? 2 : 1;
+        int row = size / 11.0d > 1 ? 2 : 1;
         LayoutHelper layout = LayoutHelper.centeredHorizontal(size, row, 28, 28, 8);
         int left = layout.getX();
         int top = layout.getY();
@@ -168,13 +168,13 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
         Matrix3x2fStack poseStack = graphics.pose();
 
         poseStack.pushMatrix();
-        poseStack.translate(width / 2f, 30);
+        poseStack.translate(width / 2.0f, 30);
 
         //title, box for icon and streak
         poseStack.pushMatrix();
         poseStack.translate(-120, 0);
 
-        String title = Ponder.lang().translate(AbstractPonderScreen.WELCOME).string();
+        String title = Ponder.lang().translate(WELCOME).string();
 
         new BoxElement().withBackground(PonderUI.BACKGROUND_FLAT).gradientBorder(PonderUI.COLOR_IDLE).at(0, 0, 0)
             .withBounds(30, 30).render(graphics);
@@ -186,9 +186,9 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
         poseStack.translate(34, -3);
 
         int streakHeight = 36;
-        UIRenderHelper.streak(graphics, 0, 0, (streakHeight / 2), streakHeight, 280);
+        UIRenderHelper.streak(graphics, 0, 0, streakHeight / 2, streakHeight, 280);
 
-        poseStack.scale(2f, 2f);
+        poseStack.scale(2.0f, 2.0f);
         graphics.text(font, title, 3, 5, UIRenderHelper.COLOR_TEXT.getFirst().getRGB(), false);
 
         poseStack.popMatrix();
@@ -196,8 +196,8 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
         poseStack.pushMatrix();
         //at the middle, 80px from the top now
 
-        int maxWidth = (int) (width * .5f);
-        String desc = Ponder.lang().translate(AbstractPonderScreen.DESCRIPTION).string();
+        int maxWidth = (int) (width * 0.5f);
+        String desc = Ponder.lang().translate(DESCRIPTION).string();
 
         int descWidth = font.width(desc);
         if (descWidth + 2 < maxWidth) {
@@ -206,7 +206,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 
         int descHeight = font.wordWrapHeight(Component.literal(desc), maxWidth);
 
-        poseStack.translate(-maxWidth / 2f, 0);
+        poseStack.translate(-maxWidth / 2.0f, 0);
 
         new BoxElement().withBackground(PonderUI.BACKGROUND_FLAT).gradientBorder(PonderUI.COLOR_IDLE).at(-3, -3, 0)
             .withBounds(maxWidth + 6, descHeight + 5).render(graphics);
@@ -223,10 +223,10 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
         poseStack.popMatrix();
 
         poseStack.translate(0, 60);
-        String categories = Ponder.lang().translate(AbstractPonderScreen.CATEGORIES, currentEntry.modName).string();
+        String categories = Ponder.lang().translate(CATEGORIES, currentEntry.modName).string();
         int stringWidth = font.width(categories);
         poseStack.pushMatrix();
-        poseStack.translate(-stringWidth / 2f, -20);
+        poseStack.translate(-stringWidth / 2.0f, -20);
 
         new BoxElement().withBackground(PonderUI.BACKGROUND_FLAT).gradientBorder(PonderUI.COLOR_IDLE).at(-3, -1, 0)
             .withBounds(stringWidth + 6, 10).render(graphics);

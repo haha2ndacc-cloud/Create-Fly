@@ -51,7 +51,7 @@ public class MechanicalDrillScenes {
         scene.world().hideSection(util.select().position(breakingPos), Direction.UP);
         ElementLink<EntityElement> plankEntity = scene.world().createItemEntity(
             util.vector().centerOf(breakingPos),
-            util.vector().of(0, .1f, 0),
+            util.vector().of(0, 0.1f, 0),
             new ItemStack(Items.OAK_PLANKS)
         );
         scene.idle(20);
@@ -77,7 +77,7 @@ public class MechanicalDrillScenes {
 
         scene.world().createItemEntity(
             util.vector().centerOf(breakingPos),
-            util.vector().of(0, .1f, 0),
+            util.vector().of(0, 0.1f, 0),
             new ItemStack(Items.OAK_PLANKS)
         );
         scene.idle(50);
@@ -141,7 +141,7 @@ public class MechanicalDrillScenes {
             }
         }
 
-        Vec3 m = util.vector().of(-.1, 0, 0);
+        Vec3 m = util.vector().of(-0.1, 0, 0);
         ItemStack item = new ItemStack(Items.OAK_PLANKS);
         scene.world().createItemEntity(util.vector().centerOf(p1), m, item);
         scene.world().createItemEntity(util.vector().centerOf(p2), m, item);

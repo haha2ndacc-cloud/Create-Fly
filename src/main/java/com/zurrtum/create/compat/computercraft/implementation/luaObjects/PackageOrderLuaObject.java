@@ -21,8 +21,8 @@ public class PackageOrderLuaObject implements LuaComparable {
     private final @Nullable PackageOrderWithCrafts context;
 
     public PackageOrderLuaObject(PackageLuaObject packageLuaObject) {
-        this.parent = packageLuaObject;
-        this.context = PackageItem.getOrderContext(parent.box);
+        parent = packageLuaObject;
+        context = PackageItem.getOrderContext(parent.box);
     }
 
     @LuaFunction(mainThread = true)

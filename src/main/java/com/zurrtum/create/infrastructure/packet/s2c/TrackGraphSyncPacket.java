@@ -192,7 +192,8 @@ public class TrackGraphSyncPacket extends TrackGraphPacket {
         Couple<Integer> key = Couple.create(node1.getNetId(), node2.getNetId());
         List<UUID> list = new ArrayList<>();
         EdgeData edgeData = edge.getEdgeData();
-        int groupType = edgeData.hasSignalBoundaries() ? NULL_GROUP : EdgeData.passiveGroup.equals(edgeData.getSingleSignalGroup()) ? PASSIVE_GROUP : GROUP;
+        int groupType = edgeData.hasSignalBoundaries() ? NULL_GROUP :
+            EdgeData.passiveGroup.equals(edgeData.getSingleSignalGroup()) ? PASSIVE_GROUP : GROUP;
         if (groupType == GROUP) {
             list.add(edgeData.getSingleSignalGroup());
         }

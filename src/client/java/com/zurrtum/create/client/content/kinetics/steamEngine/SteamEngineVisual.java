@@ -31,7 +31,7 @@ public class SteamEngineVisual extends AbstractBlockEntityVisual<SteamEngineBloc
     protected final TransformedInstance connector;
 
     private @Nullable Float lastAngle = Float.NaN;
-    private @Nullable Axis lastAxis = null;
+    private @Nullable Axis lastAxis;
 
     public SteamEngineVisual(VisualizationContext context, SteamEngineBlockEntity blockEntity, float partialTick) {
         super(context, blockEntity, partialTick);
@@ -94,25 +94,24 @@ public class SteamEngineVisual extends AbstractBlockEntityVisual<SteamEngineBloc
             linkage.setVisible(false);
             connector.setVisible(false);
             return;
-        } else {
-            piston.setVisible(true);
-            linkage.setVisible(true);
-            connector.setVisible(true);
         }
+        piston.setVisible(true);
+        linkage.setVisible(true);
+        connector.setVisible(true);
 
         Direction facing = SteamEngineBlock.getFacing(blockState);
         Axis facingAxis = facing.getAxis();
 
         boolean roll90 = facingAxis.isHorizontal() && axis == Axis.Y || facingAxis.isVertical() && axis == Axis.Z;
-        float piston = ((6 / 16f) * Mth.sin(angle) - Mth.sqrt(Mth.square(14 / 16f) - Mth.square(6 / 16f) * Mth.square(
-            Mth.cos(angle))));
-        float distance = Mth.sqrt(Mth.square(piston - 6 / 16f * Mth.sin(angle)));
-        float angle2 = (float) Math.acos(distance / (14 / 16f)) * (Mth.cos(angle) >= 0 ? 1f : -1f);
+        float piston = 6 / 16.0f * Mth.sin(angle) - Mth.sqrt(Mth.square(14 / 16.0f) - Mth.square(6 / 16.0f) * Mth.square(
+            Mth.cos(angle)));
+        float distance = Mth.sqrt(Mth.square(piston - 6 / 16.0f * Mth.sin(angle)));
+        float angle2 = (float) Math.acos(distance / (14 / 16.0f)) * (Mth.cos(angle) >= 0 ? 1.0f : -1.0f);
 
-        transformed(this.piston, facing, roll90).translate(0, piston + 20 / 16f, 0).setChanged();
+        transformed(this.piston, facing, roll90).translate(0, piston + 20 / 16.0f, 0).setChanged();
 
-        transformed(linkage, facing, roll90).center().translate(0, 1, 0).uncenter().translate(0, piston + 20 / 16f, 0)
-            .translate(0, 4 / 16f, 8 / 16f).rotateX(angle2).translate(0, -4 / 16f, -8 / 16f).setChanged();
+        transformed(linkage, facing, roll90).center().translate(0, 1, 0).uncenter().translate(0, piston + 20 / 16.0f, 0)
+            .translate(0, 4 / 16.0f, 8 / 16.0f).rotateX(angle2).translate(0, -4 / 16.0f, -8 / 16.0f).setChanged();
 
         transformed(connector, facing, roll90).translate(0, 2, 0).center().rotateX(-(angle + Mth.HALF_PI)).uncenter()
             .setChanged();

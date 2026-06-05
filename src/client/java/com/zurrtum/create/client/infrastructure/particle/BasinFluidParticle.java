@@ -49,16 +49,16 @@ public class BasinFluidParticle extends SingleQuadParticle {
         super(world, x, y, z, vx, vy, vz, still);
         layer = Layer.bySprite(still);
         gravity = 0;
-        rCol = (float) (tint >> 16 & 255) / 255.0F;
-        gCol = (float) (tint >> 8 & 255) / 255.0F;
-        bCol = (float) (tint & 255) / 255.0F;
+        rCol = (tint >> 16 & 255) / 255.0F;
+        gCol = (tint >> 8 & 255) / 255.0F;
+        bCol = (tint & 255) / 255.0F;
         alpha = 0.9F;
         xd = 0;
         yd = 0;
         zd = 0;
         uo = random.nextFloat() * 3.0F;
         vo = random.nextFloat() * 3.0F;
-        yOffset = random.nextFloat() * 1 / 32f;
+        yOffset = random.nextFloat() * 1 / 32.0f;
         y += yOffset;
         quadSize = 0;
         lifetime = 60;
@@ -70,7 +70,7 @@ public class BasinFluidParticle extends SingleQuadParticle {
         if (vx != 0) {
             lifetime = 20;
             Vec3 centerOf = VecHelper.getCenterOf(basinPos);
-            Vec3 diff = currentPos.subtract(centerOf).multiply(1, 0, 1).normalize().scale(.375);
+            Vec3 diff = currentPos.subtract(centerOf).multiply(1, 0, 1).normalize().scale(0.375);
             targetPos = centerOf.add(diff);
             xo = this.x = centerOfBasin.x;
             zo = this.z = centerOfBasin.z;
@@ -82,10 +82,8 @@ public class BasinFluidParticle extends SingleQuadParticle {
     @Override
     public void tick() {
         super.tick();
-        quadSize = targetPos != null ? Math.max(
-            1 / 32f,
-            ((1f * age) / lifetime) / 8
-        ) : 1 / 8f * (1 - ((Math.abs(age - (lifetime / 2)) / (1f * lifetime))));
+        quadSize = targetPos != null ? Math.max(1 / 32.0f, 1.0f * age / lifetime / 8) :
+            1 / 8.0f * (1 - Math.abs(age - lifetime / 2) / (1.0f * lifetime));
 
         if (age % 2 == 0) {
             if (!level.getBlockState(basinPos).is(AllBlocks.BASIN) && !BasinBlock.isBasin(level, basinPos)) {
@@ -100,13 +98,13 @@ public class BasinFluidParticle extends SingleQuadParticle {
                     totalUnits = 0;
                 }
                 float fluidLevel = Mth.clamp(totalUnits / 162000, 0, 1);
-                y = 2 / 16f + basinPos.getY() + 12 / 16f * fluidLevel + yOffset;
+                y = 2 / 16.0f + basinPos.getY() + 12 / 16.0f * fluidLevel + yOffset;
             }
 
         }
 
         if (targetPos != null) {
-            float progess = (1f * age) / lifetime;
+            float progess = 1.0f * age / lifetime;
             Vec3 currentPos = centerOfBasin.add(targetPos.subtract(centerOfBasin).scale(progess));
             x = currentPos.x;
             z = currentPos.z;

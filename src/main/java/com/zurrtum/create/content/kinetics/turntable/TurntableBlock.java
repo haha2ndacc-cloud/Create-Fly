@@ -49,7 +49,7 @@ public class TurntableBlock extends KineticBlock implements IBE<TurntableBlockEn
         if (e.getDeltaMovement().y > 0) {
             return;
         }
-        if (e.getY() < pos.getY() + .5f) {
+        if (e.getY() < pos.getY() + 0.5f) {
             return;
         }
 
@@ -61,7 +61,7 @@ public class TurntableBlock extends KineticBlock implements IBE<TurntableBlockEn
                 }
 
                 Level world = e.level();
-                if (world.isClientSide() && (e instanceof Player)) {
+                if (world.isClientSide() && e instanceof Player) {
                     if (worldIn.getBlockState(e.blockPosition()) != state) {
                         Vec3 origin = VecHelper.getCenterOf(pos);
                         Vec3 offset = e.position().subtract(origin);
@@ -72,14 +72,14 @@ public class TurntableBlock extends KineticBlock implements IBE<TurntableBlockEn
                     }
                 }
 
-                if ((e instanceof Player)) {
+                if (e instanceof Player) {
                     return;
                 }
                 if (world.isClientSide()) {
                     return;
                 }
 
-                if ((e instanceof LivingEntity livingEntity)) {
+                if (e instanceof LivingEntity livingEntity) {
                     float diff = e.getYHeadRot() - speed;
                     livingEntity.setNoActionTime(20);
                     e.setYBodyRot(diff);

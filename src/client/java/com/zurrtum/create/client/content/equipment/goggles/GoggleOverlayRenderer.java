@@ -53,8 +53,8 @@ public class GoggleOverlayRenderer {
 
     private static final Map<Object, OutlineEntry> outlines = Outliner.getInstance().getOutlines();
 
-    public static int hoverTicks = 0;
-    public static @Nullable BlockPos lastHovered = null;
+    public static int hoverTicks;
+    public static @Nullable BlockPos lastHovered;
 
     public static void renderOverlay(Minecraft mc, GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
         HitResult objectMouseOver = mc.hitResult;
@@ -133,7 +133,7 @@ public class GoggleOverlayRenderer {
         }
 
         // break early if goggle or hover returned false when present
-        if ((hasGoggleInformation && !goggleAddedInformation) && (hasHoveringInformation && !hoverAddedInformation)) {
+        if (hasGoggleInformation && !goggleAddedInformation && hasHoveringInformation && !hoverAddedInformation) {
             hoverTicks = 0;
             return;
         }
@@ -195,17 +195,17 @@ public class GoggleOverlayRenderer {
         posX = Math.min(posX, width - tooltipTextWidth - 20);
         posY = Math.min(posY, height - tooltipHeight - 20);
 
-        float fade = Mth.clamp((hoverTicks + deltaTracker.getGameTimeDeltaPartialTick(false)) / 24f, 0, 1);
+        float fade = Mth.clamp((hoverTicks + deltaTracker.getGameTimeDeltaPartialTick(false)) / 24.0f, 0, 1);
         Boolean useCustom = cfg.overlayCustomColor.get();
-        Color colorBackground = useCustom ? new Color(cfg.overlayBackgroundColor.get()) : BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(
-            .75f);
-        Color colorBorderTop = useCustom ? new Color(cfg.overlayBorderColorTop.get()) : BoxElement.COLOR_VANILLA_BORDER.getFirst()
-            .copy();
-        Color colorBorderBot = useCustom ? new Color(cfg.overlayBorderColorBot.get()) : BoxElement.COLOR_VANILLA_BORDER.getSecond()
-            .copy();
+        Color colorBackground = useCustom ? new Color(cfg.overlayBackgroundColor.get()) :
+            BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(0.75f);
+        Color colorBorderTop =
+            useCustom ? new Color(cfg.overlayBorderColorTop.get()) : BoxElement.COLOR_VANILLA_BORDER.getFirst().copy();
+        Color colorBorderBot =
+            useCustom ? new Color(cfg.overlayBorderColorBot.get()) : BoxElement.COLOR_VANILLA_BORDER.getSecond().copy();
 
         if (fade < 1) {
-            poseStack.translate((float) (Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5f) * 8), 0);
+            poseStack.translate((float) (Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + 0.5f) * 8), 0);
             colorBackground.scaleAlpha(fade);
             colorBorderTop.scaleAlpha(fade);
             colorBorderBot.scaleAlpha(fade);

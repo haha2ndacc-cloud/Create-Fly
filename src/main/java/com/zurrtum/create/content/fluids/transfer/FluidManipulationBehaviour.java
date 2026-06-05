@@ -288,8 +288,10 @@ public abstract class FluidManipulationBehaviour extends BlockEntityBehaviour<Sm
 
     @SuppressWarnings("deprecation")
     public enum BottomlessFluidMode implements Predicate<Fluid> {
-        ALLOW_ALL(Predicates.alwaysTrue()), DENY_ALL(Predicates.alwaysFalse()), ALLOW_BY_TAG(fluid -> fluid.is(
-            AllFluidTags.BOTTOMLESS_ALLOW)), DENY_BY_TAG(fluid -> !fluid.is(AllFluidTags.BOTTOMLESS_DENY));
+        ALLOW_ALL(Predicates.alwaysTrue()),
+        DENY_ALL(Predicates.alwaysFalse()),
+        ALLOW_BY_TAG(fluid -> fluid.is(AllFluidTags.BOTTOMLESS_ALLOW)),
+        DENY_BY_TAG(fluid -> !fluid.is(AllFluidTags.BOTTOMLESS_DENY));
 
         private final Predicate<Fluid> predicate;
 

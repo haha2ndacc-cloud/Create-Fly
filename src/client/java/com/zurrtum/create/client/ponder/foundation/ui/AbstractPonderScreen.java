@@ -48,9 +48,9 @@ public abstract class AbstractPonderScreen extends NavigatableSimiScreen {
     @Override
     protected Component backTrackingComponent() {
         if (ScreenOpener.getBackStepScreen() instanceof NavigatableSimiScreen) {
-            return Ponder.lang().translate(AbstractPonderScreen.THINK_BACK).component();
+            return Ponder.lang().translate(THINK_BACK).component();
         }
 
-        return Ponder.lang().translate(AbstractPonderScreen.EXIT).component();
+        return Ponder.lang().translate(EXIT).component();
     }
 }

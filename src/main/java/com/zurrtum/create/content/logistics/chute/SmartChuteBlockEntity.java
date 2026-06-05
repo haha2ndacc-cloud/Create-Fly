@@ -32,7 +32,8 @@ public class SmartChuteBlockEntity extends ChuteBlockEntity implements Clearable
 
     @Override
     protected ExtractionCountMode getExtractionMode() {
-        return filtering.isCountVisible() && !filtering.anyAmount() && !filtering.upTo ? ExtractionCountMode.EXACTLY : ExtractionCountMode.UPTO;
+        return filtering.isCountVisible() && !filtering.anyAmount() && !filtering.upTo ? ExtractionCountMode.EXACTLY :
+            ExtractionCountMode.UPTO;
     }
 
     @Override

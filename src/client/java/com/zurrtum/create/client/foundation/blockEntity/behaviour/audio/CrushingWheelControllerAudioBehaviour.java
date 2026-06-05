@@ -15,7 +15,7 @@ public class CrushingWheelControllerAudioBehaviour extends AudioBehaviour<Crushi
         if (!blockEntity.isOccupied() || blockEntity.crushingspeed == 0) {
             return;
         }
-        float pitch = Mth.clamp((blockEntity.crushingspeed / 256f) + .45f, .85f, 1f);
+        float pitch = Mth.clamp(blockEntity.crushingspeed / 256.0f + 0.45f, 0.85f, 1.0f);
         if (blockEntity.entityUUID == null && blockEntity.inventory.getItem(0).isEmpty()) {
             return;
         }

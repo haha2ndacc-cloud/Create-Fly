@@ -88,11 +88,11 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
     private final int innerRadius = 50;
     private final int outerRadius = 110;
 
-    private int selectedPropertyIndex = 0;
+    private int selectedPropertyIndex;
     private List<BlockState> allStates = List.of();
     private String propertyLabel = "";
     private int ticksOpen;
-    private int selectedStateIndex = 0;
+    private int selectedStateIndex;
 
     private final RenderElement iconScroll = RenderElement.of(PonderGuiTextures.ICON_SCROLL);
     private final RenderElement iconUp = RenderElement.of(AllIcons.I_PRIORITY_HIGH);
@@ -122,9 +122,9 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
         this.state = state;
         this.pos = pos;
         this.level = level;
-        this.nonVisualizationLevel = new NonVisualizationLevel(level);
-        this.blockEntity = level.getBlockEntity(pos);
-        this.propertiesForState = properties;
+        nonVisualizationLevel = new NonVisualizationLevel(level);
+        blockEntity = level.getBlockEntity(pos);
+        propertiesForState = properties;
 
         initForSelectedProperty();
     }
@@ -168,7 +168,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
         }
 
         offset = Mth.clamp(offset, 0, states.size() - 1);
-        selectedStateIndex = (offset == 0) ? 0 : (states.size() - offset);
+        selectedStateIndex = offset == 0 ? 0 : states.size() - offset;
     }
 
     @Override
@@ -182,26 +182,26 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 
     @Override
     protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
-        int x = this.width / 2;
-        int y = this.height / 2;
+        int x = width / 2;
+        int y = height / 2;
 
         Matrix3x2fStack ms = graphics.pose();
 
         ms.pushMatrix();
         ms.translate(x, y);
 
-        int mouseOffsetX = mouseX - this.width / 2;
-        int mouseOffsetY = mouseY - this.height / 2;
+        int mouseOffsetX = mouseX - width / 2;
+        int mouseOffsetY = mouseY - height / 2;
 
         if (Mth.length(mouseOffsetX, mouseOffsetY) > innerRadius - 5) {
             double theta = Mth.atan2(mouseOffsetX, mouseOffsetY);
 
-            float sectorSize = 360f / allStates.size();
+            float sectorSize = 360.0f / allStates.size();
 
-            selectedStateIndex = (int) Math.floor(((-AngleHelper.deg(Mth.atan2(
+            selectedStateIndex = (int) Math.floor((-AngleHelper.deg(Mth.atan2(
                 mouseOffsetX,
                 mouseOffsetY
-            )) + 180 + sectorSize / 2) % 360) / sectorSize);
+            )) + 180 + sectorSize / 2) % 360 / sectorSize);
 
             renderDirectionIndicator(graphics, theta);
         }
@@ -255,7 +255,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
             return;
         }
 
-        float sectorAngle = 360f / sectors;
+        float sectorAngle = 360.0f / sectors;
         int sectorWidth = outerRadius - innerRadius;
 
         poseStack.pushMatrix();
@@ -304,7 +304,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
                 c
             );
 
-            poseStack.translate(0, -(sectorWidth / 2f + innerRadius));
+            poseStack.translate(0, -(sectorWidth / 2.0f + innerRadius));
             poseStack.rotate(Mth.DEG_TO_RAD * (-i * sectorAngle));
 
             graphics.guiRenderState.addPicturesInPictureState(EntityBlockRenderState.create(
@@ -397,10 +397,10 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
     public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         Color color = BACKGROUND_COLOR.scaleAlpha(Math.min(
             1,
-            (ticksOpen + AnimationTickHolder.getPartialTicks()) / 20f
+            (ticksOpen + AnimationTickHolder.getPartialTicks()) / 20.0f
         ));
 
-        guiGraphics.fillGradient(0, 0, this.width, this.height, color.getRGB(), color.getRGB());
+        guiGraphics.fillGradient(0, 0, width, height, color.getRGB(), color.getRGB());
     }
 
     @Override
@@ -418,7 +418,8 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
         if (button == 0) {
             submitChange();
             return true;
-        } else if (button == 1) {
+        }
+        if (button == 1) {
             onClose();
             return true;
         }

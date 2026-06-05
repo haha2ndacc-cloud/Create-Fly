@@ -127,7 +127,10 @@ public class VanillaVisuals {
         String key = configured.configKey();
         VisualConfigValue value = blockEntities.get(key).get();
         if (value == VisualConfigValue.DEFAULT) {
-            configured.set(support ? value : VisualConfigValue.DISABLE, blockEntityOverrides.get(key));
+            configured.set(
+                support ? VisualConfigValue.DEFAULT : VisualConfigValue.DISABLE,
+                blockEntityOverrides.get(key)
+            );
         }
     }
 

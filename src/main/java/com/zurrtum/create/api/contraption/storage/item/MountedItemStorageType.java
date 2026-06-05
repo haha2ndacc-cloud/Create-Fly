@@ -26,7 +26,7 @@ public abstract class MountedItemStorageType<T extends MountedItemStorage> {
     }
 
     public final boolean is(TagKey<MountedItemStorageType<?>> tag) {
-        return this.holder.is(tag);
+        return holder.is(tag);
     }
 
     @Nullable

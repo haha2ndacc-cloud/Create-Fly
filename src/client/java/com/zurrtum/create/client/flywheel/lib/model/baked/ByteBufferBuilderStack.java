@@ -6,7 +6,7 @@ import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 class ByteBufferBuilderStack {
     private static final int INITIAL_CAPACITY_BYTES = 256 * 32;
 
-    private int nextBufferBuilderIndex = 0;
+    private int nextBufferBuilderIndex;
     private final ReferenceArrayList<ByteBufferBuilder> bufferBuilders = new ReferenceArrayList<>();
 
     ByteBufferBuilder nextOrCreate() {

@@ -12,7 +12,7 @@ public class ControllerValueBoxTransform extends ValueBoxTransform.Sided {
 
     @Override
     protected Vec3 getSouthLocation() {
-        return VecHelper.voxelSpace(8, 11f, 15.5f);
+        return VecHelper.voxelSpace(8, 11.0f, 15.5f);
     }
 
     @Override

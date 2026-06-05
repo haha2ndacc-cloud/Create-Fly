@@ -107,7 +107,7 @@ public class PipeScenes {
         scene.idle(40);
 
         Vec3 center = util.vector().centerOf(2, 1, 2);
-        AABB bb = new AABB(center, center).inflate(1 / 6f);
+        AABB bb = new AABB(center, center).inflate(1 / 6.0f);
         AABB bb1 = bb.move(-0.5, 0, 0);
         AABB bb2 = bb.move(0, 0, -0.5);
 

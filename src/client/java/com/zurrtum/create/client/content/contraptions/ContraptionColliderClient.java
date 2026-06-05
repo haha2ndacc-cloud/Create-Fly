@@ -104,9 +104,8 @@ public class ContraptionColliderClient {
             if (playerType == PlayerType.CLIENT) {
                 if (skipClientPlayer) {
                     continue;
-                } else {
-                    skipClientPlayer = true;
                 }
+                skipClientPlayer = true;
             }
 
             // Init matrix
@@ -129,7 +128,7 @@ public class ContraptionColliderClient {
 
             // Make player 'shorter' to make it less likely to become stuck
             if (playerType == PlayerType.CLIENT && entityBounds.getYsize() > 1) {
-                entityBounds = entityBounds.contract(0, 2 / 16f, 0);
+                entityBounds = entityBounds.contract(0, 2 / 16.0f, 0);
             }
 
             motion = motion.subtract(contraptionMotion);
@@ -174,8 +173,8 @@ public class ContraptionColliderClient {
             boolean surfaceCollision = collisionResult.surfaceCollision;
             boolean hardCollision = !totalResponse.equals(Vec3.ZERO);
             boolean temporalCollision = collisionResult.temporalResponse != 1;
-            Vec3 motionResponse = !temporalCollision ? motion : motion.normalize()
-                .scale(motion.length() * collisionResult.temporalResponse);
+            Vec3 motionResponse = !temporalCollision ? motion :
+                motion.normalize().scale(motion.length() * collisionResult.temporalResponse);
 
             motionResponse = rotationMatrix.transformTransposed(motionResponse).add(contraptionMotion);
             totalResponse = rotationMatrix.transformTransposed(totalResponse);
@@ -191,7 +190,7 @@ public class ContraptionColliderClient {
 
             if (!collisionLocation.equals(Vec3.ZERO)) {
                 collisionLocation = collisionLocation.add(entity.position().add(entity.getBoundingBox().getCenter())
-                    .scale(.5f));
+                    .scale(0.5f));
                 if (temporalCollision) {
                     collisionLocation = collisionLocation.add(0, motionResponse.y, 0);
                 }
@@ -201,7 +200,7 @@ public class ContraptionColliderClient {
                     BlockState blockState = contraption.getBlocks().get(pos).state();
                     if (blockState.is(BlockTags.CLIMBABLE)) {
                         surfaceCollision = true;
-                        totalResponse = totalResponse.add(0, .1f, 0);
+                        totalResponse = totalResponse.add(0, 0.1f, 0);
                     }
                 }
 
@@ -215,7 +214,7 @@ public class ContraptionColliderClient {
                     }
 
                     bounce = BlockHelper.getBounceMultiplier(blockState.getBlock());
-                    slide = Math.max(0, blockState.getBlock().getFriction() - .6f);
+                    slide = Math.max(0, blockState.getBlock().getFriction() - 0.6f);
                 }
             }
 
@@ -235,7 +234,7 @@ public class ContraptionColliderClient {
                     entity.getZ(),
                     SoundEvents.SLIME_BLOCK_FALL,
                     SoundSource.BLOCKS,
-                    .5f,
+                    0.5f,
                     1
                 );
                 continue;
@@ -257,7 +256,7 @@ public class ContraptionColliderClient {
                 double intersectY = totalResponse.y();
                 double intersectZ = totalResponse.z();
 
-                double horizonalEpsilon = 1 / 128f;
+                double horizonalEpsilon = 1 / 128.0f;
                 if (motionX != 0 && Math.abs(intersectX) > horizonalEpsilon && motionX > 0 == intersectX < 0) {
                     entityMotion = entityMotion.multiply(0, 1, 1);
                 }
@@ -272,11 +271,11 @@ public class ContraptionColliderClient {
 
             if (bounce == 0 && slide > 0 && hasNormal && anyCollision && rotation.hasVerticalRotation()) {
                 double slideFactor = collisionNormal.multiply(1, 0, 1).length() * 1.25f;
-                Vec3 motionIn = entityMotionNoTemporal.multiply(0, .9, 0).add(0, -.01f, 0);
+                Vec3 motionIn = entityMotionNoTemporal.multiply(0, 0.9, 0).add(0, -0.01f, 0);
                 Vec3 slideNormal = collisionNormal.cross(motionIn.cross(collisionNormal)).normalize();
-                Vec3 newMotion = entityMotion.multiply(.85, 0, .85)
-                    .add(slideNormal.scale((.2f + slide) * motionIn.length() * slideFactor)
-                        .add(0, -.1f - collisionNormal.y * .125f, 0));
+                Vec3 newMotion = entityMotion.multiply(0.85, 0, 0.85)
+                    .add(slideNormal.scale((0.2f + slide) * motionIn.length() * slideFactor)
+                        .add(0, -0.1f - collisionNormal.y * 0.125f, 0));
                 entity.setDeltaMovement(newMotion);
                 entityMotion = entity.getDeltaMovement();
             }
@@ -323,7 +322,7 @@ public class ContraptionColliderClient {
                         entity.setOnGround(true);
                     }
                     if (entity instanceof ItemEntity) {
-                        entityMotion = entityMotion.multiply(.5f, 1, .5f);
+                        entityMotion = entityMotion.multiply(0.5f, 1, 0.5f);
                     }
                 }
                 contactPointMotion = contraptionEntity.getContactPointMotion(entityPosition);
@@ -416,17 +415,17 @@ public class ContraptionColliderClient {
                 SoundEvents.PLAYER_ATTACK_CRIT,
                 SoundSource.NEUTRAL,
                 1,
-                .75f
+                0.75f
             );
         }
 
-        Vec3 added = entityMotion.add(contraptionMotion.multiply(1, 0, 1).normalize().add(0, .25, 0).scale(damage * 4))
+        Vec3 added = entityMotion.add(contraptionMotion.multiply(1, 0, 1).normalize().add(0, 0.25, 0).scale(damage * 4))
             .add(diffMotion);
 
         return VecHelper.clamp(added, 3);
     }
 
-    private static int packetCooldown = 0;
+    private static int packetCooldown;
 
     private static void saveClientPlayerFromClipping(
         AbstractContraptionEntity contraptionEntity,
@@ -511,7 +510,7 @@ public class ContraptionColliderClient {
         Vec3 contraptionMotion,
         double yStartOffset
     ) {
-        AABB bb = entity.getBoundingBox().deflate(1 / 4f, 0, 1 / 4f);
+        AABB bb = entity.getBoundingBox().deflate(1 / 4.0f, 0, 1 / 4.0f);
         double shortestDistance = Double.MAX_VALUE;
         double yStart = entity.maxUpStep() + contraptionEntity.getY() + yStartOffset;
         double rayLength = Math.max(5, Math.abs(entity.getY() - yStart));

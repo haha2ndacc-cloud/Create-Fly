@@ -11,7 +11,7 @@ public class SchematicHotbarSlotOverlay {
 
     public void renderOn(Minecraft mc, GuiGraphicsExtractor graphics, int slot, float tickProgress) {
         Window mainWindow = mc.getWindow();
-        int x = (mainWindow.getGuiScaledWidth() / 2 - 88) + 20 * slot;
+        int x = mainWindow.getGuiScaledWidth() / 2 - 88 + 20 * slot;
         int y = mainWindow.getGuiScaledHeight() - 19;
         AllGuiTextures.SCHEMATIC_SLOT.render(graphics, x, y);
         ItemStack stack = mc.player.getInventory().getItem(slot);

@@ -36,29 +36,29 @@ public abstract class AbstractUnbakedModel implements UnbakedModel {
     @Nullable
     @Override
     public Boolean ambientOcclusion() {
-        return this.parameters.ambientOcclusion();
+        return parameters.ambientOcclusion();
     }
 
     @Nullable
     @Override
     public GuiLight guiLight() {
-        return this.parameters.guiLight();
+        return parameters.guiLight();
     }
 
     @Nullable
     @Override
     public ItemTransforms transforms() {
-        return this.parameters.itemTransforms();
+        return parameters.itemTransforms();
     }
 
     @Override
     public TextureSlots.Data textureSlots() {
-        return this.parameters.textures();
+        return parameters.textures();
     }
 
     @Nullable
     @Override
     public Identifier parent() {
-        return this.parameters.parent();
+        return parameters.parent();
     }
 }

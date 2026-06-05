@@ -128,7 +128,7 @@ public class EjectorBlockEntity extends KineticBlockEntity {
         Direction facing = getFacing();
         List<Entity> entities = level.getEntitiesOfClass(
             Entity.class,
-            new AABB(worldPosition).inflate(-1 / 16f, 0, -1 / 16f)
+            new AABB(worldPosition).inflate(-1 / 16.0f, 0, -1 / 16.0f)
         );
 
         // Launch Items
@@ -159,7 +159,7 @@ public class EjectorBlockEntity extends KineticBlockEntity {
                 continue;
             }
 
-            entity.setPos(worldPosition.getX() + .5f, worldPosition.getY() + 1, worldPosition.getZ() + .5f);
+            entity.setPos(worldPosition.getX() + 0.5f, worldPosition.getY() + 1, worldPosition.getZ() + 0.5f);
             launcher.applyMotion(entity, facing);
 
             if (!isPlayerEntity) {
@@ -178,17 +178,24 @@ public class EjectorBlockEntity extends KineticBlockEntity {
 
             playerEntity.setXRot(-35);
             playerEntity.setYRot(facing.toYRot());
-            playerEntity.setDeltaMovement(playerEntity.getDeltaMovement().scale(.75f));
+            playerEntity.setDeltaMovement(playerEntity.getDeltaMovement().scale(0.75f));
             deployElytra(playerEntity);
             AllClientHandle.INSTANCE.sendPacket(new EjectorElytraPacket(worldPosition));
         }
 
         if (doLogic) {
-            lidProgress.chase(1, .8f, Chaser.EXP);
+            lidProgress.chase(1, 0.8f, Chaser.EXP);
             state = State.LAUNCHING;
             if (!level.isClientSide()) {
-                level.playSound(null, worldPosition, SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundSource.BLOCKS, .35f, 1f);
-                level.playSound(null, worldPosition, SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, .1f, 1.4f);
+                level.playSound(
+                    null,
+                    worldPosition,
+                    SoundEvents.WOODEN_TRAPDOOR_CLOSE,
+                    SoundSource.BLOCKS,
+                    0.35f,
+                    1.0f
+                );
+                level.playSound(null, worldPosition, SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 0.1f, 1.4f);
             }
         }
     }
@@ -324,9 +331,9 @@ public class EjectorBlockEntity extends KineticBlockEntity {
         }
 
         if (state == State.LAUNCHING) {
-            lidProgress.chase(1, .8f, Chaser.EXP);
+            lidProgress.chase(1, 0.8f, Chaser.EXP);
             lidProgress.tickChaser();
-            if (lidProgress.getValue() > 1 - 1 / 16f && doLogic) {
+            if (lidProgress.getValue() > 1 - 1 / 16.0f && doLogic) {
                 state = State.RETRACTING;
                 lidProgress.setValue(1);
             }
@@ -356,9 +363,9 @@ public class EjectorBlockEntity extends KineticBlockEntity {
                 lidProgress.setValue(value);
 
                 int soundRate = (int) (1 / (getWindUpSpeed() * 5)) + 1;
-                float volume = .125f;
+                float volume = 0.125f;
                 float pitch = 1.5f - lidProgress.getValue();
-                if (((int) level.getGameTime()) % soundRate == 0 && doLogic) {
+                if ((int) level.getGameTime() % soundRate == 0 && doLogic) {
                     level.playSound(
                         null,
                         worldPosition,
@@ -411,10 +418,10 @@ public class EjectorBlockEntity extends KineticBlockEntity {
 
         Vec3 vec = rayTraceBlocks.getLocation();
         earlyTarget = Pair.of(
-            vec.add(Vec3.atLowerCornerOf(rayTraceBlocks.getDirection().getUnitVec3i()).scale(.25f)),
+            vec.add(Vec3.atLowerCornerOf(rayTraceBlocks.getDirection().getUnitVec3i()).scale(0.25f)),
             rayTraceBlocks.getBlockPos()
         );
-        earlyTargetTime = (float) (time + (source.distanceTo(vec) / source.distanceTo(target)));
+        earlyTargetTime = (float) (time + source.distanceTo(vec) / source.distanceTo(target));
         sendData();
         return true;
     }
@@ -422,7 +429,7 @@ public class EjectorBlockEntity extends KineticBlockEntity {
     protected void nudgeEntities() {
         for (Entity entity : level.getEntitiesOfClass(
             Entity.class,
-            new AABB(worldPosition).inflate(-1 / 16f, 0, -1 / 16f)
+            new AABB(worldPosition).inflate(-1 / 16.0f, 0, -1 / 16.0f)
         )) {
             if (!entity.isAlive()) {
                 continue;
@@ -431,7 +438,7 @@ public class EjectorBlockEntity extends KineticBlockEntity {
                 continue;
             }
             if (!(entity instanceof Player)) {
-                entity.setPos(entity.getX(), entity.getY() + .125f, entity.getZ());
+                entity.setPos(entity.getX(), entity.getY() + 0.125f, entity.getZ());
             }
         }
     }
@@ -447,7 +454,7 @@ public class EjectorBlockEntity extends KineticBlockEntity {
         if (presentStackSize < maxStackSize.getValue()) {
             return;
         }
-        if (depotBehaviour.heldItem != null && depotBehaviour.heldItem.beltPosition < .49f) {
+        if (depotBehaviour.heldItem != null && depotBehaviour.heldItem.beltPosition < 0.49f) {
             return;
         }
 
@@ -480,8 +487,9 @@ public class EjectorBlockEntity extends KineticBlockEntity {
 
     @Nullable
     public DirectBeltInputBehaviour getTargetOpenInv() {
-        BlockPos targetPos = earlyTarget != null ? earlyTarget.getSecond() : worldPosition.above(launcher.getVerticalDistance())
-            .relative(getFacing(), Math.max(1, launcher.getHorizontalDistance()));
+        BlockPos targetPos = earlyTarget != null ? earlyTarget.getSecond() :
+            worldPosition.above(launcher.getVerticalDistance())
+                .relative(getFacing(), Math.max(1, launcher.getHorizontalDistance()));
         return BlockEntityBehaviour.get(level, targetPos, DirectBeltInputBehaviour.TYPE);
     }
 
@@ -490,7 +498,7 @@ public class EjectorBlockEntity extends KineticBlockEntity {
     }
 
     public Vec3 getLaunchedItemMotion(float time) {
-        Vec3 pos = launcher.getGlobalVelocity(time, getFacing().getOpposite()).scale(.5f);
+        Vec3 pos = launcher.getGlobalVelocity(time, getFacing().getOpposite()).scale(0.5f);
         return new Vec3(
             (int) (Mth.clamp(pos.x, -3.9, 3.9) * 8000.0) / 8000.0,
             (int) (Mth.clamp(pos.y, -3.9, 3.9) * 8000.0) / 8000.0,
@@ -502,7 +510,7 @@ public class EjectorBlockEntity extends KineticBlockEntity {
         int hd = launcher.getHorizontalDistance();
         int vd = launcher.getVerticalDistance();
 
-        float speedFactor = Math.abs(getSpeed()) / 256f;
+        float speedFactor = Math.abs(getSpeed()) / 256.0f;
         float distanceFactor;
         if (hd == 0 && vd == 0) {
             distanceFactor = 1;

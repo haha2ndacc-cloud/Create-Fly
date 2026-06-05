@@ -61,6 +61,7 @@ public abstract class BaseInstancer<I extends Instance> extends AbstractInstance
         }
     }
 
+    @Override
     public InstanceHandleImpl.State<I> revealInstance(InstanceHandleImpl<I> handle, I instance) {
         synchronized (lock) {
             handle.index = instances.size();
@@ -129,6 +130,7 @@ public abstract class BaseInstancer<I extends Instance> extends AbstractInstance
         setIndexChanged(handle.index);
     }
 
+    @Override
     public int instanceCount() {
         return instances.size();
     }
@@ -154,6 +156,7 @@ public abstract class BaseInstancer<I extends Instance> extends AbstractInstance
     /**
      * Clear all instances without freeing resources.
      */
+    @Override
     public void clear() {
         for (InstanceHandleImpl<I> handle : handles) {
             // Only clear instances that belong to this instancer.

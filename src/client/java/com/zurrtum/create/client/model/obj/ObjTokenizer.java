@@ -27,7 +27,7 @@ public class ObjTokenizer implements AutoCloseable {
     private final BufferedReader lineReader;
 
     public ObjTokenizer(InputStream inputStream) {
-        this.lineReader = new BufferedReader(new InputStreamReader(inputStream, Charsets.UTF_8));
+        lineReader = new BufferedReader(new InputStreamReader(inputStream, Charsets.UTF_8));
     }
 
     public String @Nullable [] readAndSplitLine(boolean ignoreEmptyLines) throws IOException {

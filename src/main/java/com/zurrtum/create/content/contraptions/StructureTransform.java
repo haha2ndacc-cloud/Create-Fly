@@ -77,15 +77,15 @@ public class StructureTransform {
             angle += 360;
         }
 
-        this.rotation = Rotation.NONE;
+        rotation = Rotation.NONE;
         if (angle == -90 || angle == 270) {
-            this.rotation = Rotation.CLOCKWISE_90;
+            rotation = Rotation.CLOCKWISE_90;
         }
         if (angle == 90) {
-            this.rotation = Rotation.COUNTERCLOCKWISE_90;
+            rotation = Rotation.COUNTERCLOCKWISE_90;
         }
         if (angle == 180) {
-            this.rotation = Rotation.CLOCKWISE_180;
+            rotation = Rotation.CLOCKWISE_180;
         }
 
         mirror = Mirror.NONE;
@@ -164,7 +164,8 @@ public class StructureTransform {
         BlockTransformer transformer = MovedBlockTransformerRegistries.BLOCK_TRANSFORMERS.get(block);
         if (transformer != null) {
             return transformer.transform(state, this);
-        } else if (block instanceof TransformableBlock transformable) {
+        }
+        if (block instanceof TransformableBlock transformable) {
             return transformable.transform(state, this);
         }
 
@@ -174,8 +175,8 @@ public class StructureTransform {
 
         if (rotationAxis == Axis.Y) {
             if (block instanceof BellBlock) {
-                if (state.getValue(BlockStateProperties.BELL_ATTACHMENT) == BellAttachType.DOUBLE_WALL) {
-                    state = state.setValue(BlockStateProperties.BELL_ATTACHMENT, BellAttachType.SINGLE_WALL);
+                if (state.getValue(BELL_ATTACHMENT) == BellAttachType.DOUBLE_WALL) {
+                    state = state.setValue(BELL_ATTACHMENT, BellAttachType.SINGLE_WALL);
                 }
                 return state.setValue(BellBlock.FACING, rotation.rotate(state.getValue(BellBlock.FACING)));
             }

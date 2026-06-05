@@ -46,7 +46,8 @@ public class SandPaperItem extends Item {
             return InteractionResult.PASS;
         }
 
-        InteractionHand otherHand = handIn == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+        InteractionHand otherHand =
+            handIn == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
         ItemStack itemInOtherHand = playerIn.getItemInHand(otherHand);
         RecipePropertySet recipe = worldIn.recipeAccess().propertySet(AllRecipeSets.SAND_PAPER_POLISHING);
         if (recipe.test(itemInOtherHand)) {
@@ -61,7 +62,7 @@ public class SandPaperItem extends Item {
         BlockHitResult raytraceresult = getPlayerPOVHitResult(worldIn, playerIn, Fluid.NONE);
         Vec3 hitVec = raytraceresult.getLocation();
 
-        AABB bb = new AABB(hitVec, hitVec).inflate(1f);
+        AABB bb = new AABB(hitVec, hitVec).inflate(1.0f);
         ItemEntity pickUp = null;
         for (ItemEntity itemEntity : worldIn.getEntitiesOfClass(ItemEntity.class, bb)) {
             if (!itemEntity.isAlive()) {
@@ -131,7 +132,11 @@ public class SandPaperItem extends Item {
         ItemStack toPolish = component.item();
 
         if (world.isClientSide()) {
-            spawnParticles(entityLiving.getEyePosition(1).add(entityLiving.getLookAngle().scale(.5f)), toPolish, world);
+            spawnParticles(
+                entityLiving.getEyePosition(1).add(entityLiving.getLookAngle().scale(0.5f)),
+                toPolish,
+                world
+            );
             return stack;
         }
 
@@ -164,7 +169,7 @@ public class SandPaperItem extends Item {
             ItemStackTemplate.fromNonEmptyStack(polishedStack)
         );
         for (int i = 0; i < 20; i++) {
-            Vec3 motion = VecHelper.offsetRandomly(Vec3.ZERO, world.getRandom(), 1 / 8f);
+            Vec3 motion = VecHelper.offsetRandomly(Vec3.ZERO, world.getRandom(), 1 / 8.0f);
             world.addParticle(option, location.x, location.y, location.z, motion.x, motion.y, motion.z);
         }
     }
@@ -198,7 +203,7 @@ public class SandPaperItem extends Item {
                 player,
                 pos,
                 1,
-                1 + (level.getRandom().nextFloat() * 0.5f - 1f) / 5f
+                1 + (level.getRandom().nextFloat() * 0.5f - 1.0f) / 5.0f
             );
             level.levelEvent(player, LevelEvent.PARTICLES_SCRAPE, pos, 0); // Spawn particles
         } else {
@@ -211,7 +216,7 @@ public class SandPaperItem extends Item {
                     player,
                     pos,
                     1,
-                    1 + (level.getRandom().nextFloat() * 0.5f - 1f) / 5f
+                    1 + (level.getRandom().nextFloat() * 0.5f - 1.0f) / 5.0f
                 );
                 level.levelEvent(player, LevelEvent.PARTICLES_WAX_OFF, pos, 0); // Spawn particles
             }

@@ -39,12 +39,13 @@ public record PotatoCannonProjectileType(HolderSet<Item> items, int reloadTicks,
         Codec.INT.optionalFieldOf("reload_ticks", 10).forGetter(PotatoCannonProjectileType::reloadTicks),
         Codec.INT.optionalFieldOf("damage", 1).forGetter(PotatoCannonProjectileType::damage),
         Codec.INT.optionalFieldOf("split", 1).forGetter(PotatoCannonProjectileType::split),
-        Codec.FLOAT.optionalFieldOf("knockback", 1f).forGetter(PotatoCannonProjectileType::knockback),
-        Codec.FLOAT.optionalFieldOf("drag", .99f).forGetter(PotatoCannonProjectileType::drag),
-        Codec.FLOAT.optionalFieldOf("velocity_multiplier", 1f)
+        Codec.FLOAT.optionalFieldOf("knockback", 1.0f).forGetter(PotatoCannonProjectileType::knockback),
+        Codec.FLOAT.optionalFieldOf("drag", 0.99f).forGetter(PotatoCannonProjectileType::drag),
+        Codec.FLOAT.optionalFieldOf("velocity_multiplier", 1.0f)
             .forGetter(PotatoCannonProjectileType::velocityMultiplier),
-        Codec.FLOAT.optionalFieldOf("gravity_multiplier", 1f).forGetter(PotatoCannonProjectileType::gravityMultiplier),
-        Codec.FLOAT.optionalFieldOf("sound_pitch", 1f).forGetter(PotatoCannonProjectileType::soundPitch),
+        Codec.FLOAT.optionalFieldOf("gravity_multiplier", 1.0f)
+            .forGetter(PotatoCannonProjectileType::gravityMultiplier),
+        Codec.FLOAT.optionalFieldOf("sound_pitch", 1.0f).forGetter(PotatoCannonProjectileType::soundPitch),
         Codec.BOOL.optionalFieldOf("sticky", false).forGetter(PotatoCannonProjectileType::sticky),
         ItemStackTemplate.CODEC.optionalFieldOf("drop_stack").forGetter(PotatoCannonProjectileType::dropStack),
         PotatoProjectileRenderMode.CODEC.optionalFieldOf("render_mode", Billboard.INSTANCE)
@@ -81,20 +82,20 @@ public record PotatoCannonProjectileType(HolderSet<Item> items, int reloadTicks,
         private int reloadTicks = 10;
         private int damage = 1;
         private int split = 1;
-        private float knockback = 1f;
+        private float knockback = 1.0f;
         private float drag = 0.99f;
-        private float velocityMultiplier = 1f;
-        private float gravityMultiplier = 1f;
-        private float soundPitch = 1f;
-        private boolean sticky = false;
+        private float velocityMultiplier = 1.0f;
+        private float gravityMultiplier = 1.0f;
+        private float soundPitch = 1.0f;
+        private boolean sticky;
         private @Nullable ItemStackTemplate dropStack;
         private PotatoProjectileRenderMode renderMode = Billboard.INSTANCE;
-        private @Nullable PotatoProjectileEntityHitAction preEntityHit = null;
-        private @Nullable PotatoProjectileEntityHitAction onEntityHit = null;
-        private @Nullable PotatoProjectileBlockHitAction onBlockHit = null;
+        private @Nullable PotatoProjectileEntityHitAction preEntityHit;
+        private @Nullable PotatoProjectileEntityHitAction onEntityHit;
+        private @Nullable PotatoProjectileBlockHitAction onBlockHit;
 
         public Builder reloadTicks(int reload) {
-            this.reloadTicks = reload;
+            reloadTicks = reload;
             return this;
         }
 
@@ -119,27 +120,27 @@ public record PotatoCannonProjectileType(HolderSet<Item> items, int reloadTicks,
         }
 
         public Builder velocity(float velocity) {
-            this.velocityMultiplier = velocity;
+            velocityMultiplier = velocity;
             return this;
         }
 
         public Builder gravity(float modifier) {
-            this.gravityMultiplier = modifier;
+            gravityMultiplier = modifier;
             return this;
         }
 
         public Builder soundPitch(float pitch) {
-            this.soundPitch = pitch;
+            soundPitch = pitch;
             return this;
         }
 
         public Builder sticky() {
-            this.sticky = true;
+            sticky = true;
             return this;
         }
 
         public Builder dropStack(ItemStackTemplate stack) {
-            this.dropStack = stack;
+            dropStack = stack;
             return this;
         }
 
@@ -164,17 +165,17 @@ public record PotatoCannonProjectileType(HolderSet<Item> items, int reloadTicks,
         }
 
         public Builder preEntityHit(PotatoProjectileEntityHitAction entityHitAction) {
-            this.preEntityHit = entityHitAction;
+            preEntityHit = entityHitAction;
             return this;
         }
 
         public Builder onEntityHit(PotatoProjectileEntityHitAction entityHitAction) {
-            this.onEntityHit = entityHitAction;
+            onEntityHit = entityHitAction;
             return this;
         }
 
         public Builder onBlockHit(PotatoProjectileBlockHitAction blockHitAction) {
-            this.onBlockHit = blockHitAction;
+            onBlockHit = blockHitAction;
             return this;
         }
 

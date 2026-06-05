@@ -156,7 +156,7 @@ public class ElevatorContactBlockEntity extends SmartBlockEntity {
     public void updateName(String shortName, String longName) {
         this.shortName = shortName;
         this.longName = longName;
-        this.deferNameGenerator = false;
+        deferNameGenerator = false;
         notifyUpdate();
 
         ElevatorColumn column = ElevatorColumn.get(level, columnCoords);

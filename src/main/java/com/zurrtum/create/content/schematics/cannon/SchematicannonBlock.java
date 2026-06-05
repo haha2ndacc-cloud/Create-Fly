@@ -43,7 +43,8 @@ public class SchematicannonBlock extends Block implements IBE<SchematicannonBloc
         if (entity != null) {
             withBlockEntityDo(
                 level, pos, be -> {
-                    be.defaultYaw = (-Mth.floor((entity.getYRot() + (entity.isShiftKeyDown() ? 180.0F : 0.0F)) * 16.0F / 360.0F + 0.5F) & 15) * 360.0F / 16.0F;
+                    be.defaultYaw = (-Mth.floor((entity.getYRot() + (entity.isShiftKeyDown() ? 180.0F :
+                        0.0F)) * 16.0F / 360.0F + 0.5F) & 15) * 360.0F / 16.0F;
                 }
             );
         }

@@ -337,7 +337,7 @@ public abstract class Outline {
         public OutlineParams() {
             faceTexture = highlightedFaceTexture = null;
             alpha = 1;
-            lineWidth = 1 / 32f;
+            lineWidth = 1 / 32.0f;
             fadeLineWidth = true;
             color = 0xFFFFFFFF;
             lightmap = LightCoordsUtil.FULL_BRIGHT;
@@ -361,25 +361,25 @@ public abstract class Outline {
         }
 
         public OutlineParams lineWidth(float width) {
-            this.lineWidth = width;
+            lineWidth = width;
             return this;
         }
 
         public OutlineParams withFaceTexture(@Nullable BindableTexture texture) {
-            this.faceTexture = texture;
+            faceTexture = texture;
             return this;
         }
 
         public OutlineParams clearTextures() {
-            return this.withFaceTextures(null, null);
+            return withFaceTextures(null, null);
         }
 
         public OutlineParams withFaceTextures(
             @Nullable BindableTexture texture,
             @Nullable BindableTexture highlightTexture
         ) {
-            this.faceTexture = texture;
-            this.highlightedFaceTexture = highlightTexture;
+            faceTexture = texture;
+            highlightedFaceTexture = highlightTexture;
             return this;
         }
 

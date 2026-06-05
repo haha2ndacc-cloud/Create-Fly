@@ -83,8 +83,8 @@ public class SmartObserverBlock extends DirectedDirectionalBlock implements IBE<
 
         if (preferredFacing == null) {
             Direction facing = context.getNearestLookingDirection();
-            preferredFacing = context.getPlayer() != null && context.getPlayer()
-                .isShiftKeyDown() ? facing : facing.getOpposite();
+            preferredFacing =
+                context.getPlayer() != null && context.getPlayer().isShiftKeyDown() ? facing : facing.getOpposite();
         }
 
         if (preferredFacing.getAxis() == Axis.Y) {
@@ -102,12 +102,13 @@ public class SmartObserverBlock extends DirectedDirectionalBlock implements IBE<
 
     @Override
     public int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, @Nullable Direction side) {
-        return isSignalSource(blockState) && (side == null || side != getTargetDirection(blockState).getOpposite()) ? 15 : 0;
+        return isSignalSource(blockState) && (side == null || side != getTargetDirection(blockState).getOpposite()) ?
+            15 : 0;
     }
 
     @Override
     public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-        worldIn.setBlock(pos, state.setValue(POWERED, false), Block.UPDATE_CLIENTS);
+        worldIn.setBlock(pos, state.setValue(POWERED, false), UPDATE_CLIENTS);
         worldIn.updateNeighborsAt(pos, this, null);
     }
 
@@ -138,7 +139,7 @@ public class SmartObserverBlock extends DirectedDirectionalBlock implements IBE<
             if (!detectorState.is(AllBlocks.SMART_OBSERVER)) {
                 continue;
             }
-            if (SmartObserverBlock.getTargetDirection(detectorState) != direction.getOpposite()) {
+            if (getTargetDirection(detectorState) != direction.getOpposite()) {
                 continue;
             }
             withBlockEntityDo(

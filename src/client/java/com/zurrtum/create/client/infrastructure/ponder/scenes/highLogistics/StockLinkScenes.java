@@ -63,7 +63,7 @@ public class StockLinkScenes {
         AABB bb1 = new AABB(link2.below());
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.BLUE, link2, bb1.deflate(0.45), 10);
         scene.idle(1);
-        bb1 = bb1.deflate(1 / 16f).contract(0, 8 / 16f, 0);
+        bb1 = bb1.deflate(1 / 16.0f).contract(0, 8 / 16.0f, 0);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.BLUE, link2, bb1, 50);
         scene.idle(26);
 
@@ -80,8 +80,8 @@ public class StockLinkScenes {
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, link2, bb1, 40);
         scene.overlay().showLine(
             PonderPalette.GREEN,
-            util.vector().centerOf(link1.below()).subtract(0, 1 / 4f, 0),
-            util.vector().centerOf(link2.below()).subtract(0, 1 / 4f, 0),
+            util.vector().centerOf(link1.below()).subtract(0, 1 / 4.0f, 0),
+            util.vector().centerOf(link2.below()).subtract(0, 1 / 4.0f, 0),
             40
         );
         scene.idle(60);
@@ -95,7 +95,7 @@ public class StockLinkScenes {
         scene.idle(2);
         scene.world().showSection(packager2S, Direction.NORTH);
         scene.idle(5);
-        scene.world().moveSection(linkL, util.vector().of(0, -.25, 0), 10);
+        scene.world().moveSection(linkL, util.vector().of(0, -0.25, 0), 10);
         scene.idle(10);
         scene.world().cycleBlockProperty(packager1, PackagerBlock.LINKED);
         scene.world().cycleBlockProperty(packager2, PackagerBlock.LINKED);

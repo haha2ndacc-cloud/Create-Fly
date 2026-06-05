@@ -44,7 +44,7 @@ public class TrackObserverVisual extends AbstractBlockEntityVisual<TrackObserver
     @Override
     public void setSectionCollector(SectionCollector sectionCollector) {
         if (oldTargetPos != null) {
-            this.lightSections = sectionCollector;
+            lightSections = sectionCollector;
             LongSet longSet = new LongArraySet();
             longSet.add(SectionPos.asLong(pos));
             longSet.add(SectionPos.asLong(oldTargetPos));

@@ -152,7 +152,7 @@ public class CapabilityMinecartController {
                 continue;
             }
 
-            Vec3 itemPos = cart.position().add(removedPos).scale(.5f);
+            Vec3 itemPos = cart.position().add(removedPos).scale(0.5f);
             ItemEntity itemEntity = new ItemEntity(
                 world,
                 itemPos.x,

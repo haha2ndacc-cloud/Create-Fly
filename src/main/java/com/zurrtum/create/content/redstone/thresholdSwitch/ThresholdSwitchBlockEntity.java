@@ -250,8 +250,8 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity implements Clea
         return new ItemStack(level.getBlockState(target).getBlock());
     }
 
-    public static enum ThresholdType {
-        UNSUPPORTED, ITEM, FLUID, CUSTOM;
+    public enum ThresholdType {
+        UNSUPPORTED, ITEM, FLUID, CUSTOM
     }
 
     public ThresholdType getTypeOfCurrentTarget() {
@@ -291,7 +291,7 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity implements Clea
     @Override
     public void addBehaviours(List<BlockEntityBehaviour<?>> behaviours) {
         behaviours.add(filtering = new ServerFilteringBehaviour(this).withCallback($ -> {
-            this.updateCurrentLevel();
+            updateCurrentLevel();
             invVersionTracker.reset();
         }));
 

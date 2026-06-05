@@ -12,15 +12,18 @@ import java.util.function.Supplier;
 
 public enum CartAssembleRailType implements StringRepresentable {
 
-    REGULAR(Blocks.RAIL), POWERED_RAIL(Blocks.POWERED_RAIL), DETECTOR_RAIL(Blocks.DETECTOR_RAIL), ACTIVATOR_RAIL(Blocks.ACTIVATOR_RAIL), CONTROLLER_RAIL(
-        AllBlocks.CONTROLLER_RAIL);
+    REGULAR(Blocks.RAIL),
+    POWERED_RAIL(Blocks.POWERED_RAIL),
+    DETECTOR_RAIL(Blocks.DETECTOR_RAIL),
+    ACTIVATOR_RAIL(Blocks.ACTIVATOR_RAIL),
+    CONTROLLER_RAIL(AllBlocks.CONTROLLER_RAIL);
 
     private final Supplier<Block> railBlockSupplier;
     private final Supplier<Item> railItemSupplier;
 
     CartAssembleRailType(Block block) {
-        this.railBlockSupplier = () -> block;
-        this.railItemSupplier = block::asItem;
+        railBlockSupplier = () -> block;
+        railItemSupplier = block::asItem;
     }
 
     public Block getBlock() {

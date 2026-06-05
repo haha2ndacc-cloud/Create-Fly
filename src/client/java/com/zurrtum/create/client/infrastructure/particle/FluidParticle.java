@@ -44,9 +44,9 @@ public class FluidParticle extends SingleQuadParticle {
 
         layer = Layer.bySprite(still);
         gravity = 1.0F;
-        rCol = 0.8F * (float) (tint >> 16 & 255) / 255.0F;
-        gCol = 0.8F * (float) (tint >> 8 & 255) / 255.0F;
-        bCol = 0.8F * (float) (tint & 255) / 255.0F;
+        rCol = 0.8F * (tint >> 16 & 255) / 255.0F;
+        gCol = 0.8F * (tint >> 8 & 255) / 255.0F;
+        bCol = 0.8F * (tint & 255) / 255.0F;
 
         xd = vx;
         yd = vy;
@@ -61,9 +61,9 @@ public class FluidParticle extends SingleQuadParticle {
     protected int getLightCoords(float a) {
         int brightnessForRender = super.getLightCoords(a);
         int skyLight = brightnessForRender >> 20;
-        int blockLight = (brightnessForRender >> 4) & 0xf;
+        int blockLight = brightnessForRender >> 4 & 0xf;
         blockLight = Math.max(blockLight, lightEmission);
-        return (skyLight << 20) | (blockLight << 4);
+        return skyLight << 20 | blockLight << 4;
     }
 
     @Override
@@ -98,7 +98,7 @@ public class FluidParticle extends SingleQuadParticle {
         if (!removed) {
             return;
         }
-        if (!onGround && random.nextFloat() < 1 / 8f) {
+        if (!onGround && random.nextFloat() < 1 / 8.0f) {
             return;
         }
         level.addParticle(evaporateParticle, x, y, z, 0, 0, 0);
@@ -127,10 +127,9 @@ public class FluidParticle extends SingleQuadParticle {
             BlockState blockState = state.createLegacyBlock();
             FluidModel model = level.minecraft.getModelManager().getFluidStateModelSet().get(state);
             int tint = AllFluidConfigs.getTint(level, x, y, z, blockState, model, fluid, data.components());
-            ColorParticleOption evaporateParticle = fluid == AllFluids.POTION ? ColorParticleOption.create(
-                ParticleTypes.ENTITY_EFFECT,
-                tint | 0xFF000000
-            ) : null;
+            ColorParticleOption evaporateParticle =
+                fluid == AllFluids.POTION ? ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, tint | 0xFF000000) :
+                    null;
             return new FluidParticle(
                 level,
                 model.stillMaterial().sprite(),

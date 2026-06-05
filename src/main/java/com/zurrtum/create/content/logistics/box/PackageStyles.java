@@ -25,9 +25,8 @@ public class PackageStyles {
         public Identifier getModel() {
             if (type.equals("cardboard")) {
                 return Identifier.fromNamespaceAndPath(namespace, "item/package/cardboard_" + width + "x" + height);
-            } else {
-                return getItemId().withPrefix("item/");
             }
+            return getItemId().withPrefix("item/");
         }
 
         public Identifier getRiggingModel() {
@@ -53,6 +52,6 @@ public class PackageStyles {
     }
 
     private static PackageStyle rare(String name) {
-        return new PackageStyle("rare_" + name, 12, 10, 21f, true);
+        return new PackageStyle("rare_" + name, 12, 10, 21.0f, true);
     }
 }

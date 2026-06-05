@@ -57,7 +57,7 @@ public abstract class PoleHelper<T extends Comparable<T>> implements IPlacementH
 
     @Override
     public Predicate<BlockState> getStatePredicate() {
-        return this.statePredicate;
+        return statePredicate;
     }
 
     @Override

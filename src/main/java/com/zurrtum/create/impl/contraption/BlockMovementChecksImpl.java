@@ -77,7 +77,7 @@ public class BlockMovementChecksImpl {
                 return result.toBoolean();
             }
         }
-        return BlockMovementChecksImpl.isMovementNecessaryFallback(state, world, pos);
+        return isMovementNecessaryFallback(state, world, pos);
     }
 
     public static boolean isMovementAllowed(BlockState state, Level world, BlockPos pos) {
@@ -87,7 +87,7 @@ public class BlockMovementChecksImpl {
                 return result.toBoolean();
             }
         }
-        return BlockMovementChecksImpl.isMovementAllowedFallback(state, world, pos);
+        return isMovementAllowedFallback(state, world, pos);
     }
 
     public static boolean isBrittle(BlockState state) {
@@ -97,7 +97,7 @@ public class BlockMovementChecksImpl {
                 return result.toBoolean();
             }
         }
-        return BlockMovementChecksImpl.isBrittleFallback(state);
+        return isBrittleFallback(state);
     }
 
     public static boolean isBlockAttachedTowards(BlockState state, Level world, BlockPos pos, Direction direction) {
@@ -107,7 +107,7 @@ public class BlockMovementChecksImpl {
                 return result.toBoolean();
             }
         }
-        return BlockMovementChecksImpl.isBlockAttachedTowardsFallback(state, world, pos, direction);
+        return isBlockAttachedTowardsFallback(state, world, pos, direction);
     }
 
     public static boolean isNotSupportive(BlockState state, Direction facing) {
@@ -117,7 +117,7 @@ public class BlockMovementChecksImpl {
                 return result.toBoolean();
             }
         }
-        return BlockMovementChecksImpl.isNotSupportiveFallback(state, facing);
+        return isNotSupportiveFallback(state, facing);
     }
 
     // fallbacks
@@ -351,7 +351,8 @@ public class BlockMovementChecksImpl {
         //        if (block instanceof AbstractBogeyBlock<?> bogey)
         //            return bogey.getStickySurfaces(world, pos, state).contains(direction);
         if (block instanceof WhistleBlock) {
-            return direction == (state.getValue(WhistleBlock.WALL) ? state.getValue(WhistleBlock.FACING) : Direction.DOWN);
+            return direction == (state.getValue(WhistleBlock.WALL) ? state.getValue(WhistleBlock.FACING) :
+                Direction.DOWN);
         }
         if (block instanceof WhistleExtenderBlock) {
             return direction == Direction.DOWN;

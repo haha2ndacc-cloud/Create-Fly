@@ -28,7 +28,7 @@ public class CKinetics extends ConfigBase {
         Comments.kineticValidationFrequency
     );
     public final ConfigFloat crankHungerMultiplier = f(
-        .01f,
+        0.01f,
         0,
         1,
         "crankHungerMultiplier",

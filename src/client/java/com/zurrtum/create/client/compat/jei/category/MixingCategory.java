@@ -67,14 +67,14 @@ public class MixingCategory extends CreateCategory<RecipeHolder<MixingRecipe>> {
         int xOffset = size < 3 ? 12 + (3 - size) * 19 / 2 : 12;
         int yOffset = 51;
         for (; i < ingredientSize; i++) {
-            builder.addInputSlot(xOffset + (i % 3) * 19, yOffset - (i / 3) * 19).setBackground(SLOT, -1, -1)
+            builder.addInputSlot(xOffset + i % 3 * 19, yOffset - i / 3 * 19).setBackground(SLOT, -1, -1)
                 .addItemStacks(getStacks(ingredients.get(i)));
         }
         for (; i < size; i++) {
             addFluidSlot(
                 builder,
-                xOffset + (i % 3) * 19,
-                yOffset - (i / 3) * 19,
+                xOffset + i % 3 * 19,
+                yOffset - i / 3 * 19,
                 fluidIngredients.get(i - ingredientSize)
             ).setBackground(SLOT, -1, -1);
         }

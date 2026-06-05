@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 public class MinecartSim2020 {
     public static Vec3 predictNextPositionOf(AbstractMinecart cart) {
         Vec3 position = cart.position();
-        Vec3 motion = VecHelper.clamp(cart.getDeltaMovement(), 1f);
+        Vec3 motion = VecHelper.clamp(cart.getDeltaMovement(), 1.0f);
         return position.add(motion);
     }
 

@@ -33,7 +33,7 @@ public class FilterMenu extends AbstractFilterMenu {
         int y = 25;
         for (int row = 0; row < 2; ++row) {
             for (int col = 0; col < 9; ++col) {
-                this.addSlot(new Slot(ghostInventory, col + row * 9, x + col * 18, y + row * 18));
+                addSlot(new Slot(ghostInventory, col + row * 9, x + col * 18, y + row * 18));
             }
         }
     }

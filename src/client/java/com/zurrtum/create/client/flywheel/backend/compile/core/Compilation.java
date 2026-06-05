@@ -28,7 +28,7 @@ public class Compilation {
     private final List<SourceFile> files = new ArrayList<>();
     private final StringBuilder generatedSource = new StringBuilder();
     private final StringBuilder fullSource = new StringBuilder();
-    private int generatedLines = 0;
+    private int generatedLines;
 
     public ShaderResult compile(ShaderType shaderType, String name) {
         int handle = GL20.glCreateShader(shaderType.glEnum);

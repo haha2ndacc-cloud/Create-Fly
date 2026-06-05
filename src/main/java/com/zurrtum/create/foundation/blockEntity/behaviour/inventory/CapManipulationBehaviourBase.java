@@ -90,7 +90,7 @@ public abstract class CapManipulationBehaviourBase<T, S extends CapManipulationB
      * To get the BlockFace to use for capability lookup, call getOpposite on the result.
      */
     public BlockFace getTarget() {
-        return this.target.getTarget(this.getLevel(), this.blockEntity.getBlockPos(), this.blockEntity.getBlockState());
+        return target.getTarget(getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState());
     }
 
     protected boolean onHandlerInvalidated() {
@@ -140,7 +140,7 @@ public abstract class CapManipulationBehaviourBase<T, S extends CapManipulationB
 
     public void findNewCapability() {
         Level world = getLevel();
-        BlockFace targetBlockFace = this.getTarget().getOpposite();
+        BlockFace targetBlockFace = getTarget().getOpposite();
         BlockPos pos = targetBlockFace.getPos();
 
         targetCapability = null;
@@ -161,16 +161,16 @@ public abstract class CapManipulationBehaviourBase<T, S extends CapManipulationB
         static InterfaceProvider towardBlockFacing() {
             return (w, p, s) -> new BlockFace(
                 p,
-                s.hasProperty(BlockStateProperties.FACING) ? s.getValue(BlockStateProperties.FACING) : s.getValue(
-                    BlockStateProperties.HORIZONTAL_FACING)
+                s.hasProperty(BlockStateProperties.FACING) ? s.getValue(BlockStateProperties.FACING) :
+                    s.getValue(BlockStateProperties.HORIZONTAL_FACING)
             );
         }
 
         static InterfaceProvider oppositeOfBlockFacing() {
             return (w, p, s) -> new BlockFace(
                 p,
-                (s.hasProperty(BlockStateProperties.FACING) ? s.getValue(BlockStateProperties.FACING) : s.getValue(
-                    BlockStateProperties.HORIZONTAL_FACING)).getOpposite()
+                (s.hasProperty(BlockStateProperties.FACING) ? s.getValue(BlockStateProperties.FACING) :
+                    s.getValue(BlockStateProperties.HORIZONTAL_FACING)).getOpposite()
             );
         }
 

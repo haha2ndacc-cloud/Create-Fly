@@ -50,10 +50,10 @@ public abstract class ShootableGadgetRenderHandler {
         LocalPlayer player = Minecraft.getInstance().player;
         boolean rightHand = hand == InteractionHand.MAIN_HAND ^ player.getMainArm() == HumanoidArm.LEFT;
         if (rightHand) {
-            rightHandAnimation = .2f;
+            rightHandAnimation = 0.2f;
             dontReequipRight = false;
         } else {
-            leftHandAnimation = .2f;
+            leftHandAnimation = 0.2f;
             dontReequipLeft = false;
         }
         playSound(hand, location);
@@ -88,16 +88,13 @@ public abstract class ShootableGadgetRenderHandler {
         AvatarRenderer<AbstractClientPlayer> playerrenderer = entityRenderDispatcher.getPlayerRenderer(player);
 
         boolean rightHand = hand == InteractionHand.MAIN_HAND ^ player.getMainArm() == HumanoidArm.LEFT;
-        float recoil = rightHand ? Mth.lerp(pt, lastRightHandAnimation, rightHandAnimation) : Mth.lerp(
-            pt,
-            lastLeftHandAnimation,
-            leftHandAnimation
-        );
+        float recoil = rightHand ? Mth.lerp(pt, lastRightHandAnimation, rightHandAnimation) :
+            Mth.lerp(pt, lastLeftHandAnimation, leftHandAnimation);
 
-        if (rightHand && (rightHandAnimation > .01f || dontReequipRight)) {
+        if (rightHand && (rightHandAnimation > 0.01f || dontReequipRight)) {
             equipProgress = 0;
         }
-        if (!rightHand && (leftHandAnimation > .01f || dontReequipLeft)) {
+        if (!rightHand && (leftHandAnimation > 0.01f || dontReequipLeft)) {
             equipProgress = 0;
         }
 
@@ -105,13 +102,13 @@ public abstract class ShootableGadgetRenderHandler {
         float flip = rightHand ? 1.0F : -1.0F;
         float f1 = Mth.sqrt(swingProgress);
         float f2 = -0.3F * Mth.sin(f1 * (float) Math.PI);
-        float f3 = 0.4F * Mth.sin(f1 * ((float) Math.PI * 2F));
+        float f3 = 0.4F * Mth.sin(f1 * ((float) Math.PI * 2.0F));
         float f4 = -0.4F * Mth.sin(swingProgress * (float) Math.PI);
         float f5 = Mth.sin(swingProgress * swingProgress * (float) Math.PI);
         float f6 = Mth.sin(f1 * (float) Math.PI);
 
         ms.pushPose();
-        ms.translate(flip * (f2 + 0.64F - .1f), f3 + -0.4F + equipProgress * -0.6F, f4 + -0.72F + .3f + recoil);
+        ms.translate(flip * (f2 + 0.64F - 0.1f), f3 + -0.4F + equipProgress * -0.6F, f4 + -0.72F + 0.3f + recoil);
         ms.mulPose(Axis.YP.rotationDegrees(flip * 75.0F));
         ms.mulPose(Axis.YP.rotationDegrees(flip * f6 * 70.0F));
         ms.mulPose(Axis.ZP.rotationDegrees(flip * f5 * -20.0F));
@@ -144,7 +141,7 @@ public abstract class ShootableGadgetRenderHandler {
 
         // Render gadget
         ms.pushPose();
-        ms.translate(flip * (f2 + 0.64F - .1f), f3 + -0.4F + equipProgress * -0.6F, f4 + -0.72F - 0.1f + recoil);
+        ms.translate(flip * (f2 + 0.64F - 0.1f), f3 + -0.4F + equipProgress * -0.6F, f4 + -0.72F - 0.1f + recoil);
         ms.mulPose(Axis.YP.rotationDegrees(flip * f6 * 70.0F));
         ms.mulPose(Axis.ZP.rotationDegrees(flip * f5 * -20.0F));
         transformTool(ms, flip, equipProgress, recoil, pt);

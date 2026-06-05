@@ -56,7 +56,7 @@ public class AABBOutline extends Outline {
 
         boolean cameraInside = box.contains(camera);
         boolean cull = !cameraInside && !params.disableCull;
-        float inflate = cameraInside ? -1 / 128f : 1 / 128f;
+        float inflate = cameraInside ? -1 / 128.0f : 1 / 128.0f;
 
         box = box.move(camera.scale(-1));
         minPos.set((float) box.minX - inflate, (float) box.minY - inflate, (float) box.minZ - inflate);

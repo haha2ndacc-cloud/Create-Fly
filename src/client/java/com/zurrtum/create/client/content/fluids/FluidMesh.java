@@ -24,7 +24,7 @@ public class FluidMesh {
     private static final RendererReloadCache<SurfaceKey, Model> SURFACE = new RendererReloadCache<>(sprite -> new SingleMeshModel(new FluidSurfaceMesh(sprite.texture(), sprite.width()),
         material(sprite.texture())
     ));
-    public static final float PIPE_RADIUS = 3f / 16f;
+    public static final float PIPE_RADIUS = 3.0f / 16.0f;
 
     // TODO: width parameter here too
     public static Model stream(TextureAtlasSprite sprite) {
@@ -67,7 +67,7 @@ public class FluidMesh {
                 vertexList.y(i, 0);
             }
 
-            float textureScale = 1 / 16f;
+            float textureScale = 1 / 16.0f;
 
             float left = -width;
             float right = width;
@@ -138,7 +138,7 @@ public class FluidMesh {
                 vertexList.v(i, 0);
             }
 
-            float textureScale = 1 / 32f;
+            float textureScale = 1 / 32.0f;
 
             float radius = PIPE_RADIUS;
             float left = -radius;

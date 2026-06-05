@@ -14,7 +14,7 @@ public class CClient extends ConfigBase {
         "indicatorType",
         Comments.placementIndicator
     );
-    public final ConfigFloat indicatorScale = f(1.0f, 0f, "indicatorScale", Comments.indicatorScale);
+    public final ConfigFloat indicatorScale = f(1.0f, 0.0f, "indicatorScale", Comments.indicatorScale);
 
     public enum PlacementIndicatorSetting {
         TEXTURE, TRIANGLE, NONE

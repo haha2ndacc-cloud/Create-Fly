@@ -36,6 +36,7 @@ public class ServerTableClothFilteringBehaviour extends ServerFilteringBehaviour
         return false;
     }
 
+    @Override
     public boolean isCountVisible() {
         return !filter.isEmpty();
     }

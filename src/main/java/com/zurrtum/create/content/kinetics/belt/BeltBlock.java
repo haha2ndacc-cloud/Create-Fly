@@ -97,7 +97,7 @@ public class BeltBlock extends HorizontalKineticBlock implements IBE<BeltBlockEn
         BeltBlockEntity blockEntity,
         @Nullable Direction context
     ) {
-        if (!BeltBlock.canTransportObjects(blockEntity.getBlockState())) {
+        if (!canTransportObjects(blockEntity.getBlockState())) {
             return null;
         }
         if (!blockEntity.isRemoved() && blockEntity.itemHandler == null) {
@@ -128,6 +128,7 @@ public class BeltBlock extends HorizontalKineticBlock implements IBE<BeltBlockEn
         return state.getValue(HORIZONTAL_FACING).getClockWise().getAxis();
     }
 
+    @Override
     public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData) {
         return AllItems.BELT_CONNECTOR.getDefaultInstance();
     }
@@ -201,7 +202,7 @@ public class BeltBlock extends HorizontalKineticBlock implements IBE<BeltBlockEn
             if (entityIn.getDeltaMovement().y > 0) {
                 return;
             }
-            Vec3 targetLocation = VecHelper.getCenterOf(pos).add(0, 5 / 16f, 0);
+            Vec3 targetLocation = VecHelper.getCenterOf(pos).add(0, 5 / 16.0f, 0);
             if (!PackageEntity.centerPackage(entityIn, targetLocation)) {
                 return;
             }
@@ -314,7 +315,7 @@ public class BeltBlock extends HorizontalKineticBlock implements IBE<BeltBlockEn
             }
             MutableBoolean success = new MutableBoolean(false);
             controllerBelt.getInventory().applyToEachWithin(
-                belt.index + .5f, .55f, (transportedItemStack) -> {
+                belt.index + 0.5f, 0.55f, transportedItemStack -> {
                     player.getInventory().placeItemBackInInventory(transportedItemStack.stack);
                     success.setTrue();
                     return TransportedResult.removeItem();
@@ -326,8 +327,8 @@ public class BeltBlock extends HorizontalKineticBlock implements IBE<BeltBlockEn
                     pos,
                     SoundEvents.ITEM_PICKUP,
                     SoundSource.PLAYERS,
-                    .2f,
-                    1f + level.getRandom().nextFloat()
+                    0.2f,
+                    1.0f + level.getRandom().nextFloat()
                 );
             }
         }
@@ -563,9 +564,9 @@ public class BeltBlock extends HorizontalKineticBlock implements IBE<BeltBlockEn
                     hasPulley ? shaftState : Blocks.AIR.defaultBlockState(),
                     currentPos
                 ),
-                Block.UPDATE_ALL
+                UPDATE_ALL
             );
-            world.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, currentPos, Block.getId(currentState));
+            world.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, currentPos, getId(currentState));
         }
     }
 
@@ -606,7 +607,7 @@ public class BeltBlock extends HorizontalKineticBlock implements IBE<BeltBlockEn
             return false;
         }
         AABB bounds = collisionShape.bounds();
-        if (bounds.getXsize() < .5f || bounds.getZsize() < .5f) {
+        if (bounds.getXsize() < 0.5f || bounds.getZsize() < 0.5f) {
             return false;
         }
         if (bounds.minY > 0) {
@@ -716,6 +717,7 @@ public class BeltBlock extends HorizontalKineticBlock implements IBE<BeltBlockEn
         return rotate;
     }
 
+    @Override
     public BlockState transform(BlockState state, StructureTransform transform) {
         if (transform.mirror != null) {
             state = mirror(state, transform.mirror);

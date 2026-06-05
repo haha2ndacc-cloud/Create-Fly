@@ -178,8 +178,8 @@ public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrencha
                         pos,
                         SoundEvents.ITEM_PICKUP,
                         SoundSource.PLAYERS,
-                        .2f,
-                        1f + level.getRandom().nextFloat()
+                        0.2f,
+                        1.0f + level.getRandom().nextFloat()
                     );
                 }
                 be.onEmptied();
@@ -247,7 +247,7 @@ public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrencha
             int slotLimit = inv.getMaxStackSize();
             ItemStack itemstack = inv.getItem(j);
             if (!itemstack.isEmpty()) {
-                f += (float) itemstack.getCount() / (float) Math.min(
+                f += (float) itemstack.getCount() / Math.min(
                     slotLimit,
                     itemstack.getOrDefault(DataComponents.MAX_STACK_SIZE, 64)
                 );

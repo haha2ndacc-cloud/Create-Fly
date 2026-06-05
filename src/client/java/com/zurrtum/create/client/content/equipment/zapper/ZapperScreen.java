@@ -110,7 +110,7 @@ public abstract class ZapperScreen extends AbstractSimiScreen {
         addRenderableWidget(renderedItem);
         renderedBlock = new ElementWidget(x + 17, y + 24).showingElement(GuiGameElement.of(zapper.getOrDefault(AllDataComponents.SHAPER_BLOCK_USED,
             Blocks.AIR.defaultBlockState()
-        )).scale(1.25f).rotate(-25f, -45f, 0).padding(10));
+        )).scale(1.25f).rotate(-25.0f, -45.0f, 0).padding(10));
         addRenderableWidget(renderedBlock);
     }
 

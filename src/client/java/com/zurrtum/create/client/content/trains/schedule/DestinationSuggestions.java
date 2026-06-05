@@ -34,8 +34,8 @@ public class DestinationSuggestions extends CommandSuggestions {
         int yOffset
     ) {
         super(pMinecraft, pScreen, pInput, pFont, true, true, 0, 7, anchorToBottom, 0xee_303030);
-        this.textBox = pInput;
-        this.font = pFont;
+        textBox = pInput;
+        font = pFont;
         this.viableStations = viableStations;
         this.yOffset = yOffset;
         currentSuggestions = new ArrayList<>();
@@ -84,6 +84,7 @@ public class DestinationSuggestions extends CommandSuggestions {
         showSuggestions(false);
     }
 
+    @Override
     public void showSuggestions(boolean pNarrateFirstSuggestion) {
         if (currentSuggestions.isEmpty()) {
             suggestions = null;

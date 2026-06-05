@@ -28,9 +28,9 @@ public class StockTickerPeripheral extends SyncedPeripheral<StockTickerBlockEnti
         RegistryAccess registryAccess = blockEntity.getLevel().registryAccess();
         for (BigItemStack entry : blockEntity.getAccurateSummary().getStacks()) {
             i++;
-            Map<String, Object> details = new HashMap<>(detailed.isPresent() && detailed.get() ? VanillaDetailRegistries.ITEM_STACK.getDetails(registryAccess,
-                entry.stack
-            ) : VanillaDetailRegistries.ITEM_STACK.getBasicDetails(registryAccess, entry.stack));
+            Map<String, Object> details = new HashMap<>(detailed.isPresent() && detailed.get() ?
+                VanillaDetailRegistries.ITEM_STACK.getDetails(registryAccess, entry.stack) :
+                VanillaDetailRegistries.ITEM_STACK.getBasicDetails(registryAccess, entry.stack));
             details.put("count", entry.count);
             result.put(i, details);
         }

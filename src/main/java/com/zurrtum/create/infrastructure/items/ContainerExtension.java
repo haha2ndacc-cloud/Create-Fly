@@ -19,10 +19,12 @@ import java.util.stream.StreamSupport;
 @SuppressWarnings("unused")
 public interface ContainerExtension extends Iterable<ItemStack> {
     Hash.Strategy<ItemStack> ITEM_STACK_HASH_STRATEGY = new Hash.Strategy<>() {
+        @Override
         public boolean equals(@Nullable ItemStack stack, @Nullable ItemStack other) {
             return stack == other || stack != null && other != null && ItemStack.isSameItemSameComponents(stack, other);
         }
 
+        @Override
         public int hashCode(ItemStack stack) {
             return ItemStack.hashItemAndComponents(stack);
         }
@@ -233,19 +235,19 @@ public interface ContainerExtension extends Iterable<ItemStack> {
     }
 
     default int forceInsert(ItemStack stack) {
-        return ContainerExtension.this.insert(stack);
+        return insert(stack);
     }
 
     default int forceInsert(ItemStack stack, int maxAmount) {
-        return ContainerExtension.this.insert(stack, maxAmount);
+        return insert(stack, maxAmount);
     }
 
     default boolean forcePreciseInsert(ItemStack stack) {
-        return ContainerExtension.this.preciseInsert(stack);
+        return preciseInsert(stack);
     }
 
     default boolean forcePreciseInsert(ItemStack stack, int maxAmount) {
-        return ContainerExtension.this.preciseInsert(stack, maxAmount);
+        return preciseInsert(stack, maxAmount);
     }
 
     default int insert(ItemStack stack, @Nullable Direction side) {

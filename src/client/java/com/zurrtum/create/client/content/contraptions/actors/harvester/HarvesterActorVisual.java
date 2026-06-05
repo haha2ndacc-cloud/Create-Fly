@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 
 public class HarvesterActorVisual extends ActorVisual {
-    static float originOffset = 1 / 16f;
+    static float originOffset = 1 / 16.0f;
     static Vec3 rotOffset = new Vec3(0.5f, -2 * originOffset + 0.5f, originOffset + 0.5f);
 
     protected TransformedInstance harvester;
@@ -43,7 +43,7 @@ public class HarvesterActorVisual extends ActorVisual {
         harvester = instancerProvider.instancer(InstanceTypes.TRANSFORMED, Models.partial(getRollingPartial()))
             .createInstance();
 
-        horizontalAngle = facing.toYRot() + ((facing.getAxis() == Direction.Axis.X) ? 180 : 0);
+        horizontalAngle = facing.toYRot() + (facing.getAxis() == Direction.Axis.X ? 180 : 0);
 
         harvester.light(localBlockLight(), 0);
         harvester.setChanged();
@@ -80,7 +80,7 @@ public class HarvesterActorVisual extends ActorVisual {
 
         float deg = AngleHelper.deg(radians);
 
-        deg = (float) (((int) (deg * 3000)) / 3000);
+        deg = (int) (deg * 3000) / 3000;
 
         rotation += deg * 1.25;
 

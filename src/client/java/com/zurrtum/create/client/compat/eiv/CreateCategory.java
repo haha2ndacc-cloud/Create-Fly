@@ -14,7 +14,7 @@ import static com.zurrtum.create.Create.MOD_ID;
 public abstract class CreateCategory implements IEivRecipeViewType {
     public void placeButton(Button button) {
         button.setX(button.getX() - 21);
-        button.setY(button.getY() - (getDisplayHeight() / 2));
+        button.setY(button.getY() - getDisplayHeight() / 2);
     }
 
     public void renderSubIcon(GuiGraphicsExtractor context, int x, int y) {

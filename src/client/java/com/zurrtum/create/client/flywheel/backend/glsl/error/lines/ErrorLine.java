@@ -2,7 +2,7 @@ package com.zurrtum.create.client.flywheel.backend.glsl.error.lines;
 
 public interface ErrorLine {
     default int neededMargin() {
-        return this.left().length();
+        return left().length();
     }
 
     default Divider divider() {

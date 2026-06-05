@@ -96,7 +96,7 @@ public abstract class SingleFluidStackStorage extends SnapshotParticipant<FluidS
             int extracted = (int) Math.min(currentStack.getAmount(), maxAmount);
 
             if (extracted > 0) {
-                this.updateSnapshots(transaction);
+                updateSnapshots(transaction);
                 currentStack = getStack();
                 currentStack.decrement(extracted);
                 setStack(currentStack);

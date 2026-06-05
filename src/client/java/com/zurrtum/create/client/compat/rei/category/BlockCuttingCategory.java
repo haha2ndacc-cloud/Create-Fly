@@ -45,7 +45,7 @@ public class BlockCuttingCategory extends CreateCategory<BlockCuttingDisplay> {
         int size = outputIngredients.size();
         Point[] outputs = new Point[size];
         for (int i = 0, left = bounds.x + 83, top = bounds.y + 53; i < size; i++) {
-            outputs[i] = new Point(left + (i % 5) * 19, top + (i / 5) * -19);
+            outputs[i] = new Point(left + i % 5 * 19, top + i / 5 * -19);
         }
         widgets.add(Widgets.createDrawableWidget((GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) -> {
             drawSlotBackground(graphics, input);

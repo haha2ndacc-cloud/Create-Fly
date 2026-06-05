@@ -41,17 +41,12 @@ public class SeatEntity extends Entity {
 
     @Override
     protected void positionRider(Entity pEntity, Entity.MoveFunction pCallback) {
-        if (!this.hasPassenger(pEntity)) {
+        if (!hasPassenger(pEntity)) {
             return;
         }
         double heightOffset = getPassengerRidingPosition(pEntity).y - pEntity.getVehicleAttachmentPoint(this).y;
 
-        pCallback.accept(
-            pEntity,
-            this.getX(),
-            1.0 / 16.0 + heightOffset + getCustomEntitySeatOffset(pEntity),
-            this.getZ()
-        );
+        pCallback.accept(pEntity, getX(), 1.0 / 16.0 + heightOffset + getCustomEntitySeatOffset(pEntity), getZ());
         if (pEntity instanceof Player player) {
             float diff = player.getDimensions(player.getPose()).height() - player.getDimensions(Pose.CROUCHING)
                 .height();
@@ -72,25 +67,25 @@ public class SeatEntity extends Entity {
             return 0.0f;
         }
         if (entity instanceof Parrot) {
-            return 1 / 12f;
+            return 1 / 12.0f;
         }
         if (entity instanceof Skeleton) {
-            return 1 / 8f;
+            return 1 / 8.0f;
         }
         if (entity instanceof Cat) {
-            return 1 / 12f;
+            return 1 / 12.0f;
         }
         if (entity instanceof Wolf) {
-            return 1 / 16f;
+            return 1 / 16.0f;
         }
         if (entity instanceof Frog) {
-            return 1.5 / 16f;
+            return 1.5 / 16.0f;
         }
         if (entity instanceof Spider) {
             return 1 / 8.0;
         }
         if (entity instanceof PackageEntity) {
-            return 3 / 32f;
+            return 3 / 32.0f;
         }
         return 0;
     }
@@ -108,7 +103,7 @@ public class SeatEntity extends Entity {
         if (isVehicle() && blockPresent) {
             return;
         }
-        this.discard();
+        discard();
     }
 
     @Override
@@ -120,7 +115,7 @@ public class SeatEntity extends Entity {
     protected boolean canRide(Entity entity) {
         // Fake Players (tested with deployers) have a BUNCH of weird issues, don't let
         // them ride seats
-        return !(FakePlayerHandler.has(entity));
+        return !FakePlayerHandler.has(entity);
     }
 
     @Override

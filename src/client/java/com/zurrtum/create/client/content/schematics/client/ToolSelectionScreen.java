@@ -55,7 +55,7 @@ public class ToolSelectionScreen extends Screen {
     }
 
     public void cycle(int direction) {
-        selection += (direction < 0) ? 1 : -1;
+        selection += direction < 0 ? 1 : -1;
         selection = (selection + tools.size()) % tools.size();
     }
 
@@ -92,7 +92,7 @@ public class ToolSelectionScreen extends Screen {
 
         float toolTipAlpha = yOffset / 10;
         List<Component> toolTip = tools.get(selection).getDescription();
-        int stringAlphaComponent = ((int) (toolTipAlpha * 0xFF)) << 24;
+        int stringAlphaComponent = (int) (toolTipAlpha * 0xFF) << 24;
 
         if (toolTipAlpha > 0.25f) {
             graphics.blit(
@@ -141,7 +141,7 @@ public class ToolSelectionScreen extends Screen {
         for (int i = 0; i < tools.size(); i++) {
             matrixStack.pushMatrix();
 
-            float alpha = focused ? 1 : .2f;
+            float alpha = focused ? 1 : 0.2f;
             if (i == selection) {
                 matrixStack.translate(0, -10);
                 graphics.centeredText(
@@ -153,7 +153,7 @@ public class ToolSelectionScreen extends Screen {
                 );
                 alpha = 1;
             }
-            int color = ((int) (alpha * 0xFF)) << 24;
+            int color = (int) (alpha * 0xFF) << 24;
             tools.get(i).getIcon().render(graphics, x + i * 50 + 16, y + 12, color);
             tools.get(i).getIcon().render(graphics, x + i * 50 + 16, y + 11, 0xFFFFFF | color);
 
@@ -165,9 +165,9 @@ public class ToolSelectionScreen extends Screen {
 
     public void update() {
         if (focused) {
-            yOffset += (10 - yOffset) * .1f;
+            yOffset += (10 - yOffset) * 0.1f;
         } else {
-            yOffset *= .9f;
+            yOffset *= 0.9f;
         }
     }
 

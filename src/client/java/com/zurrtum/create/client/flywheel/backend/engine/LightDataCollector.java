@@ -48,9 +48,8 @@ public abstract class LightDataCollector {
 
         if (fastSkyDataGetter != null && fastBlockDataGetter != null) {
             return new Fast(level, skyLayerListener, blockLayerListener, fastSkyDataGetter, fastBlockDataGetter);
-        } else {
-            return new Slow(level, skyLayerListener, blockLayerListener);
         }
+        return new Slow(level, skyLayerListener, blockLayerListener);
     }
 
     @Nullable
@@ -72,9 +71,8 @@ public abstract class LightDataCollector {
             }
 
             return dataLayer;
-        } else {
-            return null;
         }
+        return null;
     }
 
     @Nullable
@@ -191,7 +189,7 @@ public abstract class LightDataCollector {
 
         int offset = x1 + z1 * 18 + y1 * 18 * 18;
 
-        long packedByte = (block & 0xF) | ((sky & 0xF) << 4);
+        long packedByte = block & 0xF | (sky & 0xF) << 4;
 
         MemoryUtil.memPutByte(ptr + SOLID_SIZE_BYTES + offset, (byte) packedByte);
     }

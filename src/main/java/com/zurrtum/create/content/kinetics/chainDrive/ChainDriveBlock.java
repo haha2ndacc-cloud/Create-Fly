@@ -51,8 +51,8 @@ public class ChainDriveBlock extends RotatedPillarKineticBlock implements IBE<Ki
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Axis placedAxis = context.getNearestLookingDirection().getAxis();
-        Axis axis = context.getPlayer() != null && context.getPlayer().isShiftKeyDown() ? placedAxis : getPreferredAxis(
-            context);
+        Axis axis = context.getPlayer() != null && context.getPlayer().isShiftKeyDown() ? placedAxis :
+            getPreferredAxis(context);
         if (axis == null) {
             axis = placedAxis;
         }
@@ -93,7 +93,8 @@ public class ChainDriveBlock extends RotatedPillarKineticBlock implements IBE<Ki
         Part part = stateIn.getValue(PART);
         Axis axis = stateIn.getValue(AXIS);
         boolean connectionAlongFirst = stateIn.getValue(CONNECTED_ALONG_FIRST_COORDINATE);
-        Axis connectionAxis = connectionAlongFirst ? (axis == Axis.X ? Axis.Y : Axis.X) : (axis == Axis.Z ? Axis.Y : Axis.Z);
+        Axis connectionAxis =
+            connectionAlongFirst ? axis == Axis.X ? Axis.Y : Axis.X : axis == Axis.Z ? Axis.Y : Axis.Z;
 
         Axis faceAxis = face.getAxis();
         boolean facingAlongFirst = axis == Axis.X ? faceAxis.isVertical() : faceAxis == Axis.X;
@@ -119,7 +120,8 @@ public class ChainDriveBlock extends RotatedPillarKineticBlock implements IBE<Ki
         Part otherPart = neighbour.getValue(PART);
         Axis otherAxis = neighbour.getValue(AXIS);
         boolean otherConnection = neighbour.getValue(CONNECTED_ALONG_FIRST_COORDINATE);
-        Axis otherConnectionAxis = otherConnection ? (otherAxis == Axis.X ? Axis.Y : Axis.X) : (otherAxis == Axis.Z ? Axis.Y : Axis.Z);
+        Axis otherConnectionAxis =
+            otherConnection ? otherAxis == Axis.X ? Axis.Y : Axis.X : otherAxis == Axis.Z ? Axis.Y : Axis.Z;
 
         if (neighbour.getValue(AXIS) == faceAxis) {
             return stateIn;
@@ -226,7 +228,7 @@ public class ChainDriveBlock extends RotatedPillarKineticBlock implements IBE<Ki
     protected static Axis getConnectionAxis(BlockState state) {
         Axis axis = state.getValue(AXIS);
         boolean connectionAlongFirst = state.getValue(CONNECTED_ALONG_FIRST_COORDINATE);
-        return connectionAlongFirst ? (axis == Axis.X ? Axis.Y : Axis.X) : (axis == Axis.Z ? Axis.Y : Axis.Z);
+        return connectionAlongFirst ? axis == Axis.X ? Axis.Y : Axis.X : axis == Axis.Z ? Axis.Y : Axis.Z;
     }
 
     public static float getRotationSpeedModifier(KineticBlockEntity from, KineticBlockEntity to) {

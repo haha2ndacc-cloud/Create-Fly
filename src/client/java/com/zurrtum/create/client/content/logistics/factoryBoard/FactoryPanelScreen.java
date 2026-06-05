@@ -234,8 +234,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
                 renderInputItem(graphics, slot++, itemStack, mouseX, mouseY);
             }
             if (inputConfig.isEmpty()) {
-                int inputX = guiLeft + (restocker ? 88 : 68 + (slot % 3 * 20));
-                int inputY = guiTop + (restocker ? 12 : 28) + (slot / 3 * 20);
+                int inputX = guiLeft + (restocker ? 88 : 68 + slot % 3 * 20);
+                int inputY = guiTop + (restocker ? 12 : 28) + slot / 3 * 20;
                 if (!restocker && mouseY > inputY && mouseY < inputY + 60 && mouseX > inputX && mouseX < inputX + 60) {
                     graphics.setComponentTooltipForNextFrame(
                         font, List.of(
@@ -299,7 +299,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
             ItemStack asStack = AllItems.REDSTONE_LINK.getDefaultInstance();
             int itemX = x + 9;
             int itemY = y + windowHeight - 24;
-            AllGuiTextures.FROGPORT_SLOT.render(graphics, itemX - 1, itemY - 1);
+            FROGPORT_SLOT.render(graphics, itemX - 1, itemY - 1);
             graphics.item(asStack, itemX, itemY);
 
             if (mouseX >= itemX && mouseX < itemX + 16 && mouseY >= itemY && mouseY < itemY + 16) {
@@ -369,8 +369,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
         int mouseX,
         int mouseY
     ) {
-        int inputX = guiLeft + (restocker ? 88 : 68 + (slot % 3 * 20));
-        int inputY = guiTop + (restocker ? 12 : 28) + (slot / 3 * 20);
+        int inputX = guiLeft + (restocker ? 88 : 68 + slot % 3 * 20);
+        int inputY = guiTop + (restocker ? 12 : 28) + slot / 3 * 20;
 
         graphics.item(itemStack.stack, inputX, inputY);
         if (!craftingActive && !restocker && !itemStack.stack.isEmpty()) {
@@ -489,8 +489,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
         // Remove connections
         if (!craftingActive) {
             for (int i = 0; i < connections.size(); i++) {
-                int inputX = x + 68 + (i % 3 * 20);
-                int inputY = y + 28 + (i / 3 * 20);
+                int inputX = x + 68 + i % 3 * 20;
+                int inputY = y + 28 + i / 3 * 20;
                 if (mouseX >= inputX && mouseX < inputX + 16 && mouseY >= inputY && mouseY < inputY + 16) {
                     sendIt(connections.get(i).from, false);
                     playButtonSound();
@@ -539,8 +539,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
         }
 
         for (int i = 0; i < inputConfig.size(); i++) {
-            int inputX = x + 68 + (i % 3 * 20);
-            int inputY = y + 26 + (i / 3 * 20);
+            int inputX = x + 68 + i % 3 * 20;
+            int inputY = y + 26 + i / 3 * 20;
             if (mouseX >= inputX && mouseX < inputX + 16 && mouseY >= inputY && mouseY < inputY + 16) {
                 BigItemStack itemStack = inputConfig.get(i);
                 if (itemStack.stack.isEmpty()) {

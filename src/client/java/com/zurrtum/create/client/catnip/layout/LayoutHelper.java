@@ -32,10 +32,10 @@ public interface LayoutHelper {
         int height;
         int spacing;
 
-        int currentColumn = 0;
-        int currentRow = 0;
+        int currentColumn;
+        int currentRow;
         int[] rowCounts;
-        int x = 0, y = 0;
+        int x, y;
 
         CenteredHorizontalLayoutHelper(int itemCount, int rows, int width, int height, int spacing) {
             this.itemCount = itemCount;
@@ -99,7 +99,7 @@ public interface LayoutHelper {
         }
 
         private void prepareY() {
-            int totalHeight = rows * height + (rows > 1 ? ((rows - 1) * spacing) : 0);
+            int totalHeight = rows * height + (rows > 1 ? (rows - 1) * spacing : 0);
             y = -(totalHeight / 2);
         }
 
@@ -110,7 +110,7 @@ public interface LayoutHelper {
 
         @Override
         public int getTotalHeight() {
-            return rows * height + (rows > 1 ? ((rows - 1) * spacing) : 0);
+            return rows * height + (rows > 1 ? (rows - 1) * spacing : 0);
         }
 
     }

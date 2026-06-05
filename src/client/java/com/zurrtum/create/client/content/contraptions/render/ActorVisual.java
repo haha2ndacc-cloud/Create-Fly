@@ -17,8 +17,8 @@ public abstract class ActorVisual implements Visual {
 
     public ActorVisual(VisualizationContext visualizationContext, BlockAndTintGetter world, MovementContext context) {
         this.visualizationContext = visualizationContext;
-        this.instancerProvider = visualizationContext.instancerProvider();
-        this.simulationWorld = world;
+        instancerProvider = visualizationContext.instancerProvider();
+        simulationWorld = world;
         this.context = context;
     }
 

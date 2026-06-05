@@ -89,7 +89,8 @@ public class CarriageAudioBehaviour extends EntityBehaviour<CarriageContraptionE
             return;
         }
         if (bogeySounds == null) {
-            bogeySounds = carriage.bogeys.map(bogey -> bogey != null && bogey.getStyle() != null ? bogey.getStyle().soundEvent.get() : AllSoundEvents.TRAIN2.getMainEvent());
+            bogeySounds = carriage.bogeys.map(bogey -> bogey != null && bogey.getStyle() != null ?
+                bogey.getStyle().soundEvent.get() : AllSoundEvents.TRAIN2.getMainEvent());
             closestBogeySound = bogeySounds.getFirst();
         }
 
@@ -114,7 +115,7 @@ public class CarriageAudioBehaviour extends EntityBehaviour<CarriageContraptionE
             train.accumulatedSteamRelease = (float) Math.min(
                 train.accumulatedSteamRelease + Math.min(
                     0.5f,
-                    Math.abs(contraptionMotion.length() / 10f)
+                    Math.abs(contraptionMotion.length() / 10.0f)
                 ), 10
             );
         }
@@ -139,10 +140,10 @@ public class CarriageAudioBehaviour extends EntityBehaviour<CarriageContraptionE
 
         double dot = toCarriage.normalize().dot(combinedMotion.normalize());
 
-        speedFactor.chase(contraptionMotion.length(), .25f, Chaser.exp(.05f));
-        distanceFactor.chase(Mth.clampedLerp((distance - 3) / 64d, 100, 0), .25f, Chaser.exp(50f));
-        approachFactor.chase(Mth.clampedLerp(.5f * (dot + 1), 50, 200), .25f, Chaser.exp(10f));
-        seatCrossfade.chase(camEntity.getVehicle() instanceof CarriageContraptionEntity ? 1 : 0, .1f, Chaser.EXP);
+        speedFactor.chase(contraptionMotion.length(), 0.25f, Chaser.exp(0.05f));
+        distanceFactor.chase(Mth.clampedLerp((distance - 3) / 64.0d, 100, 0), 0.25f, Chaser.exp(50.0f));
+        approachFactor.chase(Mth.clampedLerp(0.5f * (dot + 1), 50, 200), 0.25f, Chaser.exp(10.0f));
+        seatCrossfade.chase(camEntity.getVehicle() instanceof CarriageContraptionEntity ? 1 : 0, 0.1f, Chaser.EXP);
 
         speedFactor.tickChaser();
         distanceFactor.tickChaser();
@@ -155,36 +156,36 @@ public class CarriageAudioBehaviour extends EntityBehaviour<CarriageContraptionE
 
         float volume = Math.min(
             Math.min(speedFactor.getValue(), distanceFactor.getValue() / 100),
-            approachFactor.getValue() / 300 + .0125f
+            approachFactor.getValue() / 300 + 0.0125f
         );
 
         if (entity.carriageIndex == 0) {
-            float v = volume * (1 - seatCrossfade.getValue() * .35f) * .75f;
+            float v = volume * (1 - seatCrossfade.getValue() * 0.35f) * 0.75f;
             if ((3 + tick) % 4 == 0) {
                 AllSoundEvents.STEAM.playAt(
                     entity.level(),
                     soundLocation,
-                    v * ((tick + 7) % 8 == 0 ? 0.75f : .45f),
+                    v * ((tick + 7) % 8 == 0 ? 0.75f : 0.45f),
                     1.17f,
                     false
                 );
             }
             if (tick % 16 == 0) {
-                AllSoundEvents.STEAM.playAt(entity.level(), soundLocation, v * 1.5f, .8f, false);
+                AllSoundEvents.STEAM.playAt(entity.level(), soundLocation, v * 1.5f, 0.8f, false);
             }
         }
 
-        if (!arrived && speedFactor.getValue() < .002f && train.accumulatedSteamRelease > 1) {
+        if (!arrived && speedFactor.getValue() < 0.002f && train.accumulatedSteamRelease > 1) {
             arrived = true;
-            float releaseVolume = train.accumulatedSteamRelease / 10f;
+            float releaseVolume = train.accumulatedSteamRelease / 10.0f;
             entity.level().playLocalSound(
                 soundLocation.x,
                 soundLocation.y,
                 soundLocation.z,
                 SoundEvents.LAVA_EXTINGUISH,
                 SoundSource.NEUTRAL,
-                .25f * releaseVolume,
-                .78f,
+                0.25f * releaseVolume,
+                0.78f,
                 false
             );
             entity.level().playLocalSound(
@@ -193,18 +194,18 @@ public class CarriageAudioBehaviour extends EntityBehaviour<CarriageContraptionE
                 soundLocation.z,
                 SoundEvents.WOODEN_TRAPDOOR_CLOSE,
                 SoundSource.NEUTRAL,
-                .2f * releaseVolume,
+                0.2f * releaseVolume,
                 1.5f,
                 false
             );
-            AllSoundEvents.STEAM.playAt(entity.level(), soundLocation, .75f * releaseVolume, .5f, false);
+            AllSoundEvents.STEAM.playAt(entity.level(), soundLocation, 0.75f * releaseVolume, 0.5f, false);
         }
 
-        float pitchModifier = ((entity.getId() * 10) % 13) / 36f;
+        float pitchModifier = (entity.getId() * 10 % 13) / 36.0f;
 
         volume = Math.min(volume, distanceFactor.getValue() / 800);
 
-        float pitch = Mth.clamp(speedFactor.getValue() * 2 + .25f, .75f, 1.95f) - pitchModifier;
+        float pitch = Mth.clamp(speedFactor.getValue() * 2 + 0.25f, 0.75f, 1.95f) - pitchModifier;
         //		float pitch2 = Mth.clamp(speedFactor.getValue() * 2, 0.75f, 1.25f) - pitchModifier;
 
         minecartEsqueSound.setPitch(pitch * 1.5f);
@@ -256,20 +257,22 @@ public class CarriageAudioBehaviour extends EntityBehaviour<CarriageContraptionE
         boolean low = train.lowHonk;
         float honkPitch = (float) Math.pow(2, train.honkPitch / 12.0);
 
-        SoundEntry endSound = !low ? AllSoundEvents.WHISTLE_TRAIN_MANUAL_END : AllSoundEvents.WHISTLE_TRAIN_MANUAL_LOW_END;
-        SoundEntry continuousSound = !low ? AllSoundEvents.WHISTLE_TRAIN_MANUAL : AllSoundEvents.WHISTLE_TRAIN_MANUAL_LOW;
+        SoundEntry endSound =
+            !low ? AllSoundEvents.WHISTLE_TRAIN_MANUAL_END : AllSoundEvents.WHISTLE_TRAIN_MANUAL_LOW_END;
+        SoundEntry continuousSound =
+            !low ? AllSoundEvents.WHISTLE_TRAIN_MANUAL : AllSoundEvents.WHISTLE_TRAIN_MANUAL_LOW;
 
         if (train.honkTicks == 5) {
             endSound.playAt(mc.level, soundLocation, 1, honkPitch, false);
         }
         if (train.honkTicks == 19) {
-            endSound.playAt(mc.level, soundLocation, .5f, honkPitch, false);
+            endSound.playAt(mc.level, soundLocation, 0.5f, honkPitch, false);
         }
 
         sharedHonkSound = playIfMissing(mc, sharedHonkSound, continuousSound.getMainEvent(), true);
         sharedHonkSound.setLocation(soundLocation);
-        float fadeout = Mth.clamp((3 - train.honkTicks) / 3f, 0, 1);
-        float fadein = Mth.clamp((train.honkTicks - 17) / 3f, 0, 1);
+        float fadeout = Mth.clamp((3 - train.honkTicks) / 3.0f, 0, 1);
+        float fadein = Mth.clamp((train.honkTicks - 17) / 3.0f, 0, 1);
         sharedHonkSound.setVolume(1 - fadeout - fadein);
         sharedHonkSound.setPitch(honkPitch);
 
@@ -307,7 +310,7 @@ public class CarriageAudioBehaviour extends EntityBehaviour<CarriageContraptionE
         }
 
         Vec3 currentLoc = new Vec3(minecartEsqueSound.getX(), minecartEsqueSound.getY(), minecartEsqueSound.getZ());
-        Vec3 newLoc = approach ? currentLoc.add(location.subtract(currentLoc).scale(.125f)) : location;
+        Vec3 newLoc = approach ? currentLoc.add(location.subtract(currentLoc).scale(0.125f)) : location;
 
         minecartEsqueSound.setLocation(newLoc);
         sharedWheelSound.setLocation(newLoc);
@@ -317,8 +320,8 @@ public class CarriageAudioBehaviour extends EntityBehaviour<CarriageContraptionE
 
     public void finalizeSharedVolume(float volume) {
         float crossfade = seatCrossfade.getValue();
-        minecartEsqueSound.setVolume((1 - crossfade * .65f) * volume / 2);
-        volume = Math.min(volume, Math.max((speedFactor.getValue() - .25f) / 4 + 0.01f, 0));
+        minecartEsqueSound.setVolume((1 - crossfade * 0.65f) * volume / 2);
+        volume = Math.min(volume, Math.max((speedFactor.getValue() - 0.25f) / 4 + 0.01f, 0));
         sharedWheelSoundSeated.setVolume(volume * crossfade);
         sharedWheelSound.setVolume(volume * (1 - crossfade) * 1.5f);
     }
@@ -344,13 +347,13 @@ public class CarriageAudioBehaviour extends EntityBehaviour<CarriageContraptionE
 
         private final boolean repeatSubtitle;
         private final WeighedSoundEvents weighedSoundEvents = resolve(Minecraft.getInstance().getSoundManager());
-        private byte subtitleTimer = 0;
+        private byte subtitleTimer;
 
         protected LoopingSound(SoundEvent soundEvent, SoundSource source, boolean repeatSubtitle) {
             super(soundEvent, source, SoundInstance.createUnseededRandom());
-            this.looping = true;
-            this.delay = 0;
-            this.volume = 0.0001f;
+            looping = true;
+            delay = 0;
+            volume = 0.0001f;
             this.repeatSubtitle = repeatSubtitle;
         }
 

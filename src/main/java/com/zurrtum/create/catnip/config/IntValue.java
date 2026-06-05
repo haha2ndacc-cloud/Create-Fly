@@ -10,7 +10,8 @@ public class IntValue extends ConfigValue<Integer> {
         super(
             builder.comment(
                 "Default: " + def,
-                "Range: " + (max == Integer.MAX_VALUE ? "> " + min : min == Integer.MIN_VALUE ? "< " + max : min + " ~ " + max)
+                "Range: " + (max == Integer.MAX_VALUE ? "> " + min :
+                    min == Integer.MIN_VALUE ? "< " + max : min + " ~ " + max)
             ), parent, name, def
         );
         setMaxmin(max, min);

@@ -21,13 +21,14 @@ public class TransformingVertexConsumer implements VertexConsumer {
     }
 
     public void clear() {
-        this.delegate = null;
-        this.poseStack = null;
+        delegate = null;
+        poseStack = null;
     }
 
+    @Override
     public VertexConsumer addVertex(float x, float y, float z) {
-        Matrix4f matrix = this.poseStack.last().pose();
-        this.delegate.addVertex(
+        Matrix4f matrix = poseStack.last().pose();
+        delegate.addVertex(
             MatrixMath.transformPositionX(matrix, x, y, z),
             MatrixMath.transformPositionY(matrix, x, y, z),
             MatrixMath.transformPositionZ(matrix, x, y, z)
@@ -37,33 +38,38 @@ public class TransformingVertexConsumer implements VertexConsumer {
 
     @Override
     public VertexConsumer setColor(int color) {
-        this.delegate.setColor(color);
+        delegate.setColor(color);
         return this;
     }
 
+    @Override
     public VertexConsumer setColor(int red, int green, int blue, int alpha) {
-        this.delegate.setColor(red, green, blue, alpha);
+        delegate.setColor(red, green, blue, alpha);
         return this;
     }
 
+    @Override
     public VertexConsumer setUv(float u, float v) {
-        this.delegate.setUv(u, v);
+        delegate.setUv(u, v);
         return this;
     }
 
+    @Override
     public VertexConsumer setUv1(int u, int v) {
-        this.delegate.setUv1(u, v);
+        delegate.setUv1(u, v);
         return this;
     }
 
+    @Override
     public VertexConsumer setUv2(int u, int v) {
-        this.delegate.setUv2(u, v);
+        delegate.setUv2(u, v);
         return this;
     }
 
+    @Override
     public VertexConsumer setNormal(float x, float y, float z) {
-        Matrix3f matrix = this.poseStack.last().normal();
-        this.delegate.setNormal(
+        Matrix3f matrix = poseStack.last().normal();
+        delegate.setNormal(
             MatrixMath.transformNormalX(matrix, x, y, z),
             MatrixMath.transformNormalY(matrix, x, y, z),
             MatrixMath.transformNormalZ(matrix, x, y, z)

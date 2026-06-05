@@ -15,7 +15,6 @@ import com.zurrtum.create.client.flywheel.lib.model.Models;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.client.flywheel.lib.visual.SimpleDynamicVisual;
 import com.zurrtum.create.client.foundation.render.AllInstanceTypes;
-import com.zurrtum.create.content.kinetics.saw.SawBlock;
 import com.zurrtum.create.content.kinetics.saw.SawBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Sheets;
@@ -23,7 +22,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -49,7 +47,7 @@ public class SawVisual extends KineticBlockEntityVisual<SawBlockEntity> implemen
 
     @Override
     public void setSectionCollector(SectionCollector sectionCollector) {
-        switch (blockState.getValue(BlockStateProperties.FACING)) {
+        switch (blockState.getValue(FACING)) {
             case UP -> setSectionCollector(sectionCollector, 0, 0, 0, 0, 1, 0);
             case DOWN -> setSectionCollector(sectionCollector, 0, -1, 0, 0, 0, 0);
             case WEST -> setSectionCollector(sectionCollector, -1, 0, 0, 0, 0, 0);
@@ -60,7 +58,7 @@ public class SawVisual extends KineticBlockEntityVisual<SawBlockEntity> implemen
     }
 
     public static RotatingInstance shaft(InstancerProvider instancerProvider, BlockState state) {
-        Direction facing = state.getValue(BlockStateProperties.FACING);
+        Direction facing = state.getValue(FACING);
         Axis axis = facing.getAxis();
         // We could change this to return either an Oriented- or SingleAxisRotatingVisual
         if (axis.isHorizontal()) {
@@ -69,10 +67,9 @@ public class SawVisual extends KineticBlockEntityVisual<SawBlockEntity> implemen
                 AllInstanceTypes.ROTATING,
                 Models.chunkPartial(AllPartialModels.SHAFT_HALF)
             ).createInstance().rotateTo(0, 0, 1, align.getStepX(), align.getStepY(), align.getStepZ());
-        } else {
-            return instancerProvider.instancer(AllInstanceTypes.ROTATING, Models.chunkPartial(AllPartialModels.SHAFT))
-                .createInstance().rotateToFace(state.getValue(SawBlock.AXIS_ALONG_FIRST_COORDINATE) ? Axis.X : Axis.Z);
         }
+        return instancerProvider.instancer(AllInstanceTypes.ROTATING, Models.chunkPartial(AllPartialModels.SHAFT))
+            .createInstance().rotateToFace(state.getValue(AXIS_ALONG_FIRST_COORDINATE) ? Axis.X : Axis.Z);
     }
 
     @Override

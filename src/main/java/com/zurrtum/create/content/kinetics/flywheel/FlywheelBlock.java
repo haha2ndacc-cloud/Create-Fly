@@ -47,7 +47,7 @@ public class FlywheelBlock extends RotatedPillarKineticBlock implements IBE<Flyw
 
     @Override
     public float getParticleTargetRadius() {
-        return 2f;
+        return 2.0f;
     }
 
     @Override

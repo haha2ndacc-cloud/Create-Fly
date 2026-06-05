@@ -169,7 +169,7 @@ public class FilteringBehaviour<T extends ServerFilteringBehaviour> extends Bloc
     }
 
     public void setLabel(MutableComponent label) {
-        this.customLabel = label;
+        customLabel = label;
     }
 
     @Override
@@ -190,12 +190,13 @@ public class FilteringBehaviour<T extends ServerFilteringBehaviour> extends Bloc
         if (customLabel != null) {
             return customLabel;
         }
-        return CreateLang.translateDirect(behaviour.isRecipeFilter() ? "logistics.recipe_filter" : behaviour.fluidFilter ? "logistics.fluid_filter" : "logistics.filter");
+        return CreateLang.translateDirect(behaviour.isRecipeFilter() ? "logistics.recipe_filter" :
+            behaviour.fluidFilter ? "logistics.fluid_filter" : "logistics.filter");
     }
 
     public MutableComponent getTip() {
-        return CreateLang.translateDirect(behaviour.getFilter()
-            .isEmpty() ? "logistics.filter.click_to_set" : "logistics.filter.click_to_replace");
+        return CreateLang.translateDirect(
+            behaviour.getFilter().isEmpty() ? "logistics.filter.click_to_set" : "logistics.filter.click_to_replace");
     }
 
     public MutableComponent getAmountTip() {
@@ -203,8 +204,9 @@ public class FilteringBehaviour<T extends ServerFilteringBehaviour> extends Bloc
     }
 
     public MutableComponent getCountLabelForValueBox() {
-        return Component.literal(behaviour.isCountVisible() ? behaviour.upTo && behaviour.getMaxStackSize() == behaviour.count ? "*" : String.valueOf(
-            behaviour.count) : "");
+        return Component.literal(behaviour.isCountVisible() ?
+            behaviour.upTo && behaviour.getMaxStackSize() == behaviour.count ? "*" : String.valueOf(behaviour.count) :
+            "");
     }
 
     @Override
@@ -228,7 +230,7 @@ public class FilteringBehaviour<T extends ServerFilteringBehaviour> extends Bloc
         if (value.row() == 0 && value.value() == behaviour.getMaxStackSize()) {
             return CreateLang.translateDirect("logistics.filter.any_amount_short");
         }
-        return Component.literal(((value.row() == 0) ? "≤" : "=") + Math.max(1, value.value()));
+        return Component.literal((value.row() == 0 ? "≤" : "=") + Math.max(1, value.value()));
     }
 
     @Override

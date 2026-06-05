@@ -49,9 +49,8 @@ public class BeltModel extends WrapperBlockStateModel {
                 return ANDESITE_MATERIAL;
             }
             return ANDESITE_MATERIAL = new Material.Baked(AllSpriteShifts.ANDESITE_CASING.getOriginal(), false);
-        } else {
-            return model.particleMaterial();
         }
+        return model.particleMaterial();
     }
 
     @Override
@@ -71,16 +70,16 @@ public class BeltModel extends WrapperBlockStateModel {
             model.collectParts(random, parts);
             if (blockentity.covered) {
                 boolean alongX = state.getValue(BeltBlock.HORIZONTAL_FACING).getAxis() == Axis.X;
-                (alongX ? AllPartialModels.BRASS_BELT_COVER_X.get() : AllPartialModels.BRASS_BELT_COVER_Z.get()).collectParts(random,
-                    parts
-                );
+                (alongX ? AllPartialModels.BRASS_BELT_COVER_X.get() :
+                    AllPartialModels.BRASS_BELT_COVER_Z.get()).collectParts(random, parts);
             }
             return;
         }
         TextureAtlasSprite original = SPRITE_SHIFT.getOriginal();
         if (blockentity.covered) {
             boolean alongX = state.getValue(BeltBlock.HORIZONTAL_FACING).getAxis() == Axis.X;
-            BlockStateModel cover = alongX ? AllPartialModels.ANDESITE_BELT_COVER_X.get() : AllPartialModels.ANDESITE_BELT_COVER_Z.get();
+            BlockStateModel cover =
+                alongX ? AllPartialModels.ANDESITE_BELT_COVER_X.get() : AllPartialModels.ANDESITE_BELT_COVER_Z.get();
             List<BlockStateModelPart> coverParts = new ObjectArrayList<>();
             cover.collectParts(random, coverParts);
             for (BlockStateModelPart part : coverParts) {

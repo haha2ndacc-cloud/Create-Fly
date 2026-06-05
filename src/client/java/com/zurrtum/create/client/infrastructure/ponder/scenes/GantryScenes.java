@@ -47,7 +47,8 @@ public class GantryScenes {
 
         scene.world().moveSection(gantry, util.vector().of(-4, 0, 0), 60);
 
-        String text = pinion ? "Gantry Carriages can mount to and slide along a Gantry Shaft." : "Gantry Shafts form the basis of a gantry setup. Attached Carriages will move along them.";
+        String text = pinion ? "Gantry Carriages can mount to and slide along a Gantry Shaft." :
+            "Gantry Shafts form the basis of a gantry setup. Attached Carriages will move along them.";
 
         scene.overlay().showText(80).attachKeyFrame().text(text).pointAt(util.vector().centerOf(centralShaft));
         scene.idle(80);
@@ -56,7 +57,7 @@ public class GantryScenes {
         scene.idle(10);
         gantry = scene.world().showIndependentSection(util.select().layer(2), Direction.DOWN);
         Vec3 gantryTop = util.vector().topOf(4, 2, 2);
-        scene.world().modifyKineticSpeed(util.select().everywhere(), f -> 0f);
+        scene.world().modifyKineticSpeed(util.select().everywhere(), f -> 0.0f);
         scene.overlay().showText(40).attachKeyFrame().text("Gantry setups can move attached Blocks.").pointAt(gantryTop)
             .placeNearTarget();
         scene.idle(30);
@@ -85,8 +86,8 @@ public class GantryScenes {
             .pointAt(util.vector().blockSurface(util.grid().at(3, 3, 2), Direction.WEST)).placeNearTarget();
         scene.idle(80);
 
-        scene.world().modifyKineticSpeed(util.select().layer(0), f -> 32f);
-        scene.world().modifyKineticSpeed(util.select().layer(1), f -> -64f);
+        scene.world().modifyKineticSpeed(util.select().layer(0), f -> 32.0f);
+        scene.world().modifyKineticSpeed(util.select().layer(1), f -> -64.0f);
 
         scene.world().moveSection(gantry, util.vector().of(-4, 0, 0), 60);
         scene.idle(20);
@@ -120,7 +121,7 @@ public class GantryScenes {
         scene.world().toggleRedstonePower(util.select().position(3, 1, 0));
         scene.world().toggleRedstonePower(util.select().position(3, 1, 1));
         scene.effects().indicateRedstone(util.grid().at(3, 1, 0));
-        scene.world().modifyKineticSpeed(util.select().position(gantryPos), f -> 32f);
+        scene.world().modifyKineticSpeed(util.select().position(gantryPos), f -> 32.0f);
         scene.idle(40);
 
         BlockPos cogPos = util.grid().at(1, 2, 1);
@@ -131,7 +132,7 @@ public class GantryScenes {
 
         Selection cogSelection = util.select().position(cogPos);
         scene.world().showSection(cogSelection, Direction.SOUTH);
-        scene.world().modifyKineticSpeed(cogSelection, f -> 32f);
+        scene.world().modifyKineticSpeed(cogSelection, f -> 32.0f);
         scene.overlay().showText(180).colored(PonderPalette.GREEN)
             .pointAt(util.vector().blockSurface(cogPos, Direction.NORTH))
             .text("Instead, its rotational force is relayed to the carriages' output shaft").placeNearTarget();
@@ -213,8 +214,8 @@ public class GantryScenes {
         scene.world().toggleRedstonePower(util.select().position(leverPos));
         scene.world().toggleRedstonePower(shafts);
         scene.effects().indicateRedstone(leverPos);
-        scene.world().modifyKineticSpeed(gears1, f -> -32f);
-        scene.world().modifyKineticSpeed(gears2, f -> 32f);
+        scene.world().modifyKineticSpeed(gears1, f -> -32.0f);
+        scene.world().modifyKineticSpeed(gears2, f -> 32.0f);
 
         scene.idle(20);
         scene.overlay().showText(120).attachKeyFrame().text("Same rules apply for the propagated rotation")
@@ -289,7 +290,7 @@ public class GantryScenes {
         scene.world().toggleRedstonePower(util.select().position(leverPos));
         scene.world().toggleRedstonePower(util.select().fromTo(3, 1, 3, 4, 1, 3));
         scene.world().toggleRedstonePower(util.select().fromTo(5, 1, 3, 5, 4, 3));
-        scene.world().modifyKineticSpeed(util.select().fromTo(0, 1, 2, 5, 1, 2), f -> -32f);
+        scene.world().modifyKineticSpeed(util.select().fromTo(0, 1, 2, 5, 1, 2), f -> -32.0f);
         scene.effects().indicateRedstone(leverPos);
         scene.world().moveSection(secondGantry, util.vector().of(-3, 0, 0), 60);
 

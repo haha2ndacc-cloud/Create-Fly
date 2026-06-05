@@ -54,13 +54,13 @@ public class ControlsMovementRenderBehaviour implements MovementRenderBehaviour 
         if (ControlsHandler.getContraption() == entity && ControlsHandler.getControlsPos() != null && ControlsHandler.getControlsPos()
             .equals(pos)) {
             Collection<Integer> pressed = ControlsHandler.currentlyPressed;
-            angles.equipAnimation.chase(1, .2f, Chaser.EXP);
+            angles.equipAnimation.chase(1, 0.2f, Chaser.EXP);
             angles.steering.chase((pressed.contains(3) ? 1 : 0) + (pressed.contains(2) ? -1 : 0), 0.2f, Chaser.EXP);
             Direction initialOrientation = cce.getInitialOrientation().getCounterClockWise();
             float f = cce.movingBackwards ^ !facing.equals(initialOrientation) ? -1 : 1;
             angles.speed.chase(Math.min(context.motion.length(), 0.5f) * f, 0.2f, Chaser.EXP);
         } else {
-            angles.equipAnimation.chase(0, .2f, Chaser.EXP);
+            angles.equipAnimation.chase(0, 0.2f, Chaser.EXP);
             angles.steering.chase(0, 0, Chaser.EXP);
             angles.speed.chase(0, 0, Chaser.EXP);
         }

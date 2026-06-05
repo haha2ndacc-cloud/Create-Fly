@@ -26,7 +26,7 @@ public class SignDisplayTarget extends DisplayTarget {
         DisplayHolder holder = (DisplayHolder) sign;
         for (int i = 0; i < text.size() && i + line < 4; i++) {
             if (i == 0) {
-                reserve(i + line, holder, context);
+                reserve(line, holder, context);
             }
             if (i > 0 && isReserved(i + line, holder, context)) {
                 break;

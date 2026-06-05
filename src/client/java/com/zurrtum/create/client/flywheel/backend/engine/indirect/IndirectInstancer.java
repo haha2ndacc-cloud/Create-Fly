@@ -56,7 +56,7 @@ public class IndirectInstancer<I extends Instance> extends AbstractInstancer<I> 
     public IndirectInstancer(InstancerKey<I> key, Recreate<I> recreate) {
         super(key, recreate);
         instanceStride = MoreMath.align4(type.layout().byteSize());
-        writer = this.type.writer();
+        writer = type.writer();
         boundingSphere = key.model().boundingSphere();
     }
 
@@ -97,9 +97,9 @@ public class IndirectInstancer<I extends Instance> extends AbstractInstancer<I> 
         private InstancePage(IndirectInstancer<I> parent, int pageNo) {
             this.parent = parent;
             this.pageNo = pageNo;
-            this.instances = instanceArray();
-            this.handles = handleArray();
-            this.valid = new AtomicInteger(0);
+            instances = instanceArray();
+            handles = handleArray();
+            valid = new AtomicInteger(0);
         }
 
         /**
@@ -122,7 +122,7 @@ public class IndirectInstancer<I extends Instance> extends AbstractInstancer<I> 
                 // determine what the new long value will be after we set the appropriate bit.
                 int index = Integer.numberOfTrailingZeros(~currentValue);
 
-                int newValue = currentValue | (1 << index);
+                int newValue = currentValue | 1 << index;
 
                 // if no other thread has modified the value since we read it, we won the race and we are done.
                 if (valid.compareAndSet(currentValue, newValue)) {
@@ -442,6 +442,7 @@ public class IndirectInstancer<I extends Instance> extends AbstractInstancer<I> 
         return instance;
     }
 
+    @Override
     public InstanceHandleImpl.State<I> revealInstance(InstanceHandleImpl<I> handle, I instance) {
         addInner(instance, handle);
         return handle.state;
@@ -546,6 +547,7 @@ public class IndirectInstancer<I extends Instance> extends AbstractInstancer<I> 
         }
     }
 
+    @Override
     public int instanceCount() {
         return instanceCount.get();
     }
@@ -553,8 +555,9 @@ public class IndirectInstancer<I extends Instance> extends AbstractInstancer<I> 
     /**
      * Clear all instances without freeing resources.
      */
+    @Override
     public void clear() {
-        this.pages.set(pageArray(0));
+        pages.set(pageArray(0));
         contentsChanged.clear();
         validityChanged.clear();
         fullPages.clear();

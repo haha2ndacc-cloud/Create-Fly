@@ -96,8 +96,8 @@ public class PlacardBlockEntity extends SmartBlockEntity {
         Vec3 offset = VecHelper.axisAlingedPlaneOf(normal);
 
         for (int i = 0; i < 10; i++) {
-            Vec3 v = VecHelper.offsetRandomly(Vec3.ZERO, level.getRandom(), .5f).multiply(offset).normalize()
-                .scale(.45f).add(normal.scale(-.45f)).add(centerOf);
+            Vec3 v = VecHelper.offsetRandomly(Vec3.ZERO, level.getRandom(), 0.5f).multiply(offset).normalize()
+                .scale(0.45f).add(normal.scale(-0.45f)).add(centerOf);
             level.addParticle(pParticleData, v.x, v.y, v.z, 0, 0, 0);
         }
     }

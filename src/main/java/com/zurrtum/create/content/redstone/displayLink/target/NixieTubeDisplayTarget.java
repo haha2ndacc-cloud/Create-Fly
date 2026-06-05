@@ -39,6 +39,7 @@ public class NixieTubeDisplayTarget extends SingleLineDisplayTarget {
         return count.intValue();
     }
 
+    @Override
     public AABB getMultiblockBounds(LevelAccessor level, BlockPos pos) {
         MutableObject<@Nullable BlockPos> start = new MutableObject<>(null);
         MutableObject<@Nullable BlockPos> end = new MutableObject<>(null);

@@ -47,9 +47,8 @@ public abstract class HorizontalKineticBlock extends KineticBlock {
                     if (prefferedSide != null && prefferedSide.getAxis() != side.getAxis()) {
                         prefferedSide = null;
                         break;
-                    } else {
-                        prefferedSide = side;
                     }
+                    prefferedSide = side;
                 }
             }
         }

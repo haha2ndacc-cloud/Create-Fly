@@ -133,7 +133,7 @@ public class CopycatPanelModel extends CopycatModel {
         Direction facing = state.getValueOrElse(CopycatPanelBlock.FACING, Direction.UP);
         Direction opposite = facing.getOpposite();
         Vec3 normal = Vec3.atLowerCornerOf(facing.getUnitVec3i());
-        Vec3 normalScaled14 = normal.scale(14 / 16f);
+        Vec3 normalScaled14 = normal.scale(14 / 16.0f);
         AABB front = CUBE_AABB.contract(normal.x * 0.9375d, normal.y * 0.9375d, normal.z * 0.9375d);
         Vec3 frontOffset = Vec3.ZERO;
         AABB back = CUBE_AABB.contract(normal.x * 0.875d, normal.y * 0.875d, normal.z * 0.875d).move(normalScaled14);

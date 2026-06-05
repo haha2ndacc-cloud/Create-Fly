@@ -231,7 +231,7 @@ public class PulleyScenes {
         scene.title("rope_pulley_multi_rope", "Synchronised Pulley Movement");
         scene.configureBasePlate(0, 0, 5);
         scene.setSceneOffsetY(-1);
-        scene.scaleSceneView(.95f);
+        scene.scaleSceneView(0.95f);
         scene.world().showSection(util.select().layer(0), Direction.UP);
         scene.idle(5);
 

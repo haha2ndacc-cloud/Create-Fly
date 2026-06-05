@@ -56,7 +56,7 @@ public class RequesterAndShopScenes {
         AABB bb1 = new AABB(link.below(2));
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.BLUE, link, bb1.deflate(0.45), 10);
         scene.idle(1);
-        bb1 = bb1.deflate(1 / 16f).contract(0, 8 / 16f, 0);
+        bb1 = bb1.deflate(1 / 16.0f).contract(0, 8 / 16.0f, 0);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.BLUE, link, bb1, 50);
         scene.idle(26);
 
@@ -73,8 +73,8 @@ public class RequesterAndShopScenes {
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, link, bb1, 40);
         scene.overlay().showLine(
             PonderPalette.GREEN,
-            util.vector().centerOf(req).subtract(0, 1 / 4f, 0),
-            util.vector().centerOf(link.below(2)).subtract(0, 1 / 4f, 0),
+            util.vector().centerOf(req).subtract(0, 1 / 4.0f, 0),
+            util.vector().centerOf(link.below(2)).subtract(0, 1 / 4.0f, 0),
             40
         );
         scene.idle(60);
@@ -85,7 +85,7 @@ public class RequesterAndShopScenes {
         scene.idle(8);
         scene.world().showSection(packS, Direction.NORTH);
         scene.idle(3);
-        scene.world().moveSection(linkL, util.vector().of(0, -.25, 0), 10);
+        scene.world().moveSection(linkL, util.vector().of(0, -0.25, 0), 10);
         scene.idle(10);
         scene.world().cycleBlockProperty(pack, PackagerBlock.LINKED);
         scene.effects().indicateSuccess(pack);

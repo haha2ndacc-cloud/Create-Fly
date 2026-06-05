@@ -78,7 +78,8 @@ public class SignalRenderer implements BlockEntityRenderer<SignalBlockEntity, Si
         }
         TrackBlockRenderer renderer = AllTrackRenders.get(trackBlock);
         if (renderer != null) {
-            RenderedTrackOverlayType type = overlayState == OverlayState.DUAL ? RenderedTrackOverlayType.DUAL_SIGNAL : RenderedTrackOverlayType.SIGNAL;
+            RenderedTrackOverlayType type = overlayState == OverlayState.DUAL ? RenderedTrackOverlayType.DUAL_SIGNAL :
+                RenderedTrackOverlayType.SIGNAL;
             state.block = renderer.getRenderState(
                 level, new Vec3(
                     targetPosition.getX() - state.blockPos.getX(),

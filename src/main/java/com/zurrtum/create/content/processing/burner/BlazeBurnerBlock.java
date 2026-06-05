@@ -204,7 +204,8 @@ public class BlazeBurnerBlock extends HorizontalDirectionalBlock implements IBE<
             if (!world.isClientSide()) {
                 stack.shrink(1);
             }
-            return InteractionResult.SUCCESS.heldItemTransformedTo(container != null ? container.create() : ItemStack.EMPTY);
+            return InteractionResult.SUCCESS.heldItemTransformedTo(
+                container != null ? container.create() : ItemStack.EMPTY);
         }
         return InteractionResult.SUCCESS.heldItemTransformedTo(ItemStack.EMPTY);
     }
@@ -217,7 +218,8 @@ public class BlazeBurnerBlock extends HorizontalDirectionalBlock implements IBE<
         if (!(item instanceof BlazeBurnerBlockItem)) {
             return defaultState;
         }
-        HeatLevel initialHeat = ((BlazeBurnerBlockItem) item).hasCapturedBlaze() ? HeatLevel.SMOULDERING : HeatLevel.NONE;
+        HeatLevel initialHeat =
+            ((BlazeBurnerBlockItem) item).hasCapturedBlaze() ? HeatLevel.SMOULDERING : HeatLevel.NONE;
         return defaultState.setValue(HEAT_LEVEL, initialHeat)
             .setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
@@ -281,7 +283,7 @@ public class BlazeBurnerBlock extends HorizontalDirectionalBlock implements IBE<
     }
 
     public static HeatLevel getHeatLevelOf(BlockState blockState) {
-        return blockState.hasProperty(BlazeBurnerBlock.HEAT_LEVEL) ? blockState.getValue(BlazeBurnerBlock.HEAT_LEVEL) : HeatLevel.NONE;
+        return blockState.hasProperty(HEAT_LEVEL) ? blockState.getValue(HEAT_LEVEL) : HeatLevel.NONE;
     }
 
     public static int getLight(BlockState state) {
@@ -333,7 +335,7 @@ public class BlazeBurnerBlock extends HorizontalDirectionalBlock implements IBE<
         }
 
         public boolean isAtLeast(HeatLevel heatLevel) {
-            return this.ordinal() >= heatLevel.ordinal();
+            return ordinal() >= heatLevel.ordinal();
         }
 
         public HeatLevel nextActiveLevel() {

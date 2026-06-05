@@ -38,10 +38,12 @@ public interface CreateStreamCodecs {
     }
 
     StreamCodec<FriendlyByteBuf, byte[]> UNBOUNDED_BYTE_ARRAY = new StreamCodec<>() {
+        @Override
         public byte[] decode(FriendlyByteBuf buf) {
             return buf.readByteArray();
         }
 
+        @Override
         public void encode(FriendlyByteBuf buf, byte[] data) {
             buf.writeByteArray(data);
         }

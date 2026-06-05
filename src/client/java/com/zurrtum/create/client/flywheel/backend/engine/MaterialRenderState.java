@@ -1,6 +1,9 @@
 package com.zurrtum.create.client.flywheel.backend.engine;
 
-import com.mojang.blaze3d.opengl.*;
+import com.mojang.blaze3d.opengl.GlDevice;
+import com.mojang.blaze3d.opengl.GlSampler;
+import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.blaze3d.opengl.GlTexture;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -185,11 +188,11 @@ public final class MaterialRenderState {
             Collections.singletonList((GlTexture) target.getColorTexture()),
             target.useDepth ? (GlTexture) target.getDepthTexture() : null
         );
-        GlStateManager._glBindFramebuffer(GlConst.GL_FRAMEBUFFER, fbo);
+        GlStateManager._glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     }
 
     private static void resetFrameBuffer() {
-        GlStateManager._glBindFramebuffer(GlConst.GL_FRAMEBUFFER, 0);
+        GlStateManager._glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     private static void resetTexture() {

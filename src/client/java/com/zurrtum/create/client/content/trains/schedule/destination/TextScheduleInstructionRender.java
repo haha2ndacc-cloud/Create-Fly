@@ -21,6 +21,7 @@ public abstract class TextScheduleInstructionRender<T extends TextScheduleInstru
         );
     }
 
+    @Override
     public void initConfigurationWidgets(T input, ModularGuiLineBuilder builder) {
         builder.addTextInput(0, 121, (e, t) -> modifyEditBox(e), "Text");
     }

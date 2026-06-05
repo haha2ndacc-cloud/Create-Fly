@@ -38,7 +38,8 @@ public class NbtReadContext extends ValueInputContextHelper {
         @Override
         @SuppressWarnings("unchecked")
         public <V> RegistryOps<V> createSerializationContext(DynamicOps<V> delegate) {
-            return ops != null ? (RegistryOps<V>) ops : HolderLookup.Provider.super.createSerializationContext(delegate);
+            return ops != null ? (RegistryOps<V>) ops :
+                HolderLookup.Provider.super.createSerializationContext(delegate);
         }
     }
 }

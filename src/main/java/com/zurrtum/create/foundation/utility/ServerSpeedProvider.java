@@ -5,7 +5,7 @@ import com.zurrtum.create.infrastructure.packet.s2c.ServerSpeedPacket;
 import net.minecraft.server.MinecraftServer;
 
 public class ServerSpeedProvider {
-    private static int serverTimer = 0;
+    private static int serverTimer;
     private static int syncInterval = getSyncInterval();
     private static ServerSpeedPacket speedPacket = new ServerSpeedPacket(syncInterval);
 

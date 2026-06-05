@@ -6,10 +6,10 @@ import com.zurrtum.create.client.AllSpriteShifts;
 import com.zurrtum.create.client.foundation.block.connected.CTSpriteShiftEntry;
 import com.zurrtum.create.client.foundation.block.connected.ConnectedTextureBehaviour;
 import com.zurrtum.create.content.contraptions.chassis.LinearChassisBlock;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -23,7 +23,8 @@ public class ChassisCTBehaviour extends ConnectedTextureBehaviour.Base {
         Block block = state.getBlock();
         BooleanProperty glueableSide = ((LinearChassisBlock) block).getGlueableSide(state, direction);
         if (glueableSide == null) {
-            return state.is(AllBlocks.LINEAR_CHASSIS) ? AllSpriteShifts.CHASSIS_SIDE : AllSpriteShifts.SECONDARY_CHASSIS_SIDE;
+            return state.is(AllBlocks.LINEAR_CHASSIS) ? AllSpriteShifts.CHASSIS_SIDE :
+                AllSpriteShifts.SECONDARY_CHASSIS_SIDE;
         }
         return state.getValue(glueableSide) ? AllSpriteShifts.CHASSIS_STICKY : AllSpriteShifts.CHASSIS;
     }
@@ -40,12 +41,9 @@ public class ChassisCTBehaviour extends ConnectedTextureBehaviour.Base {
     @Override
     protected Direction getRightDirection(BlockAndTintGetter reader, BlockPos pos, BlockState state, Direction face) {
         Direction.Axis axis = state.getValue(BlockStateProperties.AXIS);
-        return axis != face.getAxis() && axis.isHorizontal() ? (face.getAxis()
-            .isHorizontal() ? Direction.DOWN : (axis == Direction.Axis.X ? Direction.NORTH : Direction.EAST)) : super.getRightDirection(reader,
-            pos,
-            state,
-            face
-        );
+        return axis != face.getAxis() && axis.isHorizontal() ? face.getAxis().isHorizontal() ? Direction.DOWN :
+            axis == Direction.Axis.X ? Direction.NORTH : Direction.EAST :
+            super.getRightDirection(reader, pos, state, face);
     }
 
     @Override
@@ -67,7 +65,7 @@ public class ChassisCTBehaviour extends ConnectedTextureBehaviour.Base {
     public boolean reverseUVs(BlockState state, Direction face) {
         Direction.Axis axis = state.getValue(BlockStateProperties.AXIS);
         boolean end = face.getAxis() == axis;
-        if (end && axis.isHorizontal() && (face.getAxisDirection() == Direction.AxisDirection.POSITIVE)) {
+        if (end && axis.isHorizontal() && face.getAxisDirection() == Direction.AxisDirection.POSITIVE) {
             return true;
         }
         if (!end && axis.isHorizontal() && face == Direction.DOWN) {
@@ -86,14 +84,8 @@ public class ChassisCTBehaviour extends ConnectedTextureBehaviour.Base {
         Direction face
     ) {
         Direction.Axis axis = state.getValue(BlockStateProperties.AXIS);
-        boolean superConnect = face.getAxis() == axis ? super.connectsTo(
-            state,
-            other,
-            reader,
-            pos,
-            otherPos,
-            face
-        ) : state.is(other.getBlock());
+        boolean superConnect = face.getAxis() == axis ? super.connectsTo(state, other, reader, pos, otherPos, face) :
+            state.is(other.getBlock());
         return superConnect && axis == other.getValue(BlockStateProperties.AXIS);
     }
 

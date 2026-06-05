@@ -40,7 +40,7 @@ public class BeltInventory {
     @Nullable TransportedItemStack lazyClientItem;
 
     public BeltInventory(BeltBlockEntity be) {
-        this.belt = be;
+        belt = be;
         items = new LinkedList<>();
         toInsert = new LinkedList<>();
         toRemove = new LinkedList<>();
@@ -130,10 +130,8 @@ public class BeltInventory {
                 if (Math.abs(diff) <= spacing) {
                     noMovement = true;
                 }
-                movement = beltMovementPositive ? Math.min(movement, diff - spacing) : Math.max(
-                    movement,
-                    diff + spacing
-                );
+                movement =
+                    beltMovementPositive ? Math.min(movement, diff - spacing) : Math.max(movement, diff + spacing);
             }
 
             // Don't move beyond the edge
@@ -144,10 +142,8 @@ public class BeltInventory {
                 }
                 diffToEnd += beltMovementPositive ? -ending.margin : ending.margin;
             }
-            float limitedMovement = beltMovementPositive ? Math.min(movement, diffToEnd) : Math.max(
-                movement,
-                diffToEnd
-            );
+            float limitedMovement =
+                beltMovementPositive ? Math.min(movement, diffToEnd) : Math.max(movement, diffToEnd);
             float nextOffset = currentItem.beltPosition + limitedMovement;
 
             // Belt item processing
@@ -189,7 +185,7 @@ public class BeltInventory {
             currentItem.beltPosition += limitedMovement;
             float diffToMiddle = currentItem.getTargetSideOffset() - currentItem.sideOffset;
             currentItem.sideOffset += Mth.clamp(
-                diffToMiddle * Math.abs(limitedMovement) * 6f,
+                diffToMiddle * Math.abs(limitedMovement) * 6.0f,
                 -Math.abs(diffToMiddle),
                 Math.abs(diffToMiddle)
             );
@@ -293,11 +289,12 @@ public class BeltInventory {
         }
 
         // See if any new belt processing catches the item
-        if (currentItem.beltPosition > .5f || beltMovementPositive) {
-            int firstUpcomingSegment = (int) (currentItem.beltPosition + (beltMovementPositive ? .5f : -.5f));
+        if (currentItem.beltPosition > 0.5f || beltMovementPositive) {
+            int firstUpcomingSegment = (int) (currentItem.beltPosition + (beltMovementPositive ? 0.5f : -0.5f));
             int step = beltMovementPositive ? 1 : -1;
 
-            for (int segment = firstUpcomingSegment; beltMovementPositive ? segment + .5f <= nextOffset : segment + .5f >= nextOffset; segment += step) {
+            for (int segment = firstUpcomingSegment;
+                 beltMovementPositive ? segment + 0.5f <= nextOffset : segment + 0.5f >= nextOffset; segment += step) {
 
                 BeltProcessingBehaviour processingBehaviour = getBeltProcessingAtSegment(segment);
                 TransportedItemStackHandlerBehaviour stackHandlerBehaviour = getTransportedItemStackHandlerAtSegment(
@@ -322,7 +319,7 @@ public class BeltInventory {
                 }
 
                 if (result == ProcessingResult.HOLD) {
-                    currentItem.beltPosition = segment + .5f + (beltMovementPositive ? 1 / 512f : -1 / 512f);
+                    currentItem.beltPosition = segment + 0.5f + (beltMovementPositive ? 1 / 512.0f : -1 / 512.0f);
                     currentItem.locked = true;
                     belt.notifyUpdate();
                     return false;
@@ -352,12 +349,12 @@ public class BeltInventory {
     }
 
     private enum Ending {
-        UNRESOLVED(0), EJECT(0), INSERT(.25f), FUNNEL(.5f), BLOCKED(.45f);
+        UNRESOLVED(0), EJECT(0), INSERT(0.25f), FUNNEL(0.5f), BLOCKED(0.45f);
 
         private final float margin;
 
         Ending(float f) {
-            this.margin = f;
+            margin = f;
         }
     }
 
@@ -401,9 +398,9 @@ public class BeltInventory {
             return false;
         }
         if (belt.getMovementFacing() != side) {
-            segmentPos += .5f;
+            segmentPos += 0.5f;
         } else if (!beltMovementPositive) {
-            segmentPos += 1f;
+            segmentPos += 1.0f;
         }
 
         for (TransportedItemStack stack : items) {
@@ -422,7 +419,8 @@ public class BeltInventory {
 
     private boolean isBlocking(int segment, Direction side, float segmentPos, TransportedItemStack stack) {
         float currentPos = stack.beltPosition;
-        if (stack.insertedAt == segment && stack.insertedFrom == side && (beltMovementPositive ? currentPos <= segmentPos + 1 : currentPos >= segmentPos - 1)) {
+        if (stack.insertedAt == segment && stack.insertedFrom == side && (beltMovementPositive ?
+            currentPos <= segmentPos + 1 : currentPos >= segmentPos - 1)) {
             return true;
         }
         return false;
@@ -491,10 +489,10 @@ public class BeltInventory {
     public void eject(TransportedItemStack stack) {
         ItemStack ejected = stack.stack;
         Vec3 outPos = BeltHelper.getVectorForOffset(belt, stack.beltPosition);
-        float movementSpeed = Math.max(Math.abs(belt.getBeltMovementSpeed()), 1 / 8f);
-        Vec3 outMotion = Vec3.atLowerCornerOf(belt.getBeltChainDirection()).scale(movementSpeed).add(0, 1 / 8f, 0);
+        float movementSpeed = Math.max(Math.abs(belt.getBeltMovementSpeed()), 1 / 8.0f);
+        Vec3 outMotion = Vec3.atLowerCornerOf(belt.getBeltChainDirection()).scale(movementSpeed).add(0, 1 / 8.0f, 0);
         outPos = outPos.add(outMotion.normalize().scale(0.001));
-        ItemEntity entity = new ItemEntity(belt.getLevel(), outPos.x, outPos.y + 6 / 16f, outPos.z, ejected);
+        ItemEntity entity = new ItemEntity(belt.getLevel(), outPos.x, outPos.y + 6 / 16.0f, outPos.z, ejected);
         entity.setDeltaMovement(outMotion);
         entity.setDefaultPickUpDelay();
         entity.hurtMarked = true;
@@ -528,7 +526,7 @@ public class BeltInventory {
             dirty = true;
             if (result.hasHeldOutput()) {
                 TransportedItemStack held = result.getHeldOutput();
-                held.beltPosition = ((int) position) + .5f - (beltMovementPositive ? 1 / 512f : -1 / 512f);
+                held.beltPosition = (int) position + 0.5f - (beltMovementPositive ? 1 / 512.0f : -1 / 512.0f);
                 toInsert.add(held);
             }
             toInsert.addAll(result.getOutputs());

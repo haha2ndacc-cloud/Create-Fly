@@ -141,13 +141,7 @@ public class GirderBlock extends Block implements SimpleWaterloggedBlock, IWrenc
 
     @Override
     public void tick(BlockState p_60462_, ServerLevel p_60463_, BlockPos p_60464_, RandomSource p_60465_) {
-        Block.updateOrDestroy(
-            p_60462_,
-            Block.updateFromNeighbourShapes(p_60462_, p_60463_, p_60464_),
-            p_60463_,
-            p_60464_,
-            3
-        );
+        updateOrDestroy(p_60462_, updateFromNeighbourShapes(p_60462_, p_60463_, p_60464_), p_60463_, p_60464_, 3);
     }
 
     @Override
@@ -168,7 +162,8 @@ public class GirderBlock extends Block implements SimpleWaterloggedBlock, IWrenc
 
         if (direction.getAxis() != Axis.Y) {
             if (state.getValue(AXIS) != direction.getAxis()) {
-                Property<Boolean> updateProperty = axis == Axis.X ? X : axis == Axis.Z ? Z : direction == Direction.UP ? TOP : BOTTOM;
+                Property<Boolean> updateProperty =
+                    axis == Axis.X ? X : axis == Axis.Z ? Z : direction == Direction.UP ? TOP : BOTTOM;
                 if (!isConnected(world, pos, state, direction) && !isConnected(
                     world,
                     pos,
@@ -286,8 +281,8 @@ public class GirderBlock extends Block implements SimpleWaterloggedBlock, IWrenc
             canAttach = true;
         } else if (sideState.getBlock() instanceof FlapDisplayBlock) {
             canAttach = true;
-        } else if (sideState.getBlock() instanceof LanternBlock && (d == Direction.DOWN) == (sideState.getValue(
-            LanternBlock.HANGING))) {
+        } else if (sideState.getBlock() instanceof LanternBlock && (d == Direction.DOWN) == sideState.getValue(
+            LanternBlock.HANGING)) {
             canAttach = true;
         } else if (sideState.getBlock() instanceof ChainBlock && sideState.getValue(ChainBlock.AXIS) == Axis.Y) {
             canAttach = true;
@@ -314,21 +309,21 @@ public class GirderBlock extends Block implements SimpleWaterloggedBlock, IWrenc
     }
 
     public static boolean isXGirder(BlockState state) {
-        return (state.getBlock() instanceof GirderBlock && state.getValue(X)) || (state.getBlock() instanceof GirderEncasedShaftBlock && state.getValue(
-            GirderEncasedShaftBlock.HORIZONTAL_AXIS) == Axis.Z);
+        return state.getBlock() instanceof GirderBlock && state.getValue(X) || state.getBlock() instanceof GirderEncasedShaftBlock && state.getValue(
+            GirderEncasedShaftBlock.HORIZONTAL_AXIS) == Axis.Z;
     }
 
     public static boolean isZGirder(BlockState state) {
-        return (state.getBlock() instanceof GirderBlock && state.getValue(Z)) || (state.getBlock() instanceof GirderEncasedShaftBlock && state.getValue(
-            GirderEncasedShaftBlock.HORIZONTAL_AXIS) == Axis.X);
+        return state.getBlock() instanceof GirderBlock && state.getValue(Z) || state.getBlock() instanceof GirderEncasedShaftBlock && state.getValue(
+            GirderEncasedShaftBlock.HORIZONTAL_AXIS) == Axis.X;
     }
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        boolean x = state.getValue(GirderBlock.X);
-        boolean z = state.getValue(GirderBlock.Z);
-        return x ? z ? AllShapes.GIRDER_CROSS : AllShapes.GIRDER_BEAM.get(Axis.X) : z ? AllShapes.GIRDER_BEAM.get(Axis.Z) : AllShapes.EIGHT_VOXEL_POLE.get(
-            Axis.Y);
+        boolean x = state.getValue(X);
+        boolean z = state.getValue(Z);
+        return x ? z ? AllShapes.GIRDER_CROSS : AllShapes.GIRDER_BEAM.get(Axis.X) :
+            z ? AllShapes.GIRDER_BEAM.get(Axis.Z) : AllShapes.EIGHT_VOXEL_POLE.get(Axis.Y);
     }
 
     @Override
@@ -362,7 +357,7 @@ public class GirderBlock extends Block implements SimpleWaterloggedBlock, IWrenc
         if (shape.isEmpty()) {
             return false;
         }
-        if (Block.isFaceFull(shape, side.getOpposite()) && blockState.isSolid()) {
+        if (isFaceFull(shape, side.getOpposite()) && blockState.isSolid()) {
             return true;
         }
         return AbstractChuteBlock.getChuteFacing(blockState) == Direction.DOWN;

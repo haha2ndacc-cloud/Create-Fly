@@ -215,8 +215,7 @@ public class ClipboardValueSettingsHandler {
     ) {
         if (simulate) {
             return cc.canWrite(registryManager, side);
-        } else {
-            return cc.writeToClipboard(writeView.child(cc.getClipboardKey()), side);
         }
+        return cc.writeToClipboard(writeView.child(cc.getClipboardKey()), side);
     }
 }

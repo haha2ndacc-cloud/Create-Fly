@@ -43,7 +43,7 @@ public interface ITrackBlock {
     }
 
     default double getElevationAtCenter(BlockGetter world, BlockPos pos, BlockState state) {
-        return isSlope(world, pos, state) ? .5 : 0;
+        return isSlope(world, pos, state) ? 0.5 : 0;
     }
 
     static Collection<DiscoveredLocation> walkConnectedTracks(
@@ -51,8 +51,9 @@ public interface ITrackBlock {
         TrackNodeLocation location,
         boolean linear
     ) {
-        BlockGetter world = location != null && worldIn instanceof ServerLevel sl ? sl.getServer()
-            .getLevel(location.dimension) : worldIn;
+        BlockGetter world =
+            location != null && worldIn instanceof ServerLevel sl ? sl.getServer().getLevel(location.dimension) :
+                worldIn;
         List<DiscoveredLocation> list = new ArrayList<>();
         for (BlockPos blockPos : location.allAdjacent()) {
             BlockState blockState = world.getBlockState(blockPos);
@@ -70,8 +71,9 @@ public interface ITrackBlock {
         boolean linear,
         @Nullable TrackNodeLocation connectedTo
     ) {
-        BlockGetter world = connectedTo != null && worldIn instanceof ServerLevel sl ? sl.getServer()
-            .getLevel(connectedTo.dimension) : worldIn;
+        BlockGetter world =
+            connectedTo != null && worldIn instanceof ServerLevel sl ? sl.getServer().getLevel(connectedTo.dimension) :
+                worldIn;
         Vec3 center = Vec3.atBottomCenterOf(pos).add(0, getElevationAtCenter(world, pos, state), 0);
         List<DiscoveredLocation> list = new ArrayList<>();
         TrackShape shape = state.getValue(TrackBlock.SHAPE);
@@ -79,7 +81,8 @@ public interface ITrackBlock {
 
         trackAxes.forEach(axis -> {
             BiFunction<Double, Boolean, Vec3> offsetFactory = (d, b) -> axis.scale(b ? d : -d).add(center);
-            Function<Boolean, ResourceKey<Level>> dimensionFactory = b -> world instanceof Level l ? l.dimension() : Level.OVERWORLD;
+            Function<Boolean, ResourceKey<Level>> dimensionFactory = b -> world instanceof Level l ? l.dimension() :
+                Level.OVERWORLD;
             Function<Vec3, Integer> yOffsetFactory = v -> getYOffsetAt(world, pos, state, v);
 
             addToListIfConnected(

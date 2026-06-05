@@ -66,7 +66,7 @@ public class SeatMovementBehaviour extends MovementBehaviour {
             return;
         }
         toDismount.stopRiding();
-        Vec3 position = VecHelper.getCenterOf(pos).add(0, slab ? .5f : 1f, 0);
+        Vec3 position = VecHelper.getCenterOf(pos).add(0, slab ? 0.5f : 1.0f, 0);
         toDismount.teleportTo(position.x, position.y, position.z);
         if (toDismount instanceof LivingEntity entity) {
             AllSynchedDatas.CONTRAPTION_DISMOUNT_LOCATION.set(entity, Optional.empty());

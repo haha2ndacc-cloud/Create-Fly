@@ -18,7 +18,7 @@ public class AirCurrentClient {
 
         isClientPlayerInAirCurrent = true;
 
-        float pitch = (float) Mth.clamp(e.getDeltaMovement().length() * .5f, .5f, 2f);
+        float pitch = (float) Mth.clamp(e.getDeltaMovement().length() * 0.5f, 0.5f, 2.0f);
 
         if (flyingSound == null || flyingSound.isStopped()) {
             flyingSound = new AirCurrentSound(SoundEvents.ELYTRA_FLYING, pitch);

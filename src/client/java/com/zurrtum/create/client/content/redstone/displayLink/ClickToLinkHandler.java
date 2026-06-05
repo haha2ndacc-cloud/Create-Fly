@@ -15,8 +15,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public class ClickToLinkHandler {
-    private static @Nullable BlockPos lastShownPos = null;
-    private static @Nullable AABB lastShownAABB = null;
+    private static @Nullable BlockPos lastShownPos;
+    private static @Nullable AABB lastShownAABB;
 
     public static void clientTick(Minecraft mc) {
         Player player = mc.player;
@@ -43,7 +43,7 @@ public class ClickToLinkHandler {
             lastShownPos = selectedPos;
         }
 
-        Outliner.getInstance().showAABB("target", lastShownAABB).colored(0xffcb74).lineWidth(1 / 16f);
+        Outliner.getInstance().showAABB("target", lastShownAABB).colored(0xffcb74).lineWidth(1 / 16.0f);
     }
 
     public static AABB getSelectionBounds(Level world, BlockPos pos) {

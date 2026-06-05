@@ -54,7 +54,7 @@ public class AirCurrent {
         }
         Level world = source.getAirCurrentWorld();
         if (world != null && world.isClientSide()) {
-            float offset = pushing ? 0.5f : maxDistance + .5f;
+            float offset = pushing ? 0.5f : maxDistance + 0.5f;
             Vec3 pos = VecHelper.getCenterOf(source.getAirCurrentPos())
                 .add(Vec3.atLowerCornerOf(direction.getUnitVec3i()).scale(offset));
             AllClientHandle.INSTANCE.addAirFlowParticle(world, source.getAirCurrentPos(), pos.x, pos.y, pos.z);
@@ -74,7 +74,7 @@ public class AirCurrent {
 
             Vec3i flow = (pushing ? direction : direction.getOpposite()).getUnitVec3i();
             float speed = Math.abs(source.getSpeed());
-            float sneakModifier = entity.isShiftKeyDown() ? 4096f : 512f;
+            float sneakModifier = entity.isShiftKeyDown() ? 4096.0f : 512.0f;
             double entityDistance = VecHelper.alignedDistanceToFace(
                 entity.position(),
                 source.getAirCurrentPos(),
@@ -91,10 +91,10 @@ public class AirCurrent {
             double yIn = Mth.clamp(flow.getY() * acceleration - previousMotion.y, -maxAcceleration, maxAcceleration);
             double zIn = Mth.clamp(flow.getZ() * acceleration - previousMotion.z, -maxAcceleration, maxAcceleration);
 
-            entity.setDeltaMovement(previousMotion.add(new Vec3(xIn, yIn, zIn).scale(1 / 8f)));
+            entity.setDeltaMovement(previousMotion.add(new Vec3(xIn, yIn, zIn).scale(1 / 8.0f)));
             entity.fallDistance = 0;
             if (world != null && world.isClientSide()) {
-                AllClientHandle.INSTANCE.enableClientPlayerSound(entity, Mth.clamp(speed / 128f * .4f, 0.01f, .4f));
+                AllClientHandle.INSTANCE.enableClientPlayerSound(entity, Mth.clamp(speed / 128.0f * 0.4f, 0.01f, 0.4f));
             }
 
             if (entity instanceof ServerPlayer serverPlayer) {
@@ -173,7 +173,7 @@ public class AirCurrent {
 
         Level world = source.getAirCurrentWorld();
         BlockPos start = source.getAirCurrentPos();
-        float max = this.maxDistance;
+        float max = maxDistance;
         Direction facing = direction;
         Vec3 directionVec = Vec3.atLowerCornerOf(facing.getUnitVec3i());
         maxDistance = getFlowLimit(world, start, max, facing);
@@ -252,7 +252,7 @@ public class AirCurrent {
             if (shapeDepth == Double.POSITIVE_INFINITY) {
                 continue;
             }
-            return Math.min((float) (i + shapeDepth + 1 / 32d), max);
+            return Math.min((float) (i + shapeDepth + 1 / 32.0d), max);
         }
 
         return max;
@@ -299,11 +299,10 @@ public class AirCurrent {
     }
 
     private int getLimit() {
-        if ((float) (int) maxDistance == maxDistance) {
+        if ((int) maxDistance == maxDistance) {
             return (int) maxDistance;
-        } else {
-            return (int) maxDistance + 1;
         }
+        return (int) maxDistance + 1;
     }
 
     public void findAffectedHandlers() {

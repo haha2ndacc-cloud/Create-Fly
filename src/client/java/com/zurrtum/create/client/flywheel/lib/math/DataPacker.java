@@ -17,7 +17,7 @@ public final class DataPacker {
      * Unpack an unsigned, normalized byte to a float.
      */
     public static float unpackNormU8(byte b) {
-        return (float) (Byte.toUnsignedInt(b)) / 255f;
+        return Byte.toUnsignedInt(b) / 255.0f;
     }
 
     /**
@@ -31,7 +31,7 @@ public final class DataPacker {
      * Unpack a signed, normalized byte to a float.
      */
     public static float unpackNormI8(byte b) {
-        return (float) b / 127f;
+        return b / 127.0f;
     }
 
     /**
@@ -45,7 +45,7 @@ public final class DataPacker {
      * Unpack an unsigned, normalized short to a float.
      */
     public static float unpackNormU16(short s) {
-        return (float) (Short.toUnsignedInt(s)) / 65535f;
+        return Short.toUnsignedInt(s) / 65535.0f;
     }
 
     /**
@@ -59,6 +59,6 @@ public final class DataPacker {
      * Unpack a signed, normalized byte to a float.
      */
     public static float unpackNormI16(short s) {
-        return (float) s / 32767f;
+        return s / 32767.0f;
     }
 }

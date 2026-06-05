@@ -62,11 +62,10 @@ public class SimpleMountedStorage extends WrapperMountedItemStorage<ItemStackHan
      * It is highly recommended to call super in overrides.
      */
     protected Optional<Container> validate(Container handler) {
-        if (handler.getContainerSize() == this.getContainerSize()) {
+        if (handler.getContainerSize() == getContainerSize()) {
             return Optional.of(handler);
-        } else {
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     public static <T extends SimpleMountedStorage> MapCodec<T> codec(Function<Container, T> factory) {

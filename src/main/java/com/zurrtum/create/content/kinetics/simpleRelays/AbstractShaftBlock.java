@@ -23,7 +23,7 @@ public abstract class AbstractShaftBlock extends RotatedPillarKineticBlock imple
 
     public AbstractShaftBlock(Properties properties) {
         super(properties);
-        registerDefaultState(super.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
+        registerDefaultState(defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
     }
 
     @Override

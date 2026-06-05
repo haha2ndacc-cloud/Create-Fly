@@ -51,7 +51,7 @@ public class LinkRenderer {
         Component freq2 = CreateLang.translateDirect("logistics.secondFrequency");
 
         for (boolean first : Iterate.trueAndFalse) {
-            AABB bb = new AABB(Vec3.ZERO, Vec3.ZERO).inflate(.25f);
+            AABB bb = new AABB(Vec3.ZERO, Vec3.ZERO).inflate(0.25f);
             Component label = first ? freq1 : freq2;
             boolean hit = behaviour.testHit(first, target.getLocation());
             ValueBoxTransform transform = first ? behaviour.firstSlot : behaviour.secondSlot;
@@ -72,7 +72,8 @@ public class LinkRenderer {
 
             List<MutableComponent> tip = new ArrayList<>();
             tip.add(label.copy());
-            tip.add(CreateLang.translateDirect(empty ? "logistics.filter.click_to_set" : "logistics.filter.click_to_replace"));
+            tip.add(CreateLang.translateDirect(
+                empty ? "logistics.filter.click_to_set" : "logistics.filter.click_to_replace"));
             Create.VALUE_SETTINGS_HANDLER.showHoverTip(mc, tip);
         }
     }

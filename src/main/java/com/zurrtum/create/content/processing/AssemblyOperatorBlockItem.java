@@ -43,9 +43,9 @@ public class AssemblyOperatorBlockItem extends BlockItem {
         return new AssemblyOperatorUseContext(
             context.getLevel(), context.getPlayer(), context.getHand(), context.getItemInHand(), new BlockHitResult(
             new Vec3(
-                (double) up.getX() + 0.5D + (double) Direction.UP.getStepX() * 0.5D,
-                (double) up.getY() + 0.5D + (double) Direction.UP.getStepY() * 0.5D,
-                (double) up.getZ() + 0.5D + (double) Direction.UP.getStepZ() * 0.5D
+                up.getX() + 0.5D + Direction.UP.getStepX() * 0.5D,
+                up.getY() + 0.5D + Direction.UP.getStepY() * 0.5D,
+                up.getZ() + 0.5D + Direction.UP.getStepZ() * 0.5D
             ), Direction.UP, up, false
         )
         );

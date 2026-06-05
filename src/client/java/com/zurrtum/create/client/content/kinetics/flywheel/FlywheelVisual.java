@@ -65,7 +65,7 @@ public class FlywheelVisual extends KineticBlockEntityVisual<FlywheelBlockEntity
 
         float partialTicks = ctx.partialTick();
 
-        float speed = blockEntity.visualSpeed.getValue(partialTicks) * 3 / 10f;
+        float speed = blockEntity.visualSpeed.getValue(partialTicks) * 3 / 10.0f;
         float angle = blockEntity.angle + speed * partialTicks;
 
         if (Math.abs(angle - lastAngle) < 0.001) {

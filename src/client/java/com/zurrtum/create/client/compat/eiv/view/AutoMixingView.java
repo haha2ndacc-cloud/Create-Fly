@@ -43,7 +43,7 @@ public class AutoMixingView extends CreateView {
     protected int placeViewSlots(SlotDefinition slotDefinition) {
         int i = 0;
         for (int size = ingredients.size(), xOffset = size < 3 ? (3 - size) * 19 / 2 : 0; i < size; i++) {
-            slotDefinition.addItemSlot(i, 12 + xOffset + (i % 3) * 19, 48 - (i / 3) * 19);
+            slotDefinition.addItemSlot(i, 12 + xOffset + i % 3 * 19, 48 - i / 3 * 19);
         }
         slotDefinition.addItemSlot(i++, 142, 48);
         return i;

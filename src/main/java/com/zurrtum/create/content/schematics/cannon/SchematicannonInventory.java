@@ -15,7 +15,7 @@ public class SchematicannonInventory implements ItemInventory {
 
     public SchematicannonInventory(SchematicannonBlockEntity blockEntity) {
         this.blockEntity = blockEntity;
-        this.stacks = NonNullList.withSize(5, ItemStack.EMPTY);
+        stacks = NonNullList.withSize(5, ItemStack.EMPTY);
     }
 
     @Override

@@ -111,25 +111,21 @@ public final class FlwDebugInfo {
 
         appendLine(out, "Count: ").append(instancers.size());
 
-        {
-            IntList meshCountsToSort = new IntArrayList();
-            for (var instancerKey : instancers.keySet()) {
-                meshCountsToSort.add(instancerKey.model().meshes().size());
-            }
-            appendPercentiles(out, "Mesh Count Percentiles", meshCountsToSort);
+        IntList meshCountsToSort = new IntArrayList();
+        for (var instancerKey : instancers.keySet()) {
+            meshCountsToSort.add(instancerKey.model().meshes().size());
         }
+        appendPercentiles(out, "Mesh Count Percentiles", meshCountsToSort);
 
-        {
-            int totalInstanceCount = 0;
-            IntList instanceCountsToSort = new IntArrayList();
-            for (var instancer : instancers.values()) {
-                var instanceCount = instancer.instanceCount();
-                totalInstanceCount += instanceCount;
-                instanceCountsToSort.add(instanceCount);
-            }
-            appendLine(out, "Total Instance Count: ").append(totalInstanceCount);
-            appendPercentiles(out, "Instance Count Percentiles", instanceCountsToSort);
+        int totalInstanceCount = 0;
+        IntList instanceCountsToSort = new IntArrayList();
+        for (var instancer : instancers.values()) {
+            var instanceCount = instancer.instanceCount();
+            totalInstanceCount += instanceCount;
+            instanceCountsToSort.add(instanceCount);
         }
+        appendLine(out, "Total Instance Count: ").append(totalInstanceCount);
+        appendPercentiles(out, "Instance Count Percentiles", instanceCountsToSort);
     }
 
     private static void addMeshDebugInfo(StringBuilder out, DrawManager<? extends AbstractInstancer<?>> drawManager) {
@@ -141,19 +137,17 @@ public final class FlwDebugInfo {
 
         appendLine(out, "Count: ").append(numMeshes);
 
-        {
-            int totalVertices = 0;
-            IntList vertexCountsToSort = new IntArrayList();
-            for (var pooledMesh : meshPool) {
-                int vertexCount = pooledMesh.vertexCount();
+        int totalVertices = 0;
+        IntList vertexCountsToSort = new IntArrayList();
+        for (var pooledMesh : meshPool) {
+            int vertexCount = pooledMesh.vertexCount();
 
-                vertexCountsToSort.add(vertexCount);
-                totalVertices += vertexCount;
-            }
-
-            appendLine(out, "Total Vertex Count: ").append(totalVertices);
-            appendPercentiles(out, "Vertex Count Percentiles", vertexCountsToSort);
+            vertexCountsToSort.add(vertexCount);
+            totalVertices += vertexCount;
         }
+
+        appendLine(out, "Total Vertex Count: ").append(totalVertices);
+        appendPercentiles(out, "Vertex Count Percentiles", vertexCountsToSort);
     }
 
     private static void appendPercentiles(StringBuilder out, String prefix, IntList unsortedCounts) {

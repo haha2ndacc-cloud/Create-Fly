@@ -4,5 +4,5 @@ public class ImplDebugFlags {
     /**
      * Debug flag to globally turn beginFrame/tick off.
      */
-    public static boolean PAUSE_UPDATES = false;
+    public static boolean PAUSE_UPDATES;
 }

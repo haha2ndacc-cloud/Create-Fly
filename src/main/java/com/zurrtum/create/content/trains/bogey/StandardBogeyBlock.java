@@ -42,12 +42,12 @@ public class StandardBogeyBlock extends AbstractBogeyBlock<StandardBogeyBlockEnt
 
     @Override
     public double getWheelRadius() {
-        return (size == AllBogeySizes.LARGE ? 12.5 : 6.5) / 16d;
+        return (size == AllBogeySizes.LARGE ? 12.5 : 6.5) / 16.0d;
     }
 
     @Override
     public Vec3 getConnectorAnchorOffset() {
-        return new Vec3(0, 7 / 32f, 1);
+        return new Vec3(0, 7 / 32.0f, 1);
     }
 
     @Override

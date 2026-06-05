@@ -30,7 +30,7 @@ public class CustomRotationParticle extends SimpleAnimatedParticle {
 
     public void selectSpriteLoopingWithAge(SpriteSet sprite) {
         int loopFrame = age % loopLength;
-        this.setSprite(sprite.get(loopFrame, loopLength));
+        setSprite(sprite.get(loopFrame, loopLength));
     }
 
     public Quaternionf getCustomRotation(Camera camera, float partialTicks) {

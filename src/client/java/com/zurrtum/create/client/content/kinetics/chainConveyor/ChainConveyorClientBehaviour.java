@@ -85,11 +85,11 @@ public class ChainConveyorClientBehaviour extends ChainConveyorBehaviour {
                     .scale(1.5));
             }
             physicsData.motion = physicsData.motion.add(0, -0.25, 0).scale(0.75)
-                .add((box.worldPosition.subtract(physicsData.pos)).scale(0.25));
+                .add(box.worldPosition.subtract(physicsData.pos).scale(0.25));
             physicsData.pos = physicsData.pos.add(physicsData.motion);
         }
 
-        physicsData.targetPos = box.worldPosition.subtract(0, 9 / 16f, 0);
+        physicsData.targetPos = box.worldPosition.subtract(0, 9 / 16.0f, 0);
 
         if (physicsData.pos == null) {
             physicsData.pos = physicsData.targetPos;
@@ -97,7 +97,7 @@ public class ChainConveyorClientBehaviour extends ChainConveyorBehaviour {
             physicsData.prevTargetPos = physicsData.targetPos;
         }
 
-        physicsData.yaw = AngleHelper.angleLerp(.25, physicsData.yaw, box.yaw);
+        physicsData.yaw = AngleHelper.angleLerp(0.25, physicsData.yaw, box.yaw);
     }
 
     @Override

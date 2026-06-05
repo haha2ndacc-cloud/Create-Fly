@@ -142,7 +142,7 @@ public class FluidFillingBehaviour extends FluidManipulationBehaviour {
             .getValue(EnvironmentAttributes.WATER_EVAPORATES, root) && FluidHelper.isTag(fluid, FluidTags.WATER);
         boolean canPlaceSources = AllConfigs.server().fluids.fluidFillPlaceFluidSourceBlocks.get();
 
-        if ((!fillInfinite() && infinite) || evaporate || !canPlaceSources) {
+        if (!fillInfinite() && infinite || evaporate || !canPlaceSources) {
             FluidState fluidState = world.getFluidState(rootPos);
             boolean equivalentTo = fluidState.getType().isSame(fluid);
             if (!equivalentTo && !evaporate && canPlaceSources) {
@@ -284,11 +284,14 @@ public class FluidFillingBehaviour extends FluidManipulationBehaviour {
         FluidState fluidState = blockState.getFluidState();
 
         if (blockState.hasProperty(BlockStateProperties.WATERLOGGED)) {
-            return toFill.isSame(Fluids.WATER) ? blockState.getValue(BlockStateProperties.WATERLOGGED) ? SpaceType.FILLED : SpaceType.FILLABLE : SpaceType.BLOCKING;
+            return toFill.isSame(Fluids.WATER) ?
+                blockState.getValue(BlockStateProperties.WATERLOGGED) ? SpaceType.FILLED : SpaceType.FILLABLE :
+                SpaceType.BLOCKING;
         }
 
         if (blockState.getBlock() instanceof LiquidBlock) {
-            return blockState.getValue(LiquidBlock.LEVEL) == 0 ? toFill.isSame(fluidState.getType()) ? SpaceType.FILLED : SpaceType.BLOCKING : SpaceType.FILLABLE;
+            return blockState.getValue(LiquidBlock.LEVEL) == 0 ?
+                toFill.isSame(fluidState.getType()) ? SpaceType.FILLED : SpaceType.BLOCKING : SpaceType.FILLABLE;
         }
 
         if (fluidState.getType() != Fluids.EMPTY && blockState.getCollisionShape(
@@ -315,12 +318,10 @@ public class FluidFillingBehaviour extends FluidManipulationBehaviour {
             if (!pState.is(Blocks.NETHER_PORTAL) && !pState.is(Blocks.END_PORTAL) && !pState.is(Blocks.END_GATEWAY) && !pState.is(
                 Blocks.STRUCTURE_VOID)) {
                 return !pState.blocksMotion();
-            } else {
-                return false;
             }
-        } else {
             return false;
         }
+        return false;
     }
 
     protected BlockState updatePostWaterlogging(BlockState state) {

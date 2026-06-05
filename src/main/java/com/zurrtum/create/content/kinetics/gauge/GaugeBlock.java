@@ -111,11 +111,7 @@ public class GaugeBlock extends DirectionalAxisKineticBlock implements IBE<Gauge
         if (getRotationAxis(state) == Axis.Y && face != state.getValue(FACING)) {
             return false;
         }
-        return Block.shouldRenderFace(
-            state,
-            world.getBlockState(pos.relative(face)),
-            face
-        ) || world instanceof WrappedLevel;
+        return shouldRenderFace(state, world.getBlockState(pos.relative(face)), face) || world instanceof WrappedLevel;
     }
 
     @Override
@@ -139,14 +135,14 @@ public class GaugeBlock extends DirectionalAxisKineticBlock implements IBE<Gauge
             Vec3 positiveFaceVec = Vec3.atLowerCornerOf(positiveFacing.getUnitVec3i());
             int particleCount = gaugeBE.dialTarget > 1 ? 4 : 1;
 
-            if (particleCount == 1 && rand.nextFloat() > 1 / 4f) {
+            if (particleCount == 1 && rand.nextFloat() > 1 / 4.0f) {
                 continue;
             }
 
             for (int i = 0; i < particleCount; i++) {
-                Vec3 mul = VecHelper.offsetRandomly(Vec3.ZERO, rand, .25f)
-                    .multiply(new Vec3(1, 1, 1).subtract(positiveFaceVec)).normalize().scale(.3f);
-                Vec3 offset = VecHelper.getCenterOf(pos).add(faceVec.scale(.55)).add(mul);
+                Vec3 mul = VecHelper.offsetRandomly(Vec3.ZERO, rand, 0.25f)
+                    .multiply(new Vec3(1, 1, 1).subtract(positiveFaceVec)).normalize().scale(0.3f);
+                Vec3 offset = VecHelper.getCenterOf(pos).add(faceVec.scale(0.55)).add(mul);
                 worldIn.addParticle(
                     new DustParticleOptions(color, 1),
                     offset.x,

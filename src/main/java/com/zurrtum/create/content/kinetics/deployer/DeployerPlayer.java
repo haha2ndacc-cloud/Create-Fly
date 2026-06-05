@@ -22,9 +22,8 @@ public interface DeployerPlayer {
         );
         if (FakePlayerHandler.FABRIC) {
             return new DeployerFabricFakePlayer(world, profile);
-        } else {
-            return new DeployerFakePlayer(world, profile);
         }
+        return new DeployerFakePlayer(world, profile);
     }
 
     @Nullable Pair<BlockPos, Float> getBlockBreakingProgress();

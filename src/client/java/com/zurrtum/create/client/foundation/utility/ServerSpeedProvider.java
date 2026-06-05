@@ -5,8 +5,8 @@ import net.minecraft.client.Minecraft;
 
 public class ServerSpeedProvider {
     public static final LerpedFloat modifier = LerpedFloat.linear();
-    public static int clientTimer = 0;
-    public static boolean initialized = false;
+    public static int clientTimer;
+    public static boolean initialized;
 
     public static void clientTick(Minecraft mc) {
         if (mc.hasSingleplayerServer() && mc.isPaused()) {

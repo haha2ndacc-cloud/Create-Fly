@@ -67,9 +67,9 @@ public class PackagePortTargetSelectionHandler {
             return false;
         }
 
-        PackagePortTargetSelectionHandler.exactPositionOfTarget = Vec3.atCenterOf(pos);
-        PackagePortTargetSelectionHandler.activePackageTarget = new PackagePortTarget.TrainStationFrogportTarget(pos);
-        PackagePortTargetSelectionHandler.isPostbox = true;
+        exactPositionOfTarget = Vec3.atCenterOf(pos);
+        activePackageTarget = new PackagePortTarget.TrainStationFrogportTarget(pos);
+        isPostbox = true;
         return true;
     }
 
@@ -112,14 +112,14 @@ public class PackagePortTargetSelectionHandler {
             Color color = new Color(0x9ede73);
             animateConnection(mc, source, target, color);
             Outliner.getInstance().chaseAABB("ChainPointSelected", new AABB(target, target)).colored(color)
-                .lineWidth(1 / 5f).disableLineNormals();
+                .lineWidth(1 / 5.0f).disableLineNormals();
             return;
         }
 
         Vec3 target = exactPositionOfTarget;
         if (blockRayTraceResult.getType() == Type.MISS) {
             Outliner.getInstance().chaseAABB("ChainPointSelected", new AABB(target, target)).colored(0x9ede73)
-                .lineWidth(1 / 5f).disableLineNormals();
+                .lineWidth(1 / 5.0f).disableLineNormals();
             return;
         }
 
@@ -137,14 +137,14 @@ public class PackagePortTargetSelectionHandler {
             .sendStatus(player);
 
         Outliner.getInstance().chaseAABB("ChainPointSelected", new AABB(target, target)).colored(color)
-            .lineWidth(1 / 5f).disableLineNormals();
+            .lineWidth(1 / 5.0f).disableLineNormals();
 
         if (!mc.level.getBlockState(pos).canBeReplaced()) {
             return;
         }
 
         Outliner.getInstance().chaseAABB("TargetedFrogPos", new AABB(pos).contract(0, 1, 0).deflate(0.125, 0, 0.125))
-            .colored(color).lineWidth(1 / 16f).disableLineNormals();
+            .colored(color).lineWidth(1 / 16.0f).disableLineNormals();
 
         animateConnection(mc, source, target, color);
 
@@ -154,11 +154,11 @@ public class PackagePortTargetSelectionHandler {
         DustParticleOptions data = new DustParticleOptions(color.getRGB(), 1);
         ClientLevel world = mc.level;
         double totalFlyingTicks = 10;
-        int segments = (((int) totalFlyingTicks) / 3) + 1;
+        int segments = (int) totalFlyingTicks / 3 + 1;
         double tickOffset = totalFlyingTicks / segments;
 
         for (int i = 0; i < segments; i++) {
-            double ticks = ((AnimationTickHolder.getRenderTime() / 3) % tickOffset) + i * tickOffset;
+            double ticks = (AnimationTickHolder.getRenderTime() / 3) % tickOffset + i * tickOffset;
             Vec3 vec = source.lerp(target, ticks / totalFlyingTicks);
             world.addParticle(data, vec.x, vec.y, vec.z, 0, 0, 0);
         }

@@ -21,7 +21,7 @@ public class HandCrankAudioBehaviour extends KineticAudioBehaviour<HandCrankBloc
                 blockEntity.getLevel(),
                 blockEntity.getBlockPos(),
                 blockEntity.inUse / 2.5f,
-                .65f + (10 - blockEntity.inUse) / 10f,
+                0.65f + (10 - blockEntity.inUse) / 10.0f,
                 true
             );
         }

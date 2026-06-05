@@ -73,8 +73,8 @@ public class EdgeInteractionRenderer {
 
         AABB bb = EdgeInteractionHandler.getBB(pos, closestEdge);
         boolean hit = bb.contains(target.getLocation());
-        Vec3 offset = Vec3.atLowerCornerOf(closestEdge.getUnitVec3i()).scale(.5)
-            .add(Vec3.atLowerCornerOf(face.getUnitVec3i()).scale(.469)).add(VecHelper.CENTER_OF_ORIGIN);
+        Vec3 offset = Vec3.atLowerCornerOf(closestEdge.getUnitVec3i()).scale(0.5)
+            .add(Vec3.atLowerCornerOf(face.getUnitVec3i()).scale(0.469)).add(VecHelper.CENTER_OF_ORIGIN);
 
         ValueBox box = new ValueBox(CommonComponents.EMPTY, bb, pos).passive(!hit)
             .transform(new EdgeValueBoxTransform(offset)).wideOutline();
@@ -86,11 +86,8 @@ public class EdgeInteractionRenderer {
 
         List<MutableComponent> tip = new ArrayList<>();
         tip.add(CreateLang.translateDirect("logistics.crafter.connected"));
-        tip.add(CreateLang.translateDirect(CrafterHelper.areCraftersConnected(
-            world,
-            pos,
-            pos.relative(closestEdge)
-        ) ? "logistics.crafter.click_to_separate" : "logistics.crafter.click_to_merge"));
+        tip.add(CreateLang.translateDirect(CrafterHelper.areCraftersConnected(world, pos, pos.relative(closestEdge)) ?
+            "logistics.crafter.click_to_separate" : "logistics.crafter.click_to_merge"));
         Create.VALUE_SETTINGS_HANDLER.showHoverTip(mc, tip);
     }
 

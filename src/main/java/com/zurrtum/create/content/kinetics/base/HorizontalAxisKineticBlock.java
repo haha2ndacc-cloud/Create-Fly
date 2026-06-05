@@ -33,10 +33,9 @@ public class HorizontalAxisKineticBlock extends KineticBlock {
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Axis preferredAxis = getPreferredHorizontalAxis(context);
         if (preferredAxis != null) {
-            return this.defaultBlockState().setValue(HORIZONTAL_AXIS, preferredAxis);
+            return defaultBlockState().setValue(HORIZONTAL_AXIS, preferredAxis);
         }
-        return this.defaultBlockState()
-            .setValue(HORIZONTAL_AXIS, context.getHorizontalDirection().getClockWise().getAxis());
+        return defaultBlockState().setValue(HORIZONTAL_AXIS, context.getHorizontalDirection().getClockWise().getAxis());
     }
 
     @Nullable
@@ -54,9 +53,8 @@ public class HorizontalAxisKineticBlock extends KineticBlock {
                     if (prefferedSide != null && prefferedSide.getAxis() != side.getAxis()) {
                         prefferedSide = null;
                         break;
-                    } else {
-                        prefferedSide = side;
                     }
+                    prefferedSide = side;
                 }
             }
         }

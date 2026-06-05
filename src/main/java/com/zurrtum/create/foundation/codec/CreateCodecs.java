@@ -43,7 +43,8 @@ public class CreateCodecs {
     ));
 
     public static Codec<Integer> boundedIntStr(int min) {
-        return INT_STR.validate(i -> i >= min ? DataResult.success(i) : DataResult.error(() -> "Value under minimum of " + min));
+        return INT_STR.validate(i -> i >= min ? DataResult.success(i) :
+            DataResult.error(() -> "Value under minimum of " + min));
     }
 
     public static final Codec<Double> NON_NEGATIVE_DOUBLE = doubleRangeWithMessage(
@@ -58,8 +59,8 @@ public class CreateCodecs {
     );
 
     private static Codec<Double> doubleRangeWithMessage(double min, double max, Function<Double, String> errorMessage) {
-        return Codec.DOUBLE.validate(i -> i.compareTo(min) >= 0 && i.compareTo(max) <= 0 ? DataResult.success(i) : DataResult.error(
-            () -> errorMessage.apply(i)));
+        return Codec.DOUBLE.validate(i -> i.compareTo(min) >= 0 && i.compareTo(max) <= 0 ? DataResult.success(i) :
+            DataResult.error(() -> errorMessage.apply(i)));
     }
 
     public static final Codec<BlockEntityType<?>> BLOCK_ENTITY_TYPE_CODEC = BuiltInRegistries.BLOCK_ENTITY_TYPE.byNameCodec();
@@ -84,8 +85,9 @@ public class CreateCodecs {
     public static final Codec<ListTag> NBT_LIST_CODEC = Codec.PASSTHROUGH.comapFlatMap(
         dynamic -> {
             Tag nbtElement = dynamic.convert(NbtOps.INSTANCE).getValue();
-            return nbtElement instanceof ListTag nbtList ? DataResult.success(nbtList == dynamic.getValue() ? nbtList.copy() : nbtList) : DataResult.error(
-                () -> "Not a list tag: " + nbtElement);
+            return nbtElement instanceof ListTag nbtList ?
+                DataResult.success(nbtList == dynamic.getValue() ? nbtList.copy() : nbtList) :
+                DataResult.error(() -> "Not a list tag: " + nbtElement);
         }, nbt -> new Dynamic<>(NbtOps.INSTANCE, nbt.copy())
     );
     public static final Codec<Block> BLOCK_CODEC = BuiltInRegistries.BLOCK.byNameCodec();

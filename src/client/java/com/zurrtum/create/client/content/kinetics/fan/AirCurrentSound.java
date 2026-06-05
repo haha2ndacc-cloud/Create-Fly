@@ -27,11 +27,11 @@ public class AirCurrentSound extends AbstractTickableSoundInstance {
     }
 
     public void fadeIn(float maxVolume) {
-        volume = Math.min(maxVolume, volume + .05f);
+        volume = Math.min(maxVolume, volume + 0.05f);
     }
 
     public void fadeOut() {
-        volume = Math.max(0, volume - .05f);
+        volume = Math.max(0, volume - 0.05f);
     }
 
     public boolean isFaded() {

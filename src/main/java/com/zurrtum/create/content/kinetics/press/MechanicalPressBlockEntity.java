@@ -142,7 +142,7 @@ public class MechanicalPressBlockEntity extends BasinOperatingBlockEntity implem
                     result
                 );
                 created.setDefaultPickUpDelay();
-                created.setDeltaMovement(VecHelper.offsetRandomly(Vec3.ZERO, random, .05f));
+                created.setDeltaMovement(VecHelper.offsetRandomly(Vec3.ZERO, random, 0.05f));
                 level.addFreshEntity(created);
             }
             item.shrink(1);
@@ -200,11 +200,11 @@ public class MechanicalPressBlockEntity extends BasinOperatingBlockEntity implem
     public static boolean canCompress(Recipe<?> recipe) {
         if (recipe instanceof ShapedRecipe shapedRecipe) {
             return canCompress(shapedRecipe);
-        } else if (recipe instanceof ShapelessRecipe shapelessRecipe) {
-            return canCompress(shapelessRecipe);
-        } else {
-            return false;
         }
+        if (recipe instanceof ShapelessRecipe shapelessRecipe) {
+            return canCompress(shapelessRecipe);
+        }
+        return false;
     }
 
     public static boolean canCompress(ShapedRecipe recipe) {

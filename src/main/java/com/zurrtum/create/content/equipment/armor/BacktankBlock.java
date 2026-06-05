@@ -60,7 +60,8 @@ public class BacktankBlock extends HorizontalKineticBlock implements IBE<Backtan
 
     @Override
     public FluidState getFluidState(BlockState state) {
-        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
+        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) :
+            Fluids.EMPTY.defaultFluidState();
     }
 
     @Override
@@ -189,13 +190,14 @@ public class BacktankBlock extends HorizontalKineticBlock implements IBE<Backtan
             return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         if (!level.isClientSide()) {
-            level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, .75f, 1);
+            level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.75f, 1);
             player.setItemSlot(EquipmentSlot.CHEST, getCloneItemStack(level, pos, state, true));
             level.destroyBlock(pos, false);
         }
         return InteractionResult.SUCCESS;
     }
 
+    @Override
     @SuppressWarnings("deprecation")
     public ItemStack getCloneItemStack(LevelReader pLevel, BlockPos pos, BlockState state, boolean includeData) {
         Item item = asItem();

@@ -41,7 +41,7 @@ public class BellMovementBehaviour extends MovementBehaviour {
         }
 
         double dotProduct = oldMotion.dot(motion);
-        if (dotProduct <= 0 && (context.relativeMotion.length() != 0) || context.firstMovement) {
+        if (dotProduct <= 0 && context.relativeMotion.length() != 0 || context.firstMovement) {
             playSound(context);
         }
     }
@@ -64,7 +64,7 @@ public class BellMovementBehaviour extends MovementBehaviour {
             bellBlock.playSound(world, pos);
         } else {
             // Vanilla bell sound
-            world.playSound(null, pos, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2f, 1f);
+            world.playSound(null, pos, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2.0f, 1.0f);
         }
     }
 

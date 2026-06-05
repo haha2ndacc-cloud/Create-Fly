@@ -57,7 +57,7 @@ public class CouplingHandlerClient {
         for (int i = 0; i < amount; i++) {
             Vec3 v = VecHelper.offsetRandomly(Vec3.ZERO, r, 1);
             double yOffset = v.y;
-            v = v.multiply(1, 0, 1).normalize().add(0, yOffset / 8f, 0).add(center);
+            v = v.multiply(1, 0, 1).normalize().add(0, yOffset / 8.0f, 0).add(center);
             world.addParticle(particleData, v.x, v.y, v.z, 0, 0, 0);
         }
     }

@@ -27,9 +27,8 @@ public class UniqueLinkedList<E> extends LinkedList<E> {
     public boolean add(E e) {
         if (contained.add(e)) {
             return super.add(e);
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override

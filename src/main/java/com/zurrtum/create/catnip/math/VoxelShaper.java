@@ -49,7 +49,7 @@ public class VoxelShaper {
     }
 
     protected static float horizontalAngleFromDirection(Direction direction) {
-        return (float) ((Math.max(direction.get2DDataValue(), 0) & 3) * 90);
+        return (Math.max(direction.get2DDataValue(), 0) & 3) * 90;
     }
 
     protected static VoxelShaper forDirectionsWithRotation(
@@ -140,7 +140,7 @@ public class VoxelShaper {
         @Override
         public Vec3 apply(Direction direction) {
             return new Vec3(
-                direction == Direction.UP ? 0 : (Direction.Plane.VERTICAL.test(direction) ? 180 : 90),
+                direction == Direction.UP ? 0 : Direction.Plane.VERTICAL.test(direction) ? 180 : 90,
                 -horizontalAngleFromDirection(direction),
                 0
             );

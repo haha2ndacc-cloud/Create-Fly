@@ -8,7 +8,6 @@ import com.zurrtum.create.client.ponder.foundation.ui.PonderUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.parrot.Parrot;
 import net.minecraft.world.phys.Vec3;
@@ -71,11 +70,11 @@ public abstract class ParrotPose {
             double d1 = p_200602_2_.y - Vector3d.y;
             double d2 = p_200602_2_.z - Vector3d.z;
             double d3 = Mth.sqrt((float) (d0 * d0 + d2 * d2));
-            float targetPitch = Mth.wrapDegrees((float) -(Mth.atan2(d1, d3) * (double) (180F / (float) Math.PI)));
-            float targetYaw = Mth.wrapDegrees((float) -(Mth.atan2(d2, d0) * (double) (180F / (float) Math.PI)) + 90);
+            float targetPitch = Mth.wrapDegrees((float) -(Mth.atan2(d1, d3) * (180.0F / (float) Math.PI)));
+            float targetYaw = Mth.wrapDegrees((float) -(Mth.atan2(d2, d0) * (180.0F / (float) Math.PI)) + 90);
 
-            entity.setXRot(AngleHelper.angleLerp(.4f, entity.getXRot(), targetPitch));
-            entity.setYRot(AngleHelper.angleLerp(.4f, entity.getYRot(), targetYaw));
+            entity.setXRot(AngleHelper.angleLerp(0.4f, entity.getXRot(), targetPitch));
+            entity.setYRot(AngleHelper.angleLerp(0.4f, entity.getYRot(), targetYaw));
         }
 
         protected abstract Vec3 getFacedVec(PonderScene scene);

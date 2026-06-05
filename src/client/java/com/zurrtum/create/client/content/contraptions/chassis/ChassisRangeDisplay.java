@@ -19,7 +19,7 @@ import java.util.*;
 public class ChassisRangeDisplay {
 
     private static final int DISPLAY_TIME = 200;
-    private static @Nullable GroupEntry lastHoveredGroup = null;
+    private static @Nullable GroupEntry lastHoveredGroup;
 
     private static class Entry {
         ChassisBlockEntity be;
@@ -29,7 +29,7 @@ public class ChassisRangeDisplay {
             this.be = be;
             timer = DISPLAY_TIME;
             Outliner.getInstance().showCluster(getOutlineKey(), createSelection(be)).colored(0xFFFFFF)
-                .disableLineNormals().lineWidth(1 / 16f).withFaceTexture(AllSpecialTextures.HIGHLIGHT_CHECKERED);
+                .disableLineNormals().lineWidth(1 / 16.0f).withFaceTexture(AllSpecialTextures.HIGHLIGHT_CHECKERED);
         }
 
         protected Object getOutlineKey() {

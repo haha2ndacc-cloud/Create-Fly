@@ -14,8 +14,8 @@ public class GhostBlockParams {
 
     private GhostBlockParams(BlockState state) {
         this.state = state;
-        this.pos = BlockPos.ZERO;
-        this.alphaSupplier = () -> 1f;
+        pos = BlockPos.ZERO;
+        alphaSupplier = () -> 1.0f;
     }
 
     public static GhostBlockParams of(BlockState state) {
@@ -32,7 +32,7 @@ public class GhostBlockParams {
     }
 
     public GhostBlockParams at(int x, int y, int z) {
-        return this.at(new BlockPos(x, y, z));
+        return at(new BlockPos(x, y, z));
     }
 
     public GhostBlockParams alpha(Supplier<Float> alphaSupplier) {
@@ -41,10 +41,10 @@ public class GhostBlockParams {
     }
 
     public GhostBlockParams alpha(float alpha) {
-        return this.alpha(() -> alpha);
+        return alpha(() -> alpha);
     }
 
     public GhostBlockParams breathingAlpha() {
-        return this.alpha(() -> (float) GhostBlocks.getBreathingAlpha());
+        return alpha(() -> (float) GhostBlocks.getBreathingAlpha());
     }
 }

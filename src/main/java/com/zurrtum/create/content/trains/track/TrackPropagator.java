@@ -293,9 +293,9 @@ public class TrackPropagator {
         boolean centeredX = !Mth.equal(vec.x, Math.round(vec.x));
         boolean centeredZ = !Mth.equal(vec.z, Math.round(vec.z));
         if (centeredX && !centeredZ) {
-            return ((int) Math.round(vec.z)) % 16 == 0;
+            return (int) Math.round(vec.z) % 16 == 0;
         }
-        return ((int) Math.round(vec.x)) % 16 == 0;
+        return (int) Math.round(vec.x) % 16 == 0;
     }
 
 }

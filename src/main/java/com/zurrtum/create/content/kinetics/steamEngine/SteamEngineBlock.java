@@ -90,7 +90,8 @@ public class SteamEngineBlock extends FaceAttachedHorizontalDirectionalBlock imp
 
     @Override
     public FluidState getFluidState(BlockState state) {
-        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
+        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) :
+            Fluids.EMPTY.defaultFluidState();
     }
 
     @Override
@@ -134,7 +135,7 @@ public class SteamEngineBlock extends FaceAttachedHorizontalDirectionalBlock imp
         BlockPos shaftPos = getShaftPos(pState, pPos);
         BlockState shaftState = pLevel.getBlockState(shaftPos);
         if (isShaftValid(pState, shaftState)) {
-            pLevel.setBlock(shaftPos, PoweredShaftBlock.getEquivalent(shaftState), Block.UPDATE_ALL);
+            pLevel.setBlock(shaftPos, PoweredShaftBlock.getEquivalent(shaftState), UPDATE_ALL);
         }
     }
 
@@ -155,8 +156,9 @@ public class SteamEngineBlock extends FaceAttachedHorizontalDirectionalBlock imp
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         AttachFace face = pState.getValue(FACE);
         Direction direction = pState.getValue(FACING);
-        return face == AttachFace.CEILING ? AllShapes.STEAM_ENGINE_CEILING.get(direction.getAxis()) : face == AttachFace.FLOOR ? AllShapes.STEAM_ENGINE.get(
-            direction.getAxis()) : AllShapes.STEAM_ENGINE_WALL.get(direction);
+        return face == AttachFace.CEILING ? AllShapes.STEAM_ENGINE_CEILING.get(direction.getAxis()) :
+            face == AttachFace.FLOOR ? AllShapes.STEAM_ENGINE.get(direction.getAxis()) :
+                AllShapes.STEAM_ENGINE_WALL.get(direction);
     }
 
     @Override
@@ -219,7 +221,7 @@ public class SteamEngineBlock extends FaceAttachedHorizontalDirectionalBlock imp
             BlockPos pos,
             BlockHitResult ray
         ) {
-            BlockPos shaftPos = SteamEngineBlock.getShaftPos(state, pos);
+            BlockPos shaftPos = getShaftPos(state, pos);
             BlockState shaft = AllBlocks.SHAFT.defaultBlockState();
             for (Direction direction : Direction.orderedByNearest(player)) {
                 shaft = shaft.setValue(ShaftBlock.AXIS, direction.getAxis());

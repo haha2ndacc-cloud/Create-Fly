@@ -474,9 +474,8 @@ public abstract class FluidInventoryWrapper<T extends Storage<FluidVariant>, S e
                 }
                 transaction.commit();
                 return result;
-            } else {
-                return stacks;
             }
+            return stacks;
         }
     }
 
@@ -524,10 +523,9 @@ public abstract class FluidInventoryWrapper<T extends Storage<FluidVariant>, S e
             if (extract < amount) {
                 transaction.abort();
                 return false;
-            } else {
-                transaction.commit();
-                return true;
             }
+            transaction.commit();
+            return true;
         }
     }
 
@@ -548,9 +546,8 @@ public abstract class FluidInventoryWrapper<T extends Storage<FluidVariant>, S e
                     if (extract == maxAmount) {
                         transaction.commit();
                         return stack.directCopy(maxAmount);
-                    } else {
-                        transaction.abort();
                     }
+                    transaction.abort();
                 }
             }
         }
@@ -577,10 +574,9 @@ public abstract class FluidInventoryWrapper<T extends Storage<FluidVariant>, S e
             if (insert < maxAmount) {
                 transaction.abort();
                 return false;
-            } else {
-                transaction.commit();
-                return true;
             }
+            transaction.commit();
+            return true;
         }
     }
 
@@ -724,9 +720,9 @@ public abstract class FluidInventoryWrapper<T extends Storage<FluidVariant>, S e
 
         public Filter(FluidInventoryWrapper<?, ?> inventory) {
             this.inventory = inventory;
-            this.slots = SlotRangeCache.get(inventory.size());
-            this.canInsert = inventory.storage.supportsInsertion();
-            this.canExtract = inventory.storage.supportsExtraction();
+            slots = SlotRangeCache.get(inventory.size());
+            canInsert = inventory.storage.supportsInsertion();
+            canExtract = inventory.storage.supportsExtraction();
         }
 
         @Override
@@ -1230,7 +1226,7 @@ public abstract class FluidInventoryWrapper<T extends Storage<FluidVariant>, S e
         private final java.util.Iterator<StorageView<FluidVariant>> iterator;
 
         public Iterator(Storage<FluidVariant> storage) {
-            this.iterator = storage.iterator();
+            iterator = storage.iterator();
         }
 
         @Override

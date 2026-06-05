@@ -81,7 +81,8 @@ public class FunnelBlockEntity extends SmartBlockEntity implements Clearable {
 
             BeltBlockEntity belt = BeltHelper.getSegmentBE(level, worldPosition.below());
             if (belt != null) {
-                return belt.getMovementFacing() == state.getValue(BeltFunnelBlock.HORIZONTAL_FACING) ? Mode.PUSHING_TO_BELT : Mode.TAKING_FROM_BELT;
+                return belt.getMovementFacing() == state.getValue(BeltFunnelBlock.HORIZONTAL_FACING) ?
+                    Mode.PUSHING_TO_BELT : Mode.TAKING_FROM_BELT;
             }
             return Mode.INVALID;
         }
@@ -174,14 +175,15 @@ public class FunnelBlockEntity extends SmartBlockEntity implements Clearable {
         boolean vertical = facing.getAxis().isVertical();
         boolean up = facing == Direction.UP;
 
-        outputPos = outputPos.add(Vec3.atLowerCornerOf(facing.getUnitVec3i()).scale(vertical ? up ? .15f : .5f : .25f));
+        outputPos = outputPos.add(Vec3.atLowerCornerOf(facing.getUnitVec3i())
+            .scale(vertical ? up ? 0.15f : 0.5f : 0.25f));
         if (!vertical) {
-            outputPos = outputPos.subtract(0, .45f, 0);
+            outputPos = outputPos.subtract(0, 0.45f, 0);
         }
 
         Vec3 motion = Vec3.ZERO;
         if (up) {
-            motion = new Vec3(0, 4 / 16f, 0);
+            motion = new Vec3(0, 4 / 16.0f, 0);
         }
 
         ItemEntity item = new ItemEntity(level, outputPos.x, outputPos.y, outputPos.z, stack.copy());
@@ -371,11 +373,11 @@ public class FunnelBlockEntity extends SmartBlockEntity implements Clearable {
     public float getFlapOffset() {
         BlockState blockState = getBlockState();
         if (!(blockState.getBlock() instanceof BeltFunnelBlock)) {
-            return -1 / 16f;
+            return -1 / 16.0f;
         }
         return switch (blockState.getValue(BeltFunnelBlock.SHAPE)) {
-            case EXTENDED -> 8 / 16f;
-            case PULLING, PUSHING -> -2 / 16f;
+            case EXTENDED -> 8 / 16.0f;
+            case PULLING, PUSHING -> -2 / 16.0f;
             default -> 0;
         };
     }
@@ -407,6 +409,6 @@ public class FunnelBlockEntity extends SmartBlockEntity implements Clearable {
     }
 
     private LerpedFloat createChasingFlap() {
-        return LerpedFloat.linear().startWithValue(.25f).chase(0, .05f, Chaser.EXP);
+        return LerpedFloat.linear().startWithValue(0.25f).chase(0, 0.05f, Chaser.EXP);
     }
 }

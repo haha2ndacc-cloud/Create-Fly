@@ -81,7 +81,7 @@ public class CarriageBogey {
         point.upsideDown = this.upsideDown;
         point2.upsideDown = this.upsideDown;
         if (bogeyData == null || bogeyData.isEmpty()) {
-            bogeyData = this.createBogeyData(); // Prevent Crash When Updating
+            bogeyData = createBogeyData(); // Prevent Crash When Updating
         }
         bogeyData.putBoolean(UPSIDE_DOWN_KEY, upsideDown);
         this.bogeyData = bogeyData;
@@ -178,7 +178,7 @@ public class CarriageBogey {
             return null;
         }
         return points.getFirst().getPosition(carriage.train.graph, flipUpsideDown)
-            .add(points.getSecond().getPosition(carriage.train.graph, flipUpsideDown)).scale(.5);
+            .add(points.getSecond().getPosition(carriage.train.graph, flipUpsideDown)).scale(0.5);
     }
 
     public void updateCouplingAnchor(

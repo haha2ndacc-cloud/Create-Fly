@@ -19,7 +19,7 @@ public enum InstructionSpeedModifiers implements StringRepresentable {
     public final int value;
 
     InstructionSpeedModifiers(int modifier) {
-        this.value = modifier;
+        value = modifier;
     }
 
     @Override
@@ -28,8 +28,7 @@ public enum InstructionSpeedModifiers implements StringRepresentable {
     }
 
     public static InstructionSpeedModifiers getByModifier(int modifier) {
-        return Arrays.stream(InstructionSpeedModifiers.values())
-            .filter(speedModifier -> speedModifier.value == modifier).findAny()
-            .orElse(InstructionSpeedModifiers.FORWARD);
+        return Arrays.stream(values()).filter(speedModifier -> speedModifier.value == modifier).findAny()
+            .orElse(FORWARD);
     }
 }

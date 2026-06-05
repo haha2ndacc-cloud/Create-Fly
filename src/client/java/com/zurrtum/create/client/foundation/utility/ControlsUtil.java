@@ -35,9 +35,8 @@ public class ControlsUtil {
         int button = key.getValue();
         if (key.getType() == InputConstants.Type.MOUSE) {
             return GLFW.glfwGetMouseButton(window.handle(), button) == 1;
-        } else {
-            return InputConstants.isKeyDown(window, button);
         }
+        return InputConstants.isKeyDown(window, button);
     }
 
 }

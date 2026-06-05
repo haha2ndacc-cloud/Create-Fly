@@ -70,8 +70,8 @@ public class DisplayLinkScreen extends AbstractSimiScreen {
     Couple<ModularGuiLine> configWidgets;
 
     public DisplayLinkScreen(DisplayLinkBlockEntity be) {
-        this.background = AllGuiTextures.DATA_GATHERER;
-        this.blockEntity = be;
+        background = AllGuiTextures.DATA_GATHERER;
+        blockEntity = be;
         sources = Collections.emptyList();
         configWidgets = Couple.create(ModularGuiLine::new);
         target = null;
@@ -219,8 +219,9 @@ public class DisplayLinkScreen extends AbstractSimiScreen {
         source.populateData(new DisplayLinkContext(blockEntity.getLevel(), blockEntity));
 
         if (targetLineSelector != null) {
-            targetLineSelector.titled(source instanceof SingleLineDisplaySource ? CreateLang.translateDirect(
-                "display_link.display_on") : CreateLang.translateDirect("display_link.display_on_multiline"));
+            targetLineSelector.titled(
+                source instanceof SingleLineDisplaySource ? CreateLang.translateDirect("display_link.display_on") :
+                    CreateLang.translateDirect("display_link.display_on_multiline"));
         }
 
         configWidgets.forEach(s -> {

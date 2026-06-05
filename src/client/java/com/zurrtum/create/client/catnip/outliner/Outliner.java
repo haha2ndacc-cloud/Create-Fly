@@ -162,12 +162,12 @@ public class Outliner {
             if (entry.isFading()) {
                 int prevTicks = entry.ticksTillRemoval + 1;
                 float fadeticks = OutlineEntry.FADE_TICKS;
-                float lastAlpha = prevTicks >= 0 ? 1 : 1 + (prevTicks / fadeticks);
-                float currentAlpha = 1 + (entry.ticksTillRemoval / fadeticks);
+                float lastAlpha = prevTicks >= 0 ? 1 : 1 + prevTicks / fadeticks;
+                float currentAlpha = 1 + entry.ticksTillRemoval / fadeticks;
                 float alpha = Mth.lerp(pt, lastAlpha, currentAlpha);
 
                 params.alpha = alpha * alpha * alpha;
-                if (params.alpha < 1 / 8f) {
+                if (params.alpha < 1 / 8.0f) {
                     return;
                 }
             }

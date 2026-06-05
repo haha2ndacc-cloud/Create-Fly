@@ -39,7 +39,8 @@ public class DeployingDisplay extends ManualApplicationDisplay {
         Recipe<?> recipe = entry.value();
         if (recipe instanceof ItemApplicationRecipe r) {
             return new DeployingDisplay(r.result(), r.target(), r.ingredient(), r.keepHeldItem());
-        } else if (recipe instanceof SandPaperPolishingRecipe(ItemStack result, Ingredient target)) {
+        }
+        if (recipe instanceof SandPaperPolishingRecipe(ItemStack result, Ingredient target)) {
             List<Holder<Item>> sandpaperList = new ArrayList<>();
             for (Holder<Item> item : BuiltInRegistries.ITEM.getTagOrEmpty(AllItemTags.SANDPAPER)) {
                 sandpaperList.add(item);

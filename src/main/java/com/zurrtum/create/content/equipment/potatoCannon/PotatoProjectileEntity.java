@@ -55,8 +55,8 @@ public class PotatoProjectileEntity extends AbstractHurtingProjectile {
     protected double stuckFallSpeed;
 
     protected float additionalDamageMult = 1;
-    protected float additionalKnockback = 0;
-    protected float recoveryChance = 0;
+    protected float additionalKnockback;
+    protected float recoveryChance;
 
     public PotatoProjectileEntity(EntityType<? extends AbstractHurtingProjectile> type, Level level) {
         super(type, level);
@@ -77,7 +77,7 @@ public class PotatoProjectileEntity extends AbstractHurtingProjectile {
             .getLevel(enchantmentRegistry.getOrThrow(AllEnchantments.POTATO_RECOVERY));
 
         if (recovery > 0) {
-            recoveryChance = .125f + recovery * .125f;
+            recoveryChance = 0.125f + recovery * 0.125f;
         }
     }
 
@@ -123,9 +123,9 @@ public class PotatoProjectileEntity extends AbstractHurtingProjectile {
 
     public void setStuckEntity(Entity stuckEntity) {
         this.stuckEntity = stuckEntity;
-        this.stuckOffset = position().subtract(stuckEntity.position());
-        this.stuckRenderer = new StuckToEntity(stuckOffset);
-        this.stuckFallSpeed = 0.0;
+        stuckOffset = position().subtract(stuckEntity.position());
+        stuckRenderer = new StuckToEntity(stuckOffset);
+        stuckFallSpeed = 0.0;
         setDeltaMovement(Vec3.ZERO);
     }
 
@@ -191,7 +191,7 @@ public class PotatoProjectileEntity extends AbstractHurtingProjectile {
         Entity target = ray.getEntity();
         float damage = type.damage() * additionalDamageMult;
         float knockback = type.knockback() + additionalKnockback;
-        Entity owner = this.getOwner();
+        Entity owner = getOwner();
 
         if (!target.isAlive()) {
             return;
@@ -225,7 +225,7 @@ public class PotatoProjectileEntity extends AbstractHurtingProjectile {
 
         boolean targetIsEnderman = target.getType() == EntityTypes.ENDERMAN;
         int k = target.getRemainingFireTicks();
-        if (this.isOnFire() && !targetIsEnderman) {
+        if (isOnFire() && !targetIsEnderman) {
             target.igniteForSeconds(5);
         }
 
@@ -273,7 +273,7 @@ public class PotatoProjectileEntity extends AbstractHurtingProjectile {
             EnchantmentHelper.doPostAttackEffects((ServerLevel) world, livingentity, damageSource);
         }
 
-        if (livingentity != owner && livingentity instanceof Player && owner instanceof ServerPlayer serverPlayer && !this.isSilent()) {
+        if (livingentity != owner && livingentity instanceof Player && owner instanceof ServerPlayer serverPlayer && !isSilent()) {
             serverPlayer.connection.send(new ClientboundGameEventPacket(
                 ClientboundGameEventPacket.PLAY_ARROW_HIT_SOUND,
                 ClientboundGameEventPacket.DEMO_PARAM_INTRO
@@ -282,7 +282,7 @@ public class PotatoProjectileEntity extends AbstractHurtingProjectile {
 
         if (onServer && owner instanceof ServerPlayer serverplayerentity) {
             if (!target.isAlive() && target.getType()
-                .getCategory() == MobCategory.MONSTER || (target instanceof Player && target != owner)) {
+                .getCategory() == MobCategory.MONSTER || target instanceof Player && target != owner) {
                 AllAdvancements.POTATO_CANNON.trigger(serverplayerentity);
             }
         }
@@ -349,7 +349,7 @@ public class PotatoProjectileEntity extends AbstractHurtingProjectile {
                 ItemStackTemplate.fromNonEmptyStack(stack)
             );
             for (int i = 0; i < 7; i++) {
-                Vec3 m = VecHelper.offsetRandomly(Vec3.ZERO, this.random, .25f);
+                Vec3 m = VecHelper.offsetRandomly(Vec3.ZERO, random, 0.25f);
                 level().addParticle(option, hit.x, hit.y, hit.z, m.x, m.y, m.z);
             }
         }

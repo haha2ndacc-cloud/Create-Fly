@@ -21,7 +21,7 @@ public class SelectionScrollInput extends ScrollInput {
 
     public ScrollInput forOptions(List<? extends Component> options) {
         this.options = options;
-        this.max = options.size();
+        max = options.size();
         format(options::get);
         updateTooltip();
         return this;
@@ -34,7 +34,7 @@ public class SelectionScrollInput extends ScrollInput {
             return;
         }
         toolTip.add(title.plainCopy().withStyle(s -> s.withColor(HEADER_RGB.getRGB())));
-        int min = Math.min(this.max - 16, state - 7);
+        int min = Math.min(max - 16, state - 7);
         int max = Math.max(this.min + 16, state + 8);
         min = Math.max(min, this.min);
         max = Math.min(max, this.max);

@@ -24,7 +24,7 @@ public class TrackObserverScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("track_observer", "Detecting Trains");
         scene.configureBasePlate(1, 1, 9);
-        scene.scaleSceneView(.65f);
+        scene.scaleSceneView(0.65f);
         scene.setSceneOffsetY(-1);
         scene.showBasePlate();
 
@@ -47,13 +47,13 @@ public class TrackObserverScenes {
         scene.idle(10);
 
         Vec3 target = util.vector().topOf(5, 0, 7);
-        AABB bb = new AABB(target, target).move(0, 2 / 16f, 0);
+        AABB bb = new AABB(target, target).move(0, 2 / 16.0f, 0);
 
         scene.overlay().showControls(target, Pointing.DOWN, 40).rightClick()
             .withItem(AllItems.TRACK_OBSERVER.getDefaultInstance());
         scene.idle(6);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, bb, bb, 1);
-        scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, bb, bb.inflate(.45f, 1 / 16f, .45f), 60);
+        scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, bb, bb.inflate(0.45f, 1 / 16.0f, 0.45f), 60);
         scene.idle(10);
 
         scene.overlay().showText(50).pointAt(target).placeNearTarget().colored(PonderPalette.GREEN)

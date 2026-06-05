@@ -25,7 +25,10 @@ import net.minecraft.util.ProblemReporter;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.equine.Horse;
 import net.minecraft.world.entity.animal.equine.SkeletonHorse;
 import net.minecraft.world.entity.monster.EnderMan;
@@ -152,22 +155,22 @@ public class AllFanProcessingTypes {
             if (level.getRandom().nextInt(8) != 0) {
                 return;
             }
-            level.addParticle(ParticleTypes.LARGE_SMOKE, pos.x, pos.y + .25f, pos.z, 0, 1 / 16f, 0);
+            level.addParticle(ParticleTypes.LARGE_SMOKE, pos.x, pos.y + 0.25f, pos.z, 0, 1 / 16.0f, 0);
         }
 
         @Override
         public void morphAirFlow(AirFlowParticleAccess particleAccess, RandomSource random) {
             particleAccess.setColor(Color.mixColors(0xFF4400, 0xFF8855, random.nextFloat()));
-            particleAccess.setAlpha(.5f);
-            if (random.nextFloat() < 1 / 32f) {
-                particleAccess.spawnExtraParticle(ParticleTypes.FLAME, .25f);
+            particleAccess.setAlpha(0.5f);
+            if (random.nextFloat() < 1 / 32.0f) {
+                particleAccess.spawnExtraParticle(ParticleTypes.FLAME, 0.25f);
             }
-            if (random.nextFloat() < 1 / 16f) {
+            if (random.nextFloat() < 1 / 16.0f) {
                 particleAccess.spawnExtraParticle(
                     new BlockParticleOption(
                         ParticleTypes.BLOCK,
                         Blocks.LAVA.defaultBlockState()
-                    ), .25f
+                    ), 0.25f
                 );
             }
         }
@@ -235,21 +238,21 @@ public class AllFanProcessingTypes {
             }
             pos = pos.add(VecHelper.offsetRandomly(Vec3.ZERO, level.getRandom(), 1).multiply(1, 0.05f, 1).normalize()
                 .scale(0.15f));
-            level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x, pos.y + .45f, pos.z, 0, 0, 0);
+            level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x, pos.y + 0.45f, pos.z, 0, 0, 0);
             if (level.getRandom().nextInt(2) == 0) {
-                level.addParticle(ParticleTypes.SMOKE, pos.x, pos.y + .25f, pos.z, 0, 0, 0);
+                level.addParticle(ParticleTypes.SMOKE, pos.x, pos.y + 0.25f, pos.z, 0, 0, 0);
             }
         }
 
         @Override
         public void morphAirFlow(AirFlowParticleAccess particleAccess, RandomSource random) {
             particleAccess.setColor(Color.mixColors(0x0, 0x126568, random.nextFloat()));
-            particleAccess.setAlpha(1f);
-            if (random.nextFloat() < 1 / 128f) {
-                particleAccess.spawnExtraParticle(ParticleTypes.SOUL_FIRE_FLAME, .125f);
+            particleAccess.setAlpha(1.0f);
+            if (random.nextFloat() < 1 / 128.0f) {
+                particleAccess.spawnExtraParticle(ParticleTypes.SOUL_FIRE_FLAME, 0.125f);
             }
-            if (random.nextFloat() < 1 / 32f) {
-                particleAccess.spawnExtraParticle(ParticleTypes.SMOKE, .125f);
+            if (random.nextFloat() < 1 / 32.0f) {
+                particleAccess.spawnExtraParticle(ParticleTypes.SMOKE, 0.125f);
             }
         }
 
@@ -260,17 +263,17 @@ public class AllFanProcessingTypes {
                     Vec3 p = entity.getPosition(0);
                     Vec3 v = p.add(0, 0.5f, 0)
                         .add(VecHelper.offsetRandomly(Vec3.ZERO, level.getRandom(), 1).multiply(1, 0.2f, 1).normalize()
-                            .scale(1f));
+                            .scale(1.0f));
                     level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, v.x, v.y, v.z, 0, 0.1f, 0);
                     if (level.getRandom().nextInt(3) == 0) {
                         level.addParticle(
                             ParticleTypes.LARGE_SMOKE,
                             p.x,
-                            p.y + .5f,
+                            p.y + 0.5f,
                             p.z,
-                            (level.getRandom().nextFloat() - .5f) * .5f,
+                            (level.getRandom().nextFloat() - 0.5f) * 0.5f,
                             0.1f,
-                            (level.getRandom().nextFloat() - .5f) * .5f
+                            (level.getRandom().nextFloat() - 0.5f) * 0.5f
                         );
                     }
                 }
@@ -290,8 +293,8 @@ public class AllFanProcessingTypes {
                             entity.blockPosition(),
                             SoundEvents.SOUL_ESCAPE.value(),
                             SoundSource.NEUTRAL,
-                            1f,
-                            1.5f * progress / 100f
+                            1.0f,
+                            1.5f * progress / 100.0f
                         );
                     }
                     AllSynchedDatas.HAUNTING.set(horse, progress + 1);
@@ -377,18 +380,18 @@ public class AllFanProcessingTypes {
             if (level.getRandom().nextInt(8) != 0) {
                 return;
             }
-            level.addParticle(ParticleTypes.POOF, pos.x, pos.y + .25f, pos.z, 0, 1 / 16f, 0);
+            level.addParticle(ParticleTypes.POOF, pos.x, pos.y + 0.25f, pos.z, 0, 1 / 16.0f, 0);
         }
 
         @Override
         public void morphAirFlow(AirFlowParticleAccess particleAccess, RandomSource random) {
             particleAccess.setColor(Color.mixColors(0x0, 0x555555, random.nextFloat()));
-            particleAccess.setAlpha(1f);
-            if (random.nextFloat() < 1 / 32f) {
-                particleAccess.spawnExtraParticle(ParticleTypes.SMOKE, .125f);
+            particleAccess.setAlpha(1.0f);
+            if (random.nextFloat() < 1 / 32.0f) {
+                particleAccess.spawnExtraParticle(ParticleTypes.SMOKE, 0.125f);
             }
-            if (random.nextFloat() < 1 / 32f) {
-                particleAccess.spawnExtraParticle(ParticleTypes.LARGE_SMOKE, .125f);
+            if (random.nextFloat() < 1 / 32.0f) {
+                particleAccess.spawnExtraParticle(ParticleTypes.LARGE_SMOKE, 0.125f);
             }
         }
 
@@ -442,20 +445,20 @@ public class AllFanProcessingTypes {
             }
             level.addParticle(
                 new DustParticleOptions(0x0055FF, 1),
-                pos.x + (level.getRandom().nextFloat() - .5f) * .5f,
-                pos.y + .5f,
-                pos.z + (level.getRandom().nextFloat() - .5f) * .5f,
+                pos.x + (level.getRandom().nextFloat() - 0.5f) * 0.5f,
+                pos.y + 0.5f,
+                pos.z + (level.getRandom().nextFloat() - 0.5f) * 0.5f,
                 0,
-                1 / 8f,
+                1 / 8.0f,
                 0
             );
             level.addParticle(
                 ParticleTypes.SPIT,
-                pos.x + (level.getRandom().nextFloat() - .5f) * .5f,
-                pos.y + .5f,
-                pos.z + (level.getRandom().nextFloat() - .5f) * .5f,
+                pos.x + (level.getRandom().nextFloat() - 0.5f) * 0.5f,
+                pos.y + 0.5f,
+                pos.z + (level.getRandom().nextFloat() - 0.5f) * 0.5f,
                 0,
-                1 / 8f,
+                1 / 8.0f,
                 0
             );
         }
@@ -463,12 +466,12 @@ public class AllFanProcessingTypes {
         @Override
         public void morphAirFlow(AirFlowParticleAccess particleAccess, RandomSource random) {
             particleAccess.setColor(Color.mixColors(0x4499FF, 0x2277FF, random.nextFloat()));
-            particleAccess.setAlpha(1f);
-            if (random.nextFloat() < 1 / 32f) {
-                particleAccess.spawnExtraParticle(ParticleTypes.BUBBLE, .125f);
+            particleAccess.setAlpha(1.0f);
+            if (random.nextFloat() < 1 / 32.0f) {
+                particleAccess.spawnExtraParticle(ParticleTypes.BUBBLE, 0.125f);
             }
-            if (random.nextFloat() < 1 / 32f) {
-                particleAccess.spawnExtraParticle(ParticleTypes.BUBBLE_POP, .125f);
+            if (random.nextFloat() < 1 / 32.0f) {
+                particleAccess.spawnExtraParticle(ParticleTypes.BUBBLE_POP, 0.125f);
             }
         }
 

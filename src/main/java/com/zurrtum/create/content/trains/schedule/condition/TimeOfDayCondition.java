@@ -21,7 +21,7 @@ public class TimeOfDayCondition extends ScheduleWaitCondition {
         int targetHour = intData("Hour");
         int targetMinute = intData("Minute");
         int dayTime = (int) (level.getOverworldClockTime() % getRotation());
-        int targetTicks = (int) ((((targetHour + 18) % 24) * 1000 + Math.ceil(targetMinute / 60f * 1000)) % getRotation());
+        int targetTicks = (int) (((targetHour + 18) % 24 * 1000 + Math.ceil(targetMinute / 60.0f * 1000)) % getRotation());
         int diff = dayTime - targetTicks;
         return diff >= 0 && maxTickDiff >= diff;
     }
@@ -44,15 +44,15 @@ public class TimeOfDayCondition extends ScheduleWaitCondition {
 
     public MutableComponent getDigitalDisplay(int hour, int minute, boolean doubleDigitHrs) {
         int hour12raw = hour % 12 == 0 ? 12 : hour % 12;
-        String hr12 = doubleDigitHrs ? twoDigits(hour12raw) : ("" + hour12raw);
-        String hr24 = doubleDigitHrs ? twoDigits(hour) : ("" + hour);
+        String hr12 = doubleDigitHrs ? twoDigits(hour12raw) : "" + hour12raw;
+        String hr24 = doubleDigitHrs ? twoDigits(hour) : "" + hour;
         return Component.translatable(
             "create.schedule.condition.time_of_day.digital_format",
             hr12,
             hr24,
             twoDigits(minute),
-            hour > 11 ? Component.translatable("create.generic.daytime.pm") : Component.translatable(
-                "create.generic.daytime.am")
+            hour > 11 ? Component.translatable("create.generic.daytime.pm") :
+                Component.translatable("create.generic.daytime.am")
         );
     }
 
@@ -66,7 +66,7 @@ public class TimeOfDayCondition extends ScheduleWaitCondition {
         int targetMinute = intData("Minute");
         long timeOfDay = level.getOverworldClockTime();
         int dayTime = (int) (timeOfDay % getRotation());
-        int targetTicks = (int) ((((targetHour + 18) % 24) * 1000 + Math.ceil(targetMinute / 60f * 1000)) % getRotation());
+        int targetTicks = (int) (((targetHour + 18) % 24 * 1000 + Math.ceil(targetMinute / 60.0f * 1000)) % getRotation());
         int diff = targetTicks - dayTime;
 
         if (diff < 0) {
@@ -77,7 +77,7 @@ public class TimeOfDayCondition extends ScheduleWaitCondition {
             .flatMap(timeline -> timeline.value().periodTicks()).orElse(24000);
         int departureTime = (int) (timeOfDay + diff) % periodTicks;
         int departingHour = (departureTime / 1000 + 6) % 24;
-        int departingMinute = (departureTime % 1000) * 60 / 1000;
+        int departingMinute = departureTime % 1000 * 60 / 1000;
 
         return Component.translatable("create.schedule.condition.time_of_day.status")
             .append(getDigitalDisplay(departingHour, departingMinute, false));

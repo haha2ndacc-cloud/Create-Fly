@@ -62,10 +62,12 @@ public class AllParticleTypes {
         StreamCodec<? super RegistryFriendlyByteBuf, T> packetCodec
     ) {
         ParticleType<T> type = new ParticleType<T>(false) {
+            @Override
             public MapCodec<T> codec() {
                 return codec;
             }
 
+            @Override
             public StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec() {
                 return packetCodec;
             }

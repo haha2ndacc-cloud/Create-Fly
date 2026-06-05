@@ -118,10 +118,10 @@ public class RuntimeDataGenerator {
             base = MISMATCHED_WOOD_NAMES.getOrDefault(base, base);
             Identifier nonStrippedId = matched_name.withSuffix(type).withPrefix(prefix).withSuffix(suffix);
             Identifier planksId = base.withSuffix("_planks");
-            Identifier stairsId = base.withSuffix(base.getNamespace()
-                .equals(Mods.BTN.getId()) ? "_planks_stairs" : "_stairs");
-            Identifier slabId = base.withSuffix(base.getNamespace()
-                .equals(Mods.BTN.getId()) ? "_planks_slab" : "_slab");
+            Identifier stairsId = base.withSuffix(
+                base.getNamespace().equals(Mods.BTN.getId()) ? "_planks_stairs" : "_stairs");
+            Identifier slabId = base.withSuffix(
+                base.getNamespace().equals(Mods.BTN.getId()) ? "_planks_slab" : "_slab");
             Identifier fenceId = base.withSuffix("_fence");
             Identifier fenceGateId = base.withSuffix("_fence_gate");
             Identifier doorId = base.withSuffix("_door");

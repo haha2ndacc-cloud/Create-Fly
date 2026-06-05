@@ -98,7 +98,7 @@ public class TrackBlockEntity extends SmartBlockEntity implements TransformableB
             if (blockState.getBlock() instanceof ITrackBlock trackBlock && !blockState.getValue(TrackBlock.HAS_BE)) {
                 for (Vec3 v : trackBlock.getTrackAxes(level, key, blockState)) {
                     Vec3 bcEndAxis = bc.axes.getSecond();
-                    if (v.distanceTo(bcEndAxis) < 1 / 1024f || v.distanceTo(bcEndAxis.scale(-1)) < 1 / 1024f) {
+                    if (v.distanceTo(bcEndAxis) < 1 / 1024.0f || v.distanceTo(bcEndAxis.scale(-1)) < 1 / 1024.0f) {
                         level.setBlock(key, blockState.setValue(TrackBlock.HAS_BE, true), Block.UPDATE_ALL);
                     }
                 }

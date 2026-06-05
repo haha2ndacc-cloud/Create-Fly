@@ -58,7 +58,7 @@ public class RemainingAirOverlay {
         guiGraphics.item(backtank, 0, 0);
         int color = 0xFF_FFFFFF;
         if (timeLeft < 60 && timeLeft % 2 == 0) {
-            color = Color.mixColors(0xFF_FF0000, color, Math.max(timeLeft / 60f, .25f));
+            color = Color.mixColors(0xFF_FF0000, color, Math.max(timeLeft / 60.0f, 0.25f));
         }
         guiGraphics.text(mc.font, text, 16, 5, color, true);
 
@@ -108,8 +108,8 @@ public class RemainingAirOverlay {
         }
 
         List<ItemStack> backtanks = BacktankUtil.getAllWithAir(player);
-        if (backtanks.isEmpty() || (lavaDiving && backtanks.stream()
-            .allMatch(backtank -> backtank.canBeHurtBy(world.damageSources().lava())))) {
+        if (backtanks.isEmpty() || lavaDiving && backtanks.stream()
+            .allMatch(backtank -> backtank.canBeHurtBy(world.damageSources().lava()))) {
             resetAirData(player);
             return;
         }

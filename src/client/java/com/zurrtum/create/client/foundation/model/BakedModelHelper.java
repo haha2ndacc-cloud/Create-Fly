@@ -133,8 +133,8 @@ public class BakedModelHelper {
         }
         float u = UVPair.unpackU(packedUV);
         float v = UVPair.unpackV(packedUV);
-        u = sprite.getU(getUnInterpolatedU(sprite, u) + ((float) uAxis.dot(diff) * uScale));
-        v = sprite.getV(getUnInterpolatedV(sprite, v) + ((float) vAxis.dot(diff) * vScale));
+        u = sprite.getU(getUnInterpolatedU(sprite, u) + (float) uAxis.dot(diff) * uScale);
+        v = sprite.getV(getUnInterpolatedV(sprite, v) + (float) vAxis.dot(diff) * vScale);
         return UVPair.pack(u, v);
     }
 
@@ -151,9 +151,9 @@ public class BakedModelHelper {
         long packedUV2 = quad.packedUV2();
         long packedUV3 = quad.packedUV3();
 
-        Vec3 uAxis = xyz3.add(xyz2).scale(.5);
-        Vec3 vAxis = xyz1.add(xyz2).scale(.5);
-        Vec3 center = xyz3.add(xyz2).add(xyz0).add(xyz1).scale(.25);
+        Vec3 uAxis = xyz3.add(xyz2).scale(0.5);
+        Vec3 vAxis = xyz1.add(xyz2).scale(0.5);
+        Vec3 center = xyz3.add(xyz2).add(xyz0).add(xyz1).scale(0.25);
 
         float u0 = UVPair.unpackU(packedUV0);
         float u3 = UVPair.unpackU(packedUV3);
@@ -172,8 +172,8 @@ public class BakedModelHelper {
         if (uScale == 0) {
             float v3 = UVPair.unpackV(packedUV3);
             float u1 = UVPair.unpackU(packedUV1);
-            uAxis = xyz1.add(xyz2).scale(.5);
-            vAxis = xyz3.add(xyz2).scale(.5);
+            uAxis = xyz1.add(xyz2).scale(0.5);
+            vAxis = xyz3.add(xyz2).scale(0.5);
             uScale = (float) ((getUnInterpolatedU(sprite, u1) - getUnInterpolatedU(
                 sprite,
                 u0

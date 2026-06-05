@@ -40,7 +40,7 @@ public class BoilerData {
     static final int SAMPLE_RATE = 5;
 
     public static final int waterSupplyPerLevel = 10 * 81;
-    private static final float passiveEngineEfficiency = 1 / 8f;
+    private static final float passiveEngineEfficiency = 1 / 8.0f;
 
     // pooled water supply
     int gatheredSupply;
@@ -58,10 +58,10 @@ public class BoilerData {
     public int attachedWhistles;
 
     // display
-    public int maxHeatForSize = 0;
-    public int maxHeatForWater = 0;
-    public int minValue = 0;
-    public int maxValue = 0;
+    public int maxHeatForSize;
+    public int maxHeatForWater;
+    public int minValue;
+    public int maxValue;
     public boolean[] occludedDirections = {true, true, true, true};
 
     public LerpedFloat gauge = LerpedFloat.linear();
@@ -70,8 +70,8 @@ public class BoilerData {
 
     // re-use the same lambda for each side
     private final SoundPool.Sound sound = (level, pos) -> {
-        float volume = 3f / Math.max(2, attachedEngines / 6);
-        float pitch = 1.18f - level.getRandom().nextFloat() * .25f;
+        float volume = 3.0f / Math.max(2, attachedEngines / 6);
+        float pitch = 1.18f - level.getRandom().nextFloat() * 0.25f;
         level.playLocalSound(
             pos.getX(),
             pos.getY(),
@@ -83,7 +83,7 @@ public class BoilerData {
             false
         );
 
-        AllSoundEvents.STEAM.playAt(level, pos, volume / 16, .8f, false);
+        AllSoundEvents.STEAM.playAt(level, pos, volume / 16, 0.8f, false);
     };
     // separate pools for each side so they sound distinct when standing at corners of the boiler
     private final EnumMap<Direction, SoundPool> pools = new EnumMap<>(Direction.class);
@@ -97,7 +97,7 @@ public class BoilerData {
             pools.values().forEach(p -> p.play(level));
             gauge.tickChaser();
             float current = gauge.getValue(1);
-            if (current > 1 && level.getRandom().nextFloat() < 1 / 2f) {
+            if (current > 1 && level.getRandom().nextFloat() < 1 / 2.0f) {
                 gauge.setValueNoUpdate(current + Math.min(-(current - 1) * level.getRandom().nextFloat(), 0));
             }
             return;
@@ -147,16 +147,16 @@ public class BoilerData {
         }
         for (Direction d : Iterate.horizontalDirections) {
             AABB aabb = new AABB(controller.getBlockPos()).move(
-                controller.width / 2f - .5f,
+                controller.width / 2.0f - 0.5f,
                 0,
-                controller.width / 2f - .5f
-            ).deflate(5f / 8);
+                controller.width / 2.0f - 0.5f
+            ).deflate(5.0f / 8);
             aabb = aabb.move(
-                d.getStepX() * (controller.width / 2f + 1 / 4f),
+                d.getStepX() * (controller.width / 2.0f + 1 / 4.0f),
                 0,
-                d.getStepZ() * (controller.width / 2f + 1 / 4f)
+                d.getStepZ() * (controller.width / 2.0f + 1 / 4.0f)
             );
-            aabb = aabb.inflate(Math.abs(d.getStepZ()) / 2f, 0.25f, Math.abs(d.getStepX()) / 2f);
+            aabb = aabb.inflate(Math.abs(d.getStepZ()) / 2.0f, 0.25f, Math.abs(d.getStepX()) / 2.0f);
             occludedDirections[d.get2DDataValue()] = !controller.getLevel().noCollision(aabb);
         }
     }
@@ -175,11 +175,11 @@ public class BoilerData {
     }
 
     public int getMaxHeatLevelForBoilerSize(int boilerSize) {
-        return (int) Math.min(18, boilerSize / 4);
+        return Math.min(18, boilerSize / 4);
     }
 
     public int getMaxHeatLevelForWaterSupply() {
-        return (int) Math.min(18, Mth.ceil(waterSupply) / waterSupplyPerLevel);
+        return Math.min(18, Mth.ceil(waterSupply) / waterSupplyPerLevel);
     }
 
     public boolean isPassive() {
@@ -219,10 +219,10 @@ public class BoilerData {
     public MutableComponent getHeatLevelTextComponent() {
         int boilerLevel = Math.min(activeHeat, Math.min(maxHeatForWater, maxHeatForSize));
 
-        return isPassive() ? Component.translatable("create.boiler.passive") : (boilerLevel == 0 ? Component.translatable(
-            "create.boiler.idle") : boilerLevel == 18 ? Component.translatable("create.boiler.max_lvl") : Component.translatable("create.boiler.lvl",
-            String.valueOf(boilerLevel)
-        ));
+        return isPassive() ? Component.translatable("create.boiler.passive") :
+            boilerLevel == 0 ? Component.translatable("create.boiler.idle") :
+                boilerLevel == 18 ? Component.translatable("create.boiler.max_lvl") :
+                    Component.translatable("create.boiler.lvl", String.valueOf(boilerLevel));
     }
 
     public MutableComponent getSizeComponent(boolean forGoggles, boolean useBlocksAsBars, ChatFormatting... styles) {
@@ -267,7 +267,7 @@ public class BoilerData {
             .append(bars(Math.max(0, level - minValue), ChatFormatting.DARK_GREEN))
             .append(bars(Math.max(0, maxValue - level), ChatFormatting.DARK_RED))
             .append(bars(
-                Math.max(0, Math.min(18 - maxValue, ((maxValue / 5 + 1) * 5) - maxValue)),
+                Math.max(0, Math.min(18 - maxValue, (maxValue / 5 + 1) * 5 - maxValue)),
                 ChatFormatting.DARK_GRAY
             ));
     }
@@ -411,7 +411,7 @@ public class BoilerData {
         int forBoilerSize = getMaxHeatLevelForBoilerSize(boilerSize);
         int forWaterSupply = getMaxHeatLevelForWaterSupply();
         int actualHeat = Math.min(activeHeat, Math.min(forWaterSupply, forBoilerSize));
-        float target = isPassive(boilerSize) ? 1 / 8f : forBoilerSize == 0 ? 0 : actualHeat / (forBoilerSize * 1f);
+        float target = isPassive(boilerSize) ? 1 / 8.0f : forBoilerSize == 0 ? 0 : actualHeat / (forBoilerSize * 1.0f);
         gauge.chase(target, 0.125f, Chaser.EXP);
     }
 

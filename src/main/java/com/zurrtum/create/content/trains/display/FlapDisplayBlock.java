@@ -93,7 +93,7 @@ public class FlapDisplayBlock extends HorizontalKineticBlock implements IBE<Flap
         BlockState stateForPlacement = defaultBlockState();
         FluidState ifluidstate = context.getLevel().getFluidState(context.getClickedPos());
 
-        if ((blockState.getBlock() != this) || (context.getPlayer() != null && context.getPlayer().isShiftKeyDown())) {
+        if (blockState.getBlock() != this || context.getPlayer() != null && context.getPlayer().isShiftKeyDown()) {
             stateForPlacement = super.getStateForPlacement(context);
         } else {
             Direction otherFacing = blockState.getValue(HORIZONTAL_FACING);
@@ -139,7 +139,7 @@ public class FlapDisplayBlock extends HorizontalKineticBlock implements IBE<Flap
         }
 
         double yCoord = hitResult.getLocation()
-            .add(Vec3.atLowerCornerOf(hitResult.getDirection().getOpposite().getUnitVec3i()).scale(.125f)).y;
+            .add(Vec3.atLowerCornerOf(hitResult.getDirection().getOpposite().getUnitVec3i()).scale(0.125f)).y;
 
         int lineIndex = flapBE.getLineIndexAt(yCoord);
 
@@ -214,7 +214,7 @@ public class FlapDisplayBlock extends HorizontalKineticBlock implements IBE<Flap
 
     @Override
     public float getParticleTargetRadius() {
-        return .85f;
+        return 0.85f;
     }
 
     private BlockState updateColumn(Level level, BlockPos pos, BlockState state, boolean present) {
@@ -385,7 +385,7 @@ public class FlapDisplayBlock extends HorizontalKineticBlock implements IBE<Flap
             List<Direction> directions = IPlacementHelper.orderedByDistanceExceptAxis(
                 pos,
                 ray.getLocation(),
-                state.getValue(FlapDisplayBlock.HORIZONTAL_FACING).getAxis(),
+                state.getValue(HORIZONTAL_FACING).getAxis(),
                 dir -> world.getBlockState(pos.relative(dir)).canBeReplaced()
             );
 
@@ -393,7 +393,7 @@ public class FlapDisplayBlock extends HorizontalKineticBlock implements IBE<Flap
                 pos.relative(directions.getFirst()), s -> AllBlocks.DISPLAY_BOARD.updateColumn(
                     world,
                     pos.relative(directions.getFirst()),
-                    s.setValue(HORIZONTAL_FACING, state.getValue(FlapDisplayBlock.HORIZONTAL_FACING)),
+                    s.setValue(HORIZONTAL_FACING, state.getValue(HORIZONTAL_FACING)),
                     true
                 )
             );

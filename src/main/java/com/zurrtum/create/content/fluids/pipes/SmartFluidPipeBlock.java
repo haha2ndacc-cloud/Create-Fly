@@ -166,7 +166,8 @@ public class SmartFluidPipeBlock extends FaceAttachedHorizontalDirectionalBlock 
         CollisionContext p_220053_4_
     ) {
         AttachFace face = state.getValue(FACE);
-        VoxelShaper shape = face == AttachFace.FLOOR ? AllShapes.SMART_FLUID_PIPE_FLOOR : face == AttachFace.CEILING ? AllShapes.SMART_FLUID_PIPE_CEILING : AllShapes.SMART_FLUID_PIPE_WALL;
+        VoxelShaper shape = face == AttachFace.FLOOR ? AllShapes.SMART_FLUID_PIPE_FLOOR :
+            face == AttachFace.CEILING ? AllShapes.SMART_FLUID_PIPE_CEILING : AllShapes.SMART_FLUID_PIPE_WALL;
         return shape.get(state.getValue(FACING));
     }
 

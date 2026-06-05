@@ -16,7 +16,8 @@ public class WhistleSoundInstance extends AbstractTickableSoundInstance {
 
     public WhistleSoundInstance(WhistleSize size, BlockPos worldPosition) {
         super(
-            (size == WhistleSize.SMALL ? AllSoundEvents.WHISTLE_HIGH : size == WhistleSize.MEDIUM ? AllSoundEvents.WHISTLE_MEDIUM : AllSoundEvents.WHISTLE_LOW).getMainEvent(),
+            (size == WhistleSize.SMALL ? AllSoundEvents.WHISTLE_HIGH :
+                size == WhistleSize.MEDIUM ? AllSoundEvents.WHISTLE_MEDIUM : AllSoundEvents.WHISTLE_LOW).getMainEvent(),
             SoundSource.RECORDS,
             SoundInstance.createUnseededRandom()
         );
@@ -37,7 +38,7 @@ public class WhistleSoundInstance extends AbstractTickableSoundInstance {
     }
 
     public void fadeOut() {
-        this.active = false;
+        active = false;
     }
 
     public void keepAlive() {
@@ -51,7 +52,7 @@ public class WhistleSoundInstance extends AbstractTickableSoundInstance {
     @Override
     public void tick() {
         if (active) {
-            volume = Math.min(1, volume + .25f);
+            volume = Math.min(1, volume + 0.25f);
             keepAlive--;
             if (keepAlive == 0) {
                 fadeOut();
@@ -59,7 +60,7 @@ public class WhistleSoundInstance extends AbstractTickableSoundInstance {
             return;
 
         }
-        volume = Math.max(0, volume - .25f);
+        volume = Math.max(0, volume - 0.25f);
         if (volume == 0) {
             stop();
         }

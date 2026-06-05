@@ -99,8 +99,8 @@ public class EjectorBlock extends HorizontalKineticBlock implements IBE<EjectorB
 
     @Override
     public float getSlipperiness(LevelReader world, BlockPos pos) {
-        return getBlockEntityOptional(world, pos).filter(ete -> ete.state == State.LAUNCHING).isPresent() ? 1f :
-            super.getFriction();
+        return getBlockEntityOptional(world, pos).filter(ete -> ete.state == State.LAUNCHING).isPresent() ? 1.0f :
+            getFriction();
     }
 
     @Override
@@ -153,12 +153,12 @@ public class EjectorBlock extends HorizontalKineticBlock implements IBE<EjectorB
         }
         if (entity.onGround()) {
             entity.setOnGround(false);
-            Vec3 center = VecHelper.getCenterOf(position).add(0, 7 / 16f, 0);
+            Vec3 center = VecHelper.getCenterOf(position).add(0, 7 / 16.0f, 0);
             Vec3 positionVec = entity.position();
             double diff = center.distanceTo(positionVec);
             entity.setDeltaMovement(0, -0.125, 0);
-            Vec3 vec = center.add(positionVec).scale(.5f);
-            if (diff > 4 / 16f) {
+            Vec3 vec = center.add(positionVec).scale(0.5f);
+            if (diff > 4 / 16.0f) {
                 entity.setPos(vec.x, vec.y, vec.z);
                 return;
             }

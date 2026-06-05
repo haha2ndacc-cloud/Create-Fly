@@ -18,8 +18,8 @@ public class TntMinecartVisual<T extends MinecartTNT> extends MinecartVisual<T> 
     @Override
     protected void updateContents(TransformedInstance contents, Matrix4f pose, float partialTick) {
         int fuseTime = entity.getFuse();
-        if (fuseTime > -1 && (float) fuseTime - partialTick + 1.0F < 10.0F) {
-            float f = 1.0F - ((float) fuseTime - partialTick + 1.0F) / 10.0F;
+        if (fuseTime > -1 && fuseTime - partialTick + 1.0F < 10.0F) {
+            float f = 1.0F - (fuseTime - partialTick + 1.0F) / 10.0F;
             f = Mth.clamp(f, 0.0F, 1.0F);
             f *= f;
             f *= f;

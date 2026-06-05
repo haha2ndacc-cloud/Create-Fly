@@ -169,9 +169,9 @@ public class BlockClusterOutline extends Outline {
 
         loadFaceData(face, pos0, pos1, pos2, pos3, normal);
         addPos(
-            pos.getX() + face.getStepX() / 128f,
-            pos.getY() + face.getStepY() / 128f,
-            pos.getZ() + face.getStepZ() / 128f,
+            pos.getX() + face.getStepX() / 128.0f,
+            pos.getY() + face.getStepY() / 128.0f,
+            pos.getZ() + face.getStepZ() / 128.0f,
             pos0,
             pos1,
             pos2,
@@ -270,12 +270,12 @@ public class BlockClusterOutline extends Outline {
                 return false;
             }
 
-            return this.axis == other.axis && this.pos.equals(other.pos);
+            return axis == other.axis && pos.equals(other.pos);
         }
 
         @Override
         public int hashCode() {
-            return this.pos.hashCode() * 31 + axis.ordinal();
+            return pos.hashCode() * 31 + axis.ordinal();
         }
     }
 

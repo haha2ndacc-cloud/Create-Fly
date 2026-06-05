@@ -24,8 +24,8 @@ public class ValueBoxRenderer {
         float offset
     ) {
         boolean blockItem = state.usesBlockLight();
-        float scale = (!blockItem ? .5f : 1f) + 1 / 64f;
-        float zOffset = (!blockItem ? -.15f : 0) + offset;
+        float scale = (!blockItem ? 0.5f : 1.0f) + 1 / 64.0f;
+        float zOffset = (!blockItem ? -0.15f : 0) + offset;
         ms.scale(scale, scale, scale);
         ms.translate(0, 0, zOffset);
         state.submit(ms, queue, light, OverlayTexture.NO_OVERLAY, 0);
@@ -39,7 +39,7 @@ public class ValueBoxRenderer {
     ) {
         int bl = light >> 4 & 0xf;
         int sl = light >> 20 & 0xf;
-        int itemLight = Mth.floor(sl + .5) << 20 | (Mth.floor(bl + .5) & 0xf) << 4;
+        int itemLight = Mth.floor(sl + 0.5) << 20 | (Mth.floor(bl + 0.5) & 0xf) << 4;
 
         ms.pushPose();
         TransformStack.of(ms).rotateXDegrees(230);
@@ -47,11 +47,11 @@ public class ValueBoxRenderer {
         ms.popPose();
 
         ms.pushPose();
-        TransformStack.of(ms).translate(0, 0, -1 / 4f).translate(0, 0, 1 / 32f + .001).rotateYDegrees(180);
+        TransformStack.of(ms).translate(0, 0, -1 / 4.0f).translate(0, 0, 1 / 32.0f + 0.001).rotateYDegrees(180);
 
         PoseStack squashedMS = new PoseStack();
         squashedMS.last().pose().mul(ms.last().pose());
-        squashedMS.scale(.5f, .5f, 1 / 1024f);
+        squashedMS.scale(0.5f, 0.5f, 1 / 1024.0f);
         squashedMS.last().normal().set(copy);
         state.submit(squashedMS, queue, itemLight, OverlayTexture.NO_OVERLAY, 0);
 
@@ -60,7 +60,7 @@ public class ValueBoxRenderer {
 
     @SuppressWarnings("deprecation")
     public static float customZOffset(Item item) {
-        float nudge = -.1f;
+        float nudge = -0.1f;
         if (item instanceof BlockItem) {
             Block block = ((BlockItem) item).getBlock();
             if (block instanceof AbstractSimpleShaftBlock) {

@@ -182,26 +182,26 @@ public class ChainConveyorConnectionHandler {
             return;
         }
 
-        from = from.subtract(diff.normalize().scale(.5));
-        to = to.add(diff.normalize().scale(.5));
+        from = from.subtract(diff.normalize().scale(0.5));
+        to = to.add(diff.normalize().scale(0.5));
 
-        Vec3 normal = diff.cross(new Vec3(0, 1, 0)).normalize().scale(.875);
+        Vec3 normal = diff.cross(new Vec3(0, 1, 0)).normalize().scale(0.875);
 
-        Outliner.getInstance().showLine("chain_connect_line", from.add(normal), to.add(normal)).lineWidth(1 / 16f)
+        Outliner.getInstance().showLine("chain_connect_line", from.add(normal), to.add(normal)).lineWidth(1 / 16.0f)
             .colored(color);
         Outliner.getInstance().showLine("chain_connect_line_1", from.subtract(normal), to.subtract(normal))
-            .lineWidth(1 / 16f).colored(color);
+            .lineWidth(1 / 16.0f).colored(color);
 
     }
 
     private static void highlightConveyor(BlockPos pos, int color, String key) {
         for (int y : Iterate.zeroAndOne) {
-            Vec3 prevV = VecHelper.rotate(new Vec3(0, .125 + y * .75, 1.25), -22.5, Axis.Y)
+            Vec3 prevV = VecHelper.rotate(new Vec3(0, 0.125 + y * 0.75, 1.25), -22.5, Axis.Y)
                 .add(Vec3.atBottomCenterOf(pos));
             for (int i = 0; i < 8; i++) {
-                Vec3 v = VecHelper.rotate(new Vec3(0, .125 + y * .75, 1.25), 22.5 + i * 45, Axis.Y)
+                Vec3 v = VecHelper.rotate(new Vec3(0, 0.125 + y * 0.75, 1.25), 22.5 + i * 45, Axis.Y)
                     .add(Vec3.atBottomCenterOf(pos));
-                Outliner.getInstance().showLine(key + y + i, prevV, v).lineWidth(1 / 16f).colored(color);
+                Outliner.getInstance().showLine(key + y + i, prevV, v).lineWidth(1 / 16.0f).colored(color);
                 prevV = v;
             }
         }

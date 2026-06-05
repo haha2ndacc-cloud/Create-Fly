@@ -74,15 +74,15 @@ public class ToolBoxVisual extends AbstractBlockEntityVisual<ToolboxBlockEntity>
 
         if (lidAngle != lastLidAngle) {
             lid.setIdentityTransform().translate(getVisualPosition()).center().rotateYDegrees(-facing.toYRot())
-                .uncenter().translate(0, 6 / 16f, 12 / 16f).rotateXDegrees(135 * lidAngle)
-                .translateBack(0, 6 / 16f, 12 / 16f).setChanged();
+                .uncenter().translate(0, 6 / 16.0f, 12 / 16.0f).rotateXDegrees(135 * lidAngle)
+                .translateBack(0, 6 / 16.0f, 12 / 16.0f).setChanged();
         }
 
         if (drawerOffset != lastDrawerOffset) {
             drawer1.setIdentityTransform().translate(getVisualPosition()).center().rotateYDegrees(-facing.toYRot())
-                .uncenter().translate(0, 0, -drawerOffset * .35f).setChanged();
+                .uncenter().translate(0, 0, -drawerOffset * 0.35f).setChanged();
             drawer2.setIdentityTransform().translate(getVisualPosition()).center().rotateYDegrees(-facing.toYRot())
-                .uncenter().translate(0, 0.125f, -drawerOffset * .175f).setChanged();
+                .uncenter().translate(0, 0.125f, -drawerOffset * 0.175f).setChanged();
         }
 
         lastLidAngle = lidAngle;

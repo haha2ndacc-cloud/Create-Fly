@@ -19,7 +19,7 @@ public class MechanicalMixerAudioBehaviour extends KineticAudioBehaviour<Mechani
             return;
         }
         if (blockEntity.runningTicks == 20) {
-            AllSoundEvents.MIXING.playAt(blockEntity.getLevel(), blockEntity.getBlockPos(), .75f, 1, true);
+            AllSoundEvents.MIXING.playAt(blockEntity.getLevel(), blockEntity.getBlockPos(), 0.75f, 1, true);
         }
     }
 }

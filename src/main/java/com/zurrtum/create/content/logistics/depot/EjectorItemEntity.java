@@ -133,7 +133,7 @@ public class EjectorItemEntity extends ItemEntity {
     }
 
     private void setIsAlive() {
-        this.alive = true;
+        alive = true;
     }
 
     @Override
@@ -214,8 +214,9 @@ public class EjectorItemEntity extends ItemEntity {
 
     @Nullable
     private DirectBeltInputBehaviour getTargetOpenInv() {
-        BlockPos targetPos = earlyTarget != null ? earlyTarget.getSecond() : blockPosition().above(launcher.getVerticalDistance())
-            .relative(getNearestViewDirection(), Math.max(1, launcher.getHorizontalDistance()));
+        BlockPos targetPos = earlyTarget != null ? earlyTarget.getSecond() :
+            blockPosition().above(launcher.getVerticalDistance())
+                .relative(getNearestViewDirection(), Math.max(1, launcher.getHorizontalDistance()));
         return BlockEntityBehaviour.get(level(), targetPos, DirectBeltInputBehaviour.TYPE);
     }
 
@@ -254,10 +255,10 @@ public class EjectorItemEntity extends ItemEntity {
 
         Vec3 vec = rayTraceBlocks.getLocation();
         earlyTarget = Pair.of(
-            vec.add(Vec3.atLowerCornerOf(rayTraceBlocks.getDirection().getUnitVec3i()).scale(.25f)),
+            vec.add(Vec3.atLowerCornerOf(rayTraceBlocks.getDirection().getUnitVec3i()).scale(0.25f)),
             rayTraceBlocks.getBlockPos()
         );
-        earlyTargetTime = (float) (time + (source.distanceTo(vec) / source.distanceTo(target)));
+        earlyTargetTime = (float) (time + source.distanceTo(vec) / source.distanceTo(target));
         return true;
     }
 
@@ -266,7 +267,7 @@ public class EjectorItemEntity extends ItemEntity {
     }
 
     public Vec3 getLaunchedItemMotion(float time) {
-        return launcher.getGlobalVelocity(time, direction).scale(.5f);
+        return launcher.getGlobalVelocity(time, direction).scale(0.5f);
     }
 
     @Override

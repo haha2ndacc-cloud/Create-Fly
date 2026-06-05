@@ -269,9 +269,9 @@ public class SchematicPrinter {
         if (toReplace == state && !mergeTEs) {
             return false;
         }
-        if (toReplace.getDestroySpeed(world, pos) == -1 || (toReplaceOther != null && toReplaceOther.getDestroySpeed(world,
+        if (toReplace.getDestroySpeed(world, pos) == -1 || toReplaceOther != null && toReplaceOther.getDestroySpeed(world,
             pos
-        ) == -1)) {
+        ) == -1) {
             return false;
         }
 

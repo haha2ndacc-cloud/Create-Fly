@@ -38,7 +38,7 @@ public final class InstanceTree {
     private float yScale;
     private float zScale;
     private boolean visible = true;
-    private boolean skipDraw = false;
+    private boolean skipDraw;
 
     private boolean changed;
 

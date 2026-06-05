@@ -59,7 +59,7 @@ public class TimeOfDayConditionRender implements IScheduleInput<TimeOfDayConditi
 
     private Identifier getClockTextureId(TimeOfDayCondition input) {
         int displayHr = (input.intData("Hour") + 12) % 24;
-        float progress = (displayHr * 60f + input.intData("Minute")) / (24 * 60);
+        float progress = (displayHr * 60.0f + input.intData("Minute")) / (24 * 60);
         return Identifier.withDefaultNamespace("textures/item/clock_" + twoDigits(Mth.clamp(
             (int) (progress * 64),
             0,

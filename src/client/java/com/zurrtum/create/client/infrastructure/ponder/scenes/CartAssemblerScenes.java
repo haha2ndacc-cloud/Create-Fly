@@ -19,7 +19,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -33,7 +32,7 @@ public class CartAssemblerScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("cart_assembler", "Moving Structures using Cart Assemblers");
         scene.configureBasePlate(0, 0, 5);
-        scene.scaleSceneView(.9f);
+        scene.scaleSceneView(0.9f);
         scene.world().showSection(util.select().layer(0), Direction.UP);
         scene.idle(5);
 
@@ -153,7 +152,7 @@ public class CartAssemblerScenes {
         scene.world().moveSection(contraption, util.vector().of(0, -100, 4), 0);
         ItemStack asStack = AllItems.MINECART_CONTRAPTION.getDefaultInstance();
         ElementLink<EntityElement> itemEntity = scene.world()
-            .createItemEntity(cartCenter, util.vector().of(0, .1, 0), asStack);
+            .createItemEntity(cartCenter, util.vector().of(0, 0.1, 0), asStack);
         scene.idle(40);
         scene.overlay().showText(80).attachKeyFrame()
             .text("Using a Wrench on the Minecart will let you carry the Contraption elsewhere").pointAt(cartCenter)
@@ -167,9 +166,9 @@ public class CartAssemblerScenes {
         scene.world().moveSection(anchor, util.vector().of(0, 100.5, 0), 0);
         scene.world().moveSection(contraption, util.vector().of(0, 100.5, 0), 0);
         scene.idle(1);
-        scene.special().moveCart(cart, util.vector().of(0, -.5, 0), 5);
-        scene.world().moveSection(anchor, util.vector().of(0, -.5, 0), 5);
-        scene.world().moveSection(contraption, util.vector().of(0, -.5, 0), 5);
+        scene.special().moveCart(cart, util.vector().of(0, -0.5, 0), 5);
+        scene.world().moveSection(anchor, util.vector().of(0, -0.5, 0), 5);
+        scene.world().moveSection(contraption, util.vector().of(0, -0.5, 0), 5);
     }
 
     public static void modes(SceneBuilder builder, SceneBuildingUtil util) {
@@ -222,9 +221,9 @@ public class CartAssemblerScenes {
         scene.world().moveSection(contraption, util.vector().of(-1.5, 0, 0), 15);
         scene.idle(16);
         scene.special().rotateCart(cart, -45, 2);
-        scene.special().moveCart(cart, util.vector().of(-.5, 0, -.5), 8);
-        scene.world().moveSection(anchor, util.vector().of(-.5, 0, -.5), 8);
-        scene.world().moveSection(contraption, util.vector().of(-.5, 0, -.5), 8);
+        scene.special().moveCart(cart, util.vector().of(-0.5, 0, -0.5), 8);
+        scene.world().moveSection(anchor, util.vector().of(-0.5, 0, -0.5), 8);
+        scene.world().moveSection(contraption, util.vector().of(-0.5, 0, -0.5), 8);
         scene.world().rotateSection(anchor, 0, -90, 0, 12);
         scene.world().rotateSection(contraption, 0, -90, 0, 12);
         scene.idle(9);
@@ -250,7 +249,7 @@ public class CartAssemblerScenes {
         scene.special().hideElement(cart, Direction.UP);
         scene.idle(25);
 
-        Vec3 blockSurface = util.vector().blockSurface(assemblerPos, Direction.NORTH).add(0, -1 / 16f, -2 / 16f);
+        Vec3 blockSurface = util.vector().blockSurface(assemblerPos, Direction.NORTH).add(0, -1 / 16.0f, -2 / 16.0f);
         scene.overlay().showFilterSlotInput(blockSurface, Direction.NORTH, 60);
         scene.overlay().showControls(blockSurface, Pointing.DOWN, 60).rightClick();
         scene.idle(10);
@@ -274,9 +273,9 @@ public class CartAssemblerScenes {
         scene.world().moveSection(contraption, util.vector().of(-1.5, 0, 0), 15);
         scene.idle(16);
         scene.special().rotateCart(cart, -45, 2);
-        scene.special().moveCart(cart, util.vector().of(-.5, 0, -.5), 8);
-        scene.world().moveSection(anchor, util.vector().of(-.5, 0, -.5), 8);
-        scene.world().moveSection(contraption, util.vector().of(-.5, 0, -.5), 8);
+        scene.special().moveCart(cart, util.vector().of(-0.5, 0, -0.5), 8);
+        scene.world().moveSection(anchor, util.vector().of(-0.5, 0, -0.5), 8);
+        scene.world().moveSection(contraption, util.vector().of(-0.5, 0, -0.5), 8);
         scene.idle(9);
         scene.special().rotateCart(cart, -45, 2);
         scene.special().moveCart(cart, util.vector().of(0, 0, -1.5), 15);
@@ -295,7 +294,7 @@ public class CartAssemblerScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("cart_assembler_dual", "Assembling Carriage Contraptions");
         scene.configureBasePlate(0, 0, 6);
-        scene.scaleSceneView(.9f);
+        scene.scaleSceneView(0.9f);
         scene.world().showSection(util.select().layer(0), Direction.UP);
         scene.idle(5);
 
@@ -363,8 +362,8 @@ public class CartAssemblerScenes {
         scene.world().moveSection(anchors, m, 5);
         scene.idle(5);
         scene.special().rotateCart(cart, -45, 2);
-        scene.special().moveCart(cart2, util.vector().of(-.3, 0, 0), 8);
-        m = util.vector().of(-.5, 0, -.5);
+        scene.special().moveCart(cart2, util.vector().of(-0.3, 0, 0), 8);
+        m = util.vector().of(-0.5, 0, -0.5);
         scene.special().moveCart(cart, m, 8);
         scene.world().moveSection(anchors, m, 8);
         scene.world().moveSection(contraption, m, 8);
@@ -372,7 +371,7 @@ public class CartAssemblerScenes {
         scene.world().rotateSection(contraption, 0, -10, 0, 8);
         scene.idle(8);
         scene.special().rotateCart(cart, -45, 2);
-        scene.special().moveCart(cart2, util.vector().of(-.4, 0, 0), 5);
+        scene.special().moveCart(cart2, util.vector().of(-0.4, 0, 0), 5);
         m = util.vector().of(0, 0, -3.5);
         scene.special().moveCart(cart, m, 25);
         scene.world().moveSection(anchors, m, 25);
@@ -386,13 +385,13 @@ public class CartAssemblerScenes {
         scene.world().rotateSection(anchors, 0, -42, 0, 9);
         scene.world().rotateSection(contraption, 0, -42, 0, 9);
         scene.idle(9);
-        m = util.vector().of(-.5, 0, -.5);
+        m = util.vector().of(-0.5, 0, -0.5);
         scene.special().moveCart(cart2, m, 2);
         scene.special().rotateCart(cart2, -45, 2);
         scene.world().rotateSection(anchors, 0, -5, 0, 5);
         scene.world().rotateSection(contraption, 0, -5, 0, 5);
         scene.idle(2);
-        scene.special().moveCart(cart2, util.vector().of(0, 0, -.5), 5);
+        scene.special().moveCart(cart2, util.vector().of(0, 0, -0.5), 5);
         scene.special().rotateCart(cart2, -45, 2);
         scene.idle(10);
 
@@ -407,7 +406,7 @@ public class CartAssemblerScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("cart_assembler_rails", "Other types of Minecarts and Rails");
         scene.configureBasePlate(0, 0, 6);
-        scene.scaleSceneView(.9f);
+        scene.scaleSceneView(0.9f);
         scene.world().showSection(util.select().layer(0), Direction.UP);
         scene.idle(5);
 
@@ -523,9 +522,9 @@ public class CartAssemblerScenes {
         scene.world().moveSection(contraption, util.vector().of(-3, 0, 0), 30);
         scene.world().moveSection(anchor, util.vector().of(-3, 0, 0), 30);
 
-        Vec3 vec = util.vector().centerOf(assembler).add(.25, .25, -0.5);
+        Vec3 vec = util.vector().centerOf(assembler).add(0.25, 0.25, -0.5);
         for (int i = 0; i < 7; i++) {
-            scene.effects().emitParticles(vec = vec.add(-.5, 0, 0), smoke, 2, 1);
+            scene.effects().emitParticles(vec = vec.add(-0.5, 0, 0), smoke, 2, 1);
             scene.idle(5);
         }
 

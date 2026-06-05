@@ -20,9 +20,9 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class CopycatStepModel extends CopycatModel {
-    protected static final Vec3 VEC_Y_3 = new Vec3(0, .75, 0);
-    protected static final Vec3 VEC_Y_2 = new Vec3(0, .5, 0);
-    protected static final Vec3 VEC_Y_N2 = new Vec3(0, -.5, 0);
+    protected static final Vec3 VEC_Y_3 = new Vec3(0, 0.75, 0);
+    protected static final Vec3 VEC_Y_2 = new Vec3(0, 0.5, 0);
+    protected static final Vec3 VEC_Y_N2 = new Vec3(0, -0.5, 0);
 
     public CopycatStepModel(BlockState state, UnbakedRoot unbaked) {
         super(state, unbaked);
@@ -46,9 +46,9 @@ public class CopycatStepModel extends CopycatModel {
         Direction opposite = facing.getOpposite();
         boolean upperHalf = state.getValueOrElse(CopycatStepBlock.HALF, Half.BOTTOM) == Half.TOP;
         Vec3 normal = Vec3.atLowerCornerOf(facing.getUnitVec3i());
-        Vec3 normalScaled2 = normal.scale(.5);
-        Vec3 normalScaledN3 = normal.scale(-.75);
-        AABB bottomBack = CUBE_AABB.contract(-normal.x * .75, .75, -normal.z * .75);
+        Vec3 normalScaled2 = normal.scale(0.5);
+        Vec3 normalScaledN3 = normal.scale(-0.75);
+        AABB bottomBack = CUBE_AABB.contract(-normal.x * 0.75, 0.75, -normal.z * 0.75);
         AABB bottomFront = bottomBack.move(normalScaledN3);
         AABB topBack = bottomBack.move(VEC_Y_3);
         AABB topFront = bottomFront.move(VEC_Y_3);

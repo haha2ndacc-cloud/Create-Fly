@@ -225,23 +225,22 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
     public int getComparatorOutput() {
         if (inventory == null) {
             return 0;
-        } else {
-            int itemsFound = 0;
-            float proportion = 0.0F;
-
-            int size = inventory.getContainerSize();
-            for (int j = 0; j < size; ++j) {
-                ItemStack itemstack = inventory.getItem(j);
-
-                if (!itemstack.isEmpty()) {
-                    proportion += (float) itemstack.getCount() / (float) itemstack.getMaxStackSize();
-                    ++itemsFound;
-                }
-            }
-
-            proportion = proportion / (float) size;
-            return Mth.floor(proportion * 14.0F) + (itemsFound > 0 ? 1 : 0);
         }
+        int itemsFound = 0;
+        float proportion = 0.0F;
+
+        int size = inventory.getContainerSize();
+        for (int j = 0; j < size; ++j) {
+            ItemStack itemstack = inventory.getItem(j);
+
+            if (!itemstack.isEmpty()) {
+                proportion += (float) itemstack.getCount() / itemstack.getMaxStackSize();
+                ++itemsFound;
+            }
+        }
+
+        proportion = proportion / size;
+        return Mth.floor(proportion * 14.0F) + (itemsFound > 0 ? 1 : 0);
     }
 
     public class PackagePortInventory implements SidedItemInventory {
@@ -259,9 +258,8 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
             String filterString = getFilterString();
             if (receive) {
                 return filterString != null && PackageItem.matchAddress(stack, filterString);
-            } else {
-                return filterString == null || !PackageItem.matchAddress(stack, filterString);
             }
+            return filterString == null || !PackageItem.matchAddress(stack, filterString);
         }
 
         @Override
@@ -269,17 +267,16 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
             String filterString = getFilterString();
             if (receive) {
                 return filterString == null || !PackageItem.matchAddress(stack, filterString);
-            } else {
-                return filterString != null && PackageItem.matchAddress(stack, filterString);
             }
+            return filterString != null && PackageItem.matchAddress(stack, filterString);
         }
 
         public void receiveMode() {
-            this.receive = true;
+            receive = true;
         }
 
         public void sendMode() {
-            this.receive = false;
+            receive = false;
         }
 
         @Override

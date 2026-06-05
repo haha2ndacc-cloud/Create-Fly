@@ -105,12 +105,12 @@ public class RotationPropagator {
         // Gear <-> Large Gear
         if (ICogWheel.isLargeCog(stateFrom) && ICogWheel.isSmallCog(stateTo)) {
             if (isLargeToSmallCog(stateFrom, stateTo, definitionTo, diff)) {
-                return -2f;
+                return -2.0f;
             }
         }
         if (ICogWheel.isLargeCog(stateTo) && ICogWheel.isSmallCog(stateFrom)) {
             if (isLargeToSmallCog(stateTo, stateFrom, definitionFrom, diff)) {
-                return -.5f;
+                return -0.5f;
             }
         }
 
@@ -179,7 +179,8 @@ public class RotationPropagator {
         Direction source = ((DirectionalShaftHalvesBlockEntity) be).getSourceFacing();
 
         if (be instanceof GearboxBlockEntity) {
-            return direction.getAxis() == source.getAxis() ? direction == source ? 1 : -1 : direction.getAxisDirection() == source.getAxisDirection() ? -1 : 1;
+            return direction.getAxis() == source.getAxis() ? direction == source ? 1 : -1 :
+                direction.getAxisDirection() == source.getAxisDirection() ? -1 : 1;
         }
 
         if (be instanceof SplitShaftBlockEntity) {
@@ -260,7 +261,7 @@ public class RotationPropagator {
                 continue;
             }
 
-            boolean incompatible = Math.signum(newSpeed) != Math.signum(speedOfNeighbour) && (newSpeed != 0 && speedOfNeighbour != 0);
+            boolean incompatible = Math.signum(newSpeed) != Math.signum(speedOfNeighbour) && newSpeed != 0 && speedOfNeighbour != 0;
 
             boolean tooFast = Math.abs(newSpeed) > AllConfigs.server().kinetics.maxRotationSpeed.get() || Math.abs(
                 oppositeSpeed) > AllConfigs.server().kinetics.maxRotationSpeed.get();
@@ -278,47 +279,46 @@ public class RotationPropagator {
                 return;
 
                 // Same direction: overpower the slower speed
-            } else {
-
-                // Neighbour faster, overpower the incoming tree
-                if (Math.abs(oppositeSpeed) > Math.abs(speedOfCurrent)) {
-                    float prevSpeed = currentTE.getSpeed();
-                    currentTE.setSource(neighbourTE.getBlockPos());
-                    currentTE.setSpeed(getConveyedSpeed(neighbourTE, currentTE));
-                    currentTE.onSpeedChanged(prevSpeed);
-                    currentTE.sendData();
-
-                    propagateNewSource(currentTE);
-                    return;
-                }
-
-                // Current faster, overpower the neighbours' tree
-                if (Math.abs(newSpeed) >= Math.abs(speedOfNeighbour)) {
-
-                    // Do not overpower you own network -> cycle
-                    if (!currentTE.hasNetwork() || currentTE.network.equals(neighbourTE.network)) {
-                        float epsilon = Math.abs(speedOfNeighbour) / 256f / 256f;
-                        if (Math.abs(newSpeed) > Math.abs(speedOfNeighbour) + epsilon) {
-                            world.destroyBlock(pos, true);
-                        }
-                        continue;
-                    }
-
-                    if (currentTE.hasSource() && currentTE.source.equals(neighbourTE.getBlockPos())) {
-                        currentTE.removeSource();
-                    }
-
-                    float prevSpeed = neighbourTE.getSpeed();
-                    neighbourTE.setSource(currentTE.getBlockPos());
-                    neighbourTE.setSpeed(getConveyedSpeed(currentTE, neighbourTE));
-                    neighbourTE.onSpeedChanged(prevSpeed);
-                    neighbourTE.sendData();
-                    propagateNewSource(neighbourTE);
-                    continue;
-                }
             }
 
-            if (Math.abs(neighbourTE.getTheoreticalSpeed() - newSpeed) <= 1e-4f) {
+            // Neighbour faster, overpower the incoming tree
+            if (Math.abs(oppositeSpeed) > Math.abs(speedOfCurrent)) {
+                float prevSpeed = currentTE.getSpeed();
+                currentTE.setSource(neighbourTE.getBlockPos());
+                currentTE.setSpeed(getConveyedSpeed(neighbourTE, currentTE));
+                currentTE.onSpeedChanged(prevSpeed);
+                currentTE.sendData();
+
+                propagateNewSource(currentTE);
+                return;
+            }
+
+            // Current faster, overpower the neighbours' tree
+            if (Math.abs(newSpeed) >= Math.abs(speedOfNeighbour)) {
+
+                // Do not overpower you own network -> cycle
+                if (!currentTE.hasNetwork() || currentTE.network.equals(neighbourTE.network)) {
+                    float epsilon = Math.abs(speedOfNeighbour) / 256.0f / 256.0f;
+                    if (Math.abs(newSpeed) > Math.abs(speedOfNeighbour) + epsilon) {
+                        world.destroyBlock(pos, true);
+                    }
+                    continue;
+                }
+
+                if (currentTE.hasSource() && currentTE.source.equals(neighbourTE.getBlockPos())) {
+                    currentTE.removeSource();
+                }
+
+                float prevSpeed = neighbourTE.getSpeed();
+                neighbourTE.setSource(currentTE.getBlockPos());
+                neighbourTE.setSpeed(getConveyedSpeed(currentTE, neighbourTE));
+                neighbourTE.onSpeedChanged(prevSpeed);
+                neighbourTE.sendData();
+                propagateNewSource(neighbourTE);
+                continue;
+            }
+
+            if (Math.abs(neighbourTE.getTheoreticalSpeed() - newSpeed) <= 1.0e-4f) {
                 continue;
             }
 

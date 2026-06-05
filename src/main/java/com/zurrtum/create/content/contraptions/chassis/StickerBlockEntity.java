@@ -70,7 +70,7 @@ public class StickerBlockEntity extends SmartBlockEntity {
         if (isAttachedToBlock() && target == 0 && piston.getChaseTarget() == 1) {
             playSound(false);
         }
-        piston.chase(target, .4f, Chaser.LINEAR);
+        piston.chase(target, 0.4f, Chaser.LINEAR);
 
         AllClientHandle.INSTANCE.queueUpdate(this);
     }

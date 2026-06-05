@@ -85,11 +85,11 @@ public abstract class DisplaySource {
     }
 
     protected String getTranslationKey() {
-        return this.getId().getPath();
+        return getId().getPath();
     }
 
     public Component getName() {
-        return Component.translatable(this.getId().getNamespace() + ".display_source." + getTranslationKey());
+        return Component.translatable(getId().getNamespace() + ".display_source." + getTranslationKey());
     }
 
     public void loadFlapDisplayLayout(
@@ -145,18 +145,17 @@ public abstract class DisplaySource {
             if (byBe.isEmpty()) {
                 // none
                 return List.of();
-            } else {
-                // only BlockEntity
-                return byBe;
             }
-        } else if (byBe.isEmpty()) {
+            // only BlockEntity
+            return byBe;
+        }
+        if (byBe.isEmpty()) {
             // only Block
             return byBlock;
-        } else {
-            // both present, combine
-            List<DisplaySource> combined = new ArrayList<>(byBlock);
-            combined.addAll(byBe);
-            return combined;
         }
+        // both present, combine
+        List<DisplaySource> combined = new ArrayList<>(byBlock);
+        combined.addAll(byBe);
+        return combined;
     }
 }

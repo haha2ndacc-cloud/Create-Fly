@@ -15,9 +15,9 @@ public class VirtualChunkSection extends LevelChunkSection {
     public VirtualChunkSection(VirtualChunk owner, int yBase) {
         super(owner.world.palettedContainerFactory());
         this.owner = owner;
-        this.xStart = owner.getPos().getMinBlockX();
-        this.yStart = yBase;
-        this.zStart = owner.getPos().getMinBlockZ();
+        xStart = owner.getPos().getMinBlockX();
+        yStart = yBase;
+        zStart = owner.getPos().getMinBlockZ();
     }
 
     @Override

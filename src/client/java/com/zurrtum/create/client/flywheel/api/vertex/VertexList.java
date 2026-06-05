@@ -38,36 +38,36 @@ public interface VertexList {
     float normalZ(int index);
 
     default void write(MutableVertexList dst, int srcIndex, int dstIndex) {
-        dst.x(dstIndex, this.x(srcIndex));
-        dst.y(dstIndex, this.y(srcIndex));
-        dst.z(dstIndex, this.z(srcIndex));
-        dst.r(dstIndex, this.r(srcIndex));
-        dst.g(dstIndex, this.g(srcIndex));
-        dst.b(dstIndex, this.b(srcIndex));
-        dst.a(dstIndex, this.a(srcIndex));
-        dst.u(dstIndex, this.u(srcIndex));
-        dst.v(dstIndex, this.v(srcIndex));
-        dst.overlay(dstIndex, this.overlay(srcIndex));
-        dst.light(dstIndex, this.light(srcIndex));
-        dst.normalX(dstIndex, this.normalX(srcIndex));
-        dst.normalY(dstIndex, this.normalY(srcIndex));
-        dst.normalZ(dstIndex, this.normalZ(srcIndex));
+        dst.x(dstIndex, x(srcIndex));
+        dst.y(dstIndex, y(srcIndex));
+        dst.z(dstIndex, z(srcIndex));
+        dst.r(dstIndex, r(srcIndex));
+        dst.g(dstIndex, g(srcIndex));
+        dst.b(dstIndex, b(srcIndex));
+        dst.a(dstIndex, a(srcIndex));
+        dst.u(dstIndex, u(srcIndex));
+        dst.v(dstIndex, v(srcIndex));
+        dst.overlay(dstIndex, overlay(srcIndex));
+        dst.light(dstIndex, light(srcIndex));
+        dst.normalX(dstIndex, normalX(srcIndex));
+        dst.normalY(dstIndex, normalY(srcIndex));
+        dst.normalZ(dstIndex, normalZ(srcIndex));
     }
 
     default void write(MutableVertexList dst, int srcStartIndex, int dstStartIndex, int vertexCount) {
         for (int i = 0; i < vertexCount; ++i) {
-            this.write(dst, srcStartIndex + i, dstStartIndex + i);
+            write(dst, srcStartIndex + i, dstStartIndex + i);
         }
 
     }
 
     default void writeAll(MutableVertexList dst) {
-        this.write(dst, 0, 0, Math.min(this.vertexCount(), dst.vertexCount()));
+        write(dst, 0, 0, Math.min(vertexCount(), dst.vertexCount()));
     }
 
     int vertexCount();
 
     default boolean isEmpty() {
-        return this.vertexCount() == 0;
+        return vertexCount() == 0;
     }
 }

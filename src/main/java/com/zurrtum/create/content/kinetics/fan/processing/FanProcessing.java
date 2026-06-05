@@ -19,9 +19,8 @@ public class FanProcessing {
         if (!itemType.isEmpty()) {
             if (FanProcessingType.parse(itemType) != type) {
                 return type.canProcess(entity.getItem(), entity.level());
-            } else {
-                return AllSynchedDatas.ITEM_TIME.get(entity) != -1;
             }
+            return AllSynchedDatas.ITEM_TIME.get(entity) != -1;
         }
         return type.canProcess(entity.getItem(), entity.level());
     }
@@ -61,8 +60,8 @@ public class FanProcessing {
         TransportedResult ignore = TransportedResult.doNothing();
         if (transported.processedBy != type) {
             transported.processedBy = type;
-            int timeModifierForStackSize = ((transported.stack.getCount() - 1) / 16) + 1;
-            transported.processingTime = (AllConfigs.server().kinetics.fanProcessingTime.get() * timeModifierForStackSize) + 1;
+            int timeModifierForStackSize = (transported.stack.getCount() - 1) / 16 + 1;
+            transported.processingTime = AllConfigs.server().kinetics.fanProcessingTime.get() * timeModifierForStackSize + 1;
             if (!type.canProcess(transported.stack, world)) {
                 transported.processingTime = -1;
             }
@@ -98,8 +97,8 @@ public class FanProcessing {
                 throw new IllegalArgumentException("Could not get id for FanProcessingType " + type + "!");
             }
             AllSynchedDatas.ITEM_TYPE.set(entity, key.toString());
-            int timeModifierForStackSize = ((entity.getItem().getCount() - 1) / 16) + 1;
-            time = (AllConfigs.server().kinetics.fanProcessingTime.get() * timeModifierForStackSize);
+            int timeModifierForStackSize = (entity.getItem().getCount() - 1) / 16 + 1;
+            time = AllConfigs.server().kinetics.fanProcessingTime.get() * timeModifierForStackSize;
         } else {
             time = AllSynchedDatas.ITEM_TIME.get(entity) - 1;
         }

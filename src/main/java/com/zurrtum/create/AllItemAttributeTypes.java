@@ -44,7 +44,7 @@ public class AllItemAttributeTypes {
     public static final ItemAttributeType DAMAGED = singleton("damaged", ItemStack::isDamaged);
     public static final ItemAttributeType BADLY_DAMAGED = singleton(
         "badly_damaged",
-        s -> s.isDamaged() && (float) s.getDamageValue() / s.getMaxDamage() > 3 / 4f
+        s -> s.isDamaged() && (float) s.getDamageValue() / s.getMaxDamage() > 3 / 4.0f
     );
     public static final ItemAttributeType NOT_STACKABLE = singleton(
         "not_stackable",

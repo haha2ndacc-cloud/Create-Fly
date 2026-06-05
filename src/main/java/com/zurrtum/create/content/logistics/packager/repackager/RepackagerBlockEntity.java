@@ -25,6 +25,7 @@ public class RepackagerBlockEntity extends PackagerBlockEntity {
         repackageHelper = new PackageRepackageHelper();
     }
 
+    @Override
     public boolean unwrapBox(ItemStack box, boolean simulate) {
         if (animationTicks > 0) {
             return false;

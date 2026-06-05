@@ -26,20 +26,20 @@ public class PackageLuaObject implements LuaComparable {
     public PackageLuaObject(@Nullable PackagerBlockEntity blockEntity, ItemStack box) {
         this.blockEntity = blockEntity;
         this.box = box;
-        this.address = PackageItem.getAddress(box);
+        address = PackageItem.getAddress(box);
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isEditable() {
-        return (blockEntity != null && !blockEntity.heldBox.isEmpty() && blockEntity.heldBox == box);
+        return blockEntity != null && !blockEntity.heldBox.isEmpty() && blockEntity.heldBox == box;
     }
 
     @LuaFunction(mainThread = true)
     public final String getAddress() throws LuaException {
         if (isEditable()) {
-            this.address = PackageItem.getAddress(box);
+            address = PackageItem.getAddress(box);
         }
-        return this.address;
+        return address;
     }
 
     @LuaFunction(mainThread = true)
@@ -48,7 +48,7 @@ public class PackageLuaObject implements LuaComparable {
             throw new LuaException("Package is not editable");
         }
         PackageItem.addAddress(box, argument);
-        this.address = argument;
+        address = argument;
     }
 
     @LuaFunction(mainThread = true)

@@ -292,8 +292,8 @@ public class ToolboxBlockEntity extends SmartBlockEntity implements MenuProvider
                 );
             }
 
-        } else if (openTracker.openCount == 0 && lid.getChaseTarget() == 0 && lid.getValue(0) > 1 / 16f && lid.getValue(
-            1) < 1 / 16f) {
+        } else if (openTracker.openCount == 0 && lid.getChaseTarget() == 0 && lid.getValue(0) > 1 / 16.0f && lid.getValue(
+            1) < 1 / 16.0f) {
             level.playLocalSound(
                 vec.x,
                 vec.y,

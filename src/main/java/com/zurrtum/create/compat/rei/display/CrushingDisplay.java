@@ -45,7 +45,8 @@ public record CrushingDisplay(EntryIngredient input, List<ProcessingOutput> outp
         Recipe<?> recipe = entry.value();
         if (recipe instanceof CrushingRecipe crushingRecipe) {
             return new CrushingDisplay(id, crushingRecipe);
-        } else if (recipe instanceof MillingRecipe millingRecipe) {
+        }
+        if (recipe instanceof MillingRecipe millingRecipe) {
             return new CrushingDisplay(id, millingRecipe);
         }
         return null;

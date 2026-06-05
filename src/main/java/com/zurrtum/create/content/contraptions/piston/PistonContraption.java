@@ -85,7 +85,7 @@ public class PistonContraption extends TranslatingContraption {
             return false;
         }
 
-        if (blockState.getValue(MechanicalPistonBlock.STATE) == PistonState.EXTENDED) {
+        if (blockState.getValue(STATE) == PistonState.EXTENDED) {
             while (PistonExtensionPoleBlock.PlacementHelper.get().matchesAxis(
                 nextBlock,
                 direction.getAxis()
@@ -100,7 +100,7 @@ public class PistonContraption extends TranslatingContraption {
                 }
 
                 nextBlock = world.getBlockState(actualStart.relative(direction));
-                if (extensionsInFront > MechanicalPistonBlock.maxAllowedPistonPoles()) {
+                if (extensionsInFront > maxAllowedPistonPoles()) {
                     throw AssemblyException.tooManyPistonPoles();
                 }
             }
@@ -131,7 +131,7 @@ public class PistonContraption extends TranslatingContraption {
             extensionsInBack++;
             nextBlock = world.getBlockState(end.relative(direction.getOpposite()));
 
-            if (extensionsInFront + extensionsInBack > MechanicalPistonBlock.maxAllowedPistonPoles()) {
+            if (extensionsInFront + extensionsInBack > maxAllowedPistonPoles()) {
                 throw AssemblyException.tooManyPistonPoles();
             }
         }
@@ -202,9 +202,8 @@ public class PistonContraption extends TranslatingContraption {
             if (!BlockMovementChecks.isMovementAllowed(state, world, currentPos)) {
                 if (retracting) {
                     return true;
-                } else {
-                    throw AssemblyException.unmovableBlock(currentPos, state);
                 }
+                throw AssemblyException.unmovableBlock(currentPos, state);
             }
             if (retracting && state.getPistonPushReaction() == PushReaction.PUSH_ONLY) {
                 return true;
@@ -237,11 +236,7 @@ public class PistonContraption extends TranslatingContraption {
                 return true;
             }
             if (!isExtensionPole(state) && isPiston(pistonState)) {
-                world.setBlock(
-                    pistonPos,
-                    pistonState.setValue(MechanicalPistonBlock.STATE, PistonState.RETRACTED),
-                    3 | 16
-                );
+                world.setBlock(pistonPos, pistonState.setValue(STATE, PistonState.RETRACTED), 3 | 16);
             }
             return true;
         }
@@ -253,7 +248,7 @@ public class PistonContraption extends TranslatingContraption {
         BlockPos pistonPos = anchor.relative(orientation, -1);
         BlockState blockState = world.getBlockState(pos);
         if (pos.equals(pistonPos) && isPiston(blockState)) {
-            world.setBlock(pos, blockState.setValue(MechanicalPistonBlock.STATE, PistonState.MOVING), 66 | 16);
+            world.setBlock(pos, blockState.setValue(STATE, PistonState.MOVING), 66 | 16);
             return true;
         }
         return false;

@@ -11,7 +11,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public class TrapdoorMovingInteraction extends SimpleBlockMovingInteraction {
     @Override
     protected BlockState handle(Player player, Contraption contraption, BlockPos pos, BlockState currentState) {
-        SoundEvent sound = currentState.getValue(TrapDoorBlock.OPEN) ? SoundEvents.WOODEN_TRAPDOOR_CLOSE : SoundEvents.WOODEN_TRAPDOOR_OPEN;
+        SoundEvent sound = currentState.getValue(TrapDoorBlock.OPEN) ? SoundEvents.WOODEN_TRAPDOOR_CLOSE :
+            SoundEvents.WOODEN_TRAPDOOR_OPEN;
         float pitch = player.level().getRandom().nextFloat() * 0.1F + 0.9F;
         playSound(player, sound, pitch);
         return currentState.cycle(TrapDoorBlock.OPEN);

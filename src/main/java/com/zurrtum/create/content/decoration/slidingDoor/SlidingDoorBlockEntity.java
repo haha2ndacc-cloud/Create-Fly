@@ -36,7 +36,7 @@ public class SlidingDoorBlockEntity extends SmartBlockEntity {
         super.tick();
         boolean open = isOpen(getBlockState());
         boolean wasSettled = animation.settled();
-        animation.chase(open ? 1 : 0, .15f, Chaser.LINEAR);
+        animation.chase(open ? 1 : 0, 0.15f, Chaser.LINEAR);
         animation.tickChaser();
 
         if (level.isClientSide()) {
@@ -44,7 +44,7 @@ public class SlidingDoorBlockEntity extends SmartBlockEntity {
         }
 
         if (!open && !wasSettled && animation.settled()) {
-            level.playSound(null, worldPosition, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, .5f, 1);
+            level.playSound(null, worldPosition, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, 0.5f, 1);
         }
     }
 

@@ -163,7 +163,7 @@ public class TrackTargetingBehaviour<T extends TrackEdgePoint> extends BlockEnti
 
         if (rotatedDirection != null) {
             double dot = prevDirection.dot(rotatedDirection);
-            if (dot < -.85f) {
+            if (dot < -0.85f) {
                 rotatedDirection = null;
                 targetDirection = targetDirection.opposite();
                 return null;
@@ -176,15 +176,13 @@ public class TrackTargetingBehaviour<T extends TrackEdgePoint> extends BlockEnti
         CompoundTag data = migrationData;
         migrationData = null;
 
-        {
-            orthogonal = targetBezier == null;
-            Vec3 direction = edge.getDirection(true);
-            int nonZeroComponents = 0;
-            for (Axis axis : Iterate.axes) {
-                nonZeroComponents += direction.get(axis) != 0 ? 1 : 0;
-            }
-            orthogonal &= nonZeroComponents <= 1;
+        orthogonal = targetBezier == null;
+        Vec3 direction = edge.getDirection(true);
+        int nonZeroComponents = 0;
+        for (Axis axis : Iterate.axes) {
+            nonZeroComponents += direction.get(axis) != 0 ? 1 : 0;
         }
+        orthogonal &= nonZeroComponents <= 1;
 
         EdgeData signalData = edge.getEdgeData();
         if (signalData.hasPoints()) {
@@ -306,16 +304,13 @@ public class TrackTargetingBehaviour<T extends TrackEdgePoint> extends BlockEnti
         List<Vec3> trackAxes = track.getTrackAxes(level, pos, state);
         AxisDirection targetDirection = getTargetDirection();
 
-        return targetBezier != null ? TrackGraphHelper.getBezierGraphLocationAt(
-            level,
-            pos,
-            targetDirection,
-            targetBezier
-        ) : TrackGraphHelper.getGraphLocationAt(level, pos, targetDirection, trackAxes.getFirst());
+        return targetBezier != null ?
+            TrackGraphHelper.getBezierGraphLocationAt(level, pos, targetDirection, targetBezier) :
+            TrackGraphHelper.getGraphLocationAt(level, pos, targetDirection, trackAxes.getFirst());
     }
 
     public enum RenderedTrackOverlayType {
-        STATION, SIGNAL, DUAL_SIGNAL, OBSERVER;
+        STATION, SIGNAL, DUAL_SIGNAL, OBSERVER
     }
 
     public void transform(BlockEntity be, StructureTransform transform) {

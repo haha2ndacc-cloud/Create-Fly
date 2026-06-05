@@ -101,7 +101,7 @@ public class TrackBlockEntityTilt {
         Vec3 baseAxis = discoveredSlopes.getFirst().axes.getFirst();
         double baseAxisLength = baseAxis.x != 0 && baseAxis.z != 0 ? Math.sqrt(2) : 1;
         double vDistance = highestPoint.y - lowestPoint.y;
-        double m = vDistance / (hDistance);
+        double m = vDistance / hDistance;
 
         Vec3 diff = highStarts.getFirst().subtract(lowStarts.getFirst());
         boolean flipRotation = diff.dot(new Vec3(1, 0, 2).normalize()) <= 0;
@@ -239,7 +239,7 @@ public class TrackBlockEntityTilt {
 
     public static boolean compareHandles(Vec3 handle1, Vec3 handle2) {
         return new TrackNodeLocation(handle1).getLocation().multiply(1, 0, 1)
-            .distanceToSqr(new TrackNodeLocation(handle2).getLocation().multiply(1, 0, 1)) < 1 / 512f;
+            .distanceToSqr(new TrackNodeLocation(handle2).getLocation().multiply(1, 0, 1)) < 1 / 512.0f;
     }
 
 }

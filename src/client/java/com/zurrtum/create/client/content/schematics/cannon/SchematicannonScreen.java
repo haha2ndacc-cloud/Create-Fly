@@ -481,7 +481,7 @@ public class SchematicannonScreen extends AbstractSimiContainerScreen<Schematica
             return tooltip;
         }
 
-        int fillPercent = (int) ((be.remainingFuel / (float) be.getShotsPerGunpowder()) * 100);
+        int fillPercent = (int) (be.remainingFuel / (float) be.getShotsPerGunpowder() * 100);
         tooltip.add(CreateLang.translateDirect(_gunpowderLevel, fillPercent));
         tooltip.add(CreateLang.translateDirect(
             _shotsRemaining,

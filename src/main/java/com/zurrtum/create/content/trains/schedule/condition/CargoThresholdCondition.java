@@ -46,7 +46,7 @@ public abstract class CargoThresholdCondition extends LazyTickedScheduleConditio
 
     protected void requestStatusToUpdate(int amount, CompoundTag context) {
         context.putInt("CurrentDisplay", amount);
-        super.requestStatusToUpdate(context);
+        requestStatusToUpdate(context);
     }
 
     protected int getLastDisplaySnapshot(CompoundTag context) {

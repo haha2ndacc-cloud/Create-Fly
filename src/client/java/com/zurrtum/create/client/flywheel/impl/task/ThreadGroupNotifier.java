@@ -6,13 +6,13 @@ package com.zurrtum.create.client.flywheel.impl.task;
 public class ThreadGroupNotifier {
     public synchronized void awaitNotification() {
         try {
-            this.wait();
+            wait();
         } catch (InterruptedException e) {
             // we don't care if we're interrupted, just continue.
         }
     }
 
     public synchronized void postNotification() {
-        this.notifyAll();
+        notifyAll();
     }
 }

@@ -95,12 +95,11 @@ public class LinkedControllerItem extends Item implements MenuProvider {
                     openHandledScreen(serverPlayer);
                 }
                 return InteractionResult.SUCCESS;
-            } else {
-                if (world.isClientSide()) {
-                    AllClientHandle.INSTANCE.toggleLinkedControllerActive();
-                }
-                player.getCooldowns().addCooldown(player.getMainHandItem(), 2);
             }
+            if (world.isClientSide()) {
+                AllClientHandle.INSTANCE.toggleLinkedControllerActive();
+            }
+            player.getCooldowns().addCooldown(player.getMainHandItem(), 2);
         } else if (player.getMainHandItem().getItem() != this) {
             if (world.isClientSide()) {
                 AllClientHandle.INSTANCE.toggleLinkedControllerActive();

@@ -33,15 +33,16 @@ public class PonderProgressBar extends AbstractSimiWidget {
         progress = LerpedFloat.linear().startWithValue(0);
     }
 
+    @Override
     public void tick() {
-        progress.chase(ponder.getActiveScene().getSceneProgress(), .5f, LerpedFloat.Chaser.EXP);
+        progress.chase(ponder.getActiveScene().getSceneProgress(), 0.5f, LerpedFloat.Chaser.EXP);
         progress.tickChaser();
     }
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return this.active && this.visible && ponder.getActiveScene()
-            .getKeyframeCount() > 0 && mouseX >= (double) this.getX() && mouseX < (double) (this.getX() + this.width + 4) && mouseY >= (double) this.getY() - 3 && mouseY < (double) (this.getY() + this.height + 20);
+        return active && visible && ponder.getActiveScene()
+            .getKeyframeCount() > 0 && mouseX >= getX() && mouseX < getX() + width + 4 && mouseY >= (double) getY() - 3 && mouseY < getY() + height + 20;
     }
 
     @Override
@@ -68,15 +69,13 @@ public class PonderProgressBar extends AbstractSimiWidget {
         int totalTime = activeScene.getTotalTime();
         int clickedAtTime = (int) ((mouseX - getX()) / ((double) width + 4) * totalTime);
 
-        {
-            int lastKeyframeTime = activeScene.getKeyframeTime(activeScene.getKeyframeCount() - 1);
+        int lastKeyframeTime = activeScene.getKeyframeTime(activeScene.getKeyframeCount() - 1);
 
-            int diffToEnd = totalTime - clickedAtTime;
-            int diffToLast = clickedAtTime - lastKeyframeTime;
+        int diffToEnd = totalTime - clickedAtTime;
+        int diffToLast = clickedAtTime - lastKeyframeTime;
 
-            if (diffToEnd > 0 && diffToEnd < diffToLast / 2) {
-                return activeScene.getKeyframeCount();
-            }
+        if (diffToEnd > 0 && diffToEnd < diffToLast / 2) {
+            return activeScene.getKeyframeCount();
         }
 
         int index = -1;
@@ -110,8 +109,8 @@ public class PonderProgressBar extends AbstractSimiWidget {
         poseStack.scale((width + 4) * progress.getValue(partialTicks), 1);
         Color c1 = BAR_COLORS.getFirst();
         Color c2 = BAR_COLORS.getSecond();
-        UIRenderHelper.drawGradientRect(graphics, 0f, 1f, 1f, 3f, c1, c1);
-        UIRenderHelper.drawGradientRect(graphics, 0f, 3f, 1f, 4f, c2, c2);
+        UIRenderHelper.drawGradientRect(graphics, 0.0f, 1.0f, 1.0f, 3.0f, c1, c1);
+        UIRenderHelper.drawGradientRect(graphics, 0.0f, 3.0f, 1.0f, 4.0f, c2, c2);
         poseStack.popMatrix();
 
         renderKeyframes(graphics, mouseX, partialTicks);
@@ -149,7 +148,7 @@ public class PonderProgressBar extends AbstractSimiWidget {
 
         for (int i = 0; i < activeScene.getKeyframeCount(); i++) {
             int keyframeTime = activeScene.getKeyframeTime(i);
-            int keyframePos = (int) (((float) keyframeTime) / ((float) activeScene.getTotalTime()) * (width + 2));
+            int keyframePos = (int) ((float) keyframeTime / activeScene.getTotalTime() * (width + 2));
 
             boolean selected = i == hoverIndex;
             Couple<Color> colors = selected ? hover : idle;
@@ -183,10 +182,10 @@ public class PonderProgressBar extends AbstractSimiWidget {
             Font font = graphics.minecraft.font;
             UIRenderHelper.drawGradientRect(
                 graphics,
-                ((float) keyframePos),
-                9f,
-                keyframePos + 2f,
-                9f + height,
+                keyframePos,
+                9.0f,
+                keyframePos + 2.0f,
+                9.0f + height,
                 endColor,
                 startColor
             );
@@ -211,10 +210,10 @@ public class PonderProgressBar extends AbstractSimiWidget {
 
         UIRenderHelper.drawGradientRect(
             graphics,
-            ((float) keyframePos),
-            0f,
-            keyframePos + 2f,
-            1f + height,
+            keyframePos,
+            0.0f,
+            keyframePos + 2.0f,
+            1.0f + height,
             startColor,
             endColor
         );

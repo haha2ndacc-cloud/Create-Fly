@@ -22,8 +22,8 @@ public class HideAllInstruction extends TickingInstruction {
         scene.getElements().forEach(element -> {
             if (element instanceof AnimatedSceneElementBase animatedSceneElement) {
                 animatedSceneElement.setFade(1);
-                animatedSceneElement.setFadeVec(fadeOutTo == null ? null : Vec3.atLowerCornerOf(fadeOutTo.getUnitVec3i())
-                    .scale(.5f));
+                animatedSceneElement.setFadeVec(
+                    fadeOutTo == null ? null : Vec3.atLowerCornerOf(fadeOutTo.getUnitVec3i()).scale(0.5f));
             } else if (element instanceof AnimatedOverlayElementBase animatedSceneElement) {
                 animatedSceneElement.setFade(1);
             } else {
@@ -35,7 +35,7 @@ public class HideAllInstruction extends TickingInstruction {
     @Override
     public void tick(PonderScene scene) {
         super.tick(scene);
-        float fade = (remainingTicks / (float) totalTicks);
+        float fade = remainingTicks / (float) totalTicks;
 
         scene.forEach(
             AnimatedSceneElementBase.class, ase -> {

@@ -62,7 +62,7 @@ public class PackageEntity extends LivingEntity {
     public PackageEntity(EntityType<? extends PackageEntity> entityTypeIn, Level worldIn) {
         super(entityTypeIn, worldIn);
         box = ItemStack.EMPTY;
-        setYRot(this.random.nextFloat() * 360.0F);
+        setYRot(random.nextFloat() * 360.0F);
         setYHeadRot(getYRot());
         yRotO = getYRot();
         insertionDelay = 30;
@@ -70,8 +70,8 @@ public class PackageEntity extends LivingEntity {
 
     public PackageEntity(Level worldIn, double x, double y, double z) {
         this(AllEntityTypes.PACKAGE, worldIn);
-        this.setPos(x, y, z);
-        this.refreshDimensions();
+        setPos(x, y, z);
+        refreshDimensions();
     }
 
     @Override
@@ -94,10 +94,10 @@ public class PackageEntity extends LivingEntity {
         if (world != null && !world.isClientSide()) {
             if (ChuteBlock.isChute(world.getBlockState(BlockPos.containing(
                 position.x,
-                position.y + .5f,
+                position.y + 0.5f,
                 position.z
             )))) {
-                packageEntity.setYRot(((int) packageEntity.getYRot()) / 90 * 90);
+                packageEntity.setYRot((int) packageEntity.getYRot() / 90 * 90);
             }
         }
 
@@ -117,7 +117,7 @@ public class PackageEntity extends LivingEntity {
     }
 
     public static AttributeSupplier.Builder createPackageAttributes() {
-        return LivingEntity.createLivingAttributes().add(Attributes.MAX_HEALTH, 5f).add(Attributes.MOVEMENT_SPEED, 1f);
+        return createLivingAttributes().add(Attributes.MAX_HEALTH, 5.0f).add(Attributes.MOVEMENT_SPEED, 1.0f);
     }
 
     @Override
@@ -137,21 +137,21 @@ public class PackageEntity extends LivingEntity {
         if (!level().isClientSide()) {
             return;
         }
-        if (getDeltaMovement().length() < 1 / 128f) {
+        if (getDeltaMovement().length() < 1 / 128.0f) {
             return;
         }
         if (tickCount >= 20) {
             return;
         }
 
-        Vec3 motion = getDeltaMovement().scale(.75f);
+        Vec3 motion = getDeltaMovement().scale(0.75f);
         AABB bb = getBoundingBox();
         List<VoxelShape> entityStream = level().getEntityCollisions(this, bb.expandTowards(motion));
         motion = collideBoundingBox(this, motion, bb, level(), entityStream);
 
         Vec3 clientPos = position().add(motion);
         if (isInterpolating()) {
-            clientPos = VecHelper.lerp(Math.min(1, tickCount / 20f), clientPos, getInterpolation().position());
+            clientPos = VecHelper.lerp(Math.min(1, tickCount / 20.0f), clientPos, getInterpolation().position());
         }
         if (tickCount < 5) {
             setPos(clientPos.x, clientPos.y, clientPos.z);
@@ -163,7 +163,7 @@ public class PackageEntity extends LivingEntity {
 
     @Override
     public void lerpMotion(Vec3 clientVelocity) {
-        setDeltaMovement(getDeltaMovement().add(clientVelocity).scale(.5f));
+        setDeltaMovement(getDeltaMovement().add(clientVelocity).scale(0.5f));
     }
 
     public String getAddress() {
@@ -235,11 +235,11 @@ public class PackageEntity extends LivingEntity {
 
     public boolean decreaseInsertionTimer(@Nullable Vec3 targetSpot) {
         if (targetSpot != null) {
-            setDeltaMovement(getDeltaMovement().scale(.75f).multiply(1, .25f, 1));
-            Vec3 pos = position().add(targetSpot.subtract(position()).scale(.2f));
+            setDeltaMovement(getDeltaMovement().scale(0.75f).multiply(1, 0.25f, 1));
+            Vec3 pos = position().add(targetSpot.subtract(position()).scale(0.2f));
             setPos(pos.x, pos.y, pos.z);
-            float yawTarget = ((int) getYRot()) / 90 * 90;
-            setYRot(AngleHelper.angleLerp(.5f, getYRot(), yawTarget));
+            float yawTarget = (int) getYRot() / 90 * 90;
+            setYRot(AngleHelper.angleLerp(0.5f, getYRot(), yawTarget));
         }
         insertionDelay = Math.max(insertionDelay - 3, 0);
         return insertionDelay == 0;
@@ -257,7 +257,7 @@ public class PackageEntity extends LivingEntity {
 
     @Override
     public boolean canCollideWith(Entity pEntity) {
-        return pEntity instanceof PackageEntity && pEntity.getBoundingBox().maxY < getBoundingBox().minY + .125f;
+        return pEntity instanceof PackageEntity && pEntity.getBoundingBox().maxY < getBoundingBox().minY + 0.125f;
     }
 
     @Override
@@ -274,8 +274,8 @@ public class PackageEntity extends LivingEntity {
             blockPosition(),
             SoundEvents.ITEM_PICKUP,
             SoundSource.PLAYERS,
-            .2f,
-            .75f + level().getRandom().nextFloat()
+            0.2f,
+            0.75f + level().getRandom().nextFloat()
         );
         remove(RemovalReason.DISCARDED);
         return InteractionResult.SUCCESS;
@@ -290,10 +290,10 @@ public class PackageEntity extends LivingEntity {
         }
 
         if (isOtherPackage) {
-            if (entityIn.getBoundingBox().minY < this.getBoundingBox().maxY) {
+            if (entityIn.getBoundingBox().minY < getBoundingBox().maxY) {
                 super.push(entityIn);
             }
-        } else if (entityIn.getBoundingBox().minY <= this.getBoundingBox().minY) {
+        } else if (entityIn.getBoundingBox().minY <= getBoundingBox().minY) {
             super.push(entityIn);
         }
     }
@@ -305,7 +305,7 @@ public class PackageEntity extends LivingEntity {
 
     @Override
     protected Vec3 getPassengerAttachmentPoint(Entity entity, EntityDimensions dimensions, float partialTick) {
-        return super.getPassengerAttachmentPoint(entity, dimensions, partialTick).add(0, 2 / 16f, 0);
+        return super.getPassengerAttachmentPoint(entity, dimensions, partialTick).add(0, 2 / 16.0f, 0);
     }
 
     @Override
@@ -314,8 +314,8 @@ public class PackageEntity extends LivingEntity {
         if (!isAlive()) {
             return;
         }
-        if (state.getBlock() == Blocks.WATER || (state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(
-            BlockStateProperties.WATERLOGGED))) {
+        if (state.getBlock() == Blocks.WATER || state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(
+            BlockStateProperties.WATERLOGGED)) {
             destroy(damageSources().drown());
             remove(RemovalReason.KILLED);
         }
@@ -323,12 +323,12 @@ public class PackageEntity extends LivingEntity {
 
     @Override
     public boolean hurtServer(ServerLevel world, DamageSource source, float amount) {
-        if (level().isClientSide() || !this.isAlive()) {
+        if (level().isClientSide() || !isAlive()) {
             return false;
         }
 
         if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            this.remove(RemovalReason.KILLED);
+            remove(RemovalReason.KILLED);
             return false;
         }
 
@@ -340,21 +340,21 @@ public class PackageEntity extends LivingEntity {
             return false;
         }
 
-        if (this.isInvulnerableTo((ServerLevel) level(), source)) {
+        if (isInvulnerableTo((ServerLevel) level(), source)) {
             return false;
         }
 
         if (source.is(DamageTypeTags.IS_EXPLOSION)) {
-            this.destroy(source);
-            this.remove(RemovalReason.KILLED);
+            destroy(source);
+            remove(RemovalReason.KILLED);
             return false;
         }
 
         if (source.is(DamageTypeTags.IS_FIRE)) {
-            if (this.isOnFire()) {
-                this.takeDamage(source, 0.15F);
+            if (isOnFire()) {
+                takeDamage(source, 0.15F);
             } else {
-                this.setRemainingFireTicks(100); // 5 seconds
+                setRemainingFireTicks(100); // 5 seconds
             }
             return false;
         }
@@ -370,26 +370,26 @@ public class PackageEntity extends LivingEntity {
             return false;
         }
 
-        this.destroy(source);
-        this.remove(RemovalReason.KILLED);
+        destroy(source);
+        remove(RemovalReason.KILLED);
         return shotCanPierce;
     }
 
     private void takeDamage(DamageSource source, float amount) {
-        float hp = this.getHealth();
+        float hp = getHealth();
         hp = hp - amount;
         if (hp <= 0.5F) {
-            this.destroy(source);
-            this.remove(RemovalReason.KILLED);
+            destroy(source);
+            remove(RemovalReason.KILLED);
         } else {
-            this.setHealth(hp);
+            setHealth(hp);
         }
     }
 
     private void destroy(DamageSource source) {
         AllSoundEvents.PACKAGE_POP.playOnServer(level(), blockPosition());
         if (level() instanceof ServerLevel serverLevel) {
-            this.dropAllDeathLoot(serverLevel, source);
+            dropAllDeathLoot(serverLevel, source);
             serverLevel.getChunkSource()
                 .sendToTrackingPlayers(this, new PackageDestroyPacket(getBoundingBox().getCenter(), box));
         }
@@ -490,11 +490,13 @@ public class PackageEntity extends LivingEntity {
         return new Fallsounds(SoundEvents.CHISELED_BOOKSHELF_FALL, SoundEvents.CHISELED_BOOKSHELF_FALL);
     }
 
+    @Override
     @Nullable
     protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
         return null;
     }
 
+    @Override
     @Nullable
     protected SoundEvent getDeathSound() {
         return null;

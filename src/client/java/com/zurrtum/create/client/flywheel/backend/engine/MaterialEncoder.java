@@ -52,13 +52,13 @@ public final class MaterialEncoder {
     }
 
     private static int bitMask(int bitLength, int bitOffset) {
-        return ((1 << bitLength) - 1) << bitOffset;
+        return (1 << bitLength) - 1 << bitOffset;
     }
 
     public static int packUberShader(Material material) {
         var fog = MaterialShaderIndices.fogIndex(material.fog());
         var cutout = MaterialShaderIndices.cutoutIndex(material.cutout());
-        return (cutout & 0xFFFF) | (fog & 0xFFFF) << 16;
+        return cutout & 0xFFFF | (fog & 0xFFFF) << 16;
     }
 
     // Packed format:
@@ -78,17 +78,17 @@ public final class MaterialEncoder {
         if (material.polygonOffset()) {
             bits |= POLYGON_OFFSET_MASK;
         }
-        bits |= (material.depthTest().ordinal() << DEPTH_TEST_OFFSET) & DEPTH_TEST_MASK;
-        bits |= (material.transparency().ordinal() << TRANSPARENCY_OFFSET) & TRANSPARENCY_MASK;
-        bits |= (material.writeMask().ordinal() << WRITE_MASK_OFFSET) & WRITE_MASK_MASK;
+        bits |= material.depthTest().ordinal() << DEPTH_TEST_OFFSET & DEPTH_TEST_MASK;
+        bits |= material.transparency().ordinal() << TRANSPARENCY_OFFSET & TRANSPARENCY_MASK;
+        bits |= material.writeMask().ordinal() << WRITE_MASK_OFFSET & WRITE_MASK_MASK;
         if (material.useOverlay()) {
             bits |= USE_OVERLAY_MASK;
         }
         if (material.useLight()) {
             bits |= USE_LIGHT_MASK;
         }
-        bits |= (material.cardinalLightingMode()
-            .ordinal() << CARDINAL_LIGHTING_MODE_OFFSET) & CARDINAL_LIGHTING_MODE_MASK;
+        bits |= material.cardinalLightingMode()
+            .ordinal() << CARDINAL_LIGHTING_MODE_OFFSET & CARDINAL_LIGHTING_MODE_MASK;
         if (material.ambientOcclusion()) {
             bits |= AMBIENT_OCCLUSION_MASK;
         }

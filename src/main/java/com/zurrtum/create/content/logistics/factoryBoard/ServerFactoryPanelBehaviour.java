@@ -1204,15 +1204,14 @@ public class ServerFactoryPanelBehaviour extends ServerFilteringBehaviour implem
     }
 
     public int getIngredientStatusColor() {
-        return count == 0 || isMissingAddress() || redstonePowered ? 0xFF888898 : waitingForNetwork ? 0xFF5B3B3B : satisfied ? 0xFF9EFF7F : promisedSatisfied ? 0xFF22AFAF : 0xFF3D6EBD;
+        return count == 0 || isMissingAddress() || redstonePowered ? 0xFF888898 :
+            waitingForNetwork ? 0xFF5B3B3B : satisfied ? 0xFF9EFF7F : promisedSatisfied ? 0xFF22AFAF : 0xFF3D6EBD;
     }
 
     @Override
     public ItemRequirement getRequiredItems() {
-        return isActive() ? new ItemRequirement(
-            ItemUseType.CONSUME,
-            AllBlocks.FACTORY_GAUGE.asItem()
-        ) : ItemRequirement.NONE;
+        return isActive() ? new ItemRequirement(ItemUseType.CONSUME, AllBlocks.FACTORY_GAUGE.asItem()) :
+            ItemRequirement.NONE;
     }
 
     @Override

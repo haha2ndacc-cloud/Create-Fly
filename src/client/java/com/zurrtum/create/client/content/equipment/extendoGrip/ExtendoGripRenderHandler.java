@@ -83,7 +83,7 @@ public class ExtendoGripRenderHandler {
                 mainHandAnimation = 0.95f;
             }
 
-            ms.translate(flip * (0.64000005F - .1f), -0.4F + equipProgress * -0.6F, -0.71999997F + .3f);
+            ms.translate(flip * (0.64000005F - 0.1f), -0.4F + equipProgress * -0.6F, -0.71999997F + 0.3f);
 
             ms.pushPose();
             msr.rotateYDegrees(flip * 75.0F);
@@ -118,7 +118,8 @@ public class ExtendoGripRenderHandler {
             ms.pushPose();
             ms.translate(flip * -0.1f, 0, -0.3f);
             state.clear();
-            state.displayContext = rightHand ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
+            state.displayContext =
+                rightHand ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
             ItemModel model = mc.getModelManager()
                 .getItemModel((inOffhand ? offhandItem : heldItem).get(DataComponents.ITEM_MODEL));
             model.update(

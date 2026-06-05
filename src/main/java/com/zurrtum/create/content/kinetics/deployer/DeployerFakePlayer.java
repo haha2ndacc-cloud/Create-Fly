@@ -93,7 +93,7 @@ public class DeployerFakePlayer extends FakePlayerEntity implements DeployerPlay
 
     @Override
     public float getCurrentItemAttackStrengthDelay() {
-        return 1 / 64f;
+        return 1 / 64.0f;
     }
 
     @Override

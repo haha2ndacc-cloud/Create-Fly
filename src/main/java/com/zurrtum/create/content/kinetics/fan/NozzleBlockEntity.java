@@ -80,10 +80,10 @@ public class NozzleBlockEntity extends SmartBlockEntity {
         Vec3 center = VecHelper.getCenterOf(worldPosition);
         if (level.isClientSide() && range != 0) {
             if (level.getRandom()
-                .nextInt(Mth.clamp((AllConfigs.server().kinetics.fanPushDistance.get() - (int) range), 1, 10)) == 0) {
+                .nextInt(Mth.clamp(AllConfigs.server().kinetics.fanPushDistance.get() - (int) range, 1, 10)) == 0) {
                 Vec3 start = VecHelper.offsetRandomly(center, level.getRandom(), pushing ? 1 : range / 2);
                 Vec3 motion = center.subtract(start).normalize()
-                    .scale(Mth.clamp(range * (pushing ? .025f : 1f), 0, .5f) * (pushing ? -1 : 1));
+                    .scale(Mth.clamp(range * (pushing ? 0.025f : 1.0f), 0, 0.5f) * (pushing ? -1 : 1));
                 level.addParticle(ParticleTypes.POOF, start.x, start.y, start.z, motion.x, motion.y, motion.z);
             }
         }
@@ -106,7 +106,7 @@ public class NozzleBlockEntity extends SmartBlockEntity {
                 continue;
             }
 
-            float factor = (entity instanceof ItemEntity) ? 1 / 128f : 1 / 32f;
+            float factor = entity instanceof ItemEntity ? 1 / 128.0f : 1 / 32.0f;
             Vec3 pushVec = diff.normalize().scale((range - distance) * (pushing ? 1 : -1));
             entity.setDeltaMovement(entity.getDeltaMovement().add(pushVec.scale(factor)));
             entity.fallDistance = 0;
@@ -148,7 +148,7 @@ public class NozzleBlockEntity extends SmartBlockEntity {
         }
 
         Vec3 center = VecHelper.getCenterOf(worldPosition);
-        AABB bb = new AABB(center, center).inflate(range / 2f);
+        AABB bb = new AABB(center, center).inflate(range / 2.0f);
 
         for (Entity entity : level.getEntitiesOfClass(Entity.class, bb)) {
             Vec3 diff = entity.position().subtract(center);

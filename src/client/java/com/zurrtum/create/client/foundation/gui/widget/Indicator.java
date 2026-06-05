@@ -12,8 +12,8 @@ public class Indicator extends AbstractSimiWidget {
 
     public Indicator(int x, int y, Component tooltip) {
         super(x, y, AllGuiTextures.INDICATOR.getWidth(), AllGuiTextures.INDICATOR.getHeight());
-        this.toolTip = toolTip.isEmpty() ? ImmutableList.of() : ImmutableList.of(tooltip);
-        this.state = State.OFF;
+        toolTip = toolTip.isEmpty() ? ImmutableList.of() : ImmutableList.of(tooltip);
+        state = State.OFF;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class Indicator extends AbstractSimiWidget {
     }
 
     public enum State {
-        OFF, ON, RED, YELLOW, GREEN;
+        OFF, ON, RED, YELLOW, GREEN
     }
 
 }

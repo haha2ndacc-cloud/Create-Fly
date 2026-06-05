@@ -66,8 +66,8 @@ public class MountedDepotInteractionBehaviour extends MovingInteractionBehaviour
                     BlockPos.containing(contraptionEntity.toGlobalVector(Vec3.atCenterOf(localPos), 0)),
                     SoundEvents.ITEM_PICKUP,
                     SoundSource.PLAYERS,
-                    .2f,
-                    1f + world.getRandom().nextFloat()
+                    0.2f,
+                    1.0f + world.getRandom().nextFloat()
                 );
                 if (itemInHand.isEmpty()) {
                     depot.removeHeldItem();
@@ -82,8 +82,8 @@ public class MountedDepotInteractionBehaviour extends MovingInteractionBehaviour
 
         TransportedItemStack transported = new TransportedItemStack(itemInHand);
         transported.insertedFrom = player.getDirection();
-        transported.prevBeltPosition = .25f;
-        transported.beltPosition = .25f;
+        transported.prevBeltPosition = 0.25f;
+        transported.beltPosition = 0.25f;
         depot.setHeld(transported);
         depot.setChanged();
         player.setItemInHand(activeHand, ItemStack.EMPTY);

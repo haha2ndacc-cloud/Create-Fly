@@ -156,6 +156,7 @@ public class ControlledContraptionEntity extends AbstractContraptionEntity {
     public void moveOrInterpolateTo(Vec3 pos, float yaw, float pitch) {
     }
 
+    @Override
     protected void tickContraption() {
         angleDelta = angle - prevAngle;
         prevAngle = angle;
@@ -234,7 +235,7 @@ public class ControlledContraptionEntity extends AbstractContraptionEntity {
 
     @Override
     protected StructureTransform makeStructureTransform() {
-        BlockPos offset = BlockPos.containing(getAnchorVec().add(.5, .5, .5));
+        BlockPos offset = BlockPos.containing(getAnchorVec().add(0.5, 0.5, 0.5));
         float xRot = rotationAxis == Axis.X ? angle : 0;
         float yRot = rotationAxis == Axis.Y ? angle : 0;
         float zRot = rotationAxis == Axis.Z ? angle : 0;
@@ -258,6 +259,6 @@ public class ControlledContraptionEntity extends AbstractContraptionEntity {
     @Override
     public void handleStallInformation(double x, double y, double z, float angle) {
         setPosRaw(x, y, z);
-        this.angle = this.prevAngle = angle;
+        this.angle = prevAngle = angle;
     }
 }

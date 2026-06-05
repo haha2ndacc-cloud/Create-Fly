@@ -68,13 +68,11 @@ public final class PlayerUniforms extends UniformWriter {
                 int red = ARGB.red(color);
                 int green = ARGB.green(color);
                 int blue = ARGB.blue(color);
-                return writeVec4(ptr, red / 255f, green / 255f, blue / 255f, 1f);
-            } else {
-                return writeVec4(ptr, 1f, 1f, 1f, 1f);
+                return writeVec4(ptr, red / 255.0f, green / 255.0f, blue / 255.0f, 1.0f);
             }
-        } else {
-            return writeVec4(ptr, 1f, 1f, 1f, 0f);
+            return writeVec4(ptr, 1.0f, 1.0f, 1.0f, 1.0f);
         }
+        return writeVec4(ptr, 1.0f, 1.0f, 1.0f, 0.0f);
     }
 
     private static long writeEyeBrightness(long ptr, LocalPlayer player) {
@@ -83,11 +81,7 @@ public final class PlayerUniforms extends UniformWriter {
         int skyBrightness = level.getBrightness(LightLayer.SKY, player.blockPosition());
         int maxBrightness = 15;
 
-        return writeVec2(
-            ptr,
-            (float) blockBrightness / (float) maxBrightness,
-            (float) skyBrightness / (float) maxBrightness
-        );
+        return writeVec2(ptr, (float) blockBrightness / maxBrightness, (float) skyBrightness / maxBrightness);
     }
 
     private static long writeHeldLight(long ptr, LocalPlayer player) {

@@ -86,7 +86,7 @@ public class CartAssemblerBlockEntity extends SmartBlockEntity {
             disassemble(level, worldPosition, cart);
         }
         if (action == CartAssemblerBlock.CartAssemblerAction.ASSEMBLE_ACCELERATE) {
-            if (cart.getDeltaMovement().length() > 1 / 128f) {
+            if (cart.getDeltaMovement().length() > 1 / 128.0f) {
                 Direction facing = cart.getMotionDirection();
                 RailShape railShape = state.getValue(CartAssemblerBlock.RAIL_SHAPE);
                 for (Direction d : Iterate.directionsInAxis(railShape == RailShape.EAST_WEST ? Axis.X : Axis.Z)) {
@@ -109,7 +109,7 @@ public class CartAssemblerBlockEntity extends SmartBlockEntity {
         }
         if (action == CartAssemblerBlock.CartAssemblerAction.DISASSEMBLE_BRAKE) {
             Vec3 diff = VecHelper.getCenterOf(worldPosition).subtract(cart.position());
-            cart.setDeltaMovement(diff.x / 16f, 0, diff.z / 16f);
+            cart.setDeltaMovement(diff.x / 16.0f, 0, diff.z / 16.0f);
         }
     }
 
@@ -143,7 +143,7 @@ public class CartAssemblerBlockEntity extends SmartBlockEntity {
         Direction initialOrientation = CartAssemblerBlock.getHorizontalDirection(getBlockState());
 
         if (couplingFound) {
-            cart.setPos(pos.getX() + .5f, pos.getY(), pos.getZ() + .5f);
+            cart.setPos(pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f);
             if (!CouplingHandler.tryToCoupleCarts(null, world, cart.getId(), contraption.connectedCart.getId())) {
                 return;
             }
@@ -162,7 +162,7 @@ public class CartAssemblerBlockEntity extends SmartBlockEntity {
         if (couplingFound) {
             entity.setCouplingId(cart.getUUID());
         }
-        entity.setPos(pos.getX() + .5, pos.getY(), pos.getZ() + .5);
+        entity.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
         world.addFreshEntity(entity);
         entity.startRiding(cart);
 

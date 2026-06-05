@@ -69,8 +69,8 @@ public class SignalBlockEntity extends SmartBlockEntity implements Transformable
     public SignalBlockEntity(BlockPos pos, BlockState state) {
         super(AllBlockEntityTypes.TRACK_SIGNAL, pos, state);
         this.state = SignalState.INVALID;
-        this.overlay = OverlayState.SKIP;
-        this.lastReportedPower = false;
+        overlay = OverlayState.SKIP;
+        lastReportedPower = false;
     }
 
     @Override
@@ -155,10 +155,10 @@ public class SignalBlockEntity extends SmartBlockEntity implements Transformable
     }
 
     public void setOverlay(OverlayState state) {
-        if (this.overlay == state) {
+        if (overlay == state) {
             return;
         }
-        this.overlay = state;
+        overlay = state;
         notifyUpdate();
     }
 

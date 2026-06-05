@@ -71,7 +71,7 @@ public class DeployerHandler {
     private static final class ItemUseWorld extends WrappedLevel implements ServerLevelAccessor {
         private final Direction face;
         private final BlockPos pos;
-        boolean rayMode = false;
+        boolean rayMode;
 
         private ItemUseWorld(ServerLevel level, Direction face, BlockPos pos) {
             super(level);
@@ -150,7 +150,7 @@ public class DeployerHandler {
         Mode mode
     ) {
         ServerPlayer serverPlayer = player.cast();
-        Vec3 rayOrigin = vec.add(extensionVector.scale(3 / 2f + 1 / 64f));
+        Vec3 rayOrigin = vec.add(extensionVector.scale(3 / 2.0f + 1 / 64.0f));
         serverPlayer.setPos(rayOrigin.x, rayOrigin.y, rayOrigin.z);
         ItemStack stack = serverPlayer.getMainHandItem();
 
@@ -245,12 +245,12 @@ public class DeployerHandler {
         }
 
         // Shoot ray
-        Vec3 rayTarget = vec.add(extensionVector.scale(5 / 2f - 1 / 64f));
+        Vec3 rayTarget = vec.add(extensionVector.scale(5 / 2.0f - 1 / 64.0f));
         ClipContext rayTraceContext = new ClipContext(
             rayOrigin,
             rayTarget,
             Block.OUTLINE,
-            net.minecraft.world.level.ClipContext.Fluid.NONE,
+            ClipContext.Fluid.NONE,
             serverPlayer
         );
         BlockHitResult result = level.clip(rayTraceContext);
@@ -294,7 +294,7 @@ public class DeployerHandler {
                 before = blockBreakingProgress.getValue();
             }
             progress += before;
-            level.playSound(null, clickedPos, clickedState.getSoundType().getHitSound(), SoundSource.NEUTRAL, .25f, 1);
+            level.playSound(null, clickedPos, clickedState.getSoundType().getHitSound(), SoundSource.NEUTRAL, 0.25f, 1);
 
             if (progress >= 1) {
                 tryHarvestBlock(player, player.getInteractionManager(), clickedPos);
@@ -405,7 +405,7 @@ public class DeployerHandler {
             SandPaperItemComponent component = stack.get(AllDataComponents.SAND_PAPER_POLISHING);
             if (component != null) {
                 player.setSpawnedItemEffects(component.item());
-                AllSoundEvents.SANDING_SHORT.playOnServer(level, pos, .25f, 1f);
+                AllSoundEvents.SANDING_SHORT.playOnServer(level, pos, 0.25f, 1.0f);
             }
         }
 

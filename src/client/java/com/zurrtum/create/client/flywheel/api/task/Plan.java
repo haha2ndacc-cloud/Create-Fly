@@ -19,7 +19,7 @@ public interface Plan<C> {
      * @param context      An arbitrary context object that the plan wants to use at runtime.
      */
     default void execute(TaskExecutor taskExecutor, C context) {
-        this.execute(
+        execute(
             taskExecutor, context, () -> {
             }
         );

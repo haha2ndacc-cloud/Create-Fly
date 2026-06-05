@@ -77,5 +77,5 @@ public enum Transparency {
      * <p>It is recommended to use this option when possible, though for cases where blend modes are used as an
      * overlay against solid geometry the order dependent modes are preferred.
      */
-    ORDER_INDEPENDENT;
+    ORDER_INDEPENDENT
 }

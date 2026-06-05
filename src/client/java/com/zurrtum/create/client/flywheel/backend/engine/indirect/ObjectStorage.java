@@ -35,8 +35,8 @@ public class ObjectStorage extends AbstractArena {
     public ObjectStorage(long objectSizeBytes) {
         super(PAGE_SIZE * objectSizeBytes);
 
-        this.objectBuffer = new ResizableStorageBuffer();
-        this.frameDescriptorBuffer = new ResizableStorageBuffer();
+        objectBuffer = new ResizableStorageBuffer();
+        frameDescriptorBuffer = new ResizableStorageBuffer();
 
         objectBuffer.ensureCapacity(INITIAL_PAGES_ALLOCATED * elementSizeBytes);
         frameDescriptorBuffer.ensureCapacity(INITIAL_PAGES_ALLOCATED * DESCRIPTOR_SIZE_BYTES);
@@ -131,7 +131,7 @@ public class ObjectStorage extends AbstractArena {
                 frame = unHolePunch(index);
             }
 
-            ObjectStorage.this.set(frame, modelIndex, validBits);
+            set(frame, modelIndex, validBits);
         }
 
         /**
@@ -140,7 +140,7 @@ public class ObjectStorage extends AbstractArena {
          * @param index The index of the page to free.
          */
         public void holePunch(int index) {
-            ObjectStorage.this.free(pages[index]);
+            free(pages[index]);
             pages[index] = INVALID_PAGE;
         }
 
@@ -151,7 +151,7 @@ public class ObjectStorage extends AbstractArena {
          * @return The allocated page.
          */
         private int unHolePunch(int index) {
-            int page = ObjectStorage.this.alloc();
+            int page = alloc();
             pages[index] = page;
             return page;
         }
@@ -173,12 +173,12 @@ public class ObjectStorage extends AbstractArena {
         }
 
         public long page2ByteOffset(int index) {
-            return ObjectStorage.this.byteOffsetOf(pages[index]);
+            return byteOffsetOf(pages[index]);
         }
 
         public void delete() {
             for (int page : pages) {
-                ObjectStorage.this.free(page);
+                free(page);
             }
             pages = EMPTY_ALLOCATION;
         }
@@ -187,7 +187,7 @@ public class ObjectStorage extends AbstractArena {
             pages = Arrays.copyOf(pages, neededPages);
 
             for (int i = oldLength; i < neededPages; i++) {
-                var page = ObjectStorage.this.alloc();
+                var page = alloc();
                 pages[i] = page;
             }
         }
@@ -195,7 +195,7 @@ public class ObjectStorage extends AbstractArena {
         private void shrink(int oldLength, int neededPages) {
             for (int i = oldLength - 1; i >= neededPages; i--) {
                 var page = pages[i];
-                ObjectStorage.this.free(page);
+                free(page);
             }
 
             pages = Arrays.copyOf(pages, neededPages);

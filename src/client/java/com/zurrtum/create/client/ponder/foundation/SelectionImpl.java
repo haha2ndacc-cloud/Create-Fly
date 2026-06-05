@@ -70,8 +70,8 @@ public class SelectionImpl {
             for (BlockPos blockPos : posSet) {
                 center = center.add(Vec3.atLowerCornerOf(blockPos));
             }
-            center = center.scale(1f / posSet.size());
-            return center.add(new Vec3(.5, .5, .5));
+            center = center.scale(1.0f / posSet.size());
+            return center.add(new Vec3(0.5, 0.5, 0.5));
         }
 
         @Override
@@ -92,7 +92,7 @@ public class SelectionImpl {
 
         public Simple(BoundingBox bb) {
             this.bb = bb;
-            this.aabb = new AABB(bb.minX(), bb.minY(), bb.minZ(), bb.maxX() + 1, bb.maxY() + 1, bb.maxZ() + 1);
+            aabb = new AABB(bb.minX(), bb.minY(), bb.minZ(), bb.maxX() + 1, bb.maxY() + 1, bb.maxZ() + 1);
             iterable = BlockPos.betweenClosed(
                 Math.min(bb.minX(), bb.maxX()),
                 Math.min(bb.minY(), bb.maxY()),

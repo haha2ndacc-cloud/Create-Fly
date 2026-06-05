@@ -7,14 +7,17 @@ public class StringSpan extends Span {
         super(in, start, end);
     }
 
+    @Override
     public Span subSpan(int from, int to) {
-        return new StringSpan(this.in, this.start.pos() + from, this.start.pos() + to);
+        return new StringSpan(in, start.pos() + from, start.pos() + to);
     }
 
+    @Override
     public String get() {
-        return this.in.raw.substring(this.start.pos(), this.end.pos());
+        return in.raw.substring(start.pos(), end.pos());
     }
 
+    @Override
     public boolean isErr() {
         return false;
     }

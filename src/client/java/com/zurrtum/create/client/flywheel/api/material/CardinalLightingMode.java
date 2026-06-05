@@ -20,5 +20,5 @@ public enum CardinalLightingMode {
      *
      * @see com.mojang.blaze3d.systems.RenderSystem#setShaderLights
      */
-    ENTITY;
+    ENTITY
 }

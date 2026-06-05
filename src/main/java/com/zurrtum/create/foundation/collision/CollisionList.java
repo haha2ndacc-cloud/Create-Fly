@@ -17,7 +17,7 @@ public class CollisionList {
     public double[] extentsY = new double[DEFAULT_CAPACITY];
     public double[] extentsZ = new double[DEFAULT_CAPACITY];
 
-    public int size = 0;
+    public int size;
 
     /**
      * Helper to populate a CollisionList. Feed this into {@link VoxelShape#forAllBoxes}.
@@ -25,9 +25,9 @@ public class CollisionList {
     public static class Populate implements DoubleLineConsumer {
         private final CollisionList collisionList;
 
-        public int offsetX = 0;
-        public int offsetY = 0;
-        public int offsetZ = 0;
+        public int offsetX;
+        public int offsetY;
+        public int offsetZ;
 
         public Populate(CollisionList collisionList) {
             this.collisionList = collisionList;

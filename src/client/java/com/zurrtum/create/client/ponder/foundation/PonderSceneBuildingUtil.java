@@ -22,9 +22,9 @@ public class PonderSceneBuildingUtil implements SceneBuildingUtil {
 
     PonderSceneBuildingUtil(BoundingBox sceneBounds) {
         this.sceneBounds = sceneBounds;
-        this.select = new PonderSelectionUtil();
-        this.vector = new PonderVectorUtil();
-        this.grid = new PonderPositionUtil();
+        select = new PonderSelectionUtil();
+        vector = new PonderVectorUtil();
+        grid = new PonderPositionUtil();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class PonderSceneBuildingUtil implements SceneBuildingUtil {
 
         @Override
         public Vec3 blockSurface(BlockPos pos, Direction face, float margin) {
-            return centerOf(pos).add(Vec3.atLowerCornerOf(face.getUnitVec3i()).scale(.5f + margin));
+            return centerOf(pos).add(Vec3.atLowerCornerOf(face.getUnitVec3i()).scale(0.5f + margin));
         }
 
         @Override

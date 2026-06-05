@@ -74,8 +74,8 @@ public class FactoryPanelConnection {
             BlockPos toTravelLast = BlockPos.containing(diff.scale(2).add(0.1, 0.1, 0.1));
 
             if (actualMode > 1) {
-                boolean flipX = diff.x > 0 ^ (actualMode % 2 == 1);
-                boolean flipZ = diff.z > 0 ^ (actualMode % 2 == 0);
+                boolean flipX = diff.x > 0 ^ actualMode % 2 == 1;
+                boolean flipZ = diff.z > 0 ^ actualMode % 2 == 0;
                 int ceilX = Mth.positiveCeilDiv(toTravelLast.getX(), 2);
                 int ceilZ = Mth.positiveCeilDiv(toTravelLast.getZ(), 2);
                 int floorZ = Mth.floorDiv(toTravelLast.getZ(), 2);
@@ -90,17 +90,9 @@ public class FactoryPanelConnection {
             for (BlockPos toTravel : List.of(toTravelFirst, toTravelLast)) {
                 boolean zIsFarther = Math.abs(toTravel.getZ()) > Math.abs(toTravel.getX());
                 boolean zIsPreferred = desperateOption ? zIsFarther : actualMode % 2 == 1;
-                List<Direction> directionOrder = zIsPreferred ? List.of(
-                    Direction.SOUTH,
-                    Direction.NORTH,
-                    Direction.WEST,
-                    Direction.EAST
-                ) : List.of(
-                    Direction.WEST,
-                    Direction.EAST,
-                    Direction.SOUTH,
-                    Direction.NORTH
-                );
+                List<Direction> directionOrder =
+                    zIsPreferred ? List.of(Direction.SOUTH, Direction.NORTH, Direction.WEST, Direction.EAST) :
+                        List.of(Direction.WEST, Direction.EAST, Direction.SOUTH, Direction.NORTH);
 
                 for (int i = 0; i < 100; i++) {
                     if (toTravel.equals(BlockPos.ZERO)) {
@@ -134,7 +126,7 @@ public class FactoryPanelConnection {
                     testOffset = VecHelper.rotate(testOffset, xRot + 90, Axis.X);
                     testOffset = VecHelper.rotate(testOffset, yRot, Axis.Y);
                     Vec3 v = start.add(testOffset);
-                    if (!isSpaceEmpty(level, new AABB(v, v).inflate(1 / 128f))) {
+                    if (!isSpaceEmpty(level, new AABB(v, v).inflate(1 / 128.0f))) {
                         continue ModeFinder;
                     }
                 }
@@ -165,7 +157,7 @@ public class FactoryPanelConnection {
         diff = VecHelper.rotate(diff, -yRot, Axis.Y);
         diff = VecHelper.rotate(diff, -xRot - 90, Axis.X);
         diff = VecHelper.rotate(diff, -180, Axis.Y);
-        diff = diff.add(slotDiffx * .5, 0, slotDiffY * .5);
+        diff = diff.add(slotDiffx * 0.5, 0, slotDiffY * 0.5);
         diff = diff.multiply(1, 0, 1);
         return diff;
     }

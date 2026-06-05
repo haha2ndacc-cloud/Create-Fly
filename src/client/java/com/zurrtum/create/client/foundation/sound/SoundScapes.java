@@ -34,7 +34,7 @@ public class SoundScapes {
     private final Map<Pair<AmbienceGroup, PitchGroup>, SoundScape> activeSounds = new HashMap<>();
 
     private static SoundScape kinetic(float pitch, AmbienceGroup group) {
-        return new SoundScape(pitch, group).continuous(SoundEvents.MINECART_INSIDE, .25f, 1);
+        return new SoundScape(pitch, group).continuous(SoundEvents.MINECART_INSIDE, 0.25f, 1);
     }
 
     private static SoundScape cogwheel(float pitch, AmbienceGroup group) {
@@ -42,14 +42,14 @@ public class SoundScapes {
     }
 
     private static SoundScape crushing(float pitch, AmbienceGroup group) {
-        return new SoundScape(pitch, group).repeating(AllSoundEvents.CRUSHING_1.getMainEvent(), 1.545f, .75f, 1)
-            .repeating(AllSoundEvents.CRUSHING_2.getMainEvent(), 0.425f, .75f, 2)
-            .repeating(AllSoundEvents.CRUSHING_3.getMainEvent(), 2f, 1.75f, 2);
+        return new SoundScape(pitch, group).repeating(AllSoundEvents.CRUSHING_1.getMainEvent(), 1.545f, 0.75f, 1)
+            .repeating(AllSoundEvents.CRUSHING_2.getMainEvent(), 0.425f, 0.75f, 2)
+            .repeating(AllSoundEvents.CRUSHING_3.getMainEvent(), 2.0f, 1.75f, 2);
     }
 
     private static SoundScape milling(float pitch, AmbienceGroup group) {
-        return new SoundScape(pitch, group).repeating(AllSoundEvents.CRUSHING_1.getMainEvent(), 1.545f, .75f, 1)
-            .repeating(AllSoundEvents.CRUSHING_2.getMainEvent(), 0.425f, .75f, 2);
+        return new SoundScape(pitch, group).repeating(AllSoundEvents.CRUSHING_1.getMainEvent(), 1.545f, 0.75f, 1)
+            .repeating(AllSoundEvents.CRUSHING_2.getMainEvent(), 0.425f, 0.75f, 2);
     }
 
     public static void play(AmbienceGroup group, BlockPos pos, float pitch) {
@@ -148,10 +148,10 @@ public class SoundScapes {
     }
 
     public static PitchGroup getGroupFromPitch(float pitch) {
-        if (pitch < .70) {
+        if (pitch < 0.70) {
             return PitchGroup.VERY_LOW;
         }
-        if (pitch < .90) {
+        if (pitch < 0.90) {
             return PitchGroup.LOW;
         }
         if (pitch < 1.10) {
@@ -165,7 +165,10 @@ public class SoundScapes {
 
     public enum AmbienceGroup {
 
-        KINETIC(SoundScapes::kinetic), COG(SoundScapes::cogwheel), CRUSHING(SoundScapes::crushing), MILLING(SoundScapes::milling),
+        KINETIC(SoundScapes::kinetic),
+        COG(SoundScapes::cogwheel),
+        CRUSHING(SoundScapes::crushing),
+        MILLING(SoundScapes::milling),
 
         ;
 

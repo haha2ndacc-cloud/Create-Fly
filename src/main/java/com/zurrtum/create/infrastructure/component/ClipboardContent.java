@@ -51,28 +51,22 @@ public record ClipboardContent(ClipboardType type, List<List<ClipboardEntry>> pa
     }
 
     public ClipboardContent setType(ClipboardType type) {
-        return new ClipboardContent(type, this.pages, this.readOnly, this.previouslyOpenedPage, this.copiedValues);
+        return new ClipboardContent(type, pages, readOnly, previouslyOpenedPage, copiedValues);
     }
 
     public ClipboardContent setPages(List<List<ClipboardEntry>> pages) {
-        return new ClipboardContent(this.type, pages, this.readOnly, this.previouslyOpenedPage, this.copiedValues);
+        return new ClipboardContent(type, pages, readOnly, previouslyOpenedPage, copiedValues);
     }
 
     public ClipboardContent setReadOnly(boolean readOnly) {
-        return new ClipboardContent(this.type, this.pages, readOnly, this.previouslyOpenedPage, this.copiedValues);
+        return new ClipboardContent(type, pages, readOnly, previouslyOpenedPage, copiedValues);
     }
 
     public ClipboardContent setPreviouslyOpenedPage(int previouslyOpenedPage) {
-        return new ClipboardContent(this.type, this.pages, this.readOnly, previouslyOpenedPage, this.copiedValues);
+        return new ClipboardContent(type, pages, readOnly, previouslyOpenedPage, copiedValues);
     }
 
     public ClipboardContent setCopiedValues(CompoundTag copiedValues) {
-        return new ClipboardContent(
-            this.type,
-            this.pages,
-            this.readOnly,
-            this.previouslyOpenedPage,
-            Optional.of(copiedValues)
-        );
+        return new ClipboardContent(type, pages, readOnly, previouslyOpenedPage, Optional.of(copiedValues));
     }
 }

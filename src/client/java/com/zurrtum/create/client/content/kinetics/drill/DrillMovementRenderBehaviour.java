@@ -59,7 +59,7 @@ public class DrillMovementRenderBehaviour implements MovementRenderBehaviour {
         float time = AnimationTickHolder.getRenderTime() / 20;
         float yRot = Mth.DEG_TO_RAD * AngleHelper.horizontalAngle(facing);
         float xRot = Mth.DEG_TO_RAD * AngleHelper.verticalAngle(facing);
-        float zRot = Mth.DEG_TO_RAD * ((time * speed) % 360);
+        float zRot = Mth.DEG_TO_RAD * (time * speed % 360);
         int light = LightCoordsUtil.getLightCoords(renderWorld, pos);
         SuperByteBufferRenderState head = CachedBuffers.partial(AllPartialModels.DRILL_HEAD, blockState)
             .transform(transform).translate(pos).center().rotateY(yRot).rotateX(xRot).rotateZ(zRot).uncenter()

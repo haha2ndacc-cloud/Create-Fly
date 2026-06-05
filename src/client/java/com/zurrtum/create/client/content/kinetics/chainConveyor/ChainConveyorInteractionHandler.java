@@ -101,7 +101,7 @@ public class ChainConveyorInteractionHandler {
         if (!isWrench) {
             Outliner.getInstance()
                 .chaseAABB("ChainPointSelection", new AABB(selectedBakedPosition, selectedBakedPosition))
-                .colored(Color.WHITE).lineWidth(1 / 6f).disableLineNormals();
+                .colored(Color.WHITE).lineWidth(1 / 6.0f).disableLineNormals();
         }
     }
 

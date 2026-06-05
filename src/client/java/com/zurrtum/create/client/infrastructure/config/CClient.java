@@ -16,9 +16,9 @@ public class CClient extends ConfigBase {
         Comments.enableOverstressedTooltip
     );
     public final ConfigBool explainRenderErrors = b(false, "explainRenderErrors", Comments.explainRenderErrors);
-    public final ConfigFloat fanParticleDensity = f(.5f, 0, 1, "fanParticleDensity", Comments.fanParticleDensity);
+    public final ConfigFloat fanParticleDensity = f(0.5f, 0, 1, "fanParticleDensity", Comments.fanParticleDensity);
     public final ConfigFloat filterItemRenderDistance = f(
-        10f,
+        10.0f,
         1,
         "filterItemRenderDistance",
         Comments.filterItemRenderDistance
@@ -59,14 +59,14 @@ public class CClient extends ConfigBase {
     public final ConfigGroup fluidFogSettings = group(1, "fluidFogSettings", Comments.fluidFogSettings);
     public final ConfigFloat honeyTransparencyMultiplier = f(
         1,
-        .125f,
+        0.125f,
         256,
         "honey",
         Comments.honeyTransparencyMultiplier
     );
     public final ConfigFloat chocolateTransparencyMultiplier = f(
         1,
-        .125f,
+        0.125f,
         256,
         "chocolate",
         Comments.chocolateTransparencyMultiplier
@@ -114,7 +114,7 @@ public class CClient extends ConfigBase {
     //sound group
     public final ConfigGroup sound = group(1, "sound", Comments.sound);
     public final ConfigBool enableAmbientSounds = b(true, "enableAmbientSounds", Comments.enableAmbientSounds);
-    public final ConfigFloat ambientVolumeCap = f(.1f, 0, 1, "ambientVolumeCap", Comments.ambientVolumeCap);
+    public final ConfigFloat ambientVolumeCap = f(0.1f, 0, 1, "ambientVolumeCap", Comments.ambientVolumeCap);
 
     //integration
     public final ConfigGroup integration = group(1, "jeiIntegration", Comments.integration);

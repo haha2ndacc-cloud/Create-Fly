@@ -18,7 +18,7 @@ public abstract class AnimatedOverlayElementBase extends PonderElementBase imple
 
     @Override
     public float getFade(float partialTicks) {
-        return this.fade.getValue(partialTicks);
+        return fade.getValue(partialTicks);
     }
 
 }

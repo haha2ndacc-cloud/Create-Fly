@@ -31,7 +31,7 @@ public class ItemVaultMountedStorage extends WrapperMountedItemStorage<ItemStack
     @Override
     public void unmount(Level level, BlockState state, BlockPos pos, @Nullable BlockEntity be) {
         if (be instanceof ItemVaultBlockEntity vault) {
-            vault.applyInventoryToBlock(this.wrapped);
+            vault.applyInventoryToBlock(wrapped);
         }
     }
 

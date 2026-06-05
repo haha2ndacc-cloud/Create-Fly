@@ -35,8 +35,8 @@ public abstract class GaugeBlockEntity extends KineticBlockEntity {
     public void tick() {
         super.tick();
         prevDialState = dialState;
-        dialState += (dialTarget - dialState) * .125f;
-        if (dialState > 1 && level.getRandom().nextFloat() < 1 / 2f) {
+        dialState += (dialTarget - dialState) * 0.125f;
+        if (dialState > 1 && level.getRandom().nextFloat() < 1 / 2.0f) {
             dialState -= (dialState - 1) * level.getRandom().nextFloat();
         }
     }

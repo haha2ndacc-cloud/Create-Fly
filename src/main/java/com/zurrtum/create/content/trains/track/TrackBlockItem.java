@@ -39,9 +39,8 @@ public class TrackBlockItem extends BlockItem {
         ItemStack stack = player.getItemInHand(usedHand);
         if (player.isShiftKeyDown() && isFoil(stack)) {
             return clearSelection(stack, world, player);
-        } else {
-            return super.use(world, player, usedHand);
         }
+        return super.use(world, player, usedHand);
     }
 
     @Override
@@ -84,7 +83,8 @@ public class TrackBlockItem extends BlockItem {
             }
             return super.useOn(pContext);
 
-        } else if (player.isShiftKeyDown()) {
+        }
+        if (player.isShiftKeyDown()) {
             return clearSelection(stack, level, player);
         }
 

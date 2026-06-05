@@ -37,7 +37,7 @@ public class HosePulleyBlockEntity extends KineticBlockEntity {
             filler,
             drainer,
             () -> pos.below((int) Math.ceil(offset.getValue())),
-            () -> !this.isMoving
+            () -> !isMoving
         );
     }
 
@@ -169,6 +169,6 @@ public class HosePulleyBlockEntity extends KineticBlockEntity {
     }
 
     public float getInterpolatedOffset(float pt) {
-        return Math.max(offset.getValue(pt), 3 / 16f);
+        return Math.max(offset.getValue(pt), 3 / 16.0f);
     }
 }

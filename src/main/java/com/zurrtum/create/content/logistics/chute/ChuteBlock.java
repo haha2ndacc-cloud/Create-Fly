@@ -96,7 +96,7 @@ public class ChuteBlock extends AbstractChuteBlock implements ProperWaterloggedB
             level.levelEvent(
                 LevelEvent.PARTICLES_DESTROY_BLOCK,
                 context.getClickedPos(),
-                Block.getId(AllBlocks.INDUSTRIAL_IRON_BLOCK.defaultBlockState())
+                getId(AllBlocks.INDUSTRIAL_IRON_BLOCK.defaultBlockState())
             );
             return InteractionResult.SUCCESS;
         }
@@ -205,7 +205,8 @@ public class ChuteBlock extends AbstractChuteBlock implements ProperWaterloggedB
         if (vertical) {
             return state.setValue(
                 SHAPE,
-                noConnections ? state.getValue(SHAPE) == Shape.INTERSECTION ? Shape.NORMAL : state.getValue(SHAPE) : Shape.INTERSECTION
+                noConnections ? state.getValue(SHAPE) == Shape.INTERSECTION ? Shape.NORMAL : state.getValue(SHAPE) :
+                    Shape.INTERSECTION
             );
         }
         if (noConnections) {

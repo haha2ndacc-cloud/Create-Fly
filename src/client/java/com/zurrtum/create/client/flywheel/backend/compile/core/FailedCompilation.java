@@ -89,9 +89,8 @@ public class FailedCompilation {
 
         if (fileId == 0) {
             return interpretGeneratedError(ErrorLevel.ERROR, lineNo, msg);
-        } else {
-            return interpretSourceError(fileId, lineNo, msg);
         }
+        return interpretSourceError(fileId, lineNo, msg);
     }
 
     private ErrorBuilder interpretPattern2(Matcher matcher) {
@@ -106,9 +105,8 @@ public class FailedCompilation {
 
         if (fileId == 0) {
             return interpretGeneratedError(errorLevel, lineNo, msg);
-        } else {
-            return interpretWithSpan(errorLevel, fileId, lineNo, span, msg);
         }
+        return interpretWithSpan(errorLevel, fileId, lineNo, span, msg);
     }
 
     private ErrorBuilder interpretSourceError(int fileId, int lineNo, String msg) {

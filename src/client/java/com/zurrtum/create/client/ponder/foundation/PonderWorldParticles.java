@@ -11,7 +11,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.state.level.ParticlesRenderState;
@@ -39,7 +38,7 @@ public class PonderWorldParticles {
 
     public PonderWorldParticles(PonderLevel world) {
         this.world = world;
-        this.particleManager = Minecraft.getInstance().particleEngine;
+        particleManager = Minecraft.getInstance().particleEngine;
     }
 
     public void addParticle(Particle particle) {
@@ -59,7 +58,7 @@ public class PonderWorldParticles {
     }
 
     protected void addTo(ParticleLimit group, int count) {
-        this.groupCounts.addTo(group, count);
+        groupCounts.addTo(group, count);
     }
 
     public void tick() {

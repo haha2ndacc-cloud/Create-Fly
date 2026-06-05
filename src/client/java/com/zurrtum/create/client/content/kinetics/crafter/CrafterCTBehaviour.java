@@ -4,12 +4,12 @@ import com.zurrtum.create.client.AllSpriteShifts;
 import com.zurrtum.create.client.foundation.block.connected.CTSpriteShiftEntry;
 import com.zurrtum.create.client.foundation.block.connected.ConnectedTextureBehaviour;
 import com.zurrtum.create.content.kinetics.crafter.CrafterHelper;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
@@ -58,7 +58,8 @@ public class CrafterCTBehaviour extends ConnectedTextureBehaviour.Base {
         boolean isFront = facing.getAxis() == direction.getAxis();
         boolean isVertical = direction.getAxis().isVertical();
         boolean facingX = facing.getAxis() == Axis.X;
-        return isFront ? AllSpriteShifts.BRASS_CASING : isVertical && !facingX ? AllSpriteShifts.CRAFTER_OTHERSIDE : AllSpriteShifts.CRAFTER_SIDE;
+        return isFront ? AllSpriteShifts.BRASS_CASING :
+            isVertical && !facingX ? AllSpriteShifts.CRAFTER_OTHERSIDE : AllSpriteShifts.CRAFTER_SIDE;
     }
 
 }

@@ -76,7 +76,7 @@ public final class GlCompat {
         long stride
     ) {
         int count = end - start;
-        long indirect = (long) start * stride;
+        long indirect = start * stride;
         if (DRIVER == Driver.INTEL) {
             for (int i = 0; i < count; ++i) {
                 drawProgram.setUInt("_flw_baseDraw", start + i);
@@ -98,11 +98,14 @@ public final class GlCompat {
         // The vendor string I got was "ATI Technologies Inc."
         if (GL_VENDOR_STRING.contains("ATI") || GL_VENDOR_STRING.contains("AMD")) {
             return Driver.AMD;
-        } else if (GL_VENDOR_STRING.contains("NVIDIA")) {
+        }
+        if (GL_VENDOR_STRING.contains("NVIDIA")) {
             return Driver.NVIDIA;
-        } else if (GL_VENDOR_STRING.contains("Intel")) {
+        }
+        if (GL_VENDOR_STRING.contains("Intel")) {
             return Driver.INTEL;
-        } else if (GL_VENDOR_STRING.contains("Mesa")) {
+        }
+        if (GL_VENDOR_STRING.contains("Mesa")) {
             return Driver.MESA;
         }
 
@@ -112,29 +115,28 @@ public final class GlCompat {
     private static int subgroupSize() {
         if (CAPABILITIES == null) {
             return 32;
-        } else if (CAPABILITIES.GL_KHR_shader_subgroup) {
-            return GL31C.glGetInteger(38194);
-        } else {
-            return DRIVER != Driver.AMD && DRIVER != Driver.MESA ? 32 : 64;
         }
+        if (CAPABILITIES.GL_KHR_shader_subgroup) {
+            return GL31C.glGetInteger(38194);
+        }
+        return DRIVER != Driver.AMD && DRIVER != Driver.MESA ? 32 : 64;
     }
 
     private static boolean isInstancingSupported() {
         if (CAPABILITIES == null) {
             return false;
-        } else {
-            return CAPABILITIES.OpenGL33 || CAPABILITIES.GL_ARB_shader_bit_encoding;
         }
+        return CAPABILITIES.OpenGL33 || CAPABILITIES.GL_ARB_shader_bit_encoding;
     }
 
     private static boolean isIndirectSupported() {
         if (CAPABILITIES == null) {
             return false;
-        } else if (CAPABILITIES.OpenGL46) {
-            return true;
-        } else {
-            return CAPABILITIES.GL_ARB_compute_shader && CAPABILITIES.GL_ARB_direct_state_access && CAPABILITIES.GL_ARB_gpu_shader5 && CAPABILITIES.GL_ARB_multi_bind && CAPABILITIES.GL_ARB_multi_draw_indirect && CAPABILITIES.GL_ARB_shader_draw_parameters && CAPABILITIES.GL_ARB_shader_storage_buffer_object && CAPABILITIES.GL_ARB_shading_language_420pack && CAPABILITIES.GL_ARB_vertex_attrib_binding && CAPABILITIES.GL_ARB_shader_image_load_store && CAPABILITIES.GL_ARB_shader_image_size;
         }
+        if (CAPABILITIES.OpenGL46) {
+            return true;
+        }
+        return CAPABILITIES.GL_ARB_compute_shader && CAPABILITIES.GL_ARB_direct_state_access && CAPABILITIES.GL_ARB_gpu_shader5 && CAPABILITIES.GL_ARB_multi_bind && CAPABILITIES.GL_ARB_multi_draw_indirect && CAPABILITIES.GL_ARB_shader_draw_parameters && CAPABILITIES.GL_ARB_shader_storage_buffer_object && CAPABILITIES.GL_ARB_shading_language_420pack && CAPABILITIES.GL_ARB_vertex_attrib_binding && CAPABILITIES.GL_ARB_shader_image_load_store && CAPABILITIES.GL_ARB_shader_image_size;
     }
 
     private static boolean isDsaSupported() {
@@ -144,18 +146,17 @@ public final class GlCompat {
     private static GlslVersion maxGlslVersion() {
         if (CAPABILITIES == null) {
             return GlslVersion.V150;
-        } else {
-            GlslVersion[] glslVersions = GlslVersion.values();
-
-            for (int i = glslVersions.length - 1; i > 0; --i) {
-                GlslVersion version = glslVersions[i];
-                if (canCompileVersion(version)) {
-                    return version;
-                }
-            }
-
-            return GlslVersion.V150;
         }
+        GlslVersion[] glslVersions = GlslVersion.values();
+
+        for (int i = glslVersions.length - 1; i > 0; --i) {
+            GlslVersion version = glslVersions[i];
+            if (canCompileVersion(version)) {
+                return version;
+            }
+        }
+
+        return GlslVersion.V150;
     }
 
     private static boolean canCompileVersion(GlslVersion version) {

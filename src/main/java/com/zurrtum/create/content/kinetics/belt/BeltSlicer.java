@@ -135,9 +135,9 @@ public class BeltSlicer {
                     if (transportedItemStack.beltPosition <= 0) {
                         ItemEntity entity = new ItemEntity(
                             world,
-                            pos.getX() + .5f,
-                            pos.getY() + 11 / 16f,
-                            pos.getZ() + .5f,
+                            pos.getX() + 0.5f,
+                            pos.getY() + 11 / 16.0f,
+                            pos.getZ() + 0.5f,
                             transportedItemStack.stack
                         );
                         entity.setDeltaMovement(Vec3.ZERO);
@@ -387,7 +387,7 @@ public class BeltSlicer {
                 if (segmentBE != null) {
                     segmentBE.color = controllerBE.color;
                 }
-                world.playSound(null, pos, SoundEvents.WOOL_PLACE, SoundSource.PLAYERS, 0.5F, 1F);
+                world.playSound(null, pos, SoundEvents.WOOL_PLACE, SoundSource.PLAYERS, 0.5F, 1.0F);
 
                 // Transfer items to new controller
                 if (part == BeltPart.START && segmentBE != null && inventory != null) {

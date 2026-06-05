@@ -21,8 +21,8 @@ public class BlockPlaceContextMixin {
     @Inject(method = "<init>(Lnet/minecraft/world/item/context/UseOnContext;)V", at = @At("TAIL"))
     private void init(UseOnContext context, CallbackInfo ci) {
         if (context instanceof SymmetryPlacementContext placementContext) {
-            this.replaceClicked = placementContext.replacingClickedOnBlock();
-            this.relativePos = placementContext.relativePos;
+            replaceClicked = placementContext.replacingClickedOnBlock();
+            relativePos = placementContext.relativePos;
         }
     }
 }

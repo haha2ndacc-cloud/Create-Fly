@@ -25,7 +25,8 @@ public class SawFilterSlot extends ValueBoxTransform {
 
     @Override
     public void rotate(BlockState state, PoseStack ms) {
-        int yRot = (state.getValue(SawBlock.AXIS_ALONG_FIRST_COORDINATE) ? 90 : 0) + (state.getValue(SawBlock.FLIPPED) ? 0 : 180);
+        int yRot = (state.getValue(SawBlock.AXIS_ALONG_FIRST_COORDINATE) ? 90 : 0) + (state.getValue(SawBlock.FLIPPED) ?
+            0 : 180);
         TransformStack.of(ms).rotateYDegrees(yRot).rotateXDegrees(90);
     }
 }

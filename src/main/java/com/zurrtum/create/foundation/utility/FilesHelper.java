@@ -30,7 +30,7 @@ public class FilesHelper {
         String filename;
         Path filepath;
         do {
-            filename = slug(name) + ((index == 0) ? "" : "_" + index) + "." + extension;
+            filename = slug(name) + (index == 0 ? "" : "_" + index) + "." + extension;
             index++;
             filepath = folderPath.resolve(filename);
         } while (Files.exists(filepath));

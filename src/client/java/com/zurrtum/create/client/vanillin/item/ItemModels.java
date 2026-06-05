@@ -117,10 +117,12 @@ public class ItemModels {
 
     private static class ThreadLocalObjects {
         private static final Hash.Strategy<ItemStack> STACK_STRATEGY = new Hash.Strategy<>() {
+            @Override
             public int hashCode(ItemStack itemStack) {
                 return ItemStack.hashItemAndComponents(itemStack);
             }
 
+            @Override
             public boolean equals(@Nullable ItemStack itemStack, @Nullable ItemStack itemStack2) {
                 return itemStack == itemStack2 || itemStack != null && itemStack2 != null && ItemStack.isSameItemSameComponents(itemStack,
                     itemStack2

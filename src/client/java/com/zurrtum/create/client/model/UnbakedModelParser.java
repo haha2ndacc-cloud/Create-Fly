@@ -25,8 +25,9 @@ public class UnbakedModelParser {
     }
 
     public static class Deserializer implements JsonDeserializer<UnbakedModel>, TypeAdapterFactory {
-        private static final TypeToken<? extends UnbakedModel> NEXT_TYPE = FabricLoader.getInstance()
-            .isModLoaded("fabric-model-loading-api-v1") ? TypeToken.get(UnbakedModel.class) : TypeToken.get(CuboidModel.class);
+        private static final TypeToken<? extends UnbakedModel> NEXT_TYPE =
+            FabricLoader.getInstance().isModLoaded("fabric-model-loading-api-v1") ? TypeToken.get(UnbakedModel.class) :
+                TypeToken.get(CuboidModel.class);
         private final Gson gson;
         private @Nullable TypeAdapter<?> cached;
 

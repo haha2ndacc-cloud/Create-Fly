@@ -103,7 +103,7 @@ public class PackagerLinkBlock extends FaceAttachedHorizontalDirectionalBlock im
         boolean powered = power > 0;
         boolean previouslyPowered = state.getValue(POWERED);
         if (previouslyPowered != powered) {
-            worldIn.setBlock(pos, state.cycle(POWERED), Block.UPDATE_CLIENTS);
+            worldIn.setBlock(pos, state.cycle(POWERED), UPDATE_CLIENTS);
         }
         withBlockEntityDo(worldIn, pos, link -> link.behaviour.redstonePowerChanged(power));
     }

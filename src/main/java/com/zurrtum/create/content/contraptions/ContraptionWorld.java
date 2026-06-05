@@ -28,7 +28,7 @@ public class ContraptionWorld extends WrappedLevel {
 
     // https://math.stackexchange.com/questions/291468
     private static int nextMultipleOf16(double a) {
-        return (((Math.abs((int) a) - 1) | 15) + 1) * Mth.sign(a);
+        return ((Math.abs((int) a) - 1 | 15) + 1) * Mth.sign(a);
     }
 
     @Override

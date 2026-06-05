@@ -21,7 +21,10 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.WalkAnimationState;
 import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -90,7 +93,7 @@ public class DeployerScenes {
         scene.idle(50);
 
         ItemStack pot = new ItemStack(Items.FLOWER_POT);
-        Vec3 frontVec = util.vector().blockSurface(deployerPos, Direction.WEST).add(-.125, 0, 0);
+        Vec3 frontVec = util.vector().blockSurface(deployerPos, Direction.WEST).add(-0.125, 0, 0);
 
         scene.overlay().showControls(frontVec, Pointing.DOWN, 40).rightClick().withItem(pot);
         scene.idle(7);
@@ -152,7 +155,7 @@ public class DeployerScenes {
         scene.world().hideSection(util.select().position(deployerPos.above()), Direction.EAST);
         scene.idle(20);
 
-        Vec3 filterSlot = util.vector().topOf(deployerPos).add(2 / 16f, 0, 0);
+        Vec3 filterSlot = util.vector().topOf(deployerPos).add(2 / 16.0f, 0, 0);
         scene.overlay().showFilterSlotInput(filterSlot, Direction.UP, 80);
         scene.overlay().showText(40).attachKeyFrame().placeNearTarget().pointAt(filterSlot)
             .text("Deployers carry a filter slot");
@@ -206,7 +209,7 @@ public class DeployerScenes {
         scene.idle(26);
         scene.world().modifyEntity(sheep, e -> ((Sheep) e).setSheared(true));
         scene.effects().emitParticles(
-            util.vector().topOf(deployerPos.west(2)).add(0, -.25, 0), scene.effects().particleEmitterWithinBlockSpace(
+            util.vector().topOf(deployerPos.west(2)).add(0, -0.25, 0), scene.effects().particleEmitterWithinBlockSpace(
                 new BlockParticleOption(ParticleTypes.BLOCK, Blocks.WOOL.pink().defaultBlockState()),
                 util.vector().of(0, 0, 0)
             ), 25, 1
@@ -219,7 +222,7 @@ public class DeployerScenes {
             .text("...and only non-matching items will be extracted");
         scene.world().flapFunnel(deployerPos.north(), true);
         scene.world().createItemEntity(
-            util.vector().centerOf(deployerPos.north()).subtract(0, .45, 0),
+            util.vector().centerOf(deployerPos.north()).subtract(0, 0.45, 0),
             util.vector().of(0, 0, -0.1),
             new ItemStack(Items.WOOL.pink())
         );
@@ -244,7 +247,7 @@ public class DeployerScenes {
         scene.idle(10);
 
         BlockPos deployerPos = util.grid().at(3, 1, 2);
-        Vec3 frontVec = util.vector().blockSurface(deployerPos, Direction.WEST).add(-.125, 0, 0);
+        Vec3 frontVec = util.vector().blockSurface(deployerPos, Direction.WEST).add(-0.125, 0, 0);
         Selection grassBlock = util.select().position(1, 1, 2);
 
         Selection deployerSelection = util.select().position(deployerPos);
@@ -460,7 +463,7 @@ public class DeployerScenes {
 
         scene.world().toggleRedstonePower(redstone);
         scene.idle(10);
-        scene.world().moveDeployer(deployerPos, 1f, 30);
+        scene.world().moveDeployer(deployerPos, 1.0f, 30);
         scene.idle(10);
 
         scene.world().toggleRedstonePower(redstone);
@@ -470,7 +473,7 @@ public class DeployerScenes {
         scene.overlay().showText(60).pointAt(util.vector().topOf(deployerPos)).placeNearTarget()
             .text("Before stopping, the Deployer will finish any started cycles");
 
-        scene.world().moveDeployer(deployerPos, -1f, 30);
+        scene.world().moveDeployer(deployerPos, -1.0f, 30);
         scene.idle(70);
 
         scene.world().toggleRedstonePower(redstone);
@@ -491,7 +494,7 @@ public class DeployerScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("deployer_contraption", "Using Deployers on Contraptions");
         scene.configureBasePlate(0, 0, 6);
-        scene.scaleSceneView(.9f);
+        scene.scaleSceneView(0.9f);
         Selection flowers = util.select().fromTo(4, 1, 1, 1, 1, 1);
         scene.world().replaceBlocks(flowers, Blocks.AIR.defaultBlockState(), false);
 
@@ -542,7 +545,7 @@ public class DeployerScenes {
         scene.world().replaceBlocks(flowers, Blocks.AIR.defaultBlockState(), false);
         scene.world().showSection(flowers, Direction.UP);
 
-        Vec3 filterSlot = util.vector().blockSurface(deployerPos.west(3), Direction.WEST).add(0, 0, 2 / 16f);
+        Vec3 filterSlot = util.vector().blockSurface(deployerPos.west(3), Direction.WEST).add(0, 0, 2 / 16.0f);
         scene.overlay().showFilterSlotInput(filterSlot, Direction.WEST, 80);
         scene.overlay().showText(60).attachKeyFrame().placeNearTarget().pointAt(filterSlot)
             .text("The Filter slot can be used to specify which items to pull");

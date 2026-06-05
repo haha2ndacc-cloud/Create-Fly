@@ -354,6 +354,7 @@ public abstract class InventoryWrapper<T extends Storage<ItemVariant>, S extends
         return ItemStack.EMPTY;
     }
 
+    @Override
     public List<ItemStack> extract(List<ItemStack> stacks) {
         int listSize = stacks.size();
         if (listSize == 0) {
@@ -430,9 +431,8 @@ public abstract class InventoryWrapper<T extends Storage<ItemVariant>, S extends
                 }
                 transaction.commit();
                 return result;
-            } else {
-                return stacks;
             }
+            return stacks;
         }
     }
 
@@ -690,9 +690,8 @@ public abstract class InventoryWrapper<T extends Storage<ItemVariant>, S extends
                 }
                 transaction.commit();
                 return result;
-            } else {
-                return stacks;
             }
+            return stacks;
         }
     }
 
@@ -756,10 +755,9 @@ public abstract class InventoryWrapper<T extends Storage<ItemVariant>, S extends
             if (extract < amount) {
                 transaction.abort();
                 return false;
-            } else {
-                transaction.commit();
-                return true;
             }
+            transaction.commit();
+            return true;
         }
     }
 
@@ -807,10 +805,9 @@ public abstract class InventoryWrapper<T extends Storage<ItemVariant>, S extends
             if (insert < maxAmount) {
                 transaction.abort();
                 return false;
-            } else {
-                transaction.commit();
-                return true;
             }
+            transaction.commit();
+            return true;
         }
     }
 
@@ -1009,9 +1006,9 @@ public abstract class InventoryWrapper<T extends Storage<ItemVariant>, S extends
 
         public Filter(InventoryWrapper<?, ?> inventory) {
             this.inventory = inventory;
-            this.slots = SlotRangeCache.get(inventory.getContainerSize());
-            this.canInsert = inventory.storage.supportsInsertion();
-            this.canExtract = inventory.storage.supportsExtraction();
+            slots = SlotRangeCache.get(inventory.getContainerSize());
+            canInsert = inventory.storage.supportsInsertion();
+            canExtract = inventory.storage.supportsExtraction();
         }
 
         @Override
@@ -1819,9 +1816,8 @@ public abstract class InventoryWrapper<T extends Storage<ItemVariant>, S extends
                     }
                     transaction.commit();
                     return result;
-                } else {
-                    return stacks;
                 }
+                return stacks;
             }
         }
 
@@ -1903,9 +1899,8 @@ public abstract class InventoryWrapper<T extends Storage<ItemVariant>, S extends
                     }
                     transaction.commit();
                     return result;
-                } else {
-                    return stacks;
                 }
+                return stacks;
             }
         }
 
@@ -1975,7 +1970,7 @@ public abstract class InventoryWrapper<T extends Storage<ItemVariant>, S extends
         private final java.util.Iterator<StorageView<ItemVariant>> iterator;
 
         public Iterator(Storage<ItemVariant> storage) {
-            this.iterator = storage.iterator();
+            iterator = storage.iterator();
         }
 
         @Override

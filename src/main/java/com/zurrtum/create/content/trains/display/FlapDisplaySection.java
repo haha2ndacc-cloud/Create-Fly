@@ -35,13 +35,13 @@ public class FlapDisplaySection {
     public String text;
 
     public FlapDisplaySection(float width, String cycle, boolean singleFlap, boolean hasGap) {
-        this.size = width;
+        size = width;
         this.cycle = cycle;
         this.hasGap = hasGap;
         this.singleFlap = singleFlap;
-        this.spinning = new boolean[singleFlap ? 1 : Math.max(0, (int) (width / FlapDisplaySection.MONOSPACE))];
-        this.text = Strings.repeat(" ", spinning.length);
-        this.component = null;
+        spinning = new boolean[singleFlap ? 1 : Math.max(0, (int) (width / MONOSPACE))];
+        text = Strings.repeat(" ", spinning.length);
+        component = null;
     }
 
     public FlapDisplaySection rightAligned() {

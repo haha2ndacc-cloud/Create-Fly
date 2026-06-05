@@ -41,7 +41,8 @@ public class BearingVisual<B extends KineticBlockEntity & IBearingBlockEntity> e
 
         blockOrientation = getBlockStateOrientation(facing);
 
-        PartialModel top = blockEntity.isWoodenTop() ? AllPartialModels.BEARING_TOP_WOODEN : AllPartialModels.BEARING_TOP;
+        PartialModel top =
+            blockEntity.isWoodenTop() ? AllPartialModels.BEARING_TOP_WOODEN : AllPartialModels.BEARING_TOP;
 
         topInstance = instancerProvider().instancer(InstanceTypes.ORIENTED, Models.chunkPartial(top)).createInstance();
 

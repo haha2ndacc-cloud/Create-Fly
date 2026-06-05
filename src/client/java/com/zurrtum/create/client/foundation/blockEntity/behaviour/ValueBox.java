@@ -45,7 +45,7 @@ public class ValueBox extends ChasingAABBOutline {
         super(bb);
         this.label = label;
         this.pos = pos;
-        this.blockState = state;
+        blockState = state;
         this.state = new ItemStackRenderState();
     }
 
@@ -55,17 +55,17 @@ public class ValueBox extends ChasingAABBOutline {
     }
 
     public ValueBox wideOutline() {
-        this.outline = AllIcons.VALUE_BOX_HOVER_6PX;
+        outline = AllIcons.VALUE_BOX_HOVER_6PX;
         return this;
     }
 
     public ValueBox passive(boolean passive) {
-        this.isPassive = passive;
+        isPassive = passive;
         return this;
     }
 
     public ValueBox withColor(int color) {
-        this.overrideColor = color;
+        overrideColor = color;
         return this;
     }
 
@@ -87,13 +87,13 @@ public class ValueBox extends ChasingAABBOutline {
             fontScale = -transform.getFontScale();
             color = transform.getOverrideColor();
         } else {
-            fontScale = -1 / 64f;
+            fontScale = -1 / 64.0f;
             color = overrideColor;
         }
         if (!isPassive) {
             ms.pushPose();
             ms.scale(-2.01f, -2.01f, 2.01f);
-            ms.translate(-8 / 16.0, -8 / 16.0, -.5 / 16.0);
+            ms.translate(-8 / 16.0, -8 / 16.0, -0.5 / 16.0);
             getOutline().submit(ms, queue, 0xffffffff);
             ms.popPose();
         }
@@ -151,7 +151,7 @@ public class ValueBox extends ChasingAABBOutline {
                 scale = 1.65f;
                 color = 0xFFEDEDED;
             } else {
-                ms.translate(-7, 10, blockItem ? 10 + 1 / 4f : 0);
+                ms.translate(-7, 10, blockItem ? 10 + 1 / 4.0f : 0);
                 color = 0xFFEDEDED;
             }
 
@@ -191,7 +191,7 @@ public class ValueBox extends ChasingAABBOutline {
             if (singleDigit) {
                 numberScale = numberScale / 2;
             }
-            float verticalMargin = (stringWidth - font.lineHeight) / 2f;
+            float verticalMargin = (stringWidth - font.lineHeight) / 2.0f;
 
             ms.scale(numberScale, numberScale, numberScale);
             ms.translate(singleDigit ? stringWidth / 2 : 0, singleDigit ? -verticalMargin : verticalMargin, 0);
@@ -217,7 +217,7 @@ public class ValueBox extends ChasingAABBOutline {
         public void submitContents(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, int color) {
             float scale = 2 * 16;
             ms.scale(scale, scale, scale);
-            ms.translate(-.5f, -.5f, 5 / 32f);
+            ms.translate(-0.5f, -0.5f, 5 / 32.0f);
             icon.submit(ms, queue, color);
         }
 

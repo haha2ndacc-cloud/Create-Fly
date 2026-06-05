@@ -100,7 +100,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "collectEquipmentChanges(Ljava/util/Map;)Ljava/util/Map;", at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;"))
     private void onLivingEquipmentChange(CallbackInfoReturnable<Map<EquipmentSlot, ItemStack>> cir) {
-        if (((Object) this) instanceof Player player) {
+        if ((Object) this instanceof Player player) {
             CardboardArmorHandler.playerChangesEquipment(player);
             NetheriteDivingHandler.onEquipmentChange(player);
         }
@@ -115,7 +115,7 @@ public abstract class LivingEntityMixin extends Entity {
         CallbackInfo ci,
         @Share("onGround") LocalBooleanRef onGround
     ) {
-        if (((Object) this) instanceof Player player) {
+        if ((Object) this instanceof Player player) {
             onGround.set(player.onGround());
         }
     }
@@ -129,7 +129,7 @@ public abstract class LivingEntityMixin extends Entity {
         CallbackInfo ci,
         @Share("onGround") LocalBooleanRef onGround
     ) {
-        if (((Object) this) instanceof Player player) {
+        if ((Object) this instanceof Player player) {
             DivingBootsItem.onLavaTravel(player, onGround.get());
         }
     }
@@ -155,7 +155,7 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @Inject(method = "dropAllDeathLoot(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;)V", at = @At(value = "HEAD"))
+    @Inject(method = "dropAllDeathLoot(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;)V", at = @At("HEAD"))
     private void onDropPre(
         ServerLevel level,
         DamageSource source,
@@ -171,7 +171,7 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @Inject(method = "dropAllDeathLoot(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;)V", at = @At(value = "TAIL"))
+    @Inject(method = "dropAllDeathLoot(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;)V", at = @At("TAIL"))
     private void onDropPost(
         ServerLevel level,
         DamageSource source,
@@ -218,7 +218,7 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "getVisibilityPercent(Lnet/minecraft/world/entity/Entity;)D", at = @At("HEAD"), cancellable = true)
     private void getAttackDistanceScalingFactor(Entity targetingEntity, CallbackInfoReturnable<Double> cir) {
         if (CardboardArmorHandler.testForStealth(targetingEntity)) {
-            cir.setReturnValue(0d);
+            cir.setReturnValue(0.0d);
         }
     }
 

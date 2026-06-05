@@ -35,10 +35,12 @@ import java.util.Objects;
 public class BlockCuttingCategory extends CreateCategory<BlockCuttingDisplay> {
     public static List<BlockCuttingDisplay> getRecipes(RecipeMap preparedRecipes) {
         Object2ObjectMap<Ingredient, Pair<Identifier, List<ItemStack>>> map = new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<>() {
+            @Override
             public boolean equals(Ingredient ingredient, Ingredient other) {
                 return Objects.equals(ingredient, other);
             }
 
+            @Override
             public int hashCode(Ingredient ingredient) {
                 if (ingredient.values instanceof HolderSet.Direct<Item> direct) {
                     return direct.hashCode();
@@ -114,7 +116,7 @@ public class BlockCuttingCategory extends CreateCategory<BlockCuttingDisplay> {
         builder.addInputSlot(5, 5).setBackground(SLOT, -1, -1).add(display.input());
         List<List<ItemStack>> outputs = display.outputs();
         for (int i = 0, left = 78, top = 48, size = outputs.size(); i < size; i++) {
-            builder.addOutputSlot(left + (i % 5) * 19, top + (i / 5) * -19).setBackground(SLOT, -1, -1)
+            builder.addOutputSlot(left + i % 5 * 19, top + i / 5 * -19).setBackground(SLOT, -1, -1)
                 .addItemStacks(outputs.get(i));
         }
     }

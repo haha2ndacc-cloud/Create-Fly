@@ -80,7 +80,7 @@ public class ValveHandleBlock extends HandCrankBlock {
         onBlockEntityUse(
             level,
             pos,
-            hcbe -> (hcbe instanceof ValveHandleBlockEntity vhbe) && vhbe.activate(player.isShiftKeyDown()) ?
+            hcbe -> hcbe instanceof ValveHandleBlockEntity vhbe && vhbe.activate(player.isShiftKeyDown()) ?
                 InteractionResult.SUCCESS : InteractionResult.PASS
         );
         return InteractionResult.SUCCESS;

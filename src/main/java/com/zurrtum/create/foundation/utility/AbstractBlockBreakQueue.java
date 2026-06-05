@@ -31,8 +31,9 @@ public abstract class AbstractBlockBreakQueue {
     }
 
     public void destroyBlocks(Level world, @Nullable LivingEntity entity, BiConsumer<BlockPos, ItemStack> drop) {
-        Player playerEntity = entity instanceof Player ? ((Player) entity) : null;
-        ItemStack toDamage = playerEntity != null && !playerEntity.isCreative() ? playerEntity.getMainHandItem() : ItemStack.EMPTY;
+        Player playerEntity = entity instanceof Player player ? player : null;
+        ItemStack toDamage =
+            playerEntity != null && !playerEntity.isCreative() ? playerEntity.getMainHandItem() : ItemStack.EMPTY;
         destroyBlocks(world, toDamage, playerEntity, drop);
     }
 

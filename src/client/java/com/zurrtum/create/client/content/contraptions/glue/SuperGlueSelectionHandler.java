@@ -109,7 +109,7 @@ public class SuperGlueSelectionHandler {
                 AllSpecialTextures faceTex = h ? AllSpecialTextures.GLUE : null;
                 Outliner.getInstance().showAABB(glueEntity, glueEntity.getBoundingBox())
                     .colored(h ? HIGHLIGHT : PASSIVE).withFaceTextures(faceTex, faceTex).disableLineNormals()
-                    .lineWidth(h ? 1 / 16f : 1 / 64f);
+                    .lineWidth(h ? 1 / 16.0f : 1 / 64.0f);
             }
         }
 
@@ -161,11 +161,11 @@ public class SuperGlueSelectionHandler {
                     Outliner.getInstance().showAABB(bbOutlineSlot, currentSelectionBox)
                         .colored(canReach && canAfford && !cancel ? HIGHLIGHT : FAIL)
                         .withFaceTextures(AllSpecialTextures.GLUE, AllSpecialTextures.GLUE).disableLineNormals()
-                        .lineWidth(1 / 16f);
+                        .lineWidth(1 / 16.0f);
                 }
 
                 Outliner.getInstance().showCluster(clusterOutlineSlot, currentCluster).colored(0x4D9162)
-                    .disableLineNormals().lineWidth(1 / 64f);
+                    .disableLineNormals().lineWidth(1 / 64.0f);
             }
 
             return;
@@ -183,10 +183,8 @@ public class SuperGlueSelectionHandler {
 
     @Nullable
     private AABB getCurrentSelectionBox() {
-        return firstPos == null || hoveredPos == null ? null : new AABB(
-            Vec3.atLowerCornerOf(firstPos),
-            Vec3.atLowerCornerOf(hoveredPos)
-        ).expandTowards(1, 1, 1);
+        return firstPos == null || hoveredPos == null ? null :
+            new AABB(Vec3.atLowerCornerOf(firstPos), Vec3.atLowerCornerOf(hoveredPos)).expandTowards(1, 1, 1);
     }
 
     public boolean onMouseInput(Minecraft mc, boolean attack) {
@@ -270,7 +268,7 @@ public class SuperGlueSelectionHandler {
         if (currentCluster != null) {
             Outliner.getInstance().showCluster(clusterOutlineSlot, currentCluster).colored(0xB5F2C6)
                 .withFaceTextures(AllSpecialTextures.GLUE, AllSpecialTextures.HIGHLIGHT_CHECKERED).disableLineNormals()
-                .lineWidth(1 / 24f);
+                .lineWidth(1 / 24.0f);
         }
 
         discard(player);
@@ -281,19 +279,19 @@ public class SuperGlueSelectionHandler {
     public static void spawnParticles(Level world, BlockPos pos, Direction direction, boolean fullBlock) {
         Vec3 vec = Vec3.atLowerCornerOf(direction.getUnitVec3i());
         Vec3 plane = VecHelper.axisAlingedPlaneOf(vec);
-        Vec3 facePos = VecHelper.getCenterOf(pos).add(vec.scale(.5f));
+        Vec3 facePos = VecHelper.getCenterOf(pos).add(vec.scale(0.5f));
 
-        float distance = fullBlock ? 1f : .25f + .25f * (world.getRandom().nextFloat() - .5f);
+        float distance = fullBlock ? 1.0f : 0.25f + 0.25f * (world.getRandom().nextFloat() - 0.5f);
         plane = plane.scale(distance);
 
         for (int i = fullBlock ? 40 : 15; i > 0; i--) {
             Vec3 offset = VecHelper.rotate(plane, 360 * world.getRandom().nextFloat(), direction.getAxis());
-            Vec3 motion = offset.normalize().scale(1 / 16f);
+            Vec3 motion = offset.normalize().scale(1 / 16.0f);
             if (fullBlock) {
                 offset = new Vec3(
-                    Mth.clamp(offset.x, -.5, .5),
-                    Mth.clamp(offset.y, -.5, .5),
-                    Mth.clamp(offset.z, -.5, .5)
+                    Mth.clamp(offset.x, -0.5, 0.5),
+                    Mth.clamp(offset.y, -0.5, 0.5),
+                    Mth.clamp(offset.z, -0.5, 0.5)
                 );
             }
             Vec3 particlePos = facePos.add(offset);

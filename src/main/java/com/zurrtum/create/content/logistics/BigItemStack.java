@@ -66,7 +66,7 @@ public class BigItemStack {
 
     @Override
     public int hashCode() {
-        return (nullHash(stack) * 31) ^ Integer.hashCode(count);
+        return nullHash(stack) * 31 ^ Integer.hashCode(count);
     }
 
     int nullHash(@Nullable Object o) {

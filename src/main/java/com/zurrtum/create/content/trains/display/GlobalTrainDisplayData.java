@@ -10,7 +10,7 @@ import java.util.*;
 public class GlobalTrainDisplayData {
 
     public static final Map<String, Collection<TrainDeparturePrediction>> statusByDestination = new HashMap<>();
-    public static boolean updateTick = false;
+    public static boolean updateTick;
 
     public static void refresh() {
         statusByDestination.clear();

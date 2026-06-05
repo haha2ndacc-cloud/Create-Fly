@@ -56,7 +56,7 @@ public class SlidingDoorMovementBehaviour extends MovementBehaviour {
             return;
         }
         boolean wasSettled = sdbe.animation.settled();
-        sdbe.animation.chase(open ? 1 : 0, .15f, Chaser.LINEAR);
+        sdbe.animation.chase(open ? 1 : 0, 0.15f, Chaser.LINEAR);
         sdbe.animation.tickChaser();
 
         if (!wasSettled && sdbe.animation.settled() && !open) {
@@ -66,7 +66,7 @@ public class SlidingDoorMovementBehaviour extends MovementBehaviour {
                 context.position.z,
                 SoundEvents.IRON_DOOR_CLOSE,
                 SoundSource.BLOCKS,
-                .125f,
+                0.125f,
                 1,
                 false
             );
@@ -110,7 +110,7 @@ public class SlidingDoorMovementBehaviour extends MovementBehaviour {
                 BlockPos.containing(context.position),
                 SoundEvents.IRON_DOOR_OPEN,
                 SoundSource.BLOCKS,
-                .125f,
+                0.125f,
                 1
             );
         }
@@ -147,7 +147,7 @@ public class SlidingDoorMovementBehaviour extends MovementBehaviour {
             return false;
         }
         Contraption contraption = context.contraption;
-        boolean canOpen = context.motion.length() < 1 / 128f && !contraption.entity.isStalled() || contraption instanceof ElevatorContraption ec && ec.arrived;
+        boolean canOpen = context.motion.length() < 1 / 128.0f && !contraption.entity.isStalled() || contraption instanceof ElevatorContraption ec && ec.arrived;
 
         if (!canOpen) {
             context.temporaryData = null;
@@ -237,8 +237,8 @@ public class SlidingDoorMovementBehaviour extends MovementBehaviour {
         Direction stateFacing = context.state.getValue(DoorBlock.FACING);
         Direction originalFacing = Direction.get(AxisDirection.POSITIVE, stateFacing.getAxis());
         Vec3 centerOfContraption = context.contraption.bounds.getCenter();
-        Vec3 diff = Vec3.atCenterOf(context.localPos).add(Vec3.atLowerCornerOf(stateFacing.getUnitVec3i()).scale(-.45f))
-            .subtract(centerOfContraption);
+        Vec3 diff = Vec3.atCenterOf(context.localPos)
+            .add(Vec3.atLowerCornerOf(stateFacing.getUnitVec3i()).scale(-0.45f)).subtract(centerOfContraption);
         if (originalFacing.getAxis().choose(diff.x, diff.y, diff.z) < 0) {
             originalFacing = originalFacing.getOpposite();
         }

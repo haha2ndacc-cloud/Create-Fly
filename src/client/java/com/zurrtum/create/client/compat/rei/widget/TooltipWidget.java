@@ -25,7 +25,7 @@ public class TooltipWidget extends Widget {
     }
 
     public TooltipWidget(int x, int y, int width, int height, Function<Minecraft, Tooltip> tooltip) {
-        this.bounds = new Rectangle(x, y, width, height);
+        bounds = new Rectangle(x, y, width, height);
         this.tooltip = tooltip;
     }
 

@@ -23,10 +23,10 @@ import java.util.List;
 
 public class ValueSettingsClient {
     public int interactHeldTicks = -1;
-    public @Nullable BlockPos interactHeldPos = null;
-    public @Nullable BehaviourType<? extends BlockEntityBehaviour<?>> interactHeldBehaviour = null;
-    public @Nullable InteractionHand interactHeldHand = null;
-    public @Nullable Direction interactHeldFace = null;
+    public @Nullable BlockPos interactHeldPos;
+    public @Nullable BehaviourType<? extends BlockEntityBehaviour<?>> interactHeldBehaviour;
+    public @Nullable InteractionHand interactHeldHand;
+    public @Nullable Direction interactHeldFace;
 
     public @Nullable List<MutableComponent> lastHoverTip;
     public int hoverTicks;
@@ -120,9 +120,8 @@ public class ValueSettingsClient {
         if (hoverWarmup < 6) {
             hoverWarmup += 2;
             return;
-        } else {
-            hoverWarmup++;
         }
+        hoverWarmup++;
         hoverTicks = hoverTicks == 0 ? 11 : Math.max(hoverTicks, 6);
         lastHoverTip = tip;
     }
@@ -137,7 +136,7 @@ public class ValueSettingsClient {
 
         int x = guiGraphics.guiWidth() / 2;
         int y = guiGraphics.guiHeight() - 75 - lastHoverTip.size() * 12;
-        float alpha = hoverTicks > 5 ? (11 - hoverTicks) / 5f : Math.min(1, hoverTicks / 5f);
+        float alpha = hoverTicks > 5 ? (11 - hoverTicks) / 5.0f : Math.min(1, hoverTicks / 5.0f);
 
         Color color = new Color(0xffffff);
         Color titleColor = new Color(0xFBDC7D);

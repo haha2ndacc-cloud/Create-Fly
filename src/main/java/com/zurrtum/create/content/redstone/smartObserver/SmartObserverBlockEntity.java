@@ -38,7 +38,7 @@ public class SmartObserverBlockEntity extends SmartBlockEntity implements Cleara
     private VersionedInventoryTrackerBehaviour invVersionTracker;
     private boolean sustainSignal;
 
-    public int turnOffTicks = 0;
+    public int turnOffTicks;
 
     public SmartObserverBlockEntity(BlockPos pos, BlockState state) {
         super(AllBlockEntityTypes.SMART_OBSERVER, pos, state);
@@ -95,7 +95,7 @@ public class SmartObserverBlockEntity extends SmartBlockEntity implements Cleara
         );
         if (behaviour != null) {
             behaviour.handleCenteredProcessingOnAllItems(
-                .45f, stack -> {
+                0.45f, stack -> {
                     if (!filtering.test(stack.stack) || turnOffTicks == 6) {
                         return TransportedResult.doNothing();
                     }

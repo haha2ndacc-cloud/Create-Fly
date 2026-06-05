@@ -66,7 +66,7 @@ public abstract class MapItemSavedDataMixin implements StationMapData {
         float localZ = (marker.getTarget().getZ() - centerZ) / (float) scaleMultiplier;
 
         if (localX < -63.0F || localX > 63.0F || localZ < -63.0F || localZ > 63.0F) {
-            this.removeDecoration(marker.getId());
+            removeDecoration(marker.getId());
             return;
         }
 
@@ -111,8 +111,8 @@ public abstract class MapItemSavedDataMixin implements StationMapData {
         double zCenter = pos.getZ() + 0.5D;
         int scaleMultiplier = 1 << scale;
 
-        double localX = (xCenter - (double) centerX) / (double) scaleMultiplier;
-        double localZ = (zCenter - (double) centerZ) / (double) scaleMultiplier;
+        double localX = (xCenter - centerX) / scaleMultiplier;
+        double localZ = (zCenter - centerZ) / scaleMultiplier;
 
         if (localX < -63.0D || localX > 63.0D || localZ < -63.0D || localZ > 63.0D) {
             return false;

@@ -32,8 +32,10 @@ public class TrackPaverV2 {
         int extent = (int) Math.round((to - from) / direction.length());
         double length = edge.getLength();
 
-        BlockPos pos = BlockPos.containing(edge.getPosition(graph, Mth.clamp(from, 1 / 16f, length - 1 / 16f) / length)
-            .subtract(0, diff.y != 0 ? 1 : 0.5, 0));
+        BlockPos pos = BlockPos.containing(edge.getPosition(
+            graph,
+            Mth.clamp(from, 1 / 16.0f, length - 1 / 16.0f) / length
+        ).subtract(0, diff.y != 0 ? 1 : 0.5, 0));
 
         paveStraight(task, pos, direction, extent);
     }
@@ -54,8 +56,8 @@ public class TrackPaverV2 {
             r2 /= Mth.SQRT_OF_TWO;
         }
 
-        int currentOffset = (int) (Math.abs(r1) * 2 + .5f);
-        int nextOffset = (int) (Math.abs(r2) * 2 + .5f);
+        int currentOffset = (int) (Math.abs(r1) * 2 + 0.5f);
+        int nextOffset = (int) (Math.abs(r2) * 2 + 0.5f);
 
         for (int i = 0; i < extent; i++) {
             Vec3 offset = direction.scale(i);
@@ -72,7 +74,8 @@ public class TrackPaverV2 {
 
             if (placeSides) {
                 for (int side : Iterate.positiveAndNegative) {
-                    Vec3 sideOffset = normalizedDirection.scale(side).add(mainNormal.normalize().scale(flip)).scale(.5);
+                    Vec3 sideOffset = normalizedDirection.scale(side).add(mainNormal.normalize().scale(flip))
+                        .scale(0.5);
                     toPlaceOn.add(BlockPos.containing(targetVec.add(sideOffset)));
                 }
             }
@@ -95,12 +98,12 @@ public class TrackPaverV2 {
 
         BlockPos bePosition = bc.bePositions.getFirst();
         double radius = -task.getHorizontalInterval().getFirst();
-        double r1 = radius - .575;
-        double r2 = radius + .575;
+        double r1 = radius - 0.575;
+        double r2 = radius + 0.575;
 
         double handleLength = bc.getHandleLength();
-        Vec3 start = bc.starts.getFirst().subtract(Vec3.atLowerCornerOf(bePosition)).add(0, 3 / 16f, 0);
-        Vec3 end = bc.starts.getSecond().subtract(Vec3.atLowerCornerOf(bePosition)).add(0, 3 / 16f, 0);
+        Vec3 start = bc.starts.getFirst().subtract(Vec3.atLowerCornerOf(bePosition)).add(0, 3 / 16.0f, 0);
+        Vec3 end = bc.starts.getSecond().subtract(Vec3.atLowerCornerOf(bePosition)).add(0, 3 / 16.0f, 0);
         Vec3 startHandle = bc.axes.getFirst().scale(handleLength).add(start);
         Vec3 endHandle = bc.axes.getSecond().scale(handleLength).add(end);
         Vec3 startNormal = bc.normals.getFirst();
@@ -114,7 +117,7 @@ public class TrackPaverV2 {
         for (int i = 0; i < segCount; i++) {
 
             float t = i == segCount ? 1 : i * lut[i] / segCount;
-            float t1 = (i + 1) == segCount ? 1 : (i + 1) * lut[(i + 1)] / segCount;
+            float t1 = i + 1 == segCount ? 1 : (i + 1) * lut[i + 1] / segCount;
 
             if (t1 < localFrom) {
                 continue;
@@ -147,11 +150,11 @@ public class TrackPaverV2 {
 
             AABB aabb = new AABB(a3, b3).minmax(new AABB(c3, d3));
 
-            double y = vt.add(vt1).y / 2f;
+            double y = vt.add(vt1).y / 2.0f;
             for (int scanX = Mth.floor(aabb.minX); scanX <= aabb.maxX; scanX++) {
                 for (int scanZ = Mth.floor(aabb.minZ); scanZ <= aabb.maxZ; scanZ++) {
 
-                    Vec2 p = new Vec2(scanX + .5f, scanZ + .5f);
+                    Vec2 p = new Vec2(scanX + 0.5f, scanZ + 0.5f);
                     if (!isInTriangle(a, b, c, p) && !isInTriangle(a, c, d, p)) {
                         continue;
                     }
@@ -159,7 +162,7 @@ public class TrackPaverV2 {
                     Pair<Integer, Integer> key = Pair.of(scanX, scanZ);
                     if (!yLevels.containsKey(key) || yLevels.get(key) > y) {
                         yLevels.put(key, y);
-                        tLevels.put(key, (t + t1) / 2d);
+                        tLevels.put(key, (t + t1) / 2.0d);
                     }
                 }
             }
@@ -173,7 +176,7 @@ public class TrackPaverV2 {
             int floor = Mth.floor(yValue);
             BlockPos targetPos = new BlockPos(entry.getKey().getFirst(), floor, entry.getKey().getSecond()).offset(
                 bePosition);
-            task.put(targetPos.getX(), targetPos.getZ(), targetPos.getY() + (yValue - floor >= .5 ? .5f : 0));
+            task.put(targetPos.getX(), targetPos.getZ(), targetPos.getY() + (yValue - floor >= 0.5 ? 0.5f : 0));
         }
     }
 

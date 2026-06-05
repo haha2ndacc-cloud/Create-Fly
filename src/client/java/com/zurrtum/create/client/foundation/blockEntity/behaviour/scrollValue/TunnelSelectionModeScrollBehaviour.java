@@ -20,16 +20,20 @@ public class TunnelSelectionModeScrollBehaviour extends ScrollOptionBehaviour<Se
     }
 
     public enum SelectionModeIcon implements INamedIconOptions {
-        SPLIT(AllIcons.I_TUNNEL_SPLIT), FORCED_SPLIT(AllIcons.I_TUNNEL_FORCED_SPLIT), ROUND_ROBIN(AllIcons.I_TUNNEL_ROUND_ROBIN), FORCED_ROUND_ROBIN(
-            AllIcons.I_TUNNEL_FORCED_ROUND_ROBIN), PREFER_NEAREST(AllIcons.I_TUNNEL_PREFER_NEAREST), RANDOMIZE(AllIcons.I_TUNNEL_RANDOMIZE), SYNCHRONIZE(
-            AllIcons.I_TUNNEL_SYNCHRONIZE);
+        SPLIT(AllIcons.I_TUNNEL_SPLIT),
+        FORCED_SPLIT(AllIcons.I_TUNNEL_FORCED_SPLIT),
+        ROUND_ROBIN(AllIcons.I_TUNNEL_ROUND_ROBIN),
+        FORCED_ROUND_ROBIN(AllIcons.I_TUNNEL_FORCED_ROUND_ROBIN),
+        PREFER_NEAREST(AllIcons.I_TUNNEL_PREFER_NEAREST),
+        RANDOMIZE(AllIcons.I_TUNNEL_RANDOMIZE),
+        SYNCHRONIZE(AllIcons.I_TUNNEL_SYNCHRONIZE);
 
         private final String translationKey;
         private final AllIcons icon;
 
         SelectionModeIcon(AllIcons icon) {
             this.icon = icon;
-            this.translationKey = "create.tunnel.selection_mode." + Lang.asId(name());
+            translationKey = "create.tunnel.selection_mode." + Lang.asId(name());
         }
 
         public static SelectionModeIcon from(SelectionMode mode) {

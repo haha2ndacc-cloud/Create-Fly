@@ -78,7 +78,7 @@ public class LevelRenderStateMixin implements LevelInfoHolder {
         }
         int periodTicks = optionalPeriodTicks.get();
         long dayTime = level.clockManager().getTotalTicks(timeline.clock());
-        setDayTime((int) ((dayTime / periodTicks) % 0x7FFFFFFFL), (float) (dayTime % periodTicks) / periodTicks);
+        setDayTime((int) (dayTime / periodTicks % 0x7FFFFFFFL), (float) (dayTime % periodTicks) / periodTicks);
     }
 
     @Unique

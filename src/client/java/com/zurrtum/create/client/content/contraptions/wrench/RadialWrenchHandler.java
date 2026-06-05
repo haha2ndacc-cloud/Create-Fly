@@ -15,7 +15,7 @@ import net.minecraft.world.phys.HitResult;
 
 public class RadialWrenchHandler {
 
-    public static int COOLDOWN = 0;
+    public static int COOLDOWN;
 
     public static void clientTick() {
         if (COOLDOWN > 0 && !AllKeys.ROTATE_MENU.isDown()) {

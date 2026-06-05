@@ -45,14 +45,13 @@ public class CachedFluidInventoryBehaviour<T extends SmartBlockEntity> extends B
             getter = side -> {
                 if (side == null) {
                     return storage;
-                } else {
-                    int i = side.get3DDataValue();
-                    Storage<FluidVariant> sideStorage = sides[i];
-                    if (sideStorage == null) {
-                        sideStorage = sides[i] = FluidInventoryStorage.of(inventory, side);
-                    }
-                    return sideStorage;
                 }
+                int i = side.get3DDataValue();
+                Storage<FluidVariant> sideStorage = sides[i];
+                if (sideStorage == null) {
+                    sideStorage = sides[i] = FluidInventoryStorage.of(inventory, side);
+                }
+                return sideStorage;
             };
         } else {
             getter = _ -> storage;

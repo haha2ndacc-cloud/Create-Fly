@@ -28,7 +28,7 @@ public class ChuteScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("chute", "Transporting Items downward via Chutes");
         scene.configureBasePlate(0, 0, 5);
-        scene.scaleSceneView(.9f);
+        scene.scaleSceneView(0.9f);
         scene.world().showSection(util.select().layer(0), Direction.UP);
 
         ElementLink<WorldSectionElement> top = scene.world()
@@ -121,7 +121,7 @@ public class ChuteScenes {
         for (int i = 0; i < 3; i++) {
             remove = scene.world().createItemEntity(
                 util.vector().centerOf(util.grid().at(2, 6, 3).relative(offset)),
-                util.vector().of(0, 0.1, 0).add(Vec3.atLowerCornerOf(offset.getUnitVec3i()).scale(-.1)),
+                util.vector().of(0, 0.1, 0).add(Vec3.atLowerCornerOf(offset.getUnitVec3i()).scale(-0.1)),
                 stack
             );
             scene.idle(12);
@@ -142,7 +142,7 @@ public class ChuteScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("chute_upward", "Transporting Items upward via Chutes");
         scene.configureBasePlate(0, 0, 5);
-        scene.scaleSceneView(.9f);
+        scene.scaleSceneView(0.9f);
         scene.showBasePlate();
         Selection chute = util.select().fromTo(1, 2, 2, 1, 4, 2);
         scene.world().setBlocks(chute, Blocks.AIR.defaultBlockState(), false);
@@ -172,7 +172,7 @@ public class ChuteScenes {
         scene.idle(10);
         scene.rotateCameraY(60);
         scene.overlay().showText(70).text("On the 'blocked' end, items will have to be inserted/taken from the sides")
-            .attachKeyFrame().pointAt(util.vector().centerOf(util.grid().at(3, 1, 2)).add(0, 3 / 16f, 0))
+            .attachKeyFrame().pointAt(util.vector().centerOf(util.grid().at(3, 1, 2)).add(0, 3 / 16.0f, 0))
             .placeNearTarget();
         scene.idle(32);
         scene.world().flapFunnel(util.grid().at(2, 2, 2), false);
@@ -184,7 +184,7 @@ public class ChuteScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("smart_chute", "Filtering Items using Smart Chutes");
         scene.configureBasePlate(0, 0, 5);
-        scene.scaleSceneView(.9f);
+        scene.scaleSceneView(0.9f);
 
         Selection lever = util.select().fromTo(0, 1, 2, 1, 3, 2);
         BlockPos smarty = util.grid().at(2, 3, 2);
@@ -199,7 +199,7 @@ public class ChuteScenes {
             .pointAt(util.vector().blockSurface(smarty, Direction.WEST)).placeNearTarget();
         scene.idle(70);
 
-        Vec3 filter = util.vector().blockSurface(smarty, Direction.NORTH).add(0, 3 / 16f, 0);
+        Vec3 filter = util.vector().blockSurface(smarty, Direction.NORTH).add(0, 3 / 16.0f, 0);
         scene.overlay().showFilterSlotInput(filter, Direction.NORTH, 70);
         scene.idle(10);
         scene.rotateCameraY(20);

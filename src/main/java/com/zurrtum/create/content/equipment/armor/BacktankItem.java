@@ -42,7 +42,7 @@ public class BacktankItem extends BlockItem {
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        return Math.round(13.0F * Mth.clamp(getRemainingAir(stack) / ((float) BacktankUtil.maxAir(stack)), 0, 1));
+        return Math.round(13.0F * Mth.clamp(getRemainingAir(stack) / (float) BacktankUtil.maxAir(stack), 0, 1));
     }
 
     @Override

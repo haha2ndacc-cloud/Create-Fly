@@ -24,8 +24,8 @@ public class BeltTunnelItem extends BlockItem {
     @Override
     protected boolean canPlace(BlockPlaceContext ctx, BlockState state) {
         Player playerentity = ctx.getPlayer();
-        CollisionContext iselectioncontext = playerentity == null ? CollisionContext.empty() : CollisionContext.of(
-            playerentity);
+        CollisionContext iselectioncontext =
+            playerentity == null ? CollisionContext.empty() : CollisionContext.of(playerentity);
         Level world = ctx.getLevel();
         BlockPos pos = ctx.getClickedPos();
         return (!mustSurvive() || AllBlocks.ANDESITE_TUNNEL.isValidPositionForPlacement(

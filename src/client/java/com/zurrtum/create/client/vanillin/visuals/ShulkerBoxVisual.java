@@ -87,7 +87,7 @@ public class ShulkerBoxVisual extends AbstractBlockEntityVisual<ShulkerBoxBlockE
         lastProgress = progress;
 
         lid.yRot(1.5f * Mth.PI * progress);
-        lid.yPos(24f - progress * 8f);
+        lid.yPos(24.0f - progress * 8.0f);
 
         instances.updateInstancesStatic(initialPose);
     }

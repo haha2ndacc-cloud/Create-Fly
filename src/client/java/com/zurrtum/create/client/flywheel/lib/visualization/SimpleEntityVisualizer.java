@@ -91,7 +91,7 @@ public final class SimpleEntityVisualizer<T extends Entity> implements EntityVis
          * @return {@code this}
          */
         public Builder<T> neverSkipVanillaRender() {
-            this.skipVanillaRender = entity -> false;
+            skipVanillaRender = entity -> false;
             return this;
         }
 

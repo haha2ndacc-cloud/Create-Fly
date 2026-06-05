@@ -134,7 +134,8 @@ public class PackagerRenderer implements BlockEntityRenderer<PackagerBlockEntity
     }
 
     public static PartialModel getTrayModel(BlockState blockState) {
-        return blockState.is(AllBlocks.PACKAGER) ? AllPartialModels.PACKAGER_TRAY_REGULAR : AllPartialModels.PACKAGER_TRAY_DEFRAG;
+        return blockState.is(AllBlocks.PACKAGER) ? AllPartialModels.PACKAGER_TRAY_REGULAR :
+            AllPartialModels.PACKAGER_TRAY_DEFRAG;
     }
 
     public static PartialModel getHatchModel(PackagerBlockEntity be) {
@@ -142,7 +143,8 @@ public class PackagerRenderer implements BlockEntityRenderer<PackagerBlockEntity
     }
 
     public static boolean isHatchOpen(PackagerBlockEntity be) {
-        return be.animationTicks > (be.animationInward ? 1 : 5) && be.animationTicks < PackagerBlockEntity.CYCLE - (be.animationInward ? 5 : 1);
+        return be.animationTicks > (be.animationInward ? 1 : 5) && be.animationTicks < PackagerBlockEntity.CYCLE - (
+            be.animationInward ? 5 : 1);
     }
 
     public static class PackagerRenderState extends BlockEntityRenderState {

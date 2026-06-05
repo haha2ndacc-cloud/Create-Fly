@@ -39,7 +39,7 @@ public class FluidHelper {
     private static final Map<BlockPos, FluidInventoryCache> INV_CACHE = new Object2ReferenceOpenHashMap<>();
 
     public enum FluidExchange {
-        ITEM_TO_TANK, TANK_TO_ITEM;
+        ITEM_TO_TANK, TANK_TO_ITEM
     }
 
     public static boolean isWater(Fluid fluid) {
@@ -75,10 +75,7 @@ public class FluidHelper {
         //TODO
         SoundEvent soundevent = null;//fluid.getFluid().getFluidType().getSound(fluid, SoundActions.BUCKET_FILL);
         if (soundevent == null) {
-            soundevent = FluidHelper.isTag(
-                fluid,
-                FluidTags.LAVA
-            ) ? SoundEvents.BUCKET_FILL_LAVA : SoundEvents.BUCKET_FILL;
+            soundevent = isTag(fluid, FluidTags.LAVA) ? SoundEvents.BUCKET_FILL_LAVA : SoundEvents.BUCKET_FILL;
         }
         return soundevent;
     }
@@ -87,10 +84,7 @@ public class FluidHelper {
         //TODO
         SoundEvent soundevent = null;//fluid.getFluid().getFluidType().getSound(fluid, SoundActions.BUCKET_EMPTY);
         if (soundevent == null) {
-            soundevent = FluidHelper.isTag(
-                fluid,
-                FluidTags.LAVA
-            ) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
+            soundevent = isTag(fluid, FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
         }
         return soundevent;
     }
@@ -226,7 +220,7 @@ public class FluidHelper {
             return false;
         }
 
-        FluidInventory capability = FluidHelper.getFluidInventory(world, be.getBlockPos(), null, be, null);
+        FluidInventory capability = getFluidInventory(world, be.getBlockPos(), null, be, null);
 
         if (capability == null) {
             return false;

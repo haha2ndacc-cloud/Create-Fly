@@ -69,7 +69,7 @@ public abstract class AbstractChassisBlock extends RotatedPillarBlock implements
                         level.addParticle(ParticleTypes.ITEM_SLIME, vec.x, vec.y, vec.z, 0, 0, 0);
                         return InteractionResult.SUCCESS;
                     }
-                    AllSoundEvents.SLIME_ADDED.playOnServer(level, pos, .5f, 1);
+                    AllSoundEvents.SLIME_ADDED.playOnServer(level, pos, 0.5f, 1);
                     state = state.setValue(glueableSide, true);
                 }
             }
@@ -94,7 +94,7 @@ public abstract class AbstractChassisBlock extends RotatedPillarBlock implements
             return InteractionResult.SUCCESS;
         }
 
-        AllSoundEvents.SLIME_ADDED.playOnServer(level, pos, .5f, 1);
+        AllSoundEvents.SLIME_ADDED.playOnServer(level, pos, 0.5f, 1);
         level.setBlockAndUpdate(pos, state.setValue(affectedSide, isSlimeBall));
         return InteractionResult.SUCCESS;
     }

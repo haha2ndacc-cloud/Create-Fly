@@ -60,13 +60,13 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
     public final Identifier modelLocation;
 
     private ObjGeometry(Settings settings) {
-        this.modelLocation = settings.modelLocation();
-        this.automaticCulling = settings.automaticCulling();
-        this.shadeQuads = settings.shadeQuads();
-        this.flipV = settings.flipV();
-        this.emissiveAmbient = settings.emissiveAmbient();
-        this.mtlOverride = settings.mtlOverride();
-        this.parameters = settings.parameters();
+        modelLocation = settings.modelLocation();
+        automaticCulling = settings.automaticCulling();
+        shadeQuads = settings.shadeQuads();
+        flipV = settings.flipV();
+        emissiveAmbient = settings.emissiveAmbient();
+        mtlOverride = settings.mtlOverride();
+        parameters = settings.parameters();
     }
 
     public static ObjGeometry parse(ObjTokenizer tokenizer, Settings settings) throws IOException {
@@ -109,7 +109,6 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
         while ((line = tokenizer.readAndSplitLine(true)) != null) {
             switch (line[0]) {
                 case "mtllib": // Loads material library
-                {
                     if (materialLibraryOverrideLocation != null) {
                         break;
                     }
@@ -124,10 +123,8 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
                         ));
                     }
                     break;
-                }
 
                 case "usemtl": // Sets the current material (starts new mesh)
-                {
                     String mat = Strings.join(Arrays.copyOfRange(line, 1, line.length), " ");
                     Material newMat = mtllib.getMaterial(mat);
                     if (!Objects.equals(newMat, currentMat)) {
@@ -140,7 +137,6 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
                         }
                     }
                     break;
-                }
 
                 case "v": // Vertex
                     model.positions.add(parseVector4To3(line));
@@ -156,7 +152,6 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
                     break;
 
                 case "f": // Face
-                {
                     if (currentMesh == null) {
                         currentMesh = model.new ModelMesh(currentMat, currentSmoothingGroup);
                         if (currentObject != null) {
@@ -208,10 +203,8 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
                     currentMesh.faces.add(vertices);
 
                     break;
-                }
 
                 case "s": // Smoothing group (starts new mesh)
-                {
                     String smoothingGroup = "off".equals(line[1]) ? null : line[1];
                     if (!Objects.equals(currentSmoothingGroup, smoothingGroup)) {
                         currentSmoothingGroup = smoothingGroup;
@@ -223,7 +216,6 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
                         }
                     }
                     break;
-                }
 
                 case "g": {
                     String name = line[1];
@@ -240,7 +232,7 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
                     break;
                 }
 
-                case "o": {
+                case "o":
                     String name = line[1];
                     if (objAboveGroup || currentGroup == null) {
                         objAboveGroup = true;
@@ -255,7 +247,6 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
                     // Start new mesh
                     currentMesh = null;
                     break;
-                }
             }
         }
         return model;
@@ -335,7 +326,7 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
         }
 
         Matrix4f ret = transform.getMatrixCopy();
-        Vector3f origin = new Vector3f(.5f, .5f, .5f);
+        Vector3f origin = new Vector3f(0.5f, 0.5f, 0.5f);
         Matrix4f tmp = new Matrix4f().translation(origin.x(), origin.y(), origin.z());
         tmp.mul(ret, ret);
         tmp.translation(-origin.x(), -origin.y(), -origin.z());
@@ -396,7 +387,9 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
             int[] index = indices[Math.min(i, indices.length - 1)];
             Vector4f position = new Vector4f(positions.get(index[0]), 1);
             Vec2 texCoord = index.length >= 2 && !texCoords.isEmpty() ? texCoords.get(index[1]) : DEFAULT_COORDS[i];
-            Vector3f norm0 = !needsNormalRecalculation && index.length >= 3 && !normals.isEmpty() ? normals.get(index[2]) : faceNormal;
+            Vector3f norm0 =
+                !needsNormalRecalculation && index.length >= 3 && !normals.isEmpty() ? normals.get(index[2]) :
+                    faceNormal;
             Vector3f normal = norm0;
             Vector4f color = index.length >= 4 && !colors.isEmpty() ? colors.get(index[3]) : COLOR_WHITE;
             if (hasTransform) {
@@ -416,7 +409,7 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
             );
             quadBaker.addVertex(position.x(), position.y(), position.z());
             quadBaker.setColor(tintedColor.x(), tintedColor.y(), tintedColor.z(), tintedColor.w());
-            quadBaker.setUv(texture.getU(texCoord.x), texture.getV((flipV ? 1 - texCoord.y : texCoord.y)));
+            quadBaker.setUv(texture.getU(texCoord.x), texture.getV(flipV ? 1 - texCoord.y : texCoord.y));
             quadBaker.setNormal(normal.x(), normal.y(), normal.z());
             if (i == 0) {
                 quadBaker.setDirection(Direction.getApproximateNearest(normal.x(), normal.y(), normal.z()));
@@ -550,8 +543,8 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
         public final List<int[][]> faces = Lists.newArrayList();
 
         public ModelMesh(@Nullable Material currentMat, @Nullable String currentSmoothingGroup) {
-            this.mat = currentMat;
-            this.smoothingGroup = currentSmoothingGroup;
+            mat = currentMat;
+            smoothingGroup = currentSmoothingGroup;
         }
 
         public void addQuads(
@@ -566,8 +559,8 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
                 return;
             }
             Baked texture = baker.materials().resolveSlot(slots, mat.diffuseColorMap, debugName);
-            Transparency transparency = texture.forceTranslucent() ? Transparency.TRANSLUCENT : texture.sprite()
-                .transparency();
+            Transparency transparency =
+                texture.forceTranslucent() ? Transparency.TRANSLUCENT : texture.sprite().transparency();
             int tintIndex = mat.diffuseTintIndex;
             Vector4f colorTint = mat.diffuseColor;
 
@@ -575,8 +568,8 @@ public class ObjGeometry implements ExtendedUnbakedGeometry {
                 NeoForgeModelProperties.TRANSFORM,
                 Transformation.IDENTITY
             );
-            var transform = rootTransform.equals(Transformation.IDENTITY) ? state.transformation() : state.transformation()
-                .compose(rootTransform);
+            var transform = rootTransform.equals(Transformation.IDENTITY) ? state.transformation() :
+                state.transformation().compose(rootTransform);
             for (int[][] face : faces) {
                 Pair<BakedQuad, @Nullable Direction> quad = makeQuad(
                     baker,

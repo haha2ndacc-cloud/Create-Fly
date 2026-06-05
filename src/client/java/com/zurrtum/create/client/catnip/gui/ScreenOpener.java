@@ -39,7 +39,7 @@ public class ScreenOpener {
             return;
         }
         if (previousScreen instanceof NavigatableSimiScreen previousNavScreen) {
-            previousNavScreen.transition.startWithValue(-0.001).chase(-1, .3f, LerpedFloat.Chaser.EXP);
+            previousNavScreen.transition.startWithValue(-0.001).chase(-1, 0.3f, LerpedFloat.Chaser.EXP);
         }
         openScreen(previousScreen);
     }
@@ -50,7 +50,7 @@ public class ScreenOpener {
         if (tryBackTracking(screen)) {
             return;
         }
-        screen.transition.startWithValue(0.001).chase(1, .3f, LerpedFloat.Chaser.EXP);
+        screen.transition.startWithValue(0.001).chase(1, 0.3f, LerpedFloat.Chaser.EXP);
         open(screen);
     }
 

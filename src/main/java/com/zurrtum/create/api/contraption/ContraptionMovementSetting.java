@@ -66,7 +66,7 @@ public enum ContraptionMovementSetting {
      * Check if any of the blocks in the collection forbid pickup.
      */
     public static boolean isNoPickup(Collection<StructureTemplate.StructureBlockInfo> blocks) {
-        return anyAre(blocks, ContraptionMovementSetting.NO_PICKUP);
+        return anyAre(blocks, NO_PICKUP);
     }
 
     /**

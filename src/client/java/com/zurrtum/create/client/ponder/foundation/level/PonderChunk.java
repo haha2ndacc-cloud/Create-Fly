@@ -46,7 +46,7 @@ public class PonderChunk extends LevelChunk {
         this.world = world;
 
         int sectionCount = world.getSectionsCount();
-        this.sections = new PonderChunkSection[sectionCount];
+        sections = new PonderChunkSection[sectionCount];
 
         BlockPos.MutableBlockPos scratchPos = new BlockPos.MutableBlockPos();
         boolean[] hasBlock = new boolean[sectionCount];
@@ -59,10 +59,10 @@ public class PonderChunk extends LevelChunk {
             hasBlock[i] = true;
         });
         for (int i = 0; i < sectionCount; i++) {
-            sections[i] = new PonderChunkSection(this, scratchPos, chunkPos, (i + bottom) << 4, hasBlock[i]);
+            sections[i] = new PonderChunkSection(this, scratchPos, chunkPos, i + bottom << 4, hasBlock[i]);
         }
 
-        this.needsLight = true;
+        needsLight = true;
     }
 
     @Override
@@ -223,7 +223,7 @@ public class PonderChunk extends LevelChunk {
 
     @Override
     public void setLightCorrect(boolean lightCorrect) {
-        this.needsLight = lightCorrect;
+        needsLight = lightCorrect;
     }
 
     @Override

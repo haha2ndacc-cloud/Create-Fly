@@ -31,47 +31,48 @@ public abstract class Span implements CharSequence, Comparable<Span> {
      * @return The file that contains this code segment.
      */
     public SourceLines source() {
-        return this.in;
+        return in;
     }
 
     public CharPos start() {
-        return this.start;
+        return start;
     }
 
     public CharPos end() {
-        return this.end;
+        return end;
     }
 
     /**
      * @return the string index at the (inclusive) beginning of this code segment.
      */
     public int startIndex() {
-        return this.start.pos();
+        return start.pos();
     }
 
     /**
      * @return the string index at the (exclusive) end of this code segment.
      */
     public int endIndex() {
-        return this.end.pos();
+        return end.pos();
     }
 
     /**
      * @return true if this span has no width.
      */
+    @Override
     public boolean isEmpty() {
-        return this.start == this.end;
+        return start == end;
     }
 
     /**
      * @return how many lines this span spans.
      */
     public int lines() {
-        return this.end.line() - this.start.line() + 1;
+        return end.line() - start.line() + 1;
     }
 
     public int firstLine() {
-        return this.start.line();
+        return start.line();
     }
 
     /**
@@ -88,22 +89,22 @@ public abstract class Span implements CharSequence, Comparable<Span> {
 
     @Override
     public int length() {
-        return this.endIndex() - this.startIndex();
+        return endIndex() - startIndex();
     }
 
     @Override
     public char charAt(int index) {
-        return this.in.charAt(this.start.pos() + index);
+        return in.charAt(start.pos() + index);
     }
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        return this.subSpan(start, end);
+        return subSpan(start, end);
     }
 
     @Override
     public String toString() {
-        return this.get();
+        return get();
     }
 
     public static Span fromMatcher(SourceLines src, Matcher m, int group) {
@@ -124,6 +125,6 @@ public abstract class Span implements CharSequence, Comparable<Span> {
 
     @Override
     public int compareTo(Span o) {
-        return Integer.compareUnsigned(this.startIndex(), o.startIndex());
+        return Integer.compareUnsigned(startIndex(), o.startIndex());
     }
 }

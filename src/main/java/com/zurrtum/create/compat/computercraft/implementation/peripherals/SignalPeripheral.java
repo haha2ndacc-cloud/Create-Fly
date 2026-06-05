@@ -75,9 +75,8 @@ public class SignalPeripheral extends SyncedPeripheral<SignalBlockEntity> {
         SignalBoundary signal = blockEntity.getSignal();
         if (signal != null) {
             return signal.getTypeFor(blockEntity.getBlockPos()).toString();
-        } else {
-            throw new LuaException("no signal");
         }
+        throw new LuaException("no signal");
     }
 
     @LuaFunction(mainThread = true)

@@ -68,7 +68,7 @@ public class ChainGearshiftBlock extends ChainDriveBlock {
 
         boolean previouslyPowered = state.getValue(POWERED);
         if (previouslyPowered != worldIn.hasNeighborSignal(pos)) {
-            worldIn.setBlock(pos, state.cycle(POWERED), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
+            worldIn.setBlock(pos, state.cycle(POWERED), UPDATE_CLIENTS | UPDATE_KNOWN_SHAPE);
         }
     }
 

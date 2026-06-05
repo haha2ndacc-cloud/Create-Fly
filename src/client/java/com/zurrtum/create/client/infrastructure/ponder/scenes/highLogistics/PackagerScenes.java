@@ -98,13 +98,13 @@ public class PackagerScenes {
         scene.world().toggleRedstonePower(util.select().fromTo(5, 2, 2, 5, 3, 2));
         scene.idle(10);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 16f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 16.0f);
 
         scene.overlay().showText(70).text("These can be picked up and transported like any other item").attachKeyFrame()
             .placeNearTarget().pointAt(util.vector().blockSurface(util.grid().at(3, 2, 2), Direction.EAST));
 
         scene.idle(80);
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 16f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 16.0f);
         scene.idle(10);
 
         scene.world().showSection(scaff2, Direction.DOWN);
@@ -157,7 +157,7 @@ public class PackagerScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("packager_address", "Routing packages with an address");
         scene.configureBasePlate(0, 0, 9);
-        scene.scaleSceneView(.875f);
+        scene.scaleSceneView(0.875f);
         scene.showBasePlate();
 
         Selection frogport = util.select().position(7, 1, 1);
@@ -214,7 +214,7 @@ public class PackagerScenes {
         scene.world().createItemOnBelt(util.grid().at(6, 1, 6), Direction.EAST, box);
         scene.idle(20);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 32f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 32.0f);
         scene.overlay().showText(40).text("→ Warehouse").colored(PonderPalette.OUTPUT).placeNearTarget()
             .pointAt(util.vector().blockSurface(util.grid().at(3, 2, 4), Direction.NORTH));
         scene.idle(50);
@@ -265,12 +265,12 @@ public class PackagerScenes {
             .pointAt(util.vector().of(4, 2.825, 4.5));
         scene.idle(60);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 32f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 32.0f);
 
         scene.idle(60);
 
         scene.world().createItemOnBelt(util.grid().at(6, 1, 4), Direction.EAST, factoryBox);
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 32f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 32.0f);
         scene.idle(10);
 
         scene.overlay().showText(50).text("→ Factory").colored(PonderPalette.OUTPUT).placeNearTarget()
@@ -279,7 +279,7 @@ public class PackagerScenes {
             .pointAt(util.vector().of(4, 2.825, 4.5));
         scene.idle(60);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 32f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 32.0f);
 
         scene.idle(27);
         PonderHilo.packageHopsOffBelt(scene, util.grid().at(4, 1, 0), Direction.NORTH, warehouseBox);
@@ -316,12 +316,12 @@ public class PackagerScenes {
             }
         );
         scene.idle(19);
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 32f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 32.0f);
         scene.overlay().showText(100).text("For compactness, mechanical saws can unpack straight onto a belt")
             .attachKeyFrame().placeNearTarget().pointAt(util.vector().topOf(util.grid().at(2, 1, 4)));
         scene.idle(110);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 32f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 32.0f);
 
         scene.idle(20);
         scene.world().hideSection(eastBelt, Direction.EAST);

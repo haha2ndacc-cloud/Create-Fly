@@ -14,15 +14,17 @@ public abstract class GlVertexArray extends GlObject {
     public static GlVertexArray create() {
         if (GlVertexArrayDSA.SUPPORTED) {
             return new GlVertexArrayDSA();
-        } else if (GlVertexArraySeparateAttributes.SUPPORTED) {
-            return new GlVertexArraySeparateAttributes();
-        } else if (GlVertexArrayGL3.Core33.SUPPORTED) {
-            return new GlVertexArrayGL3.Core33();
-        } else if (GlVertexArrayGL3.ARB.SUPPORTED) {
-            return new GlVertexArrayGL3.ARB();
-        } else {
-            return new GlVertexArrayGL3.Core();
         }
+        if (GlVertexArraySeparateAttributes.SUPPORTED) {
+            return new GlVertexArraySeparateAttributes();
+        }
+        if (GlVertexArrayGL3.Core33.SUPPORTED) {
+            return new GlVertexArrayGL3.Core33();
+        }
+        if (GlVertexArrayGL3.ARB.SUPPORTED) {
+            return new GlVertexArrayGL3.ARB();
+        }
+        return new GlVertexArrayGL3.Core();
     }
 
     public void bindForDraw() {

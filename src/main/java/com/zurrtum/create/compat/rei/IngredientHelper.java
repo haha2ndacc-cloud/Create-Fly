@@ -88,8 +88,7 @@ public interface IngredientHelper {
                 builder.add(EntryStack.of(definition, display.stack()));
             }
             return builder.build();
-        } else {
-            return EntryIngredients.ofIngredient(ingredient);
         }
+        return EntryIngredients.ofIngredient(ingredient);
     }
 }

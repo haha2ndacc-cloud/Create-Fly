@@ -31,19 +31,20 @@ public class AnimateBlockEntityInstruction extends TickingInstruction {
             totalDelta,
             ticks,
             (w, f) -> castIfPresent(w, location, IBearingBlockEntity.class).ifPresent(bte -> bte.setAngle(f)),
-            (w) -> castIfPresent(w, location, IBearingBlockEntity.class).map(bte -> bte.getInterpolatedAngle(0))
-                .orElse(0f)
+            w -> castIfPresent(w, location, IBearingBlockEntity.class).map(bte -> bte.getInterpolatedAngle(0))
+                .orElse(0.0f)
         );
     }
 
     public static AnimateBlockEntityInstruction bogey(BlockPos location, float totalDelta, int ticks) {
         float movedPerTick = totalDelta / ticks;
         return new AnimateBlockEntityInstruction(
-            location, totalDelta, ticks, (w, f) -> castIfPresent(
-            w,
             location,
-            AbstractBogeyBlockEntity.class
-        ).ifPresent(bte -> bte.animate(f.equals(totalDelta) ? 0 : movedPerTick)), (w) -> 0f
+            totalDelta,
+            ticks,
+            (w, f) -> castIfPresent(w, location, AbstractBogeyBlockEntity.class).ifPresent(bte -> bte.animate(
+                f.equals(totalDelta) ? 0 : movedPerTick)),
+            w -> 0.0f
         );
     }
 
@@ -53,7 +54,7 @@ public class AnimateBlockEntityInstruction extends TickingInstruction {
             totalDelta,
             ticks,
             (w, f) -> castIfPresent(w, location, PulleyBlockEntity.class).ifPresent(pulley -> pulley.animateOffset(f)),
-            (w) -> castIfPresent(w, location, PulleyBlockEntity.class).map(pulley -> pulley.offset).orElse(0f)
+            w -> castIfPresent(w, location, PulleyBlockEntity.class).map(pulley -> pulley.offset).orElse(0.0f)
         );
     }
 
@@ -67,10 +68,10 @@ public class AnimateBlockEntityInstruction extends TickingInstruction {
                 location,
                 DeployerBlockEntity.class
             ).ifPresent(deployer -> deployer.setAnimatedOffset(f)),
-            (w) -> castIfPresent(w, location, DeployerBlockEntity.class).map(deployer -> DeployerRenderer.getHandOffset(
+            w -> castIfPresent(w, location, DeployerBlockEntity.class).map(deployer -> DeployerRenderer.getHandOffset(
                 deployer,
                 1
-            )).orElse(0f)
+            )).orElse(0.0f)
         );
     }
 
@@ -85,9 +86,9 @@ public class AnimateBlockEntityInstruction extends TickingInstruction {
         this.location = location;
         this.setter = setter;
         this.getter = getter;
-        this.deltaPerTick = totalDelta * (1d / ticks);
+        deltaPerTick = totalDelta * (1.0d / ticks);
         this.totalDelta = totalDelta;
-        this.target = totalDelta;
+        target = totalDelta;
     }
 
     @Override

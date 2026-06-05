@@ -56,7 +56,7 @@ public class EdgeInteractionHandler {
         if (!world.isClientSide()) {
             behaviour.connectionCallback.apply(world, pos, pos.relative(activatedDirection));
         }
-        world.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, .25f, .1f);
+        world.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.25f, 0.1f);
         return InteractionResult.SUCCESS;
     }
 
@@ -121,15 +121,15 @@ public class EdgeInteractionHandler {
         int x = vec.getX();
         int y = vec.getY();
         int z = vec.getZ();
-        double margin = 10 / 16f;
+        double margin = 10 / 16.0f;
         double absX = Math.abs(x) * margin;
         double absY = Math.abs(y) * margin;
         double absZ = Math.abs(z) * margin;
 
         bb = bb.contract(absX, absY, absZ);
-        bb = bb.move(absX / 2d, absY / 2d, absZ / 2d);
-        bb = bb.move(x / 2d, y / 2d, z / 2d);
-        bb = bb.inflate(1 / 256f);
+        bb = bb.move(absX / 2.0d, absY / 2.0d, absZ / 2.0d);
+        bb = bb.move(x / 2.0d, y / 2.0d, z / 2.0d);
+        bb = bb.inflate(1 / 256.0f);
         return bb;
     }
 }

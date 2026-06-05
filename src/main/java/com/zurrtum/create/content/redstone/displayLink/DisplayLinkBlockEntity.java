@@ -149,7 +149,7 @@ public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity implements T
         super.write(view, clientPacket);
         writeGatheredData(view);
         if (clientPacket && activeTarget != null) {
-            Identifier id = CreateRegistries.DISPLAY_TARGET.getKey(this.activeTarget);
+            Identifier id = CreateRegistries.DISPLAY_TARGET.getKey(activeTarget);
             if (id != null) {
                 view.store("TargetType", Identifier.CODEC, id);
             }
@@ -162,7 +162,7 @@ public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity implements T
 
         if (activeSource != null) {
             CompoundTag data = sourceConfig.copy();
-            Identifier id = CreateRegistries.DISPLAY_SOURCE.getKey(this.activeSource);
+            Identifier id = CreateRegistries.DISPLAY_SOURCE.getKey(activeSource);
             if (id != null) {
                 data.store("Id", Identifier.CODEC, id);
             }
@@ -186,7 +186,7 @@ public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity implements T
     }
 
     public void target(BlockPos targetPosition) {
-        this.targetOffset = targetPosition.subtract(worldPosition);
+        targetOffset = targetPosition.subtract(worldPosition);
     }
 
     public BlockPos getSourcePosition() {

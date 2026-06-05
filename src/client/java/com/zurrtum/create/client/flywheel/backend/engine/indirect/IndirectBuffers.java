@@ -44,8 +44,8 @@ public class IndirectBuffers {
 
 
     private static final float INSTANCE_GROWTH_FACTOR = 1.25f;
-    private static final float MODEL_GROWTH_FACTOR = 2f;
-    private static final float DRAW_GROWTH_FACTOR = 2f;
+    private static final float MODEL_GROWTH_FACTOR = 2.0f;
+    private static final float DRAW_GROWTH_FACTOR = 2.0f;
 
     /**
      * A small block of memory divided into 3 contiguous segments:
@@ -67,7 +67,7 @@ public class IndirectBuffers {
     public final ResizableStorageArray draw;
 
     IndirectBuffers(long instanceStride) {
-        this.multiBindBlock = MemoryBlock.calloc(BUFFERS_SIZE_BYTES, 1);
+        multiBindBlock = MemoryBlock.calloc(BUFFERS_SIZE_BYTES, 1);
 
         objectStorage = new ObjectStorage(instanceStride);
         drawInstanceIndex = new ResizableStorageArray(INT_SIZE, INSTANCE_GROWTH_FACTOR);

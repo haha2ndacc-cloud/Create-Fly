@@ -5,8 +5,6 @@ import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlockEntity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-//import net.fabricmc.fabric.api.client.renderer.v1.mesh.MutableQuadView;
-//import net.fabricmc.fabric.api.client.renderer.v1.model.FabricBlockStateModel;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
@@ -38,7 +36,7 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
 
     @Override
     public BlockStateModel bake(BlockState state, ModelBaker baker) {
-        this.modelManager = Minecraft.getInstance().getModelManager();
+        modelManager = Minecraft.getInstance().getModelManager();
         return super.bake(state, baker);
     }
 
@@ -94,7 +92,7 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
         BlockStateModel model,
         List<BlockStateModelPart> parts
     ) {
-        WrapperBlockStateModel.addPartsWithInfo(model, world, pos, material, random, parts);
+        addPartsWithInfo(model, world, pos, material, random, parts);
     }
 
     protected List<BlockStateModelPart> getMaterialParts(
@@ -127,15 +125,15 @@ public abstract class CopycatModel extends WrapperBlockStateModel {
         }
 
         public void noCull(Direction face) {
-            data |= (1 << face.get3DDataValue());
+            data |= 1 << face.get3DDataValue();
         }
 
         public boolean isCull(Direction face) {
-            return (data & (1 << face.get3DDataValue())) == 0;
+            return (data & 1 << face.get3DDataValue()) == 0;
         }
 
         public boolean isUncull(Direction face) {
-            return (data & (1 << face.get3DDataValue())) != 0;
+            return (data & 1 << face.get3DDataValue()) != 0;
         }
     }
 

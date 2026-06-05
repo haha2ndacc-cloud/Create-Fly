@@ -47,7 +47,7 @@ public class TrackGraphHelper {
                 for (Map.Entry<TrackNode, TrackEdge> entry : connectionsFrom.entrySet()) {
                     TrackNode backNode = entry.getKey();
                     Vec3 direction = entry.getValue().getDirection(true);
-                    if (direction.scale(length).distanceToSqr(axis.scale(-1)) > 1 / 4096f) {
+                    if (direction.scale(length).distanceToSqr(axis.scale(-1)) > 1 / 4096.0f) {
                         continue;
                     }
 
@@ -74,8 +74,8 @@ public class TrackGraphHelper {
             Vec3 offset = current.getLocation().subtract(start).normalize().scale(length);
 
             Vec3 compareOffset = offset.multiply(1, 0, 1).normalize();
-            boolean forward = compareOffset.distanceToSqr(axis.multiply(-1, 0, -1).normalize()) < 1 / 4096f;
-            boolean backwards = compareOffset.distanceToSqr(axis.multiply(1, 0, 1).normalize()) < 1 / 4096f;
+            boolean forward = compareOffset.distanceToSqr(axis.multiply(-1, 0, -1).normalize()) < 1 / 4096.0f;
+            boolean backwards = compareOffset.distanceToSqr(axis.multiply(1, 0, 1).normalize()) < 1 / 4096.0f;
 
             if (!forward && !backwards) {
                 continue;
@@ -99,7 +99,7 @@ public class TrackGraphHelper {
                         }
                         Vec3 diff = discoveredLocation.getLocation().subtract(loc.getLocation());
                         if ((forward ? axis.scale(-1) : axis).distanceToSqr(diff.normalize()
-                            .scale(length)) > 1 / 4096f) {
+                            .scale(length)) > 1 / 4096.0f) {
                             continue;
                         }
 
@@ -181,7 +181,7 @@ public class TrackGraphHelper {
             TrackGraphLocation graphLocation = new TrackGraphLocation();
             graphLocation.graph = graph;
             graphLocation.edge = Couple.create(location, targetLoc);
-            graphLocation.position = (targetBezier.segment() + 1) / 2f;
+            graphLocation.position = (targetBezier.segment() + 1) / 2.0f;
             if (targetDirection == AxisDirection.POSITIVE) {
                 graphLocation.edge = graphLocation.edge.swap();
                 graphLocation.position = edge.getLength() - graphLocation.position;

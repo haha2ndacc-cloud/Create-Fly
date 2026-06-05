@@ -44,10 +44,7 @@ public class AutoCompactingCategory extends CreateCategory<CraftingDisplay> {
         List<EntryIngredient> ingredients = display.getInputEntries().stream().filter(e -> !e.isEmpty()).toList();
         List<Point> points = new ArrayList<>();
         for (int i = 0, size = ingredients.size(), rows = size == 4 ? 2 : 3; i < size; i++) {
-            points.add(new Point(
-                bounds.x + 5 + (rows == 2 ? 27 : 18) + (i % rows) * 19,
-                bounds.y + 56 - (i / rows) * 19
-            ));
+            points.add(new Point(bounds.x + 5 + (rows == 2 ? 27 : 18) + i % rows * 19, bounds.y + 56 - i / rows * 19));
         }
         Point output = new Point(bounds.x + 147, bounds.y + 56);
         widgets.add(Widgets.createDrawableWidget((GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) -> {

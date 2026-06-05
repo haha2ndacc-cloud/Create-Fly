@@ -65,11 +65,11 @@ public class MountedStorageManager {
     private Set<BlockPos> interactablePositions;
 
     public MountedStorageManager() {
-        this.reset();
+        reset();
     }
 
     public void initialize() {
-        if (this.isInitialized()) {
+        if (isInitialized()) {
             // originally this threw an exception to try to catch mistakes.
             // however, in the case where a Contraption is deserialized before its Entity, that would also throw,
             // since both the deserialization and the onEntityCreated callback initialize the storage.
@@ -78,24 +78,24 @@ public class MountedStorageManager {
             return;
         }
 
-        this.allItemStorages = ImmutableMap.copyOf(this.itemsBuilder);
+        allItemStorages = ImmutableMap.copyOf(itemsBuilder);
 
-        this.items = new MountedItemStorageWrapper(subMap(this.allItemStorages, this::isExposed));
+        items = new MountedItemStorageWrapper(subMap(allItemStorages, this::isExposed));
 
-        this.allItems = this.items;
-        this.itemsBuilder = null;
+        allItems = items;
+        itemsBuilder = null;
 
-        ImmutableMap<BlockPos, MountedItemStorage> fuelMap = subMap(this.allItemStorages, this::canUseForFuel);
-        this.fuelItems = fuelMap.isEmpty() ? null : new MountedItemStorageWrapper(fuelMap);
+        ImmutableMap<BlockPos, MountedItemStorage> fuelMap = subMap(allItemStorages, this::canUseForFuel);
+        fuelItems = fuelMap.isEmpty() ? null : new MountedItemStorageWrapper(fuelMap);
 
-        ImmutableMap<BlockPos, MountedFluidStorage> fluids = ImmutableMap.copyOf(this.fluidsBuilder);
+        ImmutableMap<BlockPos, MountedFluidStorage> fluids = ImmutableMap.copyOf(fluidsBuilder);
         this.fluids = new MountedFluidStorageWrapper(fluids);
-        this.fluidsBuilder = null;
+        fluidsBuilder = null;
 
-        this.syncedItems = ImmutableMap.copyOf(this.syncedItemsBuilder);
-        this.syncedItemsBuilder = null;
-        this.syncedFluids = ImmutableMap.copyOf(this.syncedFluidsBuilder);
-        this.syncedFluidsBuilder = null;
+        syncedItems = ImmutableMap.copyOf(syncedItemsBuilder);
+        syncedItemsBuilder = null;
+        syncedFluids = ImmutableMap.copyOf(syncedFluidsBuilder);
+        syncedFluidsBuilder = null;
     }
 
     private boolean isExposed(MountedItemStorage storage) {
@@ -103,30 +103,30 @@ public class MountedStorageManager {
     }
 
     private boolean canUseForFuel(MountedItemStorage storage) {
-        return this.isExposed(storage) && !storage.type.is(AllMountedItemStorageTypeTags.FUEL_BLACKLIST);
+        return isExposed(storage) && !storage.type.is(AllMountedItemStorageTypeTags.FUEL_BLACKLIST);
     }
 
     private boolean isInitialized() {
-        return this.itemsBuilder == null;
+        return itemsBuilder == null;
     }
 
     private void assertInitialized() {
-        if (!this.isInitialized()) {
+        if (!isInitialized()) {
             throw new IllegalStateException("MountedStorageManager is uninitialized");
         }
     }
 
     protected void reset() {
-        this.allItemStorages = null;
-        this.items = null;
-        this.fuelItems = null;
-        this.fluids = null;
-        this.externalHandlers = new ArrayList<>();
-        this.allItems = null;
-        this.itemsBuilder = new HashMap<>();
-        this.fluidsBuilder = new HashMap<>();
-        this.syncedItemsBuilder = new HashMap<>();
-        this.syncedFluidsBuilder = new HashMap<>();
+        allItemStorages = null;
+        items = null;
+        fuelItems = null;
+        fluids = null;
+        externalHandlers = new ArrayList<>();
+        allItems = null;
+        itemsBuilder = new HashMap<>();
+        fluidsBuilder = new HashMap<>();
+        syncedItemsBuilder = new HashMap<>();
+        syncedFluidsBuilder = new HashMap<>();
         // interactablePositions intentionally not reset
     }
 
@@ -141,7 +141,7 @@ public class MountedStorageManager {
         if (itemType != null) {
             MountedItemStorage storage = itemType.mount(level, state, globalPos, be);
             if (storage != null) {
-                this.addStorage(storage, localPos);
+                addStorage(storage, localPos);
             }
         }
 
@@ -149,7 +149,7 @@ public class MountedStorageManager {
         if (fluidType != null) {
             MountedFluidStorage storage = fluidType.mount(level, state, globalPos, be);
             if (storage != null) {
-                this.addStorage(storage, localPos);
+                addStorage(storage, localPos);
             }
         }
     }
@@ -158,7 +158,7 @@ public class MountedStorageManager {
         BlockPos localPos = info.pos();
         BlockState state = info.state();
 
-        MountedItemStorage itemStorage = this.getAllItemStorages().get(localPos);
+        MountedItemStorage itemStorage = getAllItemStorages().get(localPos);
         if (itemStorage != null) {
             MountedItemStorageType<?> expectedType = MountedItemStorageType.REGISTRY.get(state.getBlock());
             if (itemStorage.type == expectedType) {
@@ -166,7 +166,7 @@ public class MountedStorageManager {
             }
         }
 
-        MountedFluidStorage fluidStorage = this.getFluids().storages.get(localPos);
+        MountedFluidStorage fluidStorage = getFluids().storages.get(localPos);
         if (fluidStorage != null) {
             MountedFluidStorageType<?> expectedType = MountedFluidStorageType.REGISTRY.get(state.getBlock());
             if (fluidStorage.type == expectedType) {
@@ -205,24 +205,24 @@ public class MountedStorageManager {
 
     public void handleSync(MountedStorageSyncPacket packet, AbstractContraptionEntity entity) {
         // packet only contains changed storages, grab existing ones before resetting
-        ImmutableMap<BlockPos, MountedItemStorage> items = this.getAllItemStorages();
-        MountedFluidStorageWrapper fluids = this.getFluids();
-        this.reset();
+        ImmutableMap<BlockPos, MountedItemStorage> items = getAllItemStorages();
+        MountedFluidStorageWrapper fluids = getFluids();
+        reset();
 
         // track freshly synced storages
         Map<SyncedMountedStorage, BlockPos> syncedStorages = new IdentityHashMap<>();
 
         try {
             // re-add existing ones
-            this.itemsBuilder.putAll(items);
-            this.fluidsBuilder.putAll(fluids.storages);
+            itemsBuilder.putAll(items);
+            fluidsBuilder.putAll(fluids.storages);
             // add newly synced ones, overriding existing ones if present
             packet.items().forEach((pos, storage) -> {
-                this.itemsBuilder.put(pos, storage);
+                itemsBuilder.put(pos, storage);
                 syncedStorages.put((SyncedMountedStorage) storage, pos);
             });
             packet.fluids().forEach((pos, storage) -> {
-                this.fluidsBuilder.put(pos, storage);
+                fluidsBuilder.put(pos, storage);
                 syncedStorages.put((SyncedMountedStorage) storage, pos);
             });
         } catch (Throwable t) {
@@ -230,7 +230,7 @@ public class MountedStorageManager {
             Create.LOGGER.error("An error occurred while syncing a MountedStorageManager", t);
         }
 
-        this.initialize();
+        initialize();
 
         // call all afterSync methods
         Contraption contraption = entity.getContraption();
@@ -338,7 +338,7 @@ public class MountedStorageManager {
 
         if (clientPacket) {
             // let the client know of all non-synced ones too
-            List<BlockPos> list = Sets.union(this.getAllItemStorages().keySet(), getFluids().storages.keySet()).stream()
+            List<BlockPos> list = Sets.union(getAllItemStorages().keySet(), getFluids().storages.keySet()).stream()
                 .toList();
             view.store("interactable_positions", CreateCodecs.BLOCK_POS_LIST_CODEC, list);
         }
@@ -369,22 +369,22 @@ public class MountedStorageManager {
 
         if (clientPacket) {
             // let the client know of all non-synced ones too
-            List<BlockPos> list = Sets.union(this.getAllItemStorages().keySet(), getFluids().storages.keySet()).stream()
+            List<BlockPos> list = Sets.union(getAllItemStorages().keySet(), getFluids().storages.keySet()).stream()
                 .toList();
             map.add("interactable_positions", list, CreateCodecs.BLOCK_POS_LIST_CODEC);
         }
     }
 
     public void attachExternal(Container externalStorage) {
-        this.externalHandlers.add(externalStorage);
+        externalHandlers.add(externalStorage);
         int size = externalHandlers.size();
         Container[] all = new Container[size + 1];
-        all[0] = this.items;
+        all[0] = items;
         for (int i = 0; i < size; i++) {
             all[i + 1] = externalHandlers.get(i);
         }
 
-        this.allItems = new CombinedInvWrapper(all);
+        allItems = new CombinedInvWrapper(all);
     }
 
     /**
@@ -392,16 +392,16 @@ public class MountedStorageManager {
      * non-internal mounted storages as well as all external storage.
      */
     public CombinedInvWrapper getAllItems() {
-        this.assertInitialized();
-        return this.allItems;
+        assertInitialized();
+        return allItems;
     }
 
     /**
      * Gets a map of all MountedItemStorages in the contraption, irrelevant of them being internal or providing fuel.
      */
     public ImmutableMap<BlockPos, MountedItemStorage> getAllItemStorages() {
-        this.assertInitialized();
-        return this.allItemStorages;
+        assertInitialized();
+        return allItemStorages;
     }
 
     /**
@@ -410,8 +410,8 @@ public class MountedStorageManager {
      * Most often, you want {@link #getAllItems()}, which does.
      */
     public MountedItemStorageWrapper getMountedItems() {
-        this.assertInitialized();
-        return this.items;
+        assertInitialized();
+        return items;
     }
 
     /**
@@ -420,21 +420,21 @@ public class MountedStorageManager {
      */
     @Nullable
     public MountedItemStorageWrapper getFuelItems() {
-        this.assertInitialized();
-        return this.fuelItems;
+        assertInitialized();
+        return fuelItems;
     }
 
     /**
      * Gets a fluid handler wrapping all mounted fluid storages.
      */
     public MountedFluidStorageWrapper getFluids() {
-        this.assertInitialized();
-        return this.fluids;
+        assertInitialized();
+        return fluids;
     }
 
     public boolean handlePlayerStorageInteraction(Contraption contraption, Player player, BlockPos localPos) {
         if (!(player instanceof ServerPlayer serverPlayer)) {
-            return this.interactablePositions != null && this.interactablePositions.contains(localPos);
+            return interactablePositions != null && interactablePositions.contains(localPos);
         }
 
         StructureBlockInfo info = contraption.getBlocks().get(localPos);
@@ -447,22 +447,21 @@ public class MountedStorageManager {
 
         if (storage != null) {
             return storage.handleInteraction(serverPlayer, contraption, info);
-        } else {
-            return false;
         }
+        return false;
     }
 
     private void addStorage(MountedItemStorage storage, BlockPos pos) {
-        this.itemsBuilder.put(pos, storage);
+        itemsBuilder.put(pos, storage);
         if (storage instanceof SyncedMountedStorage synced) {
-            this.syncedItemsBuilder.put(pos, synced);
+            syncedItemsBuilder.put(pos, synced);
         }
     }
 
     private void addStorage(MountedFluidStorage storage, BlockPos pos) {
-        this.fluidsBuilder.put(pos, storage);
+        fluidsBuilder.put(pos, storage);
         if (storage instanceof SyncedMountedStorage synced) {
-            this.syncedFluidsBuilder.put(pos, synced);
+            syncedFluidsBuilder.put(pos, synced);
         }
     }
 

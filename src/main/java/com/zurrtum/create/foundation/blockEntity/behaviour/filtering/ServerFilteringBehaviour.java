@@ -42,7 +42,7 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
     public static final BehaviourType<ServerFilteringBehaviour> TYPE = new BehaviourType<>();
 
     protected FilterItemStack filter;
-    boolean showCount = false;
+    boolean showCount;
     public int count = 64;
     public boolean upTo = true;
     private Predicate<ItemStack> predicate = stack -> true;
@@ -50,8 +50,8 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
     };
     private Supplier<Boolean> showCountPredicate = () -> showCount;
     private Supplier<Boolean> isActive = () -> true;
-    boolean recipeFilter = false;
-    public boolean fluidFilter = false;
+    boolean recipeFilter;
+    public boolean fluidFilter;
 
     public ServerFilteringBehaviour(SmartBlockEntity be) {
         super(be);
@@ -271,7 +271,8 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
             if (refund.getItem() == filterType) {
                 setFilter(side, copied);
                 return true;
-            } else if (inventory.extract(filterType.getDefaultInstance()) == 1 || !inventory.extract(
+            }
+            if (inventory.extract(filterType.getDefaultInstance()) == 1 || !inventory.extract(
                 stack -> stack.getItem() == filterType,
                 1
             ).isEmpty()) {
@@ -339,7 +340,7 @@ public class ServerFilteringBehaviour extends BlockEntityBehaviour<SmartBlockEnt
             }
         }
 
-        level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, .25f, .1f);
+        level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.25f, 0.1f);
     }
 
     public boolean canShortInteract(ItemStack toApply) {

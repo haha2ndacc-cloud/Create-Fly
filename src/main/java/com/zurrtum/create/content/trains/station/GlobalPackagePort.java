@@ -16,8 +16,8 @@ public class GlobalPackagePort {
 
     public String address;
     public ItemStackHandler offlineBuffer;
-    public boolean primed = false;
-    private boolean restoring = false;
+    public boolean primed;
+    private boolean restoring;
 
     public GlobalPackagePort() {
         this("", new ItemStackHandler(18), false, false);

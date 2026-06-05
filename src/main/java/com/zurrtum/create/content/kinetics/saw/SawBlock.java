@@ -190,7 +190,7 @@ public class SawBlock extends DirectionalAxisKineticBlock implements IBE<SawBloc
         if (worldIn.isClientSide() || entityIn instanceof ItemEntity) {
             return;
         }
-        if (!new AABB(pos).deflate(.1f).intersects(entityIn.getBoundingBox())) {
+        if (!new AABB(pos).deflate(0.1f).intersects(entityIn.getBoundingBox())) {
             return;
         }
         withBlockEntityDo(
@@ -278,14 +278,13 @@ public class SawBlock extends DirectionalAxisKineticBlock implements IBE<SawBloc
 
             if (directions.isEmpty()) {
                 return PlacementOffset.fail();
-            } else {
-                return PlacementOffset.success(
-                    pos.relative(directions.getFirst()),
-                    s -> s.setValue(FACING, state.getValue(FACING))
-                        .setValue(AXIS_ALONG_FIRST_COORDINATE, state.getValue(AXIS_ALONG_FIRST_COORDINATE))
-                        .setValue(FLIPPED, state.getValue(FLIPPED))
-                );
             }
+            return PlacementOffset.success(
+                pos.relative(directions.getFirst()),
+                s -> s.setValue(FACING, state.getValue(FACING))
+                    .setValue(AXIS_ALONG_FIRST_COORDINATE, state.getValue(AXIS_ALONG_FIRST_COORDINATE))
+                    .setValue(FLIPPED, state.getValue(FLIPPED))
+            );
         }
 
     }

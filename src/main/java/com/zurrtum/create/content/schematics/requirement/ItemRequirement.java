@@ -142,7 +142,8 @@ public class ItemRequirement {
             entity.getType());
         if (requirement != null) {
             return requirement.getRequiredItems(entity);
-        } else if (entity instanceof SpecialEntityItemRequirement specialEntity) {
+        }
+        if (entity instanceof SpecialEntityItemRequirement specialEntity) {
             return specialEntity.getRequiredItems();
         }
 
@@ -185,10 +186,10 @@ public class ItemRequirement {
     }
 
     public ItemRequirement union(ItemRequirement other) {
-        if (this.isInvalid() || other.isInvalid()) {
+        if (isInvalid() || other.isInvalid()) {
             return INVALID;
         }
-        if (this.isEmpty()) {
+        if (isEmpty()) {
             return other;
         }
         if (other.isEmpty()) {

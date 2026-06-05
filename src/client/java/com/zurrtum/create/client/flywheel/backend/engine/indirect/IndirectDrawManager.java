@@ -209,6 +209,7 @@ public class IndirectDrawManager extends DrawManager<IndirectInstancer<?>> {
         oitFramebuffer.delete();
     }
 
+    @Override
     public void renderCrumbling(List<Engine.CrumblingBlock> crumblingBlocks) {
         var byType = doCrumblingSort(crumblingBlocks, IndirectInstancer::fromState);
 

@@ -37,7 +37,8 @@ public class AnimationTickHolder {
     public static int getTicks(@Nullable LevelAccessor level) {
         if (level instanceof WrappedClientLevel wrappedLevel) {
             return getTicks(wrappedLevel.getWrappedLevel());
-        } else if (level instanceof PonderLevel) {
+        }
+        if (level instanceof PonderLevel) {
             return PonderUI.ponderTicks;
         }
         return getTicks();
@@ -72,8 +73,7 @@ public class AnimationTickHolder {
     public static float getPartialTicksUI(DeltaTracker timer) {
         if (timer instanceof DeltaTracker.Timer timerAccessor) {
             return timerAccessor.deltaTickResidual;
-        } else {
-            return timer.getGameTimeDeltaPartialTick(false);
         }
+        return timer.getGameTimeDeltaPartialTick(false);
     }
 }

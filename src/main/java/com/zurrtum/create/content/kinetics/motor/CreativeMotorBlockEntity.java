@@ -29,7 +29,7 @@ public class CreativeMotorBlockEntity extends GeneratingKineticBlockEntity {
         generatedSpeed = new ServerKineticScrollValueBehaviour(this);
         generatedSpeed.between(-max, max);
         generatedSpeed.setValue(DEFAULT_SPEED);
-        generatedSpeed.withCallback(i -> this.updateGeneratedRotation());
+        generatedSpeed.withCallback(i -> updateGeneratedRotation());
         behaviours.add(generatedSpeed);
     }
 

@@ -38,15 +38,15 @@ public class LerpedFloat {
 
     public LerpedFloat startWithValue(double value) {
         float f = (float) value;
-        this.previousValue = f;
-        this.chaseTarget = f;
+        previousValue = f;
+        chaseTarget = f;
         this.value = f;
         return this;
     }
 
     public LerpedFloat chase(double value, double speed, Chaser chaseFunction) {
         updateChaseTarget((float) value);
-        this.chaseSpeed = (float) speed;
+        chaseSpeed = (float) speed;
         this.chaseFunction = chaseFunction;
         return this;
     }
@@ -65,12 +65,12 @@ public class LerpedFloat {
         if (angularChase) {
             target = value + AngleHelper.getShortestAngleDiff(value, target);
         }
-        this.chaseTarget = target;
+        chaseTarget = target;
     }
 
     public boolean updateChaseSpeed(double speed) {
-        float prevSpeed = this.chaseSpeed;
-        this.chaseSpeed = (float) speed;
+        float prevSpeed = chaseSpeed;
+        chaseSpeed = (float) speed;
         return !Mth.equal(prevSpeed, speed);
     }
 
@@ -91,7 +91,7 @@ public class LerpedFloat {
     }
 
     public void setValue(double value) {
-        this.previousValue = this.value;
+        previousValue = this.value;
         this.value = (float) value;
     }
 

@@ -20,7 +20,7 @@ import java.util.OptionalInt;
 public class FakePlayerEntity extends ServerPlayer {
     public FakePlayerEntity(ServerLevel world, GameProfile profile) {
         super(world.getServer(), world, profile, ClientInformation.createDefault());
-        this.connection = new FakePlayerNetworkHandler(world.getServer(), this);
+        connection = new FakePlayerNetworkHandler(world.getServer(), this);
     }
 
     @Override

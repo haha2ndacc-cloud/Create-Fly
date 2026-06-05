@@ -207,7 +207,7 @@ public class FanScenes {
 
         ElementLink<WorldSectionElement> cogs = scene.world()
             .makeSectionIndependent(util.select().fromTo(6, 1, 2, 6, 0, 3).add(util.select().fromTo(4, 0, 2, 5, 0, 2)));
-        scene.world().modifyKineticSpeed(util.select().position(5, 2, 2), f -> f / 3f);
+        scene.world().modifyKineticSpeed(util.select().position(5, 2, 2), f -> f / 3.0f);
         scene.world().moveSection(cogs, util.vector().of(0, 1, 0), 15);
         scene.world().moveSection(blockInFront, util.vector().of(0, 1, 0), 15);
         scene.world().destroyBlock(blockPos.east());
@@ -226,7 +226,7 @@ public class FanScenes {
         scene.idle(10);
         Vec3 depotTop = util.vector().topOf(2, 1, 2).add(0, 0.25, 0);
         scene.effects()
-            .emitParticles(depotTop, scene.effects().simpleParticleEmitter(ParticleTypes.SPIT, Vec3.ZERO), .5f, 30);
+            .emitParticles(depotTop, scene.effects().simpleParticleEmitter(ParticleTypes.SPIT, Vec3.ZERO), 0.5f, 30);
         scene.idle(30);
         scene.world().modifyBlockEntityNBT(
             util.select().position(depos), DepotBlockEntity.class, nbt -> {
@@ -236,7 +236,7 @@ public class FanScenes {
             }
         );
         scene.effects()
-            .emitParticles(depotTop, scene.effects().simpleParticleEmitter(ParticleTypes.SPIT, Vec3.ZERO), .5f, 30);
+            .emitParticles(depotTop, scene.effects().simpleParticleEmitter(ParticleTypes.SPIT, Vec3.ZERO), 0.5f, 30);
         scene.overlay().showText(90).pointAt(depotTop).attachKeyFrame()
             .text("Fan Processing can also be applied to Items on Depots and Belts");
 
@@ -253,11 +253,11 @@ public class FanScenes {
             .createItemOnBelt(util.grid().at(3, 3, 3), Direction.SOUTH, sand);
         scene.idle(60);
         scene.effects()
-            .emitParticles(depotTop, scene.effects().simpleParticleEmitter(ParticleTypes.SPIT, Vec3.ZERO), .5f, 25);
+            .emitParticles(depotTop, scene.effects().simpleParticleEmitter(ParticleTypes.SPIT, Vec3.ZERO), 0.5f, 25);
         scene.idle(25);
         scene.world().changeBeltItemTo(transported, new ItemStack(Items.CLAY_BALL));
         scene.effects()
-            .emitParticles(depotTop, scene.effects().simpleParticleEmitter(ParticleTypes.SPIT, Vec3.ZERO), .5f, 25);
+            .emitParticles(depotTop, scene.effects().simpleParticleEmitter(ParticleTypes.SPIT, Vec3.ZERO), 0.5f, 25);
         scene.idle(60);
 
         scene.world().setKineticSpeed(util.select().position(1, 2, 4).add(util.select().fromTo(3, 3, 1, 1, 3, 3)), 0);

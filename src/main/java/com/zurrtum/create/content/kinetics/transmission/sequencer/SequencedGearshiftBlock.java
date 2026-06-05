@@ -192,7 +192,8 @@ public class SequencedGearshiftBlock extends HorizontalAxisKineticBlock implemen
         if (transform.rotation.ordinal() % 2 == 1) {
             if (transform.rotationAxis != state.getValue(HORIZONTAL_AXIS)) {
                 return state.cycle(VERTICAL);
-            } else if (state.getValue(VERTICAL)) {
+            }
+            if (state.getValue(VERTICAL)) {
                 return state.cycle(VERTICAL).cycle(HORIZONTAL_AXIS);
             }
         }

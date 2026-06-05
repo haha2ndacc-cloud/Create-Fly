@@ -78,7 +78,7 @@ public class MechanicalCrafterBlock extends HorizontalKineticBlock implements IB
         BlockPos placedOnPos = context.getClickedPos().relative(face.getOpposite());
         BlockState blockState = context.getLevel().getBlockState(placedOnPos);
 
-        if ((blockState.getBlock() != this) || (context.getPlayer() != null && context.getPlayer().isShiftKeyDown())) {
+        if (blockState.getBlock() != this || context.getPlayer() != null && context.getPlayer().isShiftKeyDown()) {
             BlockState stateForPlacement = super.getStateForPlacement(context);
             Direction direction = stateForPlacement.getValue(HORIZONTAL_FACING);
             if (direction != face) {
@@ -109,7 +109,7 @@ public class MechanicalCrafterBlock extends HorizontalKineticBlock implements IB
             MechanicalCrafterBlockEntity crafter = CrafterHelper.getCrafter(worldIn, pos);
             if (crafter != null) {
                 if (crafter.covered) {
-                    Block.popResource(worldIn, pos, AllItems.CRAFTER_SLOT_COVER.getDefaultInstance());
+                    popResource(worldIn, pos, AllItems.CRAFTER_SLOT_COVER.getDefaultInstance());
                 }
                 if (!isMoving) {
                     crafter.ejectWholeGrid();
@@ -291,7 +291,7 @@ public class MechanicalCrafterBlock extends HorizontalKineticBlock implements IB
 
     @Override
     public float getParticleTargetRadius() {
-        return .85f;
+        return 0.85f;
     }
 
     public static Direction getTargetDirection(BlockState state) {

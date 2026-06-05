@@ -168,15 +168,15 @@ public class FluidTankBlockEntity extends SmartBlockEntity implements IMultiBloc
         int luminosity = (int) (newFluidStack.getFluid().defaultFluidState().createLegacyBlock()
             .getLightEmission() / 1.2f);
         boolean reversed = false;
-        int maxY = (int) ((getFillState() * height) + 1);
+        int maxY = (int) (getFillState() * height + 1);
 
         for (int yOffset = 0; yOffset < height; yOffset++) {
-            boolean isBright = reversed ? (height - yOffset <= maxY) : (yOffset < maxY);
+            boolean isBright = reversed ? height - yOffset <= maxY : yOffset < maxY;
             int actualLuminosity = isBright ? luminosity : luminosity > 0 ? 1 : 0;
 
             for (int xOffset = 0; xOffset < width; xOffset++) {
                 for (int zOffset = 0; zOffset < width; zOffset++) {
-                    BlockPos pos = this.worldPosition.offset(xOffset, yOffset, zOffset);
+                    BlockPos pos = worldPosition.offset(xOffset, yOffset, zOffset);
                     FluidTankBlockEntity tankAt = ConnectivityHandler.partAt(getType(), level, pos);
                     if (tankAt == null) {
                         continue;
@@ -199,7 +199,7 @@ public class FluidTankBlockEntity extends SmartBlockEntity implements IMultiBloc
             if (fluidLevel == null) {
                 fluidLevel = LerpedFloat.linear().startWithValue(getFillState());
             }
-            fluidLevel.chase(getFillState(), .5f, Chaser.EXP);
+            fluidLevel.chase(getFillState(), 0.5f, Chaser.EXP);
         }
     }
 
@@ -256,6 +256,7 @@ public class FluidTankBlockEntity extends SmartBlockEntity implements IMultiBloc
         forceFluidLevelUpdate = true;
     }
 
+    @Override
     public void removeController(boolean keepFluids) {
         if (level.isClientSide()) {
             return;
@@ -332,7 +333,7 @@ public class FluidTankBlockEntity extends SmartBlockEntity implements IMultiBloc
             for (int xOffset = 0; xOffset < width; xOffset++) {
                 for (int zOffset = 0; zOffset < width; zOffset++) {
 
-                    BlockPos pos = this.worldPosition.offset(xOffset, yOffset, zOffset);
+                    BlockPos pos = worldPosition.offset(xOffset, yOffset, zOffset);
                     BlockState blockState = level.getBlockState(pos);
                     if (!FluidTankBlock.isTank(blockState)) {
                         continue;
@@ -346,7 +347,8 @@ public class FluidTankBlockEntity extends SmartBlockEntity implements IMultiBloc
                         }
                         // SIZE 2: Every tank has a corner window
                         if (width == 2) {
-                            shape = xOffset == 0 ? zOffset == 0 ? Shape.WINDOW_NW : Shape.WINDOW_SW : zOffset == 0 ? Shape.WINDOW_NE : Shape.WINDOW_SE;
+                            shape = xOffset == 0 ? zOffset == 0 ? Shape.WINDOW_NW : Shape.WINDOW_SW :
+                                zOffset == 0 ? Shape.WINDOW_NE : Shape.WINDOW_SE;
                         }
                         // SIZE 3: Tanks in the center have a window
                         if (width == 3 && abs(abs(xOffset) - abs(zOffset)) == 1) {
@@ -422,8 +424,8 @@ public class FluidTankBlockEntity extends SmartBlockEntity implements IMultiBloc
     }
 
     private FluidInventory handlerForCapability() {
-        return isController() ? (boiler.isActive() ? boiler.createHandler() : tankInventory) : ((getControllerBE() != null) ? getControllerBE().handlerForCapability() : new FluidTank(
-            0));
+        return isController() ? boiler.isActive() ? boiler.createHandler() : tankInventory :
+            getControllerBE() != null ? getControllerBE().handlerForCapability() : new FluidTank(0);
     }
 
     @Override
@@ -435,9 +437,8 @@ public class FluidTankBlockEntity extends SmartBlockEntity implements IMultiBloc
     protected AABB createRenderBoundingBox() {
         if (isController()) {
             return super.createRenderBoundingBox().expandTowards(width - 1, height - 1, width - 1);
-        } else {
-            return super.createRenderBoundingBox();
         }
+        return super.createRenderBoundingBox();
     }
 
     @Nullable

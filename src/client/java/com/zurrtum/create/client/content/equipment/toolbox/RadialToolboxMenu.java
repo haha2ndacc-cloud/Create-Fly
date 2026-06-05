@@ -37,7 +37,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
     private int ticksOpen;
     private int hoveredSlot;
     private boolean scrollMode;
-    private int scrollSlot = 0;
+    private int scrollSlot;
     private final List<ToolboxBlockEntity> toolboxes;
     private @Nullable ToolboxBlockEntity selectedBox;
 
@@ -64,7 +64,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
 
     @Override
     protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
-        float fade = Mth.clamp((ticksOpen + AnimationTickHolder.getPartialTicks()) / 10f, 1 / 512f, 1);
+        float fade = Mth.clamp((ticksOpen + AnimationTickHolder.getPartialTicks()) / 10.0f, 1 / 512.0f, 1);
 
         hoveredSlot = -1;
         Window window = minecraft.getWindow();
@@ -73,7 +73,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
 
         float distance = hoveredX * hoveredX + hoveredY * hoveredY;
         if (distance > 25 && distance < 10000) {
-            hoveredSlot = (Mth.floor((AngleHelper.deg(Mth.atan2(hoveredY, hoveredX)) + 360 + 180 - 22.5f)) % 360) / 45;
+            hoveredSlot = Mth.floor(AngleHelper.deg(Mth.atan2(hoveredY, hoveredX)) + 360 + 180 - 22.5f) % 360 / 45;
         }
         boolean renderCenterSlot = state == State.SELECT_ITEM_UNEQUIP;
         if (scrollMode && distance > 150) {
@@ -99,7 +99,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
             AllGuiTextures.TOOLBELT_INACTIVE_SLOT.render(graphics, -12, -12);
             graphics.item(AllItems.TOOLBOX.brown().getDefaultInstance(), -9, -9);
 
-            ms.translate(0, -40 + (10 * (1 - fade) * (1 - fade)));
+            ms.translate(0, -40 + 10 * (1 - fade) * (1 - fade));
             AllGuiTextures.TOOLBELT_SLOT.render(graphics, -12, -12);
             ms.translate(-0.5F, 0.5F);
             AllIcons.I_DISABLE.render(graphics, -9, -9);
@@ -117,7 +117,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
             }
 
             ms.pushMatrix();
-            ms.translate(80 + (-5 * (1 - fade) * (1 - fade)), 0);
+            ms.translate(80 + -5 * (1 - fade) * (1 - fade), 0);
             AllGuiTextures.TOOLBELT_SLOT.render(graphics, -12, -12);
             ms.translate(-0.5F, 0.5F);
             AllIcons.I_TOOLBOX.render(graphics, -9, -9);
@@ -133,7 +133,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
             for (int slot = 0; slot < 8; slot++) {
                 ms.pushMatrix();
                 ms.rotate(Mth.DEG_TO_RAD * (slot * 45 - 45));
-                ms.translate(0, -40 + (10 * (1 - fade) * (1 - fade)));
+                ms.translate(0, -40 + 10 * (1 - fade) * (1 - fade));
                 ms.rotate(Mth.DEG_TO_RAD * (-slot * 45 + 45));
                 ms.translate(-12, -12);
 
@@ -204,11 +204,11 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
 
             if (i1 > 8) {
                 ms.pushMatrix();
-                ms.translate((float) (width / 2), (float) (height - 68));
+                ms.translate(width / 2, height - 68);
                 int k1 = 16777215;
                 int k = i1 << 24 & -16777216;
                 int l = font.width(tip);
-                graphics.text(font, tip, Math.round(-l / 2f), -4, k1 | k, false);
+                graphics.text(font, tip, Math.round(-l / 2.0f), -4, k1 | k, false);
                 ms.popMatrix();
             }
         }
@@ -219,10 +219,10 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
     public void extractBackground(GuiGraphicsExtractor pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         Color color = BACKGROUND_COLOR.scaleAlpha(Math.min(
             1,
-            (ticksOpen + AnimationTickHolder.getPartialTicks()) / 20f
+            (ticksOpen + AnimationTickHolder.getPartialTicks()) / 20.0f
         ));
 
-        pGuiGraphics.fillGradient(0, 0, this.width, this.height, color.getRGB(), color.getRGB());
+        pGuiGraphics.fillGradient(0, 0, width, height, color.getRGB(), color.getRGB());
     }
 
     @Override
@@ -235,12 +235,13 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
     public void removed() {
         super.removed();
 
-        int selected = (scrollMode ? scrollSlot : hoveredSlot);
+        int selected = scrollMode ? scrollSlot : hoveredSlot;
 
         if (selected == DEPOSIT) {
             if (state == State.DETACH) {
                 return;
-            } else if (state == State.SELECT_BOX) {
+            }
+            if (state == State.SELECT_BOX) {
                 toolboxes.forEach(be -> minecraft.player.connection.send(new ToolboxDisposeAllPacket(be.getBlockPos())));
             } else {
                 minecraft.player.connection.send(new ToolboxDisposeAllPacket(selectedBox.getBlockPos()));
@@ -256,7 +257,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
             if (selected == UNEQUIP) {
                 minecraft.player.connection.send(new ToolboxEquipPacket(
                     null,
-                    selected,
+                    UNEQUIP,
                     minecraft.player.getInventory().getSelectedSlot()
                 ));
             }
@@ -266,7 +267,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
         if (selected == UNEQUIP) {
             minecraft.player.connection.send(new ToolboxEquipPacket(
                 selectedBox.getBlockPos(),
-                selected,
+                UNEQUIP,
                 minecraft.player.getInventory().getSelectedSlot()
             ));
         }
@@ -298,7 +299,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
         double distance = hoveredX * hoveredX + hoveredY * hoveredY;
         if (distance <= 150) {
             scrollMode = true;
-            scrollSlot = (((int) (scrollSlot - pScrollY)) + 8) % 8;
+            scrollSlot = ((int) (scrollSlot - pScrollY) + 8) % 8;
             for (int i = 0; i < 10; i++) {
 
                 if (state == State.SELECT_ITEM || state == State.SELECT_ITEM_UNEQUIP) {
@@ -365,7 +366,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
                 if (toolboxes.size() > 1) {
                     minecraft.player.connection.send(new ToolboxEquipPacket(
                         selectedBox.getBlockPos(),
-                        selected,
+                        UNEQUIP,
                         minecraft.player.getInventory().getSelectedSlot()
                     ));
                     state = State.SELECT_BOX;

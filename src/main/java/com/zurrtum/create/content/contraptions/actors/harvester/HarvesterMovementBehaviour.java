@@ -32,7 +32,7 @@ public class HarvesterMovementBehaviour extends MovementBehaviour {
 
     @Override
     public Vec3 getActiveAreaOffset(MovementContext context) {
-        return Vec3.atLowerCornerOf(context.state.getValue(HarvesterBlock.FACING).getUnitVec3i()).scale(.45);
+        return Vec3.atLowerCornerOf(context.state.getValue(HarvesterBlock.FACING).getUnitVec3i()).scale(0.45);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class HarvesterMovementBehaviour extends MovementBehaviour {
 
         if (stateVisited.is(BlockTags.LEAVES)) {
             item = new ItemStack(Items.SHEARS);
-            effectChance = .45f;
+            effectChance = 0.45f;
         }
 
         MutableBoolean seedSubtracted = new MutableBoolean(notCropButCuttable);
@@ -106,7 +106,7 @@ public class HarvesterMovementBehaviour extends MovementBehaviour {
                 if (state.getBlock() instanceof SweetBerryBushBlock && age <= 1 && replant) {
                     continue;
                 }
-                if (age == 0 && replant || !harvestPartial && (ageProperty.getPossibleValues().size() - 1 != age)) {
+                if (age == 0 && replant || !harvestPartial && ageProperty.getPossibleValues().size() - 1 != age) {
                     continue;
                 }
                 return true;

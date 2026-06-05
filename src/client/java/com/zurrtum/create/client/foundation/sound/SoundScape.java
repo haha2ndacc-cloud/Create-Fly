@@ -25,7 +25,7 @@ public class SoundScape {
     private @Nullable Vec3 meanPos;
 
     public SoundScape(float pitch, AmbienceGroup group) {
-        this.pitchGroup = SoundScapes.getGroupFromPitch(pitch);
+        pitchGroup = SoundScapes.getGroupFromPitch(pitch);
         this.pitch = pitch;
         this.group = group;
         continuous = new ArrayList<>();
@@ -79,7 +79,7 @@ public class SoundScape {
         if (amount == 0) {
             return meanPos;
         }
-        return meanPos.scale(1f / amount);
+        return meanPos.scale(1.0f / amount);
     }
 
     public float getVolume() {
@@ -91,8 +91,8 @@ public class SoundScape {
         }
         int soundCount = SoundScapes.getSoundCount(group, pitchGroup);
         float max = AllConfigs.client().ambientVolumeCap.getF();
-        float argMax = (float) SoundScapes.SOUND_VOLUME_ARG_MAX;
-        return Mth.clamp(soundCount / (argMax * 10f), 0.025f, max) * distanceMultiplier;
+        float argMax = SoundScapes.SOUND_VOLUME_ARG_MAX;
+        return Mth.clamp(soundCount / (argMax * 10.0f), 0.025f, max) * distanceMultiplier;
     }
 
 }

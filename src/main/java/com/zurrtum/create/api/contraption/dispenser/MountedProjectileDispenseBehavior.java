@@ -18,9 +18,9 @@ import org.jspecify.annotations.Nullable;
 public abstract class MountedProjectileDispenseBehavior extends DefaultMountedDispenseBehavior {
     @Override
     protected ItemStack execute(ItemStack stack, MovementContext context, BlockPos pos, Vec3 facing) {
-        double x = pos.getX() + facing.x * .7 + .5;
-        double y = pos.getY() + facing.y * .7 + .5;
-        double z = pos.getZ() + facing.z * .7 + .5;
+        double x = pos.getX() + facing.x * 0.7 + 0.5;
+        double y = pos.getY() + facing.y * 0.7 + 0.5;
+        double z = pos.getZ() + facing.z * 0.7 + 0.5;
         Projectile projectile = getProjectile(
             context.world,
             x,

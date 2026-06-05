@@ -88,10 +88,10 @@ public class BacktankBlockEntity extends KineticBlockEntity implements Nameable 
         int max = BacktankUtil.maxAir(capacityEnchantLevel);
         if (level.isClientSide()) {
             Vec3 centerOf = VecHelper.getCenterOf(worldPosition);
-            Vec3 v = VecHelper.offsetRandomly(centerOf, level.getRandom(), .65f);
+            Vec3 v = VecHelper.offsetRandomly(centerOf, level.getRandom(), 0.65f);
             Vec3 m = centerOf.subtract(v);
             if (airLevel != max) {
-                level.addParticle(new AirParticleData(1, .05f), v.x, v.y, v.z, m.x, m.y, m.z);
+                level.addParticle(new AirParticleData(1, 0.05f), v.x, v.y, v.z, m.x, m.y, m.z);
             }
             return;
         }
@@ -110,7 +110,7 @@ public class BacktankBlockEntity extends KineticBlockEntity implements Nameable 
         if (airLevel == max) {
             sendData();
         }
-        airLevelTimer = Mth.clamp((int) (128f - abs / 5f) - 108, 0, 20);
+        airLevelTimer = Mth.clamp((int) (128.0f - abs / 5.0f) - 108, 0, 20);
     }
 
     public int getComparatorOutput() {
@@ -159,11 +159,11 @@ public class BacktankBlockEntity extends KineticBlockEntity implements Nameable 
 
     protected void playFilledEffect() {
         AllSoundEvents.CONFIRM.playAt(level, worldPosition, 0.4f, 1, true);
-        Vec3 baseMotion = new Vec3(.25, 0.1, 0);
+        Vec3 baseMotion = new Vec3(0.25, 0.1, 0);
         Vec3 baseVec = VecHelper.getCenterOf(worldPosition);
         for (int i = 0; i < 360; i += 10) {
             Vec3 m = VecHelper.rotate(baseMotion, i, Axis.Y);
-            Vec3 v = baseVec.add(m.normalize().scale(.25f));
+            Vec3 v = baseVec.add(m.normalize().scale(0.25f));
 
             level.addParticle(ParticleTypes.SPIT, v.x, v.y, v.z, m.x, m.y, m.z);
         }
@@ -171,7 +171,7 @@ public class BacktankBlockEntity extends KineticBlockEntity implements Nameable 
 
     @Override
     public Component getName() {
-        return this.customName != null ? this.customName : defaultName;
+        return customName != null ? customName : defaultName;
     }
 
     public int getAirLevel() {

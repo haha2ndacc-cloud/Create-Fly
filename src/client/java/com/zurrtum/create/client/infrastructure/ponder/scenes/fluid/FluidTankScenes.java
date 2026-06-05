@@ -143,7 +143,7 @@ public class FluidTankScenes {
 
         scene.overlay().showText(50).text("The contained fluid can be measured by a Comparator").attachKeyFrame()
             .placeNearTarget()
-            .pointAt(util.vector().blockSurface(util.grid().at(2, 1, 1), Direction.DOWN).add(0, 1 / 8f, 0));
+            .pointAt(util.vector().blockSurface(util.grid().at(2, 1, 1), Direction.DOWN).add(0, 1 / 8.0f, 0));
         scene.idle(50);
 
         scene.world().hideSection(comparatorStuff, Direction.EAST);
@@ -197,10 +197,10 @@ public class FluidTankScenes {
         scene.world().createItemOnBeltLike(util.grid().at(4, 1, 0), Direction.UP, chocBucket);
         for (int i = 0; i < 10; i++) {
             scene.effects().emitParticles(
-                util.vector().topOf(3, 1, 1).add(0, 1 / 16f, 0),
+                util.vector().topOf(3, 1, 1).add(0, 1 / 16.0f, 0),
                 scene.effects().simpleParticleEmitter(
                     FluidFX.getFluidParticle(content),
-                    VecHelper.offsetRandomly(Vec3.ZERO, random, .1f)
+                    VecHelper.offsetRandomly(Vec3.ZERO, random, 0.1f)
                 ),
                 1,
                 1

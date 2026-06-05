@@ -81,7 +81,7 @@ public class RecipeButton extends Button.Plain {
         private int y;
         private int width = 150;
         private int height = 20;
-        private CreateNarration narrationSupplier = Button.DEFAULT_NARRATION;
+        private CreateNarration narrationSupplier = DEFAULT_NARRATION;
 
         public Builder(Component message, OnPress onPress) {
             super(message, onPress);

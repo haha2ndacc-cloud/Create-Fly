@@ -65,11 +65,11 @@ public class MechanicalCraftingCategory extends CreateCategory<RecipeHolder<Mech
         List<Optional<Ingredient>> layout = raw.ingredients();
         int left = 7;
         if (width < 5) {
-            left += (19 * (5 - width)) / 2;
+            left += 19 * (5 - width) / 2;
         }
         int top = 7;
         if (height < 5) {
-            top += (19 * (5 - height)) / 2;
+            top += 19 * (5 - height) / 2;
         }
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
@@ -77,7 +77,7 @@ public class MechanicalCraftingCategory extends CreateCategory<RecipeHolder<Mech
                 if (ingredient.isEmpty()) {
                     continue;
                 }
-                builder.addInputSlot(left + 16 * w + (w * 3), top + 16 * h + (h * 3)).setBackground(SLOT, -1, -1)
+                builder.addInputSlot(left + 16 * w + w * 3, top + 16 * h + h * 3).setBackground(SLOT, -1, -1)
                     .add(ingredient.get());
             }
         }

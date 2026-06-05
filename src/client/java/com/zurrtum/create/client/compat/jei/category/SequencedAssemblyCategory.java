@@ -252,7 +252,7 @@ public class SequencedAssemblyCategory extends CreateCategory<RecipeHolder<Seque
     public static class PressingRenderer implements SequencedRenderer<PressingRecipe> {
         @Override
         public void render(GuiGraphicsExtractor graphics, int i, int x, int y, Optional<IRecipeSlotView> slot) {
-            float scale = 19 / 30f;
+            float scale = 19 / 30.0f;
             Matrix3x2fStack matrices = graphics.pose();
             matrices.pushMatrix();
             matrices.translate(x, y);
@@ -272,7 +272,7 @@ public class SequencedAssemblyCategory extends CreateCategory<RecipeHolder<Seque
     public static class DeployingRenderer implements SequencedRenderer<DeployerApplicationRecipe> {
         @Override
         public void render(GuiGraphicsExtractor graphics, int i, int x, int y, Optional<IRecipeSlotView> slot) {
-            float scale = 59 / 78f;
+            float scale = 59 / 78.0f;
             Matrix3x2fStack matrices = graphics.pose();
             matrices.pushMatrix();
             matrices.translate(x, y);
@@ -310,7 +310,7 @@ public class SequencedAssemblyCategory extends CreateCategory<RecipeHolder<Seque
         @Override
         public void render(GuiGraphicsExtractor graphics, int i, int x, int y, Optional<IRecipeSlotView> slot) {
             slot.flatMap(s -> s.getDisplayedIngredient(FabricTypes.FLUID_STACK)).ifPresent(ingredient -> {
-                float scale = 35 / 46f;
+                float scale = 35 / 46.0f;
                 Matrix3x2fStack matrices = graphics.pose();
                 matrices.pushMatrix();
                 matrices.translate(x, y);

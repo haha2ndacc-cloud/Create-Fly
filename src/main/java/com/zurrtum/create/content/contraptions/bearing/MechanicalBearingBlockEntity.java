@@ -120,7 +120,7 @@ public class MechanicalBearingBlockEntity extends GeneratingKineticBlockEntity i
     @Override
     public float getInterpolatedAngle(float partialTicks) {
         if (isVirtual()) {
-            return Mth.lerp(partialTicks + .5f, prevAngle, angle);
+            return Mth.lerp(partialTicks + 0.5f, prevAngle, angle);
         }
         if (movedContraption == null || movedContraption.isStalled() || !running) {
             partialTicks = 0;
@@ -158,7 +158,7 @@ public class MechanicalBearingBlockEntity extends GeneratingKineticBlockEntity i
         }
         if (level.isClientSide()) {
             speed *= AllClientHandle.INSTANCE.getServerSpeed();
-            speed += clientAngleDiff / 3f;
+            speed += clientAngleDiff / 3.0f;
         }
         return speed;
     }
@@ -250,7 +250,7 @@ public class MechanicalBearingBlockEntity extends GeneratingKineticBlockEntity i
         if (!level.isClientSide() && assembleNextTick) {
             assembleNextTick = false;
             if (running) {
-                boolean canDisassemble = movementMode.get() == RotationMode.ROTATE_PLACE || (isNearInitialAngle() && movementMode.get() == RotationMode.ROTATE_PLACE_RETURNED);
+                boolean canDisassemble = movementMode.get() == RotationMode.ROTATE_PLACE || isNearInitialAngle() && movementMode.get() == RotationMode.ROTATE_PLACE_RETURNED;
                 if (speed == 0 && (canDisassemble || movedContraption == null || movedContraption.getContraption()
                     .getBlocks().isEmpty())) {
                     if (movedContraption != null) {
@@ -316,12 +316,12 @@ public class MechanicalBearingBlockEntity extends GeneratingKineticBlockEntity i
             return;
         }
 
-        this.movedContraption = contraption;
+        movedContraption = contraption;
         setChanged();
         BlockPos anchor = worldPosition.relative(blockState.getValue(BearingBlock.FACING));
         movedContraption.setPos(anchor.getX(), anchor.getY(), anchor.getZ());
         if (!level.isClientSide()) {
-            this.running = true;
+            running = true;
             sendData();
         }
     }
@@ -347,6 +347,7 @@ public class MechanicalBearingBlockEntity extends GeneratingKineticBlockEntity i
         return running;
     }
 
+    @Override
     public void setAngle(float forcedAngle) {
         angle = forcedAngle;
     }

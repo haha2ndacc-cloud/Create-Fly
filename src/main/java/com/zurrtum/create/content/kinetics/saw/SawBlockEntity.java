@@ -104,7 +104,7 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity implements C
 
     @Override
     protected AABB createRenderBoundingBox() {
-        return new AABB(getBlockPos()).inflate(.125f);
+        return new AABB(getBlockPos()).inflate(0.125f);
     }
 
     @Override
@@ -219,8 +219,8 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity implements C
         }
 
         // Eject Items
-        Vec3 outPos = VecHelper.getCenterOf(worldPosition).add(itemMovement.scale(.5f).add(0, .5, 0));
-        Vec3 outMotion = itemMovement.scale(.0625).add(0, .125, 0);
+        Vec3 outPos = VecHelper.getCenterOf(worldPosition).add(itemMovement.scale(0.5f).add(0, 0.5, 0));
+        Vec3 outMotion = itemMovement.scale(0.0625).add(0, 0.125, 0);
         for (int slot = 0, size = inventory.getContainerSize(); slot < size; slot++) {
             ItemStack stack = inventory.getItem(slot);
             if (stack.isEmpty()) {
@@ -264,9 +264,9 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity implements C
         }
 
         RandomSource r = level.getRandom();
-        Vec3 v = VecHelper.getCenterOf(worldPosition).add(0, 5 / 16f, 0);
+        Vec3 v = VecHelper.getCenterOf(worldPosition).add(0, 5 / 16.0f, 0);
         for (int i = 0; i < 10; i++) {
-            Vec3 m = VecHelper.offsetRandomly(new Vec3(0, 0.25f, 0), r, .125f);
+            Vec3 m = VecHelper.offsetRandomly(new Vec3(0, 0.25f, 0), r, 0.125f);
             level.addParticle(particleData, v.x, v.y, v.z, m.x, m.y, m.y);
         }
     }
@@ -285,21 +285,21 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity implements C
             );
         } else {
             particleData = new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(stack));
-            speed = .125f;
+            speed = 0.125f;
         }
 
         RandomSource r = level.getRandom();
         Vec3 vec = getItemMovementVec();
-        Vec3 pos = VecHelper.getCenterOf(this.worldPosition);
+        Vec3 pos = VecHelper.getCenterOf(worldPosition);
         float offset = inventory.recipeDuration != 0 ? inventory.remainingTime / inventory.recipeDuration : 0;
         offset /= 2;
         if (inventory.appliedRecipe) {
-            offset -= .5f;
+            offset -= 0.5f;
         }
         level.addParticle(
             particleData,
             pos.x() + -vec.x * offset,
-            pos.y() + .45f,
+            pos.y() + 0.45f,
             pos.z() + -vec.z * offset,
             -vec.x * speed,
             r.nextFloat() * speed,
@@ -355,9 +355,8 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity implements C
             Recipe<SingleRecipeInput> recipe = pair.getFirst();
             if (recipe instanceof CreateSingleStackRollableRecipe rollableRecipe) {
                 return RecipeApplier.applyRecipeOn(level.getRandom(), rolls, input, rollableRecipe);
-            } else {
-                output = recipe.assemble(input);
             }
+            output = recipe.assemble(input);
         }
         if (recipeRemainder == null) {
             return ItemHelper.multipliedOutput(output, rolls);
@@ -381,7 +380,8 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity implements C
         List<RecipeHolder<?>> startedSearch = RecipeFinder.get(
             cuttingRecipesKey,
             (ServerLevel) level,
-            AllConfigs.server().recipes.allowStonecuttingOnSaw.get() ? SawBlockEntity::matchAllRecipe : SawBlockEntity::matchCuttingRecipe
+            AllConfigs.server().recipes.allowStonecuttingOnSaw.get() ? SawBlockEntity::matchAllRecipe :
+                SawBlockEntity::matchCuttingRecipe
         );
         int index = 0;
 
@@ -476,7 +476,7 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity implements C
             time = recipe.time();
         }
 
-        inventory.remainingTime = time * Math.max(1, (inserted.getCount() / 5));
+        inventory.remainingTime = time * Math.max(1, inserted.getCount() / 5);
         inventory.recipeDuration = inventory.remainingTime;
         inventory.appliedRecipe = false;
         sendData();
@@ -514,7 +514,7 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity implements C
         float distance = (float) Math.sqrt(pos.distSqr(breakingPos));
         Vec3 dropPos = VecHelper.getCenterOf(pos);
         ItemEntity entity = new ItemEntity(level, dropPos.x, dropPos.y, dropPos.z, stack);
-        entity.setDeltaMovement(Vec3.atLowerCornerOf(breakingPos.subtract(worldPosition)).scale(distance / 20f));
+        entity.setDeltaMovement(Vec3.atLowerCornerOf(breakingPos.subtract(worldPosition)).scale(distance / 20.0f));
         level.addFreshEntity(entity);
     }
 
@@ -528,7 +528,7 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity implements C
         if (stateToBreak.is(AllBlockTags.SAPLINGS)) {
             return false;
         }
-        if (TreeCutter.isLog(stateToBreak) || (stateToBreak.is(BlockTags.LEAVES))) {
+        if (TreeCutter.isLog(stateToBreak) || stateToBreak.is(BlockTags.LEAVES)) {
             return true;
         }
         if (TreeCutter.isRoot(stateToBreak)) {

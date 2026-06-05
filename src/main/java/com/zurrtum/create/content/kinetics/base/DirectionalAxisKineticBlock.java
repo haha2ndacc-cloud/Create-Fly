@@ -90,7 +90,7 @@ public abstract class DirectionalAxisKineticBlock extends DirectionalKineticBloc
             }
         }
 
-        return this.defaultBlockState().setValue(FACING, facing).setValue(AXIS_ALONG_FIRST_COORDINATE, alongFirst);
+        return defaultBlockState().setValue(FACING, facing).setValue(AXIS_ALONG_FIRST_COORDINATE, alongFirst);
     }
 
     protected boolean prefersConnectionTo(LevelReader reader, BlockPos pos, Direction facing, boolean shaftAxis) {

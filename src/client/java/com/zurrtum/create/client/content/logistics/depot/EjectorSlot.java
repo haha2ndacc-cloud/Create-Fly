@@ -25,7 +25,11 @@ public class EjectorSlot extends ValueBoxTransform.Sided {
         if (direction != Direction.UP) {
             return super.getLocalOffset(state);
         }
-        return new Vec3(.5, 10.5 / 16f, .5).add(VecHelper.rotate(VecHelper.voxelSpace(0, 0, -5), angle(state), Axis.Y));
+        return new Vec3(0.5, 10.5 / 16.0f, 0.5).add(VecHelper.rotate(
+            VecHelper.voxelSpace(0, 0, -5),
+            angle(state),
+            Axis.Y
+        ));
     }
 
     @Override
@@ -38,7 +42,8 @@ public class EjectorSlot extends ValueBoxTransform.Sided {
     }
 
     protected float angle(BlockState state) {
-        return state.is(AllBlocks.WEIGHTED_EJECTOR) ? AngleHelper.horizontalAngle(state.getValue(EjectorBlock.HORIZONTAL_FACING)) : 0;
+        return state.is(AllBlocks.WEIGHTED_EJECTOR) ?
+            AngleHelper.horizontalAngle(state.getValue(EjectorBlock.HORIZONTAL_FACING)) : 0;
     }
 
     @Override

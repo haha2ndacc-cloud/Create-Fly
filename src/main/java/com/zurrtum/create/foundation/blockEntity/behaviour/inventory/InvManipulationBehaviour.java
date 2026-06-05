@@ -50,12 +50,12 @@ public class InvManipulationBehaviour extends CapManipulationBehaviourBase<Conta
 
     @Nullable
     public IdentifiedInventory getIdentifiedInventory() {
-        Container inventory = this.getInventory();
+        Container inventory = getInventory();
         if (inventory == null) {
             return null;
         }
 
-        InventoryIdentifier identifier = InventoryIdentifier.get(this.getLevel(), this.getTarget().getOpposite());
+        InventoryIdentifier identifier = InventoryIdentifier.get(getLevel(), getTarget().getOpposite());
         return new IdentifiedInventory(identifier, inventory);
     }
 
@@ -135,11 +135,11 @@ public class InvManipulationBehaviour extends CapManipulationBehaviourBase<Conta
         int count = stack.getCount();
         if (insert == count) {
             return ItemStack.EMPTY;
-        } else if (insert == 0) {
-            return stack;
-        } else {
-            return stack.copyWithCount(count - insert);
         }
+        if (insert == 0) {
+            return stack;
+        }
+        return stack.copyWithCount(count - insert);
     }
 
     protected Predicate<ItemStack> getFilterTest(Predicate<ItemStack> customFilter) {

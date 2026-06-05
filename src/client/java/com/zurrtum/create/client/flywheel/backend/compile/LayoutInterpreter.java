@@ -6,11 +6,14 @@ public class LayoutInterpreter {
     public static String typeName(ElementType type) {
         if (type instanceof ScalarElementType scalar) {
             return scalarTypeName(scalar);
-        } else if (type instanceof VectorElementType vector) {
+        }
+        if (type instanceof VectorElementType vector) {
             return vectorTypeName(vector);
-        } else if (type instanceof MatrixElementType matrix) {
+        }
+        if (type instanceof MatrixElementType matrix) {
             return matrixTypeName(matrix);
-        } else if (type instanceof ArrayElementType array) {
+        }
+        if (type instanceof ArrayElementType array) {
             return arrayTypeName(array);
         }
 
@@ -22,9 +25,11 @@ public class LayoutInterpreter {
 
         if (repr instanceof IntegerRepr) {
             return "int";
-        } else if (repr instanceof UnsignedIntegerRepr) {
+        }
+        if (repr instanceof UnsignedIntegerRepr) {
             return "uint";
-        } else if (repr instanceof FloatRepr) {
+        }
+        if (repr instanceof FloatRepr) {
             return "float";
         }
 
@@ -37,9 +42,11 @@ public class LayoutInterpreter {
 
         if (repr instanceof IntegerRepr) {
             return "ivec" + size;
-        } else if (repr instanceof UnsignedIntegerRepr) {
+        }
+        if (repr instanceof UnsignedIntegerRepr) {
             return "uvec" + size;
-        } else if (repr instanceof FloatRepr) {
+        }
+        if (repr instanceof FloatRepr) {
             return "vec" + size;
         }
 

@@ -6,14 +6,16 @@ public sealed interface LoadResult {
     SourceFile unwrap();
 
     record Success(SourceFile source) implements LoadResult {
+        @Override
         public SourceFile unwrap() {
-            return this.source;
+            return source;
         }
     }
 
     record Failure(LoadError error) implements LoadResult {
+        @Override
         public SourceFile unwrap() {
-            throw new ShaderException.Load(this.error.generateMessage().build());
+            throw new ShaderException.Load(error.generateMessage().build());
         }
     }
 }

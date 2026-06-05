@@ -38,8 +38,8 @@ public class PonderTooltipHandler {
     static LerpedFloat holdKeyProgress = LerpedFloat.linear().startWithValue(0);
     static ItemStack hoveredStack = ItemStack.EMPTY;
     static ItemStack trackingStack = ItemStack.EMPTY;
-    static boolean subject = false;
-    static boolean deferTick = false;
+    static boolean subject;
+    static boolean deferTick;
 
     static final List<Consumer<ItemStack>> hoveredStackCallbacks = new ArrayList<>();
 
@@ -74,9 +74,9 @@ public class PonderTooltipHandler {
                 holdKeyProgress.startWithValue(0);
                 return;
             }
-            holdKeyProgress.setValue(Math.min(1, value + Math.max(.25f, value) * .25f));
+            holdKeyProgress.setValue(Math.min(1, value + Math.max(0.25f, value) * 0.25f));
         } else {
-            holdKeyProgress.setValue(Math.max(0, value - .05f));
+            holdKeyProgress.setValue(Math.max(0, value - 0.05f));
         }
 
         hoveredStack = ItemStack.EMPTY;
@@ -105,7 +105,7 @@ public class PonderTooltipHandler {
         // TODO - Checkover
         float renderPartialTicks = AnimationTickHolder.getPartialTicksUI(mc.getDeltaTracker());
         Component component = subject ? Ponder.lang().translate(SUBJECT).component().withStyle(ChatFormatting.GREEN) :
-            makeProgressBar(Math.min(1, holdKeyProgress.getValue(renderPartialTicks) * 8 / 7f));
+            makeProgressBar(Math.min(1, holdKeyProgress.getValue(renderPartialTicks) * 8 / 7.0f));
         if (toolTip.size() < 2) {
             toolTip.add(component);
         } else {
@@ -162,7 +162,7 @@ public class PonderTooltipHandler {
 
         Color startC;
         Color endC;
-        float progress = Math.min(1, holdKeyProgress.getValue(renderPartialTicks) * 8 / 7f);
+        float progress = Math.min(1, holdKeyProgress.getValue(renderPartialTicks) * 8 / 7.0f);
 
         startC = getSmoothColorForProgress(progress);
         endC = getSmoothColorForProgress(progress);
@@ -175,7 +175,7 @@ public class PonderTooltipHandler {
         if (progress < 0.5) {
             return borderA.mixWith(borderB, progress * 2);
         }
-        return borderB.mixWith(borderC, (progress - .5f) * 2);
+        return borderB.mixWith(borderC, (progress - 0.5f) * 2);
     }
 
     private static Component makeProgressBar(float progress) {

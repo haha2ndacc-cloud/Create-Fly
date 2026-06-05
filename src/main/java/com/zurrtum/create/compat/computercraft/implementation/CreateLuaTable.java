@@ -12,7 +12,7 @@ public class CreateLuaTable implements LuaTable<Object, Object> {
     private final Map<Object, Object> map;
 
     public CreateLuaTable() {
-        this.map = new HashMap<>();
+        map = new HashMap<>();
     }
 
     public CreateLuaTable(Map<?, ?> map) {

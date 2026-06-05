@@ -43,11 +43,10 @@ public final class InstanceRecycler<I extends Instance> {
         var lastCount = count++;
         if (lastCount < instances.size()) {
             return instances.get(lastCount);
-        } else {
-            var out = factory.get();
-            instances.add(out);
-            return out;
         }
+        var out = factory.get();
+        instances.add(out);
+        return out;
     }
 
     /**

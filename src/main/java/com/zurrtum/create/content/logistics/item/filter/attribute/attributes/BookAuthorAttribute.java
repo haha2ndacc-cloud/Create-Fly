@@ -64,7 +64,7 @@ public record BookAuthorAttribute(String author) implements ItemAttribute {
         public List<ItemAttribute> getAllAttributes(ItemStack stack, Level level) {
             List<ItemAttribute> list = new ArrayList<>();
 
-            String name = BookAuthorAttribute.extractAuthor(stack);
+            String name = extractAuthor(stack);
             if (!name.isEmpty()) {
                 list.add(new BookAuthorAttribute(name));
             }

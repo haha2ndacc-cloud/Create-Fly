@@ -169,7 +169,7 @@ public class ArmBlockEntity extends KineticBlockEntity implements TransformableB
         if (level.isClientSide()) {
             return;
         }
-        if (chasedPointProgress < .5f) {
+        if (chasedPointProgress < 0.5f) {
             return;
         }
         if (phase == Phase.SEARCH_INPUTS || phase == Phase.DANCING) {
@@ -209,7 +209,7 @@ public class ArmBlockEntity extends KineticBlockEntity implements TransformableB
 
     private boolean tickMovementProgress() {
         boolean targetReachedPreviously = chasedPointProgress >= 1;
-        chasedPointProgress += Math.min(256, Math.abs(getSpeed())) / 1024f;
+        chasedPointProgress += Math.min(256, Math.abs(getSpeed())) / 1024.0f;
         if (chasedPointProgress > 1) {
             chasedPointProgress = 1;
         }
@@ -219,9 +219,8 @@ public class ArmBlockEntity extends KineticBlockEntity implements TransformableB
 
         ArmInteractionPoint targetedInteractionPoint = getTargetedInteractionPoint();
         ArmAngleTarget previousTarget = this.previousTarget;
-        ArmAngleTarget target = targetedInteractionPoint == null ? ArmAngleTarget.NO_TARGET : targetedInteractionPoint.getTargetAngles(worldPosition,
-            isOnCeiling()
-        );
+        ArmAngleTarget target = targetedInteractionPoint == null ? ArmAngleTarget.NO_TARGET :
+            targetedInteractionPoint.getTargetAngles(worldPosition, isOnCeiling());
 
         baseAngle.setValue(AngleHelper.angleLerp(
             chasedPointProgress,
@@ -230,12 +229,12 @@ public class ArmBlockEntity extends KineticBlockEntity implements TransformableB
         ));
 
         // Arm's angles first backup to resting position and then continue
-        if (chasedPointProgress < .5f) {
+        if (chasedPointProgress < 0.5f) {
             target = ArmAngleTarget.NO_TARGET;
         } else {
             previousTarget = ArmAngleTarget.NO_TARGET;
         }
-        float progress = chasedPointProgress == 1 ? 1 : (chasedPointProgress % .5f) * 2;
+        float progress = chasedPointProgress == 1 ? 1 : chasedPointProgress % 0.5f * 2;
 
         lowerArmAngle.setValue(Mth.lerp(progress, previousTarget.lowerArmAngle, target.lowerArmAngle));
         upperArmAngle.setValue(Mth.lerp(progress, previousTarget.upperArmAngle, target.upperArmAngle));
@@ -376,9 +375,8 @@ public class ArmBlockEntity extends KineticBlockEntity implements TransformableB
         ItemStack remainder = simulateInsertion(stack);
         if (ItemStack.isSameItem(stack, remainder)) {
             return stack.getCount() - remainder.getCount();
-        } else {
-            return stack.getCount();
         }
+        return stack.getCount();
     }
 
     private ItemStack simulateInsertion(ItemStack stack) {
@@ -439,8 +437,8 @@ public class ArmBlockEntity extends KineticBlockEntity implements TransformableB
                         worldPosition,
                         SoundEvents.ITEM_PICKUP,
                         SoundSource.BLOCKS,
-                        .125f,
-                        .5f + level.getRandom().nextFloat() * .25f
+                        0.125f,
+                        0.5f + level.getRandom().nextFloat() * 0.25f
                     );
                 }
                 return;
@@ -661,7 +659,7 @@ public class ArmBlockEntity extends KineticBlockEntity implements TransformableB
         if (interactionPointTagBefore == null || interactionPointTagBefore.size() != interactionPointTag.size()) {
             updateInteractionPoints = true;
         }
-        if (previousIndex != chasedPointIndex || (previousPhase != phase)) {
+        if (previousIndex != chasedPointIndex || previousPhase != phase) {
             ArmInteractionPoint previousPoint = null;
             if (previousPhase == Phase.MOVE_TO_INPUT && previousIndex < inputs.size()) {
                 previousPoint = inputs.get(previousIndex);
@@ -669,9 +667,8 @@ public class ArmBlockEntity extends KineticBlockEntity implements TransformableB
             if (previousPhase == Phase.MOVE_TO_OUTPUT && previousIndex < outputs.size()) {
                 previousPoint = outputs.get(previousIndex);
             }
-            previousTarget = previousPoint == null ? ArmAngleTarget.NO_TARGET : previousPoint.getTargetAngles(worldPosition,
-                ceiling
-            );
+            previousTarget = previousPoint == null ? ArmAngleTarget.NO_TARGET :
+                previousPoint.getTargetAngles(worldPosition, ceiling);
             if (previousPoint != null) {
                 previousBaseAngle = previousTarget.baseAngle;
             }
@@ -687,6 +684,7 @@ public class ArmBlockEntity extends KineticBlockEntity implements TransformableB
         return AllConfigs.server().logistics.mechanicalArmRange.get();
     }
 
+    @Override
     public void setLevel(Level level) {
         super.setLevel(level);
         for (ArmInteractionPoint input : inputs) {

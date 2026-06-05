@@ -18,7 +18,7 @@ public enum PlacementOptions implements StringRepresentable {
     public final String translationKey;
 
     PlacementOptions() {
-        this.translationKey = name().toLowerCase(Locale.ROOT);
+        translationKey = name().toLowerCase(Locale.ROOT);
     }
 
     @Override

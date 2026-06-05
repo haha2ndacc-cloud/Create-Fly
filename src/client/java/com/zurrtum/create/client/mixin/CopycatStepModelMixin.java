@@ -71,9 +71,9 @@ public abstract class CopycatStepModelMixin extends CopycatModel implements Fabr
         Direction opposite = facing.getOpposite();
         boolean upperHalf = state.getValueOrElse(CopycatStepBlock.HALF, Half.BOTTOM) == Half.TOP;
         Vec3 normal = Vec3.atLowerCornerOf(facing.getUnitVec3i());
-        Vec3 normalScaled2 = normal.scale(.5);
-        Vec3 normalScaledN3 = normal.scale(-.75);
-        AABB bottomBack = CUBE_AABB.contract(-normal.x * .75, .75, -normal.z * .75);
+        Vec3 normalScaled2 = normal.scale(0.5);
+        Vec3 normalScaledN3 = normal.scale(-0.75);
+        AABB bottomBack = CUBE_AABB.contract(-normal.x * 0.75, 0.75, -normal.z * 0.75);
         AABB bottomFront = bottomBack.move(normalScaledN3);
         AABB topBack = bottomBack.move(VEC_Y_3);
         AABB topFront = bottomFront.move(VEC_Y_3);

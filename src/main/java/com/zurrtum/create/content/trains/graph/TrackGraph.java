@@ -42,7 +42,7 @@ public class TrackGraph {
     List<TrackEdge> deferredIntersectionUpdates;
 
     public int netId;
-    int checksum = 0;
+    int checksum;
 
     public TrackGraph() {
         this(UUID.randomUUID());
@@ -330,7 +330,7 @@ public class TrackGraph {
     }
 
     public void setNetId(int id) {
-        this.netId = id;
+        netId = id;
     }
 
     public int getChecksum() {

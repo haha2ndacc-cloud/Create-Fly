@@ -39,13 +39,13 @@ public class PoweredShaftBlockEntity extends GeneratingKineticBlockEntity {
         enginePos = worldPosition.subtract(sourcePos);
         float prev = engineEfficiency;
         engineEfficiency = efficiency;
-        int prevDirection = this.movementDirection;
+        int prevDirection = movementDirection;
         if (Mth.equal(efficiency, prev) && prevDirection == direction) {
             return;
         }
 
         capacityKey = level.getBlockState(sourcePos).getBlock();
-        this.movementDirection = direction;
+        movementDirection = direction;
         updateGeneratedRotation();
     }
 
@@ -118,7 +118,7 @@ public class PoweredShaftBlockEntity extends GeneratingKineticBlockEntity {
     @Override
     public float calculateAddedStressCapacity() {
         float capacity = getCombinedCapacity() / getSpeedModifier();
-        this.lastCapacityProvided = capacity;
+        lastCapacityProvided = capacity;
         return capacity;
     }
 

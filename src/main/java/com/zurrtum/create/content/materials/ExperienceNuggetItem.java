@@ -34,14 +34,14 @@ public class ExperienceNuggetItem extends Item {
                 pPlayer.blockPosition(),
                 SoundEvents.AMETHYST_BLOCK_BREAK,
                 SoundSource.PLAYERS,
-                .5f,
+                0.5f,
                 1
             );
             return InteractionResult.CONSUME.heldItemTransformedTo(itemInHand);
         }
 
         int amountUsed = pPlayer.isShiftKeyDown() ? 1 : itemInHand.getCount();
-        int total = Mth.ceil(3f * amountUsed);
+        int total = Mth.ceil(3.0f * amountUsed);
         int maxOrbs = amountUsed == 1 ? 1 : 5;
         int valuePer = Math.max(1, 1 + total / maxOrbs);
 
@@ -53,10 +53,10 @@ public class ExperienceNuggetItem extends Item {
 
             Vec3 offset = VecHelper.offsetRandomly(Vec3.ZERO, pLevel.getRandom(), 1).normalize();
             Vec3 look = pPlayer.getLookAngle();
-            Vec3 motion = look.scale(0.2).add(0, 0.2, 0).add(offset.scale(.1));
-            Vec3 cross = look.cross(VecHelper.rotate(new Vec3(-.75f, 0, 0), -pPlayer.getYRot(), Axis.Y));
+            Vec3 motion = look.scale(0.2).add(0, 0.2, 0).add(offset.scale(0.1));
+            Vec3 cross = look.cross(VecHelper.rotate(new Vec3(-0.75f, 0, 0), -pPlayer.getYRot(), Axis.Y));
 
-            Vec3 global = pPlayer.getEyePosition().add(look.scale(.5f)).add(cross);
+            Vec3 global = pPlayer.getEyePosition().add(look.scale(0.5f)).add(cross);
             ExperienceOrb xp = new ExperienceOrb(pLevel, global.x, global.y, global.z, value);
             xp.setDeltaMovement(motion);
             pLevel.addFreshEntity(xp);

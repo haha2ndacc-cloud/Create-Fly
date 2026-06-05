@@ -226,9 +226,9 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
                     }
                 }
             }
-            boolean settled = flag.getValue() > .15f;
+            boolean settled = flag.getValue() > 0.15f;
             flag.tickChaser();
-            if (currentTarget == 0 && settled != flag.getValue() > .15f) {
+            if (currentTarget == 0 && settled != flag.getValue() > 0.15f) {
                 AllSoundEvents.CONTRAPTION_ASSEMBLE.playAt(level, worldPosition, 0.75f, 1.5f, true);
             }
             return;
@@ -263,15 +263,15 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
             applyAutoSchedule();
         }
 
-        if (newlyArrived || this.trainCanDisassemble != canDisassemble || !Objects.equals(
+        if (newlyArrived || trainCanDisassemble != canDisassemble || !Objects.equals(
             imminentID,
             this.imminentTrain
         ) || this.trainHasSchedule != trainHasSchedule || this.trainHasAutoSchedule != trainHasAutoSchedule) {
 
             this.imminentTrain = imminentID;
             this.trainPresent = trainPresent;
-            this.trainCanDisassemble = canDisassemble;
-            this.trainBackwards = imminentTrain != null && imminentTrain.currentlyBackwards;
+            trainCanDisassemble = canDisassemble;
+            trainBackwards = imminentTrain != null && imminentTrain.currentlyBackwards;
             this.trainHasSchedule = trainHasSchedule;
             this.trainHasAutoSchedule = trainHasAutoSchedule;
 
@@ -287,7 +287,7 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
         BlockPos pos
     ) {
         refreshAssemblyInfo();
-        BoundingBox bb = assemblyAreas.get(level).get(this.worldPosition);
+        BoundingBox bb = assemblyAreas.get(level).get(worldPosition);
         if (bb == null || !bb.isInside(pos)) {
             return false;
         }
@@ -334,11 +334,8 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
             return false;
         }
 
-        boolean upsideDown = (player.getXRot(1.0F) < 0 && (track.getBogeyAnchor(
-            level,
-            pos,
-            state
-        )).getBlock() instanceof AbstractBogeyBlock<?> bogey && bogey.canBeUpsideDown());
+        boolean upsideDown = player.getXRot(1.0F) < 0 && track.getBogeyAnchor(level, pos, state)
+            .getBlock() instanceof AbstractBogeyBlock<?> bogey && bogey.canBeUpsideDown();
 
         BlockPos targetPos = upsideDown ? pos.offset(down) : pos.offset(up);
         if (level.getBlockState(targetPos).getDestroySpeed(level, targetPos) == -1) {
@@ -404,10 +401,8 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
                 }
 
                 DiscoveredPath preferredPath = train.runtime.startCurrentInstruction(level);
-                train.navigation.startNavigation(preferredPath != null ? preferredPath : train.navigation.findPathTo(
-                    station,
-                    Double.MAX_VALUE
-                ));
+                train.navigation.startNavigation(
+                    preferredPath != null ? preferredPath : train.navigation.findPathTo(station, Double.MAX_VALUE));
             }
         }
 
@@ -726,8 +721,8 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
             }
 
             double bogeySize = bogeyTypes[i].getWheelPointSpacing();
-            pointOffsets.add(loc + .5 - bogeySize / 2);
-            pointOffsets.add(loc + .5 + bogeySize / 2);
+            pointOffsets.add(loc + 0.5 - bogeySize / 2);
+            pointOffsets.add(loc + 0.5 + bogeySize / 2);
             iPrevious = loc;
         }
 
@@ -737,13 +732,14 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
         TrackNode secondNode = null;
 
         for (int j = 0; j < assemblyLength * 2 + 40; j++) {
-            double i = j / 2d;
+            double i = j / 2.0d;
             if (points.size() == pointOffsets.size()) {
                 break;
             }
 
             TrackNodeLocation currentLocation = location;
-            location = new TrackNodeLocation(location.getLocation().add(directionVec.scale(.5))).in(location.dimension);
+            location = new TrackNodeLocation(location.getLocation()
+                .add(directionVec.scale(0.5))).in(location.dimension);
 
             if (graph == null) {
                 graph = Create.RAILWAYS.getGraph(currentLocation);
@@ -773,7 +769,7 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
                             continue;
                         }
                         Vec3 edgeDirection = edge.getDirection(true);
-                        if (Mth.equal(edgeDirection.normalize().dot(directionVec), -1d)) {
+                        if (Mth.equal(edgeDirection.normalize().dot(directionVec), -1.0d)) {
                             secondNode = otherNode;
                         }
                     }
@@ -829,10 +825,8 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
                 int offset = bogeyLocations[bogeyIndex] + 1;
                 boolean success = contraption.assemble(
                     level,
-                    upsideDownBogeys[bogeyIndex] ? upsideDownBogeyPosOffset.relative(
-                        assemblyDirection,
-                        offset
-                    ) : bogeyPosOffset.relative(assemblyDirection, offset)
+                    upsideDownBogeys[bogeyIndex] ? upsideDownBogeyPosOffset.relative(assemblyDirection, offset) :
+                        bogeyPosOffset.relative(assemblyDirection, offset)
                 );
                 atLeastOneForwardControls |= contraption.hasForwardControls();
                 contraption.setSoundQueueOffset(offset);
@@ -867,7 +861,8 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
             int bogeySpacing = 0;
 
             if (secondBogeyPos != null) {
-                if (bogeyIndex == bogeyCount - 1 || !secondBogeyPos.equals((upsideDownBogeys[bogeyIndex + 1] ? upsideDownBogeyPosOffset : bogeyPosOffset).relative(
+                if (bogeyIndex == bogeyCount - 1 || !secondBogeyPos.equals((upsideDownBogeys[bogeyIndex + 1] ?
+                    upsideDownBogeyPosOffset : bogeyPosOffset).relative(
                     assemblyDirection,
                     bogeyLocations[bogeyIndex + 1] + 1
                 ))) {
@@ -1019,7 +1014,7 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
 
         Vec3 v = Vec3.atBottomCenterOf(worldPosition.above());
         server.sendParticles(ParticleTypes.HAPPY_VILLAGER, v.x, v.y, v.z, 8, 0.35, 0.05, 0.35, 1);
-        server.sendParticles(ParticleTypes.END_ROD, v.x, v.y + .25f, v.z, 10, 0.05, 1, 0.05, 0.005f);
+        server.sendParticles(ParticleTypes.END_ROD, v.x, v.y + 0.25f, v.z, 10, 0.05, 1, 0.05, 0.005f);
     }
 
     public boolean resolveFlagAngle() {

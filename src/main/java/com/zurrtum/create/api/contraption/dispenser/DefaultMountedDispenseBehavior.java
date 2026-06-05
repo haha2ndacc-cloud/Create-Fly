@@ -29,16 +29,15 @@ public class DefaultMountedDispenseBehavior implements MountedDispenseBehavior {
         Direction closestToFacing = MountedDispenseBehavior.getClosestFacingDirection(normal);
         Container inventory = HopperBlockEntity.getContainerAt(context.world, pos.relative(closestToFacing));
         if (inventory == null) {
-            ItemStack remainder = this.execute(stack, context, pos, normal);
-            this.playSound(context.world, pos);
-            this.playAnimation(context.world, pos, closestToFacing);
+            ItemStack remainder = execute(stack, context, pos, normal);
+            playSound(context.world, pos);
+            playAnimation(context.world, pos, closestToFacing);
             return remainder;
-        } else {
-            ItemStack toInsert = stack.copyWithCount(1);
-            ItemStack remainder = HopperBlockEntity.addItem(null, inventory, toInsert, closestToFacing.getOpposite());
-            if (remainder.isEmpty()) {
-                stack.shrink(1);
-            }
+        }
+        ItemStack toInsert = stack.copyWithCount(1);
+        ItemStack remainder = HopperBlockEntity.addItem(null, inventory, toInsert, closestToFacing.getOpposite());
+        if (remainder.isEmpty()) {
+            stack.shrink(1);
         }
         return stack;
     }
@@ -59,7 +58,7 @@ public class DefaultMountedDispenseBehavior implements MountedDispenseBehavior {
     }
 
     protected void playAnimation(LevelAccessor level, BlockPos pos, Vec3 facing) {
-        this.playAnimation(level, pos, MountedDispenseBehavior.getClosestFacingDirection(facing));
+        playAnimation(level, pos, MountedDispenseBehavior.getClosestFacingDirection(facing));
     }
 
     protected void playAnimation(LevelAccessor level, BlockPos pos, Direction direction) {
@@ -74,9 +73,9 @@ public class DefaultMountedDispenseBehavior implements MountedDispenseBehavior {
         BlockPos pos,
         MovementContext context
     ) {
-        double x = pos.getX() + facing.x + .5;
-        double y = pos.getY() + facing.y + .5;
-        double z = pos.getZ() + facing.z + .5;
+        double x = pos.getX() + facing.x + 0.5;
+        double y = pos.getY() + facing.y + 0.5;
+        double z = pos.getZ() + facing.z + 0.5;
         if (MountedDispenseBehavior.getClosestFacingDirection(facing).getAxis() == Direction.Axis.Y) {
             y = y - 0.125;
         } else {

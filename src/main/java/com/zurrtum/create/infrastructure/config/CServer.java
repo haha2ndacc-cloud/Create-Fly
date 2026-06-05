@@ -8,6 +8,7 @@ import org.jspecify.annotations.Nullable;
 public class CServer extends ConfigBase {
     public Builder builder;
 
+    @Override
     public void registerAll(final Builder builder) {
         super.registerAll(builder);
         this.builder = builder;

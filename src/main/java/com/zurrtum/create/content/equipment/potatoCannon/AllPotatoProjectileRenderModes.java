@@ -74,6 +74,6 @@ public class AllPotatoProjectileRenderModes {
     }
 
     private static int entityRandom(Entity entity, int maxValue) {
-        return (System.identityHashCode(entity) * 31) % maxValue;
+        return System.identityHashCode(entity) * 31 % maxValue;
     }
 }

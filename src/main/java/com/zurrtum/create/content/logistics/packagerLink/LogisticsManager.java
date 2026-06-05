@@ -29,7 +29,7 @@ public class LogisticsManager {
 
     public static InventorySummary getSummaryOfNetwork(UUID freqId, boolean accurate) {
         try {
-            Cache<UUID, InventorySummary> cacheToUse = accurate ? LogisticsManager.ACCURATE_SUMMARIES : LogisticsManager.SUMMARIES;
+            Cache<UUID, InventorySummary> cacheToUse = accurate ? ACCURATE_SUMMARIES : SUMMARIES;
             return cacheToUse.get(freqId, () -> createSummaryOfNetwork(freqId));
         } catch (ExecutionException e) {
             e.printStackTrace();

@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AvatarRenderer.class)
 public class AvatarRendererMixin<AvatarlikeEntity extends Avatar & ClientAvatarEntity> {
-    @Inject(method = "getArmPose(Lnet/minecraft/world/entity/Avatar;Lnet/minecraft/world/entity/HumanoidArm;)Lnet/minecraft/client/model/HumanoidModel$ArmPose;", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "getArmPose(Lnet/minecraft/world/entity/Avatar;Lnet/minecraft/world/entity/HumanoidArm;)Lnet/minecraft/client/model/HumanoidModel$ArmPose;", at = @At("HEAD"), cancellable = true)
     private static void getArmPose(Avatar avatar, HumanoidArm arm, CallbackInfoReturnable<ArmPose> cir) {
         InteractionHand hand = avatar.getMainArm() == arm ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
         Item item = avatar.getItemInHand(hand).getItem();

@@ -141,7 +141,7 @@ public abstract class ZapperItem extends Item implements SwingControlItem {
         }
 
         // Find exact position of gun barrel for VFX
-        Vec3 barrelPos = ShootableGadgetItemMethods.getGunBarrelVec(player, mainHand, new Vec3(.35f, -0.1f, 1));
+        Vec3 barrelPos = ShootableGadgetItemMethods.getGunBarrelVec(player, mainHand, new Vec3(0.35f, -0.1f, 1));
 
         // Client side
         if (world.isClientSide()) {

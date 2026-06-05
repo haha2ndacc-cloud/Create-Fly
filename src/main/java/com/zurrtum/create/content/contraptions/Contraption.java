@@ -268,7 +268,7 @@ public abstract class Contraption {
             subContraption.removeBlocksFromWorld(world, BlockPos.ZERO);
             OrientedContraptionEntity movedContraption = OrientedContraptionEntity.create(world, subContraption, face);
             BlockPos anchor = blockFace.getConnectedPos();
-            movedContraption.setPos(anchor.getX() + .5f, anchor.getY(), anchor.getZ() + .5f);
+            movedContraption.setPos(anchor.getX() + 0.5f, anchor.getY(), anchor.getZ() + 0.5f);
             world.addFreshEntity(movedContraption);
             stabilizedSubContraptions.put(movedContraption.getUUID(), new BlockFace(toLocalPos(pos), face));
         }
@@ -308,12 +308,12 @@ public abstract class Contraption {
         Block stateBlock = state.getBlock();
         if (stateBlock == Blocks.SLIME_BLOCK) {
             return other.getBlock() != Blocks.HONEY_BLOCK;
-        } else if (stateBlock == Blocks.HONEY_BLOCK) {
-            return other.getBlock() != Blocks.SLIME_BLOCK;
-        } else {
-            Block otherBlock = other.getBlock();
-            return otherBlock == Blocks.SLIME_BLOCK || otherBlock == Blocks.HONEY_BLOCK;
         }
+        if (stateBlock == Blocks.HONEY_BLOCK) {
+            return other.getBlock() != Blocks.SLIME_BLOCK;
+        }
+        Block otherBlock = other.getBlock();
+        return otherBlock == Blocks.SLIME_BLOCK || otherBlock == Blocks.HONEY_BLOCK;
     }
 
     /**
@@ -482,9 +482,9 @@ public abstract class Contraption {
                 }
             }
 
-            if (!wasVisited && (canStick || blockAttachedTowardsFace || faceHasGlue || (offset == forcedDirection && !BlockMovementChecks.isNotSupportive(state,
+            if (!wasVisited && (canStick || blockAttachedTowardsFace || faceHasGlue || offset == forcedDirection && !BlockMovementChecks.isNotSupportive(state,
                 forcedDirection
-            )))) {
+            ))) {
                 frontier.add(offsetPos);
             }
         }
@@ -492,9 +492,8 @@ public abstract class Contraption {
         addBlock(world, pos, capture(world, pos));
         if (blocks.size() <= AllConfigs.server().kinetics.maxBlocksMoved.get()) {
             return true;
-        } else {
-            throw AssemblyException.structureTooLarge();
         }
+        throw AssemblyException.structureTooLarge();
     }
 
     protected void movePistonHead(
@@ -965,7 +964,7 @@ public abstract class Contraption {
         ValueOutput.ValueOutputList blockList = view.childrenList("BlockList");
 
         boolean isClient = spawnPacket && entity.level().isClientSide();
-        for (StructureBlockInfo block : this.blocks.values()) {
+        for (StructureBlockInfo block : blocks.values()) {
             int id = palette.idFor(
                 block.state(), (i, s) -> {
                     throw new IllegalStateException("Palette Map index exceeded maximum");
@@ -1042,7 +1041,7 @@ public abstract class Contraption {
 
             // Mark the pos if it has the legacy marker.
             // This will be used when creating BlockEntities for the ClientContraption.
-            this.isLegacy.put(info.pos(), legacy);
+            isLegacy.put(info.pos(), legacy);
         });
         AllClientHandle.INSTANCE.resetClientContraption(this);
     }
@@ -1087,9 +1086,9 @@ public abstract class Contraption {
                 for (int i = 0; i < superglue.size(); i++) {
                     AABB aabb = superglue.get(i);
                     if (aabb == null || !aabb.contains(
-                        block.pos().getX() + .5,
-                        block.pos().getY() + .5,
-                        block.pos().getZ() + .5
+                        block.pos().getX() + 0.5,
+                        block.pos().getY() + 0.5,
+                        block.pos().getZ() + 0.5
                     )) {
                         continue;
                     }
@@ -1203,8 +1202,8 @@ public abstract class Contraption {
                 }
 
                 BlockState blockState = world.getBlockState(targetPos);
-                if (blockState.getDestroySpeed(world, targetPos) == -1 || (state.getCollisionShape(world, targetPos)
-                    .isEmpty() && !blockState.getCollisionShape(world, targetPos).isEmpty())) {
+                if (blockState.getDestroySpeed(world, targetPos) == -1 || state.getCollisionShape(world, targetPos)
+                    .isEmpty() && !blockState.getCollisionShape(world, targetPos).isEmpty()) {
                     if (targetPos.getY() == world.getMinY()) {
                         targetPos = targetPos.above();
                     }
@@ -1475,7 +1474,7 @@ public abstract class Contraption {
     public void expandBoundsAroundAxis(Axis axis) {
         Set<BlockPos> blocks = getBlocks().keySet();
 
-        int radius = (int) (Math.ceil(getRadius(blocks, axis)));
+        int radius = (int) Math.ceil(getRadius(blocks, axis));
 
         int maxX = radius + 2;
         int maxY = radius + 2;
@@ -1614,7 +1613,7 @@ public abstract class Contraption {
     }
 
     public MountedStorageManager getStorage() {
-        return this.storage;
+        return storage;
     }
 
     public boolean isHiddenInPortal(BlockPos localPos) {

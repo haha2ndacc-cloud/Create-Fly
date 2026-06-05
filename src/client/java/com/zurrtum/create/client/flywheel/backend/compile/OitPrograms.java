@@ -49,11 +49,11 @@ public class OitPrograms {
     }
 
     public GlProgram getOitCompositeProgram() {
-        return harness.get(OitPrograms.OIT_COMPOSITE);
+        return harness.get(OIT_COMPOSITE);
     }
 
     public GlProgram getOitDepthProgram() {
-        return harness.get(OitPrograms.OIT_DEPTH);
+        return harness.get(OIT_DEPTH);
     }
 
     public void delete() {

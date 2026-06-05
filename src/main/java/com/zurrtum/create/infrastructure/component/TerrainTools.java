@@ -27,7 +27,7 @@ public enum TerrainTools implements StringRepresentable {
     public final String translationKey;
 
     TerrainTools() {
-        this.translationKey = name().toLowerCase(Locale.ROOT);
+        translationKey = name().toLowerCase(Locale.ROOT);
     }
 
     @Override

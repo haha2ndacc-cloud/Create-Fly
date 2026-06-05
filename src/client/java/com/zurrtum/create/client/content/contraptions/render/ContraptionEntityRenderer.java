@@ -149,7 +149,8 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity, S ex
     public void extractRenderState(C entity, S state, float tickProgress) {
         state.entityType = entity.getType();
         Contraption contraption = entity.getContraption();
-        ClientContraption clientContraption = contraption != null ? getOrCreateClientContraptionLazy(contraption) : null;
+        ClientContraption clientContraption =
+            contraption != null ? getOrCreateClientContraptionLazy(contraption) : null;
         if (clientContraption == null) {
             return;
         }

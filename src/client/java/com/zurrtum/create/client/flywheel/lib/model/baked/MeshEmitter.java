@@ -5,7 +5,6 @@ import com.mojang.blaze3d.PrimitiveTopology;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.zurrtum.create.client.flywheel.api.material.Material;
 import com.zurrtum.create.client.flywheel.api.model.Mesh;
 import com.zurrtum.create.client.flywheel.api.model.Model;
@@ -22,9 +21,9 @@ class MeshEmitter {
     private BufferBuilder @UnknownNullability [] bufferBuilders = new BufferBuilder[INITIAL_CAPACITY];
 
     // The number of valid elements in the above parallel arrays.
-    private int numBufferBuildersPopulated = 0;
+    private int numBufferBuildersPopulated;
 
-    private int currentIndex = 0;
+    private int currentIndex;
 
     MeshEmitter(ByteBufferBuilderStack byteBufferBuilderStack) {
         this.byteBufferBuilderStack = byteBufferBuilderStack;

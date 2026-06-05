@@ -49,7 +49,7 @@ public class MillingView extends CreateView {
             slotDefinition.addItemSlot(1, 132, 23);
         } else {
             for (int i = 0; i < size; i++) {
-                slotDefinition.addItemSlot(i + 1, i % 2 == 0 ? 126 : 145, 23 + (i / 2) * -19);
+                slotDefinition.addItemSlot(i + 1, i % 2 == 0 ? 126 : 145, 23 + i / 2 * -19);
             }
         }
         return size + 1;

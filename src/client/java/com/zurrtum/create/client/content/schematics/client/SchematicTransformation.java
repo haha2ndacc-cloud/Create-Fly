@@ -42,8 +42,8 @@ public class SchematicTransformation {
         int frontBack = settings.getMirror() == Mirror.FRONT_BACK ? -1 : 1;
         getScaleFB().chase(0, 0.45f, Chaser.EXP).startWithValue(frontBack);
         getScaleLR().chase(0, 0.45f, Chaser.EXP).startWithValue(leftRight);
-        xOrigin = bounds.getXsize() / 2f;
-        zOrigin = bounds.getZsize() / 2f;
+        xOrigin = bounds.getXsize() / 2.0f;
+        zOrigin = bounds.getZsize() / 2.0f;
 
         int r = -(settings.getRotation().ordinal() * 90);
         rotation.chase(0, 0.45f, Chaser.EXP).startWithValue(r);
@@ -63,7 +63,7 @@ public class SchematicTransformation {
         // Rotation & Mirror
         float fb = getScaleFB().getValue(pt);
         float lr = getScaleLR().getValue(pt);
-        float rot = rotation.getValue(pt) + ((fb < 0 && lr < 0) ? 180 : 0);
+        float rot = rotation.getValue(pt) + (fb < 0 && lr < 0 ? 180 : 0);
         ms.translate(xOrigin, 0, zOrigin);
         TransformStack.of(ms).translate(rotationOffset).rotateYDegrees(rot).translateBack(rotationOffset);
         ms.scale(abs(fb), 1, abs(lr));
@@ -79,8 +79,8 @@ public class SchematicTransformation {
         Vec3 rotationOffset = Vec3.ZERO;
         if ((int) (zOrigin * 2) % 2 != (int) (xOrigin * 2) % 2) {
             boolean xGreaterZ = xOrigin > zOrigin;
-            float xIn = (xGreaterZ ? 0 : .5f);
-            float zIn = (!xGreaterZ ? 0 : .5f);
+            float xIn = xGreaterZ ? 0 : 0.5f;
+            float zIn = !xGreaterZ ? 0 : 0.5f;
             if (!ignoreMirrors) {
                 xIn *= getMirrorModifier(Axis.X);
                 zIn *= getMirrorModifier(Axis.Z);
@@ -146,7 +146,7 @@ public class SchematicTransformation {
     }
 
     public BlockPos getAnchor() {
-        Vec3 vec = Vec3.ZERO.add(.5, 0, .5);
+        Vec3 vec = Vec3.ZERO.add(0.5, 0, 0.5);
         Vec3 rotationOffset = getRotationOffset(false);
         vec = vec.subtract(xOrigin, 0, zOrigin);
         vec = vec.subtract(rotationOffset.x, 0, rotationOffset.z);
@@ -158,7 +158,7 @@ public class SchematicTransformation {
     }
 
     public BlockPos fromAnchor(BlockPos pos) {
-        Vec3 vec = Vec3.ZERO.add(.5, 0, .5);
+        Vec3 vec = Vec3.ZERO.add(0.5, 0, 0.5);
         Vec3 rotationOffset = getRotationOffset(false);
         vec = vec.subtract(xOrigin, 0, zOrigin);
         vec = vec.subtract(rotationOffset.x, 0, rotationOffset.z);

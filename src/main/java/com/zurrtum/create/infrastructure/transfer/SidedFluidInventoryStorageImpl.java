@@ -15,7 +15,7 @@ public class SidedFluidInventoryStorageImpl extends CombinedStorage<FluidVariant
 
     SidedFluidInventoryStorageImpl(FluidInventoryStorageImpl storage, Direction direction) {
         super(Collections.unmodifiableList(createWrapperList(storage, direction)));
-        this.backingStorage = storage;
+        backingStorage = storage;
     }
 
     @Override

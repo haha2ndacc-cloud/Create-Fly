@@ -18,7 +18,7 @@ public class TextInstruction extends FadeInOutInstruction {
 
     public TextInstruction(TextWindowElement element, int duration, Selection selection) {
         this(element, duration);
-        outline = new OutlinerElement(o -> selection.makeOutline(o).lineWidth(1 / 16f));
+        outline = new OutlinerElement(o -> selection.makeOutline(o).lineWidth(1 / 16.0f));
     }
 
     @Override

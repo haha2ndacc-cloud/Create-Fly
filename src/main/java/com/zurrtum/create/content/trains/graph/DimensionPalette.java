@@ -52,11 +52,11 @@ public class DimensionPalette implements Codec<ResourceKey<Level>> {
 
     @Override
     public <T> DataResult<Pair<ResourceKey<Level>, T>> decode(DynamicOps<T> ops, T input) {
-        return Codec.INT.decode(ops, input).map(p -> p.mapFirst(this::decode));
+        return INT.decode(ops, input).map(p -> p.mapFirst(this::decode));
     }
 
     @Override
     public <T> DataResult<T> encode(ResourceKey<Level> input, DynamicOps<T> ops, T prefix) {
-        return Codec.INT.encode(encode(input), ops, prefix);
+        return INT.encode(encode(input), ops, prefix);
     }
 }

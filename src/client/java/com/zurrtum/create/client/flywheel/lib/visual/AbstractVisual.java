@@ -15,10 +15,10 @@ public abstract class AbstractVisual implements Visual {
     protected final VisualizationContext visualizationContext;
     protected final Level level;
 
-    protected boolean deleted = false;
+    protected boolean deleted;
 
     public AbstractVisual(VisualizationContext ctx, Level level, float partialTick) {
-        this.visualizationContext = ctx;
+        visualizationContext = ctx;
         this.level = level;
     }
 

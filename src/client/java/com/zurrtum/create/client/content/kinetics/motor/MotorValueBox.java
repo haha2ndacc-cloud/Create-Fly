@@ -20,7 +20,7 @@ public class MotorValueBox extends ValueBoxTransform.Sided {
     @Override
     public Vec3 getLocalOffset(BlockState state) {
         Direction facing = state.getValue(CreativeMotorBlock.FACING);
-        return super.getLocalOffset(state).add(Vec3.atLowerCornerOf(facing.getUnitVec3i()).scale(-1 / 16f));
+        return super.getLocalOffset(state).add(Vec3.atLowerCornerOf(facing.getUnitVec3i()).scale(-1 / 16.0f));
     }
 
     @Override

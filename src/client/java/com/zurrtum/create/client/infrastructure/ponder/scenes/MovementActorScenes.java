@@ -235,26 +235,26 @@ public class MovementActorScenes {
         scene.idle(5);
         BlockPos current = util.grid().at(2, 1, 3);
         scene.world().setBlock(current, harvested, true);
-        scene.world().createItemEntity(util.vector().centerOf(current), util.vector().of(0, 0.3, -.2), wheatItem);
+        scene.world().createItemEntity(util.vector().centerOf(current), util.vector().of(0, 0.3, -0.2), wheatItem);
         scene.idle(5);
         current = util.grid().at(1, 1, 2);
         scene.world().setBlock(current, harvested, true);
-        scene.world().createItemEntity(util.vector().centerOf(current), util.vector().of(0, 0.3, -.2), wheatItem);
+        scene.world().createItemEntity(util.vector().centerOf(current), util.vector().of(0, 0.3, -0.2), wheatItem);
         scene.idle(5);
         current = util.grid().at(3, 1, 2);
         scene.world().setBlock(current, harvested, true);
-        scene.world().createItemEntity(util.vector().centerOf(current), util.vector().of(.1, 0.3, -.1), wheatItem);
+        scene.world().createItemEntity(util.vector().centerOf(current), util.vector().of(0.1, 0.3, -0.1), wheatItem);
         current = util.grid().at(2, 1, 1);
         scene.world().setBlock(current, harvested, true);
-        scene.world().createItemEntity(util.vector().centerOf(current), util.vector().of(.1, 0.3, -.1), wheatItem);
+        scene.world().createItemEntity(util.vector().centerOf(current), util.vector().of(0.1, 0.3, -0.1), wheatItem);
         scene.idle(5);
         current = util.grid().at(3, 1, 1);
         scene.world().setBlock(current, harvested, true);
-        scene.world().createItemEntity(util.vector().centerOf(current), util.vector().of(.1, 0.3, -.1), wheatItem);
+        scene.world().createItemEntity(util.vector().centerOf(current), util.vector().of(0.1, 0.3, -0.1), wheatItem);
         scene.idle(5);
         current = util.grid().at(4, 1, 2);
         scene.world().setBlock(current, harvested, true);
-        scene.world().createItemEntity(util.vector().centerOf(current), util.vector().of(.2, 0.3, 0), wheatItem);
+        scene.world().createItemEntity(util.vector().centerOf(current), util.vector().of(0.2, 0.3, 0), wheatItem);
 
         scene.overlay().showText(80).pointAt(util.vector().topOf(1, 0, 2))
             .text("They will harvest and reset any mature crops on their way").placeNearTarget();
@@ -356,7 +356,7 @@ public class MovementActorScenes {
         scene.world().moveSection(contraption, util.vector().of(-2, 0, 0), 60);
         scene.idle(15);
 
-        Vec3 m = util.vector().of(-0.1, .2, 0);
+        Vec3 m = util.vector().of(-0.1, 0.2, 0);
         scene.world().destroyBlock(util.grid().at(2, 1, 3));
         scene.world().createItemEntity(util.vector().centerOf(2, 1, 3), m, new ItemStack(Items.LEVER));
         scene.world().destroyBlock(util.grid().at(2, 1, 2));
@@ -532,7 +532,7 @@ public class MovementActorScenes {
             scene.world().incrementBlockBreakingProgress(cobblePos);
         }
 
-        Vec3 m = util.vector().of(.1, 0, -.1);
+        Vec3 m = util.vector().of(0.1, 0, -0.1);
         ItemStack cobbleItem = new ItemStack(Items.COBBLESTONE);
         ItemStack wheatItem = new ItemStack(Items.WHEAT);
         ElementLink<EntityElement> item1 = scene.world()
@@ -559,7 +559,7 @@ public class MovementActorScenes {
         scene.idle(15);
         contraptionLink = scene.world().showIndependentSection(contraption, Direction.DOWN);
         scene.world().configureCenterOfRotation(contraptionLink, util.vector().centerOf(bearingPos));
-        scene.world().moveSection(contraptionLink, util.vector().of(0, 1 / 512f, 0), 0);
+        scene.world().moveSection(contraptionLink, util.vector().of(0, 1 / 512.0f, 0), 0);
 
         scene.world().restoreBlocks(util.select().position(wheatPos));
         scene.world().restoreBlocks(util.select().position(cobblePos));
@@ -569,7 +569,7 @@ public class MovementActorScenes {
         scene.idle(15);
         scene.effects().superGlue(controlsPos1, Direction.DOWN, true);
 
-        scene.overlay().showText(60).placeNearTarget().pointAt(util.vector().topOf(controlsPos1).add(0, -4 / 16f, 0))
+        scene.overlay().showText(60).placeNearTarget().pointAt(util.vector().topOf(controlsPos1).add(0, -4 / 16.0f, 0))
             .attachKeyFrame().text("Contraption Controls can be used to toggle them on the fly");
         scene.idle(55);
 
@@ -610,14 +610,14 @@ public class MovementActorScenes {
         contraptionLink = scene.world().showIndependentSection(contraption, Direction.DOWN);
         scene.world().showSectionAndMerge(util.select().position(controlsPos1), Direction.DOWN, contraptionLink);
         scene.world().configureCenterOfRotation(contraptionLink, util.vector().centerOf(bearingPos));
-        scene.world().moveSection(contraptionLink, util.vector().of(0, 1 / 512f, 0), 0);
+        scene.world().moveSection(contraptionLink, util.vector().of(0, 1 / 512.0f, 0), 0);
 
         scene.idle(15);
         scene.world().showSectionAndMerge(util.select().position(controlsPos2), Direction.DOWN, contraptionLink);
         scene.idle(15);
         scene.effects().superGlue(controlsPos2, Direction.DOWN, true);
 
-        scene.overlay().showText(60).placeNearTarget().pointAt(util.vector().topOf(controlsPos2).add(0, -4 / 16f, 0))
+        scene.overlay().showText(60).placeNearTarget().pointAt(util.vector().topOf(controlsPos2).add(0, -4 / 16.0f, 0))
             .attachKeyFrame().text("They can be attached anywhere on the contraption");
         scene.idle(75);
 
@@ -671,7 +671,7 @@ public class MovementActorScenes {
         scene.world().showSectionAndMerge(util.select().position(controlsPos1), Direction.DOWN, contraptionLink);
         scene.world().showSectionAndMerge(util.select().position(controlsPos2), Direction.DOWN, contraptionLink);
         scene.world().configureCenterOfRotation(contraptionLink, util.vector().centerOf(bearingPos));
-        scene.world().moveSection(contraptionLink, util.vector().of(0, 1 / 512f, 0), 0);
+        scene.world().moveSection(contraptionLink, util.vector().of(0, 1 / 512.0f, 0), 0);
 
         scene.world().restoreBlocks(util.select().position(wheatPos));
         scene.idle(30);

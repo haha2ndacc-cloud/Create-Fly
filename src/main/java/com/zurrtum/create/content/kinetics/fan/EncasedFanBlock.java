@@ -76,8 +76,8 @@ public class EncasedFanBlock extends DirectionalKineticBlock implements IBE<Enca
         }
         return defaultBlockState().setValue(
             FACING,
-            context.getPlayer() != null && context.getPlayer()
-                .isShiftKeyDown() ? preferredFacing : preferredFacing.getOpposite()
+            context.getPlayer() != null && context.getPlayer().isShiftKeyDown() ? preferredFacing :
+                preferredFacing.getOpposite()
         );
     }
 

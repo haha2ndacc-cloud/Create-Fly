@@ -65,8 +65,8 @@ public class FanWashingCategory extends CreateCategory<FanWashingDisplay> {
         } else {
             input = new Point(bounds.x + 26 + xOffsetAmount * 5, bounds.y + 53);
             for (int i = 0, left = bounds.x + 146 + xOffsetAmount * 9, top = bounds.y + 53; i < outputSize; i++) {
-                int xOffset = (i % 3) * 19;
-                int yOffset = (i / 3) * -19;
+                int xOffset = i % 3 * 19;
+                int yOffset = i / 3 * -19;
                 addOutputData(
                     results.get(i),
                     left + xOffset,

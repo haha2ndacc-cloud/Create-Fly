@@ -28,62 +28,61 @@ public class ErrorBuilder {
     }
 
     public ErrorBuilder error(String msg) {
-        return this.header(ErrorLevel.ERROR, msg);
+        return header(ErrorLevel.ERROR, msg);
     }
 
     public ErrorBuilder warn(String msg) {
-        return this.header(ErrorLevel.WARN, msg);
+        return header(ErrorLevel.WARN, msg);
     }
 
     public ErrorBuilder hint(String msg) {
-        return this.header(ErrorLevel.HINT, msg);
+        return header(ErrorLevel.HINT, msg);
     }
 
     public ErrorBuilder note(String msg) {
-        return this.header(ErrorLevel.NOTE, msg);
+        return header(ErrorLevel.NOTE, msg);
     }
 
     public ErrorBuilder header(ErrorLevel level, String msg) {
-        this.lines.add(new HeaderLine(level.toString(), msg));
+        lines.add(new HeaderLine(level.toString(), msg));
         return this;
     }
 
     public ErrorBuilder extra(String msg) {
-        this.lines.add(new TextLine(msg));
+        lines.add(new TextLine(msg));
         return this;
     }
 
     public ErrorBuilder pointAtFile(SourceFile file) {
-        return this.pointAtFile(file.name);
+        return pointAtFile(file.name);
     }
 
     public ErrorBuilder pointAtFile(SourceLines source) {
-        return this.pointAtFile(source.name);
+        return pointAtFile(source.name);
     }
 
     public ErrorBuilder pointAtFile(Identifier file) {
-        return this.pointAtFile(file.toString());
+        return pointAtFile(file.toString());
     }
 
     public ErrorBuilder pointAtFile(String file) {
-        this.lines.add(new FileLine(file));
+        lines.add(new FileLine(file));
         return this;
     }
 
     public ErrorBuilder hintIncludeFor(@Nullable Span span, String msg) {
         if (span == null) {
             return this;
-        } else {
-            SourceLines source = span.source();
-            String var10000 = String.valueOf(source.name);
-            String builder = "add #use \"" + var10000 + "\" " + msg + "\n defined here:";
-            this.header(ErrorLevel.HINT, builder);
-            return this.pointAtFile(source).pointAt(span, 0);
         }
+        SourceLines source = span.source();
+        String var10000 = String.valueOf(source.name);
+        String builder = "add #use \"" + var10000 + "\" " + msg + "\n defined here:";
+        header(ErrorLevel.HINT, builder);
+        return pointAtFile(source).pointAt(span, 0);
     }
 
     public ErrorBuilder pointAt(Span span) {
-        return this.pointAt(span, 0);
+        return pointAt(span, 0);
     }
 
     public ErrorBuilder pointAt(Span span, int ctxLines) {
@@ -92,20 +91,14 @@ public class ErrorBuilder {
             int spanLine = span.firstLine();
             int firstCol = span.start().col();
             int lastCol = span.end().col();
-            this.pointAtLine(lines, spanLine, ctxLines, firstCol, lastCol);
+            pointAtLine(lines, spanLine, ctxLines, firstCol, lastCol);
         }
 
         return this;
     }
 
     public ErrorBuilder pointAtLine(SourceLines lines, int spanLine, int ctxLines) {
-        return this.pointAtLine(
-            lines,
-            spanLine,
-            ctxLines,
-            lines.lineStartColTrimmed(spanLine),
-            lines.lineWidth(spanLine)
-        );
+        return pointAtLine(lines, spanLine, ctxLines, lines.lineStartColTrimmed(spanLine), lines.lineWidth(spanLine));
     }
 
     public ErrorBuilder pointAtLine(SourceLines lines, int spanLine, int ctxLines, int firstCol, int lastCol) {
@@ -124,32 +117,31 @@ public class ErrorBuilder {
     }
 
     public String build() {
-        Stream<String> lineStream = this.getLineStream();
+        Stream<String> lineStream = getLineStream();
         if (CONSOLE_COLORS) {
-            lineStream = lineStream.map((line) -> line + ConsoleColors.RESET);
+            lineStream = lineStream.map(line -> line + ConsoleColors.RESET);
         }
 
         return lineStream.collect(Collectors.joining("\n"));
     }
 
     private Stream<String> getLineStream() {
-        int maxMargin = this.calculateMargin();
-        return this.lines.stream().map((line) -> addPaddingToLine(maxMargin, line));
+        int maxMargin = calculateMargin();
+        return lines.stream().map(line -> addPaddingToLine(maxMargin, line));
     }
 
     private static String addPaddingToLine(int maxMargin, ErrorLine errorLine) {
         int neededMargin = errorLine.neededMargin();
         if (neededMargin >= 0) {
             return StringUtil.repeatChar(' ', maxMargin - neededMargin) + errorLine.build();
-        } else {
-            return errorLine.build();
         }
+        return errorLine.build();
     }
 
     private int calculateMargin() {
         int maxMargin = -1;
 
-        for (ErrorLine line : this.lines) {
+        for (ErrorLine line : lines) {
             int neededMargin = line.neededMargin();
             if (neededMargin > maxMargin) {
                 maxMargin = neededMargin;

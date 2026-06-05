@@ -5,11 +5,13 @@ public record SourceLine(String number, String line) implements ErrorLine {
         return new SourceLine(Integer.toString(number), line);
     }
 
+    @Override
     public String left() {
-        return this.number;
+        return number;
     }
 
+    @Override
     public String right() {
-        return this.line;
+        return line;
     }
 }

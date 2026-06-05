@@ -206,7 +206,7 @@ public class ConnectedInputHandler {
             }
 
             Comparator<BlockPos> invOrdering = switch (world.getBlockState(pos)
-                .getValueOrElse(MechanicalCrafterBlock.HORIZONTAL_FACING, Direction.SOUTH)) {
+                .getValueOrElse(HORIZONTAL_FACING, Direction.SOUTH)) {
                 case NORTH -> NORTH_COMPARATOR;
                 case EAST -> EAST_COMPARATOR;
                 case WEST -> WEST_COMPARATOR;
@@ -243,8 +243,8 @@ public class ConnectedInputHandler {
 
         private ConnectedInventory(CrafterItemHandler[] itemHandler) {
             this.itemHandler = itemHandler;
-            this.size = itemHandler.length;
-            this.slots = SlotRangeCache.get(size);
+            size = itemHandler.length;
+            slots = SlotRangeCache.get(size);
         }
 
         @Override

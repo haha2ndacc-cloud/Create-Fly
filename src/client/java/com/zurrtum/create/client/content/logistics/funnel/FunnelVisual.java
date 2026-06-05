@@ -31,7 +31,8 @@ public class FunnelVisual extends AbstractBlockEntityVisual<FunnelBlockEntity> i
         }
 
         var funnelFacing = FunnelBlock.getFunnelFacing(blockState);
-        PartialModel flapPartial = (blockState.getBlock() instanceof FunnelBlock ? AllPartialModels.FUNNEL_FLAP : AllPartialModels.BELT_FUNNEL_FLAP);
+        PartialModel flapPartial = blockState.getBlock() instanceof FunnelBlock ? AllPartialModels.FUNNEL_FLAP :
+            AllPartialModels.BELT_FUNNEL_FLAP;
 
         var commonTransform = FlapStuffs.commonTransform(
             getVisualPosition(),

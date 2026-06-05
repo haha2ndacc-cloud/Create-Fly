@@ -80,7 +80,7 @@ public class Navigation {
         destination.reserveFor(train);
 
         double acceleration = train.acceleration();
-        double brakingDistance = (train.speed * train.speed) / (2 * acceleration);
+        double brakingDistance = train.speed * train.speed / (2 * acceleration);
         double speedMod = destinationBehindTrain ? -1 : 1;
         double preDepartureLookAhead = train.getCurrentStation() != null ? 4.5 : 0;
         double distanceToNextCurve = -1;
@@ -96,15 +96,15 @@ public class Navigation {
                 waitingForSignal = null;
             }
 
-            TravellingPoint leadingPoint = !destinationBehindTrain ? train.carriages.getFirst()
-                .getLeadingPoint() : train.carriages.get(train.carriages.size() - 1).getTrailingPoint();
+            TravellingPoint leadingPoint = !destinationBehindTrain ? train.carriages.getFirst().getLeadingPoint() :
+                train.carriages.get(train.carriages.size() - 1).getTrailingPoint();
 
             if (waitingForSignal == null) {
                 distanceToSignal = Double.MAX_VALUE;
                 ticksWaitingForSignal = 0;
             }
 
-            if (distanceToSignal > 1 / 16f) {
+            if (distanceToSignal > 1 / 16.0f) {
                 MutableDouble curveDistanceTracker = new MutableDouble(-1);
 
                 signalScout.node1 = leadingPoint.node1;
@@ -112,7 +112,7 @@ public class Navigation {
                 signalScout.edge = leadingPoint.edge;
                 signalScout.position = leadingPoint.position;
 
-                double brakingDistanceNoFlicker = brakingDistance + 3 - (brakingDistance % 3);
+                double brakingDistanceNoFlicker = brakingDistance + 3 - brakingDistance % 3;
                 double scanDistance = Mth.clamp(brakingDistanceNoFlicker, preDepartureLookAhead, distanceToDestination);
 
                 MutableDouble crossSignalDistanceTracker = new MutableDouble(-1);
@@ -162,7 +162,7 @@ public class Navigation {
                                     return true; // Standard entry signal, do not collect any further segments
                                 }
                             }
-                            if (!occupied && !crossSignal && distance < distanceToSignal + .25 && distance < brakingDistanceNoFlicker) {
+                            if (!occupied && !crossSignal && distance < distanceToSignal + 0.25 && distance < brakingDistanceNoFlicker) {
                                 signalEdgeGroup.reserved = signal; // Reserve group for traversal
                             }
                             return false;
@@ -177,14 +177,13 @@ public class Navigation {
                             }
                         }
                         if (!crossSignal) {
-                            if (distance < distanceToSignal + .25) {
+                            if (distance < distanceToSignal + 0.25) {
                                 // Collect and reset the signal chain because none were blocked
                                 trackingCrossSignal.setValue(null);
                                 reserveChain();
                                 return false;
-                            } else {
-                                return true; // End of a blocked signal chain
                             }
+                            return true; // End of a blocked signal chain
                         }
 
                         return false;
@@ -194,10 +193,10 @@ public class Navigation {
                         double vDistance = Math.abs(turn.starts.getFirst().y - turn.starts.getSecond().y);
 
                         // ignore turn if its a straight & mild slope
-                        if (turn != null && vDistance > 1 / 16f) {
+                        if (turn != null && vDistance > 1 / 16.0f) {
                             if (turn.axes.getFirst().multiply(1, 0, 1)
                                 .distanceTo(turn.axes.getSecond().multiply(1, 0, 1)
-                                    .scale(-1)) < 1 / 64f && vDistance / turn.getLength() < .225f) {
+                                    .scale(-1)) < 1 / 64.0f && vDistance / turn.getLength() < 0.225f) {
                                 return;
                             }
                         }
@@ -226,7 +225,7 @@ public class Navigation {
         targetDistance += 0.25d;
 
         // dont leave until green light
-        if (targetDistance > 1 / 32f && train.getCurrentStation() != null) {
+        if (targetDistance > 1 / 32.0f && train.getCurrentStation() != null) {
             if (waitingForSignal != null && distanceToSignal < preDepartureLookAhead) {
                 ticksWaitingForSignal++;
                 return;
@@ -241,8 +240,8 @@ public class Navigation {
             return;
         }
 
-        if (targetDistance - Math.abs(train.speed) < 1 / 32f) {
-            train.speed = Math.max(targetDistance, 1 / 32f) * speedMod;
+        if (targetDistance - Math.abs(train.speed) < 1 / 32.0f) {
+            train.speed = Math.max(targetDistance, 1 / 32.0f) * speedMod;
             return;
         }
 
@@ -251,11 +250,11 @@ public class Navigation {
         double topSpeed = train.maxSpeed();
 
         if (targetDistance < 10) {
-            double maxApproachSpeed = topSpeed * ((targetDistance) / 10);
+            double maxApproachSpeed = topSpeed * (targetDistance / 10);
             double speedRelativeToStation = train.speed * speedMod;
 
             if (speedRelativeToStation > maxApproachSpeed) {
-                train.speed += (maxApproachSpeed - Math.abs(train.speed)) * .5f * speedMod;
+                train.speed += (maxApproachSpeed - Math.abs(train.speed)) * 0.5f * speedMod;
                 return;
             }
         }
@@ -266,8 +265,9 @@ public class Navigation {
         double targetSpeed = targetDistance > brakingDistance ? topSpeed * speedMod : 0;
 
         if (distanceToNextCurve != -1) {
-            double slowingDistance = brakingDistance - (turnTopSpeed * turnTopSpeed) / (2 * acceleration);
-            double targetTurnSpeed = distanceToNextCurve > slowingDistance ? topSpeed * speedMod : turnTopSpeed * speedMod;
+            double slowingDistance = brakingDistance - turnTopSpeed * turnTopSpeed / (2 * acceleration);
+            double targetTurnSpeed =
+                distanceToNextCurve > slowingDistance ? topSpeed * speedMod : turnTopSpeed * speedMod;
             if (Math.abs(targetTurnSpeed) < Math.abs(targetSpeed)) {
                 targetSpeed = targetTurnSpeed;
             }
@@ -292,7 +292,7 @@ public class Navigation {
         if (train.manualTick) {
             return true;
         }
-        if (distanceToDestination < .5f) {
+        if (distanceToDestination < 0.5f) {
             return true;
         }
         SignalBoundary signal = train.graph.getPoint(EdgePointType.SIGNAL, waitingForSignal.getFirst());
@@ -396,7 +396,7 @@ public class Navigation {
         if (noneFound) {
             distanceToDestination = distanceStartedAt = 0;
             currentPath = new ArrayList<>();
-            if (this.destination != null) {
+            if (destination != null) {
                 cancelNavigation();
             }
             return -1;
@@ -411,11 +411,11 @@ public class Navigation {
         train.reservedSignalBlocks.clear();
         train.navigation.waitingForSignal = null;
 
-        if (this.destination == null) {
+        if (destination == null) {
             distanceStartedAt = distance;
         }
 
-        if (this.destination == pathTo.destination) {
+        if (destination == pathTo.destination) {
             return 0;
         }
 
@@ -443,7 +443,7 @@ public class Navigation {
             train.status.foundConductor();
         }
 
-        this.destination = pathTo.destination;
+        destination = pathTo.destination;
         return cost;
     }
 
@@ -465,14 +465,14 @@ public class Navigation {
         for (boolean forward : Iterate.trueAndFalse) {
 
             // When updating destinations midtransit, avoid reversing out of path
-            if (this.destination != null && destinationBehindTrain == forward) {
+            if (destination != null && destinationBehindTrain == forward) {
                 continue;
             }
 
-            TravellingPoint initialPoint = forward ? train.carriages.getFirst().getLeadingPoint() : train.carriages.get(
-                train.carriages.size() - 1).getTrailingPoint();
-            TrackEdge initialEdge = forward ? initialPoint.edge : graph.getConnectionsFrom(initialPoint.node2)
-                .get(initialPoint.node1);
+            TravellingPoint initialPoint = forward ? train.carriages.getFirst().getLeadingPoint() :
+                train.carriages.get(train.carriages.size() - 1).getTrailingPoint();
+            TrackEdge initialEdge =
+                forward ? initialPoint.edge : graph.getConnectionsFrom(initialPoint.node2).get(initialPoint.node1);
 
             search(
                 Double.MAX_VALUE,
@@ -549,7 +549,7 @@ public class Navigation {
 
         MutableObject<@Nullable GlobalStation> result = new MutableObject<>(null);
         double acceleration = train.acceleration();
-        double minDistance = .75f * (train.speed * train.speed) / (2 * acceleration);
+        double minDistance = 0.75f * (train.speed * train.speed) / (2 * acceleration);
         double maxDistance = Math.max(32, 1.5f * (train.speed * train.speed) / (2 * acceleration));
 
         search(
@@ -644,8 +644,8 @@ public class Navigation {
             }
         }
 
-        TravellingPoint startingPoint = forward ? train.carriages.getFirst()
-            .getLeadingPoint() : train.carriages.getLast().getTrailingPoint();
+        TravellingPoint startingPoint =
+            forward ? train.carriages.getFirst().getLeadingPoint() : train.carriages.getLast().getTrailingPoint();
 
         Set<TrackEdge> visited = new HashSet<>();
         Map<TrackEdge, Pair<Boolean, Couple<TrackNode>>> reachedVia = new IdentityHashMap<>();
@@ -915,8 +915,8 @@ public class Navigation {
         public FrontierEntry(double distance, int penalty, TrackNode node1, TrackNode node2, TrackEdge edge) {
             this.distance = distance;
             this.penalty = penalty;
-            this.remaining = 0;
-            this.hasDestination = false;
+            remaining = 0;
+            hasDestination = false;
             this.node1 = node1;
             this.node2 = node2;
             this.edge = edge;

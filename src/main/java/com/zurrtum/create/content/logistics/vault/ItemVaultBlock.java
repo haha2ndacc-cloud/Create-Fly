@@ -73,10 +73,10 @@ public class ItemVaultBlock extends Block implements IWrenchable, IBE<ItemVaultB
                 .getBlockState(pContext.getClickedPos().relative(pContext.getClickedFace().getOpposite()));
             Axis preferredAxis = getVaultBlockAxis(placedOn);
             if (preferredAxis != null) {
-                return this.defaultBlockState().setValue(HORIZONTAL_AXIS, preferredAxis);
+                return defaultBlockState().setValue(HORIZONTAL_AXIS, preferredAxis);
             }
         }
-        return this.defaultBlockState().setValue(HORIZONTAL_AXIS, pContext.getHorizontalDirection().getAxis());
+        return defaultBlockState().setValue(HORIZONTAL_AXIS, pContext.getHorizontalDirection().getAxis());
     }
 
     @Override

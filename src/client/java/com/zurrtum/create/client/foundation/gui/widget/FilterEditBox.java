@@ -79,11 +79,11 @@ public class FilterEditBox extends EditBox {
                 int start = Math.min(pos, cursorPos);
                 int end = Math.max(pos, cursorPos);
                 if (start != end) {
-                    String newValue = new StringBuilder(this.value).delete(start, end).toString();
+                    String newValue = new StringBuilder(value).delete(start, end).toString();
                     if (filter.test(newValue)) {
                         value = newValue;
                         setCursorPosition(start);
-                        onValueChange(this.value);
+                        onValueChange(value);
                         moveCursorTo(start, false);
                     }
                 }

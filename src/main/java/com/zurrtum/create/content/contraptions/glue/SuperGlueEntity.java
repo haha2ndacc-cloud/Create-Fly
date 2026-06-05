@@ -330,7 +330,7 @@ public class SuperGlueEntity extends Entity implements SpecialEntityItemRequirem
                     for (int i = 0; i <= max * 2; i++) {
                         for (int o1 : Iterate.zeroAndOne) {
                             for (int o2 : Iterate.zeroAndOne) {
-                                Vec3 v = origin.add(normal.scale(i / 2f)).add(normal2.scale(max2 * o1))
+                                Vec3 v = origin.add(normal.scale(i / 2.0f)).add(normal2.scale(max2 * o1))
                                     .add(normal3.scale(max3 * o2));
 
                                 slevel.sendParticles(ParticleTypes.ITEM_SLIME, v.x, v.y, v.z, 1, 0, 0, 0, 0);

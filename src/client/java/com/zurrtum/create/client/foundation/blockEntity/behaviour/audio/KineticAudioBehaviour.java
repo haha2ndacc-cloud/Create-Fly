@@ -18,7 +18,7 @@ public class KineticAudioBehaviour<T extends KineticBlockEntity> extends AudioBe
         if (componentSpeed == 0) {
             return;
         }
-        float pitch = Mth.clamp((componentSpeed / 256f) + .45f, .85f, 1f);
+        float pitch = Mth.clamp(componentSpeed / 256.0f + 0.45f, 0.85f, 1.0f);
 
         if (blockEntity.isNoisy()) {
             SoundScapes.play(SoundScapes.AmbienceGroup.KINETIC, blockEntity.getBlockPos(), pitch);

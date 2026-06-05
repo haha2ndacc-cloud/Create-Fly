@@ -32,9 +32,9 @@ public class PlacementOffset {
 
     private PlacementOffset(boolean success) {
         this.success = success;
-        this.pos = BlockPos.ZERO;
-        this.stateTransform = Function.identity();
-        this.ghostState = null;
+        pos = BlockPos.ZERO;
+        stateTransform = Function.identity();
+        ghostState = null;
     }
 
     public static PlacementOffset fail() {

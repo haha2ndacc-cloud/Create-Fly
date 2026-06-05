@@ -182,8 +182,10 @@ public class BeltVisual extends KineticBlockEntityVisual<BeltBlockEntity> {
             speed = -speed;
         }
 
-        float rotX = (!diagonal && beltSlope != BeltSlope.HORIZONTAL ? 90 : 0) + (downward ? 180 : 0) + (sideways ? 90 : 0) + (vertical && alongZ ? 180 : 0);
-        float rotY = facing.toYRot() + (diagonal ^ alongX && !downward ? 180 : 0) + (sideways && alongZ ? 180 : 0) + (vertical && alongX ? 90 : 0);
+        float rotX = (!diagonal && beltSlope != BeltSlope.HORIZONTAL ? 90 : 0) + (downward ? 180 : 0) + (sideways ? 90 :
+            0) + (vertical && alongZ ? 180 : 0);
+        float rotY = facing.toYRot() + (diagonal ^ alongX && !downward ? 180 : 0) + (sideways && alongZ ? 180 : 0) + (
+            vertical && alongX ? 90 : 0);
         float rotZ = (sideways ? 90 : 0) + (vertical && alongX ? 90 : 0);
 
         Quaternionf q = new Quaternionf().rotationXYZ(

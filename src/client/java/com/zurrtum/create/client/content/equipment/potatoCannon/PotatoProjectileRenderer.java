@@ -45,7 +45,7 @@ public class PotatoProjectileRenderer extends EntityRenderer<PotatoProjectileEnt
         itemModelManager.appendItemLayers(item, stack, item.displayContext, entity.level(), null, 0);
         state.box = entity.getBoundingBox();
         state.velocity = entity.getDeltaMovement();
-        state.translateY = (float) (state.box.getYsize() / 2 - 1 / 8f);
+        state.translateY = (float) (state.box.getYsize() / 2 - 1 / 8.0f);
         state.mode = entity.getRenderMode();
         state.transformer = AllPotatoProjectileTransforms.get(state.mode);
         state.camera = Minecraft.getInstance().getCameraEntity();

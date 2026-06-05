@@ -96,7 +96,8 @@ public class SymmetryWandScreen extends AbstractSimiScreen {
         labelType = new Label(x + 51, y + 28, CommonComponents.EMPTY).colored(0xFFFFFFFF).withShadow();
         labelAlign = new Label(x + 51, y + 50, CommonComponents.EMPTY).colored(0xFFFFFFFF).withShadow();
 
-        int state = currentElement instanceof TriplePlaneMirror ? 2 : currentElement instanceof CrossPlaneMirror ? 1 : 0;
+        int state =
+            currentElement instanceof TriplePlaneMirror ? 2 : currentElement instanceof CrossPlaneMirror ? 1 : 0;
         areaType = new SelectionScrollInput(x + 45, y + 21, 109, 18).forOptions(getMirrors())
             .titled(mirrorType.plainCopy()).writingTo(labelType).setState(state);
 
@@ -178,7 +179,7 @@ public class SymmetryWandScreen extends AbstractSimiScreen {
 
     private void transformBlock(PoseStack ms, float p) {
         ms.translate(0.1875F, 0.9375f, 0);
-        ms.mulPose(Axis.of(new Vector3f(.3f, 1f, 0f)).rotationDegrees(-22.5f));
+        ms.mulPose(Axis.of(new Vector3f(0.3f, 1.0f, 0.0f)).rotationDegrees(-22.5f));
         ms.scale(1, -1, 1);
         SymmetryHandlerClient.applyModelTransform(currentElement, ms);
     }

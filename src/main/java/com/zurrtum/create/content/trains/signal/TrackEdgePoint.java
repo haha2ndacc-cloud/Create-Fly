@@ -80,7 +80,7 @@ public abstract class TrackEdgePoint {
     }
 
     public void setLocation(Couple<TrackNodeLocation> nodes, double position) {
-        this.edgeLocation = nodes;
+        edgeLocation = nodes;
         this.position = position;
     }
 

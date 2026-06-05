@@ -21,7 +21,7 @@ public class CreativeCrateMountedStorage extends MountedItemStorage {
     protected CreativeCrateMountedStorage(ItemStack suppliedStack) {
         super(AllMountedStorageTypes.CREATIVE_CRATE);
         this.suppliedStack = suppliedStack;
-        this.max = suppliedStack.getOrDefault(DataComponents.MAX_STACK_SIZE, 64);
+        max = suppliedStack.getOrDefault(DataComponents.MAX_STACK_SIZE, 64);
     }
 
     @Override

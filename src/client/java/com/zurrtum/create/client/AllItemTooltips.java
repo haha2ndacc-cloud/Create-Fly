@@ -5,7 +5,6 @@ import com.zurrtum.create.client.catnip.lang.FontHelper;
 import com.zurrtum.create.client.foundation.item.ItemDescription;
 import com.zurrtum.create.client.foundation.item.KineticStats;
 import com.zurrtum.create.client.foundation.item.TooltipModifier;
-import com.zurrtum.create.content.logistics.packagePort.PackagePortItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.ColorCollection;
 

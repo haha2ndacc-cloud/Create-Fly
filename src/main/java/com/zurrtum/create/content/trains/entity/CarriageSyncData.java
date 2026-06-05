@@ -365,7 +365,7 @@ public class CarriageSyncData {
                 TrackEdge newEdge = entry.getValue();
                 Vec3 currentDirection = edge.getDirection(false);
                 Vec3 newDirection = newEdge.getDirection(true);
-                if (currentDirection.dot(newDirection) < 7 / 8f) {
+                if (currentDirection.dot(newDirection) < 7 / 8.0f) {
                     continue;
                 }
                 if (!visited.add(entry.getValue())) {

@@ -51,7 +51,7 @@ public class BlockEntityVisualizerBuilder<T extends BlockEntity> {
      * @return {@code this}
      */
     public BlockEntityVisualizerBuilder<T> neverSkipVanillaRender() {
-        this.skipVanillaRender = blockEntity -> false;
+        skipVanillaRender = blockEntity -> false;
         return this;
     }
 

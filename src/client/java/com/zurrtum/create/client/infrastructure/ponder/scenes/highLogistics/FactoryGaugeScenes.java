@@ -83,7 +83,7 @@ public class FactoryGaugeScenes {
         AABB bb1 = new AABB(link.below(2));
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.BLUE, link, bb1.deflate(0.45), 10);
         scene.idle(1);
-        bb1 = bb1.deflate(1 / 16f).contract(0, 8 / 16f, 0);
+        bb1 = bb1.deflate(1 / 16.0f).contract(0, 8 / 16.0f, 0);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.BLUE, link, bb1, 50);
         scene.idle(26);
 
@@ -133,7 +133,7 @@ public class FactoryGaugeScenes {
         scene.idle(5);
         scene.world().showSection(packager, Direction.EAST);
         scene.idle(2);
-        scene.world().moveSection(linkL, util.vector().of(0, -.25, 0), 10);
+        scene.world().moveSection(linkL, util.vector().of(0, -0.25, 0), 10);
         scene.idle(10);
 
         scene.overlay().showText(90).text("The gauge can refill this inventory from the logistics network")
@@ -334,7 +334,7 @@ public class FactoryGaugeScenes {
 
         scene.overlay().showControls(panelM.add(1, -0.5, 0), Pointing.DOWN, 50).rightClick();
         scene.idle(7);
-        scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, nuggG, boundingBox.move(1, -.5, 0), 40);
+        scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, nuggG, boundingBox.move(1, -0.5, 0), 40);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, alloyG, boundingBox, 40);
         scene.idle(10);
 
@@ -836,7 +836,7 @@ public class FactoryGaugeScenes {
     public static void links(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("factory_gauge_links", "Connecting Gauges to other Blocks");
-        scene.setSceneOffsetY(-1f);
+        scene.setSceneOffsetY(-1.0f);
         scene.configureBasePlate(0, 0, 5);
         scene.showBasePlate();
 

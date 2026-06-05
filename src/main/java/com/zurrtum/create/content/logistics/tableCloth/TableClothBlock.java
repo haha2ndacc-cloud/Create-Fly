@@ -234,9 +234,8 @@ public class TableClothBlock extends Block implements IWrenchable, IBE<TableClot
 
             if (directions.isEmpty()) {
                 return PlacementOffset.fail();
-            } else {
-                return PlacementOffset.success(pos.relative(directions.getFirst()), s -> s);
             }
+            return PlacementOffset.success(pos.relative(directions.getFirst()), s -> s);
         }
     }
 }

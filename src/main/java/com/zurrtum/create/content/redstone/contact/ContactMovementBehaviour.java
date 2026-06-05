@@ -15,7 +15,7 @@ public class ContactMovementBehaviour extends MovementBehaviour {
 
     @Override
     public Vec3 getActiveAreaOffset(MovementContext context) {
-        return Vec3.atLowerCornerOf(context.state.getValue(RedstoneContactBlock.FACING).getUnitVec3i()).scale(.65f);
+        return Vec3.atLowerCornerOf(context.state.getValue(RedstoneContactBlock.FACING).getUnitVec3i()).scale(0.65f);
     }
 
     @Override

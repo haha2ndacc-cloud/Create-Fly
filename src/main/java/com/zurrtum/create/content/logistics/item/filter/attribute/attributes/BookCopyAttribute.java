@@ -65,7 +65,7 @@ public record BookCopyAttribute(int generation) implements ItemAttribute {
         public List<ItemAttribute> getAllAttributes(ItemStack stack, Level level) {
             List<ItemAttribute> list = new ArrayList<>();
 
-            int generation = BookCopyAttribute.extractGeneration(stack);
+            int generation = extractGeneration(stack);
             if (generation >= 0) {
                 list.add(new BookCopyAttribute(generation));
             }

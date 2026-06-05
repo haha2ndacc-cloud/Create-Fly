@@ -144,8 +144,8 @@ public class ContraptionCollider {
             boolean surfaceCollision = collisionResult.surfaceCollision;
             boolean hardCollision = !totalResponse.equals(Vec3.ZERO);
             boolean temporalCollision = collisionResult.temporalResponse != 1;
-            Vec3 motionResponse = !temporalCollision ? motion : motion.normalize()
-                .scale(motion.length() * collisionResult.temporalResponse);
+            Vec3 motionResponse = !temporalCollision ? motion :
+                motion.normalize().scale(motion.length() * collisionResult.temporalResponse);
 
             motionResponse = rotationMatrix.transformTransposed(motionResponse).add(contraptionMotion);
             totalResponse = rotationMatrix.transformTransposed(totalResponse);
@@ -161,7 +161,7 @@ public class ContraptionCollider {
 
             if (!collisionLocation.equals(Vec3.ZERO)) {
                 collisionLocation = collisionLocation.add(entity.position().add(entity.getBoundingBox().getCenter())
-                    .scale(.5f));
+                    .scale(0.5f));
                 if (temporalCollision) {
                     collisionLocation = collisionLocation.add(0, motionResponse.y, 0);
                 }
@@ -171,7 +171,7 @@ public class ContraptionCollider {
                     BlockState blockState = contraption.getBlocks().get(pos).state();
                     if (blockState.is(BlockTags.CLIMBABLE)) {
                         surfaceCollision = true;
-                        totalResponse = totalResponse.add(0, .1f, 0);
+                        totalResponse = totalResponse.add(0, 0.1f, 0);
                     }
                 }
 
@@ -185,7 +185,7 @@ public class ContraptionCollider {
                     }
 
                     bounce = BlockHelper.getBounceMultiplier(blockState.getBlock());
-                    slide = Math.max(0, blockState.getBlock().getFriction() - .6f);
+                    slide = Math.max(0, blockState.getBlock().getFriction() - 0.6f);
                 }
             }
 
@@ -205,7 +205,7 @@ public class ContraptionCollider {
                     entity.getZ(),
                     SoundEvents.SLIME_BLOCK_FALL,
                     SoundSource.BLOCKS,
-                    .5f,
+                    0.5f,
                     1
                 );
                 continue;
@@ -227,7 +227,7 @@ public class ContraptionCollider {
                 double intersectY = totalResponse.y();
                 double intersectZ = totalResponse.z();
 
-                double horizonalEpsilon = 1 / 128f;
+                double horizonalEpsilon = 1 / 128.0f;
                 if (motionX != 0 && Math.abs(intersectX) > horizonalEpsilon && motionX > 0 == intersectX < 0) {
                     entityMotion = entityMotion.multiply(0, 1, 1);
                 }
@@ -242,11 +242,11 @@ public class ContraptionCollider {
 
             if (bounce == 0 && slide > 0 && hasNormal && anyCollision && rotation.hasVerticalRotation()) {
                 double slideFactor = collisionNormal.multiply(1, 0, 1).length() * 1.25f;
-                Vec3 motionIn = entityMotionNoTemporal.multiply(0, .9, 0).add(0, -.01f, 0);
+                Vec3 motionIn = entityMotionNoTemporal.multiply(0, 0.9, 0).add(0, -0.01f, 0);
                 Vec3 slideNormal = collisionNormal.cross(motionIn.cross(collisionNormal)).normalize();
-                Vec3 newMotion = entityMotion.multiply(.85, 0, .85)
-                    .add(slideNormal.scale((.2f + slide) * motionIn.length() * slideFactor)
-                        .add(0, -.1f - collisionNormal.y * .125f, 0));
+                Vec3 newMotion = entityMotion.multiply(0.85, 0, 0.85)
+                    .add(slideNormal.scale((0.2f + slide) * motionIn.length() * slideFactor)
+                        .add(0, -0.1f - collisionNormal.y * 0.125f, 0));
                 entity.setDeltaMovement(newMotion);
                 entityMotion = entity.getDeltaMovement();
             }
@@ -284,7 +284,7 @@ public class ContraptionCollider {
                         entity.setOnGround(true);
                     }
                     if (entity instanceof ItemEntity) {
-                        entityMotion = entityMotion.multiply(.5f, 1, .5f);
+                        entityMotion = entityMotion.multiply(0.5f, 1, 0.5f);
                     }
                 }
                 contactPointMotion = contraptionEntity.getContactPointMotion(entityPosition);
@@ -357,7 +357,7 @@ public class ContraptionCollider {
                 SoundEvents.PLAYER_ATTACK_CRIT,
                 SoundSource.NEUTRAL,
                 1,
-                .75f
+                0.75f
             );
             if (!entity.isAlive()) {
                 contraptionEntity.getControllingPlayer()
@@ -366,7 +366,7 @@ public class ContraptionCollider {
             }
         }
 
-        Vec3 added = entityMotion.add(contraptionMotion.multiply(1, 0, 1).normalize().add(0, .25, 0).scale(damage * 4))
+        Vec3 added = entityMotion.add(contraptionMotion.multiply(1, 0, 1).normalize().add(0, 0.25, 0).scale(damage * 4))
             .add(diffMotion);
 
         return VecHelper.clamp(added, 3);
@@ -456,7 +456,7 @@ public class ContraptionCollider {
                 world,
                 list
             );
-            if (vec32.y < (double) e.maxUpStep()) {
+            if (vec32.y < e.maxUpStep()) {
                 Vec3 vec33 = Entity.collideBoundingBox(
                     e,
                     new Vec3(p_20273_.x, 0.0D, p_20273_.z),
@@ -495,8 +495,8 @@ public class ContraptionCollider {
     ) {
         double height = localBB.getYsize();
         double width = localBB.getXsize();
-        double horizontalFactor = (height > width && width != 0) ? height / width : 1;
-        double verticalFactor = (width > height && height != 0) ? width / height : 1;
+        double horizontalFactor = height > width && width != 0 ? height / width : 1;
+        double verticalFactor = width > height && height != 0 ? width / height : 1;
         AABB blockScanBB = localBB.inflate(0.5f);
         blockScanBB = blockScanBB.inflate(horizontalFactor, verticalFactor, horizontalFactor);
 

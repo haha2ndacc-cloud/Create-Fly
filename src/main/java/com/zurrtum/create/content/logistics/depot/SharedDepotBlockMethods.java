@@ -84,8 +84,8 @@ public class SharedDepotBlockMethods {
                     pos,
                     SoundEvents.ITEM_PICKUP,
                     SoundSource.PLAYERS,
-                    .2f,
-                    1f + level.getRandom().nextFloat()
+                    0.2f,
+                    1.0f + level.getRandom().nextFloat()
                 );
             }
         }
@@ -106,8 +106,8 @@ public class SharedDepotBlockMethods {
         if (!wasEmptyHanded && !shouldntPlaceItem) {
             TransportedItemStack transported = new TransportedItemStack(stack);
             transported.insertedFrom = player.getDirection();
-            transported.prevBeltPosition = .25f;
-            transported.beltPosition = .25f;
+            transported.prevBeltPosition = 0.25f;
+            transported.beltPosition = 0.25f;
             behaviour.setHeldItem(transported);
             player.setItemInHand(hand, ItemStack.EMPTY);
             AllSoundEvents.DEPOT_SLIDE.playOnServer(level, pos);
@@ -131,7 +131,7 @@ public class SharedDepotBlockMethods {
         if (inputBehaviour == null) {
             return;
         }
-        Vec3 targetLocation = VecHelper.getCenterOf(pos).add(0, 5 / 16f, 0);
+        Vec3 targetLocation = VecHelper.getCenterOf(pos).add(0, 5 / 16.0f, 0);
         if (!PackageEntity.centerPackage(entityIn, targetLocation)) {
             return;
         }

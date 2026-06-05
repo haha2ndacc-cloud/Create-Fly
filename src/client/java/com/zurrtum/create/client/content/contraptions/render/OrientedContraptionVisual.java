@@ -24,7 +24,7 @@ public class OrientedContraptionVisual<T extends OrientedContraptionEntity> exte
         float angleYaw = entity.getViewYRot(partialTicks);
         float anglePitch = entity.getViewXRot(partialTicks);
 
-        matrixStack.translate(-.5f, 0, -.5f);
+        matrixStack.translate(-0.5f, 0, -0.5f);
 
         Entity ridingEntity = entity.getVehicle();
         if (ridingEntity instanceof AbstractMinecart cart) {

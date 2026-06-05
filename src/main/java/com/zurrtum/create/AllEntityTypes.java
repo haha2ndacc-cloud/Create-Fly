@@ -63,7 +63,7 @@ public class AllEntityTypes {
     public static final EntityType<PotatoProjectileEntity> POTATO_PROJECTILE = register(
         "potato_projectile",
         EntityType.Builder.of(PotatoProjectileEntity::new, MobCategory.MISC).clientTrackingRange(4).updateInterval(20)
-            .sized(.25f, .25f)
+            .sized(0.25f, 0.25f)
     );
     public static final EntityType<PackageEntity> PACKAGE = register(
         "package",

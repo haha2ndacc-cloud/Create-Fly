@@ -104,31 +104,30 @@ public abstract class DrawManager<N extends AbstractInstancer<?>> {
             if (MODEL_WARNINGS) {
                 StringBuilder builder = new StringBuilder();
                 builder.append("Creating an instancer for a model with no meshes! Stack trace:");
-                StackWalker.getInstance().forEach((f) -> builder.append("\n\t").append(f.toString()));
+                StackWalker.getInstance().forEach(f -> builder.append("\n\t").append(f.toString()));
                 FlwBackend.LOGGER.warn(builder.toString());
             }
 
             return false;
-        } else {
-            List<Model.ConfiguredMesh> meshes = model.meshes();
-
-            for (int i = 0; i < meshes.size(); ++i) {
-                Model.ConfiguredMesh mesh = (Model.ConfiguredMesh) meshes.get(i);
-                if (!MaterialRenderState.materialIsAllNonNull(mesh.material())) {
-                    if (MODEL_WARNINGS) {
-                        StringBuilder builder = new StringBuilder();
-                        builder.append("ConfiguredMesh at index ").append(i)
-                            .append(" has null components in its material! Stack trace:");
-                        StackWalker.getInstance().forEach((f) -> builder.append("\n\t").append(f.toString()));
-                        FlwBackend.LOGGER.warn(builder.toString());
-                    }
-
-                    return false;
-                }
-            }
-
-            return true;
         }
+        List<Model.ConfiguredMesh> meshes = model.meshes();
+
+        for (int i = 0; i < meshes.size(); ++i) {
+            Model.ConfiguredMesh mesh = meshes.get(i);
+            if (!MaterialRenderState.materialIsAllNonNull(mesh.material())) {
+                if (MODEL_WARNINGS) {
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("ConfiguredMesh at index ").append(i)
+                        .append(" has null components in its material! Stack trace:");
+                    StackWalker.getInstance().forEach(f -> builder.append("\n\t").append(f.toString()));
+                    FlwBackend.LOGGER.warn(builder.toString());
+                }
+
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @FunctionalInterface
@@ -137,7 +136,8 @@ public abstract class DrawManager<N extends AbstractInstancer<?>> {
         @Nullable I apply(InstanceHandleImpl.State<?> state);
     }
 
-    protected static <I extends AbstractInstancer<?>> Map<GroupKey<?>, Int2ObjectMap<List<Pair<I, InstanceHandleImpl<?>>>>> doCrumblingSort(List<Engine.CrumblingBlock> crumblingBlocks,
+    protected static <I extends AbstractInstancer<?>> Map<GroupKey<?>, Int2ObjectMap<List<Pair<I, InstanceHandleImpl<?>>>>> doCrumblingSort(
+        List<Engine.CrumblingBlock> crumblingBlocks,
         State2Instancer<I> cast
     ) {
         Map<GroupKey<?>, Int2ObjectMap<List<Pair<I, InstanceHandleImpl<?>>>>> byType = new HashMap<>();

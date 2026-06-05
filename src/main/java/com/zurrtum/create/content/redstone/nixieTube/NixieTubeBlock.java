@@ -353,7 +353,7 @@ public class NixieTubeBlock extends DoubleFaceAttachedBlock implements IBE<Nixie
         if (level.isClientSide()) {
             return;
         }
-        withBlockEntityDo(level, pos, be -> NixieTubeBlock.updateDisplayedRedstoneValue(be, state, false));
+        withBlockEntityDo(level, pos, be -> updateDisplayedRedstoneValue(be, state, false));
     }
 
     static boolean isValidBlock(BlockGetter world, BlockPos pos, boolean above) {

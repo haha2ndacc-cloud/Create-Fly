@@ -60,7 +60,7 @@ public class SawMovementRenderBehaviour implements MovementRenderBehaviour {
         boolean horizontal = closestToFacing.getAxis().isHorizontal();
         boolean backwards = VecHelper.isVecPointingTowards(context.relativeMotion, facing.getOpposite());
         boolean moving = context.getAnimationSpeed() != 0;
-        boolean shouldAnimate = (context.contraption.stalled && horizontal) || (!context.contraption.stalled && !backwards && moving);
+        boolean shouldAnimate = context.contraption.stalled && horizontal || !context.contraption.stalled && !backwards && moving;
         SuperByteBuffer saw;
         float zRot;
         if (SawBlock.isHorizontal(blockState)) {

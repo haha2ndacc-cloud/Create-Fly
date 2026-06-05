@@ -57,7 +57,7 @@ public class DeployerBlockEntity extends KineticBlockEntity implements Clearable
     protected @Nullable DeployerPlayer player;
     public int timer;
     public float reach;
-    public boolean fistBump = false;
+    public boolean fistBump;
     public List<ItemStack> overflowItems = new ArrayList<>();
     protected ServerFilteringBehaviour filtering;
     protected boolean redstoneLocked;
@@ -275,11 +275,11 @@ public class DeployerBlockEntity extends KineticBlockEntity implements Clearable
     protected void start() {
         state = State.EXPANDING;
         Vec3 movementVector = getMovementVector();
-        Vec3 rayOrigin = VecHelper.getCenterOf(worldPosition).add(movementVector.scale(3 / 2f));
-        Vec3 rayTarget = VecHelper.getCenterOf(worldPosition).add(movementVector.scale(5 / 2f));
+        Vec3 rayOrigin = VecHelper.getCenterOf(worldPosition).add(movementVector.scale(3 / 2.0f));
+        Vec3 rayTarget = VecHelper.getCenterOf(worldPosition).add(movementVector.scale(5 / 2.0f));
         ClipContext rayTraceContext = new ClipContext(rayOrigin, rayTarget, Block.OUTLINE, Fluid.NONE, player.cast());
         BlockHitResult result = level.clip(rayTraceContext);
-        reach = (float) (.5f + Math.min(result.getLocation().subtract(rayOrigin).length(), .75f));
+        reach = (float) (0.5f + Math.min(result.getLocation().subtract(rayOrigin).length(), 0.75f));
         timer = 1000;
         sendData();
     }
@@ -314,7 +314,7 @@ public class DeployerBlockEntity extends KineticBlockEntity implements Clearable
 
         for (DeployerBlockEntity be : Arrays.asList(this, partner)) {
             be.fistBump = true;
-            be.reach = ((i - 2)) * .5f;
+            be.reach = (i - 2) * 0.5f;
             be.timer = 1000;
             be.state = State.EXPANDING;
             be.sendData();
@@ -327,7 +327,7 @@ public class DeployerBlockEntity extends KineticBlockEntity implements Clearable
         int i = 0;
         DeployerBlockEntity deployerBlockEntity = null;
         for (i = 2; i < 5; i++) {
-            BlockPos pos = this.worldPosition.relative(getBlockState().getValue(BlockStateProperties.FACING), i);
+            BlockPos pos = worldPosition.relative(getBlockState().getValue(BlockStateProperties.FACING), i);
             if (!level.isLoaded(pos)) {
                 return;
             }
@@ -355,8 +355,8 @@ public class DeployerBlockEntity extends KineticBlockEntity implements Clearable
         award(AllAdvancements.FIST_BUMP);
 
         BlockPos soundLocation = BlockPos.containing(Vec3.atCenterOf(worldPosition)
-            .add(Vec3.atCenterOf(deployerBlockEntity.getBlockPos())).scale(.5f));
-        level.playSound(null, soundLocation, SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundSource.BLOCKS, .75f, .75f);
+            .add(Vec3.atCenterOf(deployerBlockEntity.getBlockPos())).scale(0.5f));
+        level.playSound(null, soundLocation, SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundSource.BLOCKS, 0.75f, 0.75f);
     }
 
     protected void activate() {

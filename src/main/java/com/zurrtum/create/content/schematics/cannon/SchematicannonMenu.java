@@ -52,7 +52,8 @@ public class SchematicannonMenu extends MenuBase<SchematicannonBlockEntity> {
                 4,
                 5,
                 false
-            )) ;
+            ))
+                ;
         }
 
         return ItemStack.EMPTY;

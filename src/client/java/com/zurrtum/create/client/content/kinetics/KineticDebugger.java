@@ -24,7 +24,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public class KineticDebugger {
-    public static boolean rainbowDebug = false;
+    public static boolean rainbowDebug;
 
     public static void tick(Minecraft mc) {
         if (!isActive()) {
@@ -46,7 +46,7 @@ public class KineticDebugger {
         VoxelShape shape = world.getBlockState(toOutline).getBlockSupportShape(world, toOutline);
 
         if (be.getTheoreticalSpeed() != 0 && !shape.isEmpty()) {
-            Outliner.getInstance().chaseAABB("kineticSource", shape.bounds().move(toOutline)).lineWidth(1 / 16f)
+            Outliner.getInstance().chaseAABB("kineticSource", shape.bounds().move(toOutline)).lineWidth(1 / 16.0f)
                 .colored(be.hasSource() ? Color.generateFromLong(be.network).getRGB() : 0xffcc00);
         }
 
@@ -54,13 +54,13 @@ public class KineticDebugger {
             Axis axis = rotate.getRotationAxis(state);
             Vec3 vec = Vec3.atLowerCornerOf(Direction.get(AxisDirection.POSITIVE, axis).getUnitVec3i());
             Vec3 center = VecHelper.getCenterOf(be.getBlockPos());
-            Outliner.getInstance().showLine("rotationAxis", center.add(vec), center.subtract(vec)).lineWidth(1 / 16f);
+            Outliner.getInstance().showLine("rotationAxis", center.add(vec), center.subtract(vec)).lineWidth(1 / 16.0f);
         }
 
     }
 
     public static boolean isActive() {
-        return isF3DebugModeActive() && KineticDebugger.rainbowDebug;
+        return isF3DebugModeActive() && rainbowDebug;
     }
 
     public static boolean isF3DebugModeActive() {

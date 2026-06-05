@@ -5,12 +5,12 @@ import com.zurrtum.create.client.foundation.block.connected.AllCTTypes;
 import com.zurrtum.create.client.foundation.block.connected.CTSpriteShiftEntry;
 import com.zurrtum.create.client.foundation.block.connected.CTType;
 import com.zurrtum.create.client.foundation.block.connected.ConnectedTextureBehaviour;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
@@ -131,7 +131,8 @@ public class RoofBlockCTBehaviour extends ConnectedTextureBehaviour.Base {
             facing = facing.getCounterClockWise();
         }
 
-        int type = shape == StairsShape.STRAIGHT ? 0 : (shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT) ? 1 : 2;
+        int type = shape == StairsShape.STRAIGHT ? 0 :
+            shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT ? 1 : 2;
         int rot = facing.get2DDataValue();
         context.up = type >= 2;
         context.right = type % 2 == 1;
@@ -142,8 +143,8 @@ public class RoofBlockCTBehaviour extends ConnectedTextureBehaviour.Base {
 
     protected boolean connects(BlockAndTintGetter reader, BlockPos pos, BlockState state, BlockState other) {
         double top = state.getCollisionShape(reader, pos).max(Axis.Y);
-        double topOther = other.getSoundType() != SoundType.COPPER ? 0 : other.getCollisionShape(reader, pos)
-            .max(Axis.Y);
+        double topOther =
+            other.getSoundType() != SoundType.COPPER ? 0 : other.getCollisionShape(reader, pos).max(Axis.Y);
         return Mth.equal(top, topOther);
     }
 

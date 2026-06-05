@@ -28,7 +28,7 @@ public class ServerBulkScrollValueBehaviour extends ServerScrollValueBehaviour {
             playFeedbackSound(this);
         }
         for (SmartBlockEntity be : getBulk()) {
-            ServerScrollValueBehaviour other = be.getBehaviour(ServerScrollValueBehaviour.TYPE);
+            ServerScrollValueBehaviour other = be.getBehaviour(TYPE);
             if (other != null) {
                 other.setValue(valueSetting.value());
             }

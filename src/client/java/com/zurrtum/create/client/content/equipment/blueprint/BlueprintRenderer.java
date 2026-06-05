@@ -54,8 +54,10 @@ public class BlueprintRenderer extends EntityRenderer<BlueprintEntity, Blueprint
         float pitch = entity.getXRot();
         int size = entity.size;
         Level level = entity.level();
-        CardinalLighting cardinalLighting = level instanceof BlockAndTintGetter getter ? getter.cardinalLighting() : null;
-        PartialModel partialModel = size == 3 ? AllPartialModels.CRAFTING_BLUEPRINT_3x3 : size == 2 ? AllPartialModels.CRAFTING_BLUEPRINT_2x2 : AllPartialModels.CRAFTING_BLUEPRINT_1x1;
+        CardinalLighting cardinalLighting =
+            level instanceof BlockAndTintGetter getter ? getter.cardinalLighting() : null;
+        PartialModel partialModel = size == 3 ? AllPartialModels.CRAFTING_BLUEPRINT_3x3 :
+            size == 2 ? AllPartialModels.CRAFTING_BLUEPRINT_2x2 : AllPartialModels.CRAFTING_BLUEPRINT_1x1;
         state.model = CachedBuffers.partial(partialModel, Blocks.AIR.defaultBlockState())
             .cardinalLighting(cardinalLighting).light(state.lightCoords).disableDiffuse().extractRenderState();
         state.yRot = yaw != 0 ? Axis.YP.rotation(Mth.DEG_TO_RAD * -yaw) : null;

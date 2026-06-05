@@ -45,13 +45,16 @@ public interface AutoCompactingDisplay {
         }
         if (recipe instanceof ShapelessRecipe) {
             return new ShapelessDisplay((RecipeHolder<ShapelessRecipe>) entry);
-        } else if (recipe instanceof ShapedRecipe) {
+        }
+        if (recipe instanceof ShapedRecipe) {
             return new ShapedDisplay((RecipeHolder<ShapedRecipe>) entry);
-        } else if (!recipe.isSpecial()) {
+        }
+        if (!recipe.isSpecial()) {
             for (RecipeDisplay d : recipe.display()) {
                 if (d instanceof ShapedCraftingRecipeDisplay display) {
                     return new CraftingDisplayShaped(display);
-                } else if (d instanceof ShapelessCraftingRecipeDisplay display) {
+                }
+                if (d instanceof ShapelessCraftingRecipeDisplay display) {
                     return new CraftingDisplayShapeless(display);
                 }
             }

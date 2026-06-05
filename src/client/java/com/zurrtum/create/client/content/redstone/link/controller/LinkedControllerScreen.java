@@ -45,7 +45,7 @@ public class LinkedControllerScreen extends AbstractSimiContainerScreen<LinkedCo
             AllGuiTextures.LINKED_CONTROLLER.getWidth(),
             AllGuiTextures.LINKED_CONTROLLER.getHeight() + 4 + PLAYER_INVENTORY.getHeight()
         );
-        this.background = AllGuiTextures.LINKED_CONTROLLER;
+        background = AllGuiTextures.LINKED_CONTROLLER;
     }
 
     @Nullable
@@ -141,7 +141,7 @@ public class LinkedControllerScreen extends AbstractSimiContainerScreen<LinkedCo
             return list;
         }
         list.add(CreateLang.translateDirect(
-            "linked_controller.frequency_slot_" + ((slot % 2) + 1),
+            "linked_controller.frequency_slot_" + (slot % 2 + 1),
             ControlsUtil.getControls().get(slot / 2).getTranslatedKeyMessage().getString()
         ).withStyle(ChatFormatting.GOLD));
         return list;

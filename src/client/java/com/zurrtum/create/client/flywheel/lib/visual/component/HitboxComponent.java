@@ -47,9 +47,9 @@ public final class HitboxComponent implements EntityComponent {
     public HitboxComponent(VisualizationContext context, Entity entity) {
         this.context = context;
         this.entity = entity;
-        this.showEyeBox = entity instanceof LivingEntity;
+        showEyeBox = entity instanceof LivingEntity;
 
-        this.recycler = new SmartRecycler<>(this::createInstance);
+        recycler = new SmartRecycler<>(this::createInstance);
     }
 
     private TransformedInstance createInstance(Model model) {

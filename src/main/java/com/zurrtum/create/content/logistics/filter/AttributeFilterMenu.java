@@ -55,8 +55,8 @@ public class AttributeFilterMenu extends AbstractFilterMenu {
 
     @Override
     protected void addFilterSlots() {
-        this.addSlot(new Slot(ghostInventory, 0, 16, 27));
-        this.addSlot(new Slot(ghostInventory, 1, 16, 62) {
+        addSlot(new Slot(ghostInventory, 0, 16, 27));
+        addSlot(new Slot(ghostInventory, 1, 16, 62) {
             @Override
             public boolean mayPickup(Player playerIn) {
                 return false;

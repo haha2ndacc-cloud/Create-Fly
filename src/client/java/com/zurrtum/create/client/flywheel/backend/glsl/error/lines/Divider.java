@@ -5,11 +5,11 @@ public enum Divider {
 
     private final String s;
 
-    private Divider(String s) {
+    Divider(String s) {
         this.s = s;
     }
 
     public String toString() {
-        return this.s;
+        return s;
     }
 }

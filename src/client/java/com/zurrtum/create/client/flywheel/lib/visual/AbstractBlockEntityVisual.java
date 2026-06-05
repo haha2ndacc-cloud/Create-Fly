@@ -46,14 +46,14 @@ public abstract class AbstractBlockEntityVisual<T extends BlockEntity> extends A
     public AbstractBlockEntityVisual(VisualizationContext ctx, T blockEntity, float partialTick) {
         super(ctx, blockEntity.getLevel(), partialTick);
         this.blockEntity = blockEntity;
-        this.pos = blockEntity.getBlockPos();
-        this.blockState = blockEntity.getBlockState();
-        this.visualPos = pos.subtract(ctx.renderOrigin());
+        pos = blockEntity.getBlockPos();
+        blockState = blockEntity.getBlockState();
+        visualPos = pos.subtract(ctx.renderOrigin());
     }
 
     @Override
     public void setSectionCollector(SectionCollector sectionCollector) {
-        this.lightSections = sectionCollector;
+        lightSections = sectionCollector;
         lightSections.sections(LongSet.of(SectionPos.asLong(pos)));
     }
 

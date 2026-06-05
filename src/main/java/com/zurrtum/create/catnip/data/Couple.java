@@ -97,11 +97,7 @@ public class Couple<T> extends Pair<T, T> implements Iterable<T> {
                             new Couple<>(first, second),
                             ops.empty()
                         ));
-                    },
-                    e -> DataResult.success(com.mojang.datafixers.util.Pair.of(
-                        create(Optional::empty),
-                        ops.empty()
-                    ))
+                    }, e -> DataResult.success(com.mojang.datafixers.util.Pair.of(create(Optional::empty), ops.empty()))
                 );
             }
 
@@ -141,10 +137,7 @@ public class Couple<T> extends Pair<T, T> implements Iterable<T> {
     }
 
     public <S> Couple<S> mapNotNull(Function<T, S> function) {
-        return create(
-            first != null ? function.apply(first) : null,
-            second != null ? function.apply(second) : null
-        );
+        return create(first != null ? function.apply(first) : null, second != null ? function.apply(second) : null);
     }
 
     public <S> Couple<S> mapWithContext(BiFunction<T, Boolean, S> function) {

@@ -20,7 +20,7 @@ public class CachedBuffers {
     public static final Compartment<Pair<Direction, PartialModel>> DIRECTIONAL_PARTIAL = new Compartment<>();
     public static final Compartment<Pair<Direction, PartialModel>> DIRECTIONAL_PARTIAL_VERTICAL = new Compartment<>();
     public static final Compartment<Pair<Direction, PartialModel>> DIRECTIONAL_PARTIAL_CUSTOM = new Compartment<>();
-    private static final Function<Direction, Pose> ROTATE_TO_FACE = Util.memoize((facing) -> {
+    private static final Function<Direction, Pose> ROTATE_TO_FACE = Util.memoize(facing -> {
         Pose pose = new Pose();
         switch (facing) {
             case NORTH -> pose.rotateAround(new Quaternionf().rotationY(Mth.DEG_TO_RAD * 180), 0.5f, 0.5f, 0.5f);
@@ -31,7 +31,7 @@ public class CachedBuffers {
         }
         return pose;
     });
-    private static final Function<Direction, Pose> ROTATE_TO_FACE_VERTICAL = Util.memoize((facing) -> {
+    private static final Function<Direction, Pose> ROTATE_TO_FACE_VERTICAL = Util.memoize(facing -> {
         Pose pose = new Pose();
         switch (facing) {
             case NORTH ->

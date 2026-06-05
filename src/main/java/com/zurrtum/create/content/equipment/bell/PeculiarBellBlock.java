@@ -37,7 +37,7 @@ public class PeculiarBellBlock extends AbstractBellBlock<PeculiarBellBlockEntity
 
     @Override
     public void playSound(Level world, BlockPos pos) {
-        AllSoundEvents.PECULIAR_BELL_USE.playOnServer(world, pos, 2f, 0.94f);
+        AllSoundEvents.PECULIAR_BELL_USE.playOnServer(world, pos, 2.0f, 0.94f);
     }
 
     @Override
@@ -97,9 +97,8 @@ public class PeculiarBellBlock extends AbstractBellBlock<PeculiarBellBlockEntity
             AllSoundEvents.HAUNTED_BELL_CONVERT.playOnServer(worldIn, pos);
         }
 
-        return AllBlocks.HAUNTED_BELL.defaultBlockState().setValue(HauntedBellBlock.FACING, state.getValue(FACING))
-            .setValue(HauntedBellBlock.ATTACHMENT, state.getValue(ATTACHMENT))
-            .setValue(HauntedBellBlock.POWERED, state.getValue(POWERED));
+        return AllBlocks.HAUNTED_BELL.defaultBlockState().setValue(FACING, state.getValue(FACING))
+            .setValue(ATTACHMENT, state.getValue(ATTACHMENT)).setValue(POWERED, state.getValue(POWERED));
     }
 
     public void spawnConversionParticles(LevelAccessor world, BlockPos blockPos) {

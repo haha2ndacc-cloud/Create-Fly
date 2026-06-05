@@ -1,7 +1,7 @@
 package com.zurrtum.create.client.flywheel.lib.math;
 
 public final class MoreMath {
-    public static final float SQRT_3_OVER_2 = (float) (Math.sqrt((double) 3.0F) / (double) 2.0F);
+    public static final float SQRT_3_OVER_2 = (float) (Math.sqrt(3.0F) / (double) 2.0F);
 
     private MoreMath() {
     }
@@ -35,6 +35,6 @@ public final class MoreMath {
     }
 
     public static long ceilLong(float f) {
-        return (long) Math.ceil((double) f);
+        return (long) Math.ceil(f);
     }
 }

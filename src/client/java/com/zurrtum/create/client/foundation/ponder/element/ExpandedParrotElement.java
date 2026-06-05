@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 public class ExpandedParrotElement extends ParrotElementImpl {
 
-    protected boolean deferConductor = false;
+    protected boolean deferConductor;
 
     protected ExpandedParrotElement(Vec3 location, Supplier<? extends ParrotPose> pose) {
         super(location, pose);

@@ -95,11 +95,11 @@ public record ItemDescription(ImmutableList<Component> lines, ImmutableList<Comp
         Minecraft mc = Minecraft.getInstance();
         if (mc.hasShiftDown()) {
             return linesOnShift;
-        } else if (mc.hasControlDown()) {
-            return linesOnCtrl;
-        } else {
-            return lines;
         }
+        if (mc.hasControlDown()) {
+            return linesOnCtrl;
+        }
+        return lines;
     }
 
     public static class Builder {

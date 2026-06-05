@@ -45,7 +45,7 @@ public abstract class AbstractStationScreen extends AbstractSimiScreen implement
 
     public AbstractStationScreen(StationBlockEntity be, GlobalStation station) {
         super(be.getBlockState().getBlock().getName());
-        this.blockEntity = be;
+        blockEntity = be;
         this.station = station;
         displayedTrain = new WeakReference<>(null);
     }
@@ -158,10 +158,10 @@ public abstract class AbstractStationScreen extends AbstractSimiScreen implement
     private void transform(PoseStack ms, float partialTicks) {
         ms.scale(1, -1, 1);
         float value = blockEntity.flag.getValue(partialTicks);
-        float progress = (float) (Math.pow(Math.min(value * 5, 1), 2));
+        float progress = (float) Math.pow(Math.min(value * 5, 1), 2);
         if (blockEntity.flag.getChaseTarget() > 0 && !blockEntity.flag.settled() && progress == 1) {
-            float wiggleProgress = (value - .2f) / .8f;
-            progress += (Math.sin(wiggleProgress * (2 * Mth.PI) * 4) / 8f) / Math.max(1, 8f * wiggleProgress);
+            float wiggleProgress = (value - 0.2f) / 0.8f;
+            progress += Math.sin(wiggleProgress * (2 * Mth.PI) * 4) / 8.0f / Math.max(1, 8.0f * wiggleProgress);
         }
 
         TransformStack.of(ms).rotateXDegrees(24).rotateYDegrees(-210).translate(-0.12F, -0.81F, 0).rotateYDegrees(90)

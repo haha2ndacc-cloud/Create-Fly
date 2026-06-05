@@ -237,9 +237,8 @@ public abstract class CreateView extends AbstractList<IEivViewRecipe> implements
     public IEivViewRecipe get(int index) {
         if (index != 0) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: 1");
-        } else {
-            return this;
         }
+        return this;
     }
 
     @Override
@@ -247,10 +246,12 @@ public abstract class CreateView extends AbstractList<IEivViewRecipe> implements
         action.accept(this);
     }
 
+    @Override
     public boolean removeIf(Predicate<? super IEivViewRecipe> filter) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void replaceAll(UnaryOperator<IEivViewRecipe> operator) {
         throw new UnsupportedOperationException();
     }
@@ -267,54 +268,61 @@ public abstract class CreateView extends AbstractList<IEivViewRecipe> implements
     private class ViewSpliterator implements Spliterator<IEivViewRecipe> {
         long est = 1L;
 
+        @Override
         public Spliterator<IEivViewRecipe> trySplit() {
             return null;
         }
 
+        @Override
         public boolean tryAdvance(Consumer<? super IEivViewRecipe> consumer) {
             Objects.requireNonNull(consumer);
             if (est > 0L) {
                 --est;
                 consumer.accept(CreateView.this);
                 return true;
-            } else {
-                return false;
             }
+            return false;
         }
 
+        @Override
         public void forEachRemaining(Consumer<? super IEivViewRecipe> consumer) {
             tryAdvance(consumer);
         }
 
+        @Override
         public long estimateSize() {
             return est;
         }
 
+        @Override
         public int characteristics() {
-            return Spliterator.ORDERED | Spliterator.DISTINCT | Spliterator.SIZED | Spliterator.NONNULL | Spliterator.IMMUTABLE | Spliterator.SUBSIZED;
+            return ORDERED | DISTINCT | SIZED | NONNULL | IMMUTABLE | SUBSIZED;
         }
     }
 
     private class ViewIterator implements Iterator<IEivViewRecipe> {
         private boolean hasNext = true;
 
+        @Override
         public boolean hasNext() {
             return hasNext;
         }
 
+        @Override
         public IEivViewRecipe next() {
             if (hasNext) {
                 hasNext = false;
                 return CreateView.this;
-            } else {
-                throw new NoSuchElementException();
             }
+            throw new NoSuchElementException();
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }
 
+        @Override
         public void forEachRemaining(Consumer<? super IEivViewRecipe> action) {
             Objects.requireNonNull(action);
             if (hasNext) {

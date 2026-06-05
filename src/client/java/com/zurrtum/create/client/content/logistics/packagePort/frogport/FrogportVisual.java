@@ -32,7 +32,7 @@ public class FrogportVisual extends AbstractBlockEntityVisual<FrogportBlockEntit
     private float lastHeadPitch = Float.NaN;
     private float lastTonguePitch = Float.NaN;
     private float lastTongueLength = Float.NaN;
-    private boolean lastGoggles = false;
+    private boolean lastGoggles;
 
     public FrogportVisual(VisualizationContext ctx, FrogportBlockEntity blockEntity, float partialTick) {
         super(ctx, blockEntity, partialTick);
@@ -90,7 +90,7 @@ public class FrogportVisual extends AbstractBlockEntityVisual<FrogportBlockEntit
                 blockEntity.getLevel(),
                 blockEntity.getBlockPos()
             ).subtract(0, animating && depositing ? 0 : 0.75, 0).subtract(Vec3.atCenterOf(blockEntity.getBlockPos()));
-            tonguePitch = (float) Mth.atan2(diff.y, diff.multiply(1, 0, 1).length() + (3 / 16f)) * Mth.RAD_TO_DEG;
+            tonguePitch = (float) Mth.atan2(diff.y, diff.multiply(1, 0, 1).length() + 3 / 16.0f) * Mth.RAD_TO_DEG;
             tongueLength = Math.max((float) diff.length(), 1);
             headPitch = Mth.clamp(tonguePitch * 2, 60, 100);
         }
@@ -107,7 +107,7 @@ public class FrogportVisual extends AbstractBlockEntityVisual<FrogportBlockEntit
                     tongueLength * modifier
                 );
                 tongueLength *= Math.max(0, 1 - Math.pow((progress * 1.25 - 0.25) * 4 - 1, 4));
-                headPitchModifier = (float) Math.max(0, 1 - Math.pow((progress * 1.25) * 2 - 1, 4));
+                headPitchModifier = (float) Math.max(0, 1 - Math.pow(progress * 1.25 * 2 - 1, 4));
                 scale = 0.25f + progress * 3 / 4;
 
             } else {
@@ -123,7 +123,7 @@ public class FrogportVisual extends AbstractBlockEntityVisual<FrogportBlockEntit
             tongueLength = 0;
             float anticipation = blockEntity.anticipationProgress.getValue(partialTicks);
             headPitchModifier =
-                anticipation > 0 ? (float) Math.max(0, 1 - Math.pow((anticipation * 1.25) * 2 - 1, 4)) : 0;
+                anticipation > 0 ? (float) Math.max(0, 1 - Math.pow(anticipation * 1.25 * 2 - 1, 4)) : 0;
             rig.handle().setVisible(false);
             box.handle().setVisible(false);
         }
@@ -137,7 +137,7 @@ public class FrogportVisual extends AbstractBlockEntityVisual<FrogportBlockEntit
                 .setChanged();
 
             // Save the base pose to avoid recalculating it twice every frame
-            basePose.set(body.pose).translate(8 / 16f, 10 / 16f, 11 / 16f);
+            basePose.set(body.pose).translate(8 / 16.0f, 10 / 16.0f, 11 / 16.0f);
 
             // I'm not entirely sure that yaw ever changes
             lastYaw = yaw;
@@ -148,15 +148,15 @@ public class FrogportVisual extends AbstractBlockEntityVisual<FrogportBlockEntit
         }
 
         if (headPitch != lastHeadPitch) {
-            head.setTransform(basePose).rotateXDegrees(headPitch).translateBack(8 / 16f, 10 / 16f, 11 / 16f)
+            head.setTransform(basePose).rotateXDegrees(headPitch).translateBack(8 / 16.0f, 10 / 16.0f, 11 / 16.0f)
                 .setChanged();
 
             lastHeadPitch = headPitch;
         }
 
         if (tonguePitch != lastTonguePitch || tongueLength != lastTongueLength) {
-            tongue.setTransform(basePose).rotateXDegrees(tonguePitch).scale(1f, 1f, tongueLength / (7 / 16f))
-                .translateBack(8 / 16f, 10 / 16f, 11 / 16f).setChanged();
+            tongue.setTransform(basePose).rotateXDegrees(tonguePitch).scale(1.0f, 1.0f, tongueLength / (7 / 16.0f))
+                .translateBack(8 / 16.0f, 10 / 16.0f, 11 / 16.0f).setChanged();
 
             lastTonguePitch = tonguePitch;
             lastTongueLength = tongueLength;
@@ -207,7 +207,7 @@ public class FrogportVisual extends AbstractBlockEntityVisual<FrogportBlockEntit
             .stealInstance(box);
         box.handle().setVisible(true);
 
-        box.setIdentityTransform().translate(getVisualPosition()).translate(0, 3 / 16f, 0)
+        box.setIdentityTransform().translate(getVisualPosition()).translate(0, 3 / 16.0f, 0)
             .translate(diff.normalize().scale(itemDistance).subtract(0, animating && depositing ? 0.75 : 0, 0)).center()
             .scale(scale).uncenter().setChanged();
 

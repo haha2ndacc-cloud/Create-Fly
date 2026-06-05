@@ -115,41 +115,38 @@ public class ToolboxInventory implements ItemInventory {
                 ItemStack target = getItem(i);
                 if (target.isEmpty()) {
                     return maxAmount;
-                } else {
-                    count += stackSize - target.getCount();
-                    if (count >= maxAmount) {
-                        return maxAmount;
-                    }
+                }
+                count += stackSize - target.getCount();
+                if (count >= maxAmount) {
+                    return maxAmount;
                 }
             }
             return count;
-        } else {
-            int remaining = maxAmount;
-            for (int i = compartment * STACKS_PER_COMPARTMENT, end = i + STACKS_PER_COMPARTMENT; i < end; i++) {
-                ItemStack target = getItem(i);
-                if (target.isEmpty()) {
-                    setItem(i, directCopy(stack, remaining));
+        }
+        int remaining = maxAmount;
+        for (int i = compartment * STACKS_PER_COMPARTMENT, end = i + STACKS_PER_COMPARTMENT; i < end; i++) {
+            ItemStack target = getItem(i);
+            if (target.isEmpty()) {
+                setItem(i, directCopy(stack, remaining));
+                setChanged();
+                return maxAmount;
+            }
+            int count = target.getCount();
+            if (count != stackSize) {
+                int insert = Math.min(remaining, stackSize - count);
+                target.setCount(count + insert);
+                if (remaining == insert) {
                     setChanged();
                     return maxAmount;
-                } else {
-                    int count = target.getCount();
-                    if (count != stackSize) {
-                        int insert = Math.min(remaining, stackSize - count);
-                        target.setCount(count + insert);
-                        if (remaining == insert) {
-                            setChanged();
-                            return maxAmount;
-                        }
-                        remaining -= insert;
-                    }
                 }
+                remaining -= insert;
             }
-            if (remaining == maxAmount) {
-                return 0;
-            }
-            setChanged();
-            return maxAmount - remaining;
         }
+        if (remaining == maxAmount) {
+            return 0;
+        }
+        setChanged();
+        return maxAmount - remaining;
     }
 
     public ItemStack takeFromCompartment(int maxAmount, int compartment, boolean simulate) {
@@ -181,14 +178,13 @@ public class ToolboxInventory implements ItemInventory {
                 return directCopy(findStack, count);
             }
             return ItemStack.EMPTY;
-        } else {
-            ItemStack stack = takeFromCompartment(maxAmount, index, index + STACKS_PER_COMPARTMENT - 1);
-            if (stack == ItemStack.EMPTY) {
-                return stack;
-            }
-            setChanged();
+        }
+        ItemStack stack = takeFromCompartment(maxAmount, index, index + STACKS_PER_COMPARTMENT - 1);
+        if (stack == ItemStack.EMPTY) {
             return stack;
         }
+        setChanged();
+        return stack;
     }
 
     protected ItemStack takeFromCompartment(int maxAmount, int start, int end) {

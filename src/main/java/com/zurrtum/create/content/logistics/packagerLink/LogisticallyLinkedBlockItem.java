@@ -92,9 +92,8 @@ public class LogisticallyLinkedBlockItem extends BlockItem {
                 stack.remove(DataComponents.BLOCK_ENTITY_DATA);
             }
             return InteractionResult.SUCCESS;
-        } else {
-            return super.use(world, player, usedHand);
         }
+        return super.use(world, player, usedHand);
     }
 
     @Override
@@ -131,8 +130,8 @@ public class LogisticallyLinkedBlockItem extends BlockItem {
             return useOn;
         }
 
-        player.sendOverlayMessage(tuned ? Component.translatable("create.logistically_linked.connected") : Component.translatable(
-            "create.logistically_linked.new_network_started"));
+        player.sendOverlayMessage(tuned ? Component.translatable("create.logistically_linked.connected") :
+            Component.translatable("create.logistically_linked.new_network_started"));
         return useOn;
     }
 

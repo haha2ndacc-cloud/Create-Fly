@@ -55,7 +55,7 @@ public interface InventoryIdentifier {
     record Single(BlockPos pos) implements InventoryIdentifier {
         @Override
         public boolean contains(BlockFace face) {
-            return this.pos.equals(face.getPos());
+            return pos.equals(face.getPos());
         }
     }
 
@@ -73,21 +73,21 @@ public interface InventoryIdentifier {
         @Override
         public boolean contains(BlockFace face) {
             BlockPos pos = face.getPos();
-            return this.first.equals(pos) || this.second.equals(pos);
+            return first.equals(pos) || second.equals(pos);
         }
     }
 
     record Bounds(BoundingBox bounds) implements InventoryIdentifier {
         @Override
         public boolean contains(BlockFace face) {
-            return this.bounds.isInside(face.getPos());
+            return bounds.isInside(face.getPos());
         }
     }
 
     record MultiFace(BlockPos pos, Set<Direction> sides) implements InventoryIdentifier {
         @Override
         public boolean contains(BlockFace face) {
-            return this.pos.equals(face.getPos()) && this.sides.contains(face.getFace());
+            return pos.equals(face.getPos()) && sides.contains(face.getFace());
         }
     }
 }

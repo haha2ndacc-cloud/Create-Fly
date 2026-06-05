@@ -121,8 +121,9 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
         editorEditBox.setFocused(false);
         editorEditBox.mouseClicked(new MouseButtonEvent(0, 0, new MouseButtonInfo(0, 0)), false);
         editorEditBox.setMaxLength(28);
-        editorEditBox.setValue(index == -1 || schedule.get(index).isEmpty() ? CreateLang.translate(
-            "gui.stock_ticker.new_category").string() : schedule.get(index).getHoverName().getString());
+        editorEditBox.setValue(index == -1 || schedule.get(index).isEmpty() ?
+            CreateLang.translate("gui.stock_ticker.new_category").string() :
+            schedule.get(index).getHoverName().getString());
 
         editingIndex = index;
         editingItem = index == -1 ? ItemStack.EMPTY : schedule.get(index);
@@ -212,7 +213,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
             leftPos + 3,
             topPos + 16,
             leftPos + 187,
-            topPos + 19 + (AllGuiTextures.STOCK_KEEPER_CATEGORY.getHeight() * slices)
+            topPos + 19 + AllGuiTextures.STOCK_KEEPER_CATEGORY.getHeight() * slices
         );
         for (int i = 0; i <= entries.size(); i++) {
             matrixStack.pushMatrix();
@@ -260,8 +261,8 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
         Component name = entry.getHoverName();
         graphics.text(
             font,
-            entry.isEmpty() ? CreateLang.translate("gui.stock_ticker.empty_category_name_placeholder")
-                .string() : name.getString(20).stripTrailing() + (name.getString().length() > 20 ? "..." : ""),
+            entry.isEmpty() ? CreateLang.translate("gui.stock_ticker.empty_category_name_placeholder").string() :
+                name.getString(20).stripTrailing() + (name.getString().length() > 20 ? "..." : ""),
             35,
             5,
             0xFF656565,
@@ -283,7 +284,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
         int click
     ) {
         // Prevent actions outside the window for them
-        if (mouseX < this.leftPos || mouseX >= this.leftPos + imageWidth || mouseY < this.topPos + 15 || mouseY >= this.topPos + 99) {
+        if (mouseX < leftPos || mouseX >= leftPos + imageWidth || mouseY < topPos + 15 || mouseY >= topPos + 99) {
             return false;
         }
 
@@ -293,8 +294,8 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 
         int mx = (int) mouseX;
         int my = (int) mouseY;
-        int x = mx - this.leftPos - 20;
-        int y = my - this.topPos - 24;
+        int x = mx - leftPos - 20;
+        int y = my - topPos - 24;
         if (x < 0 || x >= 196) {
             return false;
         }
@@ -319,8 +320,9 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
             int fieldSize = 140;
             if (x > 0 && x <= fieldSize && y > 0 && y <= 16) {
                 List<Component> components = new ArrayList<>();
-                components.add(entry.isEmpty() ? CreateLang.translate("gui.stock_ticker.empty_category_name_placeholder")
-                    .component() : entry.getHoverName());
+                components.add(entry.isEmpty() ?
+                    CreateLang.translate("gui.stock_ticker.empty_category_name_placeholder").component() :
+                    entry.getHoverName());
                 components.add(clickToEdit);
                 renderActionTooltip(graphics, components, mx, my);
                 if (click == 0) {
@@ -407,7 +409,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
                 my
             );
             if (click == 0) {
-                playUiSound(SoundEvents.UI_BUTTON_CLICK.value(), 1f, 1f);
+                playUiSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0f, 1.0f);
                 startEditing(-1);
             }
         }
@@ -430,7 +432,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
             return true;
         }
         if (action(click, null, pMouseX, pMouseY, click.button())) {
-            playUiSound(SoundEvents.UI_BUTTON_CLICK.value(), 1f, 1f);
+            playUiSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0f, 1.0f);
             return true;
         }
 
@@ -519,7 +521,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
     public void extractBackground(GuiGraphicsExtractor graphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.extractBackground(graphics, pMouseX, pMouseY, pPartialTick);
         pPartialTick = AnimationTickHolder.getPartialTicksUI(minecraft.getDeltaTracker());
-        int y = this.topPos;
+        int y = topPos;
         AllGuiTextures.STOCK_KEEPER_CATEGORY_HEADER.render(graphics, leftPos, y);
         y += AllGuiTextures.STOCK_KEEPER_CATEGORY_HEADER.getHeight();
         for (int i = 0; i < slices; i++) {
@@ -532,12 +534,12 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
         FormattedCharSequence formattedcharsequence = menu.contentHolder.getBlockState().getBlock().getName()
             .getVisualOrderText();
 
-        int center = leftPos + (AllGuiTextures.STOCK_KEEPER_CATEGORY.getWidth()) / 2;
+        int center = leftPos + AllGuiTextures.STOCK_KEEPER_CATEGORY.getWidth() / 2;
         graphics.text(
             font,
             formattedcharsequence,
-            (center - font.width(formattedcharsequence) / 2),
-            this.topPos + 4,
+            center - font.width(formattedcharsequence) / 2,
+            topPos + 4,
             0xFF3D3C48,
             false
         );
@@ -548,24 +550,24 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
             return;
         }
 
-        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
+        graphics.fillGradient(0, 0, width, height, -1072689136, -804253680);
 
-        y = this.topPos - 5;
+        y = topPos - 5;
         AllGuiTextures.STOCK_KEEPER_CATEGORY_HEADER.render(graphics, leftPos, y);
         y += AllGuiTextures.STOCK_KEEPER_CATEGORY_HEADER.getHeight();
         AllGuiTextures.STOCK_KEEPER_CATEGORY_EDIT.render(graphics, leftPos, y);
         y += AllGuiTextures.STOCK_KEEPER_CATEGORY_EDIT.getHeight();
         AllGuiTextures.STOCK_KEEPER_CATEGORY_FOOTER.render(graphics, leftPos, y);
 
-        renderPlayerInventory(graphics, leftPos + 10, this.topPos + 88);
+        renderPlayerInventory(graphics, leftPos + 10, topPos + 88);
 
         formattedcharsequence = CreateLang.translate("gui.stock_ticker.category_editor").component()
             .getVisualOrderText();
         graphics.text(
             font,
             formattedcharsequence,
-            (center - font.width(formattedcharsequence) / 2),
-            this.topPos - 1,
+            center - font.width(formattedcharsequence) / 2,
+            topPos - 1,
             0x3D3C48,
             false
         );

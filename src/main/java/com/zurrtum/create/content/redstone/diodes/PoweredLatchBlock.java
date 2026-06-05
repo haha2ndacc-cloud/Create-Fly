@@ -99,7 +99,7 @@ public class PoweredLatchBlock extends ToggleLatchBlock {
         }
 
         if (state != stateIn) {
-            worldIn.setBlock(pos, state, Block.UPDATE_CLIENTS);
+            worldIn.setBlock(pos, state, UPDATE_CLIENTS);
         }
     }
 
@@ -111,7 +111,7 @@ public class PoweredLatchBlock extends ToggleLatchBlock {
         if (!worldIn.isClientSide()) {
             float f = !state.getValue(POWERING) ? 0.6F : 0.5F;
             worldIn.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, f);
-            worldIn.setBlock(pos, state.cycle(POWERING), Block.UPDATE_CLIENTS);
+            worldIn.setBlock(pos, state.cycle(POWERING), UPDATE_CLIENTS);
         }
         return InteractionResult.SUCCESS;
     }

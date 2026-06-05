@@ -31,8 +31,8 @@ public abstract class SingleBlockEntityEdgePoint extends TrackEdgePoint {
 
     @Override
     public void blockEntityAdded(BlockEntity blockEntity, boolean front) {
-        this.blockEntityPos = blockEntity.getBlockPos();
-        this.blockEntityDimension = blockEntity.getLevel().dimension();
+        blockEntityPos = blockEntity.getBlockPos();
+        blockEntityDimension = blockEntity.getLevel().dimension();
     }
 
     @Override

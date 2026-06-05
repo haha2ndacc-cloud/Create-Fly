@@ -42,8 +42,8 @@ public class BlazeBurnerMovementRenderBehaviour implements MovementRenderBehavio
 
         RandomSource r = context.world.getRandom();
         Vec3 c = context.position;
-        Vec3 v = c.add(VecHelper.offsetRandomly(Vec3.ZERO, r, .125f).multiply(1, 0, 1));
-        if (r.nextInt(3) == 0 && context.motion.length() < 1 / 64f) {
+        Vec3 v = c.add(VecHelper.offsetRandomly(Vec3.ZERO, r, 0.125f).multiply(1, 0, 1));
+        if (r.nextInt(3) == 0 && context.motion.length() < 1 / 64.0f) {
             context.world.addParticle(ParticleTypes.LARGE_SMOKE, v.x, v.y, v.z, 0, 0, 0);
         }
 
@@ -51,7 +51,7 @@ public class BlazeBurnerMovementRenderBehaviour implements MovementRenderBehavio
         boolean quickTurn = shouldRenderHat(context) && !Mth.equal(context.relativeMotion.length(), 0);
         headAngle.chase(
             headAngle.getValue() + AngleHelper.getShortestAngleDiff(headAngle.getValue(), getTargetAngle(context)),
-            .5f,
+            0.5f,
             quickTurn ? LerpedFloat.Chaser.EXP : LerpedFloat.Chaser.exp(5)
         );
         headAngle.tickChaser();
@@ -102,7 +102,7 @@ public class BlazeBurnerMovementRenderBehaviour implements MovementRenderBehavio
         return data.getBooleanOr(
             "Conductor",
             false
-        ) && (context.contraption.entity instanceof CarriageContraptionEntity cce) && cce.hasSchedule();
+        ) && context.contraption.entity instanceof CarriageContraptionEntity cce && cce.hasSchedule();
     }
 
     private boolean determineIfConducting(MovementContext context) {

@@ -44,7 +44,7 @@ public class Create implements ModInitializer {
     public static final String VERSION = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow().getMetadata()
         .getVersion().getFriendlyString().split("\\+")[0];
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    public static boolean Lazy = false;
+    public static boolean Lazy;
 
     public static @Nullable MinecraftServer SERVER;
     public static TorquePropagator TORQUE_PROPAGATOR;

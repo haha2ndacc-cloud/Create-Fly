@@ -74,7 +74,8 @@ public final class FluidInteractionRegistry {
         addInteraction(
             Fluids.LAVA, new InteractionInformation(
                 Fluids.WATER,
-                fluidState -> fluidState.isSource() ? Blocks.OBSIDIAN.defaultBlockState() : Blocks.COBBLESTONE.defaultBlockState()
+                fluidState -> fluidState.isSource() ? Blocks.OBSIDIAN.defaultBlockState() :
+                    Blocks.COBBLESTONE.defaultBlockState()
             )
         );
 
@@ -91,9 +92,8 @@ public final class FluidInteractionRegistry {
                 AllFluids.HONEY, fluidState -> {
                 if (fluidState.isSource()) {
                     return Blocks.OBSIDIAN.defaultBlockState();
-                } else {
-                    return AllBlocks.LIMESTONE.defaultBlockState();
                 }
+                return AllBlocks.LIMESTONE.defaultBlockState();
             }
             )
         );
@@ -102,9 +102,8 @@ public final class FluidInteractionRegistry {
                 AllFluids.CHOCOLATE, fluidState -> {
                 if (fluidState.isSource()) {
                     return Blocks.OBSIDIAN.defaultBlockState();
-                } else {
-                    return AllBlocks.SCORIA.defaultBlockState();
                 }
+                return AllBlocks.SCORIA.defaultBlockState();
             }
             )
         );

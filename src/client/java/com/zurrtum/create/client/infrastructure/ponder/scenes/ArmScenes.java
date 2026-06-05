@@ -170,8 +170,8 @@ public class ArmScenes {
 
         Object in = new Object();
         Object out = new Object();
-        AABB chestBounds = new AABB(1 / 16f, 0, 1 / 16f, 15 / 16f, 14 / 16f, 15 / 16f);
-        AABB funnelBounds = new AABB(0, 0, 8 / 16f, 16 / 16f, 16 / 16f, 16 / 16f);
+        AABB chestBounds = new AABB(1 / 16.0f, 0, 1 / 16.0f, 15 / 16.0f, 14 / 16.0f, 15 / 16.0f);
+        AABB funnelBounds = new AABB(0, 0, 8 / 16.0f, 16 / 16.0f, 16 / 16.0f, 16 / 16.0f);
 
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.RED, in, chestBounds.move(4, 2, 3), 120);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.RED, out, chestBounds.move(0, 2, 3), 120);
@@ -361,7 +361,7 @@ public class ArmScenes {
         scene.idle(10);
 
         AABB depotBox = AllShapes.CASING_13PX.get(Direction.UP).bounds();
-        AABB beltBox = depotBox.contract(0, -3 / 16f, 0).inflate(1, 0, 0);
+        AABB beltBox = depotBox.contract(0, -3 / 16.0f, 0).inflate(1, 0, 0);
         BlockPos depotPos = util.grid().at(1, 1, 4);
         BlockPos armPos = util.grid().at(3, 1, 4);
 
@@ -384,7 +384,7 @@ public class ArmScenes {
             .colored(PonderPalette.OUTPUT);
         scene.idle(70);
 
-        Vec3 scrollSlot = util.vector().of(3.5, 1 + 3 / 16f, 4);
+        Vec3 scrollSlot = util.vector().of(3.5, 1 + 3 / 16.0f, 4);
         scene.overlay().showFilterSlotInput(scrollSlot, Direction.NORTH, 120);
         scene.overlay().showText(50).text("...it will act according to its setting").pointAt(scrollSlot)
             .placeNearTarget();

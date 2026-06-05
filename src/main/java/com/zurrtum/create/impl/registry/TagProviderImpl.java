@@ -34,8 +34,8 @@ public class TagProviderImpl<K, V> implements SimpleRegistry.Provider<K, V> {
     @Override
     @Nullable
     public V get(K object) {
-        Holder<K> holder = this.holderGetter.apply(object);
-        return holder.is(this.tag) ? this.value : null;
+        Holder<K> holder = holderGetter.apply(object);
+        return holder.is(tag) ? value : null;
     }
 
     @Override

@@ -14,8 +14,8 @@ import org.jspecify.annotations.Nullable;
 public class FluidEntry {
     public FlowableFluid flowing = new Flowing();
     public FlowableFluid still = new Still();
-    public @Nullable BucketItem bucket = null;
-    public @Nullable FluidBlock block = null;
+    public @Nullable BucketItem bucket;
+    public @Nullable FluidBlock block;
 
     private class Flowing extends FlowableFluid {
         public FluidEntry getEntry() {

@@ -4,7 +4,6 @@ import com.zurrtum.create.AllBlockEntityTypes;
 import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.catnip.data.Iterate;
 import com.zurrtum.create.content.kinetics.base.DirectionalAxisKineticBlock;
-import com.zurrtum.create.content.kinetics.gantry.GantryShaftBlock;
 import com.zurrtum.create.foundation.block.IBE;
 import com.zurrtum.create.foundation.block.NeighborUpdateListeningBlock;
 import net.minecraft.core.BlockPos;
@@ -35,8 +34,7 @@ public class GantryCarriageBlock extends DirectionalAxisKineticBlock implements 
     public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
         Direction direction = state.getValue(FACING);
         BlockState shaft = world.getBlockState(pos.relative(direction.getOpposite()));
-        return shaft.getBlock() == AllBlocks.GANTRY_SHAFT && shaft.getValue(GantryShaftBlock.FACING)
-            .getAxis() != direction.getAxis();
+        return shaft.getBlock() == AllBlocks.GANTRY_SHAFT && shaft.getValue(FACING).getAxis() != direction.getAxis();
     }
 
     @Override
@@ -127,7 +125,7 @@ public class GantryCarriageBlock extends DirectionalAxisKineticBlock implements 
         if (otherState.getBlock() != AllBlocks.GANTRY_SHAFT) {
             return state;
         }
-        if (otherState.getValue(GantryShaftBlock.FACING).getAxis() == direction.getAxis()) {
+        if (otherState.getValue(FACING).getAxis() == direction.getAxis()) {
             return state;
         }
         if (isValidGantryShaftAxis(state, otherState)) {
@@ -137,7 +135,7 @@ public class GantryCarriageBlock extends DirectionalAxisKineticBlock implements 
     }
 
     public static boolean isValidGantryShaftAxis(BlockState pinionState, BlockState gantryState) {
-        return getValidGantryShaftAxis(pinionState) == gantryState.getValue(GantryShaftBlock.FACING).getAxis();
+        return getValidGantryShaftAxis(pinionState) == gantryState.getValue(FACING).getAxis();
     }
 
     public static Axis getValidGantryShaftAxis(BlockState state) {

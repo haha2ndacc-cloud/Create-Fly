@@ -35,7 +35,7 @@ public class ShaderSources {
             StringUtil.formatTime(loadEnd - loadStart)
         );
 
-        this.cache = sourceFinder.results;
+        cache = sourceFinder.results;
     }
 
     private static Identifier locationWithoutFlywheelPrefix(Identifier loc) {
@@ -72,7 +72,7 @@ public class ShaderSources {
                 return;
             }
 
-            this.results.put(strippedLoc, readResource(strippedLoc, resource));
+            results.put(strippedLoc, readResource(strippedLoc, resource));
         }
 
         public LoadResult recursiveLoad(Identifier location) {

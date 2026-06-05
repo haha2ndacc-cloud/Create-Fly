@@ -55,11 +55,11 @@ public class MechanicalCraftingView extends CreateView {
     protected int placeViewSlots(SlotDefinition slotDefinition) {
         int left = 7;
         if (width < 5) {
-            left += (19 * (5 - width)) / 2;
+            left += 19 * (5 - width) / 2;
         }
         int top = 1;
         if (height < 5) {
-            top += (19 * (5 - height)) / 2;
+            top += 19 * (5 - height) / 2;
         }
         int i = 0;
         for (int h = 0; h < height; h++) {
@@ -67,7 +67,7 @@ public class MechanicalCraftingView extends CreateView {
                 if (empty.contains(h * width + w)) {
                     continue;
                 }
-                slotDefinition.addItemSlot(i++, left + 16 * w + (w * 3), top + 16 * h + (h * 3));
+                slotDefinition.addItemSlot(i++, left + 16 * w + w * 3, top + 16 * h + h * 3);
             }
         }
         slotDefinition.addItemSlot(i++, 133, 74);

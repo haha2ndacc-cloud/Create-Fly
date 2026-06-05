@@ -75,10 +75,9 @@ public class CreativeModeTabsMixin {
 
             if (displayCompare != 0) {
                 return -displayCompare;
-            } else {
-                // Ensure a deterministic order
-                return e1.key().identifier().compareTo(e2.key().identifier());
             }
+            // Ensure a deterministic order
+            return e1.key().identifier().compareTo(e2.key().identifier());
         };
         final List<Holder.Reference<CreativeModeTab>> sortedItemGroups = BuiltInRegistries.CREATIVE_MODE_TAB.listElements()
             .sorted(entryComparator).toList();
@@ -93,11 +92,13 @@ public class CreativeModeTabsMixin {
                 continue;
             }
 
-            fabricItemGroup.fabric_setPage((count / TABS_PER_PAGE) + 1);
+            fabricItemGroup.fabric_setPage(count / TABS_PER_PAGE + 1);
             int pageIndex = count % TABS_PER_PAGE;
-            CreativeModeTab.Row row = pageIndex < (TABS_PER_PAGE / 2) ? CreativeModeTab.Row.TOP : CreativeModeTab.Row.BOTTOM;
+            CreativeModeTab.Row row =
+                pageIndex < TABS_PER_PAGE / 2 ? CreativeModeTab.Row.TOP : CreativeModeTab.Row.BOTTOM;
             itemGroup.row = row;
-            itemGroup.column = row == CreativeModeTab.Row.TOP ? pageIndex % TABS_PER_PAGE : (pageIndex - TABS_PER_PAGE / 2) % (TABS_PER_PAGE);
+            itemGroup.column = row == CreativeModeTab.Row.TOP ? pageIndex % TABS_PER_PAGE :
+                (pageIndex - TABS_PER_PAGE / 2) % TABS_PER_PAGE;
 
             count++;
         }

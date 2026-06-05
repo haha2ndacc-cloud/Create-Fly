@@ -49,15 +49,14 @@ public class VerticalGearboxItem extends BlockItem {
                     if (prefferedAxis != null && prefferedAxis != side.getAxis()) {
                         prefferedAxis = null;
                         break;
-                    } else {
-                        prefferedAxis = side.getAxis();
                     }
+                    prefferedAxis = side.getAxis();
                 }
             }
         }
 
-        Axis axis = prefferedAxis == null ? player.getDirection().getClockWise()
-            .getAxis() : prefferedAxis == Axis.X ? Axis.Z : Axis.X;
+        Axis axis = prefferedAxis == null ? player.getDirection().getClockWise().getAxis() :
+            prefferedAxis == Axis.X ? Axis.Z : Axis.X;
         world.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.AXIS, axis));
         return super.updateCustomBlockEntityTag(pos, world, player, stack, state);
     }

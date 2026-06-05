@@ -65,7 +65,8 @@ public class ExtendoGripItem extends Item {
                 .is(AllItems.EXTENDO_GRIP)) {
                 if (modifiers != doubleRangeModifier) {
                     stack.set(DataComponents.ATTRIBUTE_MODIFIERS, doubleRangeModifier);
-                    livingEntity.lastEquipmentItems.get(slot).remove(DataComponents.ATTRIBUTE_MODIFIERS);
+                    livingEntity.lastEquipmentItems.get(EquipmentSlot.MAINHAND)
+                        .remove(DataComponents.ATTRIBUTE_MODIFIERS);
                     if (entity instanceof ServerPlayer serverPlayer) {
                         AllAdvancements.EXTENDO_GRIP_DUAL.trigger(serverPlayer);
                     }
@@ -147,11 +148,13 @@ public class ExtendoGripItem extends Item {
 
     public static boolean shouldInteraction(Player player, InteractionHand hand, ItemStack stack) {
         if (stack.isEmpty()) {
-            return player.getItemBySlot(hand == InteractionHand.MAIN_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND)
+            return player.getItemBySlot(
+                    hand == InteractionHand.MAIN_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND)
                 .is(AllItems.EXTENDO_GRIP);
         }
         if (stack.is(AllItems.EXTENDO_GRIP)) {
-            stack = player.getItemBySlot(hand == InteractionHand.MAIN_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
+            stack = player.getItemBySlot(
+                hand == InteractionHand.MAIN_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
             return stack.isEmpty() || stack.is(AllItems.EXTENDO_GRIP);
         }
         return false;

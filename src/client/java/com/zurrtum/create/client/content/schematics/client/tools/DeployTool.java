@@ -54,8 +54,8 @@ public class DeployTool extends PlacementToolBase {
         Vec3 rotationOffset = transformation.getRotationOffset(true);
         int centerX = (int) center.x;
         int centerZ = (int) center.z;
-        double xOrigin = bounds.getXsize() / 2f;
-        double zOrigin = bounds.getZsize() / 2f;
+        double xOrigin = bounds.getXsize() / 2.0f;
+        double zOrigin = bounds.getZsize() / 2.0f;
         Vec3 origin = new Vec3(xOrigin, 0, zOrigin);
 
         ms.translate(x - centerX - camera.x, y - camera.y, z - centerZ - camera.z);

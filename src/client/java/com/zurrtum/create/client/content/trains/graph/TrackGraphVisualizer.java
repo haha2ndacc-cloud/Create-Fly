@@ -36,7 +36,7 @@ public class TrackGraphVisualizer {
         Vec3 camera = cameraEntity.getEyePosition();
         Outliner outliner = Outliner.getInstance();
         Map<UUID, SignalEdgeGroup> allGroups = Create.RAILWAYS.signalEdgeGroups;
-        float width = 1 / 8f;
+        float width = 1 / 8.0f;
 
         for (Map.Entry<TrackNodeLocation, TrackNode> nodeEntry : graph.nodes.entrySet()) {
             TrackNodeLocation nodeLocation = nodeEntry.getKey();
@@ -71,7 +71,7 @@ public class TrackGraphVisualizer {
                     continue;
                 }
 
-                Vec3 yOffset = new Vec3(0, (other.hashCode() > hashCode ? 6 : 5) / 64f, 0);
+                Vec3 yOffset = new Vec3(0, (other.hashCode() > hashCode ? 6 : 5) / 64.0f, 0);
                 Vec3 startPoint = edge.getPosition(graph, 0);
                 Vec3 endPoint = edge.getPosition(graph, 1);
 
@@ -95,10 +95,10 @@ public class TrackGraphVisualizer {
                             if (group != null) {
                                 outliner.showLine(
                                     Pair.of(boundary, edge),
-                                    edge.getPosition(graph, prev + (prev == 0 ? 0 : 1 / 16f / length)).add(yOffset),
+                                    edge.getPosition(graph, prev + (prev == 0 ? 0 : 1 / 16.0f / length)).add(yOffset),
                                     edge.getPosition(
                                         graph,
-                                        (prev = boundary.getLocationOn(edge) / length) - 1 / 16f / length
+                                        (prev = boundary.getLocationOn(edge) / length) - 1 / 16.0f / length
                                     ).add(yOffset)
                                 ).colored(group.color.get()).lineWidth(width);
                             }
@@ -110,7 +110,7 @@ public class TrackGraphVisualizer {
                             if (group != null) {
                                 outliner.showLine(
                                     edge,
-                                    edge.getPosition(graph, prev + 1 / 16f / length).add(yOffset),
+                                    edge.getPosition(graph, prev + 1 / 16.0f / length).add(yOffset),
                                     endPoint.add(yOffset)
                                 ).colored(group.color.get()).lineWidth(width);
                             }
@@ -161,7 +161,7 @@ public class TrackGraphVisualizer {
                         BezierConnection turn = edge.getTurn();
 
                         for (int i = 0; i <= turn.getSegmentCount(); i++) {
-                            double f = i * 1f / turn.getSegmentCount();
+                            double f = i * 1.0f / turn.getSegmentCount();
                             double position = f * turn.getLength();
                             Vec3 current = edge.getPosition(graph, f);
 
@@ -215,7 +215,7 @@ public class TrackGraphVisualizer {
                     Vec3 previous = null;
                     BezierConnection turn = edge.getTurn();
                     for (int i = 0; i <= turn.getSegmentCount(); i++) {
-                        Vec3 current = edge.getPosition(graph, i * 1f / turn.getSegmentCount());
+                        Vec3 current = edge.getPosition(graph, i * 1.0f / turn.getSegmentCount());
                         if (previous != null) {
                             outliner.showLine(Pair.of(edge, previous), previous.add(yOffset), current.add(yOffset))
                                 .colored(singleEdgeGroup.color.get()).lineWidth(width);
@@ -253,11 +253,11 @@ public class TrackGraphVisualizer {
                 continue;
             }
 
-            Vec3 yOffset = new Vec3(0, 3 / 16f, 0);
+            Vec3 yOffset = new Vec3(0, 3 / 16.0f, 0);
             Vec3 v1 = location.add(yOffset);
-            Vec3 v2 = v1.add(node.getNormal().scale(3 / 16f));
+            Vec3 v2 = v1.add(node.getNormal().scale(3 / 16.0f));
             Outliner.getInstance().showLine(node.getNetId(), v1, v2)
-                .colored(Color.mixColors(Color.WHITE, graph.color, 1)).lineWidth(1 / 8f);
+                .colored(Color.mixColors(Color.WHITE, graph.color, 1)).lineWidth(1 / 8.0f);
 
             Map<TrackNode, TrackEdge> map = graph.connectionsByNode.get(node);
             if (map == null) {
@@ -271,9 +271,9 @@ public class TrackGraphVisualizer {
 
                 if (!edge.node1.getLocation().dimension.equals(edge.node2.getLocation().dimension)) {
                     v1 = location.add(yOffset);
-                    v2 = v1.add(node.getNormal().scale(3 / 16f));
+                    v2 = v1.add(node.getNormal().scale(3 / 16.0f));
                     Outliner.getInstance().showLine(node.getNetId(), v1, v2)
-                        .colored(Color.mixColors(Color.WHITE, graph.color, 1)).lineWidth(1 / 4f);
+                        .colored(Color.mixColors(Color.WHITE, graph.color, 1)).lineWidth(1 / 4.0f);
                     continue;
                 }
                 if (other.hashCode() > hashCode && !InputConstants.isKeyDown(
@@ -283,7 +283,7 @@ public class TrackGraphVisualizer {
                     continue;
                 }
 
-                yOffset = new Vec3(0, (other.hashCode() > hashCode ? 6 : 4) / 16f, 0);
+                yOffset = new Vec3(0, (other.hashCode() > hashCode ? 6 : 4) / 16.0f, 0);
                 if (!edge.isTurn()) {
                     if (extended) {
                         Vec3 materialPos = edge.getPosition(graph, 0.5).add(0, 1, 0);
@@ -293,14 +293,14 @@ public class TrackGraphVisualizer {
                             new ItemStack(edge.getTrackMaterial())
                         );
                         Outliner.getInstance()
-                            .showAABB(edge.edgeData, AABB.ofSize(materialPos, .25, 0, .25).move(0, -0.5, 0))
-                            .lineWidth(1 / 16f).colored(graph.color);
+                            .showAABB(edge.edgeData, AABB.ofSize(materialPos, 0.25, 0, 0.25).move(0, -0.5, 0))
+                            .lineWidth(1 / 16.0f).colored(graph.color);
                     }
                     Outliner.getInstance().showLine(
                         edge,
                         edge.getPosition(graph, 0).add(yOffset),
                         edge.getPosition(graph, 1).add(yOffset)
-                    ).colored(graph.color).lineWidth(1 / 16f);
+                    ).colored(graph.color).lineWidth(1 / 16.0f);
                     continue;
                 }
 
@@ -311,15 +311,15 @@ public class TrackGraphVisualizer {
                     Outliner.getInstance()
                         .showItem(Pair.of(edge, edge.edgeData), materialPos, new ItemStack(edge.getTrackMaterial()));
                     Outliner.getInstance()
-                        .showAABB(edge.edgeData, AABB.ofSize(materialPos, .25, 0, .25).move(0, -0.5, 0))
-                        .lineWidth(1 / 16f).colored(graph.color);
+                        .showAABB(edge.edgeData, AABB.ofSize(materialPos, 0.25, 0, 0.25).move(0, -0.5, 0))
+                        .lineWidth(1 / 16.0f).colored(graph.color);
                 }
                 for (int i = 0; i <= turn.getSegmentCount(); i++) {
-                    Vec3 current = edge.getPosition(graph, i * 1f / turn.getSegmentCount());
+                    Vec3 current = edge.getPosition(graph, i * 1.0f / turn.getSegmentCount());
                     if (previous != null) {
                         Outliner.getInstance()
                             .showLine(Pair.of(edge, previous), previous.add(yOffset), current.add(yOffset))
-                            .colored(graph.color).lineWidth(1 / 16f);
+                            .colored(graph.color).lineWidth(1 / 16.0f);
                     }
                     previous = current;
                 }

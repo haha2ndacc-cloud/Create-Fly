@@ -35,7 +35,7 @@ public class ElevatorControlsHandler {
 
         @Override
         public boolean testHit(LevelAccessor level, BlockPos pos, BlockState state, Vec3 localHit) {
-            return localHit.distanceTo(getLocalOffset(state)) < scale * .85;
+            return localHit.distanceTo(getLocalOffset(state)) < scale * 0.85;
         }
 
     }
@@ -120,8 +120,8 @@ public class ElevatorControlsHandler {
             ContraptionControlsMovement.tickFloorSelection(efs, ec);
 
             if (prev != efs.currentIndex && !ec.namesList.isEmpty()) {
-                float pitch = (efs.currentIndex) / (float) (ec.namesList.size());
-                pitch = Mth.lerp(pitch, 1f, 1.5f);
+                float pitch = efs.currentIndex / (float) ec.namesList.size();
+                pitch = Mth.lerp(pitch, 1.0f, 1.5f);
                 AllSoundEvents.SCROLL_VALUE.play(
                     world,
                     player,

@@ -18,6 +18,7 @@ import java.util.stream.StreamSupport;
 
 public interface FluidInventory extends Clearable, Iterable<FluidStack> {
     Hash.Strategy<FluidStack> FLUID_STACK_HASH_STRATEGY = new Hash.Strategy<>() {
+        @Override
         public boolean equals(@Nullable FluidStack stack, @Nullable FluidStack other) {
             return stack == other || stack != null && other != null && FluidStack.areFluidsAndComponentsEqual(
                 stack,
@@ -25,6 +26,7 @@ public interface FluidInventory extends Clearable, Iterable<FluidStack> {
             );
         }
 
+        @Override
         public int hashCode(FluidStack stack) {
             return FluidStack.hashCode(stack);
         }
@@ -258,7 +260,8 @@ public interface FluidInventory extends Clearable, Iterable<FluidStack> {
                             entry.setValue(remaining - insert);
                         }
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxAmount = target.getMaxAmount();
                         int amount = target.getAmount();
                         if (amount != maxAmount) {
@@ -473,19 +476,19 @@ public interface FluidInventory extends Clearable, Iterable<FluidStack> {
     }
 
     default int forceInsert(FluidStack stack) {
-        return FluidInventory.this.insert(stack);
+        return insert(stack);
     }
 
     default int forceInsert(FluidStack stack, int maxAmount) {
-        return FluidInventory.this.insert(stack, maxAmount);
+        return insert(stack, maxAmount);
     }
 
     default boolean forcePreciseInsert(FluidStack stack) {
-        return FluidInventory.this.preciseInsert(stack);
+        return preciseInsert(stack);
     }
 
     default boolean forcePreciseInsert(FluidStack stack, int maxAmount) {
-        return FluidInventory.this.preciseInsert(stack, maxAmount);
+        return preciseInsert(stack, maxAmount);
     }
 
     default int getMaxAmount(FluidStack stack) {
@@ -613,7 +616,8 @@ public interface FluidInventory extends Clearable, Iterable<FluidStack> {
                         }
                         dirty = true;
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxAmount = target.getMaxAmount();
                         int amount = target.getAmount();
                         if (amount != maxAmount) {
@@ -649,9 +653,8 @@ public interface FluidInventory extends Clearable, Iterable<FluidStack> {
             }
             markDirty();
             return result;
-        } else {
-            return stacks;
         }
+        return stacks;
     }
 
     default int insertExist(FluidStack stack, @Nullable Direction side) {
@@ -718,6 +721,7 @@ public interface FluidInventory extends Clearable, Iterable<FluidStack> {
         return iterator();
     }
 
+    @Override
     default java.util.Iterator<FluidStack> iterator() {
         return new Iterator(this);
     }
@@ -927,7 +931,8 @@ public interface FluidInventory extends Clearable, Iterable<FluidStack> {
                             entry.setValue(remaining - insert);
                         }
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxAmount = target.getMaxAmount();
                         int amount = target.getAmount();
                         if (amount != maxAmount) {
@@ -1017,7 +1022,7 @@ public interface FluidInventory extends Clearable, Iterable<FluidStack> {
 
         public Iterator(FluidInventory inventory) {
             this.inventory = inventory;
-            this.size = inventory.size();
+            size = inventory.size();
         }
 
         @Override
@@ -1027,11 +1032,10 @@ public interface FluidInventory extends Clearable, Iterable<FluidStack> {
 
         @Override
         public FluidStack next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            } else {
+            if (hasNext()) {
                 return inventory.getStack(index++);
             }
+            throw new NoSuchElementException();
         }
     }
 }

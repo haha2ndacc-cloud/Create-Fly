@@ -341,7 +341,7 @@ public class FrogportBlockEntity extends PackagePortBlockEntity {
 
     @Nullable
     protected Container getAdjacentInventory(Direction side) {
-        BlockPos pos = this.worldPosition.relative(side);
+        BlockPos pos = worldPosition.relative(side);
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity == null || blockEntity instanceof FrogportBlockEntity) {
             return null;

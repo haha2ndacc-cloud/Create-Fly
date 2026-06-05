@@ -52,10 +52,12 @@ public record BlockCuttingDisplay(EntryIngredient input, List<EntryIngredient> o
     public static void register(ServerDisplayRegistry registry) {
         Object2ObjectMap<Ingredient, Pair<EntryIngredient, List<ItemStack>>> map = new Object2ObjectOpenCustomHashMap<>(
             new Hash.Strategy<>() {
+                @Override
                 public boolean equals(Ingredient ingredient, Ingredient other) {
                     return Objects.equals(ingredient, other);
                 }
 
+                @Override
                 public int hashCode(Ingredient ingredient) {
                     if (ingredient.values instanceof HolderSet.Direct<Item> direct) {
                         return direct.hashCode();

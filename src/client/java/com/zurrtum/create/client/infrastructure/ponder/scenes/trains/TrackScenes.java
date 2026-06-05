@@ -27,7 +27,7 @@ public class TrackScenes {
     public static void placement(SceneBuilder scene, SceneBuildingUtil util) {
         scene.title("track_placement", "Placing Train Tracks");
         scene.configureBasePlate(0, 0, 15);
-        scene.scaleSceneView(.5f);
+        scene.scaleSceneView(0.5f);
         scene.showBasePlate();
         scene.idle(10);
 
@@ -63,7 +63,7 @@ public class TrackScenes {
 
         scene.overlay().showControls(startTrack, Pointing.DOWN, 40).rightClick().withItem(trackStack);
         scene.idle(6);
-        AABB bb = new AABB(util.grid().at(3, 1, 5)).contract(0, .75f, 0).inflate(0, 0, .85f);
+        AABB bb = new AABB(util.grid().at(3, 1, 5)).contract(0, 0.75f, 0).inflate(0, 0, 0.85f);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, startTrack, bb, 32);
         scene.idle(45);
 
@@ -121,7 +121,7 @@ public class TrackScenes {
         scene.world().hideSection(util.select().fromTo(12, 1, 2, 12, 1, 5), Direction.NORTH);
         scene.world().hideSection(util.select().fromTo(5, 1, 12, 2, 1, 12), Direction.WEST);
 
-        bb = new AABB(util.grid().at(5, 1, 5)).contract(0, .75f, 0).inflate(3, 0, 3).expandTowards(.85f, 0, .85f);
+        bb = new AABB(util.grid().at(5, 1, 5)).contract(0, 0.75f, 0).inflate(3, 0, 3).expandTowards(0.85f, 0, 0.85f);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, startTrack, bb, 32);
         scene.idle(20);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, startTrack, bb.move(4, 0, 4), 32);
@@ -223,7 +223,7 @@ public class TrackScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("track_portal", "Tracks and the Nether");
         scene.configureBasePlate(0, 0, 9);
-        scene.scaleSceneView(.65f);
+        scene.scaleSceneView(0.65f);
         scene.setSceneOffsetY(-1);
         scene.showBasePlate();
         scene.world().showSection(util.select().fromTo(2, 1, 7, 6, 6, 7), Direction.UP);
@@ -281,7 +281,7 @@ public class TrackScenes {
         ElementLink<WorldSectionElement> nether = scene.world()
             .showIndependentSection(util.select().layers(7, 1), Direction.UP);
         scene.world().moveSection(nether, util.vector().of(0, -7, 0), 0);
-        scene.special().moveParrot(birb, util.vector().of(0, 0, -.1f), 1);
+        scene.special().moveParrot(birb, util.vector().of(0, 0, -0.1f), 1);
         scene.idle(25);
 
         ElementLink<WorldSectionElement> s1 = scene.world()
@@ -303,7 +303,7 @@ public class TrackScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("track_chunks", "Traversing unloaded Chunks");
         scene.configureBasePlate(0, 0, 9);
-        scene.scaleSceneView(.65f);
+        scene.scaleSceneView(0.65f);
         scene.removeShadow();
         scene.setSceneOffsetY(-1);
 
@@ -356,7 +356,7 @@ public class TrackScenes {
         scene.world().moveSection(trackElement, util.vector().of(12, 0, 0), 120);
         scene.world().moveSection(stationElement, util.vector().of(12, 0, 0), 120);
         scene.world().moveSection(stationTrackElement, util.vector().of(12, 0, 0), 120);
-        scene.world().animateBogey(util.grid().at(4, 2, 4), 12f, 120);
+        scene.world().animateBogey(util.grid().at(4, 2, 4), 12.0f, 120);
         scene.special().moveParrot(birb, util.vector().of(12, 0, 0), 120);
         scene.idle(15);
         scene.world().hideIndependentSection(stationElement, null);
@@ -367,7 +367,7 @@ public class TrackScenes {
         scene.overlay().chaseBoundingBoxOutline(
             PonderPalette.BLUE,
             trainElement,
-            new AABB(util.grid().at(4, 2, 4)).inflate(1, .75f, .5f),
+            new AABB(util.grid().at(4, 2, 4)).inflate(1, 0.75f, 0.5f),
             280
         );
 
@@ -384,7 +384,7 @@ public class TrackScenes {
 
         scene.world().moveSection(trackElement, util.vector().of(19, 0, 0), 190);
         scene.world().moveSection(stationTrackElement, util.vector().of(19, 0, 0), 190);
-        scene.world().animateBogey(util.grid().at(4, 2, 4), 19f, 190);
+        scene.world().animateBogey(util.grid().at(4, 2, 4), 19.0f, 190);
 
         scene.idle(30);
         scene.overlay().showText(90).pointAt(util.vector().blockSurface(util.grid().at(3, 2, 4), Direction.WEST))

@@ -24,8 +24,8 @@ public class MountedItemStorageWrapper extends CombinedInvWrapper {
 
         // Build lookup arrays
         int totalSlots = getContainerSize();
-        this.slotToStorage = new int[totalSlots];
-        this.slotOffsets = new int[itemHandler.length];
+        slotToStorage = new int[totalSlots];
+        slotOffsets = new int[itemHandler.length];
 
         int currentSlot = 0;
         for (int storageIdx = 0; storageIdx < itemHandler.length; storageIdx++) {

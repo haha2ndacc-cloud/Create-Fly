@@ -59,12 +59,12 @@ public class ClipboardEntry {
     public ClipboardEntry(boolean checked, MutableComponent text) {
         this.checked = checked;
         this.text = text;
-        this.icon = ItemStack.EMPTY;
+        icon = ItemStack.EMPTY;
     }
 
     public ClipboardEntry displayItem(ItemStack icon, int amount) {
         this.icon = icon;
-        this.itemAmount = amount;
+        itemAmount = amount;
         return this;
     }
 
@@ -93,7 +93,7 @@ public class ClipboardEntry {
     }
 
     public static List<ClipboardEntry> getLastViewedEntries(ItemStack heldItem) {
-        List<List<ClipboardEntry>> pages = ClipboardEntry.readAll(heldItem);
+        List<List<ClipboardEntry>> pages = readAll(heldItem);
         if (pages.isEmpty()) {
             return new ArrayList<>();
         }

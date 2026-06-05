@@ -116,7 +116,7 @@ public class MinecartVisual<T extends AbstractMinecart> extends AbstractEntityVi
         }
 
         if (hurtTime > 0) {
-            stack.rotateX((Mth.sin(hurtTime) * hurtTime * damage / 10.0F * (float) entity.getHurtDir()) * Mth.DEG_TO_RAD);
+            stack.rotateX(Mth.sin(hurtTime) * hurtTime * damage / 10.0F * entity.getHurtDir() * Mth.DEG_TO_RAD);
         }
 
         if (contents != null) {
@@ -145,9 +145,9 @@ public class MinecartVisual<T extends AbstractMinecart> extends AbstractEntityVi
         );
         long randomBits = entity.getId() * 493286711L;
         randomBits = randomBits * randomBits * 4392167121L + randomBits * 98761L;
-        float nudgeX = (((float) (randomBits >> 16 & 7L) + 0.5f) / 8.0f - 0.5F) * 0.004f;
-        float nudgeY = (((float) (randomBits >> 20 & 7L) + 0.5f) / 8.0f - 0.5F) * 0.004f;
-        float nudgeZ = (((float) (randomBits >> 24 & 7L) + 0.5f) / 8.0f - 0.5F) * 0.004f;
+        float nudgeX = (((randomBits >> 16 & 7L) + 0.5f) / 8.0f - 0.5F) * 0.004f;
+        float nudgeY = (((randomBits >> 20 & 7L) + 0.5f) / 8.0f - 0.5F) * 0.004f;
+        float nudgeZ = (((randomBits >> 24 & 7L) + 0.5f) / 8.0f - 0.5F) * 0.004f;
         stack.translate(nudgeX, nudgeY, nudgeZ);
     }
 

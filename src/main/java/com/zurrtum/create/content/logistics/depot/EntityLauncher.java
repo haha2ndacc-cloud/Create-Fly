@@ -78,7 +78,7 @@ public class EntityLauncher {
     public void applyMotion(Entity entity, Direction facing) {
         Vec3 motionVec = new Vec3(0, yMotion, xMotion);
         motionVec = VecHelper.rotate(motionVec, AngleHelper.horizontalAngle(facing), Axis.Y);
-        entity.setDeltaMovement(motionVec.x * .91, motionVec.y * .98, motionVec.z * .91);
+        entity.setDeltaMovement(motionVec.x * 0.91, motionVec.y * 0.98, motionVec.z * 0.91);
     }
 
     public int getHorizontalDistance() {
@@ -94,7 +94,7 @@ public class EntityLauncher {
     }
 
     public Vec3 getGlobalPos(double t, Direction d, BlockPos launcher) {
-        return getGlobalPos(t, d, new Vec3(launcher.getX() + .5f, launcher.getY() + .5f, launcher.getZ() + .5f));
+        return getGlobalPos(t, d, new Vec3(launcher.getX() + 0.5f, launcher.getY() + 0.5f, launcher.getZ() + 0.5f));
     }
 
     public Vec3 getGlobalPos(double t, Direction d, Vec3 start) {
@@ -130,12 +130,12 @@ public class EntityLauncher {
 
     public float dy(double t) {
         double f = Math.pow(0.98, t);
-        return (float) (yMotion * f + ((f - 1) / (0.98 - 1)) * -0.0784);
+        return (float) (yMotion * f + (f - 1) / (0.98 - 1) * -0.0784);
     }
 
     protected void recalculateTrajectory() {
-        double xTarget = this.horizontalDistance;
-        double yTarget = this.verticalDistance;
+        double xTarget = horizontalDistance;
+        double yTarget = verticalDistance;
 
         /*
          ** Iterated:
@@ -179,16 +179,16 @@ public class EntityLauncher {
          *
          */
 
-        double xError = (-0.0007 * Math.pow(xTarget + .5, 2) + 0.484) - (Math.min(5, yTarget) / 5) * Math.min(
+        double xError = -0.0007 * Math.pow(xTarget + 0.5, 2) + 0.484 - Math.min(5, yTarget) / 5 * Math.min(
             1,
             0.076 * xTarget - 0.0014 * xTarget * xTarget
         );
 
-        double yPeak = Math.max(0, yTarget + (xTarget + .5) / 8f) + (xTarget <= 1 ? 1 : 4);
+        double yPeak = Math.max(0, yTarget + (xTarget + 0.5) / 8.0f) + (xTarget <= 1 ? 1 : 4);
         yMotion = Math.sqrt(2 * yPeak / 13) + 0.015 * yPeak;
         double tPeak = Math.log(98 / (25 * yMotion + 98)) / (2 * Math.log(7) - 2 * Math.log(5) - Math.log(2));
         totalFlyingTicks = Math.sqrt(yPeak - yMotion) * 4.87 + 0.115 * (yPeak - yMotion) + tPeak;
-        xMotion = (xTarget - xError + .5) / (-10.6033 * (-1 + Math.pow(0.91, totalFlyingTicks)));
+        xMotion = (xTarget - xError + 0.5) / (-10.6033 * (-1 + Math.pow(0.91, totalFlyingTicks)));
 
     }
 

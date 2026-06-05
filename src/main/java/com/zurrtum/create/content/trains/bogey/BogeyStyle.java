@@ -106,7 +106,7 @@ public class BogeyStyle {
         }
 
         public Builder size(BogeySize size, AbstractBogeyBlock<?> block) {
-            this.sizes.put(size, block);
+            sizes.put(size, block);
             return this;
         }
 

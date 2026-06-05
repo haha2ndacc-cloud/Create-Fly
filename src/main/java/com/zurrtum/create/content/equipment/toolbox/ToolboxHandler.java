@@ -109,7 +109,7 @@ public class ToolboxHandler {
 
         BlockEntity prevBlockEntity = world.getBlockEntity(prevPos);
         if (prevBlockEntity instanceof ToolboxBlockEntity toolbox) {
-            toolbox.unequip(prevSlot, player, hotbarSlot, keepItems || !ToolboxHandler.withinRange(player, toolbox));
+            toolbox.unequip(prevSlot, player, hotbarSlot, keepItems || !withinRange(player, toolbox));
         }
         compound.remove(key);
     }

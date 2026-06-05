@@ -40,9 +40,9 @@ public final class MaterialShaderIndices {
         private final ObjectList<Identifier> sources;
 
         private Index() {
-            this.sources2Index = new Object2IntOpenHashMap<>();
+            sources2Index = new Object2IntOpenHashMap<>();
             sources2Index.defaultReturnValue(-1);
-            this.sources = new ObjectArrayList<>();
+            sources = new ObjectArrayList<>();
         }
 
         public Identifier get(int index) {

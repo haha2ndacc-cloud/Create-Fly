@@ -88,13 +88,13 @@ public class Train {
     );
     public static final Random RANDOM = new Random();
 
-    public double speed = 0;
-    public double targetSpeed = 0;
-    public @Nullable Double speedBeforeStall = null;
+    public double speed;
+    public double targetSpeed;
+    public @Nullable Double speedBeforeStall;
     public int carriageWaitingForChunks = -1;
 
     public double throttle = 1;
-    public boolean honk = false;
+    public boolean honk;
 
     public UUID id;
     @Nullable
@@ -199,9 +199,9 @@ public class Train {
         this.carriageSpacing = carriageSpacing;
         this.icon = icon;
         this.mapColorIndex = mapColorIndex;
-        this.stress = new double[carriageSpacing.size()];
+        stress = new double[carriageSpacing.size()];
         this.name = name;
-        this.status = new TrainStatus(this);
+        status = new TrainStatus(this);
         this.doubleEnded = doubleEnded;
 
         carriages.forEach(c -> c.setTrain(this));
@@ -427,7 +427,7 @@ public class Train {
 
         boolean approachingStation = navigation.distanceToDestination < 5;
         double leadingModifier = approachingStation ? 0.75d : 0.5d;
-        double trailingModifier = approachingStation ? 0d : 0.125d;
+        double trailingModifier = approachingStation ? 0.0d : 0.125d;
 
         boolean blocked = false;
         boolean iterateFromBack = speed < 0;
@@ -435,7 +435,8 @@ public class Train {
         for (int index = 0; index < carriageCount; index++) {
             int i = iterateFromBack ? carriageCount - 1 - index : index;
             double leadingStress = i == 0 ? 0 : stress[i - 1] * -(iterateFromBack ? trailingModifier : leadingModifier);
-            double trailingStress = i == stress.length ? 0 : stress[i] * (iterateFromBack ? leadingModifier : trailingModifier);
+            double trailingStress =
+                i == stress.length ? 0 : stress[i] * (iterateFromBack ? leadingModifier : trailingModifier);
 
             Carriage carriage = carriages.get(i);
 
@@ -628,7 +629,7 @@ public class Train {
     }
 
     private void tickDerailedSlowdown() {
-        speed /= 3f;
+        speed /= 3.0f;
         if (Mth.equal(speed, 0)) {
             speed = 0;
         }
@@ -697,7 +698,7 @@ public class Train {
         Train train = collision.getFirst();
 
         double combinedSpeed = Math.abs(speed) + Math.abs(train.speed);
-        if (combinedSpeed > .2f) {
+        if (combinedSpeed > 0.2f) {
             Vec3 v = collision.getSecond();
             level.explode(null, v.x, v.y, v.z, (float) Math.min(3 * combinedSpeed, 5), ExplosionInteraction.NONE);
         }
@@ -765,7 +766,7 @@ public class Train {
                     double[] intersect = VecHelper.intersect(start, start2, normedDiff, normedDiff2, Axis.Y);
 
                     if (intersect == null) {
-                        Vec3 intersectSphere = VecHelper.intersectSphere(start2, normedDiff2, start, .125f);
+                        Vec3 intersectSphere = VecHelper.intersectSphere(start2, normedDiff2, start, 0.125f);
                         if (intersectSphere == null) {
                             continue;
                         }
@@ -773,8 +774,8 @@ public class Train {
                             continue;
                         }
                         intersect = new double[2];
-                        intersect[0] = intersectSphere.distanceTo(start) - .125;
-                        intersect[1] = intersectSphere.distanceTo(start2) - .125;
+                        intersect[0] = intersectSphere.distanceTo(start) - 0.125;
+                        intersect[1] = intersectSphere.distanceTo(start2) - 0.125;
                     }
 
                     if (intersect[0] > diff.length()) {
@@ -802,7 +803,7 @@ public class Train {
         if (derailed) {
             return;
         }
-        speed = -Mth.clamp(speed, -.5, .5);
+        speed = -Mth.clamp(speed, -0.5, 0.5);
         derailed = true;
         graph = null;
         status.crash();
@@ -901,7 +902,7 @@ public class Train {
             if (!Mth.equal(entity.pitch, 0)) {
                 return false;
             }
-            if (!Mth.equal(((entity.yaw % 90) + 360) % 90, 0)) {
+            if (!Mth.equal((entity.yaw % 90 + 360) % 90, 0)) {
                 return false;
             }
         }
@@ -1254,15 +1255,18 @@ public class Train {
     }
 
     public float maxSpeed() {
-        return (fuelTicks > 0 ? AllConfigs.server().trains.poweredTrainTopSpeed.getF() : AllConfigs.server().trains.trainTopSpeed.getF()) / 20;
+        return (fuelTicks > 0 ? AllConfigs.server().trains.poweredTrainTopSpeed.getF() :
+            AllConfigs.server().trains.trainTopSpeed.getF()) / 20;
     }
 
     public float maxTurnSpeed() {
-        return (fuelTicks > 0 ? AllConfigs.server().trains.poweredTrainTurningTopSpeed.getF() : AllConfigs.server().trains.trainTurningTopSpeed.getF()) / 20;
+        return (fuelTicks > 0 ? AllConfigs.server().trains.poweredTrainTurningTopSpeed.getF() :
+            AllConfigs.server().trains.trainTurningTopSpeed.getF()) / 20;
     }
 
     public float acceleration() {
-        return (fuelTicks > 0 ? AllConfigs.server().trains.poweredTrainAcceleration.getF() : AllConfigs.server().trains.trainAcceleration.getF()) / 400;
+        return (fuelTicks > 0 ? AllConfigs.server().trains.poweredTrainAcceleration.getF() :
+            AllConfigs.server().trains.trainAcceleration.getF()) / 400;
     }
 
     public void write(ValueOutput view, DimensionPalette dimensions) {

@@ -105,9 +105,10 @@ public class TrainRelocatorClient {
             for (int i = 0; i < toVisualise.size() - 1; i++) {
                 Vec3 vec1 = toVisualise.get(i).add(offset);
                 Vec3 vec2 = toVisualise.get(i + 1).add(offset);
-                Outliner.getInstance().showLine(Pair.of(relocating, i), vec1.add(0, -.925f, 0), vec2.add(0, -.925f, 0))
+                Outliner.getInstance()
+                    .showLine(Pair.of(relocating, i), vec1.add(0, -0.925f, 0), vec2.add(0, -0.925f, 0))
                     .colored(lastHoveredResult || i != toVisualise.size() - 2 ? 0x95CD41 : 0xEA5C2B)
-                    .disableLineNormals().lineWidth(i % 2 == 1 ? 1 / 6f : 1 / 4f);
+                    .disableLineNormals().lineWidth(i % 2 == 1 ? 1 / 6.0f : 1 / 4.0f);
             }
         }
 
@@ -183,7 +184,7 @@ public class TrainRelocatorClient {
 
             Entity entity = world.getEntity(relocatingEntityId);
             if (entity instanceof AbstractContraptionEntity ce && Math.abs(ce.getPosition(0).subtract(ce.getPosition(1))
-                .lengthSqr()) > 1 / 1024d) {
+                .lengthSqr()) > 1 / 1024.0d) {
                 player.sendOverlayMessage(CreateLang.translateDirect("train.cannot_relocate_moving")
                     .withStyle(ChatFormatting.RED));
                 relocatingTrain = null;

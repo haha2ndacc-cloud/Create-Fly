@@ -42,7 +42,8 @@ public class AutoCompactingDisplay extends CreateDisplay {
                 getItemStacks(ingredients.getFirst()),
                 ingredients.size()
             );
-        } else if (recipe instanceof ShapedRecipe shapedRecipe) {
+        }
+        if (recipe instanceof ShapedRecipe shapedRecipe) {
             List<ItemStack> input = null;
             int size = 0;
             for (Optional<Ingredient> value : shapedRecipe.getIngredients()) {

@@ -26,7 +26,7 @@ public class RollerScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("mechanical_roller_pave", "Clearing and Paving with the Roller");
         scene.configureBasePlate(0, 0, 9);
-        scene.scaleSceneView(.75f);
+        scene.scaleSceneView(0.75f);
         scene.setSceneOffsetY(-1);
         scene.showBasePlate();
         scene.idle(5);
@@ -111,7 +111,7 @@ public class RollerScenes {
                 rte -> rte.setAnimatedSpeed(-100)
             );
         }
-        scene.world().animateBogey(bogeyPos, 1f, 20);
+        scene.world().animateBogey(bogeyPos, 1.0f, 20);
         scene.idle(20);
         for (int i = 0; i < 3; i++) {
             scene.world().modifyBlockEntity(
@@ -136,7 +136,7 @@ public class RollerScenes {
                 rte -> rte.setAnimatedSpeed(-100)
             );
         }
-        scene.world().animateBogey(bogeyPos, 2f, 40);
+        scene.world().animateBogey(bogeyPos, 2.0f, 40);
         scene.idle(40);
         for (int i = 0; i < 3; i++) {
             scene.world().modifyBlockEntity(
@@ -160,9 +160,9 @@ public class RollerScenes {
         scene.world().animateTrainStation(stationPos, true);
         scene.world().hideSection(someRubble, Direction.DOWN);
 
-        Vec3 filterSlot = util.vector().of(6.75 - 1 / 16f, 3, 3.25 + 1 / 16f);
+        Vec3 filterSlot = util.vector().of(6.75 - 1 / 16.0f, 3, 3.25 + 1 / 16.0f);
         scene.overlay().showFilterSlotInput(filterSlot, Direction.UP, 60);
-        scene.overlay().showText(60).pointAt(filterSlot.add(-.125, 0, 0)).attachKeyFrame()
+        scene.overlay().showText(60).pointAt(filterSlot.add(-0.125, 0, 0)).attachKeyFrame()
             .text("While disassembled, a suitable paving material can be specified").placeNearTarget();
         scene.idle(50);
 
@@ -229,7 +229,7 @@ public class RollerScenes {
                 rte -> rte.setAnimatedSpeed(-100)
             );
         }
-        scene.world().animateBogey(bogeyPos, 1f, 20);
+        scene.world().animateBogey(bogeyPos, 1.0f, 20);
         scene.idle(10);
         scene.world().replaceBlocks(util.select().fromTo(3, 0, 3, 3, 0, 5), paveMaterial.defaultBlockState(), true);
         scene.idle(10);
@@ -256,7 +256,7 @@ public class RollerScenes {
                 rte -> rte.setAnimatedSpeed(-100)
             );
         }
-        scene.world().animateBogey(bogeyPos, 3f, 60);
+        scene.world().animateBogey(bogeyPos, 3.0f, 60);
         scene.idle(10);
         scene.world().replaceBlocks(util.select().fromTo(2, 0, 3, 2, 0, 5), paveMaterial.defaultBlockState(), true);
         scene.idle(20);
@@ -345,7 +345,7 @@ public class RollerScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("mechanical_roller_fill", "Filling terrain with the Roller");
         scene.configureBasePlate(0, 0, 9);
-        scene.scaleSceneView(.625f);
+        scene.scaleSceneView(0.625f);
         scene.setSceneOffsetY(-3);
         scene.world().showSection(util.select().layer(0), Direction.UP);
         scene.idle(5);
@@ -380,9 +380,9 @@ public class RollerScenes {
         scene.world().showSectionAndMerge(rollers, Direction.EAST, trainLink);
         scene.idle(15);
 
-        Vec3 filterSlot = util.vector().of(6.75 - 1 / 16f, 7, 3.75 - 1 / 16f);
+        Vec3 filterSlot = util.vector().of(6.75 - 1 / 16.0f, 7, 3.75 - 1 / 16.0f);
         scene.overlay().showFilterSlotInput(filterSlot, Direction.UP, 60);
-        scene.overlay().showText(60).pointAt(filterSlot.add(-.125, 0, 0)).attachKeyFrame()
+        scene.overlay().showText(60).pointAt(filterSlot.add(-0.125, 0, 0)).attachKeyFrame()
             .text("While disassembled, rollers can be set to other modes").placeNearTarget();
         scene.idle(70);
 
@@ -395,7 +395,7 @@ public class RollerScenes {
         scene.idle(15);
         Block paveMaterial = Blocks.COARSE_DIRT;
         ItemStack paveItem = new ItemStack(paveMaterial);
-        scene.overlay().showControls(filterSlot.add(0, 0, -6 / 16f), Pointing.UP, 35).withItem(paveItem);
+        scene.overlay().showControls(filterSlot.add(0, 0, -6 / 16.0f), Pointing.UP, 35).withItem(paveItem);
         scene.idle(7);
         scene.world().setFilterData(rollers, RollerBlockEntity.class, paveItem);
         scene.idle(10);

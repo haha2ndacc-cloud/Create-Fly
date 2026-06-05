@@ -157,7 +157,7 @@ public class WrappedLevel extends Level {
     }
 
     public void setChunkSource(ChunkSource source) {
-        this.chunkSource = source;
+        chunkSource = source;
     }
 
     @Override
@@ -346,52 +346,52 @@ public class WrappedLevel extends Level {
 
     @Override
     public int getMaxY() {
-        return this.getMinY() + this.getHeight() - 1;
+        return getMinY() + getHeight() - 1;
     }
 
     @Override
     public int getSectionsCount() {
-        return this.getMaxSectionY() - this.getMinSectionY() + 1;
+        return getMaxSectionY() - getMinSectionY() + 1;
     }
 
     @Override
     public int getMinSectionY() {
-        return SectionPos.blockToSectionCoord(this.getMinY());
+        return SectionPos.blockToSectionCoord(getMinY());
     }
 
     @Override
     public int getMaxSectionY() {
-        return SectionPos.blockToSectionCoord(this.getMaxY());
+        return SectionPos.blockToSectionCoord(getMaxY());
     }
 
     @Override
     public boolean isInsideBuildHeight(int y) {
-        return y >= this.getMinY() && y <= this.getMaxY();
+        return y >= getMinY() && y <= getMaxY();
     }
 
     @Override
     public boolean isOutsideBuildHeight(BlockPos pos) {
-        return this.isOutsideBuildHeight(pos.getY());
+        return isOutsideBuildHeight(pos.getY());
     }
 
     @Override
     public boolean isOutsideBuildHeight(int y) {
-        return y < this.getMinY() || y > this.getMaxY();
+        return y < getMinY() || y > getMaxY();
     }
 
     @Override
     public int getSectionIndex(int y) {
-        return this.getSectionIndexFromSectionY(SectionPos.blockToSectionCoord(y));
+        return getSectionIndexFromSectionY(SectionPos.blockToSectionCoord(y));
     }
 
     @Override
     public int getSectionIndexFromSectionY(int coord) {
-        return coord - this.getMinSectionY();
+        return coord - getMinSectionY();
     }
 
     @Override
     public int getSectionYFromSectionIndex(int index) {
-        return index + this.getMinSectionY();
+        return index + getMinSectionY();
     }
 
     @Override

@@ -111,8 +111,8 @@ public class DebugScenes {
 
         Vec3 vec1 = util.vector().topOf(1, 0, 0);
         Vec3 vec2 = util.vector().topOf(0, 0, 1);
-        AABB boundingBox1 = new AABB(vec1, vec1).expandTowards(0, 2.5, 0).inflate(.15, 0, .15);
-        AABB boundingBox2 = new AABB(vec2, vec2).expandTowards(0, .125, 0).inflate(.45, 0, .45);
+        AABB boundingBox1 = new AABB(vec1, vec1).expandTowards(0, 2.5, 0).inflate(0.15, 0, 0.15);
+        AABB boundingBox2 = new AABB(vec2, vec2).expandTowards(0, 0.125, 0).inflate(0.45, 0, 0.45);
         Vec3 poi1 = boundingBox1.getCenter();
         Vec3 poi2 = boundingBox2.getCenter();
 
@@ -126,7 +126,8 @@ public class DebugScenes {
 
         scene.idle(12);
         scene.special().movePointOfInterest(util.grid().at(-4, 5, 4));
-        scene.overlay().showText(40).colored(PonderPalette.RED).text("wut?").pointAt(parrotPos.add(-.25f, 0.25f, .25f));
+        scene.overlay().showText(40).colored(PonderPalette.RED).text("wut?")
+            .pointAt(parrotPos.add(-0.25f, 0.25f, 0.25f));
 
     }
 
@@ -164,9 +165,10 @@ public class DebugScenes {
         scene.idle(10);
 
         Vec3 emitterPos = util.vector().of(2.5, 2.25, 2.5);
-        ParticleEmitter emitter = scene.effects().simpleParticleEmitter(ParticleTypes.LAVA, util.vector().of(0, .1, 0));
+        ParticleEmitter emitter = scene.effects()
+            .simpleParticleEmitter(ParticleTypes.LAVA, util.vector().of(0, 0.1, 0));
         ParticleEmitter rotation = scene.effects()
-            .simpleParticleEmitter(ParticleTypes.BUBBLE_COLUMN_UP, util.vector().of(0, .1, 0));
+            .simpleParticleEmitter(ParticleTypes.BUBBLE_COLUMN_UP, util.vector().of(0, 0.1, 0));
 
         scene.overlay().showText(20).text("Incoming...").pointAt(emitterPos);
         scene.idle(30);
@@ -212,7 +214,7 @@ public class DebugScenes {
         Object chassisEffectHighlight = new Object();
 
         AABB point = new AABB(chassisSurface, chassisSurface);
-        AABB expanded = point.inflate(1 / 4f, 1 / 4f, 1 / 16f);
+        AABB expanded = point.inflate(1 / 4.0f, 1 / 4.0f, 1 / 16.0f);
 
         Selection singleBlock = util.select().position(1, 2, 3);
         Selection twoBlocks = util.select().fromTo(1, 2, 3, 1, 3, 3);

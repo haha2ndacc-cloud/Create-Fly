@@ -99,8 +99,8 @@ public abstract class PlayerMixin {
                 player.getZ(),
                 sound,
                 player.getSoundSource(),
-                1f,
-                1f
+                1.0f,
+                1.0f
             );
         } else {
             original.call(player, sound);
@@ -138,8 +138,8 @@ public abstract class PlayerMixin {
                     player.getZ(),
                     sound,
                     player.getSoundSource(),
-                    1f,
-                    1f
+                    1.0f,
+                    1.0f
                 );
                 original.call(player, entity, false, true, fullStrengthAttack, stabAttack, magicBoost);
                 return;
@@ -150,7 +150,7 @@ public abstract class PlayerMixin {
 
     @Inject(method = "attack(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"), cancellable = true)
     private void attack(Entity target, CallbackInfo ci) {
-        if (((Object) this) instanceof ServerPlayer player && WrenchItem.wrenchInstaKillsMinecarts(player, target)) {
+        if ((Object) this instanceof ServerPlayer player && WrenchItem.wrenchInstaKillsMinecarts(player, target)) {
             ci.cancel();
         }
     }

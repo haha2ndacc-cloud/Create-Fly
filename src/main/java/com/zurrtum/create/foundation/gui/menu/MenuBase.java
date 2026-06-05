@@ -40,11 +40,11 @@ public abstract class MenuBase<T> extends AbstractContainerMenu {
     protected void addPlayerSlots(int x, int y) {
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 9; ++col) {
-                this.addSlot(this.createPlayerSlot(playerInventory, col + row * 9 + 9, x + col * 18, y + row * 18));
+                addSlot(createPlayerSlot(playerInventory, col + row * 9 + 9, x + col * 18, y + row * 18));
             }
         }
         for (int hotbarSlot = 0; hotbarSlot < 9; ++hotbarSlot) {
-            this.addSlot(this.createPlayerSlot(playerInventory, hotbarSlot, x + hotbarSlot * 18, y + 58));
+            addSlot(createPlayerSlot(playerInventory, hotbarSlot, x + hotbarSlot * 18, y + 58));
         }
     }
 

@@ -24,13 +24,13 @@ public record ArrowRenderState(Matrix3x2f pose, float r, float g, float b, float
     @Override
     public void buildVertices(VertexConsumer vertexConsumer) {
         vertexConsumer.addVertexWith2DPose(pose, 0, -(10 + length)).setColor(r, g, b, a);
-        vertexConsumer.addVertexWith2DPose(pose, -9, -3).setColor(r, g, b, 0f);
-        vertexConsumer.addVertexWith2DPose(pose, -6, -6).setColor(r, g, b, 0f);
-        vertexConsumer.addVertexWith2DPose(pose, -3, -8).setColor(r, g, b, 0f);
-        vertexConsumer.addVertexWith2DPose(pose, 0, -8.5f).setColor(r, g, b, 0f);
-        vertexConsumer.addVertexWith2DPose(pose, 3, -8).setColor(r, g, b, 0f);
-        vertexConsumer.addVertexWith2DPose(pose, 6, -6).setColor(r, g, b, 0f);
-        vertexConsumer.addVertexWith2DPose(pose, 9, -3).setColor(r, g, b, 0f);
+        vertexConsumer.addVertexWith2DPose(pose, -9, -3).setColor(r, g, b, 0.0f);
+        vertexConsumer.addVertexWith2DPose(pose, -6, -6).setColor(r, g, b, 0.0f);
+        vertexConsumer.addVertexWith2DPose(pose, -3, -8).setColor(r, g, b, 0.0f);
+        vertexConsumer.addVertexWith2DPose(pose, 0, -8.5f).setColor(r, g, b, 0.0f);
+        vertexConsumer.addVertexWith2DPose(pose, 3, -8).setColor(r, g, b, 0.0f);
+        vertexConsumer.addVertexWith2DPose(pose, 6, -6).setColor(r, g, b, 0.0f);
+        vertexConsumer.addVertexWith2DPose(pose, 9, -3).setColor(r, g, b, 0.0f);
     }
 
     @Override

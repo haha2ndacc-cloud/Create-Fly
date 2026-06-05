@@ -162,12 +162,11 @@ public class ParallelTaskExecutor implements TaskExecutorImpl {
             processTask(task);
             // Check again next loop.
             return false;
-        } else {
-            // Nothing right now, wait for the other threads to finish.
-            // If we timed-out tasks may have been added to the queue, so check again.
-            // if they didn't, we're done.
-            return waitGroup.await(10_000);
         }
+        // Nothing right now, wait for the other threads to finish.
+        // If we timed-out tasks may have been added to the queue, so check again.
+        // if they didn't, we're done.
+        return waitGroup.await(10_000);
     }
 
     private void processTask(Runnable task) {
@@ -198,11 +197,11 @@ public class ParallelTaskExecutor implements TaskExecutorImpl {
         @Override
         public void run() {
             // Run until the executor shuts down
-            while (ParallelTaskExecutor.this.running.get()) {
+            while (running.get()) {
                 Runnable task = taskQueue.pollFirst();
 
                 if (task != null) {
-                    this.processTask(task);
+                    processTask(task);
                 } else {
                     // Nothing to do, time to sleep.
                     spinThenWait();
@@ -238,7 +237,7 @@ public class ParallelTaskExecutor implements TaskExecutorImpl {
                     return;
                 }
 
-                Thread.onSpinWait();
+                onSpinWait();
             }
             taskNotifier.awaitNotification();
         }

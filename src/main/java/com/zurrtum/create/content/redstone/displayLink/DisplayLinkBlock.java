@@ -150,7 +150,7 @@ public class DisplayLinkBlock extends WrenchableDirectionalBlock implements IBE<
         boolean powered = shouldBePowered(state, worldIn, pos);
         boolean previouslyPowered = state.getValue(POWERED);
         if (previouslyPowered != powered) {
-            worldIn.setBlock(pos, state.cycle(POWERED), Block.UPDATE_CLIENTS);
+            worldIn.setBlock(pos, state.cycle(POWERED), UPDATE_CLIENTS);
             if (!powered) {
                 withBlockEntityDo(worldIn, pos, DisplayLinkBlockEntity::onNoLongerPowered);
             }

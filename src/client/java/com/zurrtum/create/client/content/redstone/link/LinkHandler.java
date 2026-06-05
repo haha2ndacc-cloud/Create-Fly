@@ -44,7 +44,7 @@ public class LinkHandler {
         for (boolean first : Iterate.trueAndFalse) {
             if (behaviour.testHit(first, ray.getLocation())) {
                 behaviour.setFrequency(first, heldItem);
-                world.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, .25f, .1f);
+                world.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.25f, 0.1f);
                 player.connection.send(new LinkSettingsPacket(pos, first, hand));
                 return InteractionResult.SUCCESS;
             }

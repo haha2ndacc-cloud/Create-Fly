@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 public class ExperienceBlock extends Block {
     public static final SoundType SOUND = new SoundType(
         1,
-        .5f,
+        0.5f,
         SoundEvents.AMETHYST_BLOCK_BREAK,
         SoundEvents.AMETHYST_BLOCK_STEP,
         SoundEvents.AMETHYST_BLOCK_PLACE,
@@ -31,7 +31,7 @@ public class ExperienceBlock extends Block {
         if (pRand.nextInt(5) != 0) {
             return;
         }
-        Vec3 vec3 = VecHelper.clampComponentWise(VecHelper.offsetRandomly(Vec3.ZERO, pRand, .75f), .55f)
+        Vec3 vec3 = VecHelper.clampComponentWise(VecHelper.offsetRandomly(Vec3.ZERO, pRand, 0.75f), 0.55f)
             .add(VecHelper.getCenterOf(pPos));
         pLevel.addParticle(
             ParticleTypes.END_ROD,

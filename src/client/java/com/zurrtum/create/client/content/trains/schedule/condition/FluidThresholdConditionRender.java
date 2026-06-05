@@ -39,8 +39,10 @@ public class FluidThresholdConditionRender extends CargoThresholdConditionRender
                 "schedule.condition.threshold.x_units_of_item",
                 input.getThreshold(),
                 CreateLang.translateDirect("schedule.condition.threshold.buckets"),
-                input.compareStack.isEmpty() ? CreateLang.translateDirect("schedule.condition.threshold.anything") : input.compareStack.isFilterItem() ? CreateLang.translateDirect(
-                    "schedule.condition.threshold.matching_content") : loadFluid(input).getName()
+                input.compareStack.isEmpty() ? CreateLang.translateDirect("schedule.condition.threshold.anything") :
+                    input.compareStack.isFilterItem() ?
+                        CreateLang.translateDirect("schedule.condition.threshold.matching_content") :
+                        loadFluid(input).getName()
             ).withStyle(ChatFormatting.DARK_AQUA)
         );
     }

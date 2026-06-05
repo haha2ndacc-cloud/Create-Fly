@@ -49,7 +49,7 @@ public class FlattenTool {
                         newValue += kernel[iOffset + 2][jOffset + 2] * ref;
                     }
                 }
-                result[i][j] = Mth.floor(newValue + .5f);
+                result[i][j] = Mth.floor(newValue + 0.5f);
             }
         }
         return result;

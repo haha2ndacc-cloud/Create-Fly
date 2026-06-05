@@ -25,7 +25,7 @@ public class ComposableEntityVisual<T extends Entity> extends AbstractVisual imp
         super(ctx, entity.level(), partialTick);
         this.entity = entity;
         this.controller = controller;
-        this.visuals = new Visual[controller.elements.length];
+        visuals = new Visual[controller.elements.length];
 
         updateElements(partialTick);
     }

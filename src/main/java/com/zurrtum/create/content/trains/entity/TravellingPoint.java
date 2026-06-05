@@ -36,22 +36,14 @@ public class TravellingPoint {
     public interface ITrackSelector extends BiFunction<TrackGraph, Pair<Boolean, List<Map.Entry<TrackNode, TrackEdge>>>, Map.Entry<TrackNode, TrackEdge>> {
     }
 
-    ;
-
     public interface IEdgePointListener extends BiPredicate<Double, Pair<TrackEdgePoint, Couple<TrackNode>>> {
     }
-
-    ;
 
     public interface ITurnListener extends BiConsumer<Double, TrackEdge> {
     }
 
-    ;
-
     public interface IPortalListener extends Predicate<Couple<TrackNodeLocation>> {
     }
-
-    ;
 
     public TravellingPoint() {
     }
@@ -282,9 +274,8 @@ public class TravellingPoint {
                     break;
                 }
 
-                Map.Entry<TrackNode, TrackEdge> entry = validTargets.size() == 1 ? validTargets.getFirst() : trackSelector.apply(graph,
-                    Pair.of(true, validTargets)
-                );
+                Map.Entry<TrackNode, TrackEdge> entry = validTargets.size() == 1 ? validTargets.getFirst() :
+                    trackSelector.apply(graph, Pair.of(true, validTargets));
 
                 if (entry.getValue().getLength() == 0 && portalListener.test(Couple.create(
                     node2.getLocation(),
@@ -343,9 +334,8 @@ public class TravellingPoint {
                     break;
                 }
 
-                Map.Entry<TrackNode, TrackEdge> entry = validTargets.size() == 1 ? validTargets.getFirst() : trackSelector.apply(graph,
-                    Pair.of(false, validTargets)
-                );
+                Map.Entry<TrackNode, TrackEdge> entry = validTargets.size() == 1 ? validTargets.getFirst() :
+                    trackSelector.apply(graph, Pair.of(false, validTargets));
 
                 if (entry.getValue().getLength() == 0 && portalListener.test(Couple.create(
                     entry.getKey().getLocation(),
@@ -411,7 +401,7 @@ public class TravellingPoint {
             TrackEdgePoint nextBoundary = edgePoints.get(index);
             double locationOn = nextBoundary.getLocationOn(edge);
             double distance = forward ? locationOn : length - locationOn;
-            if (forward ? (locationOn < from || locationOn >= to) : (locationOn <= from || locationOn > to)) {
+            if (forward ? locationOn < from || locationOn >= to : locationOn <= from || locationOn > to) {
                 continue;
             }
             Couple<TrackNode> nodes = Couple.create(node1, node2);

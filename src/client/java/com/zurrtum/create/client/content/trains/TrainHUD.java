@@ -33,13 +33,13 @@ public class TrainHUD {
     static LerpedFloat displayedThrottle = LerpedFloat.linear();
     static LerpedFloat displayedPromptSize = LerpedFloat.linear();
 
-    static @Nullable Double editedThrottle = null;
+    static @Nullable Double editedThrottle;
     static int hudPacketCooldown = 5;
     static int honkPacketCooldown = 5;
 
     public static @Nullable Component currentPrompt;
     public static boolean currentPromptShadow;
-    public static int promptKeepAlive = 0;
+    public static int promptKeepAlive;
 
     static boolean usedToHonk;
 
@@ -50,7 +50,7 @@ public class TrainHUD {
             currentPrompt = null;
         }
 
-        displayedPromptSize.chase(currentPrompt != null ? mc.font.width(currentPrompt) + 17 : 0, .5f, Chaser.EXP);
+        displayedPromptSize.chase(currentPrompt != null ? mc.font.width(currentPrompt) + 17 : 0, 0.5f, Chaser.EXP);
         displayedPromptSize.tickChaser();
 
         Carriage carriage = getCarriage();
@@ -62,9 +62,9 @@ public class TrainHUD {
         double value = Math.abs(train.speed) / (train.maxSpeed() * AllConfigs.server().trains.manualTrainSpeedModifier.getF());
         value = Mth.clamp(value + 0.05f, 0, 1);
 
-        displayedSpeed.chase((int) (value * 18) / 18f, .5f, Chaser.EXP);
+        displayedSpeed.chase((int) (value * 18) / 18.0f, 0.5f, Chaser.EXP);
         displayedSpeed.tickChaser();
-        displayedThrottle.chase(editedThrottle != null ? editedThrottle : train.throttle, .75f, Chaser.EXP);
+        displayedThrottle.chase(editedThrottle != null ? editedThrottle : train.throttle, 0.75f, Chaser.EXP);
         displayedThrottle.tickChaser();
 
         LocalPlayer player = mc.player;
@@ -155,7 +155,7 @@ public class TrainHUD {
         if (promptSize > 1) {
 
             poseStack.pushMatrix();
-            poseStack.translate(promptSize / -2f + 91, -27);
+            poseStack.translate(promptSize / -2.0f + 91, -27);
 
             AllGuiTextures.TRAIN_PROMPT_L.render(guiGraphics, -3, 0);
             AllGuiTextures.TRAIN_PROMPT_R.render(guiGraphics, promptSize, 0);
@@ -164,7 +164,7 @@ public class TrainHUD {
                 AllGuiTextures.TRAIN_PROMPT.location,
                 0,
                 0,
-                AllGuiTextures.TRAIN_PROMPT.getStartX() + (128 - promptSize / 2f),
+                AllGuiTextures.TRAIN_PROMPT.getStartX() + (128 - promptSize / 2.0f),
                 AllGuiTextures.TRAIN_PROMPT.getStartY(),
                 promptSize,
                 AllGuiTextures.TRAIN_PROMPT.getHeight(),
@@ -177,7 +177,7 @@ public class TrainHUD {
             Font font = mc.font;
             if (currentPrompt != null && font.width(currentPrompt) < promptSize - 10) {
                 poseStack.pushMatrix();
-                poseStack.translate(font.width(currentPrompt) / -2f + 82, -27);
+                poseStack.translate(font.width(currentPrompt) / -2.0f + 82, -27);
                 guiGraphics.text(font, currentPrompt, 9, 4, 0xFF544D45, currentPromptShadow);
                 poseStack.popMatrix();
             }
@@ -216,8 +216,8 @@ public class TrainHUD {
 
         boolean reversing = ControlsHandler.currentlyPressed.contains(1);
         inverted ^= reversing;
-        int angleOffset = (ControlsHandler.currentlyPressed.contains(2) ? -45 : 0) + (ControlsHandler.currentlyPressed.contains(
-            3) ? 45 : 0);
+        int angleOffset = (ControlsHandler.currentlyPressed.contains(2) ? -45 : 0) + (
+            ControlsHandler.currentlyPressed.contains(3) ? 45 : 0);
         if (reversing) {
             angleOffset *= -1;
         }
@@ -229,7 +229,7 @@ public class TrainHUD {
         }
 
         float angle = diff + angleOffset;
-        float snappedAngle = (snapSize * Math.round(angle / snapSize)) % 360f;
+        float snappedAngle = snapSize * Math.round(angle / snapSize) % 360.0f;
 
         poseStack.translate(91, -9);
         poseStack.scale(0.925f, 0.925f);
@@ -246,7 +246,7 @@ public class TrainHUD {
         }
 
         double prevThrottle = editedThrottle == null ? carriage.train.throttle : editedThrottle;
-        editedThrottle = Mth.clamp(prevThrottle + (delta > 0 ? 1 : -1) / 18f, 1 / 18f, 1);
+        editedThrottle = Mth.clamp(prevThrottle + (delta > 0 ? 1 : -1) / 18.0f, 1 / 18.0f, 1);
         return true;
     }
 

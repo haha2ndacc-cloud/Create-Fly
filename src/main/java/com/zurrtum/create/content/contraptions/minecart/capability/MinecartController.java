@@ -142,7 +142,7 @@ public class MinecartController {
 
     public float getCouplingLength(boolean leading) {
         Optional<CouplingData> optional = couplings.get(leading);
-        return optional.map(couplingData -> couplingData.length).orElse(0F);
+        return optional.map(couplingData -> couplingData.length).orElse(0.0F);
     }
 
     public boolean hasContraptionCoupling(boolean current) {

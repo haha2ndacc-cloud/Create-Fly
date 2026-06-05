@@ -71,7 +71,7 @@ public class StickerBlock extends WrenchableDirectionalBlock implements IBE<Stic
             if (state.getValue(POWERED)) {
                 state = state.cycle(EXTENDED);
             }
-            worldIn.setBlock(pos, state, Block.UPDATE_CLIENTS);
+            worldIn.setBlock(pos, state, UPDATE_CLIENTS);
         }
     }
 

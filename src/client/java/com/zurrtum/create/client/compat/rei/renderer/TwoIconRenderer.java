@@ -17,7 +17,7 @@ public record TwoIconRenderer(ItemStack icon, ItemStack subIcon) implements Rend
         Matrix3x2fStack matrices = graphics.pose();
         matrices.pushMatrix();
         matrices.translate(bounds.x, bounds.y);
-        matrices.scale(bounds.getWidth() / 16f, bounds.getHeight() / 16f);
+        matrices.scale(bounds.getWidth() / 16.0f, bounds.getHeight() / 16.0f);
         graphics.item(icon, 0, 0);
         matrices.translate(9, 9);
         matrices.scale(0.5f, 0.5f);

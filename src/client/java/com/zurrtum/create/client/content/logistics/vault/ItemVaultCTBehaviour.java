@@ -5,12 +5,12 @@ import com.zurrtum.create.client.AllSpriteShifts;
 import com.zurrtum.create.client.foundation.block.connected.CTSpriteShiftEntry;
 import com.zurrtum.create.client.foundation.block.connected.ConnectedTextureBehaviour;
 import com.zurrtum.create.content.logistics.vault.ItemVaultBlock;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
@@ -63,6 +63,7 @@ public class ItemVaultCTBehaviour extends ConnectedTextureBehaviour.Base {
         return Direction.fromAxisAndDirection(Axis.Y, face.getAxisDirection());
     }
 
+    @Override
     public boolean buildContextForOccludedDirections() {
         return super.buildContextForOccludedDirections();
     }

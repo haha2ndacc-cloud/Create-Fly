@@ -117,7 +117,7 @@ public class SchematicTableScreen extends AbstractSimiContainerScreen<SchematicT
         Create.SCHEMATIC_SENDER.refresh();
         List<Component> availableSchematics = Create.SCHEMATIC_SENDER.getAvailableSchematics();
 
-        int y = this.topPos + 2;
+        int y = topPos + 2;
 
         schematicsLabel = new Label(leftPos + 51, y + 26, CommonComponents.EMPTY).withShadow();
         schematicsLabel.text = CommonComponents.EMPTY;
@@ -152,7 +152,7 @@ public class SchematicTableScreen extends AbstractSimiContainerScreen<SchematicT
             removeWidget(schematicsArea);
 
             if (!availableSchematics1.isEmpty()) {
-                schematicsArea = new SelectionScrollInput(leftPos + 45, this.topPos + 21, 139, 18).forOptions(
+                schematicsArea = new SelectionScrollInput(leftPos + 45, topPos + 21, 139, 18).forOptions(
                     availableSchematics1).titled(availableSchematicsTitle.plainCopy()).writingTo(schematicsLabel);
                 schematicsArea.onChanged();
                 addRenderableWidget(schematicsArea);
@@ -174,7 +174,7 @@ public class SchematicTableScreen extends AbstractSimiContainerScreen<SchematicT
 
         renderedItem = new ElementWidget(
             leftPos + imageWidth,
-            this.topPos + background.getHeight() - 40
+            topPos + background.getHeight() - 40
         ).showingElement(GuiGameElement.of(AllItems.SCHEMATIC_TABLE.getDefaultInstance()).scale(3));
         addRenderableWidget(renderedItem);
     }
@@ -248,7 +248,7 @@ public class SchematicTableScreen extends AbstractSimiContainerScreen<SchematicT
             } else {
                 lastChasingProgress = chasingProgress;
                 progress = menu.contentHolder.uploadingProgress;
-                chasingProgress += (progress - chasingProgress) * .5f;
+                chasingProgress += (progress - chasingProgress) * 0.5f;
             }
             confirmButton.active = false;
 

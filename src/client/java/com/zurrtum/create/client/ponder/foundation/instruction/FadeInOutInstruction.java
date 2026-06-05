@@ -29,11 +29,11 @@ public abstract class FadeInOutInstruction extends TickingInstruction {
         int elapsed = totalTicks - remainingTicks;
 
         if (elapsed < fadeTime) {
-            float fade = (elapsed / (float) fadeTime);
+            float fade = elapsed / (float) fadeTime;
             applyFade(scene, fade * fade);
 
         } else if (remainingTicks < fadeTime) {
-            float fade = (remainingTicks / (float) fadeTime);
+            float fade = remainingTicks / (float) fadeTime;
             applyFade(scene, fade * fade);
 
         } else {

@@ -18,7 +18,7 @@ public abstract class RotatedPillarKineticBlock extends KineticBlock {
 
     public RotatedPillarKineticBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.defaultBlockState().setValue(AXIS, Direction.Axis.Y));
+        registerDefaultState(defaultBlockState().setValue(AXIS, Direction.Axis.Y));
     }
 
     @Override
@@ -48,9 +48,8 @@ public abstract class RotatedPillarKineticBlock extends KineticBlock {
                     if (prefferedAxis != null && prefferedAxis != side.getAxis()) {
                         prefferedAxis = null;
                         break;
-                    } else {
-                        prefferedAxis = side.getAxis();
                     }
+                    prefferedAxis = side.getAxis();
                 }
             }
         }
@@ -67,12 +66,12 @@ public abstract class RotatedPillarKineticBlock extends KineticBlock {
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Axis preferredAxis = getPreferredAxis(context);
         if (preferredAxis != null && (context.getPlayer() == null || !context.getPlayer().isShiftKeyDown())) {
-            return this.defaultBlockState().setValue(AXIS, preferredAxis);
+            return defaultBlockState().setValue(AXIS, preferredAxis);
         }
-        return this.defaultBlockState().setValue(
+        return defaultBlockState().setValue(
             AXIS,
-            preferredAxis != null && context.getPlayer().isShiftKeyDown() ? context.getClickedFace()
-                .getAxis() : context.getNearestLookingDirection().getAxis()
+            preferredAxis != null && context.getPlayer().isShiftKeyDown() ? context.getClickedFace().getAxis() :
+                context.getNearestLookingDirection().getAxis()
         );
     }
 }

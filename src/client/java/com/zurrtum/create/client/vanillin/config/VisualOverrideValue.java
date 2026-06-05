@@ -9,7 +9,8 @@ public enum VisualOverrideValue {
     public static VisualOverrideValue parse(String string) {
         if (string.equals("default")) {
             return DEFAULT;
-        } else if (string.equals("disable")) {
+        }
+        if (string.equals("disable")) {
             return DISABLE;
         }
         return null;

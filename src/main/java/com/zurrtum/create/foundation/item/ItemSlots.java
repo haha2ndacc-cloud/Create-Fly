@@ -38,43 +38,44 @@ public class ItemSlots {
     private int size;
 
     public ItemSlots() {
-        this.map = new Int2ObjectOpenHashMap<>();
-        this.size = 0;
+        map = new Int2ObjectOpenHashMap<>();
+        size = 0;
     }
 
     public void set(int slot, ItemStack stack) {
         if (slot < 0) {
             throw new IllegalArgumentException("Slot must be positive");
-        } else if (!stack.isEmpty()) {
-            this.map.put(slot, stack);
-            this.size = Math.max(this.size, slot + 1);
+        }
+        if (!stack.isEmpty()) {
+            map.put(slot, stack);
+            size = Math.max(size, slot + 1);
         }
     }
 
     public int getSize() {
-        return this.size;
+        return size;
     }
 
     public void setSize(int size) {
-        if (size <= this.getHighestSlot()) {
+        if (size <= getHighestSlot()) {
             throw new IllegalStateException("cannot set size to below the highest slot");
         }
         this.size = size;
     }
 
     public void forEach(SlotConsumer consumer) {
-        for (Int2ObjectMap.Entry<ItemStack> entry : this.map.int2ObjectEntrySet()) {
+        for (Int2ObjectMap.Entry<ItemStack> entry : map.int2ObjectEntrySet()) {
             consumer.accept(entry.getIntKey(), entry.getValue());
         }
     }
 
     private int getHighestSlot() {
-        return this.map.keySet().intStream().max().orElse(-1);
+        return map.keySet().intStream().max().orElse(-1);
     }
 
     public <T extends Container> T toHandler(IntFunction<T> factory) {
-        T handler = factory.apply(this.size);
-        this.forEach(handler::setItem);
+        T handler = factory.apply(size);
+        forEach(handler::setItem);
         return handler;
     }
 
@@ -93,7 +94,7 @@ public class ItemSlots {
 
     public Map<Integer, ItemStack> toBoxedMap() {
         Map<Integer, ItemStack> map = new HashMap<>();
-        this.forEach(map::put);
+        forEach(map::put);
         return map;
     }
 
@@ -104,7 +105,8 @@ public class ItemSlots {
     }
 
     public static Codec<ItemSlots> maxSizeCodec(int maxSize) {
-        return CODEC.validate(slots -> slots.size <= maxSize ? DataResult.success(slots) : DataResult.error(() -> "Slots above maximum of " + maxSize));
+        return CODEC.validate(slots -> slots.size <= maxSize ? DataResult.success(slots) :
+            DataResult.error(() -> "Slots above maximum of " + maxSize));
     }
 
     private static ItemSlots deserialize(Map<Integer, ItemStack> map, int size) {

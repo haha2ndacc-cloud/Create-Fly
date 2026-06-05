@@ -10,8 +10,11 @@ import net.minecraft.util.StringRepresentable;
 import java.util.Locale;
 
 public enum TerrainBrushes implements StringRepresentable {
-    Cuboid(new CuboidBrush()), Sphere(new SphereBrush()), Cylinder(new CylinderBrush()), Surface(new DynamicBrush(true)), Cluster(
-        new DynamicBrush(false));
+    Cuboid(new CuboidBrush()),
+    Sphere(new SphereBrush()),
+    Cylinder(new CylinderBrush()),
+    Surface(new DynamicBrush(true)),
+    Cluster(new DynamicBrush(false));
 
     public static final Codec<TerrainBrushes> CODEC = StringRepresentable.fromEnum(TerrainBrushes::values);
     public static final StreamCodec<ByteBuf, TerrainBrushes> STREAM_CODEC = CatnipStreamCodecBuilders.ofEnum(

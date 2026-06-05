@@ -89,11 +89,11 @@ public interface Translate<Self extends Translate<Self>> {
      * @return {@code this}
      */
     default Self nudge(int seed) {
-        long randomBits = (long) seed * 31L * 493286711L;
+        long randomBits = seed * 31L * 493286711L;
         randomBits = randomBits * randomBits * 4392167121L + randomBits * 98761L;
-        float xNudge = (((float) (randomBits >> 16 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
-        float yNudge = (((float) (randomBits >> 20 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
-        float zNudge = (((float) (randomBits >> 24 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        float xNudge = (((randomBits >> 16 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        float yNudge = (((randomBits >> 20 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        float zNudge = (((randomBits >> 24 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
         return translate(xNudge, yNudge, zNudge);
     }
 }

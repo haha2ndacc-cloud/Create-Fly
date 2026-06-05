@@ -75,7 +75,7 @@ public class GirderWrenchBehaviorHandler {
                 .getUnitVec3i()).scale(0.3))
             .add(Vec3.atLowerCornerOf(dirPair.getFirst().getOpposite().getUnitVec3i()).scale(0.1 * normalMultiplier));
 
-        Outliner.getInstance().showAABB("girderWrench", new AABB(corner1, corner2)).lineWidth(1 / 32f)
+        Outliner.getInstance().showAABB("girderWrench", new AABB(corner1, corner2)).lineWidth(1 / 32.0f)
             .colored(new Color(127, 127, 127));
     }
 }

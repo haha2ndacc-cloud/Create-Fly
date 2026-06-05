@@ -8,7 +8,7 @@ public class BrassTunnelItemHandler implements ItemInventory {
     private final BrassTunnelBlockEntity blockEntity;
 
     public BrassTunnelItemHandler(BrassTunnelBlockEntity be) {
-        this.blockEntity = be;
+        blockEntity = be;
     }
 
     @Override
@@ -40,13 +40,12 @@ public class BrassTunnelItemHandler implements ItemInventory {
         }
         if (blockEntity.hasDistributionBehaviour()) {
             return blockEntity.stackToDistribute;
-        } else {
-            Container inventory = blockEntity.getBeltCapability();
-            if (inventory == null) {
-                return ItemStack.EMPTY;
-            }
-            return inventory.getItem(0);
         }
+        Container inventory = blockEntity.getBeltCapability();
+        if (inventory == null) {
+            return ItemStack.EMPTY;
+        }
+        return inventory.getItem(0);
     }
 
     @Override

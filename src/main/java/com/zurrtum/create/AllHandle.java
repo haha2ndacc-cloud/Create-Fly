@@ -382,7 +382,7 @@ public class AllHandle {
                             world,
                             packet.soundSource(),
                             1,
-                            world.getRandom().nextFloat() * .5f + .5f
+                            world.getRandom().nextFloat() * 0.5f + 0.5f
                         );
                         if (!player.isCreative() && bezierConnection != null) {
                             bezierConnection.addItemsToPlayer(player);
@@ -435,11 +435,12 @@ public class AllHandle {
                         stack.remove(AllDataComponents.TRACK_TARGETING_ITEM_SELECTED_POS);
                         stack.remove(AllDataComponents.TRACK_TARGETING_ITEM_SELECTED_DIRECTION);
                         stack.remove(AllDataComponents.TRACK_TARGETING_ITEM_BEZIER);
-                        AllSoundEvents.CONTROLLER_CLICK.play(world, null, pos, 1, .5f);
+                        AllSoundEvents.CONTROLLER_CLICK.play(world, null, pos, 1, 0.5f);
                         return true;
                     }
 
-                    EdgePointType<?> type = stack.is(AllItems.TRACK_SIGNAL) ? EdgePointType.SIGNAL : EdgePointType.STATION;
+                    EdgePointType<?> type =
+                        stack.is(AllItems.TRACK_SIGNAL) ? EdgePointType.SIGNAL : EdgePointType.STATION;
                     MutableObject<@Nullable OverlapResult> result = new MutableObject<>(null);
                     BezierTrackPointLocation bezierTrackPointLocation = new BezierTrackPointLocation(
                         packet.targetPos(),
@@ -457,7 +458,7 @@ public class AllHandle {
                     if (result.get().feedback != null) {
                         player.sendOverlayMessage(Component.translatable("create." + result.get().feedback)
                             .withStyle(ChatFormatting.RED));
-                        AllSoundEvents.DENY.play(world, null, pos, .5f, 1);
+                        AllSoundEvents.DENY.play(world, null, pos, 0.5f, 1);
                         return true;
                     }
 
@@ -720,17 +721,18 @@ public class AllHandle {
 
                         float bestDiff = Float.POSITIVE_INFINITY;
                         ChainConveyorPackage best = null;
-                        List<ChainConveyorPackage> list = selectedConnection.equals(BlockPos.ZERO) ? be.getLoopingPackages() : be.getTravellingPackages()
-                            .get(selectedConnection);
+                        List<ChainConveyorPackage> list =
+                            selectedConnection.equals(BlockPos.ZERO) ? be.getLoopingPackages() :
+                                be.getTravellingPackages().get(selectedConnection);
 
                         if (list == null || list.isEmpty()) {
                             return true;
                         }
 
                         for (ChainConveyorPackage liftPackage : list) {
-                            float diff = Math.abs(selectedConnection == null ? AngleHelper.getShortestAngleDiff(liftPackage.chainPosition,
-                                chainPosition
-                            ) : liftPackage.chainPosition - chainPosition);
+                            float diff = Math.abs(selectedConnection == null ?
+                                AngleHelper.getShortestAngleDiff(liftPackage.chainPosition, chainPosition) :
+                                liftPackage.chainPosition - chainPosition);
                             if (diff > bestDiff) {
                                 continue;
                             }
@@ -984,9 +986,8 @@ public class AllHandle {
                     if (packet.indices().isEmpty()) {
                         be.hiddenCategoriesByPlayer.remove(listener.player.getUUID());
                         return false;
-                    } else {
-                        be.hiddenCategoriesByPlayer.put(listener.player.getUUID(), packet.indices());
                     }
+                    be.hiddenCategoriesByPlayer.put(listener.player.getUUID(), packet.indices());
                     return true;
                 }
                 return false;
@@ -1653,7 +1654,8 @@ public class AllHandle {
     }
 
     public static void onPlaceExtendedCurve(ServerGamePacketListenerImpl listener, PlaceExtendedCurvePacket packet) {
-        ItemStack stack = listener.player.getItemInHand(packet.mainHand() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+        ItemStack stack = listener.player.getItemInHand(
+            packet.mainHand() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
         if (!stack.is(AllItemTags.TRACKS)) {
             return;
         }
@@ -1721,7 +1723,7 @@ public class AllHandle {
         }
 
         player.hurtServer(world, AllDamageSources.get(world).runOver(cce), packet.damage());
-        world.playSound(player, entity.blockPosition(), SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.NEUTRAL, 1, .75f);
+        world.playSound(player, entity.blockPosition(), SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.NEUTRAL, 1, 0.75f);
     }
 
     public static void onTrainHUDUpdate(ServerGamePacketListenerImpl listener, TrainHUDUpdatePacket packet) {

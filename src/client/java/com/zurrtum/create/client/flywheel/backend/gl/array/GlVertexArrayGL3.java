@@ -19,8 +19,8 @@ public abstract class GlVertexArrayGL3 extends GlVertexArray {
     private final long[] bindingOffsets = new long[MAX_ATTRIB_BINDINGS];
     private final int[] bindingStrides = new int[MAX_ATTRIB_BINDINGS];
     private final int[] bindingDivisors = new int[MAX_ATTRIB_BINDINGS];
-    private int requestedElementBuffer = 0;
-    private int boundElementBuffer = 0;
+    private int requestedElementBuffer;
+    private int boundElementBuffer;
 
     public GlVertexArrayGL3() {
         handle(GL30.glGenVertexArrays());

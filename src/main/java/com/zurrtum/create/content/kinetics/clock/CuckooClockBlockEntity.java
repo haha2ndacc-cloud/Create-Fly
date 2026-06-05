@@ -36,6 +36,7 @@ public class CuckooClockBlockEntity extends KineticBlockEntity {
         PIG, CREEPER, SURPRISE, NONE;
         public static final Codec<Animation> CODEC = StringRepresentable.fromEnum(Animation::values);
 
+        @Override
         public String getSerializedName() {
             return name().toLowerCase(Locale.ROOT);
         }

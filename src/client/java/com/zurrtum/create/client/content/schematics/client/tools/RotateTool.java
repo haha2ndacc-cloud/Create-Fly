@@ -28,7 +28,7 @@ public class RotateTool extends PlacementToolBase {
         Vec3 start = center.subtract(0, height / 2, 0);
         Vec3 end = center.add(0, height / 2, 0);
 
-        line.getParams().disableCull().disableLineNormals().colored(0xdddddd).lineWidth(1 / 16f);
+        line.getParams().disableCull().disableLineNormals().colored(0xdddddd).lineWidth(1 / 16.0f);
         line.set(start, end).submit(mc, ms, queue, Vec3.ZERO, AnimationTickHolder.getPartialTicks());
 
         super.renderOnSchematic(mc, ms, queue);

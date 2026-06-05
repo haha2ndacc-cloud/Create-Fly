@@ -37,12 +37,13 @@ public class AtomicBitSet {
             throw new IllegalArgumentException("Cannot specify fewer than 64 bits in each segment!");
         }
 
-        this.log2SegmentSize = log2SegmentSizeInBits;
-        this.numLongsPerSegment = (1 << (log2SegmentSizeInBits - 6));
-        this.segmentMask = numLongsPerSegment - 1;
+        log2SegmentSize = log2SegmentSizeInBits;
+        numLongsPerSegment = 1 << log2SegmentSizeInBits - 6;
+        segmentMask = numLongsPerSegment - 1;
 
         long numBitsPerSegment = numLongsPerSegment * 64L;
-        int numSegmentsToPreallocate = numBitsToPreallocate == 0 ? 1 : (int) (((numBitsToPreallocate - 1) / numBitsPerSegment) + 1);
+        int numSegmentsToPreallocate =
+            numBitsToPreallocate == 0 ? 1 : (int) ((numBitsToPreallocate - 1) / numBitsPerSegment + 1);
 
         segments = new AtomicReference<>(new AtomicBitSetSegments(numSegmentsToPreallocate, numLongsPerSegment));
     }
@@ -107,7 +108,7 @@ public class AtomicBitSet {
 
             if (fromLongIndex == toLongIndex) {
                 // Case 1A: One Long
-                setOr(segment, fromLongIndex, (fromLongMask & toLongMask));
+                setOr(segment, fromLongIndex, fromLongMask & toLongMask);
             } else {
                 // Case 1B: Multiple Longs
                 // Handle first word
@@ -253,7 +254,7 @@ public class AtomicBitSet {
 
         long mask = maskForPosition(position);
 
-        return (((long) AA.getAcquire(segment, longPosition) & mask) != 0);
+        return ((long) AA.getAcquire(segment, longPosition) & mask) != 0;
     }
 
     public long maxSetBit() {
@@ -266,7 +267,7 @@ public class AtomicBitSet {
             for (int longIdx = segment.length - 1; longIdx >= 0; longIdx--) {
                 long l = (long) AA.getAcquire(segment, longIdx);
                 if (l != 0) {
-                    return ((long) segmentIdx << log2SegmentSize) + (longIdx * 64L) + (63 - Long.numberOfLeadingZeros(l));
+                    return ((long) segmentIdx << log2SegmentSize) + longIdx * 64L + (63 - Long.numberOfLeadingZeros(l));
                 }
             }
         }
@@ -289,12 +290,12 @@ public class AtomicBitSet {
         int longPosition = longIndexInSegmentForPosition(fromIndex);
         long[] segment = segments.getSegment(segmentPosition);
 
-        long word = (long) AA.getAcquire(segment, longPosition) & (0xffffffffffffffffL << bitPosInLongForPosition(
-            fromIndex));
+        long word = (long) AA.getAcquire(segment, longPosition) & 0xffffffffffffffffL << bitPosInLongForPosition(
+            fromIndex);
 
         while (true) {
             if (word != 0) {
-                return (segmentPosition << (log2SegmentSize)) + (longPosition << 6) + Long.numberOfTrailingZeros(word);
+                return (segmentPosition << log2SegmentSize) + (longPosition << 6) + Long.numberOfTrailingZeros(word);
             }
             if (++longPosition > segmentMask) {
                 segmentPosition++;
@@ -325,12 +326,12 @@ public class AtomicBitSet {
         int longPosition = longIndexInSegmentForPosition(fromIndex);
         long[] segment = segments.getSegment(segmentPosition);
 
-        long word = ~((long) AA.getAcquire(segment, longPosition)) & (0xffffffffffffffffL << bitPosInLongForPosition(
-            fromIndex));
+        long word = ~((long) AA.getAcquire(segment, longPosition)) & 0xffffffffffffffffL << bitPosInLongForPosition(
+            fromIndex);
 
         while (true) {
             if (word != 0) {
-                return (segmentPosition << (log2SegmentSize)) + (longPosition << 6) + Long.numberOfTrailingZeros(word);
+                return (segmentPosition << log2SegmentSize) + (longPosition << 6) + Long.numberOfTrailingZeros(word);
             }
             if (++longPosition > segmentMask) {
                 segmentPosition++;
@@ -350,7 +351,7 @@ public class AtomicBitSet {
      * @return the number of bits which are set in this bit set.
      */
     public int cardinality() {
-        return this.segments.get().cardinality();
+        return segments.get().cardinality();
     }
 
     /**
@@ -372,7 +373,7 @@ public class AtomicBitSet {
                     // The JIT loves this loop. Trying to be clever by starting from Long.numberOfLeadingZeros(l)
                     // causes it to be much slower.
                     for (int bitIndex = 0; bitIndex < 64; bitIndex++) {
-                        if ((l & (1L << bitIndex)) != 0) {
+                        if ((l & 1L << bitIndex) != 0) {
                             var position = (segmentIndex << log2SegmentSize) + (longIndex << 6) + bitIndex;
                             if (start == -1) {
                                 start = position;
@@ -447,7 +448,7 @@ public class AtomicBitSet {
      */
     private int longIndexInSegmentForPosition(int position) {
         // remainder of div by num bits per segment
-        return (position >>> 6) & segmentMask;
+        return position >>> 6 & segmentMask;
     }
 
     /**
@@ -577,16 +578,16 @@ public class AtomicBitSet {
             throw new IllegalArgumentException("Segment sizes must be the same");
         }
 
-        AtomicBitSetSegments thisSegments = this.segments.get();
+        AtomicBitSetSegments thisSegments = segments.get();
         AtomicBitSetSegments otherSegments = other.segments.get();
 
         for (int i = 0; i < thisSegments.numSegments(); i++) {
             long[] thisArray = thisSegments.getSegment(i);
-            long[] otherArray = (i < otherSegments.numSegments()) ? otherSegments.getSegment(i) : null;
+            long[] otherArray = i < otherSegments.numSegments() ? otherSegments.getSegment(i) : null;
 
             for (int j = 0; j < thisArray.length; j++) {
                 long thisLong = (long) AA.getAcquire(thisArray, j);
-                long otherLong = (otherArray == null) ? 0 : (long) AA.getAcquire(otherArray, j);
+                long otherLong = otherArray == null ? 0 : (long) AA.getAcquire(otherArray, j);
 
                 if (thisLong != otherLong) {
                     return false;
@@ -621,10 +622,10 @@ public class AtomicBitSet {
      */
     public BitSet toBitSet() {
         BitSet resultSet = new BitSet();
-        int ordinal = this.nextSetBit(0);
+        int ordinal = nextSetBit(0);
         while (ordinal != -1) {
             resultSet.set(ordinal);
-            ordinal = this.nextSetBit(ordinal + 1);
+            ordinal = nextSetBit(ordinal + 1);
         }
         return resultSet;
     }

@@ -283,7 +283,8 @@ public class BrassTunnelBlockEntity extends BeltTunnelBlockEntity {
                             break;
                         }
                         continue;
-                    } else if (!remainder.isEmpty() && !simulate) {
+                    }
+                    if (!remainder.isEmpty() && !simulate) {
                         full.add(pair);
                     }
 
@@ -427,12 +428,12 @@ public class BrassTunnelBlockEntity extends BeltTunnelBlockEntity {
                 if (!simulate) {
                     tunnel.flap(side, true);
                     float beltMovementSpeed = below.getDirectionAwareBeltMovementSpeed();
-                    float movementSpeed = Math.max(Math.abs(beltMovementSpeed), 1 / 8f);
+                    float movementSpeed = Math.max(Math.abs(beltMovementSpeed), 1 / 8.0f);
                     int additionalOffset = beltMovementSpeed > 0 ? 1 : 0;
                     Vec3 outPos = BeltHelper.getVectorForOffset(controllerBE, below.index + additionalOffset);
-                    Vec3 outMotion = Vec3.atLowerCornerOf(side.getUnitVec3i()).scale(movementSpeed).add(0, 1 / 8f, 0);
+                    Vec3 outMotion = Vec3.atLowerCornerOf(side.getUnitVec3i()).scale(movementSpeed).add(0, 1 / 8.0f, 0);
                     outPos.add(outMotion.normalize());
-                    ItemEntity entity = new ItemEntity(level, outPos.x, outPos.y + 6 / 16f, outPos.z, stack);
+                    ItemEntity entity = new ItemEntity(level, outPos.x, outPos.y + 6 / 16.0f, outPos.z, stack);
                     entity.setDeltaMovement(outMotion);
                     entity.setDefaultPickUpDelay();
                     entity.hurtMarked = true;
@@ -795,7 +796,7 @@ public class BrassTunnelBlockEntity extends BeltTunnelBlockEntity {
     }
 
     public enum SelectionMode {
-        SPLIT, FORCED_SPLIT, ROUND_ROBIN, FORCED_ROUND_ROBIN, PREFER_NEAREST, RANDOMIZE, SYNCHRONIZE;
+        SPLIT, FORCED_SPLIT, ROUND_ROBIN, FORCED_ROUND_ROBIN, PREFER_NEAREST, RANDOMIZE, SYNCHRONIZE
     }
 
     public boolean canTakeItems() {

@@ -142,7 +142,7 @@ public class StationPeripheral extends SyncedPeripheral<StationBlockEntity> {
         Train train = getTrainOrThrow();
         train.name = Component.literal(name);
         blockEntity.getLevel().getServer().getPlayerList()
-            .broadcastAll((new TrainEditReturnPacket(train.id, name, train.icon.id(), train.mapColorIndex)));
+            .broadcastAll(new TrainEditReturnPacket(train.id, name, train.icon.id(), train.mapColorIndex));
     }
 
     @LuaFunction
@@ -266,15 +266,20 @@ public class StationPeripheral extends SyncedPeripheral<StationBlockEntity> {
 
         if (type == Tag.TAG_BYTE && key != null && key.equals("Count")) {
             return tag.asByte().get();
-        } else if (type == Tag.TAG_BYTE) {
+        }
+        if (type == Tag.TAG_BYTE) {
             return tag.asByte().get() != 0;
-        } else if (type == Tag.TAG_SHORT || type == Tag.TAG_INT || type == Tag.TAG_LONG) {
+        }
+        if (type == Tag.TAG_SHORT || type == Tag.TAG_INT || type == Tag.TAG_LONG) {
             return tag.asLong().get();
-        } else if (type == Tag.TAG_FLOAT || type == Tag.TAG_DOUBLE) {
+        }
+        if (type == Tag.TAG_FLOAT || type == Tag.TAG_DOUBLE) {
             return tag.asDouble().get();
-        } else if (type == Tag.TAG_STRING) {
+        }
+        if (type == Tag.TAG_STRING) {
             return tag.asString().get();
-        } else if (type == Tag.TAG_LIST || type == Tag.TAG_BYTE_ARRAY || type == Tag.TAG_INT_ARRAY || type == Tag.TAG_LONG_ARRAY) {
+        }
+        if (type == Tag.TAG_LIST || type == Tag.TAG_BYTE_ARRAY || type == Tag.TAG_INT_ARRAY || type == Tag.TAG_LONG_ARRAY) {
             CreateLuaTable list = new CreateLuaTable();
             ListTag listTag = tag.asList().get();
 
@@ -284,7 +289,8 @@ public class StationPeripheral extends SyncedPeripheral<StationBlockEntity> {
 
             return list;
 
-        } else if (type == Tag.TAG_COMPOUND) {
+        }
+        if (type == Tag.TAG_COMPOUND) {
             CreateLuaTable table = new CreateLuaTable();
             CompoundTag compoundTag = tag.asCompound().get();
 
@@ -308,19 +314,22 @@ public class StationPeripheral extends SyncedPeripheral<StationBlockEntity> {
     private static Tag toNBTTag(@Nullable String key, Object value) throws LuaException {
         if (value instanceof Boolean v) {
             return ByteTag.valueOf(v);
-        } else if (value instanceof Byte || (key != null && key.equals("count"))) {
+        }
+        if (value instanceof Byte || "count".equals(key)) {
             return ByteTag.valueOf(((Number) value).byteValue());
-        } else if (value instanceof Number v) {
+        }
+        if (value instanceof Number v) {
             // If number is numerical integer
             if (v.intValue() == v.doubleValue()) {
                 return IntTag.valueOf(v.intValue());
-            } else {
-                return DoubleTag.valueOf(v.doubleValue());
             }
+            return DoubleTag.valueOf(v.doubleValue());
 
-        } else if (value instanceof String v) {
+        }
+        if (value instanceof String v) {
             return StringTag.valueOf(v);
-        } else if (value instanceof Map<?, ?> v && v.containsKey(1.0)) { // List
+        }
+        if (value instanceof Map<?, ?> v && v.containsKey(1.0)) { // List
             ListTag list = new ListTag();
             for (double i = 1; i <= v.size(); i++) {
                 if (v.get(i) != null) {
@@ -330,7 +339,8 @@ public class StationPeripheral extends SyncedPeripheral<StationBlockEntity> {
 
             return list;
 
-        } else if (value instanceof Map<?, ?> v) { // Table/Map
+        }
+        if (value instanceof Map<?, ?> v) { // Table/Map
             CompoundTag compound = new CompoundTag();
             for (Object objectKey : v.keySet()) {
                 if (!(objectKey instanceof String compoundKey)) {
@@ -341,8 +351,8 @@ public class StationPeripheral extends SyncedPeripheral<StationBlockEntity> {
                     // Items serialize their resource location as "id" and not as "Id".
                     // This check is needed to see if the 'i' should be left lowercase or not.
                     // Items store "count" in the same compound tag, so we can check for its presence to see if this is a serialized item
-                    compoundKey.equals("id") && v.containsKey("count") ? "id" : StringHelper.snakeCaseToCamelCase(
-                        compoundKey), toNBTTag(compoundKey, v.get(compoundKey))
+                    compoundKey.equals("id") && v.containsKey("count") ? "id" :
+                        StringHelper.snakeCaseToCamelCase(compoundKey), toNBTTag(compoundKey, v.get(compoundKey))
                 );
             }
 

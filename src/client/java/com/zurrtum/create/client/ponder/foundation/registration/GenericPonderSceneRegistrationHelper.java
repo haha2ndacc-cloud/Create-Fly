@@ -31,6 +31,7 @@ public class GenericPonderSceneRegistrationHelper<T> implements PonderSceneRegis
         return new GenericPonderSceneRegistrationHelper<>(helperDelegate, keyGen.andThen(this.keyGen));
     }
 
+    @Override
     public StoryBoardEntry addStoryBoard(
         T component,
         Identifier schematicLocation,
@@ -40,6 +41,7 @@ public class GenericPonderSceneRegistrationHelper<T> implements PonderSceneRegis
         return helperDelegate.addStoryBoard(keyGen.apply(component), schematicLocation, storyBoard, tags);
     }
 
+    @Override
     public StoryBoardEntry addStoryBoard(
         T component,
         String schematicPath,

@@ -57,13 +57,13 @@ public class WhistleExtenderBlock extends Block implements IWrenchable {
         BlockPos pos = context.getClickedPos();
 
         if (context.getClickLocation().y < context.getClickedPos()
-            .getY() + .5f || state.getValue(SHAPE) == WhistleExtenderShape.SINGLE) {
+            .getY() + 0.5f || state.getValue(SHAPE) == WhistleExtenderShape.SINGLE) {
             return IWrenchable.super.onSneakWrenched(state, context);
         }
         if (!(world instanceof ServerLevel)) {
             return InteractionResult.SUCCESS;
         }
-        world.setBlock(pos, state.setValue(SHAPE, WhistleExtenderShape.SINGLE), Block.UPDATE_ALL);
+        world.setBlock(pos, state.setValue(SHAPE, WhistleExtenderShape.SINGLE), UPDATE_ALL);
         IWrenchable.playRemoveSound(world, pos);
         return InteractionResult.SUCCESS;
     }
@@ -139,6 +139,7 @@ public class WhistleExtenderBlock extends Block implements IWrenchable {
         return below.is(this) && below.getValue(SHAPE) != WhistleExtenderShape.SINGLE || below.is(AllBlocks.STEAM_WHISTLE);
     }
 
+    @Override
     public BlockState updateShape(
         BlockState pState,
         LevelReader pLevel,
@@ -165,10 +166,8 @@ public class WhistleExtenderBlock extends Block implements IWrenchable {
             return pState;
         }
 
-        return !pState.canSurvive(pLevel, pCurrentPos) ? Blocks.AIR.defaultBlockState() : pState.setValue(
-            SIZE,
-            pLevel.getBlockState(pCurrentPos.below()).getValue(SIZE)
-        );
+        return !pState.canSurvive(pLevel, pCurrentPos) ? Blocks.AIR.defaultBlockState() :
+            pState.setValue(SIZE, pLevel.getBlockState(pCurrentPos.below()).getValue(SIZE));
     }
 
     @Override
@@ -192,12 +191,14 @@ public class WhistleExtenderBlock extends Block implements IWrenchable {
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         WhistleSize size = pState.getValue(SIZE);
         return switch (pState.getValue(SHAPE)) {
-            case DOUBLE ->
-                size == WhistleSize.LARGE ? AllShapes.WHISTLE_EXTENDER_LARGE_DOUBLE : size == WhistleSize.MEDIUM ? AllShapes.WHISTLE_EXTENDER_MEDIUM_DOUBLE : AllShapes.WHISTLE_EXTENDER_SMALL_DOUBLE;
-            case DOUBLE_CONNECTED ->
-                size == WhistleSize.LARGE ? AllShapes.WHISTLE_EXTENDER_LARGE_DOUBLE_CONNECTED : size == WhistleSize.MEDIUM ? AllShapes.WHISTLE_EXTENDER_MEDIUM_DOUBLE_CONNECTED : AllShapes.WHISTLE_EXTENDER_SMALL_DOUBLE_CONNECTED;
-            default ->
-                size == WhistleSize.LARGE ? AllShapes.WHISTLE_EXTENDER_LARGE : size == WhistleSize.MEDIUM ? AllShapes.WHISTLE_EXTENDER_MEDIUM : AllShapes.WHISTLE_EXTENDER_SMALL;
+            case DOUBLE -> size == WhistleSize.LARGE ? AllShapes.WHISTLE_EXTENDER_LARGE_DOUBLE :
+                size == WhistleSize.MEDIUM ? AllShapes.WHISTLE_EXTENDER_MEDIUM_DOUBLE :
+                    AllShapes.WHISTLE_EXTENDER_SMALL_DOUBLE;
+            case DOUBLE_CONNECTED -> size == WhistleSize.LARGE ? AllShapes.WHISTLE_EXTENDER_LARGE_DOUBLE_CONNECTED :
+                size == WhistleSize.MEDIUM ? AllShapes.WHISTLE_EXTENDER_MEDIUM_DOUBLE_CONNECTED :
+                    AllShapes.WHISTLE_EXTENDER_SMALL_DOUBLE_CONNECTED;
+            default -> size == WhistleSize.LARGE ? AllShapes.WHISTLE_EXTENDER_LARGE :
+                size == WhistleSize.MEDIUM ? AllShapes.WHISTLE_EXTENDER_MEDIUM : AllShapes.WHISTLE_EXTENDER_SMALL;
         };
     }
 

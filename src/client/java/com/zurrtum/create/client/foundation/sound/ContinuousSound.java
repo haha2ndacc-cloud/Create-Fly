@@ -16,9 +16,9 @@ public class ContinuousSound extends AbstractTickableSoundInstance {
         this.scape = scape;
         this.sharedPitch = sharedPitch;
         this.relativeVolume = relativeVolume;
-        this.looping = true;
-        this.delay = 0;
-        this.relative = false;
+        looping = true;
+        delay = 0;
+        relative = false;
     }
 
     public void remove() {

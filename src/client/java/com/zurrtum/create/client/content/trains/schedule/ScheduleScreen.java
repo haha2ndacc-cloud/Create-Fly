@@ -426,11 +426,8 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
             destinationSuggestions.tick();
         }
 
-        schedule.savedProgress = schedule.entries.isEmpty() ? 0 : Mth.clamp(
-            schedule.savedProgress,
-            0,
-            schedule.entries.size() - 1
-        );
+        schedule.savedProgress =
+            schedule.entries.isEmpty() ? 0 : Mth.clamp(schedule.savedProgress, 0, schedule.entries.size() - 1);
         resetProgress.active = schedule.savedProgress > 0;
         skipProgress.active = schedule.entries.size() > 1;
     }
@@ -466,10 +463,8 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
                 float expectedY = scrollOffset + topPos + yOffset + 4;
                 float actualY = Mth.clamp(expectedY, topPos + 18, topPos + 170);
                 matrixStack.translate(0, actualY);
-                (expectedY == actualY ? AllGuiTextures.SCHEDULE_POINTER : AllGuiTextures.SCHEDULE_POINTER_OFFSCREEN).render(graphics,
-                    leftPos,
-                    0
-                );
+                (expectedY == actualY ? AllGuiTextures.SCHEDULE_POINTER :
+                    AllGuiTextures.SCHEDULE_POINTER_OFFSCREEN).render(graphics, leftPos, 0);
                 matrixStack.popMatrix();
             }
 
@@ -738,7 +733,8 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
         Matrix3x2fStack matrixStack = graphics.pose();
         matrixStack.pushMatrix();
 
-        AllGuiTextures left = clean ? AllGuiTextures.SCHEDULE_CONDITION_LEFT_CLEAN : AllGuiTextures.SCHEDULE_CONDITION_LEFT;
+        AllGuiTextures left =
+            clean ? AllGuiTextures.SCHEDULE_CONDITION_LEFT_CLEAN : AllGuiTextures.SCHEDULE_CONDITION_LEFT;
         AllGuiTextures middle = AllGuiTextures.SCHEDULE_CONDITION_MIDDLE;
         AllGuiTextures item = AllGuiTextures.SCHEDULE_CONDITION_ITEM;
         AllGuiTextures right = AllGuiTextures.SCHEDULE_CONDITION_RIGHT;
@@ -776,8 +772,8 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 
         int mx = (int) mouseX;
         int my = (int) mouseY;
-        int x = mx - this.leftPos - 25;
-        int y = my - this.topPos - 25;
+        int x = mx - leftPos - 25;
+        int y = my - topPos - 25;
         if (x < 0 || x >= 205) {
             return false;
         }
@@ -1091,7 +1087,8 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
             onEditorClose.accept(true);
             stopEditing();
             return true;
-        } else if (hitE) {
+        }
+        if (hitE) {
             return false;
         }
         return super.keyPressed(input);
@@ -1113,7 +1110,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 
         if (minecraft.hasShiftDown()) {
             List<ScheduleEntry> entries = schedule.entries;
-            int y = (int) (pMouseY - this.topPos - 25 + scroll.getValue());
+            int y = (int) (pMouseY - topPos - 25 + scroll.getValue());
             for (int i = 0; i < entries.size(); i++) {
                 ScheduleEntry entry = entries.get(i);
                 int maxRows = 0;
@@ -1192,8 +1189,8 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
             return;
         }
 
-        int x = this.leftPos + 53;
-        int y = this.topPos + 87;
+        int x = leftPos + 53;
+        int y = topPos + 87;
         if (mouseX < x || mouseY < y || mouseX >= x + 120 || mouseY >= y + 18) {
             return;
         }
@@ -1210,10 +1207,10 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
             if (slot == null || !slot.getItem().isEmpty()) {
                 continue;
             }
-            if (mouseX < this.leftPos + slot.x || mouseX > this.leftPos + slot.x + 18) {
+            if (mouseX < leftPos + slot.x || mouseX > leftPos + slot.x + 18) {
                 continue;
             }
-            if (mouseY < this.topPos + slot.y || mouseY > this.topPos + slot.y + 18) {
+            if (mouseY < topPos + slot.y || mouseY > topPos + slot.y + 18) {
                 continue;
             }
             renderActionTooltip(graphics, secondLineTooltip, mouseX, mouseY);
@@ -1241,17 +1238,18 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
             return;
         }
 
-        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
+        graphics.fillGradient(0, 0, width, height, -1072689136, -804253680);
         AllGuiTextures.SCHEDULE_EDITOR.render(graphics, leftPos - 2, topPos + 40);
         AllGuiTextures.PLAYER_INVENTORY.render(graphics, leftPos + 38, topPos + 122);
         graphics.text(font, playerInventoryTitle, leftPos + 46, topPos + 128, 0xFF505050, false);
 
-        formattedcharsequence = editingCondition == null ? CreateLang.translateDirect("schedule.instruction.editor")
-            .getVisualOrderText() : CreateLang.translateDirect("schedule.condition.editor").getVisualOrderText();
+        formattedcharsequence =
+            editingCondition == null ? CreateLang.translateDirect("schedule.instruction.editor").getVisualOrderText() :
+                CreateLang.translateDirect("schedule.condition.editor").getVisualOrderText();
         graphics.text(
             font,
             formattedcharsequence,
-            (center - font.width(formattedcharsequence) / 2),
+            center - font.width(formattedcharsequence) / 2,
             topPos + 44,
             0xFF505050,
             false

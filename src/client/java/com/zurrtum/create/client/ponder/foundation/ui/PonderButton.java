@@ -62,7 +62,7 @@ public class PonderButton extends BoxWidget {
     }
 
     public <T extends PonderButton> T withShortcut(KeyMapping key) {
-        this.shortcut = key;
+        shortcut = key;
         //noinspection unchecked
         return (T) this;
     }
@@ -73,7 +73,7 @@ public class PonderButton extends BoxWidget {
 
     public <T extends PonderButton> T showing(ItemStack item) {
         this.item = item;
-        return super.showingElement(GuiGameElement.of(item).scale(1.5f).at(-4, -4));
+        return showingElement(GuiGameElement.of(item).scale(1.5f).at(-4, -4));
     }
 
     public void flash() {
@@ -95,8 +95,8 @@ public class PonderButton extends BoxWidget {
         super.beforeRender(graphics, mouseX, mouseY, partialTicks);
 
         float flashValue = flash.getValue(partialTicks);
-        if (flashValue > .1f) {
-            float sin = 0.5f + 0.5f * Mth.sin((AnimationTickHolder.getTicks(true) + partialTicks) / 10f);
+        if (flashValue > 0.1f) {
+            float sin = 0.5f + 0.5f * Mth.sin((AnimationTickHolder.getTicks(true) + partialTicks) / 10.0f);
             sin *= flashValue;
             Color nc1 = new Color(255, 255, 255, Mth.clamp(gradientColor.getFirst().getAlpha() + 150, 0, 255));
             Color nc2 = new Color(155, 155, 155, Mth.clamp(gradientColor.getSecond().getAlpha() + 150, 0, 255));
@@ -136,7 +136,7 @@ public class PonderButton extends BoxWidget {
             gradientColor = getColorClick();
             startGradientAnimation(getColorForState(), 0.15);
 
-            runCallback(width / 2f, height / 2f);
+            runCallback(width / 2.0f, height / 2.0f);
             return true;
         }
 
@@ -159,7 +159,7 @@ public class PonderButton extends BoxWidget {
     }
 
     public boolean isVisible() {
-        return !(fade.getValue() < .1f);
+        return !(fade.getValue() < 0.1f);
     }
 
     public void clear() {

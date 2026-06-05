@@ -1,6 +1,6 @@
 package com.zurrtum.create.client.infrastructure.particle;
 
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.util.LightCoordsUtil;
 import org.joml.Vector3f;

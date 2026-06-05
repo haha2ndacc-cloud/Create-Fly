@@ -83,12 +83,12 @@ public class LightUpdatedVisualStorage {
     }
 
     private long getNextUpdateId() {
-        long out = this.updateId;
+        long out = updateId;
 
-        this.updateId++;
-        if (this.updateId == NEVER_UPDATED) {
+        updateId++;
+        if (updateId == NEVER_UPDATED) {
             // Somehow we were running long enough to wrap around. Go back to the initial value.
-            this.updateId = INITIAL_UPDATE_ID;
+            updateId = INITIAL_UPDATE_ID;
         }
 
         return out;
@@ -165,9 +165,8 @@ public class LightUpdatedVisualStorage {
     private static Updater createUpdater(LightUpdatedVisual visual, int sectionCount) {
         if (sectionCount == 1) {
             return new Updater.Simple(visual);
-        } else {
-            return new Updater.Synced(visual, new AtomicLong(NEVER_UPDATED));
         }
+        return new Updater.Synced(visual, new AtomicLong(NEVER_UPDATED));
     }
 
     // Breaking this into 2 separate cases allows us to avoid the overhead of atomics in the common case.
@@ -191,7 +190,7 @@ public class LightUpdatedVisualStorage {
             public void updateLight(Context ctx) {
                 // Different update ID means we won, so we can update the visual.
                 // Same update ID means another thread beat us to the update.
-                if (this.updateId.getAndSet(ctx.updateId) != ctx.updateId) {
+                if (updateId.getAndSet(ctx.updateId) != ctx.updateId) {
                     visual.updateLight(ctx.partialTick);
                 }
             }

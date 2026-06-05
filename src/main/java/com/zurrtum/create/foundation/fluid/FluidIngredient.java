@@ -20,6 +20,7 @@ public interface FluidIngredient extends Predicate<FluidStack> {
 
     int amount();
 
+    @Override
     boolean test(FluidStack stack);
 
     List<Fluid> getMatchingFluids();

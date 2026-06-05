@@ -59,10 +59,8 @@ public class ChassisBlockEntity extends SmartBlockEntity {
         if (!(getBlockState().getBlock() instanceof AbstractChassisBlock)) {
             return Collections.emptyList();
         }
-        return isRadial() ? getIncludedBlockPositionsRadial(
-            forcedMovement,
-            visualize
-        ) : getIncludedBlockPositionsLinear(forcedMovement, visualize);
+        return isRadial() ? getIncludedBlockPositionsRadial(forcedMovement, visualize) :
+            getIncludedBlockPositionsLinear(forcedMovement, visualize);
     }
 
     protected boolean isRadial() {
@@ -218,7 +216,7 @@ public class ChassisBlockEntity extends SmartBlockEntity {
                 if (localVisited.contains(searchPos)) {
                     continue;
                 }
-                if (!searchPos.closerThan(worldPosition, chassisRange + .5f)) {
+                if (!searchPos.closerThan(worldPosition, chassisRange + 0.5f)) {
                     continue;
                 }
                 if (!BlockMovementChecks.isMovementNecessary(searchedState, level, searchPos)) {

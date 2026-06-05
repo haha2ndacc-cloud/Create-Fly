@@ -58,6 +58,7 @@ public abstract class TimedWaitConditionRender<T extends TimedWaitCondition> imp
         );
     }
 
+    @Override
     public void initConfigurationWidgets(T input, ModularGuiLineBuilder builder) {
         builder.addScrollInput(
             0, 31, (i, l) -> {

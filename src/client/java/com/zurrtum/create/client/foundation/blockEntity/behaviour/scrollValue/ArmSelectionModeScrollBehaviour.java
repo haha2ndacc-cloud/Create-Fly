@@ -19,15 +19,16 @@ public class ArmSelectionModeScrollBehaviour extends ScrollOptionBehaviour<Selec
     }
 
     public enum SelectionModeIcon implements INamedIconOptions {
-        ROUND_ROBIN(AllIcons.I_ARM_ROUND_ROBIN), FORCED_ROUND_ROBIN(AllIcons.I_ARM_FORCED_ROUND_ROBIN), PREFER_FIRST(
-            AllIcons.I_ARM_PREFER_FIRST);
+        ROUND_ROBIN(AllIcons.I_ARM_ROUND_ROBIN),
+        FORCED_ROUND_ROBIN(AllIcons.I_ARM_FORCED_ROUND_ROBIN),
+        PREFER_FIRST(AllIcons.I_ARM_PREFER_FIRST);
 
         private final String translationKey;
         private final AllIcons icon;
 
         SelectionModeIcon(AllIcons icon) {
             this.icon = icon;
-            this.translationKey = "create.mechanical_arm.selection_mode." + Lang.asId(name());
+            translationKey = "create.mechanical_arm.selection_mode." + Lang.asId(name());
         }
 
         public static SelectionModeIcon from(SelectionMode mode) {

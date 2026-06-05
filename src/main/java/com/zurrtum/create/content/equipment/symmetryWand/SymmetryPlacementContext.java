@@ -40,8 +40,8 @@ public class SymmetryPlacementContext extends BlockPlaceContext {
             )
         );
         if (!canReplaceExisting) {
-            this.replaceClicked = false;
-            this.relativePos = position;
+            replaceClicked = false;
+            relativePos = position;
         }
         this.replace = replace;
         this.state = state;

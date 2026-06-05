@@ -123,7 +123,7 @@ public class FluidTankBlock extends Block implements IWrenchable, IBE<FluidTankB
         return InteractionResult.SUCCESS;
     }
 
-    static final VoxelShape CAMPFIRE_SMOKE_CLIP = Block.box(0, 4, 0, 16, 16, 16);
+    static final VoxelShape CAMPFIRE_SMOKE_CLIP = box(0, 4, 0, 16, 16, 16);
 
     @Override
     public VoxelShape getCollisionShape(
@@ -256,14 +256,14 @@ public class FluidTankBlock extends Block implements IWrenchable, IBE<FluidTankB
 
         if (soundevent != null && !onClient) {
             float pitch = Mth.clamp(
-                1 - (1f * fluidInTank.getAmount() / (FluidTankBlockEntity.getCapacityMultiplier() * 16)),
+                1 - 1.0f * fluidInTank.getAmount() / (FluidTankBlockEntity.getCapacityMultiplier() * 16),
                 0,
                 1
             );
             pitch /= 1.5f;
-            pitch += .5f;
-            pitch += (level.getRandom().nextFloat() - .5f) / 4f;
-            level.playSound(null, pos, soundevent, SoundSource.BLOCKS, .5f, pitch);
+            pitch += 0.5f;
+            pitch += (level.getRandom().nextFloat() - 0.5f) / 4.0f;
+            level.playSound(null, pos, soundevent, SoundSource.BLOCKS, 0.5f, pitch);
         }
 
         if (!FluidStack.areFluidsAndComponentsEqual(fluidInTank, prevFluidInTank)) {
@@ -284,10 +284,10 @@ public class FluidTankBlock extends Block implements IWrenchable, IBE<FluidTankB
                     Vec3 vec = hitResult.getLocation();
                     vec = new Vec3(
                         vec.x,
-                        controllerBE.getBlockPos().getY() + fluidLevel * (controllerBE.height - .5f) + .25f,
+                        controllerBE.getBlockPos().getY() + fluidLevel * (controllerBE.height - 0.5f) + 0.25f,
                         vec.z
                     );
-                    Vec3 motion = player.position().subtract(vec).scale(1 / 20f);
+                    Vec3 motion = player.position().subtract(vec).scale(1 / 20.0f);
                     vec = vec.add(motion);
                     level.addParticle(blockParticleData, vec.x, vec.y, vec.z, motion.x, motion.y, motion.z);
                     return InteractionResult.SUCCESS;

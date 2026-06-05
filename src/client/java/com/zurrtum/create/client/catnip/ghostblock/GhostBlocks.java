@@ -25,7 +25,7 @@ public class GhostBlocks {
     public static double getBreathingAlpha() {
         double period = 2500;
         double timer = System.currentTimeMillis() % period;
-        double offset = Mth.cos((float) ((2d / period) * Math.PI * timer));
+        double offset = Mth.cos((float) ((2.0d / period) * Math.PI * timer));
         return 0.55d - 0.2d * offset;
     }
 
@@ -92,7 +92,7 @@ public class GhostBlocks {
         public Entry(GhostBlockRenderer ghost, GhostBlockParams params, int ttl) {
             this.ghost = ghost;
             this.params = params;
-            this.ticksToLive = ttl;
+            ticksToLive = ttl;
         }
 
         public boolean isAlive() {

@@ -52,7 +52,7 @@ public class GlassFluidPipeBlock extends AxisPipeBlock implements IBE<StraightPi
             BlockStateProperties.WATERLOGGED,
             state.getValue(BlockStateProperties.WATERLOGGED)
         );
-        world.setBlock(pos, newState, Block.UPDATE_ALL);
+        world.setBlock(pos, newState, UPDATE_ALL);
         FluidTransportBehaviour.loadFlows(world, pos);
         return InteractionResult.SUCCESS;
     }
@@ -61,15 +61,14 @@ public class GlassFluidPipeBlock extends AxisPipeBlock implements IBE<StraightPi
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         FluidState ifluidstate = context.getLevel().getFluidState(context.getClickedPos());
         BlockState state = super.getStateForPlacement(context);
-        return state == null ? null : state.setValue(
-            BlockStateProperties.WATERLOGGED,
-            ifluidstate.getType() == Fluids.WATER
-        );
+        return state == null ? null :
+            state.setValue(BlockStateProperties.WATERLOGGED, ifluidstate.getType() == Fluids.WATER);
     }
 
     @Override
     public FluidState getFluidState(BlockState state) {
-        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
+        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) :
+            Fluids.EMPTY.defaultFluidState();
     }
 
     @Override

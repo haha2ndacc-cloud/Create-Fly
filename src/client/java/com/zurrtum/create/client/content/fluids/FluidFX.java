@@ -36,7 +36,7 @@ public class FluidFX {
 
         RandomSource random = level.getRandom();
         for (int i = 0; i < 20; i++) {
-            Vec3 v = VecHelper.offsetRandomly(Vec3.ZERO, random, .25f);
+            Vec3 v = VecHelper.offsetRandomly(Vec3.ZERO, random, 0.25f);
             particle(level, blockParticleData, center.add(v), v);
         }
 
@@ -77,11 +77,11 @@ public class FluidFX {
         for (int i = 0; i < amount; i++) {
             Vec3 vec = VecHelper.offsetRandomly(Vec3.ZERO, random, 1).normalize();
             vec = VecHelper.clampComponentWise(vec, rimRadius).multiply(VecHelper.axisAlingedPlaneOf(directionVec))
-                .add(directionVec.scale(.45 + random.nextFloat() / 16f));
-            Vec3 m = vec.scale(.05f);
+                .add(directionVec.scale(0.45 + random.nextFloat() / 16.0f));
+            Vec3 m = vec.scale(0.05f);
             vec = vec.add(VecHelper.getCenterOf(pos));
 
-            world.addAlwaysVisibleParticle(particle, vec.x, vec.y - 1 / 16f, vec.z, m.x, m.y, m.z);
+            world.addAlwaysVisibleParticle(particle, vec.x, vec.y - 1 / 16.0f, vec.z, m.x, m.y, m.z);
         }
     }
 
@@ -96,17 +96,17 @@ public class FluidFX {
     ) {
         RandomSource random = world.getRandom();
         for (int i = 0; i < amount; i++) {
-            Vec3 vec = VecHelper.offsetRandomly(Vec3.ZERO, random, rimRadius * .75f);
+            Vec3 vec = VecHelper.offsetRandomly(Vec3.ZERO, random, rimRadius * 0.75f);
             vec = vec.multiply(VecHelper.axisAlingedPlaneOf(directionVec))
-                .add(directionVec.scale(.5 + random.nextFloat() / 4f));
-            Vec3 m = vec.scale(1 / 4f);
+                .add(directionVec.scale(0.5 + random.nextFloat() / 4.0f));
+            Vec3 m = vec.scale(1 / 4.0f);
             Vec3 centerOf = VecHelper.getCenterOf(pos);
             vec = vec.add(centerOf);
             if (inbound) {
                 vec = vec.add(m);
-                m = centerOf.add(directionVec.scale(.5)).subtract(vec).scale(1 / 16f);
+                m = centerOf.add(directionVec.scale(0.5)).subtract(vec).scale(1 / 16.0f);
             }
-            world.addAlwaysVisibleParticle(particle, vec.x, vec.y - 1 / 16f, vec.z, m.x, m.y, m.z);
+            world.addAlwaysVisibleParticle(particle, vec.x, vec.y - 1 / 16.0f, vec.z, m.x, m.y, m.z);
         }
     }
 

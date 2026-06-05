@@ -85,18 +85,15 @@ public class FluidPipeBlockEntity extends SmartBlockEntity implements Transforma
 
             if (attachment == AttachmentTypes.RIM) {
                 if (!FluidPipeBlock.isPipe(otherState) && !(otherState.getBlock() instanceof EncasedPipeBlock) && !(otherState.getBlock() instanceof GlassFluidPipeBlock)) {
-                    FluidTransportBehaviour pipeBehaviour = BlockEntityBehaviour.get(
-                        world,
-                        offsetPos,
-                        FluidTransportBehaviour.TYPE
-                    );
+                    FluidTransportBehaviour pipeBehaviour = get(world, offsetPos, TYPE);
                     if (pipeBehaviour != null && pipeBehaviour.canHaveFlowToward(otherState, direction.getOpposite())) {
                         return AttachmentTypes.DETAILED_CONNECTION;
                     }
                 }
 
                 if (!FluidPipeBlock.shouldDrawRim(world, pos, state, direction)) {
-                    return FluidPropagator.getStraightPipeAxis(state) == direction.getAxis() ? AttachmentTypes.CONNECTION : AttachmentTypes.DETAILED_CONNECTION;
+                    return FluidPropagator.getStraightPipeAxis(state) == direction.getAxis() ?
+                        AttachmentTypes.CONNECTION : AttachmentTypes.DETAILED_CONNECTION;
                 }
             }
 

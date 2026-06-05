@@ -346,13 +346,8 @@ public class BasinBlockEntity extends SmartBlockEntity implements Clearable {
             targetInv = inserter.getInventory();
         }
 
-        FluidInventory targetTank = be == null ? null : FluidHelper.getFluidInventory(
-            level,
-            be.getBlockPos(),
-            null,
-            be,
-            opposite
-        );
+        FluidInventory targetTank =
+            be == null ? null : FluidHelper.getFluidInventory(level, be.getBlockPos(), null, be, opposite);
 
         boolean update = false;
 
@@ -497,29 +492,16 @@ public class BasinBlockEntity extends SmartBlockEntity implements Clearable {
 
             BlockEntity be = level.getBlockEntity(worldPosition.below().relative(direction));
 
-            InvManipulationBehaviour inserter = be == null ? null : BlockEntityBehaviour.get(
-                level,
-                be.getBlockPos(),
-                InvManipulationBehaviour.TYPE
-            );
+            InvManipulationBehaviour inserter =
+                be == null ? null : BlockEntityBehaviour.get(level, be.getBlockPos(), InvManipulationBehaviour.TYPE);
             Direction opposite = direction.getOpposite();
-            Container targetInv = be == null ? null : ItemHelper.getInventory(
-                level,
-                be.getBlockPos(),
-                null,
-                be,
-                opposite
-            );
+            Container targetInv =
+                be == null ? null : ItemHelper.getInventory(level, be.getBlockPos(), null, be, opposite);
             if (targetInv == null && inserter != null) {
                 targetInv = inserter.getInventory();
             }
-            FluidInventory targetTank = be == null ? null : FluidHelper.getFluidInventory(
-                level,
-                be.getBlockPos(),
-                null,
-                be,
-                opposite
-            );
+            FluidInventory targetTank =
+                be == null ? null : FluidHelper.getFluidInventory(level, be.getBlockPos(), null, be, opposite);
             boolean externalTankNotPresent = targetTank == null;
 
             if (!outputItems.isEmpty() && targetInv == null) {
@@ -568,19 +550,17 @@ public class BasinBlockEntity extends SmartBlockEntity implements Clearable {
     ) {
         if (simulate) {
             return targetTank.countSpace(outputFluids);
-        } else {
-            targetTank.insert(outputFluids);
-            return true;
         }
+        targetTank.insert(outputFluids);
+        return true;
     }
 
     private boolean acceptItemOutputsIntoBasin(List<ItemStack> outputItems, boolean simulate, Container targetInv) {
         if (simulate) {
             return targetInv.countSpace(outputItems, 9, 17);
-        } else {
-            targetInv.insert(outputItems, 9, 17);
-            return true;
         }
+        targetInv.insert(outputItems, 9, 17);
+        return true;
     }
 
     public void readOnlyItems(ValueInput view) {
@@ -591,7 +571,8 @@ public class BasinBlockEntity extends SmartBlockEntity implements Clearable {
         if (state.hasProperty(BlazeBurnerBlock.HEAT_LEVEL)) {
             return state.getValue(BlazeBurnerBlock.HEAT_LEVEL);
         }
-        return state.is(AllBlockTags.PASSIVE_BOILER_HEATERS) && BlockHelper.isNotUnheated(state) ? HeatLevel.SMOULDERING : HeatLevel.NONE;
+        return state.is(AllBlockTags.PASSIVE_BOILER_HEATERS) && BlockHelper.isNotUnheated(state) ?
+            HeatLevel.SMOULDERING : HeatLevel.NONE;
     }
 
     public Couple<SmartFluidTankBehaviour> getTanks() {
@@ -609,7 +590,7 @@ public class BasinBlockEntity extends SmartBlockEntity implements Clearable {
 
     public boolean setAreFluidsMoving(boolean areFluidsMoving) {
         this.areFluidsMoving = areFluidsMoving;
-        ingredientRotationSpeed.chase(areFluidsMoving ? 20 : 0, .1f, Chaser.EXP);
+        ingredientRotationSpeed.chase(areFluidsMoving ? 20 : 0, 0.1f, Chaser.EXP);
         return areFluidsMoving;
     }
 

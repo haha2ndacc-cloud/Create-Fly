@@ -62,16 +62,15 @@ public class StationSummaryDisplaySource extends DisplaySource {
 
             } else {
                 int min = prediction.ticks / 1200;
-                int sec = (prediction.ticks / 20) % 60;
-                sec = Mth.ceil(sec / 15f) * 15;
+                int sec = prediction.ticks / 20 % 60;
+                sec = Mth.ceil(sec / 15.0f) * 15;
                 if (sec == 60) {
                     min++;
                     sec = 0;
                 }
                 lines.add(min > 0 ? Component.literal(String.valueOf(min)) : WHITESPACE);
-                lines.add(min > 0 ? Component.translatable("create.display_source.station_summary.minutes") : Component.translatable("create.display_source.station_summary.seconds",
-                    sec
-                ));
+                lines.add(min > 0 ? Component.translatable("create.display_source.station_summary.minutes") :
+                    Component.translatable("create.display_source.station_summary.seconds", sec));
             }
 
             lines.add(prediction.train.name.copy());
@@ -126,14 +125,14 @@ public class StationSummaryDisplaySource extends DisplaySource {
         ArrayList<FlapDisplaySection> list = new ArrayList<>();
 
         int timeWidth = 20;
-        float gapSize = 8f;
+        float gapSize = 8.0f;
         float platformWidth = columnWidth2 * MONOSPACE;
 
         // populate
         FlapDisplaySection minutes = new FlapDisplaySection(MONOSPACE, "numeric", false, false);
         FlapDisplaySection time = new FlapDisplaySection(timeWidth, "arrival_time", true, true);
 
-        float totalSize = flapDisplay.xSize * 32f - 4f - gapSize * 2;
+        float totalSize = flapDisplay.xSize * 32.0f - 4.0f - gapSize * 2;
         totalSize = totalSize - timeWidth - MONOSPACE;
         platformWidth = Math.min(platformWidth, totalSize - gapSize);
         platformWidth = (int) (platformWidth / MONOSPACE) * MONOSPACE;
@@ -145,8 +144,8 @@ public class StationSummaryDisplaySource extends DisplaySource {
             totalSize += gapSize;
         }
 
-        int trainNameWidth = (int) ((columnWidth / 100f) * totalSize / MONOSPACE);
-        int destinationWidth = (int) Math.round((1 - columnWidth / 100f) * totalSize / MONOSPACE);
+        int trainNameWidth = (int) (columnWidth / 100.0f * totalSize / MONOSPACE);
+        int destinationWidth = Math.round((1 - columnWidth / 100.0f) * totalSize / MONOSPACE);
 
         FlapDisplaySection trainName = new FlapDisplaySection(
             trainNameWidth * MONOSPACE,

@@ -46,10 +46,10 @@ public class ElevatorContactScreen extends AbstractSimiScreen {
     public ElevatorContactScreen(BlockPos pos, String prevShortName, String prevLongName, DoorControl prevDoorControl) {
         super(CreateLang.translateDirect("elevator_contact.title"));
         this.pos = pos;
-        this.doorControl = prevDoorControl;
+        doorControl = prevDoorControl;
         background = AllGuiTextures.ELEVATOR_CONTACT;
-        this.shortName = prevShortName;
-        this.longName = prevLongName;
+        shortName = prevShortName;
+        longName = prevLongName;
     }
 
     @Override
@@ -185,7 +185,7 @@ public class ElevatorContactScreen extends AbstractSimiScreen {
             confirm();
             return true;
         }
-        if (keyCode == 256 && this.shouldCloseOnEsc()) {
+        if (keyCode == 256 && shouldCloseOnEsc()) {
             onClose();
             return true;
         }

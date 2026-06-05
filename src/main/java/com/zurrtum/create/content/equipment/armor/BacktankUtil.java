@@ -82,7 +82,7 @@ public class BacktankUtil {
             return;
         }
 
-        sendWarning(player, air, newAir, maxAir / 10f);
+        sendWarning(player, air, newAir, maxAir / 10.0f);
         sendWarning(player, air, newAir, 1);
     }
 
@@ -95,10 +95,11 @@ public class BacktankUtil {
         }
 
         boolean depleted = threshold == 1;
-        MutableComponent component = Component.translatable(depleted ? "create.backtank.depleted" : "create.backtank.low");
+        MutableComponent component = Component.translatable(
+            depleted ? "create.backtank.depleted" : "create.backtank.low");
 
         AllSoundEvents.DENY.play(player.level(), null, player.blockPosition(), 1, 1.25f);
-        AllSoundEvents.STEAM.play(player.level(), null, player.blockPosition(), .5f, .5f);
+        AllSoundEvents.STEAM.play(player.level(), null, player.blockPosition(), 0.5f, 0.5f);
 
         player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 40, 10));
         player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("\u26A0 ")

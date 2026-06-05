@@ -62,7 +62,7 @@ public class ChuteShapes {
     public static VoxelShape createSlope() {
         VoxelShape shape = Shapes.empty();
         for (int i = 0; i < 16; i++) {
-            float offset = i / 16f;
+            float offset = i / 16.0f;
             shape = Shapes.join(shape, PANEL.move(0, offset, offset), BooleanOp.OR);
         }
         return shape;

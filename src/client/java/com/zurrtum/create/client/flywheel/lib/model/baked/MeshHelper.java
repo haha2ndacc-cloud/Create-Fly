@@ -23,7 +23,7 @@ public final class MeshHelper {
         long dstStride = vertexView.stride();
 
         ByteBuffer src = data.vertexBuffer();
-        MemoryBlock dst = MemoryBlock.mallocTracked((long) vertexCount * dstStride);
+        MemoryBlock dst = MemoryBlock.mallocTracked(vertexCount * dstStride);
         long srcPtr = MemoryUtil.memAddress(src);
         long dstPtr = dst.ptr();
         // The first 35 bytes of each vertex in an entity vertex buffer are guaranteed to contain the same data in the

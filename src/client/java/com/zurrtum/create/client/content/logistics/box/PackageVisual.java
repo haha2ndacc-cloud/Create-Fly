@@ -47,11 +47,11 @@ public class PackageVisual extends AbstractEntityVisual<PackageEntity> implement
         var y = (float) (Mth.lerp(partialTick, entity.yo, pos.y) - renderOrigin.getY());
         var z = (float) (Mth.lerp(partialTick, entity.zo, pos.z) - renderOrigin.getZ());
 
-        long randomBits = (long) entity.getId() * 31L * 493286711L;
+        long randomBits = entity.getId() * 31L * 493286711L;
         randomBits = randomBits * randomBits * 4392167121L + randomBits * 98761L;
-        float xNudge = (((float) (randomBits >> 16 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
-        float yNudge = (((float) (randomBits >> 20 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
-        float zNudge = (((float) (randomBits >> 24 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        float xNudge = (((randomBits >> 16 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        float yNudge = (((randomBits >> 20 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+        float zNudge = (((randomBits >> 24 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
 
         instance.setIdentityTransform().translate(x - 0.5 + xNudge, y + yNudge, z - 0.5 + zNudge)
             .rotateYCenteredDegrees(-yaw - 90).light(computePackedLight(partialTick)).setChanged();

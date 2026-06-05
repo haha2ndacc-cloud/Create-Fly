@@ -62,9 +62,8 @@ public class FlwLibLinkImpl implements FlwLibLink {
             return IrisCompat.isShaderPackInUse();
         } /*else if (OptifineCompat.IS_INSTALLED) {
             return OptifineCompat.isShaderPackInUse();
-        }*/ else {
-            return false;
-        }
+        }*/
+        return false;
     }
 
     @Override
@@ -73,8 +72,7 @@ public class FlwLibLinkImpl implements FlwLibLink {
             return IrisCompat.isRenderingShadowPass();
         } /*else if (OptifineCompat.IS_INSTALLED) {
             return OptifineCompat.isRenderingShadowPass();
-        }*/ else {
-            return false;
-        }
+        }*/
+        return false;
     }
 }

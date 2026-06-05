@@ -143,7 +143,8 @@ public class FlapDisplayRenderer implements BlockEntityRenderer<FlapDisplayBlock
             for (int i = 0; i < count; i++) {
                 FlapDisplaySection section = line.get(i);
                 renderOutput.nextSection(section, margin + offsets[i]);
-                String text = section.renderCharsIndividually() || !section.spinning[0] ? section.text : section.cyclingOptions[(levelTicks / 3 + i * 13) % section.cyclingOptions.length];
+                String text = section.renderCharsIndividually() || !section.spinning[0] ? section.text :
+                    section.cyclingOptions[(levelTicks / 3 + i * 13) % section.cyclingOptions.length];
                 StringDecomposer.iterateFormatted(text, Style.EMPTY, renderOutput);
             }
             y += 16;

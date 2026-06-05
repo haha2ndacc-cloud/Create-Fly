@@ -174,7 +174,8 @@ public class AllPotatoProjectileEntityHitActions {
                         livingEntity.stopRiding();
                     }
 
-                    SoundEvent soundevent = livingEntity instanceof Fox ? SoundEvents.FOX_TELEPORT : SoundEvents.CHORUS_FRUIT_TELEPORT;
+                    SoundEvent soundevent =
+                        livingEntity instanceof Fox ? SoundEvents.FOX_TELEPORT : SoundEvents.CHORUS_FRUIT_TELEPORT;
                     level.playSound(null, entityX, entityY, entityZ, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
                     livingEntity.playSound(soundevent, 1.0F, 1.0F);
                     livingEntity.setDeltaMovement(Vec3.ZERO);

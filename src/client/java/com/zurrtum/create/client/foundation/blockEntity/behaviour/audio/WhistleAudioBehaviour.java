@@ -51,8 +51,8 @@ public class WhistleAudioBehaviour extends AudioBehaviour<WhistleBlockEntity> {
             AllSoundEvents.WHISTLE_CHIFF.playAt(
                 world,
                 pos,
-                maxVolume * .175f,
-                size == WhistleBlock.WhistleSize.SMALL ? f + .75f : f,
+                maxVolume * 0.175f,
+                size == WhistleBlock.WhistleSize.SMALL ? f + 0.75f : f,
                 false
             );
             particle = true;
@@ -67,10 +67,10 @@ public class WhistleAudioBehaviour extends AudioBehaviour<WhistleBlockEntity> {
 
         Direction facing = blockEntity.getBlockState().getOptionalValue(WhistleBlock.FACING).orElse(Direction.SOUTH);
         float angle = 180 + AngleHelper.horizontalAngle(facing);
-        Vec3 sizeOffset = VecHelper.rotate(new Vec3(0, -0.4f, 1 / 16f * size.ordinal()), angle, Axis.Y);
+        Vec3 sizeOffset = VecHelper.rotate(new Vec3(0, -0.4f, 1 / 16.0f * size.ordinal()), angle, Axis.Y);
         Vec3 offset = VecHelper.rotate(new Vec3(0, 1, 0.75f), angle, Axis.Y);
-        Vec3 v = offset.scale(.45f).add(sizeOffset).add(Vec3.atCenterOf(pos));
-        Vec3 m = offset.subtract(Vec3.atLowerCornerOf(facing.getUnitVec3i()).scale(.75f));
+        Vec3 v = offset.scale(0.45f).add(sizeOffset).add(Vec3.atCenterOf(pos));
+        Vec3 m = offset.subtract(Vec3.atLowerCornerOf(facing.getUnitVec3i()).scale(0.75f));
         world.addParticle(AllParticleTypes.STEAM_JET, v.x, v.y, v.z, m.x, m.y, m.z);
     }
 }

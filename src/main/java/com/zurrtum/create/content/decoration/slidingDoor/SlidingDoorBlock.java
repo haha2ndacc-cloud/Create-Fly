@@ -178,7 +178,8 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
         }
         DoubleBlockHalf doubleblockhalf = blockState.getValue(HALF);
         if (pFacing.getAxis() == Direction.Axis.Y && doubleblockhalf == DoubleBlockHalf.LOWER == (pFacing == Direction.UP)) {
-            return pFacingState.is(this) && pFacingState.getValue(HALF) != doubleblockhalf ? blockState : Blocks.AIR.defaultBlockState();
+            return pFacingState.is(this) && pFacingState.getValue(HALF) != doubleblockhalf ? blockState :
+                Blocks.AIR.defaultBlockState();
         }
         return blockState;
     }
@@ -192,17 +193,18 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
             return;
         }
         BlockState changedState = state.setValue(OPEN, open);
-        level.setBlock(pos, changedState, Block.UPDATE_CLIENTS | Block.UPDATE_IMMEDIATE);
+        level.setBlock(pos, changedState, UPDATE_CLIENTS | UPDATE_IMMEDIATE);
 
         DoorHingeSide hinge = changedState.getValue(HINGE);
         Direction facing = changedState.getValue(FACING);
-        BlockPos otherPos = pos.relative(hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
+        BlockPos otherPos = pos.relative(
+            hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
         BlockState otherDoor = level.getBlockState(otherPos);
         if (isDoubleDoor(changedState, hinge, facing, otherDoor)) {
             setOpen(entity, level, otherDoor, otherPos, open);
         }
 
-        this.playSound(entity, level, pos, open);
+        playSound(entity, level, pos, open);
         level.gameEvent(entity, open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
     }
 
@@ -232,28 +234,30 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
         BlockState changedState = pState.setValue(POWERED, isPowered).setValue(OPEN, isPowered);
 
         if (isPowered != pState.getValue(OPEN)) {
-            this.playSound(null, pLevel, pPos, isPowered);
+            playSound(null, pLevel, pPos, isPowered);
             pLevel.gameEvent(null, isPowered ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pPos);
 
             DoorHingeSide hinge = changedState.getValue(HINGE);
             Direction facing = changedState.getValue(FACING);
-            BlockPos otherPos = pPos.relative(hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
+            BlockPos otherPos = pPos.relative(
+                hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
             BlockState otherDoor = pLevel.getBlockState(otherPos);
 
             if (isDoubleDoor(changedState, hinge, facing, otherDoor)) {
                 otherDoor = otherDoor.setValue(POWERED, isPowered).setValue(OPEN, isPowered);
-                pLevel.setBlock(otherPos, otherDoor, Block.UPDATE_CLIENTS);
+                pLevel.setBlock(otherPos, otherDoor, UPDATE_CLIENTS);
             }
         }
 
-        pLevel.setBlock(pPos, changedState, Block.UPDATE_CLIENTS);
+        pLevel.setBlock(pPos, changedState, UPDATE_CLIENTS);
     }
 
     public static boolean isDoorPowered(Level pLevel, BlockPos pPos, BlockState state) {
         boolean lower = state.getValue(HALF) == DoubleBlockHalf.LOWER;
         DoorHingeSide hinge = state.getValue(HINGE);
         Direction facing = state.getValue(FACING);
-        BlockPos otherPos = pPos.relative(hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
+        BlockPos otherPos = pPos.relative(
+            hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
         BlockState otherDoor = pLevel.getBlockState(otherPos);
 
         if (isDoubleDoor(
@@ -261,11 +265,13 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
             hinge,
             facing,
             otherDoor
-        ) && (pLevel.hasNeighborSignal(otherPos) || pLevel.hasNeighborSignal(otherPos.relative(lower ? Direction.UP : Direction.DOWN)))) {
+        ) && (pLevel.hasNeighborSignal(otherPos) || pLevel.hasNeighborSignal(otherPos.relative(
+            lower ? Direction.UP : Direction.DOWN)))) {
             return true;
         }
 
-        return pLevel.hasNeighborSignal(pPos) || pLevel.hasNeighborSignal(pPos.relative(lower ? Direction.UP : Direction.DOWN));
+        return pLevel.hasNeighborSignal(pPos) || pLevel.hasNeighborSignal(pPos.relative(
+            lower ? Direction.UP : Direction.DOWN));
     }
 
     @Override
@@ -278,17 +284,18 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
     ) {
         state = state.cycle(OPEN);
         boolean isOpen = state.getValue(OPEN);
-        level.setBlock(pos, state, Block.UPDATE_CLIENTS | Block.UPDATE_IMMEDIATE);
+        level.setBlock(pos, state, UPDATE_CLIENTS | UPDATE_IMMEDIATE);
         level.gameEvent(player, isOpen(state) ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
 
         DoorHingeSide hinge = state.getValue(HINGE);
         Direction facing = state.getValue(FACING);
-        BlockPos otherPos = pos.relative(hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
+        BlockPos otherPos = pos.relative(
+            hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
         BlockState otherDoor = level.getBlockState(otherPos);
         if (isDoubleDoor(state, hinge, facing, otherDoor)) {
             useWithoutItem(otherDoor, level, otherPos, player, hitResult);
         } else if (isOpen) {
-            this.playSound(player, level, pos, true);
+            playSound(player, level, pos, true);
             level.gameEvent(player, GameEvent.BLOCK_OPEN, pos);
         }
 

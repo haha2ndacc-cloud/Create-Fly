@@ -59,7 +59,7 @@ public class HarvesterMovementRenderBehaviour implements MovementRenderBehaviour
         if (context.contraption.stalled) {
             speed = 0;
         }
-        float angle = (time * speed) % 360;
+        float angle = time * speed % 360;
         if (angle != 0) {
             model.translate(0, 0.375f, 0.5625f).rotate(AngleHelper.rad(angle), Direction.WEST)
                 .translate(0, -0.375f, -0.5625f);

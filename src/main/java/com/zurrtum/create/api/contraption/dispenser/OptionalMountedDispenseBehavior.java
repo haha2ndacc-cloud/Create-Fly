@@ -16,14 +16,14 @@ public class OptionalMountedDispenseBehavior extends DefaultMountedDispenseBehav
 
     @Override
     protected final ItemStack execute(ItemStack stack, MovementContext context, BlockPos pos, Vec3 facing) {
-        ItemStack remainder = this.doExecute(stack, context, pos, facing);
-        this.success = remainder != null;
+        ItemStack remainder = doExecute(stack, context, pos, facing);
+        success = remainder != null;
         return remainder == null ? stack : remainder;
     }
 
     @Override
     protected void playSound(LevelAccessor level, BlockPos pos) {
-        if (this.success) {
+        if (success) {
             super.playSound(level, pos);
         } else {
             level.levelEvent(LevelEvent.SOUND_DISPENSER_FAIL, pos, 0);

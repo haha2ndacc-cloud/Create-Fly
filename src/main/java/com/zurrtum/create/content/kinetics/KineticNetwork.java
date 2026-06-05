@@ -93,7 +93,7 @@ public class KineticNetwork {
         be.updateFromNetwork(0, 0, 0);
 
         if (members.isEmpty()) {
-            TorquePropagator.networks.get(be.getLevel()).remove(this.id);
+            TorquePropagator.networks.get(be.getLevel()).remove(id);
             return;
         }
 

@@ -53,7 +53,7 @@ public class ContraptionControlsBlockEntity extends SmartBlockEntity implements 
             return;
         }
         this.powered = powered;
-        this.disabled = powered;
+        disabled = powered;
         notifyUpdate();
     }
 
@@ -100,8 +100,8 @@ public class ContraptionControlsBlockEntity extends SmartBlockEntity implements 
     }
 
     public static void sendStatus(Player player, ItemStack filter, boolean enabled) {
-        MutableComponent state = Component.translatable("create.contraption.controls.actor_toggle." + (enabled ? "on" : "off"))
-            .withColor(enabled ? 0xA3DF55 : 0xEE9246);
+        MutableComponent state = Component.translatable("create.contraption.controls.actor_toggle." + (enabled ? "on" :
+            "off")).withColor(enabled ? 0xA3DF55 : 0xEE9246);
 
         if (filter.isEmpty()) {
             player.sendOverlayMessage(Component.translatable("create.contraption.controls.all_actor_toggle", state));

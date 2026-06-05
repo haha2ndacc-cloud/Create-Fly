@@ -76,6 +76,7 @@ public abstract class AbstractChuteBlock extends Block implements IWrenchable, I
         return true;
     }
 
+    @Override
     public boolean propagatesSkylightDown(BlockState state) {
         return false;
     }

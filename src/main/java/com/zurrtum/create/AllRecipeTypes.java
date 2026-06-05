@@ -62,7 +62,7 @@ public class AllRecipeTypes {
     public static boolean shouldIgnoreInAutomation(RecipeHolder<?> recipe) {
         RecipeSerializer<?> serializer = recipe.value().getSerializer();
         if (serializer != null && BuiltInRegistries.RECIPE_SERIALIZER.wrapAsHolder(serializer)
-            .is(AllRecipeTypes.AUTOMATION_IGNORE_TAG)) {
+            .is(AUTOMATION_IGNORE_TAG)) {
             return true;
         }
         return !CAN_BE_AUTOMATED.test(recipe);
@@ -80,7 +80,7 @@ public class AllRecipeTypes {
     }
 
     public static void register() {
-        DEPLOYER_RECIPES.add(AllRecipeTypes.DEPLOYING);
-        DEPLOYER_RECIPES.add(AllRecipeTypes.ITEM_APPLICATION);
+        DEPLOYER_RECIPES.add(DEPLOYING);
+        DEPLOYER_RECIPES.add(ITEM_APPLICATION);
     }
 }

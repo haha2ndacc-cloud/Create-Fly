@@ -149,14 +149,14 @@ public abstract class ChainConveyorShape {
         public float getChainPosition(Vec3 intersection) {
             Vec3 diff = bounds.getCenter().subtract(intersection);
             float angle = (float) (Mth.RAD_TO_DEG * Mth.atan2(diff.x, diff.z) + 360 + 180) % 360;
-            return Math.round(angle / 45) * 45f;
+            return Math.round(angle / 45) * 45.0f;
         }
 
         @Override
         public Vec3 getVec(BlockPos anchor, float position) {
             Vec3 point = bounds.getCenter();
             point = point.add(VecHelper.rotate(new Vec3(0, 0, radius), position, Axis.Y));
-            return point.add(Vec3.atLowerCornerOf(anchor)).add(0, -.125, 0);
+            return point.add(Vec3.atLowerCornerOf(anchor)).add(0, -0.125, 0);
         }
 
     }

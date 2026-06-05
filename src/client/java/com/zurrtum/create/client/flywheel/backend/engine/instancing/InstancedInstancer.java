@@ -108,13 +108,14 @@ public class InstancedInstancer<I extends Instance> extends BaseInstancer<I> {
         return capacity > vbo.size();
     }
 
+    @Override
     public void parallelUpdate() {
         if (deleted.isEmpty()) {
             return;
         }
 
         // Figure out which elements are to be removed.
-        final int oldSize = this.instances.size();
+        final int oldSize = instances.size();
         int removeCount = deleted.cardinality();
 
         if (oldSize == removeCount) {
@@ -137,7 +138,7 @@ public class InstancedInstancer<I extends Instance> extends BaseInstancer<I> {
         changed.clear(newSize, oldSize);
 
         // Punch out the deleted instances, shifting over surviving instances to fill their place.
-        for (int scanPos = writePos; (scanPos < oldSize) && (writePos < newSize); scanPos++, writePos++) {
+        for (int scanPos = writePos; scanPos < oldSize && writePos < newSize; scanPos++, writePos++) {
             // Find next non-deleted element.
             scanPos = deleted.nextClearBit(scanPos);
 
@@ -160,6 +161,7 @@ public class InstancedInstancer<I extends Instance> extends BaseInstancer<I> {
         handles.subList(newSize, oldSize).clear();
     }
 
+    @Override
     public void delete() {
         if (vbo == null) {
             return;

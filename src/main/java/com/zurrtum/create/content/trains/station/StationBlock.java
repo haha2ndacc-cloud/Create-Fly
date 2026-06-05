@@ -177,8 +177,8 @@ public class StationBlock extends Block implements IBE<StationBlockEntity>, Item
                     player.blockPosition(),
                     SoundEvents.ITEM_PICKUP,
                     SoundSource.PLAYERS,
-                    .2f,
-                    1f + player.level().getRandom().nextFloat()
+                    0.2f,
+                    1.0f + player.level().getRandom().nextFloat()
                 );
                 return InteractionResult.SUCCESS;
             }

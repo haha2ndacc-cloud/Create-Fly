@@ -46,8 +46,8 @@ public class ClientContraption {
     public final BitSet scratchErroredBlockEntities = new BitSet();
 
     protected final Contraption contraption;
-    private int structureVersion = 0;
-    private int childrenVersion = 0;
+    private int structureVersion;
+    private int childrenVersion;
 
     public ClientContraption(Contraption contraption) {
         var level = contraption.entity.level();

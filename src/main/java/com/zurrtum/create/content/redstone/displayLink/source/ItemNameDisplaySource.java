@@ -36,7 +36,7 @@ public class ItemNameDisplaySource extends SingleLineDisplaySource {
 
             MutableObject<@Nullable ItemStack> stackHolder = new MutableObject<>();
             behaviour.handleCenteredProcessingOnAllItems(
-                .25f, tis -> {
+                0.25f, tis -> {
                     stackHolder.setValue(tis.stack);
                     return TransportedResult.doNothing();
                 }

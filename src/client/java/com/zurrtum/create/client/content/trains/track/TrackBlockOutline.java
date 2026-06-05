@@ -81,7 +81,7 @@ public class TrackBlockOutline {
                 float[] stepLUT = bc.getStepLUT();
                 int segments = (int) (bc.getLength() * 2);
                 AABB segmentBounds = AllShapes.TRACK_ORTHO.get(Direction.SOUTH).bounds();
-                segmentBounds = segmentBounds.move(-.5, segmentBounds.getYsize() / -2, -.5);
+                segmentBounds = segmentBounds.move(-0.5, segmentBounds.getYsize() / -2, -0.5);
 
                 int bestSegment = -1;
                 double bestDistance = Double.MAX_VALUE;
@@ -97,7 +97,7 @@ public class TrackBlockOutline {
                     Vec3 diff = v2.subtract(v1);
                     Vec3 angles = TrackRenderer.getModelAngles(bc.getNormal(t1), diff);
 
-                    Vec3 anchor = v1.add(diff.scale(.5));
+                    Vec3 anchor = v1.add(diff.scale(0.5));
                     Vec3 localOrigin = origin.subtract(anchor);
                     Vec3 localDirection = target.subtract(origin);
                     localOrigin = VecHelper.rotate(localOrigin, AngleHelper.deg(-angles.x), Axis.X);
@@ -160,10 +160,10 @@ public class TrackBlockOutline {
         Vec3 vec = result.vec().subtract(camera);
         Vec3 angles = result.angles();
         ms.pushPose();
-        ms.translate(vec.x, vec.y + .125f, vec.z);
+        ms.translate(vec.x, vec.y + 0.125f, vec.z);
         ms.mulPose(new Quaternionf().rotationY((float) angles.y));
         ms.mulPose(new Quaternionf().rotationX((float) angles.x));
-        ms.translate(-.5, -.125f, -.5);
+        ms.translate(-0.5, -0.125f, -0.5);
         int color = mc.player.getMainHandItem().is(AllItemTags.TRACKS) ? RED_COLOR : BLACK_COLOR;
         submitShape(AllShapes.TRACK_ORTHO.get(Direction.SOUTH), ms, queue, color, lineWidth);
         ms.popPose();

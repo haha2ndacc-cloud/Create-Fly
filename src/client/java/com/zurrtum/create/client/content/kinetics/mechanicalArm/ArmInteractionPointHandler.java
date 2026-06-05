@@ -189,7 +189,7 @@ public class ArmInteractionPointHandler {
             }
 
             int color = point.getMode().getColor();
-            Outliner.getInstance().showAABB(point, shape.bounds().move(pos)).colored(color).lineWidth(1 / 16f);
+            Outliner.getInstance().showAABB(point, shape.bounds().move(pos)).colored(color).lineWidth(1 / 16.0f);
         }
     }
 

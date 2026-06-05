@@ -17,7 +17,8 @@ public class MemoryBuffer {
         if (block == null) {
             block = MemoryBlock.malloc(neededCapacityForIndex(index + 8));
             return true;
-        } else if (block.size() < neededCapacityForIndex(index)) {
+        }
+        if (block.size() < neededCapacityForIndex(index)) {
             block = block.realloc(neededCapacityForIndex(index + 8));
             return true;
         }

@@ -97,7 +97,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements Tran
         if (connection == null && !canAcceptMorePackages()) {
             return false;
         }
-        return connection == null || (level.getBlockEntity(worldPosition.offset(connection)) instanceof ChainConveyorBlockEntity otherClbe && otherClbe.canAcceptMorePackages());
+        return connection == null || level.getBlockEntity(worldPosition.offset(connection)) instanceof ChainConveyorBlockEntity otherClbe && otherClbe.canAcceptMorePackages();
     }
 
     public boolean canAcceptMorePackagesFromOtherConveyor() {
@@ -126,11 +126,11 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements Tran
             removeInvalidConnections();
         }
 
-        float serverSpeed = level.isClientSide() && !isVirtual() ? AllClientHandle.INSTANCE.getServerSpeed() : 1f;
-        float speed = getSpeed() / 360f;
+        float serverSpeed = level.isClientSide() && !isVirtual() ? AllClientHandle.INSTANCE.getServerSpeed() : 1.0f;
+        float speed = getSpeed() / 360.0f;
         float radius = 1.5f;
         float distancePerTick = Math.abs(speed);
-        float degreesPerTick = (speed / (Mth.PI * radius)) * 360f;
+        float degreesPerTick = speed / (Mth.PI * radius) * 360.0f;
         boolean reversedPreviously = reversed;
 
         prepareStats();
@@ -143,7 +143,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements Tran
             routingTable.tick();
             if (routingTable.shouldAdvertise()) {
                 for (BlockPos pos : connections) {
-                    if (level.getBlockEntity(this.worldPosition.offset(pos)) instanceof ChainConveyorBlockEntity clbe) {
+                    if (level.getBlockEntity(worldPosition.offset(pos)) instanceof ChainConveyorBlockEntity clbe) {
                         routingTable.advertiseTo(pos, clbe.routingTable);
                     }
                 }
@@ -169,7 +169,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements Tran
                         continue;
                     }
                     box.justFlipped = true;
-                    float length = (float) Vec3.atLowerCornerOf(offset).length() - 22 / 16f;
+                    float length = (float) Vec3.atLowerCornerOf(offset).length() - 22 / 16.0f;
                     box.chainPosition = length - box.chainPosition;
                     otherLift.addTravellingPackage(box, offset.multiply(-1));
                     iterator.remove();
@@ -443,7 +443,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements Tran
     public Vec3 getPackagePosition(float chainPosition, @Nullable BlockPos travelTarget) {
         if (travelTarget == null) {
             return Vec3.atBottomCenterOf(worldPosition)
-                .add(VecHelper.rotate(new Vec3(0, 6 / 16f, 0.875), chainPosition, Axis.Y));
+                .add(VecHelper.rotate(new Vec3(0, 6 / 16.0f, 0.875), chainPosition, Axis.Y));
         }
         prepareStats();
         ConnectionStats stats = connectionStats.get(travelTarget);
@@ -456,16 +456,16 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements Tran
 
     private void calculateConnectionStats(BlockPos connection) {
         boolean reversed = getSpeed() < 0;
-        float offBranchDistance = 35f;
+        float offBranchDistance = 35.0f;
         float direction = Mth.RAD_TO_DEG * (float) Mth.atan2(connection.getX(), connection.getZ());
         float angle = wrapAngle(direction - offBranchDistance * (reversed ? -1 : 1));
         float oppositeAngle = wrapAngle(angle + 180 + 2 * offBranchDistance * (reversed ? -1 : 1));
 
         Vec3 start = Vec3.atBottomCenterOf(worldPosition).add(VecHelper.rotate(new Vec3(0, 0, 1.25), angle, Axis.Y))
-            .add(0, 6 / 16f, 0);
+            .add(0, 6 / 16.0f, 0);
 
         Vec3 end = Vec3.atBottomCenterOf(worldPosition.offset(connection))
-            .add(VecHelper.rotate(new Vec3(0, 0, 1.25), oppositeAngle, Axis.Y)).add(0, 6 / 16f, 0);
+            .add(VecHelper.rotate(new Vec3(0, 0, 1.25), oppositeAngle, Axis.Y)).add(0, 6 / 16.0f, 0);
 
         float length = (float) start.distanceTo(end);
         connectionStats.put(connection, new ConnectionStats(angle, length, start, end));

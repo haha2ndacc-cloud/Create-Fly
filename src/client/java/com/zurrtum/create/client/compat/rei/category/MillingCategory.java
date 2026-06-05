@@ -61,7 +61,7 @@ public class MillingCategory extends CreateCategory<MillingDisplay> {
         } else {
             for (int i = 0; i < outputSize; i++) {
                 int xOffset = i % 2 == 0 ? 0 : 19;
-                int yOffset = (i / 2) * -19;
+                int yOffset = i / 2 * -19;
                 addOutputData(
                     results.get(i),
                     bounds.x + 138 + xOffset,

@@ -19,7 +19,7 @@ public class HauntedBellBlockEntity extends AbstractBellBlockEntity {
     public static final int RECHARGE_TICKS = 65;
     public static final int EFFECT_TICKS = 20;
 
-    public int effectTicks = 0;
+    public int effectTicks;
 
     public HauntedBellBlockEntity(BlockPos pos, BlockState state) {
         super(AllBlockEntityTypes.HAUNTED_BELL, pos, state);

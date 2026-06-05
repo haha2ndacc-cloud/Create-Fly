@@ -16,17 +16,17 @@ public class ElementWidget extends AbstractSimiWidget {
 
     protected RenderElement element = AbstractRenderElement.EMPTY;
 
-    protected boolean usesFade = false;
+    protected boolean usesFade;
     protected int fadeModX;
     protected int fadeModY;
     protected LerpedFloat fade = LerpedFloat.linear().startWithValue(1);
 
-    protected boolean rescaleElement = false;
+    protected boolean rescaleElement;
     protected float rescaleSizeX;
     protected float rescaleSizeY;
 
-    protected float paddingX = 0;
-    protected float paddingY = 0;
+    protected float paddingX;
+    protected float paddingY;
     protected @Nullable Vector4i scissor;
 
     public ElementWidget(int x, int y) {
@@ -44,7 +44,7 @@ public class ElementWidget extends AbstractSimiWidget {
     }
 
     public <T extends ElementWidget> T showing(ScreenElement renderable) {
-        return this.showingElement(RenderElement.of(renderable));
+        return showingElement(RenderElement.of(renderable));
     }
 
     public <T extends ElementWidget> T modifyElement(Consumer<RenderElement> consumer) {
@@ -60,7 +60,7 @@ public class ElementWidget extends AbstractSimiWidget {
     }
 
     public <T extends ElementWidget> T withScissor(int x1, int y1, int width, int height) {
-        this.scissor = new Vector4i(x1, y1, x1 + width, y1 + height);
+        scissor = new Vector4i(x1, y1, x1 + width, y1 + height);
         //noinspection unchecked
         return (T) this;
     }
@@ -73,17 +73,17 @@ public class ElementWidget extends AbstractSimiWidget {
     }
 
     public <T extends ElementWidget> T enableFade(int fadeModifierX, int fadeModifierY) {
-        this.fade.startWithValue(0);
-        this.usesFade = true;
-        this.fadeModX = fadeModifierX;
-        this.fadeModY = fadeModifierY;
+        fade.startWithValue(0);
+        usesFade = true;
+        fadeModX = fadeModifierX;
+        fadeModY = fadeModifierY;
         //noinspection unchecked
         return (T) this;
     }
 
     public <T extends ElementWidget> T disableFade() {
-        this.fade.startWithValue(1);
-        this.usesFade = false;
+        fade.startWithValue(1);
+        usesFade = false;
         //noinspection unchecked
         return (T) this;
     }
@@ -105,7 +105,7 @@ public class ElementWidget extends AbstractSimiWidget {
      */
     @Deprecated
     public <T extends ElementWidget> T rescaleElement(float rescaleSizeX, float rescaleSizeY) {
-        this.rescaleElement = true;
+        rescaleElement = true;
         this.rescaleSizeX = rescaleSizeX;
         this.rescaleSizeY = rescaleSizeY;
         //noinspection unchecked
@@ -113,7 +113,7 @@ public class ElementWidget extends AbstractSimiWidget {
     }
 
     public <T extends ElementWidget> T disableRescale() {
-        this.rescaleElement = false;
+        rescaleElement = false;
         //noinspection unchecked
         return (T) this;
     }

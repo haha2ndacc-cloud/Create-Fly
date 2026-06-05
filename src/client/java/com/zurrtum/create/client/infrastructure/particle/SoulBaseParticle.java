@@ -25,12 +25,12 @@ public class SoulBaseParticle extends CustomRotationParticle {
         RandomSource random
     ) {
         super(worldIn, x, y, z, spriteSet, 0);
-        this.quadSize = 0.5f;
-        this.setSize(this.quadSize, this.quadSize);
-        this.loopLength = 16 + (int) (random.nextFloat() * 2f - 1f);
-        this.lifetime = (int) (90.0F / (random.nextFloat() * 0.36F + 0.64F));
-        this.selectSpriteLoopingWithAge(sprites);
-        this.stoppedByCollision = true; // disable movement
+        quadSize = 0.5f;
+        setSize(quadSize, quadSize);
+        loopLength = 16 + (int) (random.nextFloat() * 2.0f - 1.0f);
+        lifetime = (int) (90.0F / (random.nextFloat() * 0.36F + 0.64F));
+        selectSpriteLoopingWithAge(sprites);
+        stoppedByCollision = true; // disable movement
     }
 
     @Override

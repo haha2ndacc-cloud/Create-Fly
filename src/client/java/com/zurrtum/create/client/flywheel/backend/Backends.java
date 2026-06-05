@@ -17,7 +17,7 @@ public final class Backends {
      * Use GPU instancing to render everything.
      */
     public static final Backend INSTANCING = SimpleBackend.builder()
-        .engineFactory((level) -> new EngineImpl(level, new InstancedDrawManager(InstancingPrograms.get()), 256))
+        .engineFactory(level -> new EngineImpl(level, new InstancedDrawManager(InstancingPrograms.get()), 256))
         .priority(500)
         .supported(() -> GlCompat.SUPPORTS_INSTANCING && InstancingPrograms.allLoaded() && !ShadersModHelper.isShaderPackInUse())
         .register(ResourceUtil.rl("instancing"));
@@ -25,7 +25,7 @@ public final class Backends {
      * Use Compute shaders to cull instances.
      */
     public static final Backend INDIRECT = SimpleBackend.builder()
-        .engineFactory((level) -> new EngineImpl(level, new IndirectDrawManager(IndirectPrograms.get()), 256))
+        .engineFactory(level -> new EngineImpl(level, new IndirectDrawManager(IndirectPrograms.get()), 256))
         .priority(() -> GlCompat.DRIVER == Driver.INTEL ? 1 : 1000)
         .supported(() -> GlCompat.SUPPORTS_INDIRECT && IndirectPrograms.allLoaded() && !ShadersModHelper.isShaderPackInUse())
         .register(ResourceUtil.rl("indirect"));

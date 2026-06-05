@@ -22,7 +22,7 @@ public class AllBogeySizes {
     public static final BogeySize LARGE = register("large", 12.5f);
 
     private static BogeySize register(String id, float radius) {
-        BogeySize size = new BogeySize(Identifier.fromNamespaceAndPath(MOD_ID, id), radius / 16f);
+        BogeySize size = new BogeySize(Identifier.fromNamespaceAndPath(MOD_ID, id), radius / 16.0f);
         register(size);
         return size;
     }

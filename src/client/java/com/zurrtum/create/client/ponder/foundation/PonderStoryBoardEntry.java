@@ -27,8 +27,8 @@ public class PonderStoryBoardEntry implements StoryBoardEntry {
         this.namespace = namespace;
         this.schematicLocation = schematicLocation;
         this.component = component;
-        this.tags = new ArrayList<>();
-        this.orderingEntries = new ArrayList<>();
+        tags = new ArrayList<>();
+        orderingEntries = new ArrayList<>();
     }
 
     public PonderStoryBoardEntry(PonderStoryBoard board, String namespace, String schematicPath, Identifier component) {
@@ -69,13 +69,13 @@ public class PonderStoryBoardEntry implements StoryBoardEntry {
 
     @Override
     public StoryBoardEntry orderBefore(String namespace, String otherSceneId) {
-        this.orderingEntries.add(SceneOrderingEntry.before(namespace, otherSceneId));
+        orderingEntries.add(SceneOrderingEntry.before(namespace, otherSceneId));
         return this;
     }
 
     @Override
     public StoryBoardEntry orderAfter(String namespace, String otherSceneId) {
-        this.orderingEntries.add(SceneOrderingEntry.after(namespace, otherSceneId));
+        orderingEntries.add(SceneOrderingEntry.after(namespace, otherSceneId));
         return this;
     }
 

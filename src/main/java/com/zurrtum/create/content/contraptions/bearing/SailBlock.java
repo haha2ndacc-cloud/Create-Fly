@@ -108,7 +108,7 @@ public class SailBlock extends WrenchableDirectionalBlock {
                     SoundEvents.DYE_USE,
                     SoundSource.BLOCKS,
                     1.0f,
-                    1.1f - level.getRandom().nextFloat() * .2f
+                    1.1f - level.getRandom().nextFloat() * 0.2f
                 );
             }
             applyDye(state, level, pos, hitResult.getLocation(), color);
@@ -262,18 +262,17 @@ public class SailBlock extends WrenchableDirectionalBlock {
             List<Direction> directions = IPlacementHelper.orderedByDistanceExceptAxis(
                 pos,
                 ray.getLocation(),
-                state.getValue(SailBlock.FACING).getAxis(),
+                state.getValue(FACING).getAxis(),
                 dir -> world.getBlockState(pos.relative(dir)).canBeReplaced()
             );
 
             if (directions.isEmpty()) {
                 return PlacementOffset.fail();
-            } else {
-                return PlacementOffset.success(
-                    pos.relative(directions.getFirst()),
-                    s -> s.setValue(FACING, state.getValue(FACING))
-                );
             }
+            return PlacementOffset.success(
+                pos.relative(directions.getFirst()),
+                s -> s.setValue(FACING, state.getValue(FACING))
+            );
         }
     }
 }

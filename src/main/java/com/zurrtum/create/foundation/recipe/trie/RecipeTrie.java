@@ -127,10 +127,10 @@ public class RecipeTrie<R extends Recipe<?>> {
 
         private final Map<Object, AbstractVariant> variantCache = new HashMap<>();
         private final Object2IntOpenHashMap<AbstractVariant> variantToId = new Object2IntOpenHashMap<>();
-        private int nextVariantId = 0;
+        private int nextVariantId;
 
         private final Object2IntMap<AbstractIngredient> ingredientToId = new Object2IntOpenHashMap<>();
-        private int nextIngredientId = 0;
+        private int nextIngredientId;
         private final int universalIngredientId;
 
         private final Int2ObjectOpenHashMap<IntSet> variantToIngredients = new Int2ObjectOpenHashMap<>();

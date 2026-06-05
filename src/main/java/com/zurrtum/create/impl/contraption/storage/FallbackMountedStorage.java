@@ -14,7 +14,7 @@ import java.util.Optional;
  * whose class is exactly {@link ItemStackHandler}.
  */
 public class FallbackMountedStorage extends SimpleMountedStorage {
-    public static final MapCodec<FallbackMountedStorage> CODEC = SimpleMountedStorage.codec(FallbackMountedStorage::new);
+    public static final MapCodec<FallbackMountedStorage> CODEC = codec(FallbackMountedStorage::new);
 
     public FallbackMountedStorage(Container handler) {
         super(AllMountedStorageTypes.FALLBACK, handler);

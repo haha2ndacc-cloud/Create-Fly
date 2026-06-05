@@ -136,6 +136,7 @@ public abstract class FilterItem extends Item implements MenuProvider, SupportsI
         return true;
     }
 
+    @Override
     public abstract DataComponentType<?> getComponentType();
 
     public abstract FilterItemStack makeStackWrapper(ItemStack filter);

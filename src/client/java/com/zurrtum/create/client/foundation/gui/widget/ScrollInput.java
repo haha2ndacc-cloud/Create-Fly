@@ -21,7 +21,7 @@ public class ScrollInput extends AbstractSimiWidget {
     protected @Nullable Component title = CreateLang.translateDirect("gui.scrollInput.defaultTitle");
     protected final Component scrollToModify = CreateLang.translateDirect("gui.scrollInput.scrollToModify");
     protected final Component shiftScrollsFaster = CreateLang.translateDirect("gui.scrollInput.shiftScrollsFaster");
-    protected @Nullable Component hint = null;
+    protected @Nullable Component hint;
     protected @Nullable Label displayLabel;
     protected boolean inverted;
     protected boolean soundPlayed;
@@ -70,7 +70,7 @@ public class ScrollInput extends AbstractSimiWidget {
     }
 
     public ScrollInput removeCallback() {
-        this.onScroll = null;
+        onScroll = null;
         return this;
     }
 
@@ -92,7 +92,7 @@ public class ScrollInput extends AbstractSimiWidget {
     }
 
     public ScrollInput writingTo(@Nullable Label label) {
-        this.displayLabel = label;
+        displayLabel = label;
         if (label != null) {
             writeToLabel();
         }

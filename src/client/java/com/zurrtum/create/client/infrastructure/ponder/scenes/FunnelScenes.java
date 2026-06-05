@@ -36,7 +36,7 @@ public class FunnelScenes {
         scene.title("funnel_intro", "Using funnels");
         scene.configureBasePlate(0, 1, 5);
         scene.world().showSection(util.select().layer(0), Direction.UP);
-        scene.world().modifyKineticSpeed(util.select().everywhere(), f -> f / 2f);
+        scene.world().modifyKineticSpeed(util.select().everywhere(), f -> f / 2.0f);
 
         scene.idle(10);
 
@@ -101,7 +101,7 @@ public class FunnelScenes {
         for (int i = 0; i < 3; i++) {
             scene.idle(8);
             scene.world().flapFunnel(util.grid().at(1, 2, 4), false);
-            scene.world().createItemEntity(sideItemSpawn, util.vector().of(-.05, 0, 0), itemStack);
+            scene.world().createItemEntity(sideItemSpawn, util.vector().of(-0.05, 0, 0), itemStack);
         }
 
         scene.idle(8);
@@ -115,7 +115,7 @@ public class FunnelScenes {
         scene.title("funnel_direction", "Direction of Transfer");
         scene.configureBasePlate(0, 0, 5);
         scene.world().showSection(util.select().layer(0), Direction.UP);
-        scene.world().modifyKineticSpeed(util.select().everywhere(), f -> f / 2f);
+        scene.world().modifyKineticSpeed(util.select().everywhere(), f -> f / 2.0f);
         scene.world().setBlocks(util.select().position(3, 1, 1), AllBlocks.ANDESITE_CASING.defaultBlockState(), false);
 
         BlockPos topFunnel = util.grid().at(3, 3, 2);
@@ -137,7 +137,7 @@ public class FunnelScenes {
         scene.idle(45);
 
         ElementLink<EntityElement> itemLink = scene.world()
-            .createItemEntity(topCenter, util.vector().of(0, 4 / 16f, 0), itemStack);
+            .createItemEntity(topCenter, util.vector().of(0, 4 / 16.0f, 0), itemStack);
         scene.idle(40);
 
         scene.world().modifyEntity(itemLink, Entity::discard);
@@ -169,7 +169,7 @@ public class FunnelScenes {
         scene.overlay().showText(80).text("Using a wrench, the funnel can be flipped after placement.").attachKeyFrame()
             .pointAt(topCenter).placeNearTarget();
 
-        itemLink = scene.world().createItemEntity(topCenter, util.vector().of(0, 4 / 16f, 0), itemStack);
+        itemLink = scene.world().createItemEntity(topCenter, util.vector().of(0, 4 / 16.0f, 0), itemStack);
         scene.idle(30);
 
         scene.overlay().showControls(topSide, Pointing.RIGHT, 40).rightClick()
@@ -195,7 +195,7 @@ public class FunnelScenes {
 
         scene.world().flapFunnel(sideFunnel, true);
         itemLink = scene.world()
-            .createItemEntity(sideCenter.subtract(0, .45, 0), util.vector().of(0, 0, -0.1), itemStack);
+            .createItemEntity(sideCenter.subtract(0, 0.45, 0), util.vector().of(0, 0, -0.1), itemStack);
         scene.idle(60);
         scene.world().hideSection(sideFunnelSelection, Direction.UP);
         scene.world().hideSection(topFunnelSelection, Direction.UP);
@@ -317,7 +317,7 @@ public class FunnelScenes {
         BlockPos redstone = util.grid().at(2, 2, 2);
         BlockPos funnel = util.grid().at(3, 2, 2);
 
-        AABB redstoneBB = new AABB(funnel).inflate(-1 / 16f, -6 / 16f, -1 / 16f).move(0, -5 / 16f, 0);
+        AABB redstoneBB = new AABB(funnel).inflate(-1 / 16.0f, -6 / 16.0f, -1 / 16.0f).move(0, -5 / 16.0f, 0);
 
         for (int i = 0; i < 4; i++) {
             if (lastItemEntity != null) {
@@ -382,7 +382,7 @@ public class FunnelScenes {
         scene.world().flapFunnel(brassFunnel, true);
         scene.idle(60);
 
-        filter = filter.add(0, -5 / 16f, -1.5 / 16f);
+        filter = filter.add(0, -5 / 16.0f, -1.5 / 16.0f);
         scene.overlay().showFilterSlotInput(filter, Direction.NORTH, 80);
         scene.overlay().showControls(filter, Pointing.DOWN, 60).rightClick();
         scene.idle(10);

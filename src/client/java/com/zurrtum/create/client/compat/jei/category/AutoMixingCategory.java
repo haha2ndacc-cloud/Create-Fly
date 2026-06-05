@@ -64,7 +64,7 @@ public class AutoMixingCategory extends CreateCategory<RecipeHolder<ShapelessRec
         ShapelessRecipe recipe = entry.value();
         List<List<ItemStack>> ingredients = condenseIngredients(recipe.ingredients);
         for (int i = 0, size = ingredients.size(), xOffset = size < 3 ? (3 - size) * 19 / 2 : 0; i < size; i++) {
-            builder.addInputSlot(12 + xOffset + (i % 3) * 19, 51 - (i / 3) * 19).setBackground(SLOT, -1, -1)
+            builder.addInputSlot(12 + xOffset + i % 3 * 19, 51 - i / 3 * 19).setBackground(SLOT, -1, -1)
                 .addItemStacks(ingredients.get(i));
         }
         builder.addOutputSlot(142, 51).setBackground(SLOT, -1, -1).add(recipe.result);

@@ -40,7 +40,7 @@ public class DivingHelmetItem extends Item {
         return new ItemAttributeModifiers(ImmutableList.<ItemAttributeModifiers.Entry>builder()
             .addAll(material.createAttributes(ArmorType.HELMET).modifiers()).add(new ItemAttributeModifiers.Entry(
                 Attributes.SUBMERGED_MINING_SPEED,
-                DivingHelmetItem.SPEED_MODIFIER,
+                SPEED_MODIFIER,
                 EquipmentSlotGroup.HEAD
             )).build());
     }

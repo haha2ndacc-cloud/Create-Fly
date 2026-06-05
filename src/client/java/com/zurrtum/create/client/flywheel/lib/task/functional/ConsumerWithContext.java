@@ -15,6 +15,7 @@ import java.util.function.Consumer;
  */
 @FunctionalInterface
 public interface ConsumerWithContext<T, C> extends BiConsumer<T, C> {
+    @Override
     void accept(T t, C context);
 
     /**

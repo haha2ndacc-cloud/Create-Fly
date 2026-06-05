@@ -44,8 +44,9 @@ public class ItemThresholdConditionRender extends CargoThresholdConditionRender<
                 "schedule.condition.threshold.x_units_of_item",
                 input.getThreshold(),
                 CreateLang.translateDirect("schedule.condition.threshold." + (input.inStacks() ? "stacks" : "items")),
-                stack.isEmpty() ? CreateLang.translateDirect("schedule.condition.threshold.anything") : stack.isFilterItem() ? CreateLang.translateDirect(
-                    "schedule.condition.threshold.matching_content") : stack.item().getHoverName()
+                stack.isEmpty() ? CreateLang.translateDirect("schedule.condition.threshold.anything") :
+                    stack.isFilterItem() ? CreateLang.translateDirect("schedule.condition.threshold.matching_content") :
+                        stack.item().getHoverName()
             ).withStyle(ChatFormatting.DARK_AQUA)
         );
     }

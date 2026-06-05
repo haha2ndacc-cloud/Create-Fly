@@ -49,7 +49,7 @@ public class BlueprintScreen extends AbstractSimiContainerScreen<BlueprintMenu> 
             AllGuiTextures.BLUEPRINT.getWidth(),
             AllGuiTextures.BLUEPRINT.getHeight() + 4 + PLAYER_INVENTORY.getHeight()
         );
-        this.background = AllGuiTextures.BLUEPRINT;
+        background = AllGuiTextures.BLUEPRINT;
     }
 
     @Nullable
@@ -105,8 +105,8 @@ public class BlueprintScreen extends AbstractSimiContainerScreen<BlueprintMenu> 
         ms.translate(0.48F, 0.04F, 0);
         ms.scale(1, -1, 1);
         ms.mulPose(Axis.ZP.rotationDegrees(22.5F));
-        ms.mulPose(Axis.XP.rotationDegrees(45F));
-        ms.mulPose(Axis.YP.rotationDegrees(-45F));
+        ms.mulPose(Axis.XP.rotationDegrees(45.0F));
+        ms.mulPose(Axis.YP.rotationDegrees(-45.0F));
     }
 
     @Override

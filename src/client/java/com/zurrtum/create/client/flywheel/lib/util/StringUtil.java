@@ -34,23 +34,23 @@ public final class StringUtil {
     public static String formatBytes(long bytes) {
         if (bytes < 1024L) {
             return bytes + " B";
-        } else if (bytes < 1048576L) {
-            return THREE_DECIMAL_PLACES.format((double) ((float) bytes / 1024.0F)) + " KiB";
-        } else {
-            return bytes < 1073741824L ? THREE_DECIMAL_PLACES.format((double) ((float) bytes / 1024.0F / 1024.0F)) + " MiB" : THREE_DECIMAL_PLACES.format(
-                (double) ((float) bytes / 1024.0F / 1024.0F / 1024.0F)) + " GiB";
         }
+        if (bytes < 1048576L) {
+            return THREE_DECIMAL_PLACES.format(bytes / 1024.0F) + " KiB";
+        }
+        return bytes < 1073741824L ? THREE_DECIMAL_PLACES.format(bytes / 1024.0F / 1024.0F) + " MiB" :
+            THREE_DECIMAL_PLACES.format(bytes / 1024.0F / 1024.0F / 1024.0F) + " GiB";
     }
 
     public static String formatTime(long ns) {
         if (ns < 1000L) {
             return ns + " ns";
-        } else if (ns < 1000000L) {
-            return THREE_DECIMAL_PLACES.format((double) ((float) ns / 1000.0F)) + " μs";
-        } else {
-            return ns < 1000000000L ? THREE_DECIMAL_PLACES.format((double) ((float) ns / 1000000.0F)) + " ms" : THREE_DECIMAL_PLACES.format(
-                (double) ((float) ns / 1.0E9F)) + " s";
         }
+        if (ns < 1000000L) {
+            return THREE_DECIMAL_PLACES.format(ns / 1000.0F) + " μs";
+        }
+        return ns < 1000000000L ? THREE_DECIMAL_PLACES.format(ns / 1000000.0F) + " ms" :
+            THREE_DECIMAL_PLACES.format(ns / 1.0E9F) + " s";
     }
 
     public static String formatAddress(long address) {
@@ -68,19 +68,18 @@ public final class StringUtil {
     public static String indent(String str, int n) {
         if (str.isEmpty()) {
             return "";
-        } else {
-            Stream<String> stream = str.lines();
-            if (n > 0) {
-                String spaces = repeatChar(' ', n);
-                stream = stream.map((s) -> spaces + s);
-            } else if (n == Integer.MIN_VALUE) {
-                stream = stream.map(String::stripLeading);
-            } else if (n < 0) {
-                throw new IllegalArgumentException("Requested indentation (" + n + ") is unsupported");
-            }
-
-            return (String) stream.collect(Collectors.joining("\n"));
         }
+        Stream<String> stream = str.lines();
+        if (n > 0) {
+            String spaces = repeatChar(' ', n);
+            stream = stream.map(s -> spaces + s);
+        } else if (n == Integer.MIN_VALUE) {
+            stream = stream.map(String::stripLeading);
+        } else if (n < 0) {
+            throw new IllegalArgumentException("Requested indentation (" + n + ") is unsupported");
+        }
+
+        return stream.collect(Collectors.joining("\n"));
     }
 
     public static String repeatChar(char c, int n) {

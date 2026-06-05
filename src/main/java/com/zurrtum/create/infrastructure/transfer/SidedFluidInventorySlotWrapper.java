@@ -26,18 +26,16 @@ public class SidedFluidInventorySlotWrapper implements SingleSlotStorage<FluidVa
     public long insert(FluidVariant resource, long maxAmount, TransactionContext transaction) {
         if (!sidedInventory.canInsert(slotWrapper.slot, FluidInventoryStorage.getCachedStack(resource), direction)) {
             return 0;
-        } else {
-            return slotWrapper.insert(resource, maxAmount, transaction);
         }
+        return slotWrapper.insert(resource, maxAmount, transaction);
     }
 
     @Override
     public long extract(FluidVariant resource, long maxAmount, TransactionContext transaction) {
         if (!sidedInventory.canExtract(slotWrapper.slot, FluidInventoryStorage.getCachedStack(resource), direction)) {
             return 0;
-        } else {
-            return slotWrapper.extract(resource, maxAmount, transaction);
         }
+        return slotWrapper.extract(resource, maxAmount, transaction);
     }
 
     @Override

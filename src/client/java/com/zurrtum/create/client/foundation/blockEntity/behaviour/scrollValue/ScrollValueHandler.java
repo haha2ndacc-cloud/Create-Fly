@@ -6,9 +6,9 @@ import net.minecraft.util.Mth;
 
 public class ScrollValueHandler {
 
-    private static float lastPassiveScroll = 0.0f;
-    private static float passiveScroll = 0.0f;
-    private static float passiveScrollDirection = 1f;
+    private static float lastPassiveScroll;
+    private static float passiveScroll;
+    private static float passiveScrollDirection = 1.0f;
     public static final PhysicalFloat wrenchCog = PhysicalFloat.create().withDrag(0.3);
 
     public static float getScroll(float partialTicks) {

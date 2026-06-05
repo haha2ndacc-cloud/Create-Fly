@@ -68,8 +68,8 @@ public class CrushingWheelBlock extends RotatedPillarKineticBlock implements IBE
 
         boolean controllerExists = world.getBlockState(controllerPos).is(AllBlocks.CRUSHING_WHEEL_CONTROLLER);
         boolean controllerIsValid = controllerExists && world.getBlockState(controllerPos).getValue(VALID);
-        Direction controllerOldDirection = controllerExists ? world.getBlockState(controllerPos)
-            .getValue(CrushingWheelControllerBlock.FACING) : null;
+        Direction controllerOldDirection =
+            controllerExists ? world.getBlockState(controllerPos).getValue(CrushingWheelControllerBlock.FACING) : null;
 
         boolean controllerShouldExist = false;
         boolean controllerShouldBeValid = false;
@@ -82,7 +82,7 @@ public class CrushingWheelBlock extends RotatedPillarKineticBlock implements IBE
             CrushingWheelBlockEntity be = getBlockEntity(world, pos);
             CrushingWheelBlockEntity otherBE = getBlockEntity(world, otherWheelPos);
 
-            if (be != null && otherBE != null && (be.getSpeed() > 0) != (otherBE.getSpeed() > 0) && be.getSpeed() != 0 && otherBE.getSpeed() != 0) {
+            if (be != null && otherBE != null && be.getSpeed() > 0 != otherBE.getSpeed() > 0 && be.getSpeed() != 0 && otherBE.getSpeed() != 0) {
                 Axis wheelAxis = state.getValue(AXIS);
                 Axis sideAxis = side.getAxis();
                 int controllerADO = Math.round(Math.signum(be.getSpeed())) * side.getAxisDirection().getStep();
@@ -146,18 +146,18 @@ public class CrushingWheelBlock extends RotatedPillarKineticBlock implements IBE
             return;
         }
 
-        float speed = getBlockEntityOptional(worldIn, pos).map(CrushingWheelBlockEntity::getSpeed).orElse(0f);
+        float speed = getBlockEntityOptional(worldIn, pos).map(CrushingWheelBlockEntity::getSpeed).orElse(0.0f);
 
         double x = 0;
         double z = 0;
 
         if (state.getValue(AXIS) == Axis.X) {
-            z = speed / 20f;
-            x += (pos.getX() + .5f - entityIn.getX()) * .1f;
+            z = speed / 20.0f;
+            x += (pos.getX() + 0.5f - entityIn.getX()) * 0.1f;
         }
         if (state.getValue(AXIS) == Axis.Z) {
-            x = speed / -20f;
-            z += (pos.getZ() + .5f - entityIn.getZ()) * .1f;
+            x = speed / -20.0f;
+            z += (pos.getZ() + 0.5f - entityIn.getZ()) * 0.1f;
         }
         entityIn.setDeltaMovement(entityIn.getDeltaMovement().add(x, 0, z));
     }
@@ -194,7 +194,7 @@ public class CrushingWheelBlock extends RotatedPillarKineticBlock implements IBE
 
     @Override
     public float getParticleInitialRadius() {
-        return 1f;
+        return 1.0f;
     }
 
     @Override

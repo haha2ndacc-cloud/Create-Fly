@@ -13,7 +13,7 @@ public class GlslSwitch implements GlslStmt {
 
     private final List<Pair<GlslExpr, GlslBlock>> cases = new ArrayList<>();
     @Nullable
-    private GlslBlock defaultCase = null;
+    private GlslBlock defaultCase;
 
     private GlslSwitch(GlslExpr on) {
         this.on = on;

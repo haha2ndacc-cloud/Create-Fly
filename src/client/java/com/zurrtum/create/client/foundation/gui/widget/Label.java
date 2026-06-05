@@ -31,7 +31,7 @@ public class Label extends AbstractSimiWidget {
     }
 
     public Label withShadow() {
-        this.hasShadow = true;
+        hasShadow = true;
         return this;
     }
 

@@ -32,10 +32,10 @@ public class SoulPulseEffect {
     public final @Nullable List<BlockPos> added;
 
     public SoulPulseEffect(BlockPos pos, int distance, boolean canOverlap) {
-        this.ticks = TICKS_PER_LAYER * distance;
+        ticks = TICKS_PER_LAYER * distance;
         this.pos = pos;
         this.distance = distance;
-        this.added = canOverlap ? null : new ArrayList<>();
+        added = canOverlap ? null : new ArrayList<>();
     }
 
     public boolean finished() {
@@ -111,7 +111,7 @@ public class SoulPulseEffect {
         Vec3 p = Vec3.atLowerCornerOf(at);
         if (canOverlap()) {
             world.addAlwaysVisibleParticle(
-                ((int) Math.round(VecHelper.getCenterOf(pos).distanceTo(VecHelper.getCenterOf(at)))) >= distance ?
+                (int) Math.round(VecHelper.getCenterOf(pos).distanceTo(VecHelper.getCenterOf(at))) >= distance ?
                     AllParticleTypes.SOUL_PERIMETER : AllParticleTypes.SOUL_EXPANDING_PERIMETER,
                 p.x + 0.5,
                 p.y + 0.5,
@@ -121,7 +121,7 @@ public class SoulPulseEffect {
                 0
             );
         }
-        if (SoulPulseEffect.isDark(world, at)) {
+        if (isDark(world, at)) {
             world.addAlwaysVisibleParticle(AllParticleTypes.SOUL, p.x + 0.5, p.y + 0.5, p.z + 0.5, 0, 0, 0);
             world.addParticle(AllParticleTypes.SOUL_BASE, p.x + 0.5, p.y + 0.01, p.z + 0.5, 0, 0, 0);
         }

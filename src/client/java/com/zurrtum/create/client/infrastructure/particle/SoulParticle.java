@@ -19,7 +19,7 @@ public class SoulParticle extends CustomRotationParticle {
     protected int endTicks;
     protected int numLoops;
 
-    protected int firstStartFrame = 0;
+    protected int firstStartFrame;
     protected int startFrames = 17;
 
     protected int firstLoopFrame = 17;
@@ -33,8 +33,8 @@ public class SoulParticle extends CustomRotationParticle {
     protected int totalFrames = 53;
     protected int ticksPerFrame = 2;
 
-    protected boolean isPerimeter = false;
-    protected boolean isExpandingPerimeter = false;
+    protected boolean isPerimeter;
+    protected boolean isExpandingPerimeter;
     protected boolean isVisible = true;
     protected int perimeterFrames = 8;
 
@@ -51,23 +51,23 @@ public class SoulParticle extends CustomRotationParticle {
         RandomSource random
     ) {
         super(worldIn, x, y, z, spriteSet, 0);
-        this.quadSize = 0.5f;
-        this.setSize(this.quadSize, this.quadSize);
+        quadSize = 0.5f;
+        setSize(quadSize, quadSize);
 
-        this.loopLength = loopFrames + (int) (random.nextFloat() * 5f - 4f);
-        this.startTicks = startFrames + (int) (random.nextFloat() * 5f - 4f);
-        this.endTicks = endFrames + (int) (random.nextFloat() * 5f - 4f);
-        this.numLoops = (int) (1f + random.nextFloat() * 2f);
+        loopLength = loopFrames + (int) (random.nextFloat() * 5.0f - 4.0f);
+        startTicks = startFrames + (int) (random.nextFloat() * 5.0f - 4.0f);
+        endTicks = endFrames + (int) (random.nextFloat() * 5.0f - 4.0f);
+        numLoops = (int) (1.0f + random.nextFloat() * 2.0f);
 
-        this.setFrame(0);
-        this.stoppedByCollision = true; // disable movement
-        this.mirror = random.nextBoolean();
+        setFrame(0);
+        stoppedByCollision = true; // disable movement
+        mirror = random.nextBoolean();
 
-        this.isExpandingPerimeter = type == AllParticleTypes.SOUL_EXPANDING_PERIMETER;
-        this.isPerimeter = type == AllParticleTypes.SOUL_PERIMETER || isExpandingPerimeter;
-        this.animationStage = !isPerimeter ? new StartAnimation(this) : new PerimeterAnimation(this);
+        isExpandingPerimeter = type == AllParticleTypes.SOUL_EXPANDING_PERIMETER;
+        isPerimeter = type == AllParticleTypes.SOUL_PERIMETER || isExpandingPerimeter;
+        animationStage = !isPerimeter ? new StartAnimation(this) : new PerimeterAnimation(this);
         if (isPerimeter) {
-            yo = y -= .5f - 1 / 128f;
+            yo = y -= 0.5f - 1 / 128.0f;
             totalFrames = perimeterFrames;
             isVisible = false;
         }
@@ -135,7 +135,7 @@ public class SoulParticle extends CustomRotationParticle {
         }
 
         public float getAnimAge() {
-            return (float) animAge;
+            return animAge;
         }
 
         @Nullable
@@ -152,16 +152,15 @@ public class SoulParticle extends CustomRotationParticle {
         public void tick() {
             super.tick();
 
-            particle.setFrame(particle.firstStartFrame + (int) (getAnimAge() / (float) particle.startTicks * particle.startFrames));
+            particle.setFrame(particle.firstStartFrame + (int) (getAnimAge() / particle.startTicks * particle.startFrames));
         }
 
         @Override
         public AnimationStage getNext() {
             if (animAge < particle.startTicks) {
                 return this;
-            } else {
-                return new LoopAnimation(particle);
             }
+            return new LoopAnimation(particle);
         }
     }
 
@@ -196,9 +195,8 @@ public class SoulParticle extends CustomRotationParticle {
         public AnimationStage getNext() {
             if (loops <= particle.numLoops) {
                 return this;
-            } else {
-                return new EndAnimation(particle);
             }
+            return new EndAnimation(particle);
         }
     }
 
@@ -212,7 +210,7 @@ public class SoulParticle extends CustomRotationParticle {
         public void tick() {
             super.tick();
 
-            particle.setFrame(particle.firstEndFrame + (int) ((getAnimAge() / (float) particle.endTicks) * particle.endFrames));
+            particle.setFrame(particle.firstEndFrame + (int) (getAnimAge() / particle.endTicks * particle.endFrames));
 
         }
 
@@ -221,9 +219,8 @@ public class SoulParticle extends CustomRotationParticle {
         public AnimationStage getNext() {
             if (animAge < particle.endTicks) {
                 return this;
-            } else {
-                return null;
             }
+            return null;
         }
     }
 
@@ -242,11 +239,11 @@ public class SoulParticle extends CustomRotationParticle {
         @Override
         @Nullable
         public AnimationStage getNext() {
-            if (animAge < (particle.isExpandingPerimeter ? 8 : particle.startTicks + particle.endTicks + particle.numLoops * particle.loopLength)) {
+            if (animAge < (particle.isExpandingPerimeter ? 8 :
+                particle.startTicks + particle.endTicks + particle.numLoops * particle.loopLength)) {
                 return this;
-            } else {
-                return null;
             }
+            return null;
         }
     }
 }

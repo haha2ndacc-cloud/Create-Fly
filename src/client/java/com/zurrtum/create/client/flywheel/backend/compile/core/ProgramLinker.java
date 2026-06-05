@@ -34,10 +34,9 @@ public class ProgramLinker {
 
         if (linkSuccessful(handle)) {
             return LinkResult.success(out, log);
-        } else {
-            out.delete();
-            return LinkResult.failure(log);
         }
+        out.delete();
+        return LinkResult.failure(log);
     }
 
     private static boolean linkSuccessful(int handle) {

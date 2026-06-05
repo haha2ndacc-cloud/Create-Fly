@@ -104,9 +104,9 @@ public class CrushingWheelControllerBlock extends DirectionalBlock implements IB
                 if (be.processingEntity == entityIn) {
                     entityIn.makeStuckInBlock(
                         state, new Vec3(
-                            axis == Axis.X ? (double) 0.05F : 0.25D,
-                            axis == Axis.Y ? (double) 0.05F : 0.25D,
-                            axis == Axis.Z ? (double) 0.05F : 0.25D
+                            axis == Axis.X ? 0.05F : 0.25D,
+                            axis == Axis.Y ? 0.05F : 0.25D,
+                            axis == Axis.Z ? 0.05F : 0.25D
                         )
                     );
                 }
@@ -153,9 +153,9 @@ public class CrushingWheelControllerBlock extends DirectionalBlock implements IB
         if (rand.nextInt(1) != 0) {
             return;
         }
-        double d0 = (float) pos.getX() + rand.nextFloat();
-        double d1 = (float) pos.getY() + rand.nextFloat();
-        double d2 = (float) pos.getZ() + rand.nextFloat();
+        double d0 = pos.getX() + rand.nextFloat();
+        double d1 = pos.getY() + rand.nextFloat();
+        double d2 = pos.getZ() + rand.nextFloat();
         worldIn.addParticle(ParticleTypes.CRIT, d0, d1, d2, 0.0D, 0.0D, 0.0D);
     }
 
@@ -197,7 +197,7 @@ public class CrushingWheelControllerBlock extends DirectionalBlock implements IB
                     if (!(adjBE instanceof CrushingWheelBlockEntity cwbe)) {
                         continue;
                     }
-                    be.crushingspeed = Math.abs(cwbe.getSpeed() / 50f);
+                    be.crushingspeed = Math.abs(cwbe.getSpeed() / 50.0f);
                     be.sendData();
 
                     cwbe.award(AllAdvancements.CRUSHING_WHEEL);

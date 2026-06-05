@@ -27,7 +27,7 @@ public class FlywheelBlockEntity extends KineticBlockEntity {
     protected void read(ValueInput view, boolean clientPacket) {
         super.read(view, clientPacket);
         if (clientPacket) {
-            visualSpeed.chase(getGeneratedSpeed(), 1 / 64f, Chaser.EXP);
+            visualSpeed.chase(getGeneratedSpeed(), 1 / 64.0f, Chaser.EXP);
         }
     }
 
@@ -42,7 +42,7 @@ public class FlywheelBlockEntity extends KineticBlockEntity {
         float targetSpeed = getSpeed();
         visualSpeed.updateChaseTarget(targetSpeed);
         visualSpeed.tickChaser();
-        angle += visualSpeed.getValue() * 3 / 10f;
+        angle += visualSpeed.getValue() * 3 / 10.0f;
         angle %= 360;
     }
 }

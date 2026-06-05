@@ -64,7 +64,7 @@ public class RotatingInstance extends ColoredLitOverlayInstance {
     public RotatingInstance setup(KineticBlockEntity blockEntity, Axis axis, float speed) {
         var blockState = blockEntity.getBlockState();
         var pos = blockEntity.getBlockPos();
-        return setRotationAxis(axis).setRotationalSpeed(speed * RotatingInstance.SPEED_MULTIPLIER)
+        return setRotationAxis(axis).setRotationalSpeed(speed * SPEED_MULTIPLIER)
             .setRotationOffset(KineticBlockEntityVisual.rotationOffset(
                 blockState,
                 axis,

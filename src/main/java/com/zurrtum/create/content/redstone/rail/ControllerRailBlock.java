@@ -97,7 +97,7 @@ public class ControllerRailBlock extends BaseRailBlock implements IWrenchable, M
 
     private static void decelerateCart(BlockPos pos, AbstractMinecart cart) {
         Vec3 diff = VecHelper.getCenterOf(pos).subtract(cart.position());
-        cart.setDeltaMovement(diff.x / 16f, 0, diff.z / 16f);
+        cart.setDeltaMovement(diff.x / 16.0f, 0, diff.z / 16.0f);
 
         if (cart instanceof MinecartFurnace fme) {
             fme.push = Vec3.ZERO;
@@ -135,7 +135,7 @@ public class ControllerRailBlock extends BaseRailBlock implements IWrenchable, M
             return;
         }
         Vec3 accelerationVec = Vec3.atLowerCornerOf(getAccelerationVector(state));
-        double targetSpeed = cart.getMaxSpeed((ServerLevel) world) * state.getValue(POWER) / 15f;
+        double targetSpeed = cart.getMaxSpeed((ServerLevel) world) * state.getValue(POWER) / 15.0f;
 
         if (cart instanceof MinecartFurnace fme) {
             fme.push = new Vec3(accelerationVec.x, 0, accelerationVec.z);
@@ -232,7 +232,7 @@ public class ControllerRailBlock extends BaseRailBlock implements IWrenchable, M
     }
 
     private void placeAndNotify(BlockState state, BlockPos pos, Level world) {
-        world.setBlock(pos, state, Block.UPDATE_ALL);
+        world.setBlock(pos, state, UPDATE_ALL);
         world.updateNeighborsAt(pos.below(), this, null);
         if (state.getValue(SHAPE).isSlope()) {
             world.updateNeighborsAt(pos.above(), this, null);

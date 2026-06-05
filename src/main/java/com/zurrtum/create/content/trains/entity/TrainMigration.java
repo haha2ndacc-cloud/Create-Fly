@@ -66,7 +66,7 @@ public class TrainMigration {
                     continue;
                 }
                 TrackNode newNode2 = entry.getKey();
-                float radius = 1 / 64f;
+                float radius = 1 / 64.0f;
                 Vec3 direction = edge.getDirection(true);
                 if (!Mth.equal(direction.dot(prevDirection), 1)) {
                     continue;

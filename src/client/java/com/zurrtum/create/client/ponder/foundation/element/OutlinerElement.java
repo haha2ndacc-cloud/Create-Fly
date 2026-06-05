@@ -13,13 +13,13 @@ public class OutlinerElement extends AnimatedSceneElementBase {
 
     public OutlinerElement(Function<Outliner, OutlineParams> outlinerCall) {
         this.outlinerCall = outlinerCall;
-        this.overrideColor = -1;
+        overrideColor = -1;
     }
 
     @Override
     public void tick(PonderScene scene) {
         super.tick(scene);
-        if (fade.getValue() < 1 / 16f) {
+        if (fade.getValue() < 1 / 16.0f) {
             return;
         }
         if (fade.getValue(0) > fade.getValue(1)) {

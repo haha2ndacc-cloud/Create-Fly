@@ -28,7 +28,7 @@ public class FadeOutOfSceneInstruction<T extends AnimatedSceneElement> extends T
         }
         element.setVisible(true);
         element.setFade(1);
-        element.setFadeVec(fadeOutTo == null ? Vec3.ZERO : Vec3.atLowerCornerOf(fadeOutTo.getUnitVec3i()).scale(.5f));
+        element.setFadeVec(fadeOutTo == null ? Vec3.ZERO : Vec3.atLowerCornerOf(fadeOutTo.getUnitVec3i()).scale(0.5f));
     }
 
     @Override
@@ -37,7 +37,7 @@ public class FadeOutOfSceneInstruction<T extends AnimatedSceneElement> extends T
         if (element == null) {
             return;
         }
-        float fade = (remainingTicks / (float) totalTicks);
+        float fade = remainingTicks / (float) totalTicks;
         element.setFade(1 - (1 - fade) * (1 - fade));
         if (remainingTicks == 0) {
             element.setVisible(false);

@@ -45,7 +45,7 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
     ).map(Color::setImmutable);
 
     protected float z;
-    protected boolean wasHovered = false;
+    protected boolean wasHovered;
     protected List<Component> toolTip = new LinkedList<>();
     protected BiConsumer<Integer, Integer> onClick = (_$, _$$) -> {
     };
@@ -66,7 +66,7 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
     }
 
     public <T extends AbstractSimiWidget> T withCallback(BiConsumer<Integer, Integer> cb) {
-        this.onClick = cb;
+        onClick = cb;
         //noinspection unchecked
         return (T) this;
     }
@@ -113,13 +113,13 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
     }
 
     protected void renderTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
-        if (this.isHovered()) {
-            List<Component> tooltip = this.getToolTip();
+        if (isHovered()) {
+            List<Component> tooltip = getToolTip();
             if (tooltip.isEmpty()) {
                 return;
             }
-            int ttx = this.lockedTooltipX == -1 ? mouseX : this.lockedTooltipX + this.getX();
-            int tty = this.lockedTooltipY == -1 ? mouseY : this.lockedTooltipY + this.getY();
+            int ttx = lockedTooltipX == -1 ? mouseX : lockedTooltipX + getX();
+            int tty = lockedTooltipY == -1 ? mouseY : lockedTooltipY + getY();
 
             graphics.setComponentTooltipForNextFrame(graphics.minecraft.font, tooltip, ttx, tty);
         }

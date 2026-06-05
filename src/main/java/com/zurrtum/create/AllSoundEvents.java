@@ -19,71 +19,71 @@ public class AllSoundEvents {
     public static final SoundEntry SCHEMATICANNON_LAUNCH_BLOCK = register(
         "schematicannon_launch_block",
         BLOCKS,
-        .1f,
+        0.1f,
         1.1f
     );
-    public static final SoundEntry SCHEMATICANNON_FINISH = register("schematicannon_finish", BLOCKS, 1, .7f);
-    public static final SoundEntry DEPOT_SLIDE = register("depot_slide", BLOCKS, .125f, 1.5f);
-    public static final SoundEntry DEPOT_PLOP = register("depot_plop", BLOCKS, .25f, 1.25f);
-    public static final SoundEntry FUNNEL_FLAP = register("funnel_flap", BLOCKS, .125f, 1.5f, .0425f, .75f);
+    public static final SoundEntry SCHEMATICANNON_FINISH = register("schematicannon_finish", BLOCKS, 1, 0.7f);
+    public static final SoundEntry DEPOT_SLIDE = register("depot_slide", BLOCKS, 0.125f, 1.5f);
+    public static final SoundEntry DEPOT_PLOP = register("depot_plop", BLOCKS, 0.25f, 1.25f);
+    public static final SoundEntry FUNNEL_FLAP = register("funnel_flap", BLOCKS, 0.125f, 1.5f, 0.0425f, 0.75f);
     public static final SoundEntry PACKAGER = register("packager", BLOCKS, 0.5f, 0.75f);
     public static final SoundEntry SLIME_ADDED = register("slime_added", BLOCKS);
     public static final SoundEntry MECHANICAL_PRESS_ACTIVATION = register(
         "mechanical_press_activation",
         BLOCKS,
-        .125f,
-        1f,
-        .5f,
-        1f
+        0.125f,
+        1.0f,
+        0.5f,
+        1.0f
     );
     public static final SoundEntry MECHANICAL_PRESS_ACTIVATION_ON_BELT = register(
         "mechanical_press_activation_belt",
         BLOCKS,
-        .75f,
-        1f,
-        .15f,
-        .75f
+        0.75f,
+        1.0f,
+        0.15f,
+        0.75f
     );
-    public static final SoundEntry MIXING = register("mixing", BLOCKS, .125f, .5f, .125f, .5f);
+    public static final SoundEntry MIXING = register("mixing", BLOCKS, 0.125f, 0.5f, 0.125f, 0.5f);
     public static final SoundEntry SPOUTING = register("spout", BLOCKS);
-    public static final SoundEntry CRANKING = register("cranking", BLOCKS, .075f, .5f, .025f, .5f);
+    public static final SoundEntry CRANKING = register("cranking", BLOCKS, 0.075f, 0.5f, 0.025f, 0.5f);
     public static final SoundEntry WORLDSHAPER_PLACE = register("worldshaper_place", PLAYERS);
-    public static final SoundEntry SCROLL_VALUE = register("scroll_value", PLAYERS, .124f, 1f);
+    public static final SoundEntry SCROLL_VALUE = register("scroll_value", PLAYERS, 0.124f, 1.0f);
     public static final SoundEntry CONFIRM = register("confirm", PLAYERS, 0.5f, 0.8f);
     public static final SoundEntry CONFIRM_2 = register("confirm_2", PLAYERS);
-    public static final SoundEntry DENY = register("deny", PLAYERS, 1f, 0.5f);
+    public static final SoundEntry DENY = register("deny", PLAYERS, 1.0f, 0.5f);
     public static final SoundEntry COGS = register("cogs", BLOCKS);
     public static final SoundEntry FWOOMP = register("fwoomp", PLAYERS);
     public static final SoundEntry CARDBOARD_SWORD = register("cardboard_bonk", PLAYERS);
-    public static final SoundEntry FROGPORT_OPEN = register("frogport_open", BLOCKS, 1f, 2f);
+    public static final SoundEntry FROGPORT_OPEN = register("frogport_open", BLOCKS, 1.0f, 2.0f);
     public static final SoundEntry FROGPORT_CLOSE = register("frogport_close", BLOCKS);
     public static final SoundEntry FROGPORT_CATCH = register("frogport_catch", BLOCKS);
     public static final SoundEntry STOCK_LINK = register("stock_link", BLOCKS);
     public static final SoundEntry FROGPORT_DEPOSIT = register("frogport_deposit", BLOCKS);
-    public static final SoundEntry POTATO_HIT = register("potato_hit", PLAYERS, .75f, .75f, .75f, 1.25f);
+    public static final SoundEntry POTATO_HIT = register("potato_hit", PLAYERS, 0.75f, 0.75f, 0.75f, 1.25f);
     public static final SoundEntry CONTRAPTION_ASSEMBLE = register(
         "contraption_assemble",
         BLOCKS,
-        .5f,
-        .5f,
-        .045f,
-        .74f
+        0.5f,
+        0.5f,
+        0.045f,
+        0.74f
     );
-    public static final SoundEntry CONTRAPTION_DISASSEMBLE = register("contraption_disassemble", BLOCKS, .35f, .75f);
-    public static final SoundEntry WRENCH_ROTATE = register("wrench_rotate", BLOCKS, .25f, 1.25f);
-    public static final SoundEntry WRENCH_REMOVE = register("wrench_remove", BLOCKS, .25f, .75f, .25f, .75f);
-    public static final SoundEntry PACKAGE_POP = register("package_pop", BLOCKS, .75f, 1f, .25f, 1.15f);
-    public static final SoundEntry CRAFTER_CLICK = register("crafter_click", BLOCKS, .25f, 1, .125f, 1);
-    public static final SoundEntry CRAFTER_CRAFT = register("crafter_craft", BLOCKS, .125f, .75f);
+    public static final SoundEntry CONTRAPTION_DISASSEMBLE = register("contraption_disassemble", BLOCKS, 0.35f, 0.75f);
+    public static final SoundEntry WRENCH_ROTATE = register("wrench_rotate", BLOCKS, 0.25f, 1.25f);
+    public static final SoundEntry WRENCH_REMOVE = register("wrench_remove", BLOCKS, 0.25f, 0.75f, 0.25f, 0.75f);
+    public static final SoundEntry PACKAGE_POP = register("package_pop", BLOCKS, 0.75f, 1.0f, 0.25f, 1.15f);
+    public static final SoundEntry CRAFTER_CLICK = register("crafter_click", BLOCKS, 0.25f, 1, 0.125f, 1);
+    public static final SoundEntry CRAFTER_CRAFT = register("crafter_craft", BLOCKS, 0.125f, 0.75f);
     public static final SoundEntry SANDING_SHORT = register("sanding_short", BLOCKS);
     public static final SoundEntry SANDING_LONG = register("sanding_long", BLOCKS);
-    public static final SoundEntry CONTROLLER_CLICK = register("controller_click", BLOCKS, .35f, 1f);
+    public static final SoundEntry CONTROLLER_CLICK = register("controller_click", BLOCKS, 0.35f, 1.0f);
     public static final SoundEntry CONTROLLER_PUT = register("controller_put", BLOCKS);
     public static final SoundEntry CONTROLLER_TAKE = register("controller_take", BLOCKS);
-    public static final SoundEntry SAW_ACTIVATE_WOOD = register("saw_activate_wood", BLOCKS, .75f, 1.5f);
-    public static final SoundEntry SAW_ACTIVATE_STONE = register("saw_activate_stone", BLOCKS, .125f, 1.25f);
-    public static final SoundEntry BLAZE_MUNCH = register("blaze_munch", BLOCKS, .5f, 1f);
-    public static final SoundEntry ITEM_HATCH = register("item_hatch", BLOCKS, .25f, 1.4f, .75f, 1.15f);
+    public static final SoundEntry SAW_ACTIVATE_WOOD = register("saw_activate_wood", BLOCKS, 0.75f, 1.5f);
+    public static final SoundEntry SAW_ACTIVATE_STONE = register("saw_activate_stone", BLOCKS, 0.125f, 1.25f);
+    public static final SoundEntry BLAZE_MUNCH = register("blaze_munch", BLOCKS, 0.5f, 1.0f);
+    public static final SoundEntry ITEM_HATCH = register("item_hatch", BLOCKS, 0.25f, 1.4f, 0.75f, 1.15f);
     public static final SoundEntry CRUSHING_1 = register("crushing_1", BLOCKS);
     public static final SoundEntry CRUSHING_2 = register("crushing_2", BLOCKS);
     public static final SoundEntry CRUSHING_3 = register("crushing_3", BLOCKS);
@@ -112,7 +112,7 @@ public class AllSoundEvents {
 
     private static SoundEntry register(String name, SoundSource category, float... data) {
         if (data.length == 0) {
-            data = new float[]{1f, 1f};
+            data = new float[]{1.0f, 1.0f};
         }
         Identifier id = Identifier.fromNamespaceAndPath(MOD_ID, name);
         int count = data.length / 2;
@@ -190,7 +190,7 @@ public class AllSoundEvents {
         }
 
         public void playAt(Level world, Vec3i pos, float volume, float pitch, boolean fade) {
-            playAt(world, pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5, volume, pitch, fade);
+            playAt(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, volume, pitch, fade);
         }
 
         public void playAt(Level world, Vec3 pos, float volume, float pitch, boolean fade) {

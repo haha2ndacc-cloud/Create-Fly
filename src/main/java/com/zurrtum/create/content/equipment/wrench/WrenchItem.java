@@ -64,7 +64,7 @@ public class WrenchItem extends Item {
         }
         state.spawnAfterBreak(serverWorld, pos, ItemStack.EMPTY, true);
         world.destroyBlock(pos, false);
-        AllSoundEvents.WRENCH_REMOVE.playOnServer(world, pos, 1, world.getRandom().nextFloat() * .5f + .5f);
+        AllSoundEvents.WRENCH_REMOVE.playOnServer(world, pos, 1, world.getRandom().nextFloat() * 0.5f + 0.5f);
         return InteractionResult.SUCCESS;
     }
 

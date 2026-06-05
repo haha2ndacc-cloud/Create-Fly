@@ -156,7 +156,8 @@ public abstract class CopycatPanelModelMixin extends CopycatModel implements Fab
                         BakedModelHelper.cropAndMove(quad, sprite, front, frontOffset);
                     }
                     return true;
-                } else if (direction != opposite) {
+                }
+                if (direction != opposite) {
                     BakedModelHelper.cropAndMove(quad, spriteFinder.find(quad), back, backOffset);
                     return true;
                 }

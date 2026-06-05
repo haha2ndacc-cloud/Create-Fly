@@ -37,7 +37,7 @@ public class ChainConveyorRidingHandler {
 
         Component component = Component.translatable("mount.onboard", mc.options.keyShift.getTranslatedKeyMessage());
         mc.gui.hud.setOverlayMessage(component, false);
-        mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.CHAIN_HIT, 1f, 0.5f));
+        mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.CHAIN_HIT, 1.0f, 0.5f));
     }
 
     public static void clientTick(Minecraft mc) {
@@ -80,7 +80,7 @@ public class ChainConveyorRidingHandler {
 
         if (ridingConnection != null) {
             ConnectionStats stats = clbe.connectionStats.get(ridingConnection);
-            targetPosition = stats.start().add((stats.end().subtract(stats.start())).normalize()
+            targetPosition = stats.start().add(stats.end().subtract(stats.start()).normalize()
                 .scale(Math.min(stats.chainLength(), chainPosition)));
         } else {
             targetPosition = Vec3.atBottomCenterOf(ridingChainConveyor)
@@ -114,10 +114,10 @@ public class ChainConveyorRidingHandler {
 
     private static void updateTargetPosition(Minecraft mc, ChainConveyorBlockEntity clbe) {
         float serverSpeed = ServerSpeedProvider.get();
-        float speed = clbe.getSpeed() / 360f;
+        float speed = clbe.getSpeed() / 360.0f;
         float radius = 1.5f;
         float distancePerTick = Math.abs(speed);
-        float degreesPerTick = (speed / (Mth.PI * radius)) * 360f;
+        float degreesPerTick = speed / (Mth.PI * radius) * 360.0f;
 
         if (ridingConnection != null) {
             ConnectionStats stats = clbe.connectionStats.get(ridingConnection);

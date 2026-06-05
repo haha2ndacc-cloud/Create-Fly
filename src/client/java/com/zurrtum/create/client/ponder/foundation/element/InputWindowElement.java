@@ -105,7 +105,7 @@ public class InputWindowElement extends AnimatedOverlayElementBase {
         int keyWidth = 0;
         String text = hasText ? PonderIndex.getLangAccess().getShared(key) : "";
 
-        if (fade < 1 / 16f) {
+        if (fade < 1 / 16.0f) {
             return;
         }
         Vec2 sceneToScreen = scene.getTransform().sceneToScreen(sceneSpace, partialTicks);
@@ -136,7 +136,7 @@ public class InputWindowElement extends AnimatedOverlayElementBase {
                 font,
                 text,
                 2,
-                (int) ((height - font.lineHeight) / 2f + 2),
+                (int) ((height - font.lineHeight) / 2.0f + 2),
                 PonderPalette.WHITE.getColorObject().scaleAlpha(fade).getRGB(),
                 false
             );

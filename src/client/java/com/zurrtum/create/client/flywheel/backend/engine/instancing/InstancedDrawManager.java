@@ -29,7 +29,7 @@ public class InstancedDrawManager extends DrawManager<InstancedInstancer<?>> {
         .thenComparing(InstancedDraw::material, MaterialRenderState.COMPARATOR);
 
     private final List<InstancedDraw> allDraws = new ArrayList<>();
-    private boolean needSort = false;
+    private boolean needSort;
 
     private final List<InstancedDraw> draws = new ArrayList<>();
     private final List<InstancedDraw> oitDraws = new ArrayList<>();
@@ -64,14 +64,13 @@ public class InstancedDrawManager extends DrawManager<InstancedInstancer<?>> {
     public void render(LightStorage lightStorage, EnvironmentStorage environmentStorage) {
         super.render(lightStorage, environmentStorage);
 
-        this.instancers.values().removeIf(instancer -> {
+        instancers.values().removeIf(instancer -> {
             if (instancer.instanceCount() == 0) {
                 instancer.delete();
                 return true;
-            } else {
-                instancer.updateBuffer();
-                return false;
             }
+            instancer.updateBuffer();
+            return false;
         });
 
         // Remove the draw calls for any instancers we deleted.

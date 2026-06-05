@@ -14,6 +14,6 @@ public class ObserverFilterSlot extends ValueBoxTransform {
 
     @Override
     public Vec3 getLocalOffset(BlockState state) {
-        return new Vec3(0.5, 15.5 / 16d, 0.5);
+        return new Vec3(0.5, 15.5 / 16.0d, 0.5);
     }
 }

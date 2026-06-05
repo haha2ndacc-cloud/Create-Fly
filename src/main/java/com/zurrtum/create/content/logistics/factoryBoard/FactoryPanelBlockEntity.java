@@ -208,15 +208,15 @@ public class FactoryPanelBlockEntity extends SmartBlockEntity {
             }
             FactoryPanelPosition panelPosition = behaviour.getPanelPosition();
             Vec3 vec = new Vec3(
-                .25 + panelPosition.slot().xOffset * .5,
-                1 / 16f,
-                .25 + panelPosition.slot().yOffset * .5
+                0.25 + panelPosition.slot().xOffset * 0.5,
+                1 / 16.0f,
+                0.25 + panelPosition.slot().yOffset * 0.5
             );
             vec = VecHelper.rotateCentered(vec, 180, Axis.Y);
             vec = VecHelper.rotateCentered(vec, xRot, Axis.X);
             vec = VecHelper.rotateCentered(vec, yRot, Axis.Y);
-            AABB bb = new AABB(vec, vec).inflate(1 / 16f)
-                .inflate(inflateAxes.x * 3 / 16f, inflateAxes.y * 3 / 16f, inflateAxes.z * 3 / 16f);
+            AABB bb = new AABB(vec, vec).inflate(1 / 16.0f)
+                .inflate(inflateAxes.x * 3 / 16.0f, inflateAxes.y * 3 / 16.0f, inflateAxes.z * 3 / 16.0f);
             lastShape = Shapes.or(lastShape, Shapes.create(bb));
         }
 

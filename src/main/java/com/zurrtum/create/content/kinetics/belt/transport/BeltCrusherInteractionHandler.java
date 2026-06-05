@@ -23,7 +23,8 @@ public class BeltCrusherInteractionHandler {
         int step = beltMovementPositive ? 1 : -1;
         firstUpcomingSegment = Mth.clamp(firstUpcomingSegment, 0, beltInventory.belt.beltLength - 1);
 
-        for (int segment = firstUpcomingSegment; beltMovementPositive ? segment <= nextOffset : segment + 1 >= nextOffset; segment += step) {
+        for (int segment = firstUpcomingSegment;
+             beltMovementPositive ? segment <= nextOffset : segment + 1 >= nextOffset; segment += step) {
             BlockPos crusherPos = BeltHelper.getPositionForOffset(beltInventory.belt, segment).above();
             Level world = beltInventory.belt.getLevel();
             BlockState crusherState = world.getBlockState(crusherPos);
@@ -36,9 +37,9 @@ public class BeltCrusherInteractionHandler {
                 continue;
             }
 
-            float crusherEntry = segment + .5f;
-            crusherEntry += .399f * (beltMovementPositive ? -1 : 1);
-            float postCrusherEntry = crusherEntry + .799f * (!beltMovementPositive ? -1 : 1);
+            float crusherEntry = segment + 0.5f;
+            crusherEntry += 0.399f * (beltMovementPositive ? -1 : 1);
+            float postCrusherEntry = crusherEntry + 0.799f * (!beltMovementPositive ? -1 : 1);
 
             boolean hasCrossed = nextOffset > crusherEntry && nextOffset < postCrusherEntry && beltMovementPositive || nextOffset < crusherEntry && nextOffset > postCrusherEntry && !beltMovementPositive;
             if (!hasCrossed) {

@@ -35,7 +35,7 @@ public interface Instancer<I extends Instance> {
      */
     default void createInstances(I[] arr) {
         for (int i = 0; i < arr.length; ++i) {
-            arr[i] = this.createInstance();
+            arr[i] = createInstance();
         }
 
     }

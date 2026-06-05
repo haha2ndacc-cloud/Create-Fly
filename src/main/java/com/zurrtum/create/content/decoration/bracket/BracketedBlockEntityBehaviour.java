@@ -39,7 +39,7 @@ public class BracketedBlockEntityBehaviour extends BlockEntityBehaviour<SmartBlo
     }
 
     public void applyBracket(BlockState state) {
-        this.bracket = state;
+        bracket = state;
         reRender = true;
         blockEntity.notifyUpdate();
         Level world = getLevel();
@@ -62,12 +62,12 @@ public class BracketedBlockEntityBehaviour extends BlockEntityBehaviour<SmartBlo
             return null;
         }
 
-        BlockState removed = this.bracket;
+        BlockState removed = bracket;
         Level world = getLevel();
         if (!world.isClientSide()) {
             world.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, getPos(), Block.getId(bracket));
         }
-        this.bracket = null;
+        bracket = null;
         reRender = true;
         if (inOnReplacedContext) {
             blockEntity.sendData();

@@ -66,8 +66,8 @@ public class BrassTunnelBlock extends BeltTunnelBlock {
                     pos,
                     SoundEvents.ITEM_PICKUP,
                     SoundSource.PLAYERS,
-                    .2f,
-                    1f + level.getRandom().nextFloat()
+                    0.2f,
+                    1.0f + level.getRandom().nextFloat()
                 );
                 return InteractionResult.SUCCESS;
             }

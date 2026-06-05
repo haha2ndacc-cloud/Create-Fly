@@ -197,7 +197,7 @@ public class EjectorTargetHandler {
         }
 
         double totalFlyingTicks = launcher.getTotalFlyingTicks() + 3;
-        int segments = (((int) totalFlyingTicks) / 3) + 1;
+        int segments = (int) totalFlyingTicks / 3 + 1;
         double tickOffset = totalFlyingTicks / segments;
         boolean valid = xDiff == validX && zDiff == validZ;
         int intColor = valid ? 0x9ede73 : 0xff7171;
@@ -205,10 +205,10 @@ public class EjectorTargetHandler {
         ClientLevel world = mc.level;
 
         AABB bb = new AABB(0, 0, 0, 1, 0, 1).move(currentSelection.offset(-validX, -yDiff, -validZ));
-        Outliner.getInstance().chaseAABB("valid", bb).colored(intColor).lineWidth(1 / 16f);
+        Outliner.getInstance().chaseAABB("valid", bb).colored(intColor).lineWidth(1 / 16.0f);
 
         for (int i = 0; i < segments; i++) {
-            double ticks = ((AnimationTickHolder.getRenderTime() / 3) % tickOffset) + i * tickOffset;
+            double ticks = (AnimationTickHolder.getRenderTime() / 3) % tickOffset + i * tickOffset;
             Vec3 vec = launcher.getGlobalPos(ticks, d, pos).add(xDiff - validX, 0, zDiff - validZ);
             world.addParticle(data, vec.x, vec.y, vec.z, 0, 0, 0);
         }
@@ -248,7 +248,7 @@ public class EjectorTargetHandler {
         BlockState state = world.getBlockState(pos);
         VoxelShape shape = state.getShape(world, pos);
         AABB boundingBox = shape.isEmpty() ? new AABB(BlockPos.ZERO) : shape.bounds();
-        Outliner.getInstance().showAABB("target", boundingBox.move(pos)).colored(0xffcb74).lineWidth(1 / 16f);
+        Outliner.getInstance().showAABB("target", boundingBox.move(pos)).colored(0xffcb74).lineWidth(1 / 16.0f);
     }
 
 }

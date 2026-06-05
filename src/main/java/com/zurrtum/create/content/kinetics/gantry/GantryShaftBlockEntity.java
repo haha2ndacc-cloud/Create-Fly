@@ -123,7 +123,7 @@ public class GantryShaftBlockEntity extends KineticBlockEntity {
         if (blockState.getBlock() != AllBlocks.GANTRY_SHAFT) {
             return 0;
         }
-        return Mth.clamp(convertToLinear(-getSpeed()), -.49f, .49f);
+        return Mth.clamp(convertToLinear(-getSpeed()), -0.49f, 0.49f);
     }
 
     @Override

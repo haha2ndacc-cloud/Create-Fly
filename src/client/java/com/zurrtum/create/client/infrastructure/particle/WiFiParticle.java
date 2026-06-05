@@ -24,13 +24,13 @@ public class WiFiParticle extends CustomRotationParticle {
         RandomSource random
     ) {
         super(worldIn, x, y + (vy < 0 ? -1 : 1), z, spriteSet, 0);
-        this.quadSize = 0.5f;
-        this.setSize(this.quadSize, this.quadSize);
-        this.loopLength = 16;
-        this.lifetime = 16;
-        this.setSpriteFromAge(spriteSet);
-        this.stoppedByCollision = true; // disable movement
-        this.downward = vy < 0;
+        quadSize = 0.5f;
+        setSize(quadSize, quadSize);
+        loopLength = 16;
+        lifetime = 16;
+        setSpriteFromAge(spriteSet);
+        stoppedByCollision = true; // disable movement
+        downward = vy < 0;
     }
 
     @Override

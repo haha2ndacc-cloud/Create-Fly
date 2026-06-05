@@ -33,7 +33,7 @@ public class BearingScenes {
         scene.title("windmill_source", "Generating Rotational Force using Windmill Bearings");
         scene.configureBasePlate(1, 1, 5);
         scene.setSceneOffsetY(-1);
-        scene.scaleSceneView(.9f);
+        scene.scaleSceneView(0.9f);
 
         scene.world().showSection(util.select().fromTo(1, 0, 1, 5, 0, 5), Direction.UP);
         scene.world().setBlock(
@@ -124,7 +124,7 @@ public class BearingScenes {
         scene.rotateCameraY(-90);
         scene.idle(20);
 
-        scene.overlay().showControls(util.vector().topOf(windmill).subtract(.5, 0, 0), Pointing.DOWN, 60).rightClick();
+        scene.overlay().showControls(util.vector().topOf(windmill).subtract(0.5, 0, 0), Pointing.DOWN, 60).rightClick();
         scene.idle(7);
         scene.world().rotateBearing(windmill, 360, 200);
         scene.world().rotateSection(structure, 0, 0, 360, 200);
@@ -135,7 +135,7 @@ public class BearingScenes {
         scene.effects().indicateSuccess(gaugePos);
         scene.idle(10);
 
-        scene.overlay().showText(60).pointAt(util.vector().topOf(windmill).subtract(.5, 0, 0)).placeNearTarget()
+        scene.overlay().showText(60).pointAt(util.vector().topOf(windmill).subtract(0.5, 0, 0)).placeNearTarget()
             .attachKeyFrame()
             .text("Activated with Right-Click, the Windmill Bearing will start providing Rotational Force");
         scene.idle(70);
@@ -145,7 +145,7 @@ public class BearingScenes {
             .text("The Amount of Sail Blocks determine its Rotation Speed");
         scene.idle(90);
 
-        Vec3 surface = util.vector().blockSurface(windmill, Direction.WEST).add(0, 0, 2 / 16f);
+        Vec3 surface = util.vector().blockSurface(windmill, Direction.WEST).add(0, 0, 2 / 16.0f);
         scene.overlay().showControls(surface, Pointing.DOWN, 60).rightClick();
         scene.overlay().showFilterSlotInput(surface, Direction.WEST, 50);
         scene.overlay().showText(60).pointAt(surface).attachKeyFrame().placeNearTarget()
@@ -159,14 +159,14 @@ public class BearingScenes {
         scene.effects().rotationDirectionIndicator(windmill.south());
         scene.idle(69);
 
-        scene.overlay().showControls(util.vector().topOf(windmill).subtract(.5, 0, 0), Pointing.DOWN, 60).rightClick();
+        scene.overlay().showControls(util.vector().topOf(windmill).subtract(0.5, 0, 0), Pointing.DOWN, 60).rightClick();
         scene.idle(7);
         scene.world().rotateBearing(windmill, -45, 0);
         scene.world().rotateSection(structure, 0, 0, -45, 0);
         scene.world().setKineticSpeed(largeCog, 0);
         scene.world().setKineticSpeed(kinetics, 0);
         scene.idle(10);
-        scene.overlay().showText(60).pointAt(util.vector().topOf(windmill).subtract(.5, 0, 0)).placeNearTarget()
+        scene.overlay().showText(60).pointAt(util.vector().topOf(windmill).subtract(0.5, 0, 0)).placeNearTarget()
             .text("Right-click the Bearing anytime to stop and edit the Structure again");
         scene.idle(30);
 
@@ -360,7 +360,7 @@ public class BearingScenes {
             .text("When Stopped, the Bearing will place the structure at the nearest grid-aligned Angle");
         scene.idle(110);
 
-        Vec3 blockSurface = util.vector().blockSurface(bearingPos, Direction.NORTH).add(0, 2 / 16f, 0);
+        Vec3 blockSurface = util.vector().blockSurface(bearingPos, Direction.NORTH).add(0, 2 / 16.0f, 0);
         scene.overlay().showFilterSlotInput(blockSurface, Direction.NORTH, 60);
         scene.overlay().showControls(blockSurface, Pointing.DOWN, 60).rightClick();
         scene.idle(10);

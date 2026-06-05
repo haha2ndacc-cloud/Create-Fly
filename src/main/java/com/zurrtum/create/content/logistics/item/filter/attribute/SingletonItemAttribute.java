@@ -40,7 +40,7 @@ public final class SingletonItemAttribute implements ItemAttribute {
         private final SingletonItemAttribute attribute;
 
         public Type(Function<Type, SingletonItemAttribute> singletonFunc) {
-            this.attribute = singletonFunc.apply(this);
+            attribute = singletonFunc.apply(this);
         }
 
         @Override

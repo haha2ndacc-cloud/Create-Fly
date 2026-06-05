@@ -136,9 +136,8 @@ public class LangBuilder {
     public LangBuilder add(Component component) {
         if (component instanceof MutableComponent mutableComponent) {
             return add(mutableComponent);
-        } else {
-            return add(component.copy());
         }
+        return add(component.copy());
     }
 
     /**
@@ -166,7 +165,7 @@ public class LangBuilder {
      * Applies the color to all added components
      */
     public LangBuilder color(Color color) {
-        return this.color(color.getRGB());
+        return color(color.getRGB());
     }
 
     public MutableComponent component() {

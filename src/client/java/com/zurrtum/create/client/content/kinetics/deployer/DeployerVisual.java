@@ -115,27 +115,28 @@ public class DeployerVisual extends ShaftVisual<DeployerBlockEntity> implements 
 
     private float getProgress(float partialTicks) {
         if (blockEntity.state == DeployerBlockEntity.State.EXPANDING) {
-            float f = 1 - (blockEntity.timer - partialTicks * blockEntity.getTimerSpeed()) / 1000f;
+            float f = 1 - (blockEntity.timer - partialTicks * blockEntity.getTimerSpeed()) / 1000.0f;
             if (blockEntity.fistBump) {
                 f *= f;
             }
             return f;
         }
         if (blockEntity.state == DeployerBlockEntity.State.RETRACTING) {
-            return (blockEntity.timer - partialTicks * blockEntity.getTimerSpeed()) / 1000f;
+            return (blockEntity.timer - partialTicks * blockEntity.getTimerSpeed()) / 1000.0f;
         }
         return 0;
     }
 
     private void updatePosition() {
-        float handLength = currentHand == AllPartialModels.DEPLOYER_HAND_POINTING ? 0 : currentHand == AllPartialModels.DEPLOYER_HAND_HOLDING ? 4 / 16f : 3 / 16f;
-        float distance = Math.min(Mth.clamp(progress, 0, 1) * (blockEntity.reach + handLength), 21 / 16f);
+        float handLength = currentHand == AllPartialModels.DEPLOYER_HAND_POINTING ? 0 :
+            currentHand == AllPartialModels.DEPLOYER_HAND_HOLDING ? 4 / 16.0f : 3 / 16.0f;
+        float distance = Math.min(Mth.clamp(progress, 0, 1) * (blockEntity.reach + handLength), 21 / 16.0f);
         Vec3i facingVec = facing.getUnitVec3i();
         BlockPos blockPos = getVisualPosition();
 
-        float x = blockPos.getX() + ((float) facingVec.getX()) * distance;
-        float y = blockPos.getY() + ((float) facingVec.getY()) * distance;
-        float z = blockPos.getZ() + ((float) facingVec.getZ()) * distance;
+        float x = blockPos.getX() + facingVec.getX() * distance;
+        float y = blockPos.getY() + facingVec.getY() * distance;
+        float z = blockPos.getZ() + facingVec.getZ() * distance;
 
         pole.position(x, y, z).setChanged();
         hand.position(x, y, z).setChanged();

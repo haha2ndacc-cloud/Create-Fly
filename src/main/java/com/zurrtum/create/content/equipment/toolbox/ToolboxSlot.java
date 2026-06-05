@@ -10,7 +10,7 @@ public class ToolboxSlot extends Slot {
 
     public ToolboxSlot(ToolboxMenu menu, Container inventory, int index, int x, int y, boolean isVisible) {
         super(inventory, index, x, y);
-        this.toolboxMenu = menu;
+        toolboxMenu = menu;
         this.isVisible = isVisible;
     }
 

@@ -8,7 +8,7 @@ import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.Level;
 
 public class SchematicRenderLevel extends SchematicLevel implements BlockAndTintGetter {
-    private static final CardinalLighting FULL_LIGHTING = new CardinalLighting(1F, 1F, 1F, 1F, 1F, 1F);
+    private static final CardinalLighting FULL_LIGHTING = new CardinalLighting(1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F);
 
     public SchematicRenderLevel(Level original) {
         super(original);

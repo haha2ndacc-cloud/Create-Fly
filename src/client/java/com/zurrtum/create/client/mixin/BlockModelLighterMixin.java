@@ -277,11 +277,11 @@ public class BlockModelLighterMixin {
         boolean isClearC
     ) {
         int lightABlock = lightA & 0xFFFF;
-        int lightASky = (lightA >>> 16) & 0xFFFF;
+        int lightASky = lightA >>> 16 & 0xFFFF;
         int lightBBlock = lightB & 0xFFFF;
-        int lightBSky = (lightB >>> 16) & 0xFFFF;
+        int lightBSky = lightB >>> 16 & 0xFFFF;
         int lightCBlock = lightC & 0xFFFF;
-        int lightCSky = (lightC >>> 16) & 0xFFFF;
+        int lightCSky = lightC >>> 16 & 0xFFFF;
         int minBlock = 0x10000;
         int minSky = 0x10000;
         if (isClearA) {

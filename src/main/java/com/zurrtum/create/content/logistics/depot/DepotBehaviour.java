@@ -100,7 +100,7 @@ public class DepotBehaviour extends BlockEntityBehaviour<SmartBlockEntity> imple
             } else {
                 if (!ItemHelper.canItemStackAmountsStack(heldItem.stack, ts.stack)) {
                     Vec3 vec = VecHelper.getCenterOf(blockEntity.getBlockPos());
-                    Containers.dropItemStack(blockEntity.getLevel(), vec.x, vec.y + .5f, vec.z, ts.stack);
+                    Containers.dropItemStack(blockEntity.getLevel(), vec.x, vec.y + 0.5f, vec.z, ts.stack);
                 } else {
                     heldItem.stack.grow(ts.stack.getCount());
                 }
@@ -125,11 +125,7 @@ public class DepotBehaviour extends BlockEntityBehaviour<SmartBlockEntity> imple
             return;
         }
 
-        BeltProcessingBehaviour processingBehaviour = BlockEntityBehaviour.get(
-            world,
-            pos.above(2),
-            BeltProcessingBehaviour.TYPE
-        );
+        BeltProcessingBehaviour processingBehaviour = get(world, pos.above(2), BeltProcessingBehaviour.TYPE);
         if (processingBehaviour == null) {
             return;
         }
@@ -139,10 +135,8 @@ public class DepotBehaviour extends BlockEntityBehaviour<SmartBlockEntity> imple
 
         ItemStack previousItem = heldItem.stack;
         boolean wasLocked = heldItem.locked;
-        ProcessingResult result = wasLocked ? processingBehaviour.handleHeldItem(
-            heldItem,
-            transportedHandler
-        ) : processingBehaviour.handleReceivedItem(heldItem, transportedHandler);
+        ProcessingResult result = wasLocked ? processingBehaviour.handleHeldItem(heldItem, transportedHandler) :
+            processingBehaviour.handleReceivedItem(heldItem, transportedHandler);
         if (result == ProcessingResult.REMOVE) {
             heldItem = null;
             blockEntity.sendData();
@@ -157,20 +151,20 @@ public class DepotBehaviour extends BlockEntityBehaviour<SmartBlockEntity> imple
 
     protected boolean tick(TransportedItemStack heldItem) {
         heldItem.prevSideOffset = heldItem.sideOffset;
-        if (heldItem.beltPosition == .5f) {
+        if (heldItem.beltPosition == 0.5f) {
             return true;
         }
         heldItem.prevBeltPosition = heldItem.beltPosition;
-        float diff = .5f - heldItem.beltPosition;
-        if (diff > 1 / 512f) {
-            if (diff > 1 / 32f && !BeltHelper.isItemUpright(heldItem.stack)) {
+        float diff = 0.5f - heldItem.beltPosition;
+        if (diff > 1 / 512.0f) {
+            if (diff > 1 / 32.0f && !BeltHelper.isItemUpright(heldItem.stack)) {
                 heldItem.angle += 1;
             }
-            heldItem.beltPosition += diff / 4f;
+            heldItem.beltPosition += diff / 4.0f;
         } else {
-            heldItem.prevBeltPosition = heldItem.beltPosition = .5f;
+            heldItem.prevBeltPosition = heldItem.beltPosition = 0.5f;
         }
-        return diff < 1 / 16f;
+        return diff < 1 / 16.0f;
     }
 
     private boolean handleBeltFunnelOutput() {
@@ -294,7 +288,7 @@ public class DepotBehaviour extends BlockEntityBehaviour<SmartBlockEntity> imple
             maxStackSize.get() == 0 ? 64 : maxStackSize.get(),
             getHeldItemStack().getMaxStackSize()
         );
-        return (fromGetter) - cumulativeStackSize;
+        return fromGetter - cumulativeStackSize;
     }
 
     public ItemStack insert(TransportedItemStack heldItem, boolean simulate) {
@@ -350,7 +344,7 @@ public class DepotBehaviour extends BlockEntityBehaviour<SmartBlockEntity> imple
             return returned;
         }
 
-        if (this.isEmpty()) {
+        if (isEmpty()) {
             if (heldItem.insertedFrom.getAxis().isHorizontal()) {
                 AllSoundEvents.DEPOT_SLIDE.playOnServer(getLevel(), getPos());
             } else {
@@ -373,7 +367,7 @@ public class DepotBehaviour extends BlockEntityBehaviour<SmartBlockEntity> imple
     }
 
     public void removeHeldItem() {
-        this.heldItem = null;
+        heldItem = null;
     }
 
     public void setCenteredHeldItem(TransportedItemStack heldItem) {
@@ -404,7 +398,7 @@ public class DepotBehaviour extends BlockEntityBehaviour<SmartBlockEntity> imple
 
         int size = transportedStack.stack.getCount();
         transportedStack = transportedStack.copy();
-        transportedStack.beltPosition = side.getAxis().isVertical() ? .5f : 0;
+        transportedStack.beltPosition = side.getAxis().isVertical() ? 0.5f : 0;
         transportedStack.insertedFrom = side;
         transportedStack.prevSideOffset = transportedStack.sideOffset;
         transportedStack.prevBeltPosition = transportedStack.beltPosition;
@@ -423,7 +417,7 @@ public class DepotBehaviour extends BlockEntityBehaviour<SmartBlockEntity> imple
         if (heldItem == null) {
             return;
         }
-        if (.5f - heldItem.beltPosition > maxDistanceFromCentre) {
+        if (0.5f - heldItem.beltPosition > maxDistanceFromCentre) {
             return;
         }
 
@@ -450,9 +444,9 @@ public class DepotBehaviour extends BlockEntityBehaviour<SmartBlockEntity> imple
             items = processingOutputBuffer.insert(items);
             if (!items.isEmpty()) {
                 Level world = blockEntity.getLevel();
-                Vec3 vec = VecHelper.getCenterOf(blockEntity.getBlockPos()).add(0, .5f, 0);
+                Vec3 vec = VecHelper.getCenterOf(blockEntity.getBlockPos()).add(0, 0.5f, 0);
                 double x = vec.x;
-                double y = vec.y + .5f;
+                double y = vec.y + 0.5f;
                 double z = vec.z;
                 for (ItemStack stack : items) {
                     Containers.dropItemStack(world, x, y, z, stack);
@@ -488,7 +482,7 @@ public class DepotBehaviour extends BlockEntityBehaviour<SmartBlockEntity> imple
         private final NonNullList<ItemStack> stacks;
 
         public DepotOutputHandler() {
-            this.stacks = NonNullList.withSize(8, ItemStack.EMPTY);
+            stacks = NonNullList.withSize(8, ItemStack.EMPTY);
         }
 
         @Override

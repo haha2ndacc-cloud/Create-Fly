@@ -185,14 +185,14 @@ public class LinkedControllerClientHandler {
             // Released Keys
             if (!releasedKeys.isEmpty()) {
                 player.connection.send(new LinkedControllerInputPacket(releasedKeys, false, lecternPos));
-                AllSoundEvents.CONTROLLER_CLICK.playAt(player.level(), player.blockPosition(), 1f, .5f, true);
+                AllSoundEvents.CONTROLLER_CLICK.playAt(player.level(), player.blockPosition(), 1.0f, 0.5f, true);
             }
 
             // Newly Pressed Keys
             if (!newKeys.isEmpty()) {
                 player.connection.send(new LinkedControllerInputPacket(newKeys, true, lecternPos));
                 packetCooldown = PACKET_RATE;
-                AllSoundEvents.CONTROLLER_CLICK.playAt(player.level(), player.blockPosition(), 1f, .75f, true);
+                AllSoundEvents.CONTROLLER_CLICK.playAt(player.level(), player.blockPosition(), 1.0f, 0.75f, true);
             }
 
             // Keepalive Pressed Keys
@@ -209,7 +209,7 @@ public class LinkedControllerClientHandler {
             VoxelShape shape = world.getBlockState(selectedLocation).getShape(world, selectedLocation);
             if (!shape.isEmpty()) {
                 Outliner.getInstance().showAABB("controller", shape.bounds().move(selectedLocation)).colored(0xB73C2D)
-                    .lineWidth(1 / 16f);
+                    .lineWidth(1 / 16.0f);
             }
 
             if (newKeys.isEmpty()) {
@@ -272,7 +272,7 @@ public class LinkedControllerClientHandler {
         for (Component iTextComponent : list) {
             width = Math.max(width, mc.font.width(iTextComponent));
         }
-        int x = (width1 / 3) - width / 2;
+        int x = width1 / 3 - width / 2;
         int y = height1 - height - 24;
 
         // TODO

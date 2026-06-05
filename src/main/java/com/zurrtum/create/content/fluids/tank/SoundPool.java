@@ -38,7 +38,7 @@ public class SoundPool {
 
     private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
-    private int ticks = 0;
+    private int ticks;
 
     public SoundPool(int maxConcurrent, int mergeTicks, Sound sound) {
         this.maxConcurrent = maxConcurrent;

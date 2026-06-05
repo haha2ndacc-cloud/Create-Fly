@@ -12,7 +12,7 @@ import static org.lwjgl.opengl.GL45.*;
  * The only way to get data in and out is to use GPU copies.
  */
 public class ResizableStorageBuffer extends GlObject {
-    private long capacity = 0;
+    private long capacity;
 
     public ResizableStorageBuffer() {
         handle(glCreateBuffers());

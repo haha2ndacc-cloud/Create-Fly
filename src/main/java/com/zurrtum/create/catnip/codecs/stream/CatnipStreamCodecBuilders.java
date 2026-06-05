@@ -20,10 +20,12 @@ import java.util.Optional;
 public interface CatnipStreamCodecBuilders {
     static <T extends ByteBuf, S extends Enum<S>> StreamCodec<T, S> ofEnum(Class<S> clazz) {
         return new StreamCodec<>() {
+            @Override
             public S decode(T buffer) {
                 return clazz.getEnumConstants()[VarInt.read(buffer)];
             }
 
+            @Override
             public void encode(T buffer, S value) {
                 VarInt.write(buffer, value.ordinal());
             }

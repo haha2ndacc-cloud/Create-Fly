@@ -64,7 +64,8 @@ public class BlazeBurnerRenderer implements BlockEntityRenderer<BlazeBurnerBlock
         float horizontalAngle = AngleHelper.rad(be.headAngle.getValue(tickProgress));
         boolean canDrawFlame = heatLevel.isAtLeast(HeatLevel.FADING);
         boolean drawGoggles = be.goggles;
-        PartialModel drawHat = be.hat ? AllPartialModels.TRAIN_HAT : be.stockKeeper ? AllPartialModels.LOGISTICS_HAT : null;
+        PartialModel drawHat =
+            be.hat ? AllPartialModels.TRAIN_HAT : be.stockKeeper ? AllPartialModels.LOGISTICS_HAT : null;
         int hashCode = be.hashCode();
         state.data = getBlazeBurnerRenderData(
             level,
@@ -94,7 +95,8 @@ public class BlazeBurnerRenderer implements BlockEntityRenderer<BlazeBurnerBlock
             return blockAbove ? AllPartialModels.BLAZE_SUPER_ACTIVE : AllPartialModels.BLAZE_SUPER;
         }
         if (heatLevel.isAtLeast(HeatLevel.FADING)) {
-            return blockAbove && heatLevel.isAtLeast(HeatLevel.KINDLED) ? AllPartialModels.BLAZE_ACTIVE : AllPartialModels.BLAZE_IDLE;
+            return blockAbove && heatLevel.isAtLeast(HeatLevel.KINDLED) ? AllPartialModels.BLAZE_ACTIVE :
+                AllPartialModels.BLAZE_IDLE;
         }
         return AllPartialModels.BLAZE_INERT;
     }
@@ -154,7 +156,9 @@ public class BlazeBurnerRenderer implements BlockEntityRenderer<BlazeBurnerBlock
         data.blaze = CachedBuffers.partial(blazeModel, blockState).cardinalLighting(cardinalLighting)
             .light(LightCoordsUtil.FULL_BRIGHT).extractRenderState();
         if (drawGoggles) {
-            PartialModel gogglesModel = blazeModel == AllPartialModels.BLAZE_INERT ? AllPartialModels.BLAZE_GOGGLES_SMALL : AllPartialModels.BLAZE_GOGGLES;
+            PartialModel gogglesModel =
+                blazeModel == AllPartialModels.BLAZE_INERT ? AllPartialModels.BLAZE_GOGGLES_SMALL :
+                    AllPartialModels.BLAZE_GOGGLES;
             data.goggles = CachedBuffers.partial(gogglesModel, blockState).cardinalLighting(cardinalLighting)
                 .light(LightCoordsUtil.FULL_BRIGHT).extractRenderState();
         }
@@ -180,7 +184,8 @@ public class BlazeBurnerRenderer implements BlockEntityRenderer<BlazeBurnerBlock
             data.rods2Y = Mth.sin((renderTick + Mth.HALF_PI) % Mth.TWO_PI) / 64 + animation - 0.1875f;
         }
         if (canDrawFlame && blockAbove) {
-            SpriteShiftEntry spriteShift = heatLevel == HeatLevel.SEETHING ? AllSpriteShifts.SUPER_BURNER_FLAME : AllSpriteShifts.BURNER_FLAME;
+            SpriteShiftEntry spriteShift =
+                heatLevel == HeatLevel.SEETHING ? AllSpriteShifts.SUPER_BURNER_FLAME : AllSpriteShifts.BURNER_FLAME;
             TextureAtlasSprite target = spriteShift.getTarget();
             float spriteWidth = target.getU1() - target.getU0();
             float spriteHeight = target.getV1() - target.getV0();

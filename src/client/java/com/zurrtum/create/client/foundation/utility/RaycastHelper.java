@@ -42,7 +42,7 @@ public class RaycastHelper {
         float f5 = Mth.sin(n2);
         float f6 = f3 * f4;
         float f7 = f2 * f4;
-        return origin.add((double) f6 * range, (double) f5 * range, (double) f7 * range);
+        return origin.add(f6 * range, f5 * range, f7 * range);
     }
 
     @Nullable
@@ -89,25 +89,25 @@ public class RaycastHelper {
             double d2 = 999.0D;
 
             if (dx > x) {
-                d0 = (double) x + 1.0D;
+                d0 = x + 1.0D;
             } else if (dx < x) {
-                d0 = (double) x + 0.0D;
+                d0 = x + 0.0D;
             } else {
                 flag2 = false;
             }
 
             if (dy > y) {
-                d1 = (double) y + 1.0D;
+                d1 = y + 1.0D;
             } else if (dy < y) {
-                d1 = (double) y + 0.0D;
+                d1 = y + 0.0D;
             } else {
                 flag = false;
             }
 
             if (dz > z) {
-                d2 = (double) z + 1.0D;
+                d2 = z + 1.0D;
             } else if (dz < z) {
-                d2 = (double) z + 0.0D;
+                d2 = z + 0.0D;
             } else {
                 flag1 = false;
             }
@@ -191,7 +191,7 @@ public class RaycastHelper {
         }
 
         public boolean missed() {
-            return this.pos == null;
+            return pos == null;
         }
     }
 }

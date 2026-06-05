@@ -6,7 +6,6 @@ import com.zurrtum.create.api.schematic.requirement.SpecialBlockItemRequirement;
 import com.zurrtum.create.content.decoration.encasing.EncasedBlock;
 import com.zurrtum.create.content.kinetics.base.AbstractEncasedShaftBlock;
 import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
-import com.zurrtum.create.content.kinetics.base.RotatedPillarKineticBlock;
 import com.zurrtum.create.content.schematics.requirement.ItemRequirement;
 import com.zurrtum.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
@@ -47,7 +46,7 @@ public class EncasedShaftBlock extends AbstractEncasedShaftBlock implements IBE<
         if (context.getLevel().isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        context.getLevel().levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, context.getClickedPos(), Block.getId(state));
+        context.getLevel().levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, context.getClickedPos(), getId(state));
         KineticBlockEntity.switchToBlockState(
             context.getLevel(),
             context.getClickedPos(),
@@ -91,10 +90,6 @@ public class EncasedShaftBlock extends AbstractEncasedShaftBlock implements IBE<
         InteractionHand hand,
         BlockHitResult ray
     ) {
-        KineticBlockEntity.switchToBlockState(
-            level,
-            pos,
-            defaultBlockState().setValue(RotatedPillarKineticBlock.AXIS, state.getValue(RotatedPillarKineticBlock.AXIS))
-        );
+        KineticBlockEntity.switchToBlockState(level, pos, defaultBlockState().setValue(AXIS, state.getValue(AXIS)));
     }
 }

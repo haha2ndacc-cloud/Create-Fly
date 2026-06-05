@@ -194,7 +194,7 @@ public class FluidPropagator {
     public static boolean isOpenEnd(BlockGetter reader, BlockPos pos, Direction side) {
         BlockPos connectedPos = pos.relative(side);
         BlockState connectedState = reader.getBlockState(connectedPos);
-        FluidTransportBehaviour pipe = FluidPropagator.getPipe(reader, connectedPos);
+        FluidTransportBehaviour pipe = getPipe(reader, connectedPos);
         if (pipe != null && pipe.canHaveFlowToward(connectedState, side.getOpposite())) {
             return false;
         }
@@ -277,9 +277,8 @@ public class FluidPropagator {
             if (openAt1 && openAt2) {
                 if (axisFound != null) {
                     return null;
-                } else {
-                    axisFound = axis;
                 }
+                axisFound = axis;
             }
         }
         return connections == 2 ? axisFound : null;

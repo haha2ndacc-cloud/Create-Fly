@@ -20,7 +20,7 @@ public class PackagePortMenu extends MenuBase<PackagePortBlockEntity> {
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
         // based on the impl from chests.
-        Slot slot = this.slots.get(index);
+        Slot slot = slots.get(index);
         if (!slot.hasItem()) {
             return ItemStack.EMPTY;
         }
@@ -35,7 +35,7 @@ public class PackagePortMenu extends MenuBase<PackagePortBlockEntity> {
         int size = contentHolder.inventory.getContainerSize();
         if (index < size) {
             // move into player inventory
-            if (!moveItemStackTo(stack, size, this.slots.size(), true)) {
+            if (!moveItemStackTo(stack, size, slots.size(), true)) {
                 return ItemStack.EMPTY;
             }
         } else {
@@ -108,7 +108,7 @@ public class PackagePortMenu extends MenuBase<PackagePortBlockEntity> {
                     break;
                 }
 
-                Slot slot = this.slots.get(i);
+                Slot slot = slots.get(i);
                 ItemStack stackInSlot = slot.getItem();
                 if (!stackInSlot.isEmpty() && ItemStack.isSameItemSameComponents(stack, stackInSlot)) {
                     int totalCount = stackInSlot.getCount() + stack.getCount();
@@ -151,7 +151,7 @@ public class PackagePortMenu extends MenuBase<PackagePortBlockEntity> {
                     break;
                 }
 
-                Slot slot = this.slots.get(i);
+                Slot slot = slots.get(i);
                 ItemStack stackInSlot = slot.getItem();
                 if (stackInSlot.isEmpty() && slot.mayPlace(stack)) {
                     if (stack.getCount() > slot.getMaxStackSize()) {

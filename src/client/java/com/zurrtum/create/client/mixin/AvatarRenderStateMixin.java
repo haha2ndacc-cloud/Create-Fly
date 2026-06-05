@@ -68,16 +68,14 @@ public class AvatarRenderStateMixin implements CardboardRenderState, SkyhookRend
         if (player instanceof AbstractClientPlayer clientPlayer && clientPlayer.getAbilities().flying) {
             flying = true;
             return;
-        } else {
-            flying = false;
         }
+        flying = false;
         Minecraft mc = Minecraft.getInstance();
         if (player == mc.player && mc.options.getCameraType() == CameraType.FIRST_PERSON) {
             skip = true;
             return;
-        } else {
-            skip = false;
         }
+        skip = false;
         onGround = player.onGround();
         lastYaw = player.yRotO;
         yaw = player.getYRot();

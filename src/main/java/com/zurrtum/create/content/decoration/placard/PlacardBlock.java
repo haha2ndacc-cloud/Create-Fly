@@ -157,15 +157,16 @@ public class PlacardBlock extends FaceAttachedHorizontalDirectionalBlock impleme
                         return InteractionResult.FAIL;
                     }
 
-                    boolean test = inBlock.getItem() instanceof FilterItem ? FilterItemStack.of(inBlock)
-                        .test(level, inHand) : ItemStack.isSameItemSameComponents(inHand, inBlock);
+                    boolean test =
+                        inBlock.getItem() instanceof FilterItem ? FilterItemStack.of(inBlock).test(level, inHand) :
+                            ItemStack.isSameItemSameComponents(inHand, inBlock);
                     if (!test) {
                         AllSoundEvents.DENY.play(level, null, pos, 1, 1);
                         return InteractionResult.SUCCESS;
                     }
 
                     AllSoundEvents.CONFIRM.play(level, null, pos, 1, 1);
-                    level.setBlock(pos, state.setValue(POWERED, true), Block.UPDATE_ALL);
+                    level.setBlock(pos, state.setValue(POWERED, true), UPDATE_ALL);
                     updateNeighbours(state, level, pos);
                     pte.poweredTicks = 19;
                     pte.notifyUpdate();

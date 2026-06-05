@@ -29,9 +29,9 @@ public class AllPlacedFeatures {
 
     public static void register(RegistryAccess registryManager) {
         Registry<PlacedFeature> placed = registryManager.lookupOrThrow(Registries.PLACED_FEATURE);
-        Holder<PlacedFeature> zincOverworld = placed.get(AllPlacedFeatures.ZINC_ORE).orElseThrow();
-        Holder<PlacedFeature> striatedOverworld = placed.get(AllPlacedFeatures.STRIATED_ORES_OVERWORLD).orElseThrow();
-        Holder<PlacedFeature> striatedNether = placed.get(AllPlacedFeatures.STRIATED_ORES_NETHER).orElseThrow();
+        Holder<PlacedFeature> zincOverworld = placed.get(ZINC_ORE).orElseThrow();
+        Holder<PlacedFeature> striatedOverworld = placed.get(STRIATED_ORES_OVERWORLD).orElseThrow();
+        Holder<PlacedFeature> striatedNether = placed.get(STRIATED_ORES_NETHER).orElseThrow();
         int index = GenerationStep.Decoration.UNDERGROUND_ORES.ordinal();
         addFeature(registryManager, LevelStem.OVERWORLD, index, List.of(zincOverworld, striatedOverworld));
         addFeature(registryManager, LevelStem.NETHER, index, List.of(striatedNether));

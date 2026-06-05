@@ -74,7 +74,7 @@ public class CopycatPanelBlock extends WaterloggedCopycatBlock {
             return material.setValue(TrapDoorBlock.FACING, pPlayer.getDirection()).setValue(TrapDoorBlock.OPEN, false);
         }
 
-        boolean clickedNearTop = pHit.getLocation().y - .5 > pPos.getY();
+        boolean clickedNearTop = pHit.getLocation().y - 0.5 > pPos.getY();
         return material.setValue(TrapDoorBlock.OPEN, true)
             .setValue(TrapDoorBlock.HALF, clickedNearTop ? Half.TOP : Half.BOTTOM)
             .setValue(TrapDoorBlock.FACING, panelFacing);
@@ -258,12 +258,11 @@ public class CopycatPanelBlock extends WaterloggedCopycatBlock {
 
             if (directions.isEmpty()) {
                 return PlacementOffset.fail();
-            } else {
-                return PlacementOffset.success(
-                    pos.relative(directions.getFirst()),
-                    s -> s.setValue(FACING, state.getValue(FACING))
-                );
             }
+            return PlacementOffset.success(
+                pos.relative(directions.getFirst()),
+                s -> s.setValue(FACING, state.getValue(FACING))
+            );
         }
     }
 

@@ -293,7 +293,8 @@ public interface ContainerMixin extends ContainerExtension {
                             entry.setValue(remaining - insert);
                         }
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxCount = target.getMaxStackSize();
                         int count = target.getCount();
                         if (count != maxCount) {
@@ -359,7 +360,8 @@ public interface ContainerMixin extends ContainerExtension {
                             entry.setValue(remaining - insert);
                         }
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxCount = target.getMaxStackSize();
                         int count = target.getCount();
                         if (count != maxCount) {
@@ -564,9 +566,8 @@ public interface ContainerMixin extends ContainerExtension {
             }
             setChanged();
             return result;
-        } else {
-            return stacks;
         }
+        return stacks;
     }
 
     @Override
@@ -891,7 +892,8 @@ public interface ContainerMixin extends ContainerExtension {
                         }
                         dirty = true;
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxCount = target.getMaxStackSize();
                         int count = target.getCount();
                         if (count != maxCount) {
@@ -927,9 +929,8 @@ public interface ContainerMixin extends ContainerExtension {
             }
             setChanged();
             return result;
-        } else {
-            return stacks;
         }
+        return stacks;
     }
 
     @Override
@@ -993,7 +994,8 @@ public interface ContainerMixin extends ContainerExtension {
                         }
                         dirty = true;
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxCount = target.getMaxStackSize();
                         int count = target.getCount();
                         if (count != maxCount) {
@@ -1029,9 +1031,8 @@ public interface ContainerMixin extends ContainerExtension {
             }
             setChanged();
             return result;
-        } else {
-            return stacks;
         }
+        return stacks;
     }
 
     @Override
@@ -1253,7 +1254,8 @@ public interface ContainerMixin extends ContainerExtension {
                             entry.setValue(remaining - insert);
                         }
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxCount = target.getMaxStackSize();
                         int count = target.getCount();
                         if (count != maxCount) {

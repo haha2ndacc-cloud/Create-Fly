@@ -31,9 +31,9 @@ public class ScrollInstance extends ColoredLitOverlayInstance {
     }
 
     public ScrollInstance position(Vec3i position) {
-        this.x = position.getX();
-        this.y = position.getY();
-        this.z = position.getZ();
+        x = position.getX();
+        y = position.getY();
+        z = position.getZ();
         return this;
     }
 

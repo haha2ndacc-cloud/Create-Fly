@@ -83,7 +83,7 @@ public abstract class EntityMixin {
 
         contraptions.addAll(level.getEntitiesOfClass(
             AbstractContraptionEntity.class,
-            ((Entity) (Object) this).getBoundingBox().inflate(1f)
+            ((Entity) (Object) this).getBoundingBox().inflate(1.0f)
         ));
         return contraptions;
     }
@@ -131,7 +131,7 @@ public abstract class EntityMixin {
     }
 
     // involves client-side view bobbing animation on contraptions
-    @Inject(method = "move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V", at = @At(value = "TAIL"))
+    @Inject(method = "move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V", at = @At("TAIL"))
     private void create$onMove(MoverType moverType, Vec3 delta, CallbackInfo ci) {
         if (!level.isClientSide()) {
             return;
@@ -168,7 +168,7 @@ public abstract class EntityMixin {
         AllSynchedDatas.CONTRAPTION_GROUNDED.set(self, true);
     }
 
-    @Inject(method = "spawnSprintParticle()V", at = @At(value = "TAIL"))
+    @Inject(method = "spawnSprintParticle()V", at = @At("TAIL"))
     private void create$onSpawnSprintParticle(CallbackInfo ci) {
         Entity self = (Entity) (Object) this;
         Vec3 worldPos = position.add(0, -0.2, 0);
@@ -179,9 +179,9 @@ public abstract class EntityMixin {
                     Vec3 speed = self.getDeltaMovement();
                     level.addParticle(
                         new BlockParticleOption(ParticleTypes.BLOCK, state),
-                        self.getX() + ((double) random.nextFloat() - 0.5D) * (double) dimensions.width(),
+                        self.getX() + (random.nextFloat() - 0.5D) * dimensions.width(),
                         self.getY() + 0.1D,
-                        self.getZ() + ((double) random.nextFloat() - 0.5D) * (double) dimensions.height(),
+                        self.getZ() + (random.nextFloat() - 0.5D) * dimensions.height(),
                         speed.x * -4.0D,
                         1.5D,
                         speed.z * -4.0D

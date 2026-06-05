@@ -145,7 +145,7 @@ public class BeltShapes {
 
             result = Shapes.or(
                 result,//move slice i voxels "right" and i-5 voxels "down"
-                slice.move(0, yOffset / 16f, -i / 16f)
+                slice.move(0, yOffset / 16.0f, -i / 16.0f)
             );
         }
 
@@ -260,7 +260,8 @@ public class BeltShapes {
         }
 
         if (part == BeltPart.START) {
-            return slope == BeltSlope.UPWARD ? AllShapes.CASING_11PX.get(Direction.UP) : PARTIAL_CASING.get(facing.getOpposite());
+            return slope == BeltSlope.UPWARD ? AllShapes.CASING_11PX.get(Direction.UP) :
+                PARTIAL_CASING.get(facing.getOpposite());
         }
         if (part == BeltPart.END) {
             return slope == BeltSlope.DOWNWARD ? AllShapes.CASING_11PX.get(Direction.UP) : PARTIAL_CASING.get(facing);

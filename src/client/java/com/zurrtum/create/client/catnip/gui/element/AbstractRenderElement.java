@@ -11,8 +11,8 @@ public abstract class AbstractRenderElement implements RenderElement {
     };
 
     protected int width = 16, height = 16;
-    protected float x = 0, y = 0, z = 0;
-    protected float alpha = 1f;
+    protected float x, y, z;
+    protected float alpha = 1.0f;
 
     @Override
     public <T extends RenderElement> T at(float x, float y) {

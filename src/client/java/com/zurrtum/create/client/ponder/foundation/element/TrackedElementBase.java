@@ -18,7 +18,7 @@ public abstract class TrackedElementBase<T> extends PonderElementBase implements
     private final WeakReference<T> reference;
 
     public TrackedElementBase(T wrapped) {
-        this.reference = new WeakReference<>(wrapped);
+        reference = new WeakReference<>(wrapped);
     }
 
     @Override

@@ -49,7 +49,7 @@ public class SpeedControllerBlockEntity extends KineticBlockEntity {
         targetSpeed = new ServerKineticScrollValueBehaviour(this);
         targetSpeed.between(-max, max);
         targetSpeed.setValue(DEFAULT_SPEED);
-        targetSpeed.withCallback(i -> this.updateTargetRotation());
+        targetSpeed.withCallback(i -> updateTargetRotation());
         behaviours.add(targetSpeed);
     }
 

@@ -20,7 +20,7 @@ public class TooltipArea extends AbstractSimiWidget {
     }
 
     public TooltipArea withTooltip(List<Component> tooltip) {
-        this.toolTip = tooltip;
+        toolTip = tooltip;
         return this;
     }
 

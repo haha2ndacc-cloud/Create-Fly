@@ -167,7 +167,7 @@ public class MeshPool {
         }
 
         public int firstIndex() {
-            return MeshPool.this.indexPool.firstIndex(mesh.indexSequence());
+            return indexPool.firstIndex(mesh.indexSequence());
         }
 
         public long firstIndexByteOffset() {
@@ -201,8 +201,8 @@ public class MeshPool {
 
         @Override
         protected void _delete() {
-            MeshPool.this.dirty = true;
-            MeshPool.this.anyToRemove = true;
+            dirty = true;
+            anyToRemove = true;
         }
     }
 }

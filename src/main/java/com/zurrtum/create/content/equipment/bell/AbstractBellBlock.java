@@ -54,7 +54,7 @@ public abstract class AbstractBellBlock<BE extends AbstractBellBlockEntity> exte
         if (shouldPower == pState.getValue(POWERED)) {
             return;
         }
-        pLevel.setBlock(pPos, pState.setValue(POWERED, shouldPower), Block.UPDATE_ALL);
+        pLevel.setBlock(pPos, pState.setValue(POWERED, shouldPower), UPDATE_ALL);
         if (!shouldPower) {
             return;
         }
@@ -75,7 +75,7 @@ public abstract class AbstractBellBlock<BE extends AbstractBellBlockEntity> exte
         if (direction == null) {
             direction = world.getBlockState(pos).getValue(FACING);
         }
-        if (!this.canRingFrom(state, direction, hit.getLocation().y - pos.getY())) {
+        if (!canRingFrom(state, direction, hit.getLocation().y - pos.getY())) {
             return false;
         }
         return ring(world, pos, direction, player);

@@ -57,7 +57,7 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
 
     // "static" matches selectedTab
     @Unique
-    private static int currentPage = 0;
+    private static int currentPage;
 
     @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/EditBox;setTextColor(I)V", shift = At.Shift.AFTER))
     private void init(CallbackInfo info) {

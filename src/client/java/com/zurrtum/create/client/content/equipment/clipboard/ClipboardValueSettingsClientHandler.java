@@ -128,7 +128,7 @@ public class ClipboardValueSettingsClientHandler {
                 LOGGER
             )) {
                 ValueInput view = TagValueInput.create(logging, level.registryAccess(), tagElement);
-                canPaste = (Stream.of(
+                canPaste = Stream.of(
                         ServerScrollValueBehaviour.TYPE,
                         ServerFilteringBehaviour.TYPE,
                         ServerLinkBehaviour.TYPE
@@ -136,7 +136,7 @@ public class ClipboardValueSettingsClientHandler {
                     .anyMatch(type -> smartBE.getBehaviour(type) instanceof ClipboardCloneable cc && view.child(cc.getClipboardKey())
                         .map(v -> cc.readFromClipboard(v, player, side, true))
                         .orElse(false)) || smartBE instanceof ClipboardCloneable ccbe && view.child(ccbe.getClipboardKey())
-                    .map(v -> ccbe.readFromClipboard(v, player, side, true)).orElse(false));
+                    .map(v -> ccbe.readFromClipboard(v, player, side, true)).orElse(false);
             }
         }
 

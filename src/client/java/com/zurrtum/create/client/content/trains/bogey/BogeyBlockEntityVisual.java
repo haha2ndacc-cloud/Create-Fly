@@ -42,11 +42,11 @@ public class BogeyBlockEntityVisual extends AbstractBlockEntityVisual<AbstractBo
 
         BlockPos visualPos = getVisualPosition();
         poseStack.translate(visualPos.getX(), visualPos.getY(), visualPos.getZ());
-        poseStack.translate(.5f, .5f, .5f);
+        poseStack.translate(0.5f, 0.5f, 0.5f);
         if (blockState.getValue(AbstractBogeyBlock.AXIS) == Direction.Axis.X) {
             poseStack.mulPose(Axis.YP.rotationDegrees(90));
         }
-        poseStack.translate(0, -1.5 - 1 / 128f, 0);
+        poseStack.translate(0, -1.5 - 1 / 128.0f, 0);
 
         bogey = AllBogeyStyleRenders.createVisual(lastStyle, bogeySize, visualizationContext, partialTick, false);
 
@@ -56,7 +56,7 @@ public class BogeyBlockEntityVisual extends AbstractBlockEntityVisual<AbstractBo
     @Override
     public void setSectionCollector(SectionCollector sectionCollector) {
         if (bogey != null) {
-            this.lightSections = sectionCollector;
+            lightSections = sectionCollector;
             lightSections.sections(bogey.createSections(pos));
         } else {
             super.setSectionCollector(sectionCollector);

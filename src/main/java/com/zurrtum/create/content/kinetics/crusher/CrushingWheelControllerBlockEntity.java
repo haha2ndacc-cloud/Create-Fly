@@ -111,7 +111,7 @@ public class CrushingWheelControllerBlockEntity extends SmartBlockEntity impleme
         int offset = facing.getAxisDirection().getStep();
         Vec3 outSpeed = new Vec3(
             (facing.getAxis() == Axis.X ? 0.25D : 0.0D) * offset,
-            offset == 1 ? (facing.getAxis() == Axis.Y ? 0.5D : 0.0D) : 0.0D
+            offset == 1 ? facing.getAxis() == Axis.Y ? 0.5D : 0.0D : 0.0D
             // Increased upwards speed so upwards
             // crushing wheels shoot out the item
             // properly.
@@ -120,16 +120,16 @@ public class CrushingWheelControllerBlockEntity extends SmartBlockEntity impleme
         ); // No downwards speed, so downwards crushing wheels
         // drop the items as before.
         Vec3 outPos = centerPos.add(
-            (facing.getAxis() == Axis.X ? .55f * offset : 0f),
-            (facing.getAxis() == Axis.Y ? .55f * offset : 0f),
-            (facing.getAxis() == Axis.Z ? .55f * offset : 0f)
+            facing.getAxis() == Axis.X ? 0.55f * offset : 0.0f,
+            facing.getAxis() == Axis.Y ? 0.55f * offset : 0.0f,
+            facing.getAxis() == Axis.Z ? 0.55f * offset : 0.0f
         );
 
         if (!hasEntity()) {
 
             float processingSpeed = Mth.clamp(
-                (speed) / (!inventory.appliedRecipe ? (float) Math.log(inventory.getItem(0)
-                    .getCount()) / (float) Math.log(2) : 1), .25f, 20
+                speed / (!inventory.appliedRecipe ?
+                    (float) Math.log(inventory.getItem(0).getCount()) / (float) Math.log(2) : 1), 0.25f, 20
             );
             inventory.remainingTime -= processingSpeed;
             spawnParticles(inventory.getItem(0));
@@ -202,19 +202,19 @@ public class CrushingWheelControllerBlockEntity extends SmartBlockEntity impleme
         }
 
         if (!processingEntity.isAlive() || !processingEntity.getBoundingBox()
-            .intersects(new AABB(worldPosition).inflate(.5f))) {
+            .intersects(new AABB(worldPosition).inflate(0.5f))) {
             clear();
             return;
         }
 
-        double xMotion = ((worldPosition.getX() + .5f) - processingEntity.getX()) / 2f;
-        double zMotion = ((worldPosition.getZ() + .5f) - processingEntity.getZ()) / 2f;
+        double xMotion = ((worldPosition.getX() + 0.5f) - processingEntity.getX()) / 2.0f;
+        double zMotion = ((worldPosition.getZ() + 0.5f) - processingEntity.getZ()) / 2.0f;
         if (processingEntity.isShiftKeyDown()) {
             xMotion = zMotion = 0;
         }
-        double movement = Math.max(-speed / 4f, -.5f) * -offset;
+        double movement = Math.max(-speed / 4.0f, -0.5f) * -offset;
         processingEntity.setDeltaMovement(new Vec3(
-            facing.getAxis() == Axis.X ? movement : xMotion, facing.getAxis() == Axis.Y ? movement : 0f // Do
+            facing.getAxis() == Axis.X ? movement : xMotion, facing.getAxis() == Axis.Y ? movement : 0.0f // Do
             // not
             // move
             // entities
@@ -233,18 +233,18 @@ public class CrushingWheelControllerBlockEntity extends SmartBlockEntity impleme
 
         if (!(processingEntity instanceof ItemEntity itemEntity)) {
             Vec3 entityOutPos = outPos.add(
-                facing.getAxis() == Axis.X ? .5f * offset : 0f,
-                facing.getAxis() == Axis.Y ? .5f * offset : 0f,
-                facing.getAxis() == Axis.Z ? .5f * offset : 0f
+                facing.getAxis() == Axis.X ? 0.5f * offset : 0.0f,
+                facing.getAxis() == Axis.Y ? 0.5f * offset : 0.0f,
+                facing.getAxis() == Axis.Z ? 0.5f * offset : 0.0f
             );
             int crusherDamage = AllConfigs.server().kinetics.crushingDamage.get();
 
             if (processingEntity instanceof LivingEntity livingEntity) {
-                if ((livingEntity.getHealth() - crusherDamage <= 0) // Takes LivingEntity instances
+                if (livingEntity.getHealth() - crusherDamage <= 0 // Takes LivingEntity instances
                     // as exception, so it can
                     // move them before it would
                     // kill them.
-                    && (livingEntity.hurtTime <= 0)) { // This way it can actually output the items
+                    && livingEntity.hurtTime <= 0) { // This way it can actually output the items
                     // to the right spot.
                     processingEntity.setPosRaw(entityOutPos.x, entityOutPos.y, entityOutPos.z);
                 }
@@ -258,15 +258,15 @@ public class CrushingWheelControllerBlockEntity extends SmartBlockEntity impleme
 
         itemEntity.setPickUpDelay(20);
         if (facing.getAxis() == Axis.Y) {
-            if (processingEntity.getY() * -offset < (centerPos.y - .25f) * -offset) {
+            if (processingEntity.getY() * -offset < (centerPos.y - 0.25f) * -offset) {
                 intakeItem(itemEntity);
             }
         } else if (facing.getAxis() == Axis.Z) {
-            if (processingEntity.getZ() * -offset < (centerPos.z - .25f) * -offset) {
+            if (processingEntity.getZ() * -offset < (centerPos.z - 0.25f) * -offset) {
                 intakeItem(itemEntity);
             }
         } else {
-            if (processingEntity.getX() * -offset < (centerPos.x - .25f) * -offset) {
+            if (processingEntity.getX() * -offset < (centerPos.x - 0.25f) * -offset) {
                 intakeItem(itemEntity);
             }
         }

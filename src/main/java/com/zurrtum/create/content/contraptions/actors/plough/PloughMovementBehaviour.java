@@ -97,7 +97,7 @@ public class PloughMovementBehaviour extends BlockBreakingMovementBehaviour {
 
     @Override
     public Vec3 getActiveAreaOffset(MovementContext context) {
-        return Vec3.atLowerCornerOf(context.state.getValue(PloughBlock.FACING).getUnitVec3i()).scale(.45);
+        return Vec3.atLowerCornerOf(context.state.getValue(PloughBlock.FACING).getUnitVec3i()).scale(0.45);
     }
 
     @Override

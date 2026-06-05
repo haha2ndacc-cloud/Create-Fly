@@ -47,7 +47,7 @@ public class SandPaperModel implements ItemModel {
     public SandPaperModel(List<BakedQuad> quads, ModelRenderProperties settings) {
         this.quads = quads;
         this.settings = settings;
-        this.extents = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(this.quads));
+        extents = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(this.quads));
     }
 
     @Override
@@ -79,12 +79,12 @@ public class SandPaperModel implements ItemModel {
             Matrix4f pose = itemLayer.localTransform;
             pose.translate(0.5F, 0.5F, 0.5F);
             if (leftHand) {
-                pose.translate(-.5f, 0, -.25f);
+                pose.translate(-0.5f, 0, -0.25f);
                 pose.rotate(Axis.ZP.rotationDegrees(-40));
                 pose.rotate(Axis.XP.rotationDegrees(-10));
                 pose.rotate(Axis.YP.rotationDegrees(-90));
             } else {
-                pose.translate(.5f, 0, -.25f);
+                pose.translate(0.5f, 0, -0.25f);
                 pose.rotate(Axis.ZP.rotationDegrees(40));
                 pose.rotate(Axis.XP.rotationDegrees(10));
                 pose.rotate(Axis.YP.rotationDegrees(90));
@@ -100,11 +100,12 @@ public class SandPaperModel implements ItemModel {
                 int maxUseTime = stack.getUseDuration(entity);
                 boolean jeiMode = stack.has(AllDataComponents.SAND_PAPER_JEI);
                 float partialTicks = AnimationTickHolder.getPartialTicks();
-                float time = (float) (jeiMode ? (-AnimationTickHolder.getTicks()) % maxUseTime : itemInUseCount) - partialTicks + 1.0F;
+                float time = (jeiMode ? -AnimationTickHolder.getTicks() % maxUseTime :
+                    itemInUseCount) - partialTicks + 1.0F;
                 LayerRenderState[] layers = state.layers;
                 ItemTransform transform = settings.transforms().getTransform(displayContext);
                 boolean applyLeftHandFix = displayContext.leftHand();
-                boolean reverseBobbing = time / (float) maxUseTime < 0.8F;
+                boolean reverseBobbing = time / maxUseTime < 0.8F;
                 boolean isGui = displayContext == ItemDisplayContext.GUI;
                 Quaternionf rotate = isGui ? null : Axis.YP.rotationDegrees(leftHand ? -40 : 40);
                 float bobbing = reverseBobbing ? -Mth.abs(Mth.cos(time / 4.0F * (float) Math.PI) * 0.1F) : 0;
@@ -122,7 +123,7 @@ public class SandPaperModel implements ItemModel {
                         }
                     }
                     if (isGui) {
-                        pose.scaleLocal(.75f);
+                        pose.scaleLocal(0.75f);
                         pose.translateLocal(0.5f, 0.7f, 1.5f);
                     } else {
                         pose.rotateLocal(rotate);

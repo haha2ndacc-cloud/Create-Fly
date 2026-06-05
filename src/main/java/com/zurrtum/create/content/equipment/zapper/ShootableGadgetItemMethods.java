@@ -26,7 +26,8 @@ public class ShootableGadgetItemMethods {
             return;
         }
 
-        boolean gunInOtherHand = predicate.test(player.getItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND));
+        boolean gunInOtherHand = predicate.test(player.getItemInHand(
+            hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND));
         player.getCooldowns().addCooldown(item, gunInOtherHand ? cooldown * 2 / 3 : cooldown);
     }
 
@@ -46,7 +47,8 @@ public class ShootableGadgetItemMethods {
     ) {
         boolean isSwap = item.has(AllDataComponents.SHAPER_SWAP);
         boolean mainHand = hand == InteractionHand.MAIN_HAND;
-        boolean gunInOtherHand = predicate.test(player.getItemInHand(mainHand ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND));
+        boolean gunInOtherHand = predicate.test(player.getItemInHand(
+            mainHand ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND));
 
         // Pass To Offhand
         if (mainHand && isSwap && gunInOtherHand) {
@@ -67,8 +69,8 @@ public class ShootableGadgetItemMethods {
 
     public static Vec3 getGunBarrelVec(Player player, boolean mainHand, Vec3 rightHandForward) {
         Vec3 start = player.position().add(0, player.getEyeHeight(), 0);
-        float yaw = (float) ((player.getYRot()) / -180 * Math.PI);
-        float pitch = (float) ((player.getXRot()) / -180 * Math.PI);
+        float yaw = (float) (player.getYRot() / -180 * Math.PI);
+        float pitch = (float) (player.getXRot() / -180 * Math.PI);
         int flip = mainHand == (player.getMainArm() == HumanoidArm.RIGHT) ? -1 : 1;
         Vec3 barrelPosNoTransform = new Vec3(flip * rightHandForward.x, rightHandForward.y, rightHandForward.z);
         return start.add(barrelPosNoTransform.xRot(pitch).yRot(yaw));

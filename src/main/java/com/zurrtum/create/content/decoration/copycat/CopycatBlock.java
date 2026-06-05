@@ -73,7 +73,7 @@ public abstract class CopycatBlock extends Block implements IBE<CopycatBlockEnti
                 context.getLevel().levelEvent(
                     LevelEvent.PARTICLES_DESTROY_BLOCK,
                     context.getClickedPos(),
-                    Block.getId(ufte.getBlockState())
+                    getId(ufte.getBlockState())
                 );
                 ufte.setMaterial(AllBlocks.COPYCAT_BASE.defaultBlockState());
                 ufte.setConsumedItem(ItemStack.EMPTY);
@@ -118,8 +118,8 @@ public abstract class CopycatBlock extends Block implements IBE<CopycatBlockEnti
                         ufte.getBlockPos(),
                         SoundEvents.ITEM_FRAME_ADD_ITEM,
                         SoundSource.BLOCKS,
-                        .75f,
-                        .95f
+                        0.75f,
+                        0.95f
                     );
                     return InteractionResult.SUCCESS;
                 }
@@ -138,7 +138,7 @@ public abstract class CopycatBlock extends Block implements IBE<CopycatBlockEnti
                     material.getSoundType().getPlaceSound(),
                     SoundSource.BLOCKS,
                     1,
-                    .75f
+                    0.75f
                 );
 
                 if (player.isCreative()) {

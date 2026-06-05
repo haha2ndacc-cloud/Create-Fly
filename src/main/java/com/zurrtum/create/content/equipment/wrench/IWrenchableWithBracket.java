@@ -18,7 +18,7 @@ import java.util.Optional;
 
 public interface IWrenchableWithBracket extends IWrenchable {
 
-    public Optional<ItemStack> removeBracket(BlockGetter world, BlockPos pos, boolean inOnReplacedContext);
+    Optional<ItemStack> removeBracket(BlockGetter world, BlockPos pos, boolean inOnReplacedContext);
 
     @Override
     default InteractionResult onWrenched(BlockState state, UseOnContext context) {
@@ -40,10 +40,8 @@ public interface IWrenchableWithBracket extends IWrenchable {
             }
             if (!world.isClientSide() && blockState.getBlock() == AllBlocks.FLUID_PIPE) {
                 Axis preferred = FluidPropagator.getStraightPipeAxis(blockState);
-                Direction preferredDirection = preferred == null ? Direction.UP : Direction.get(
-                    AxisDirection.POSITIVE,
-                    preferred
-                );
+                Direction preferredDirection =
+                    preferred == null ? Direction.UP : Direction.get(AxisDirection.POSITIVE, preferred);
                 BlockState updated = AllBlocks.FLUID_PIPE.updateBlockState(
                     blockState,
                     preferredDirection,

@@ -9,7 +9,8 @@ public enum UnsignedIntegerRepr implements ValueRepr {
         this.byteSize = byteSize;
     }
 
+    @Override
     public int byteSize() {
-        return this.byteSize;
+        return byteSize;
     }
 }

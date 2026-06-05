@@ -43,7 +43,7 @@ public class RedstoneContactBlock extends WrenchableDirectionalBlock implements 
         BlockState state = defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
         Direction placeDirection = context.getClickedFace().getOpposite();
 
-        if ((context.getPlayer() != null && context.getPlayer().isShiftKeyDown()) || hasValidContact(
+        if (context.getPlayer() != null && context.getPlayer().isShiftKeyDown() || hasValidContact(
             context.getLevel(),
             context.getClickedPos(),
             placeDirection
@@ -71,7 +71,7 @@ public class RedstoneContactBlock extends WrenchableDirectionalBlock implements 
 
         BlockPos pos = context.getClickedPos();
         state = level.getBlockState(pos);
-        Direction facing = state.getValue(RedstoneContactBlock.FACING);
+        Direction facing = state.getValue(FACING);
         if (facing.getAxis() == Axis.Y) {
             return onWrenched;
         }

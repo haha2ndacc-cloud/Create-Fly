@@ -19,7 +19,7 @@ public class ItemStackHandler implements ItemInventory {
     }
 
     public ItemStackHandler(int size) {
-        this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
+        stacks = NonNullList.withSize(size, ItemStack.EMPTY);
     }
 
     @Override

@@ -109,13 +109,13 @@ public class ContraptionHandlerClient {
 
         if (lastOverride > 5) {
             AllSynchedDatas.LAST_OVERRIDE_LIMB_SWING_UPDATE.set(remotePlayer, -1);
-            AllSynchedDatas.OVERRIDE_LIMB_SWING.set(remotePlayer, 0F);
+            AllSynchedDatas.OVERRIDE_LIMB_SWING.set(remotePlayer, 0.0F);
             return;
         }
         AllSynchedDatas.LAST_OVERRIDE_LIMB_SWING_UPDATE.set(remotePlayer, lastOverride + 1);
 
         float limbSwing = AllSynchedDatas.OVERRIDE_LIMB_SWING.get(remotePlayer);
-        remotePlayer.xo = remotePlayer.getX() - (limbSwing / 4);
+        remotePlayer.xo = remotePlayer.getX() - limbSwing / 4;
         remotePlayer.zo = remotePlayer.getZ();
     }
 
@@ -137,8 +137,7 @@ public class ContraptionHandlerClient {
         Vec3 target = rayInputs.getSecond();
         AABB aabb = new AABB(origin, target).inflate(16);
 
-        Collection<WeakReference<AbstractContraptionEntity>> contraptions = ContraptionHandlerClient.loadedContraptions.get(
-            mc.level).values();
+        Collection<WeakReference<AbstractContraptionEntity>> contraptions = loadedContraptions.get(mc.level).values();
 
         double bestDistance = Double.MAX_VALUE;
         BlockHitResult bestResult = null;

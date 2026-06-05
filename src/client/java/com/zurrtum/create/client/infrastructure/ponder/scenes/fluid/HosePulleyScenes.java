@@ -29,7 +29,7 @@ public class HosePulleyScenes {
         scene.title("hose_pulley", "Source Filling and Draining using Hose Pulleys");
         scene.configureBasePlate(0, 0, 3);
         scene.setSceneOffsetY(-1);
-        scene.scaleSceneView(.9f);
+        scene.scaleSceneView(0.9f);
         scene.showBasePlate();
         scene.idle(5);
 
@@ -144,7 +144,7 @@ public class HosePulleyScenes {
         scene.title("hose_pulley_level", "Fill and Drain level of Hose Pulleys");
         scene.configureBasePlate(0, 0, 3);
         scene.setSceneOffsetY(-1.5f);
-        scene.scaleSceneView(.9f);
+        scene.scaleSceneView(0.9f);
         scene.showBasePlate();
 
         List<BlockPos> blocks = new LinkedList<>();
@@ -206,7 +206,7 @@ public class HosePulleyScenes {
         );
         scene.world().propagatePipeChange(util.grid().at(3, 2, 1));
 
-        Vec3 surface = util.vector().topOf(1, 3, 1).subtract(0, 2 / 8f, 0);
+        Vec3 surface = util.vector().topOf(1, 3, 1).subtract(0, 2 / 8.0f, 0);
         AABB bb = new AABB(surface, surface).inflate(1.5, 0, 1.5);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.MEDIUM, bb, bb, 3);
         scene.idle(3);
@@ -225,7 +225,7 @@ public class HosePulleyScenes {
 
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.WHITE, bb, bb.move(0, -2, 0), 60);
         scene.overlay().showText(60).text("The surface level will end up just below where the hose ends")
-            .attachKeyFrame().placeNearTarget().pointAt(util.vector().of(0, 2 - 1 / 8f, 1.5f));
+            .attachKeyFrame().placeNearTarget().pointAt(util.vector().of(0, 2 - 1 / 8.0f, 1.5f));
         scene.idle(30);
 
         scene.idle(30);
@@ -246,9 +246,9 @@ public class HosePulleyScenes {
             .pointAt(util.vector().centerOf(hosePos.below(3)));
         scene.idle(10);
 
-        scene.overlay().chaseBoundingBoxOutline(PonderPalette.MEDIUM, bb, bb.move(0, -3 + 2 / 8f, 0), 3);
+        scene.overlay().chaseBoundingBoxOutline(PonderPalette.MEDIUM, bb, bb.move(0, -3 + 2 / 8.0f, 0), 3);
         scene.idle(3);
-        scene.overlay().chaseBoundingBoxOutline(PonderPalette.MEDIUM, bb, bb.expandTowards(0, -3 + 2 / 8f, 0), 120);
+        scene.overlay().chaseBoundingBoxOutline(PonderPalette.MEDIUM, bb, bb.expandTowards(0, -3 + 2 / 8.0f, 0), 120);
         scene.idle(20);
 
         scene.world().setBlock(util.grid().at(1, 3, 1), Blocks.WATER.defaultBlockState(), false);
@@ -264,7 +264,7 @@ public class HosePulleyScenes {
 
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.WHITE, bb, bb, 100);
         scene.overlay().showText(100).text("The filled pool will not grow beyond the layer above the hose end")
-            .attachKeyFrame().placeNearTarget().pointAt(util.vector().of(0, 4 - 1 / 8f, 1.5f));
+            .attachKeyFrame().placeNearTarget().pointAt(util.vector().of(0, 4 - 1 / 8.0f, 1.5f));
         scene.idle(80);
     }
 
@@ -272,8 +272,8 @@ public class HosePulleyScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("hose_pulley_infinite", "Passively Filling and Draining large bodies of Fluid");
         scene.configureBasePlate(0, 0, 5);
-        scene.setSceneOffsetY(-.5f);
-        scene.scaleSceneView(.9f);
+        scene.setSceneOffsetY(-0.5f);
+        scene.scaleSceneView(0.9f);
         scene.showBasePlate();
         scene.idle(5);
 

@@ -70,14 +70,17 @@ public class CreateSceneBuilder extends PonderSceneBuilder {
         special = new SpecialInstructions();
     }
 
+    @Override
     public EffectInstructions effects() {
         return effects;
     }
 
+    @Override
     public WorldInstructions world() {
         return world;
     }
 
+    @Override
     public SpecialInstructions special() {
         return special;
     }
@@ -216,7 +219,7 @@ public class CreateSceneBuilder extends PonderSceneBuilder {
                     return;
                 }
                 transporter.handleCenteredProcessingOnAllItems(
-                    .52f,
+                    0.52f,
                     tis -> TransportedItemStackHandlerBehaviour.TransportedResult.removeItem()
                 );
             });
@@ -422,7 +425,7 @@ public class CreateSceneBuilder extends PonderSceneBuilder {
                 }
                 float rpm = ((KineticBlockEntity) blockEntity).getSpeed();
                 entity.yRotO = entity.getYRot();
-                entity.setYRot(entity.yRotO + (rpm * .3f));
+                entity.setYRot(entity.yRotO + rpm * 0.3f);
             }
         }
     }

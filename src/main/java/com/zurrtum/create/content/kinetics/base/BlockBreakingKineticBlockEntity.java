@@ -119,7 +119,7 @@ public abstract class BlockBreakingKineticBlockEntity extends KineticBlockEntity
 
         float breakSpeed = getBreakSpeed();
         destroyProgress += Mth.clamp((int) (breakSpeed / blockHardness), 1, 10 - destroyProgress);
-        level.playSound(null, worldPosition, stateToBreak.getSoundType().getHitSound(), SoundSource.BLOCKS, .25f, 1);
+        level.playSound(null, worldPosition, stateToBreak.getSoundType().getHitSound(), SoundSource.BLOCKS, 0.25f, 1);
 
         if (destroyProgress >= 10) {
             onBlockBroken(stateToBreak);
@@ -130,7 +130,7 @@ public abstract class BlockBreakingKineticBlockEntity extends KineticBlockEntity
         }
 
         ticksUntilNextProgress = (int) (blockHardness / breakSpeed);
-        level.destroyBlockProgress(breakerId, breakingPos, (int) destroyProgress);
+        level.destroyBlockProgress(breakerId, breakingPos, destroyProgress);
     }
 
     public boolean canBreak(BlockState stateToBreak, float blockHardness) {
@@ -144,9 +144,9 @@ public abstract class BlockBreakingKineticBlockEntity extends KineticBlockEntity
     }
 
     public void onBlockBroken(BlockState stateToBreak) {
-        Vec3 vec = VecHelper.offsetRandomly(VecHelper.getCenterOf(breakingPos), level.getRandom(), .125f);
+        Vec3 vec = VecHelper.offsetRandomly(VecHelper.getCenterOf(breakingPos), level.getRandom(), 0.125f);
         BlockHelper.destroyBlock(
-            level, breakingPos, 1f, (stack) -> {
+            level, breakingPos, 1.0f, stack -> {
                 if (stack.isEmpty()) {
                     return;
                 }
@@ -163,7 +163,7 @@ public abstract class BlockBreakingKineticBlockEntity extends KineticBlockEntity
     }
 
     protected float getBreakSpeed() {
-        return Math.abs(getSpeed() / 100f);
+        return Math.abs(getSpeed() / 100.0f);
     }
 
 }

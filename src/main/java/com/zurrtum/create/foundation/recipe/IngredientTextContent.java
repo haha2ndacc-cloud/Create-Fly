@@ -130,9 +130,8 @@ public class IngredientTextContent implements ComponentContents {
             Optional<Component> otherName = other.getName();
             if (name.isPresent() && otherName.isPresent()) {
                 return name.get().equals(otherName.get());
-            } else {
-                return true;
             }
+            return true;
         }
         return false;
     }

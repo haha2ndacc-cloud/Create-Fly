@@ -303,8 +303,8 @@ public class IndirectCullingGroup<I extends Instance> {
                 drawProgram,
                 GL_TRIANGLES,
                 GL_UNSIGNED_INT,
-                this.start,
-                this.end,
+                start,
+                end,
                 IndirectBuffers.DRAW_COMMAND_STRIDE
             );
         }

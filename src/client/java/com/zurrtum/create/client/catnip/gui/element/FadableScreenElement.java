@@ -7,7 +7,7 @@ public interface FadableScreenElement extends ScreenElement {
 
     @Override
     default void render(GuiGraphicsExtractor graphics, int x, int y) {
-        render(graphics, x, y, 1f);
+        render(graphics, x, y, 1.0f);
     }
 
     void render(GuiGraphicsExtractor graphics, int x, int y, float alpha);

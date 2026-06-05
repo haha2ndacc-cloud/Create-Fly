@@ -147,7 +147,7 @@ public class ChainDriveScenes {
         scene.overlay().chaseBoundingBoxOutline(
             PonderPalette.FAST,
             eastDrive.west(),
-            bb.move(-2, 0, 0).expandTowards(15 / 16f, 0, 0),
+            bb.move(-2, 0, 0).expandTowards(15 / 16.0f, 0, 0),
             160
         );
         scene.idle(20);
@@ -172,7 +172,7 @@ public class ChainDriveScenes {
         scene.world().toggleRedstonePower(util.select().fromTo(leverPos, leverPos.south(2)));
         Selection newDriveSelect = util.select().fromTo(eastDrive.south(2), eastDrive.south(2).west(2));
         ElementLink<WorldSectionElement> drives = scene.world().showIndependentSection(newDriveSelect, Direction.NORTH);
-        scene.world().modifyKineticSpeed(util.select().fromTo(westGauge.below(), middleGauge), f -> .5f * f);
+        scene.world().modifyKineticSpeed(util.select().fromTo(westGauge.below(), middleGauge), f -> 0.5f * f);
         scene.world().setKineticSpeed(newDriveSelect, -32);
         scene.world().moveSection(drives, util.vector().of(0, 0, -2), 0);
         scene.world().moveSection(lever, util.vector().of(-2, 0, 0), 10);
@@ -183,13 +183,13 @@ public class ChainDriveScenes {
         scene.world().toggleRedstonePower(util.select().position(1, 1, 4));
         BlockPos analogPos = leverPos.west(2);
         scene.effects().indicateRedstone(analogPos);
-        scene.world().modifyKineticSpeed(util.select().position(westGauge), f -> .5f * f);
+        scene.world().modifyKineticSpeed(util.select().position(westGauge), f -> 0.5f * f);
 
         scene.idle(10);
 
         bb = new AABB(eastDrive);
         scene.overlay()
-            .chaseBoundingBoxOutline(PonderPalette.MEDIUM, eastDrive, bb.expandTowards(-15 / 16f, 0, 0), 160);
+            .chaseBoundingBoxOutline(PonderPalette.MEDIUM, eastDrive, bb.expandTowards(-15 / 16.0f, 0, 0), 160);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.SLOW, eastDrive.west(), bb.move(-2, 0, 0), 160);
         scene.idle(20);
 
@@ -216,7 +216,7 @@ public class ChainDriveScenes {
 
         scene.world().toggleRedstonePower(util.select().fromTo(leverPos, leverPos.south(2)));
         scene.world().toggleRedstonePower(util.select().position(1, 1, 4));
-        scene.world().modifyKineticSpeed(util.select().position(westGauge), f -> 2f * f);
+        scene.world().modifyKineticSpeed(util.select().position(westGauge), f -> 2.0f * f);
         scene.world().hideIndependentSection(lever, Direction.UP);
         scene.idle(15);
 
@@ -230,7 +230,7 @@ public class ChainDriveScenes {
         );
         scene.world().modifyBlock(analogPos.south(), s -> s.setValue(RedStoneWireBlock.POWER, 8), false);
         scene.world().toggleRedstonePower(util.select().position(1, 1, 4));
-        scene.world().modifyKineticSpeed(util.select().position(westGauge), f -> .75f * f);
+        scene.world().modifyKineticSpeed(util.select().position(westGauge), f -> 0.75f * f);
         scene.effects().indicateRedstone(analogPos);
 
         scene.idle(20);

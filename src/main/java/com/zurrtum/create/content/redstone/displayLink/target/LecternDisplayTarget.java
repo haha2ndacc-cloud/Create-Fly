@@ -75,6 +75,7 @@ public class LecternDisplayTarget extends DisplayTarget {
         return new DisplayTargetStats(50, 256, this);
     }
 
+    @Override
     public Component getLineOptionText(int line) {
         return Component.translatable("create.display_target.page", line + 1);
     }

@@ -47,8 +47,8 @@ public class MovementContext {
 
     public MovementContext(Level world, StructureBlockInfo info, Contraption contraption) {
         this.world = world;
-        this.state = info.state();
-        this.blockEntityData = info.nbt();
+        state = info.state();
+        blockEntityData = info.nbt();
         this.contraption = contraption;
         localPos = info.pos();
 
@@ -61,8 +61,8 @@ public class MovementContext {
         data = new CompoundTag();
         stall = false;
         filter = null;
-        this.itemStorage = Suppliers.memoize(() -> contraption.getStorage().getAllItemStorages().get(this.localPos));
-        this.fluidStorage = Suppliers.memoize(() -> contraption.getStorage().getFluids().storages.get(this.localPos));
+        itemStorage = Suppliers.memoize(() -> contraption.getStorage().getAllItemStorages().get(localPos));
+        fluidStorage = Suppliers.memoize(() -> contraption.getStorage().getFluids().storages.get(localPos));
     }
 
     public float getAnimationSpeed() {
@@ -74,10 +74,10 @@ public class MovementContext {
         if (world.isClientSide() && contraption.stalled) {
             return 700;
         }
-        if (Math.abs(length) < 1 / 512f) {
+        if (Math.abs(length) < 1 / 512.0f) {
             return 0;
         }
-        return (((int) (length * modifier + 100 * Math.signum(length))) / 100) * 100;
+        return (int) (length * modifier + 100 * Math.signum(length)) / 100 * 100;
     }
 
     public static MovementContext read(Level world, StructureBlockInfo info, ValueInput view, Contraption contraption) {
@@ -115,11 +115,11 @@ public class MovementContext {
 
     @Nullable
     public MountedItemStorage getItemStorage() {
-        return this.itemStorage.get();
+        return itemStorage.get();
     }
 
     @Nullable
     public MountedFluidStorage getFluidStorage() {
-        return this.fluidStorage.get();
+        return fluidStorage.get();
     }
 }

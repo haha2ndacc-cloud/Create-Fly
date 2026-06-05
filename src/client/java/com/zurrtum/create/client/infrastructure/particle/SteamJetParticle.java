@@ -29,18 +29,18 @@ public class SteamJetParticle extends SimpleAnimatedParticle {
         SpriteSet sprite,
         RandomSource random
     ) {
-        super(world, x, y, z, sprite, random.nextFloat() * .5f);
+        super(world, x, y, z, sprite, random.nextFloat() * 0.5f);
         xd = 0;
         yd = 0;
         zd = 0;
         gravity = 0;
-        quadSize = .375f;
+        quadSize = 0.375f;
         setLifetime(21);
         setPos(x, y, z);
         roll = oRoll = random.nextFloat() * Mth.PI;
         yaw = (float) Mth.atan2(dx, dz) - Mth.PI;
         pitch = (float) Mth.atan2(dy, Math.sqrt(dx * dx + dz * dz)) - Mth.PI / 2;
-        this.setSpriteFromAge(sprite);
+        setSpriteFromAge(sprite);
     }
 
     @Override
@@ -94,17 +94,18 @@ public class SteamJetParticle extends SimpleAnimatedParticle {
 
     @Override
     public int getLightCoords(float partialTick) {
-        BlockPos blockpos = BlockPos.containing(this.x, this.y, this.z);
-        return this.level.isLoaded(blockpos) ? LightCoordsUtil.getLightCoords(level, blockpos) : 0;
+        BlockPos blockpos = BlockPos.containing(x, y, z);
+        return level.isLoaded(blockpos) ? LightCoordsUtil.getLightCoords(level, blockpos) : 0;
     }
 
     public static class Factory implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet spriteSet;
 
         public Factory(SpriteSet animatedSprite) {
-            this.spriteSet = animatedSprite;
+            spriteSet = animatedSprite;
         }
 
+        @Override
         public Particle createParticle(
             SimpleParticleType type,
             ClientLevel worldIn,
@@ -116,7 +117,7 @@ public class SteamJetParticle extends SimpleAnimatedParticle {
             double zSpeed,
             RandomSource random
         ) {
-            return new SteamJetParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, this.spriteSet, random);
+            return new SteamJetParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, spriteSet, random);
         }
     }
 }

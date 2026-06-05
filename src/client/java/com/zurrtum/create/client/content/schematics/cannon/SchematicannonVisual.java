@@ -67,9 +67,9 @@ public class SchematicannonVisual extends AbstractBlockEntityVisual<Schematicann
         }
 
         if (pitch != lastPitch || recoil != lastRecoil) {
-            pipe.setIdentityTransform().translate(getVisualPosition()).translate(.5f, 15 / 16f, .5f)
+            pipe.setIdentityTransform().translate(getVisualPosition()).translate(0.5f, 15 / 16.0f, 0.5f)
                 .rotate((float) ((yaw + 90) / 180 * Math.PI), Direction.UP)
-                .rotate((float) (pitch / 180 * Math.PI), Direction.SOUTH).translateBack(.5f, 15 / 16f, .5f)
+                .rotate((float) (pitch / 180 * Math.PI), Direction.SOUTH).translateBack(0.5f, 15 / 16.0f, 0.5f)
                 .translate(0, -recoil / 100, 0).setChanged();
         }
 

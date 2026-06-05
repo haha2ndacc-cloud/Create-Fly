@@ -32,7 +32,7 @@ import java.util.List;
 import static com.zurrtum.create.client.foundation.gui.AllGuiTextures.*;
 
 public class ToolboxHandlerClient {
-    static int COOLDOWN = 0;
+    static int COOLDOWN;
 
     public static void clientTick() {
         if (COOLDOWN > 0 && !AllKeys.TOOLBELT.consumeClick() && (AllKeys.TOOLBELT.key != AllKeys.TOOL_MENU.key || !AllKeys.TOOL_MENU.consumeClick())) {
@@ -192,10 +192,9 @@ public class ToolboxHandlerClient {
             double max = ToolboxHandler.getMaxRange(player);
             boolean selected = slot == selectedSlot;
             int offset = selected ? 1 : 0;
-            AllGuiTextures texture = ToolboxHandler.distance(
-                player.position(),
-                pos
-            ) < max * max ? selected ? TOOLBELT_SELECTED_ON : TOOLBELT_HOTBAR_ON : selected ? TOOLBELT_SELECTED_OFF : TOOLBELT_HOTBAR_OFF;
+            AllGuiTextures texture = ToolboxHandler.distance(player.position(), pos) < max * max ?
+                selected ? TOOLBELT_SELECTED_ON : TOOLBELT_HOTBAR_ON :
+                selected ? TOOLBELT_SELECTED_OFF : TOOLBELT_HOTBAR_OFF;
             texture.render(guiGraphics, x + 20 * slot - offset, y + offset);
         }
     }

@@ -47,8 +47,10 @@ public class BeltFunnelBlock extends AbstractHorizontalFunnelBlock implements Sp
     public static final EnumProperty<Shape> SHAPE = EnumProperty.create("shape", Shape.class);
 
     public enum Shape implements StringRepresentable {
-        RETRACTED(AllShapes.BELT_FUNNEL_RETRACTED), EXTENDED(AllShapes.BELT_FUNNEL_EXTENDED), PUSHING(AllShapes.BELT_FUNNEL_PERPENDICULAR), PULLING(
-            AllShapes.BELT_FUNNEL_PERPENDICULAR);
+        RETRACTED(AllShapes.BELT_FUNNEL_RETRACTED),
+        EXTENDED(AllShapes.BELT_FUNNEL_EXTENDED),
+        PUSHING(AllShapes.BELT_FUNNEL_PERPENDICULAR),
+        PULLING(AllShapes.BELT_FUNNEL_PERPENDICULAR);
 
         final VoxelShaper shaper;
 
@@ -131,8 +133,8 @@ public class BeltFunnelBlock extends AbstractHorizontalFunnelBlock implements Sp
         BlockState stateForPlacement = super.getStateForPlacement(ctx);
         BlockPos pos = ctx.getClickedPos();
         Level world = ctx.getLevel();
-        Direction facing = ctx.getClickedFace().getAxis()
-            .isHorizontal() ? ctx.getClickedFace() : ctx.getHorizontalDirection();
+        Direction facing =
+            ctx.getClickedFace().getAxis().isHorizontal() ? ctx.getClickedFace() : ctx.getHorizontalDirection();
 
         BlockState state = stateForPlacement.setValue(HORIZONTAL_FACING, facing);
         boolean sneaking = ctx.getPlayer() != null && ctx.getPlayer().isShiftKeyDown();
@@ -150,6 +152,7 @@ public class BeltFunnelBlock extends AbstractHorizontalFunnelBlock implements Sp
         return movementFacing.getAxis() != facing.getAxis() ? perpendicularState : Shape.RETRACTED;
     }
 
+    @Override
     public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData) {
         return new ItemStack(parent);
     }
@@ -200,7 +203,7 @@ public class BeltFunnelBlock extends AbstractHorizontalFunnelBlock implements Sp
 
     public static boolean isOnValidBelt(BlockState state, LevelReader world, BlockPos pos) {
         BlockState stateBelow = world.getBlockState(pos.below());
-        if ((stateBelow.getBlock() instanceof BeltBlock)) {
+        if (stateBelow.getBlock() instanceof BeltBlock) {
             return BeltBlock.canTransportObjects(stateBelow);
         }
         DirectBeltInputBehaviour directBeltInputBehaviour = BlockEntityBehaviour.get(

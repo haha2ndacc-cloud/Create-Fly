@@ -26,8 +26,8 @@ public class RotateSceneInstruction extends PonderInstruction {
         SceneTransform transform = scene.getTransform();
         float targetX = relative ? transform.xRotation.getChaseTarget() + xRot : xRot;
         float targetY = relative ? transform.yRotation.getChaseTarget() + yRot : yRot;
-        transform.xRotation.chase(targetX, .1f, Chaser.EXP);
-        transform.yRotation.chase(targetY, .1f, Chaser.EXP);
+        transform.xRotation.chase(targetX, 0.1f, Chaser.EXP);
+        transform.yRotation.chase(targetY, 0.1f, Chaser.EXP);
     }
 
 }

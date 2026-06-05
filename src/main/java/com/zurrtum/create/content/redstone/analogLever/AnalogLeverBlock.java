@@ -40,12 +40,12 @@ public class AnalogLeverBlock extends FaceAttachedHorizontalDirectionalBlock imp
 
     public AnalogLeverBlock(Properties p_i48402_1_) {
         super(p_i48402_1_);
-        this.shapeFunction = this.createShapeFunction();
+        shapeFunction = createShapeFunction();
     }
 
     private Function<BlockState, VoxelShape> createShapeFunction() {
-        Map<AttachFace, Map<Direction, VoxelShape>> map = Shapes.rotateAttachFace(Block.boxZ(6.0, 8.0, 10.0, 16.0));
-        return this.getShapeForEachState(state -> map.get(state.getValue(FACE)).get(state.getValue(FACING)));
+        Map<AttachFace, Map<Direction, VoxelShape>> map = Shapes.rotateAttachFace(boxZ(6.0, 8.0, 10.0, 16.0));
+        return getShapeForEachState(state -> map.get(state.getValue(FACE)).get(state.getValue(FACING)));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class AnalogLeverBlock extends FaceAttachedHorizontalDirectionalBlock imp
             worldIn, pos, be -> {
                 boolean sneak = player.isShiftKeyDown();
                 be.changeState(sneak);
-                float f = .25f + ((be.state + 5) / 15f) * .5f;
+                float f = 0.25f + (be.state + 5) / 15.0f * 0.5f;
                 worldIn.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.2F, f);
                 return InteractionResult.SUCCESS;
             }
@@ -130,9 +130,9 @@ public class AnalogLeverBlock extends FaceAttachedHorizontalDirectionalBlock imp
     private static void addParticles(BlockState state, LevelAccessor worldIn, BlockPos pos, float alpha) {
         Direction direction = state.getValue(FACING).getOpposite();
         Direction direction1 = getConnectedDirection(state).getOpposite();
-        double d0 = (double) pos.getX() + 0.5D + 0.1D * (double) direction.getStepX() + 0.2D * (double) direction1.getStepX();
-        double d1 = (double) pos.getY() + 0.5D + 0.1D * (double) direction.getStepY() + 0.2D * (double) direction1.getStepY();
-        double d2 = (double) pos.getZ() + 0.5D + 0.1D * (double) direction.getStepZ() + 0.2D * (double) direction1.getStepZ();
+        double d0 = pos.getX() + 0.5D + 0.1D * direction.getStepX() + 0.2D * direction1.getStepX();
+        double d1 = pos.getY() + 0.5D + 0.1D * direction.getStepY() + 0.2D * direction1.getStepY();
+        double d2 = pos.getZ() + 0.5D + 0.1D * direction.getStepZ() + 0.2D * direction1.getStepZ();
         worldIn.addParticle(new DustParticleOptions(0xFF0000, alpha), d0, d1, d2, 0.0D, 0.0D, 0.0D);
     }
 

@@ -85,7 +85,7 @@ public class DeskBellBlock extends WrenchableDirectionalBlock implements ProperW
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        level.setBlock(pos, state.setValue(POWERED, true), Block.UPDATE_ALL);
+        level.setBlock(pos, state.setValue(POWERED, true), UPDATE_ALL);
         updateNeighbours(state, level, pos);
         withBlockEntityDo(level, pos, DeskBellBlockEntity::ding);
         return InteractionResult.SUCCESS;
@@ -122,7 +122,7 @@ public class DeskBellBlock extends WrenchableDirectionalBlock implements ProperW
     }
 
     public void unPress(BlockState pState, Level pLevel, BlockPos pPos) {
-        pLevel.setBlock(pPos, pState.setValue(POWERED, false), Block.UPDATE_ALL);
+        pLevel.setBlock(pPos, pState.setValue(POWERED, false), UPDATE_ALL);
         updateNeighbours(pState, pLevel, pPos);
     }
 

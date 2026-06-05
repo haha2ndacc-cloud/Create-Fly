@@ -37,7 +37,7 @@ public class DisplayBoardTarget extends DisplayTarget {
         for (int i = 0; i + line < lines.size(); i++) {
 
             if (i == 0) {
-                reserve(i + line, controller, context);
+                reserve(line, controller, context);
             }
             if (i > 0 && isReserved(i + line, controller, context)) {
                 break;
@@ -94,6 +94,7 @@ public class DisplayBoardTarget extends DisplayTarget {
         return be.getController();
     }
 
+    @Override
     public AABB getMultiblockBounds(LevelAccessor level, BlockPos pos) {
         AABB baseShape = super.getMultiblockBounds(level, pos);
         BlockEntity be = level.getBlockEntity(pos);

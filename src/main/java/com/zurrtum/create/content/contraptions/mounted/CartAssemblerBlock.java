@@ -141,8 +141,8 @@ public class CartAssemblerBlock extends BaseRailBlock implements IBE<CartAssembl
             case ACTIVATOR_RAIL -> powered ? CartAssemblerAction.DISASSEMBLE : CartAssemblerAction.PASS;
             case CONTROLLER_RAIL ->
                 powered ? CartAssemblerAction.ASSEMBLE_ACCELERATE_DIRECTIONAL : CartAssemblerAction.DISASSEMBLE_BRAKE;
-            case DETECTOR_RAIL -> cart.getPassengers()
-                .isEmpty() ? CartAssemblerAction.ASSEMBLE_ACCELERATE : CartAssemblerAction.DISASSEMBLE;
+            case DETECTOR_RAIL -> cart.getPassengers().isEmpty() ? CartAssemblerAction.ASSEMBLE_ACCELERATE :
+                CartAssemblerAction.DISASSEMBLE;
             case POWERED_RAIL ->
                 powered ? CartAssemblerAction.ASSEMBLE_ACCELERATE : CartAssemblerAction.DISASSEMBLE_BRAKE;
             case REGULAR -> powered ? CartAssemblerAction.ASSEMBLE : CartAssemblerAction.DISASSEMBLE;
@@ -204,7 +204,7 @@ public class CartAssemblerBlock extends BaseRailBlock implements IBE<CartAssembl
         }
         boolean previouslyPowered = state.getValue(POWERED);
         if (previouslyPowered != worldIn.hasNeighborSignal(pos)) {
-            worldIn.setBlock(pos, state.cycle(POWERED), Block.UPDATE_CLIENTS);
+            worldIn.setBlock(pos, state.cycle(POWERED), UPDATE_CLIENTS);
         }
         super.neighborChanged(state, worldIn, pos, blockIn, WireOrientation, isMoving);
     }
@@ -277,7 +277,7 @@ public class CartAssemblerBlock extends BaseRailBlock implements IBE<CartAssembl
     ) {
         return super.getDrops(
             state,
-            (new LootParams.Builder(world)).withParameter(LootContextParams.ORIGIN, Vec3.atLowerCornerOf(pos))
+            new LootParams.Builder(world).withParameter(LootContextParams.ORIGIN, Vec3.atLowerCornerOf(pos))
                 .withParameter(LootContextParams.TOOL, p_220077_5_)
                 .withOptionalParameter(LootContextParams.THIS_ENTITY, p_220077_4_)
                 .withOptionalParameter(LootContextParams.BLOCK_ENTITY, p_220077_3_)
@@ -344,7 +344,7 @@ public class CartAssemblerBlock extends BaseRailBlock implements IBE<CartAssembl
             return InteractionResult.SUCCESS;
         }
         BlockPos pos = context.getClickedPos();
-        world.setBlock(pos, rotate(state, Rotation.CLOCKWISE_90), Block.UPDATE_ALL);
+        world.setBlock(pos, rotate(state, Rotation.CLOCKWISE_90), UPDATE_ALL);
         world.updateNeighborsAt(pos.below(), this, null);
         return InteractionResult.SUCCESS;
     }

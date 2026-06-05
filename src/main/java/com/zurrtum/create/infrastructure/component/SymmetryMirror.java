@@ -255,7 +255,7 @@ public abstract class SymmetryMirror {
     }
 
     public void setPosition(Vec3 pos3d) {
-        this.position = pos3d;
+        position = pos3d;
     }
 
     @Override

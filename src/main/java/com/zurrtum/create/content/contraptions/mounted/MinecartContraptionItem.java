@@ -80,7 +80,7 @@ public class MinecartContraptionItem extends Item {
 
     private MinecartContraptionItem(EntityType<? extends AbstractMinecart> minecartTypeIn, Properties builder) {
         super(builder);
-        this.minecartType = minecartTypeIn;
+        minecartType = minecartTypeIn;
         DispenserBlock.registerBehavior(this, DISPENSER_BEHAVIOR);
     }
 
@@ -93,9 +93,9 @@ public class MinecartContraptionItem extends Item {
             Direction direction = source.state().getValue(DispenserBlock.FACING);
             ServerLevel world = source.level();
             Vec3 vec3 = source.center();
-            double d0 = vec3.x() + (double) direction.getStepX() * 1.125D;
-            double d1 = Math.floor(vec3.y()) + (double) direction.getStepY();
-            double d2 = vec3.z() + (double) direction.getStepZ() * 1.125D;
+            double d0 = vec3.x() + direction.getStepX() * 1.125D;
+            double d1 = Math.floor(vec3.y()) + direction.getStepY();
+            double d2 = vec3.z() + direction.getStepZ() * 1.125D;
             BlockPos blockpos = source.pos().relative(direction);
             BlockState blockstate = world.getBlockState(blockpos);
             RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock abstractRailBlock ?
@@ -109,7 +109,7 @@ public class MinecartContraptionItem extends Item {
                 }
             } else {
                 if (!blockstate.isAir() || !world.getBlockState(blockpos.below()).is(BlockTags.RAILS)) {
-                    return this.behaviourDefaultDispenseItem.dispense(source, stack);
+                    return behaviourDefaultDispenseItem.dispense(source, stack);
                 }
 
                 BlockState blockstate1 = world.getBlockState(blockpos.below());
@@ -156,42 +156,41 @@ public class MinecartContraptionItem extends Item {
         BlockState blockstate = world.getBlockState(blockpos);
         if (!blockstate.is(BlockTags.RAILS)) {
             return InteractionResult.FAIL;
-        } else {
-            ItemStack itemstack = context.getItemInHand();
-            if (world instanceof ServerLevel serverlevel) {
-                RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock abstractRailBlock ?
-                    blockstate.getValue(abstractRailBlock.getShapeProperty()) : RailShape.NORTH_SOUTH;
-                double d0 = 0.0D;
-                if (railshape.isSlope()) {
-                    d0 = 0.5D;
-                }
-
-                AbstractMinecart abstractminecartentity = AbstractMinecart.createMinecart(
-                    serverlevel,
-                    (double) blockpos.getX() + 0.5D,
-                    (double) blockpos.getY() + 0.0625D + d0,
-                    (double) blockpos.getZ() + 0.5D,
-                    this.minecartType,
-                    EntitySpawnReason.SPAWN_ITEM_USE,
-                    itemstack,
-                    null
-                );
-                if (itemstack.has(DataComponents.CUSTOM_NAME)) {
-                    abstractminecartentity.setCustomName(itemstack.getHoverName());
-                }
-                Player player = context.getPlayer();
-                world.addFreshEntity(abstractminecartentity);
-                addContraptionToMinecart(
-                    world,
-                    itemstack,
-                    abstractminecartentity,
-                    player == null ? null : player.getDirection()
-                );
+        }
+        ItemStack itemstack = context.getItemInHand();
+        if (world instanceof ServerLevel serverlevel) {
+            RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock abstractRailBlock ?
+                blockstate.getValue(abstractRailBlock.getShapeProperty()) : RailShape.NORTH_SOUTH;
+            double d0 = 0.0D;
+            if (railshape.isSlope()) {
+                d0 = 0.5D;
             }
 
-            itemstack.shrink(1);
-            return InteractionResult.SUCCESS;
+            AbstractMinecart abstractminecartentity = AbstractMinecart.createMinecart(
+                serverlevel,
+                blockpos.getX() + 0.5D,
+                blockpos.getY() + 0.0625D + d0,
+                blockpos.getZ() + 0.5D,
+                minecartType,
+                EntitySpawnReason.SPAWN_ITEM_USE,
+                itemstack,
+                null
+            );
+            if (itemstack.has(DataComponents.CUSTOM_NAME)) {
+                abstractminecartentity.setCustomName(itemstack.getHoverName());
+            }
+            Player player = context.getPlayer();
+            world.addFreshEntity(abstractminecartentity);
+            addContraptionToMinecart(
+                world,
+                itemstack,
+                abstractminecartentity,
+                player == null ? null : player.getDirection()
+            );
         }
+
+        itemstack.shrink(1);
+        return InteractionResult.SUCCESS;
     }
 
     public static void addContraptionToMinecart(

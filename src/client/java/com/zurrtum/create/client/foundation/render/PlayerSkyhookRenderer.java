@@ -39,9 +39,9 @@ public class PlayerSkyhookRenderer {
         model.rightLeg.resetPose();
 
         float time = AnimationTickHolder.getTicks() + AnimationTickHolder.getPartialTicks();
-        float mainCycle = Mth.sin(((float) ((time + 10) * 0.3f / Math.PI)));
-        float limbCycle = Mth.sin(((float) (time * 0.3f / Math.PI)));
-        float bodySwing = AngleHelper.rad(15 + (mainCycle * 10));
+        float mainCycle = Mth.sin((float) ((time + 10) * 0.3f / Math.PI));
+        float limbCycle = Mth.sin((float) (time * 0.3f / Math.PI));
+        float bodySwing = AngleHelper.rad(15 + mainCycle * 10);
         float limbSwing = AngleHelper.rad(limbCycle * 15);
         if (isLeftArmMain) {
             bodySwing = -bodySwing;
@@ -66,7 +66,7 @@ public class PlayerSkyhookRenderer {
         offsetY = otherArm.y;
         otherArm.x = offsetX * Mth.cos(bodySwing) - offsetY * Mth.sin(bodySwing);
         otherArm.y = offsetX * Mth.sin(bodySwing) + offsetY * Mth.cos(bodySwing);
-        otherArm.zRot = (isLeftArmMain ? -1 : 1) * (-AngleHelper.rad(20)) + 0.5f * bodySwing + limbSwing;
+        otherArm.zRot = (isLeftArmMain ? -1 : 1) * -AngleHelper.rad(20) + 0.5f * bodySwing + limbSwing;
 
         ModelPart leadingLeg = isLeftArmMain ? model.leftLeg : model.rightLeg;
         ModelPart trailingLeg = isLeftArmMain ? model.rightLeg : model.leftLeg;
@@ -77,14 +77,14 @@ public class PlayerSkyhookRenderer {
         leadingLeg.x = offsetX * Mth.cos(bodySwing) - offsetY * Mth.sin(bodySwing);
         leadingLeg.y = offsetX * Mth.sin(bodySwing) + offsetY * Mth.cos(bodySwing);
         leadingLeg.xRot = -AngleHelper.rad(25);
-        leadingLeg.zRot = (isLeftArmMain ? -1 : 1) * (AngleHelper.rad(10)) + 0.5f * bodySwing + limbSwing;
+        leadingLeg.zRot = (isLeftArmMain ? -1 : 1) * AngleHelper.rad(10) + 0.5f * bodySwing + limbSwing;
         trailingLeg.y -= 0.8f;
         offsetX = trailingLeg.x;
         offsetY = trailingLeg.y;
         trailingLeg.x = offsetX * Mth.cos(bodySwing) - offsetY * Mth.sin(bodySwing);
         trailingLeg.y = offsetX * Mth.sin(bodySwing) + offsetY * Mth.cos(bodySwing);
         trailingLeg.xRot = AngleHelper.rad(10);
-        trailingLeg.zRot = (isLeftArmMain ? -1 : 1) * (-AngleHelper.rad(10)) + 0.5f * bodySwing + limbSwing;
+        trailingLeg.zRot = (isLeftArmMain ? -1 : 1) * -AngleHelper.rad(10) + 0.5f * bodySwing + limbSwing;
         model.head.x -= armPivotX;
         model.body.x -= armPivotX;
         otherArm.x -= armPivotX;

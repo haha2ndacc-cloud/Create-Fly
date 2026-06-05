@@ -62,7 +62,7 @@ public class FanHauntingCategory extends CreateCategory<RecipeHolder<HauntingRec
             int xOffsetAmount = 1 - Math.min(3, outputSize);
             builder.addInputSlot(21 + xOffsetAmount * 5, 48).setBackground(SLOT, -1, -1).add(recipe.ingredient());
             for (int i = 0, left = 141 + xOffsetAmount * 9, top = 48; i < outputSize; i++) {
-                addChanceSlot(builder, left + (i % 3) * 19, top + (i / 3) * -19, results.get(i));
+                addChanceSlot(builder, left + i % 3 * 19, top + i / 3 * -19, results.get(i));
             }
         }
     }

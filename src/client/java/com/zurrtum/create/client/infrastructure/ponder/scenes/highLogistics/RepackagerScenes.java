@@ -23,7 +23,7 @@ public class RepackagerScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("repackager", "Merging packages from a request");
         scene.configureBasePlate(1, 0, 7);
-        scene.setSceneOffsetY(-.5f);
+        scene.setSceneOffsetY(-0.5f);
         scene.showBasePlate();
 
         Selection belt2 = util.select().fromTo(7, 1, 2, 6, 1, 1);
@@ -48,7 +48,7 @@ public class RepackagerScenes {
         Selection repackS = util.select().fromTo(5, 2, 2, 5, 3, 2);
         Selection largeCog3 = util.select().position(6, 0, 7);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 2f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 2.0f);
 
         scene.idle(10);
 
@@ -87,10 +87,10 @@ public class RepackagerScenes {
         scene.idle(13);
         scene.world().createItemOnBelt(util.grid().at(7, 1, 1), Direction.DOWN, box3);
         scene.idle(3);
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 16f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 16.0f);
 
-        AABB bb1 = new AABB(util.grid().at(2, 2, 1)).deflate(0.125, 0.5, 0.125).inflate(0.65, 0, 0).move(1.05, -.5, 0);
-        AABB bb2 = new AABB(util.grid().at(7, 2, 1)).deflate(0.125, 0.5, 0.125).move(-.25, -.5, 0);
+        AABB bb1 = new AABB(util.grid().at(2, 2, 1)).deflate(0.125, 0.5, 0.125).inflate(0.65, 0, 0).move(1.05, -0.5, 0);
+        AABB bb2 = new AABB(util.grid().at(7, 2, 1)).deflate(0.125, 0.5, 0.125).move(-0.25, -0.5, 0);
 
         scene.overlay()
             .chaseBoundingBoxOutline(PonderPalette.INPUT, pack, new AABB(bb1.getCenter(), bb1.getCenter()), 1);
@@ -107,16 +107,16 @@ public class RepackagerScenes {
             .pointAt(util.vector().of(7, 2, 1.5)).placeNearTarget();
         scene.idle(60);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 24f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 24.0f);
         scene.idle(60);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 24f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 24.0f);
 
         scene.overlay().showText(60).text("Otherwise, other packages could arrive inbetween").attachKeyFrame()
             .colored(PonderPalette.RED).pointAt(util.vector().of(5.5, 2, 3)).placeNearTarget();
         scene.idle(60);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 16f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 16.0f);
         scene.idle(40);
         scene.world().removeItemsFromBelt(util.grid().at(5, 1, 5));
         PonderHilo.packagerUnpack(scene, pack, box1);
@@ -186,7 +186,7 @@ public class RepackagerScenes {
         scene.overlay().showText(60).text("Once all fragments arrived, they will be exported as a new package")
             .attachKeyFrame().colored(PonderPalette.GREEN).pointAt(util.vector().of(5.5, 2, 3)).placeNearTarget();
         scene.idle(60);
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 2f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 2.0f);
         scene.rotateCameraY(15);
         scene.world().createItemOnBelt(util.grid().at(5, 1, 3), Direction.NORTH, box3);
         PonderHilo.packagerClear(scene, repack);

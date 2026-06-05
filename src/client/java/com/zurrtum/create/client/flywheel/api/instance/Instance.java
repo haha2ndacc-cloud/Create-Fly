@@ -6,14 +6,14 @@ public interface Instance {
     InstanceHandle handle();
 
     default void setChanged() {
-        this.handle().setChanged();
+        handle().setChanged();
     }
 
     default void delete() {
-        this.handle().setDeleted();
+        handle().setDeleted();
     }
 
     default void setVisible(boolean visible) {
-        this.handle().setVisible(visible);
+        handle().setVisible(visible);
     }
 }

@@ -68,23 +68,22 @@ public abstract class MountedItemStorage implements ItemInventory {
         Vec3 localPosVec = Vec3.atCenterOf(localPos);
         Predicate<Player> stillValid = p -> {
             Vec3 currentPos = contraption.entity.toGlobalVector(localPosVec, 0);
-            return this.isMenuValid(player, contraption, currentPos);
+            return isMenuValid(player, contraption, currentPos);
         };
-        Component menuName = this.getMenuName(info, contraption);
-        Container handler = this.getHandlerForMenu(info, contraption);
+        Component menuName = getMenuName(info, contraption);
+        Container handler = getHandlerForMenu(info, contraption);
         Consumer<ContainerUser> onClose = p -> {
             Vec3 newPos = contraption.entity.toGlobalVector(localPosVec, 0);
-            this.playClosingSound(level, newPos);
+            playClosingSound(level, newPos);
         };
 
-        OptionalInt id = player.openMenu(this.createMenuProvider(menuName, handler, stillValid, onClose));
+        OptionalInt id = player.openMenu(createMenuProvider(menuName, handler, stillValid, onClose));
         if (id.isPresent()) {
             Vec3 globalPos = contraption.entity.toGlobalVector(localPosVec, 0);
-            this.playOpeningSound(level, globalPos);
+            playOpeningSound(level, globalPos);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -101,7 +100,7 @@ public abstract class MountedItemStorage implements ItemInventory {
      * @return true if a GUI opened for this storage is still valid
      */
     protected boolean isMenuValid(ServerPlayer player, Contraption contraption, Vec3 pos) {
-        return contraption.entity.isAlive() && player.distanceToSqr(pos) < (8 * 8);
+        return contraption.entity.isAlive() && player.distanceToSqr(pos) < 8 * 8;
     }
 
     /**
@@ -129,7 +128,7 @@ public abstract class MountedItemStorage implements ItemInventory {
      * Play the sound made by opening this storage's GUI.
      */
     protected void playOpeningSound(ServerLevel level, Vec3 pos) {
-        level.playSound(null, BlockPos.containing(pos), SoundEvents.BARREL_OPEN, SoundSource.BLOCKS, 0.75f, 1f);
+        level.playSound(null, BlockPos.containing(pos), SoundEvents.BARREL_OPEN, SoundSource.BLOCKS, 0.75f, 1.0f);
     }
 
     /**

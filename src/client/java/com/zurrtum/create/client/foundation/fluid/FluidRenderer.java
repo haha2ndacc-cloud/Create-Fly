@@ -76,9 +76,9 @@ public class FluidRenderer {
         PoseStack.Pose entry,
         int light
     ) {
-        int blockLightIn = (light >> 4) & 0xF;
+        int blockLightIn = light >> 4 & 0xF;
         int luminosity = Math.max(blockLightIn, lightEmission);
-        light = (light & 0xF00000) | luminosity << 4;
+        light = light & 0xF00000 | luminosity << 4;
 
         if (inbound) {
             direction = direction.getOpposite();
@@ -87,12 +87,13 @@ public class FluidRenderer {
         entry = entry.copy();
         entry.translate(0.5f, 0.5f, 0.5f);
         entry.rotate(Axis.YP.rotation(Mth.DEG_TO_RAD * AngleHelper.horizontalAngle(direction)));
-        entry.rotate(Axis.XP.rotation(Mth.DEG_TO_RAD * (direction == Direction.UP ? 180 : direction == Direction.DOWN ? 0 : 270)));
+        entry.rotate(Axis.XP.rotation(Mth.DEG_TO_RAD * (direction == Direction.UP ? 180 :
+            direction == Direction.DOWN ? 0 : 270)));
         entry.translate(0, -0.5f, 0);
 
         float hMin = -radius;
-        float y = inbound ? 1 : .5f;
-        float yMin = y - Mth.clamp(progress * .5f, 0, 1);
+        float y = inbound ? 1 : 0.5f;
+        float yMin = y - Mth.clamp(progress * 0.5f, 0, 1);
 
         for (int i = 0; i < 4; i++) {
             renderFlowingTiledFace(
@@ -168,7 +169,7 @@ public class FluidRenderer {
 
         @Override
         public void render(PoseStack.Pose pose, VertexConsumer vertexConsumer) {
-            FluidRenderer.renderFluidStream(
+            renderFluidStream(
                 flowTexture,
                 stillTexture,
                 tint,

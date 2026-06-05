@@ -32,7 +32,7 @@ public class PonderIndexExclusionHelper implements IndexExclusionHelper {
     @Override
     public IndexExclusionHelper excludeItemVariants(Class<? extends Item> itemClazz, Item originalVariant) {
         exclusions.add(itemLike -> {
-            if (!(itemClazz.isInstance(itemLike))) {
+            if (!itemClazz.isInstance(itemLike)) {
                 return false;
             }
 
@@ -49,7 +49,7 @@ public class PonderIndexExclusionHelper implements IndexExclusionHelper {
             }
 
             Block block = blockItem.getBlock();
-            if (!(blockClazz.isInstance(block))) {
+            if (!blockClazz.isInstance(block)) {
                 return false;
             }
 

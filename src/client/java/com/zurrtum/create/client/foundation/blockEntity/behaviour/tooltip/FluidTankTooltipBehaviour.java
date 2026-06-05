@@ -59,7 +59,8 @@ public class FluidTankTooltipBehaviour extends TooltipBehaviour<FluidTankBlockEn
 
         tooltip.add(CommonComponents.EMPTY);
 
-        if (data.attachedEngines > 0 && data.maxHeatForSize > 0 && data.maxHeatForWater == 0 && (data.passiveHeat ? 1 : data.activeHeat) > 0) {
+        if (data.attachedEngines > 0 && data.maxHeatForSize > 0 && data.maxHeatForWater == 0 && (data.passiveHeat ? 1 :
+            data.activeHeat) > 0) {
             CreateLang.translate("boiler.water_input_rate").style(ChatFormatting.GRAY).forGoggles(tooltip);
             CreateLang.number(data.waterSupply / 81).style(ChatFormatting.BLUE)
                 .add(CreateLang.translate("generic.unit.millibuckets"))
@@ -74,10 +75,9 @@ public class FluidTankTooltipBehaviour extends TooltipBehaviour<FluidTankBlockEn
         CreateLang.translate("tooltip.capacityProvided").style(ChatFormatting.GRAY).forGoggles(tooltip);
 
         CreateLang.number(totalSU).translate("generic.unit.stress").style(ChatFormatting.AQUA).space()
-            .add((data.attachedEngines == 1 ? CreateLang.translate("boiler.via_one_engine") : CreateLang.translate(
-                "boiler.via_engines",
-                data.attachedEngines
-            )).style(ChatFormatting.DARK_GRAY)).forGoggles(tooltip, 1);
+            .add((data.attachedEngines == 1 ? CreateLang.translate("boiler.via_one_engine") :
+                CreateLang.translate("boiler.via_engines", data.attachedEngines)).style(ChatFormatting.DARK_GRAY))
+            .forGoggles(tooltip, 1);
 
         return true;
     }

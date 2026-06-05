@@ -16,8 +16,8 @@ import java.util.concurrent.ExecutionException;
 
 public class TickBasedCache<K, V> implements Cache<K, V> {
 
-    private static int currentTick = 0;
-    private static int currentClientTick = 0;
+    private static int currentTick;
+    private static int currentClientTick;
 
     public static void tick() {
         currentTick++;

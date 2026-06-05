@@ -21,7 +21,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -75,21 +74,26 @@ public class SymmetryWandItem extends Item {
         SymmetryMirror newElement = new PlaneMirror(pos3d);
 
         if (previousElement instanceof EmptyMirror) {
-            newElement.setOrientation((player.getDirection() == Direction.NORTH || player.getDirection() == Direction.SOUTH) ? PlaneMirror.Align.XY.ordinal() : PlaneMirror.Align.YZ.ordinal());
+            newElement.setOrientation(
+                player.getDirection() == Direction.NORTH || player.getDirection() == Direction.SOUTH ?
+                    PlaneMirror.Align.XY.ordinal() : PlaneMirror.Align.YZ.ordinal());
             newElement.enable = true;
             wand.set(AllDataComponents.SYMMETRY_WAND_ENABLE, true);
         } else {
             previousElement.setPosition(pos3d);
 
             if (previousElement instanceof PlaneMirror) {
-                previousElement.setOrientation((player.getDirection() == Direction.NORTH || player.getDirection() == Direction.SOUTH) ? PlaneMirror.Align.XY.ordinal() : PlaneMirror.Align.YZ.ordinal());
+                previousElement.setOrientation(
+                    player.getDirection() == Direction.NORTH || player.getDirection() == Direction.SOUTH ?
+                        PlaneMirror.Align.XY.ordinal() : PlaneMirror.Align.YZ.ordinal());
             }
 
             if (previousElement instanceof CrossPlaneMirror) {
                 float rotation = player.getYHeadRot();
                 float abs = Math.abs(rotation % 90);
                 boolean diagonal = abs > 22 && abs < 45 + 22;
-                previousElement.setOrientation(diagonal ? CrossPlaneMirror.Align.D.ordinal() : CrossPlaneMirror.Align.Y.ordinal());
+                previousElement.setOrientation(
+                    diagonal ? CrossPlaneMirror.Align.D.ordinal() : CrossPlaneMirror.Align.Y.ordinal());
             }
 
             newElement = previousElement;
@@ -159,7 +163,7 @@ public class SymmetryWandItem extends Item {
         if (!isEnabled(wand)) {
             return;
         }
-        if (!BlockItem.BY_BLOCK.containsKey(block.getBlock())) {
+        if (!BY_BLOCK.containsKey(block.getBlock())) {
             return;
         }
 

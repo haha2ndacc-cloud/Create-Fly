@@ -12,7 +12,7 @@ public class ContinuousOBBCollider {
     static final Vec3 uA0 = new Vec3(1, 0, 0);
     static final Vec3 uA1 = new Vec3(0, 1, 0);
     static final Vec3 uA2 = new Vec3(0, 0, 1);
-    static int checkCount = 0;
+    static int checkCount;
 
     public static class CollisionResponse {
         public boolean surfaceCollision;
@@ -57,13 +57,13 @@ public class ContinuousOBBCollider {
         // space required for the actual collision pass and improve the cache locality of the colliders.
         denseViableColliders.size = 0;
         for (int bbIdx = 0; bbIdx < collidableBBs.size; ++bbIdx) {
-            if (Math.abs((obbCenter.x + motion.x) - collidableBBs.centerX[bbIdx]) > collidableBBs.extentsX[bbIdx] + aabbInLocalX) {
+            if (abs(obbCenter.x + motion.x - collidableBBs.centerX[bbIdx]) > collidableBBs.extentsX[bbIdx] + aabbInLocalX) {
                 continue;
             }
-            if (Math.abs((obbCenter.y + motion.y) - collidableBBs.centerY[bbIdx]) > collidableBBs.extentsY[bbIdx] + aabbInLocalY) {
+            if (abs(obbCenter.y + motion.y - collidableBBs.centerY[bbIdx]) > collidableBBs.extentsY[bbIdx] + aabbInLocalY) {
                 continue;
             }
-            if (Math.abs((obbCenter.z + motion.z) - collidableBBs.centerZ[bbIdx]) > collidableBBs.extentsZ[bbIdx] + aabbInLocalZ) {
+            if (abs(obbCenter.z + motion.z - collidableBBs.centerZ[bbIdx]) > collidableBBs.extentsZ[bbIdx] + aabbInLocalZ) {
                 continue;
             }
 
@@ -299,7 +299,7 @@ public class ContinuousOBBCollider {
                 earliestCollisionExitTime = Math.min(exitTime, earliestCollisionExitTime);
             }
 
-            if (axisOfObjA && distance != 0 && -(diff) <= abs(normalSeparation)) {
+            if (axisOfObjA && distance != 0 && -diff <= abs(normalSeparation)) {
                 normalAxis = axis;
                 normalSeparation = separation;
             }
@@ -328,7 +328,7 @@ public class ContinuousOBBCollider {
                 }
             }
 
-            if (distance != 0 && -(diff) <= abs(this.separation)) {
+            if (distance != 0 && -diff <= abs(this.separation)) {
                 this.axis = axis;
                 this.separation = separation;
                 double scale = signum(TL) * (axisOfObjA ? -rA : -rB) - signum(separation) * 0.125;
@@ -352,19 +352,19 @@ public class ContinuousOBBCollider {
         }
 
         private static double withSignedEpsilon(double sep) {
-            return sep + (signum(sep) * 1E-4);
+            return sep + signum(sep) * 1.0E-4;
         }
 
         public void reset() {
             // Reset the manifold.
-            this.axis = Vec3.ZERO;
-            this.normalAxis = Vec3.ZERO;
-            this.separation = Double.MAX_VALUE;
-            this.stepSeparation = Double.MAX_VALUE;
-            this.normalSeparation = Double.MAX_VALUE;
-            this.latestCollisionEntryTime = -1;
-            this.earliestCollisionExitTime = Double.MAX_VALUE;
-            this.isDiscreteCollision = true;
+            axis = Vec3.ZERO;
+            normalAxis = Vec3.ZERO;
+            separation = Double.MAX_VALUE;
+            stepSeparation = Double.MAX_VALUE;
+            normalSeparation = Double.MAX_VALUE;
+            latestCollisionEntryTime = -1;
+            earliestCollisionExitTime = Double.MAX_VALUE;
+            isDiscreteCollision = true;
         }
     }
 }

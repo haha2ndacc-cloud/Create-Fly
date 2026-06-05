@@ -70,8 +70,8 @@ public class LogisticallyLinkedClientHandler {
             for (int i = 0, size = list.size(); i < size; i++) {
                 AABB aabb = list.get(i);
                 Outliner.getInstance()
-                    .showAABB(Pair.of(behaviour, i), aabb.inflate(-1 / 128f).move(be.getBlockPos()), 2)
-                    .lineWidth(1 / 32f).disableLineNormals()
+                    .showAABB(Pair.of(behaviour, i), aabb.inflate(-1 / 128.0f).move(be.getBlockPos()), 2)
+                    .lineWidth(1 / 32.0f).disableLineNormals()
                     .colored(AnimationTickHolder.getTicks() % 16 < 8 ? 0x708DAD : 0x90ADCD);
             }
 
@@ -96,8 +96,8 @@ public class LogisticallyLinkedClientHandler {
         Outliner.getInstance().showAABB(
                 fpb,
                 FactoryPanelConnectionHandler.getBB(fpb.blockEntity.getBlockState(), fpb.getPanelPosition())
-                    .inflate(-1.5 / 128f)
-            ).lineWidth(1 / 32f).disableLineNormals()
+                    .inflate(-1.5 / 128.0f)
+            ).lineWidth(1 / 32.0f).disableLineNormals()
             .colored(AnimationTickHolder.getTicks() % 16 < 8 ? 0x708DAD : 0x90ADCD);
     }
 

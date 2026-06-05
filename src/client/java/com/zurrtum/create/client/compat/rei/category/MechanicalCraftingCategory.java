@@ -51,11 +51,11 @@ public class MechanicalCraftingCategory extends CreateCategory<MechanicalCraftin
         List<EntryIngredient> ingredients = new ArrayList<>();
         int left = bounds.x + 12;
         if (width < 5) {
-            left += (19 * (5 - width)) / 2;
+            left += 19 * (5 - width) / 2;
         }
         int top = bounds.y + 12;
         if (height < 5) {
-            top += (19 * (5 - height)) / 2;
+            top += 19 * (5 - height) / 2;
         }
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
@@ -63,7 +63,7 @@ public class MechanicalCraftingCategory extends CreateCategory<MechanicalCraftin
                 if (ingredient.isEmpty()) {
                     continue;
                 }
-                inputs.add(new Point(left + 16 * w + (w * 3), top + 16 * h + (h * 3)));
+                inputs.add(new Point(left + 16 * w + w * 3, top + 16 * h + h * 3));
                 ingredients.add(EntryIngredients.ofIngredient(ingredient.get()));
             }
         }

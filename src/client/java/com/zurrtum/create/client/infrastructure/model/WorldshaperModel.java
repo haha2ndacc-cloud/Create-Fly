@@ -20,7 +20,6 @@ import net.minecraft.client.renderer.block.BlockModelRenderState;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.block.model.BlockDisplayContext;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
@@ -156,8 +155,8 @@ public class WorldshaperModel implements ItemModel {
         int lightItensity = (int) (15 * Mth.clamp(multiplier, 0, 1));
         if (displayContext == ItemDisplayContext.GUI) {
             int[] glowTint = LIGHT_TINTS[lightItensity];
-            submitCustomLayerWithLightTint(state, settings, displayContext, 0, glowTint, core);
-            submitCustomLayerWithLightTint(state, settings, displayContext, 0, glowTint, coreGlow);
+            submitCustomLayerWithLightTint(state, settings, ItemDisplayContext.GUI, 0, glowTint, core);
+            submitCustomLayerWithLightTint(state, settings, ItemDisplayContext.GUI, 0, glowTint, coreGlow);
         } else {
             int glowLight = LightCoordsUtil.pack(lightItensity, Math.max(lightItensity, 4));
             submitCustomLayerWithLightTint(state, settings, displayContext, glowLight, TINTS, core);
@@ -172,7 +171,7 @@ public class WorldshaperModel implements ItemModel {
                 LayerRenderState layer = state.newLayer();
                 UsedRenderState renderer;
                 if (blockState.getBlock() instanceof CrossCollisionBlock block) {
-                    renderer = UsedItemRenderState.create(mc, block, displayContext, world, user, seed);
+                    renderer = UsedItemRenderState.create(mc, block, ItemDisplayContext.GUI, world, user, seed);
                 } else {
                     renderer = UsedBlockRenderState.create(mc, blockState);
                 }

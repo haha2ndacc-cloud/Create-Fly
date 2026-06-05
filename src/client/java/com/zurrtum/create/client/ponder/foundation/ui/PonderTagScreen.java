@@ -70,7 +70,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
             items.removeIf(entry -> entry.item == tag.getMainItem().getItem());
         }
 
-        int rowCount = Mth.clamp((int) Math.ceil(items.size() / 11d), 1, 3);
+        int rowCount = Mth.clamp((int) Math.ceil(items.size() / 11.0d), 1, 3);
         LayoutHelper layout = LayoutHelper.centeredHorizontal(items.size(), rowCount, 28, 28, 8);
         itemArea = layout.getArea();
         int itemCenterX = (int) (width * itemXmult);
@@ -128,8 +128,8 @@ public class PonderTagScreen extends AbstractPonderScreen {
 
         hoveredItem = ItemStack.EMPTY;
         Window w = minecraft.getWindow();
-        int mX = (int) (minecraft.mouseHandler.xpos() * (double) w.getGuiScaledWidth() / (double) w.getScreenWidth());
-        int mY = (int) (minecraft.mouseHandler.ypos() * (double) w.getGuiScaledHeight() / (double) w.getScreenHeight());
+        int mX = (int) (minecraft.mouseHandler.xpos() * w.getGuiScaledWidth() / w.getScreenWidth());
+        int mY = (int) (minecraft.mouseHandler.ypos() * w.getGuiScaledHeight() / w.getScreenHeight());
         for (GuiEventListener child : children()) {
             if (child == backTrack) {
                 continue;
@@ -151,7 +151,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
 
         Matrix3x2fStack poseStack = graphics.pose();
         poseStack.pushMatrix();
-        poseStack.translate((float) (width / 2 - 120), (float) (height * mainYmult - 40));
+        poseStack.translate(width / 2 - 120, (float) (height * mainYmult - 40));
 
         poseStack.pushMatrix();
         //poseStack.translate(0, 0, 800);
@@ -168,7 +168,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
 
         graphics.text(
             font,
-            Ponder.lang().translate(AbstractPonderScreen.PONDERING_TAG).component(),
+            Ponder.lang().translate(PONDERING_TAG).component(),
             x,
             y - 6,
             UIRenderHelper.COLOR_TEXT_DARKER.getFirst().getRGB(),
@@ -181,13 +181,13 @@ public class PonderTagScreen extends AbstractPonderScreen {
         poseStack.popMatrix();
 
         poseStack.pushMatrix();
-        poseStack.translate(21.5f, 22f);
+        poseStack.translate(21.5f, 22.0f);
         renderTag.render(graphics, 0, 0);
         poseStack.popMatrix();
         poseStack.popMatrix();
 
         poseStack.pushMatrix();
-        int w = (int) (width * .45);
+        int w = (int) (width * 0.45);
         x = (width - w) / 2;
         y = getItemsY() - 10 + Math.max(itemArea.getHeight(), 48);
 
@@ -219,14 +219,14 @@ public class PonderTagScreen extends AbstractPonderScreen {
         int x = (int) (width * itemXmult);
         int y = getItemsY();
 
-        String relatedTitle = Ponder.lang().translate(AbstractPonderScreen.ASSOCIATED).string();
+        String relatedTitle = Ponder.lang().translate(ASSOCIATED).string();
         int stringWidth = font.width(relatedTitle);
 
         Matrix3x2fStack poseStack = graphics.pose();
         poseStack.pushMatrix();
         poseStack.translate(x, y);
         new BoxElement().withBackground(PonderUI.BACKGROUND_FLAT).gradientBorder(PonderUI.COLOR_IDLE)
-            .at((windowWidth - stringWidth) / 2f - 5, itemArea.getY() - 21, 100).withBounds(stringWidth + 10, 10)
+            .at((windowWidth - stringWidth) / 2.0f - 5, itemArea.getY() - 21, 100).withBounds(stringWidth + 10, 10)
             .render(graphics);
 
         //		UIRenderHelper.streak(0, itemArea.getX() - 10, itemArea.getY() - 20, 20, 180, 0x101010);

@@ -126,10 +126,10 @@ public class WorldshaperScreen extends ZapperScreen {
         return switch (brush) {
             case DynamicBrush b -> CreateLang.translateDirect("generic.range");
             case SphereBrush b -> CreateLang.translateDirect("generic.radius");
-            case CylinderBrush b ->
-                paramIndex == 0 ? CreateLang.translateDirect("generic.radius") : CreateLang.translateDirect(paramIndex == 1 ? "generic.height" : "generic.length");
-            default ->
-                CreateLang.translateDirect(paramIndex == 0 ? "generic.width" : paramIndex == 1 ? "generic.height" : "generic.length");
+            case CylinderBrush b -> paramIndex == 0 ? CreateLang.translateDirect("generic.radius") :
+                CreateLang.translateDirect(paramIndex == 1 ? "generic.height" : "generic.length");
+            default -> CreateLang.translateDirect(
+                paramIndex == 0 ? "generic.width" : paramIndex == 1 ? "generic.height" : "generic.length");
         };
     }
 
@@ -294,8 +294,10 @@ public class WorldshaperScreen extends ZapperScreen {
     @Override
     protected ConfigureZapperPacket getConfigurationPacket() {
         int brushParamX = currentBrushParams[0];
-        int brushParamY = followDiagonalsIndicator != null ? followDiagonalsIndicator.state == State.ON ? 0 : 1 : currentBrushParams[1];
-        int brushParamZ = acrossMaterialsIndicator != null ? acrossMaterialsIndicator.state == State.ON ? 0 : 1 : currentBrushParams[2];
+        int brushParamY = followDiagonalsIndicator != null ? followDiagonalsIndicator.state == State.ON ? 0 : 1 :
+            currentBrushParams[1];
+        int brushParamZ = acrossMaterialsIndicator != null ? acrossMaterialsIndicator.state == State.ON ? 0 : 1 :
+            currentBrushParams[2];
         return new ConfigureWorldshaperPacket(
             hand,
             currentPattern,

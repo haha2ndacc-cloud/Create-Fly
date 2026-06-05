@@ -113,7 +113,7 @@ public class UberShaderComponent implements SourceComponent {
         }
 
         public Builder materialSources(List<Identifier> sources) {
-            this.materialSources.addAll(sources);
+            materialSources.addAll(sources);
             return this;
         }
 
@@ -128,7 +128,7 @@ public class UberShaderComponent implements SourceComponent {
         }
 
         public Builder switchOn(GlslExpr expr) {
-            this.switchArg = expr;
+            switchArg = expr;
             return this;
         }
 

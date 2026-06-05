@@ -22,7 +22,7 @@ public class LineInstruction extends TickingInstruction {
     @Override
     public void tick(PonderScene scene) {
         super.tick(scene);
-        scene.getOutliner().showLine(start, start, end).lineWidth(big ? 1 / 8f : 1 / 16f).colored(color.getColor());
+        scene.getOutliner().showLine(start, start, end).lineWidth(big ? 1 / 8.0f : 1 / 16.0f).colored(color.getColor());
     }
 
 }

@@ -134,8 +134,8 @@ public abstract class BlockEntityBehaviour<T extends SmartBlockEntity> {
     }
 
     public void setLazyTickRate(int slowTickRate) {
-        this.lazyTickRate = slowTickRate;
-        this.lazyTickCounter = slowTickRate;
+        lazyTickRate = slowTickRate;
+        lazyTickCounter = slowTickRate;
     }
 
     public void lazyTick() {

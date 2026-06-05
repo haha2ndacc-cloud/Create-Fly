@@ -13,7 +13,7 @@ public record FnSignature(String returnType, String name, ImmutableList<Pair<Str
     }
 
     public static FnSignature of(String returnType, String name) {
-        return FnSignature.create().returnType(returnType).name(name).build();
+        return create().returnType(returnType).name(name).build();
     }
 
     public static FnSignature ofVoid(String name) {

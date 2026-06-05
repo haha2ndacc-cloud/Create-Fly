@@ -161,8 +161,7 @@ public abstract class WrapperBlockStateModelMixin implements FabricBlockStateMod
     ) {
         if (needUpdateTerrainParticle()) {
             return particleMaterialWithInfo(level, WrapperBlockStateModel.findPos(level, pos, state), state);
-        } else {
-            return particleMaterial();
         }
+        return particleMaterial();
     }
 }

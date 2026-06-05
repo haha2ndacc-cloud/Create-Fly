@@ -19,9 +19,9 @@ public class IntArrayTrie<V> {
 
     private final TrieNode<V> root = new TrieNode<>();
 
-    private int maxDepth = 0;
+    private int maxDepth;
     private int nodeCount = 1; // count root
-    private int valueCount = 0;
+    private int valueCount;
 
     public int getMaxDepth() {
         return maxDepth;

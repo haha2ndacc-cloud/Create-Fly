@@ -101,8 +101,8 @@ public class EncasedCogwheelBlock extends RotatedPillarKineticBlock implements I
         KineticBlockEntity.switchToBlockState(
             level,
             pos,
-            state.cycle(context.getClickedFace()
-                .getAxisDirection() == AxisDirection.POSITIVE ? TOP_SHAFT : BOTTOM_SHAFT)
+            state.cycle(
+                context.getClickedFace().getAxisDirection() == AxisDirection.POSITIVE ? TOP_SHAFT : BOTTOM_SHAFT)
         );
         IWrenchable.playRotateSound(level, pos);
         return InteractionResult.SUCCESS;
@@ -112,9 +112,8 @@ public class EncasedCogwheelBlock extends RotatedPillarKineticBlock implements I
     public BlockState getRotatedBlockState(BlockState originalState, Direction targetedFace) {
         originalState = swapShaftsForRotation(originalState, Rotation.CLOCKWISE_90, targetedFace.getAxis());
         return originalState.setValue(
-            RotatedPillarKineticBlock.AXIS,
-            VoxelShaper.axisAsFace(originalState.getValue(RotatedPillarKineticBlock.AXIS))
-                .getClockWise(targetedFace.getAxis()).getAxis()
+            AXIS,
+            VoxelShaper.axisAsFace(originalState.getValue(AXIS)).getClockWise(targetedFace.getAxis()).getAxis()
         );
     }
 
@@ -123,7 +122,7 @@ public class EncasedCogwheelBlock extends RotatedPillarKineticBlock implements I
         if (context.getLevel().isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        context.getLevel().levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, context.getClickedPos(), Block.getId(state));
+        context.getLevel().levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, context.getClickedPos(), getId(state));
         KineticBlockEntity.switchToBlockState(
             context.getLevel(),
             context.getClickedPos(),
@@ -135,7 +134,8 @@ public class EncasedCogwheelBlock extends RotatedPillarKineticBlock implements I
 
     @Override
     public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
-        return face.getAxis() == state.getValue(AXIS) && state.getValue(face.getAxisDirection() == AxisDirection.POSITIVE ? TOP_SHAFT : BOTTOM_SHAFT);
+        return face.getAxis() == state.getValue(AXIS) && state.getValue(
+            face.getAxisDirection() == AxisDirection.POSITIVE ? TOP_SHAFT : BOTTOM_SHAFT);
     }
 
     @Override
@@ -285,7 +285,8 @@ public class EncasedCogwheelBlock extends RotatedPillarKineticBlock implements I
             if (!def.hasShaftTowards(level, pos.relative(d), adjacentState, d.getOpposite())) {
                 continue;
             }
-            encasedState = encasedState.cycle(d.getAxisDirection() == AxisDirection.POSITIVE ? EncasedCogwheelBlock.TOP_SHAFT : EncasedCogwheelBlock.BOTTOM_SHAFT);
+            encasedState = encasedState.cycle(
+                d.getAxisDirection() == AxisDirection.POSITIVE ? TOP_SHAFT : BOTTOM_SHAFT);
         }
 
         KineticBlockEntity.switchToBlockState(level, pos, encasedState);

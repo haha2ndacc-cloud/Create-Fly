@@ -59,7 +59,6 @@ public class CouplingHandler {
             }
             consumer.accept(Couple.create(controller, coupledController));
         }
-        ;
     }
 
     public static boolean tryToCoupleCarts(@Nullable Player player, Level world, int cartId1, int cartId2) {

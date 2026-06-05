@@ -60,7 +60,7 @@ public abstract class AbstractBogeyBlockEntity extends CachedRenderBBBlockEntity
 
     @Override
     protected void saveAdditional(ValueOutput view) {
-        CompoundTag data = this.getBogeyData();
+        CompoundTag data = getBogeyData();
         if (data != null) {
             view.store(BOGEY_DATA_KEY, CompoundTag.CODEC, data); // Now contains style
         }

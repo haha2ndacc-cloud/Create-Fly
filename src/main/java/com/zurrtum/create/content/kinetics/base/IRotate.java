@@ -28,11 +28,10 @@ public interface IRotate extends IWrenchable {
     }
 
     enum SpeedLevel {
-        NONE(ChatFormatting.DARK_GRAY, 0x000000, 0), SLOW(ChatFormatting.GREEN, 0x22FF22, 10), MEDIUM(
-            ChatFormatting.AQUA,
-            0x0084FF,
-            20
-        ), FAST(ChatFormatting.LIGHT_PURPLE, 0xFF55FF, 30);
+        NONE(ChatFormatting.DARK_GRAY, 0x000000, 0),
+        SLOW(ChatFormatting.GREEN, 0x22FF22, 10),
+        MEDIUM(ChatFormatting.AQUA, 0x0084FF, 20),
+        FAST(ChatFormatting.LIGHT_PURPLE, 0xFF55FF, 30);
 
         private final ChatFormatting textColor;
         private final int color;
@@ -83,9 +82,10 @@ public interface IRotate extends IWrenchable {
     }
 
     enum StressImpact {
-        LOW(ChatFormatting.YELLOW, ChatFormatting.GREEN), MEDIUM(ChatFormatting.GOLD, ChatFormatting.YELLOW), HIGH(ChatFormatting.RED,
-            ChatFormatting.GOLD
-        ), OVERSTRESSED(ChatFormatting.RED, ChatFormatting.RED);
+        LOW(ChatFormatting.YELLOW, ChatFormatting.GREEN),
+        MEDIUM(ChatFormatting.GOLD, ChatFormatting.YELLOW),
+        HIGH(ChatFormatting.RED, ChatFormatting.GOLD),
+        OVERSTRESSED(ChatFormatting.RED, ChatFormatting.RED);
 
         private final ChatFormatting absoluteColor;
         private final ChatFormatting relativeColor;
@@ -97,15 +97,15 @@ public interface IRotate extends IWrenchable {
 
         public static StressImpact of(double stressPercent) {
             if (stressPercent > 1) {
-                return StressImpact.OVERSTRESSED;
+                return OVERSTRESSED;
             }
-            if (stressPercent > .75d) {
-                return StressImpact.HIGH;
+            if (stressPercent > 0.75d) {
+                return HIGH;
             }
-            if (stressPercent > .5d) {
-                return StressImpact.MEDIUM;
+            if (stressPercent > 0.5d) {
+                return MEDIUM;
             }
-            return StressImpact.LOW;
+            return LOW;
         }
 
         public static boolean isEnabled() {

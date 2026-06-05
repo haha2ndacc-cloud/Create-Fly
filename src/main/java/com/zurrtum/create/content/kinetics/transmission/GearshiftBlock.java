@@ -58,7 +58,7 @@ public class GearshiftBlock extends AbstractEncasedShaftBlock implements IBE<Spl
         boolean previouslyPowered = state.getValue(POWERED);
         if (previouslyPowered != worldIn.hasNeighborSignal(pos)) {
             detachKinetics(worldIn, pos, true);
-            worldIn.setBlock(pos, state.cycle(POWERED), Block.UPDATE_CLIENTS);
+            worldIn.setBlock(pos, state.cycle(POWERED), UPDATE_CLIENTS);
         }
     }
 

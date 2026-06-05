@@ -13,7 +13,7 @@ import org.jspecify.annotations.Nullable;
 public abstract class PercentOrProgressBarDisplaySource extends NumericSingleLineDisplaySource {
     @Override
     protected MutableComponent provideLine(DisplayLinkContext context, DisplayTargetStats stats) {
-        Float rawProgress = this.getProgress(context);
+        Float rawProgress = getProgress(context);
         if (rawProgress == null) {
             return EMPTY_LINE;
         }
@@ -28,7 +28,7 @@ public abstract class PercentOrProgressBarDisplaySource extends NumericSingleLin
         int length = Math.min(stats.maxColumns() - labelSize, 128);
 
         if (context.getTargetBlockEntity() instanceof SignBlockEntity) {
-            length = (int) (length * 6f / 9f);
+            length = (int) (length * 6.0f / 9.0f);
         }
         if (context.getTargetBlockEntity() instanceof FlapDisplayBlockEntity) {
             length = sizeForWideChars(length);
@@ -63,12 +63,8 @@ public abstract class PercentOrProgressBarDisplaySource extends NumericSingleLin
 
     @Override
     protected FlapDisplaySection createSectionForValue(DisplayLinkContext context, int size) {
-        return !progressBarActive(context) ? super.createSectionForValue(context, size) : new FlapDisplaySection(
-            size * FlapDisplaySection.MONOSPACE,
-            "pixel",
-            false,
-            false
-        ).wideFlaps();
+        return !progressBarActive(context) ? super.createSectionForValue(context, size) :
+            new FlapDisplaySection(size * FlapDisplaySection.MONOSPACE, "pixel", false, false).wideFlaps();
     }
 
     private int sizeForWideChars(int size) {

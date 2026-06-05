@@ -20,10 +20,12 @@ public class CpuArena extends AbstractArena {
         memoryBlock.free();
     }
 
+    @Override
     public long byteCapacity() {
         return memoryBlock.size();
     }
 
+    @Override
     protected void grow() {
         memoryBlock = memoryBlock.realloc(memoryBlock.size() * 2);
     }

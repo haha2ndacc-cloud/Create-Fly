@@ -105,9 +105,9 @@ public class LitBlazeBurnerBlock extends Block implements IWrenchable {
         world.addAlwaysVisibleParticle(
             ParticleTypes.LARGE_SMOKE,
             true,
-            (double) pos.getX() + 0.5D + random.nextDouble() / 3.0D * (double) (random.nextBoolean() ? 1 : -1),
-            (double) pos.getY() + random.nextDouble() + random.nextDouble(),
-            (double) pos.getZ() + 0.5D + random.nextDouble() / 3.0D * (double) (random.nextBoolean() ? 1 : -1),
+            pos.getX() + 0.5D + random.nextDouble() / 3.0D * (random.nextBoolean() ? 1 : -1),
+            pos.getY() + random.nextDouble() + random.nextDouble(),
+            pos.getZ() + 0.5D + random.nextDouble() / 3.0D * (random.nextBoolean() ? 1 : -1),
             0.0D,
             0.07D,
             0.0D
@@ -120,7 +120,7 @@ public class LitBlazeBurnerBlock extends Block implements IWrenchable {
                 pos.getZ() + 0.5F,
                 SoundEvents.CAMPFIRE_CRACKLE,
                 SoundSource.BLOCKS,
-                0.25F + random.nextFloat() * .25f,
+                0.25F + random.nextFloat() * 0.25f,
                 random.nextFloat() * 0.7F + 0.6F,
                 false
             );
@@ -179,9 +179,8 @@ public class LitBlazeBurnerBlock extends Block implements IWrenchable {
     public static int getLight(BlockState state) {
         if (state.getValue(FLAME_TYPE) == FlameType.SOUL) {
             return 9;
-        } else {
-            return 12;
         }
+        return 12;
     }
 
     public enum FlameType implements StringRepresentable {

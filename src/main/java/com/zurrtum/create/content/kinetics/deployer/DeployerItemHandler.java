@@ -14,7 +14,7 @@ public class DeployerItemHandler implements SidedItemInventory {
 
     public DeployerItemHandler(DeployerBlockEntity be) {
         this.be = be;
-        this.player = be.player;
+        player = be.player;
     }
 
     @Override

@@ -160,9 +160,8 @@ public class VisualizationManagerImpl implements VisualizationManager {
     private DistanceUpdateLimiterImpl createUpdateLimiter() {
         if (FlwConfig.INSTANCE.limitUpdates()) {
             return new BandedPrimeLimiter();
-        } else {
-            return new NonLimiter();
         }
+        return new NonLimiter();
     }
 
     @Contract("null -> false")
@@ -218,9 +217,8 @@ public class VisualizationManagerImpl implements VisualizationManager {
     public Vec3i renderOrigin() {
         if (lateInit == null) {
             return Vec3i.ZERO;
-        } else {
-            return lateInit.engine.renderOrigin();
         }
+        return lateInit.engine.renderOrigin();
     }
 
     @Override

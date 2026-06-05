@@ -39,10 +39,10 @@ public class PlacementClient {
 
     static final LerpedFloat angle = LerpedFloat.angular().chase(0, 0.25f, LerpedFloat.Chaser.EXP);
     @Nullable
-    static BlockPos target = null;
+    static BlockPos target;
     @Nullable
-    static BlockPos lastTarget = null;
-    static int animationTick = 0;
+    static BlockPos lastTarget;
+    static int animationTick;
 
     public static void tick(Minecraft mc) {
         setTarget(null);
@@ -155,8 +155,8 @@ public class PlacementClient {
         Player player = mc.player;
 
         if (player != null && animationTick > 0) {
-            float screenY = graphics.guiHeight() / 2f;
-            float screenX = graphics.guiWidth() / 2f;
+            float screenY = graphics.guiHeight() / 2.0f;
+            float screenX = graphics.guiWidth() / 2.0f;
             float progress = getCurrentAlpha();
 
             drawDirectionIndicator(graphics, partialTicks, screenX, screenY, progress);
@@ -164,7 +164,7 @@ public class PlacementClient {
     }
 
     public static float getCurrentAlpha() {
-        return Math.min(animationTick / 10f/* + event.getPartialTicks() */, 1f);
+        return Math.min(animationTick / 10.0f/* + event.getPartialTicks() */, 1.0f);
     }
 
     private static void drawDirectionIndicator(
@@ -174,9 +174,9 @@ public class PlacementClient {
         float centerY,
         float progress
     ) {
-        float r = .8f;
-        float g = .8f;
-        float b = .8f;
+        float r = 0.8f;
+        float g = 0.8f;
+        float b = 0.8f;
         float a = progress * progress;
 
         Vec3 projTarget = VecHelper.projectToPlayerView(
@@ -201,11 +201,11 @@ public class PlacementClient {
             angle.setValue(targetAngle);
         }
 
-        angle.chase(targetAngle, .25f, LerpedFloat.Chaser.EXP);
+        angle.chase(targetAngle, 0.25f, LerpedFloat.Chaser.EXP);
         angle.tickChaser();
 
         float snapSize = 22.5f;
-        float snappedAngle = (snapSize * Math.round(angle.getValue(0f) / snapSize)) % 360f;
+        float snappedAngle = snapSize * Math.round(angle.getValue(0.0f) / snapSize) % 360.0f;
 
         float length = 10;
 
@@ -249,16 +249,16 @@ public class PlacementClient {
         Matrix3x2fStack ms = graphics.pose();
         ms.pushMatrix();
         ms.translate(centerX, centerY);
-        float scale = PonderConfig.client().indicatorScale.get() * .75f;
+        float scale = PonderConfig.client().indicatorScale.get() * 0.75f;
         ms.scale(scale, scale);
         ms.scale(12, 12);
 
         float index = snappedAngle / 22.5f;
-        float tex_size = 16f / 256f;
+        float tex_size = 16.0f / 256.0f;
 
         float tx = 0;
         float ty = index * tex_size;
-        float tw = 1f;
+        float tw = 1.0f;
         float th = tex_size;
         int size = (int) (36 * scale);
         TextureSetup texture = PonderGuiTextures.PLACEMENT_INDICATOR_SHEET.bind();
@@ -282,7 +282,7 @@ public class PlacementClient {
 
     //RIP
     public static void renderArrow(Vec3 center, Vec3 target, Direction arrowPlane) {
-        renderArrow(center, target, arrowPlane, 1D);
+        renderArrow(center, target, arrowPlane, 1.0D);
     }
 
     public static void renderArrow(Vec3 center, Vec3 target, Direction arrowPlane, double distanceFromCenter) {
@@ -290,14 +290,14 @@ public class PlacementClient {
         Vec3 facing = Vec3.atLowerCornerOf(arrowPlane.getUnitVec3i());
         Vec3 start = center.add(direction);
         Vec3 offset = direction.scale(distanceFromCenter - 1);
-        Vec3 offsetA = direction.cross(facing).normalize().scale(.25);
-        Vec3 offsetB = facing.cross(direction).normalize().scale(.25);
-        Vec3 endA = center.add(direction.scale(.75)).add(offsetA);
-        Vec3 endB = center.add(direction.scale(.75)).add(offsetB);
+        Vec3 offsetA = direction.cross(facing).normalize().scale(0.25);
+        Vec3 offsetB = facing.cross(direction).normalize().scale(0.25);
+        Vec3 endA = center.add(direction.scale(0.75)).add(offsetA);
+        Vec3 endB = center.add(direction.scale(0.75)).add(offsetB);
         Outliner.getInstance().showLine("placementArrowA" + center + target, start.add(offset), endA.add(offset))
-            .lineWidth(1 / 16f);
+            .lineWidth(1 / 16.0f);
         Outliner.getInstance().showLine("placementArrowB" + center + target, start.add(offset), endB.add(offset))
-            .lineWidth(1 / 16f);
+            .lineWidth(1 / 16.0f);
     }
 
     public static void displayGhost(Object slot, PlacementOffset offset) {

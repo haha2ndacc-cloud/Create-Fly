@@ -56,7 +56,8 @@ public final class FlwTaskExecutor {
 
             if (threadCount == 0) {
                 return SerialTaskExecutor.INSTANCE;
-            } else if (threadCount < 0) {
+            }
+            if (threadCount < 0) {
                 threadCount = getOptimalThreadCount();
             } else {
                 threadCount = Mth.clamp(threadCount, 1, getMaxThreadCount());

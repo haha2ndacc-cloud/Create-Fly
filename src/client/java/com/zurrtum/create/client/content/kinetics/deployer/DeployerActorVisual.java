@@ -97,12 +97,12 @@ public class DeployerActorVisual extends ActorVisual {
         if (context.disabled) {
             factor = 0;
         } else if (context.contraption.stalled || context.position == null || context.data.contains("StationaryTimer")) {
-            factor = Mth.sin(AnimationTickHolder.getRenderTime() * .5f) * .25f + .25f;
+            factor = Mth.sin(AnimationTickHolder.getRenderTime() * 0.5f) * 0.25f + 0.25f;
         } else {
             Vec3 center = VecHelper.getCenterOf(BlockPos.containing(context.position));
             double distance = context.position.distanceTo(center);
             double nextDistance = context.position.add(context.motion).distanceTo(center);
-            factor = .5f - Mth.clamp(Mth.lerp(AnimationTickHolder.getPartialTicks(), distance, nextDistance), 0, 1);
+            factor = 0.5f - Mth.clamp(Mth.lerp(AnimationTickHolder.getPartialTicks(), distance, nextDistance), 0, 1);
         }
         return (float) factor;
     }

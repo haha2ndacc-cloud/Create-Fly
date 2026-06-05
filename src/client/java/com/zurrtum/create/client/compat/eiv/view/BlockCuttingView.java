@@ -44,7 +44,7 @@ public class BlockCuttingView extends CreateView {
         slotDefinition.addItemSlot(0, 3, 1);
         int size = results.size();
         for (int i = 0, left = 76, top = 44; i < size; i++) {
-            slotDefinition.addItemSlot(i + 1, left + (i % 5) * 19, top + (i / 5) * -19);
+            slotDefinition.addItemSlot(i + 1, left + i % 5 * 19, top + i / 5 * -19);
         }
         return size + 1;
     }

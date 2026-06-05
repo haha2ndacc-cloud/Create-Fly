@@ -73,15 +73,17 @@ public class FactoryPanelModel extends WrapperBlockStateModel {
     ) {
         PartialModel factoryPanel;
         if (behaviour.panelBE().restocker) {
-            factoryPanel = behaviour.count == 0 ? AllPartialModels.FACTORY_PANEL_RESTOCKER : AllPartialModels.FACTORY_PANEL_RESTOCKER_WITH_BULB;
+            factoryPanel = behaviour.count == 0 ? AllPartialModels.FACTORY_PANEL_RESTOCKER :
+                AllPartialModels.FACTORY_PANEL_RESTOCKER_WITH_BULB;
         } else {
-            factoryPanel = behaviour.count == 0 ? AllPartialModels.FACTORY_PANEL : AllPartialModels.FACTORY_PANEL_WITH_BULB;
+            factoryPanel =
+                behaviour.count == 0 ? AllPartialModels.FACTORY_PANEL : AllPartialModels.FACTORY_PANEL_WITH_BULB;
         }
 
         float xRot = Mth.RAD_TO_DEG * FactoryPanelBlock.getXRot(state) + 90;
         float yRot = Mth.RAD_TO_DEG * FactoryPanelBlock.getYRot(state);
-        double xOffset = slot.xOffset * .5;
-        double yOffset = slot.yOffset * .5;
+        double xOffset = slot.xOffset * 0.5;
+        double yOffset = slot.yOffset * 0.5;
 
         List<BlockStateModelPart> modelParts = new ObjectArrayList<>();
         factoryPanel.get().collectParts(random, modelParts);

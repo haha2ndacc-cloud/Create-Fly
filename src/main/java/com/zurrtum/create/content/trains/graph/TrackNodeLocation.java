@@ -167,7 +167,7 @@ public class TrackNodeLocation extends Vec3i {
     public Collection<BlockPos> allAdjacent() {
         Set<BlockPos> set = new HashSet<>();
         Vec3 vec3 = getLocation().subtract(0, yOffsetPixels / 16.0, 0);
-        double step = 1 / 8f;
+        double step = 1 / 8.0f;
         for (int x : Iterate.positiveAndNegative) {
             for (int y : Iterate.positiveAndNegative) {
                 for (int z : Iterate.positiveAndNegative) {
@@ -180,8 +180,8 @@ public class TrackNodeLocation extends Vec3i {
 
     public static class DiscoveredLocation extends TrackNodeLocation {
 
-        @Nullable BezierConnection turn = null;
-        boolean forceNode = false;
+        @Nullable BezierConnection turn;
+        boolean forceNode;
         @Nullable Vec3 direction;
         Vec3 normal;
         TrackMaterial materialA;
@@ -202,12 +202,12 @@ public class TrackNodeLocation extends Vec3i {
         }
 
         public DiscoveredLocation materialA(TrackMaterial material) {
-            this.materialA = material;
+            materialA = material;
             return this;
         }
 
         public DiscoveredLocation materialB(TrackMaterial material) {
-            this.materialB = material;
+            materialB = material;
             return this;
         }
 
@@ -266,7 +266,7 @@ public class TrackNodeLocation extends Vec3i {
             return this.direction != null && Math.max(
                 direction.dot(this.direction),
                 direction.dot(this.direction.scale(-1))
-            ) < 7 / 8f;
+            ) < 7 / 8.0f;
         }
 
         @Nullable

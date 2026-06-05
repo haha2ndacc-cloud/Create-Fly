@@ -15,7 +15,7 @@ import java.util.List;
 
 public class AnalogLeverBlockEntity extends SmartBlockEntity {
 
-    int state = 0;
+    int state;
     int lastChange;
     public LerpedFloat clientState;
 

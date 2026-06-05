@@ -100,7 +100,7 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
             preferredFacing = player != null && player.isShiftKeyDown() ? facing : facing.getOpposite();
         }
 
-        if (player != null && !(FakePlayerHandler.has(player))) {
+        if (player != null && !FakePlayerHandler.has(player)) {
             if (context.getLevel().getBlockState(context.getClickedPos().relative(preferredFacing.getOpposite()))
                 .is(AllBlocks.PORTABLE_STORAGE_INTERFACE)) {
                 player.sendOverlayMessage(Component.translatable("create.packager.no_portable_storage"));
@@ -170,8 +170,8 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
                         player.blockPosition(),
                         SoundEvents.ITEM_PICKUP,
                         SoundSource.PLAYERS,
-                        .2f,
-                        1f + player.level().getRandom().nextFloat()
+                        0.2f,
+                        1.0f + player.level().getRandom().nextFloat()
                     );
                     be.heldBox = ItemStack.EMPTY;
                     be.notifyUpdate();
@@ -231,7 +231,7 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
         if (previouslyPowered == worldIn.hasNeighborSignal(pos)) {
             return;
         }
-        worldIn.setBlock(pos, state.cycle(POWERED), Block.UPDATE_CLIENTS);
+        worldIn.setBlock(pos, state.cycle(POWERED), UPDATE_CLIENTS);
         if (!previouslyPowered) {
             withBlockEntityDo(worldIn, pos, PackagerBlockEntity::activate);
         }

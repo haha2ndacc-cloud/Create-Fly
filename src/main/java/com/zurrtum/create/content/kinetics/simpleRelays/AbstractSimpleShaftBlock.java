@@ -11,7 +11,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,7 +31,7 @@ public abstract class AbstractSimpleShaftBlock extends AbstractShaftBlock implem
     @Override
     public void affectNeighborsAfterRemoval(BlockState state, ServerLevel world, BlockPos pos, boolean isMoving) {
         if (!isMoving) {
-            removeBracket(world, pos, true).ifPresent(stack -> Block.popResource(world, pos, stack));
+            removeBracket(world, pos, true).ifPresent(stack -> popResource(world, pos, stack));
         }
     }
 

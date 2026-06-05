@@ -34,7 +34,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Blaze;
@@ -127,7 +126,7 @@ public class ProcessingScenes {
         scene.idle(20);
 
         scene.overlay().showText(50).text("The outputs can also be extracted by automation")
-            .pointAt(util.vector().blockSurface(millstone, Direction.WEST).add(-.5, .4, 0)).placeNearTarget();
+            .pointAt(util.vector().blockSurface(millstone, Direction.WEST).add(-0.5, 0.4, 0)).placeNearTarget();
         scene.idle(60);
     }
 
@@ -135,7 +134,7 @@ public class ProcessingScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("crushing_wheels", "Processing Items with Crushing Wheels");
         scene.configureBasePlate(0, 0, 5);
-        scene.scaleSceneView(.9f);
+        scene.scaleSceneView(0.9f);
 
         Selection wheels = util.select().fromTo(3, 2, 2, 1, 2, 2);
         Selection kinetics = util.select().fromTo(0, 1, 5, 4, 1, 3);
@@ -222,7 +221,7 @@ public class ProcessingScenes {
 
         scene.overlay().showText(50).attachKeyFrame()
             .text("Items can be inserted and picked up through automated means as well")
-            .pointAt(centerTop.add(0, .5, 0)).placeNearTarget();
+            .pointAt(centerTop.add(0, 0.5, 0)).placeNearTarget();
         scene.idle(40);
 
         for (int i = 0; i < 5; i++) {
@@ -296,7 +295,7 @@ public class ProcessingScenes {
         scene.world().modifyBlockEntity(
             pressPos,
             type,
-            pte -> pte.getPressingBehaviour().makePressingParticleEffect(depotCenter.add(0, 8 / 16f, 0), copper)
+            pte -> pte.getPressingBehaviour().makePressingParticleEffect(depotCenter.add(0, 8 / 16.0f, 0), copper)
         );
         scene.world().removeItemsFromBelt(depotPos);
         ItemStack sheet = AllItems.COPPER_SHEET.getDefaultInstance();
@@ -330,7 +329,7 @@ public class ProcessingScenes {
         scene.world().modifyBlockEntity(
             pressPos,
             type,
-            pte -> pte.getPressingBehaviour().makePressingParticleEffect(depotCenter.add(0, 8 / 16f, 0), copper)
+            pte -> pte.getPressingBehaviour().makePressingParticleEffect(depotCenter.add(0, 8 / 16.0f, 0), copper)
         );
         scene.world().removeItemsFromBelt(pressPos.below(2));
         ingot = scene.world().createItemOnBelt(pressPos.below(2), Direction.UP, sheet);
@@ -344,7 +343,7 @@ public class ProcessingScenes {
         scene.world().modifyBlockEntity(
             pressPos,
             type,
-            pte -> pte.getPressingBehaviour().makePressingParticleEffect(depotCenter.add(0, 8 / 16f, 0), copper)
+            pte -> pte.getPressingBehaviour().makePressingParticleEffect(depotCenter.add(0, 8 / 16.0f, 0), copper)
         );
         scene.world().removeItemsFromBelt(pressPos.below(2));
         ingot2 = scene.world().createItemOnBelt(pressPos.below(2), Direction.UP, sheet);
@@ -839,7 +838,7 @@ public class ProcessingScenes {
         scene.world().createItemOnBelt(util.grid().at(2, 1, 2), Direction.WEST, block);
         scene.idle(40);
         scene.overlay().showText(70).text("Desired outputs will then have to be extracted from the basin")
-            .pointAt(util.vector().topOf(util.grid().at(3, 1, 2)).subtract(0, 3 / 16f, 0)).placeNearTarget();
+            .pointAt(util.vector().topOf(util.grid().at(3, 1, 2)).subtract(0, 3 / 16.0f, 0)).placeNearTarget();
         scene.idle(80);
 
         Vec3 filter = util.vector().of(2.5, 2.825, 2.5);

@@ -85,7 +85,7 @@ public enum AllCTTypes implements CTType {
             }
 
             if (borders == 2) {
-                if ((c.up && c.left && c.topLeft) || (c.down && c.left && c.bottomLeft) || (c.up && c.right && c.topRight) || (c.down && c.right && c.bottomRight)) {
+                if (c.up && c.left && c.topLeft || c.down && c.left && c.bottomLeft || c.up && c.right && c.topRight || c.down && c.right && c.bottomRight) {
                     tileX += 3;
                 }
             }
@@ -185,7 +185,7 @@ public enum AllCTTypes implements CTType {
     private final ContextRequirement contextRequirement;
 
     AllCTTypes(int sheetSize, ContextRequirement contextRequirement) {
-        this.id = Create.asResource(Lang.asId(name()));
+        id = Create.asResource(Lang.asId(name()));
         this.sheetSize = sheetSize;
         this.contextRequirement = contextRequirement;
     }

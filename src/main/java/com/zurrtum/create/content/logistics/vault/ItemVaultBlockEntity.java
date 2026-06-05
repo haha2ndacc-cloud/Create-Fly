@@ -36,7 +36,7 @@ import java.util.function.Supplier;
 
 public class ItemVaultBlockEntity extends SmartBlockEntity implements IMultiBlockEntityContainer.Inventory, Clearable {
 
-    protected @Nullable Supplier<@Nullable ItemInventory> itemCapability = null;
+    protected @Nullable Supplier<@Nullable ItemInventory> itemCapability;
     protected InventoryIdentifier invId;
 
     protected ItemVaultHandler inventory;
@@ -94,8 +94,8 @@ public class ItemVaultBlockEntity extends SmartBlockEntity implements IMultiBloc
 
         Axis axis = controllerBE.getMainConnectionAxis();
 
-        int zMax = (axis == Axis.X ? radius : length);
-        int xMax = (axis == Axis.Z ? radius : length);
+        int zMax = axis == Axis.X ? radius : length;
+        int xMax = axis == Axis.Z ? radius : length;
 
         // Mutable position we'll use for the blocks we poke updates at.
         BlockPos.MutableBlockPos updatePos = new BlockPos.MutableBlockPos();
@@ -225,6 +225,7 @@ public class ItemVaultBlockEntity extends SmartBlockEntity implements IMultiBloc
         return null;
     }
 
+    @Override
     public void removeController(boolean keepContents) {
         if (level.isClientSide()) {
             return;
@@ -292,7 +293,8 @@ public class ItemVaultBlockEntity extends SmartBlockEntity implements IMultiBloc
             return;
         }
 
-        boolean changeOfController = controllerBefore == null ? controller != null : !controllerBefore.equals(controller);
+        boolean changeOfController =
+            controllerBefore == null ? controller != null : !controllerBefore.equals(controller);
         if (hasLevel() && (changeOfController || prevSize != radius || prevLength != length)) {
             level.setBlocksDirty(getBlockPos(), Blocks.AIR.defaultBlockState(), getBlockState());
         }
@@ -333,8 +335,8 @@ public class ItemVaultBlockEntity extends SmartBlockEntity implements IMultiBloc
 
     public InventoryIdentifier getInvId() {
         // ensure capability is up to date first, which sets the ID
-        this.initCapability();
-        return this.invId;
+        initCapability();
+        return invId;
     }
 
     public void applyInventoryToBlock(ItemStackHandler handler) {
@@ -375,10 +377,8 @@ public class ItemVaultBlockEntity extends SmartBlockEntity implements IMultiBloc
         for (int yOffset = 0; yOffset < length; yOffset++) {
             for (int xOffset = 0; xOffset < radius; xOffset++) {
                 for (int zOffset = 0; zOffset < radius; zOffset++) {
-                    BlockPos vaultPos = alongZ ? worldPosition.offset(xOffset, zOffset, yOffset) : worldPosition.offset(yOffset,
-                        xOffset,
-                        zOffset
-                    );
+                    BlockPos vaultPos = alongZ ? worldPosition.offset(xOffset, zOffset, yOffset) :
+                        worldPosition.offset(yOffset, xOffset, zOffset);
                     ItemVaultBlockEntity vaultAt = ConnectivityHandler.partAt(
                         AllBlockEntityTypes.ITEM_VAULT,
                         level,
@@ -401,13 +401,10 @@ public class ItemVaultBlockEntity extends SmartBlockEntity implements IMultiBloc
         }
 
         // build an identifier encompassing all component vaults
-        BlockPos farCorner = alongZ ? worldPosition.offset(radius, radius, length) : worldPosition.offset(
-            length,
-            radius,
-            radius
-        );
-        BoundingBox bounds = BoundingBox.fromCorners(this.worldPosition, farCorner);
-        this.invId = new InventoryIdentifier.Bounds(bounds);
+        BlockPos farCorner =
+            alongZ ? worldPosition.offset(radius, radius, length) : worldPosition.offset(length, radius, radius);
+        BoundingBox bounds = BoundingBox.fromCorners(worldPosition, farCorner);
+        invId = new InventoryIdentifier.Bounds(bounds);
     }
 
     public static int getMaxLength(int radius) {
@@ -421,7 +418,7 @@ public class ItemVaultBlockEntity extends SmartBlockEntity implements IMultiBloc
 
     @Override
     public void notifyMultiUpdated() {
-        BlockState state = this.getBlockState();
+        BlockState state = getBlockState();
         if (ItemVaultBlock.isVault(state)) { // safety
             level.setBlock(
                 getBlockPos(),
@@ -463,12 +460,12 @@ public class ItemVaultBlockEntity extends SmartBlockEntity implements IMultiBloc
 
     @Override
     public void setHeight(int height) {
-        this.length = height;
+        length = height;
     }
 
     @Override
     public void setWidth(int width) {
-        this.radius = width;
+        radius = width;
     }
 
     @Override
@@ -719,10 +716,12 @@ public class ItemVaultBlockEntity extends SmartBlockEntity implements IMultiBloc
             return ItemStack.EMPTY;
         }
 
+        @Override
         public int getVersion() {
             return version;
         }
 
+        @Override
         public int getId() {
             return id;
         }

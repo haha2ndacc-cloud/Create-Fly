@@ -58,7 +58,7 @@ public class MillingCategory extends CreateCategory<RecipeHolder<MillingRecipe>>
             addChanceSlot(builder, 139, 27, results.getFirst());
         } else {
             for (int i = 0; i < size; i++) {
-                addChanceSlot(builder, i % 2 == 0 ? 133 : 152, 27 + (i / 2) * -19, results.get(i));
+                addChanceSlot(builder, i % 2 == 0 ? 133 : 152, 27 + i / 2 * -19, results.get(i));
             }
         }
     }

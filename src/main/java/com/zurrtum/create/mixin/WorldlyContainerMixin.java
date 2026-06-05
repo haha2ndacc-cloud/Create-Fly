@@ -326,7 +326,8 @@ public interface WorldlyContainerMixin extends WorldlyContainerExtension {
                             entry.setValue(remaining - insert);
                         }
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxCount = target.getMaxStackSize();
                         int count = target.getCount();
                         if (count != maxCount) {
@@ -403,7 +404,8 @@ public interface WorldlyContainerMixin extends WorldlyContainerExtension {
                             entry.setValue(remaining - insert);
                         }
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxCount = target.getMaxStackSize();
                         int count = target.getCount();
                         if (count != maxCount) {
@@ -620,9 +622,8 @@ public interface WorldlyContainerMixin extends WorldlyContainerExtension {
             }
             setChanged();
             return result;
-        } else {
-            return stacks;
         }
+        return stacks;
     }
 
     @Override
@@ -978,7 +979,8 @@ public interface WorldlyContainerMixin extends WorldlyContainerExtension {
                         }
                         dirty = true;
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxCount = target.getMaxStackSize();
                         int count = target.getCount();
                         if (count != maxCount) {
@@ -1014,9 +1016,8 @@ public interface WorldlyContainerMixin extends WorldlyContainerExtension {
             }
             setChanged();
             return result;
-        } else {
-            return stacks;
         }
+        return stacks;
     }
 
     @Override
@@ -1091,7 +1092,8 @@ public interface WorldlyContainerMixin extends WorldlyContainerExtension {
                         }
                         dirty = true;
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxCount = target.getMaxStackSize();
                         int count = target.getCount();
                         if (count != maxCount) {
@@ -1127,9 +1129,8 @@ public interface WorldlyContainerMixin extends WorldlyContainerExtension {
             }
             setChanged();
             return result;
-        } else {
-            return stacks;
         }
+        return stacks;
     }
 
     @Override
@@ -1357,7 +1358,8 @@ public interface WorldlyContainerMixin extends WorldlyContainerExtension {
                             entry.setValue(remaining - insert);
                         }
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxCount = target.getMaxStackSize();
                         int count = target.getCount();
                         if (count != maxCount) {

@@ -24,6 +24,7 @@ public class HatchFilterSlot extends ValueBoxTransform {
         return super.getScale() * 0.965f;
     }
 
+    @Override
     public boolean testHit(LevelAccessor level, BlockPos pos, BlockState state, Vec3 localHit) {
         return localHit.distanceTo(getLocalOffset(state).subtract(0, 0.125, 0)) < scale / 2;
     }

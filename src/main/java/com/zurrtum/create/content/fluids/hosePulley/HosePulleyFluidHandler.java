@@ -28,7 +28,7 @@ public class HosePulleyFluidHandler implements SidedFluidInventory {
     private final Supplier<Boolean> predicate;
     private final HosePulleyBlockEntity be;
     private FluidStack stack = FluidStack.EMPTY;
-    private int previousAmount = 0;
+    private int previousAmount;
 
     public HosePulleyFluidHandler(
         HosePulleyBlockEntity be,
@@ -48,9 +48,8 @@ public class HosePulleyFluidHandler implements SidedFluidInventory {
     public int[] getAvailableSlots(@Nullable Direction side) {
         if (HosePulleyBlock.hasPipeTowards(be.getLevel(), be.getBlockPos(), be.getBlockState(), side)) {
             return SLOTS;
-        } else {
-            return EMPTY_SLOTS;
         }
+        return EMPTY_SLOTS;
     }
 
     @Override

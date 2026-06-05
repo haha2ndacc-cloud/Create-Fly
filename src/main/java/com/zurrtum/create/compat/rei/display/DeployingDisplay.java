@@ -52,7 +52,8 @@ public record DeployingDisplay(EntryIngredient input, EntryIngredient target, En
         Recipe<?> recipe = entry.value();
         if (recipe instanceof ItemApplicationRecipe itemApplicationRecipe) {
             return new DeployingDisplay(id, itemApplicationRecipe);
-        } else if (recipe instanceof SandPaperPolishingRecipe sandPaperPolishingRecipe) {
+        }
+        if (recipe instanceof SandPaperPolishingRecipe sandPaperPolishingRecipe) {
             return new DeployingDisplay(id, sandPaperPolishingRecipe);
         }
         return null;

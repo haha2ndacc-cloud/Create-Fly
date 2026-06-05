@@ -25,9 +25,8 @@ public class DepotItemHandler implements ItemInventory {
                 return true;
             }
             return behaviour.getHeldItemStack().getCount() < max;
-        } else {
-            return behaviour.getHeldItemStack().isEmpty() && behaviour.isOutputEmpty();
         }
+        return behaviour.getHeldItemStack().isEmpty() && behaviour.isOutputEmpty();
     }
 
     @Override

@@ -38,8 +38,8 @@ public class CreativeFluidTankBlockEntity extends FluidTankBlockEntity {
 
         private CreativeFluidTankInventory(FluidStack stack, int capacity) {
             super(capacity);
-            this.fluid = stack;
-            this.updateCallback = null;
+            fluid = stack;
+            updateCallback = null;
         }
 
         @Override

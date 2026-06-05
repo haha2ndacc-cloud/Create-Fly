@@ -54,7 +54,7 @@ public class UIRenderHelper {
         Color c1 = color.scaleAlpha(0.625f);
         Color c2 = color.scaleAlpha(0.5f);
         Color c3 = color.scaleAlpha(0.0625f);
-        Color c4 = color.scaleAlpha(0f);
+        Color c4 = color.scaleAlpha(0.0f);
 
         Matrix3x2fStack poseStack = graphics.pose();
         poseStack.pushMatrix();
@@ -79,8 +79,8 @@ public class UIRenderHelper {
             return;
         }
 
-        double split1 = .5;
-        double split2 = .75;
+        double split1 = 0.5;
+        double split2 = 0.75;
         graphics.fillGradient(-width, 0, width, (int) (split1 * height), c1.getRGB(), c2.getRGB());
         graphics.fillGradient(
             -width,
@@ -133,7 +133,7 @@ public class UIRenderHelper {
 
         float w = breadth / 2;
         //graphics.fillGradient(-w, 0, w, length, startColor.getRGB(), endColor.getRGB());
-        drawGradientRect(graphics, -w, 0f, w, length, startColor, endColor);
+        drawGradientRect(graphics, -w, 0.0f, w, length, startColor, endColor);
 
         poseStack.popMatrix();
     }
@@ -216,14 +216,14 @@ public class UIRenderHelper {
         float x3 = indent + width;
 
         float y0 = 0;
-        float y1 = height / 2f;
+        float y1 = height / 2.0f;
         float y2 = height;
 
         indent = Math.abs(indent);
         width = Math.abs(width);
         Color fc1 = Color.mixColors(c1, c2, 0);
-        Color fc2 = Color.mixColors(c1, c2, (indent) / (width + 2f * indent));
-        Color fc3 = Color.mixColors(c1, c2, (indent + width) / (width + 2f * indent));
+        Color fc2 = Color.mixColors(c1, c2, indent / (width + 2.0f * indent));
+        Color fc3 = Color.mixColors(c1, c2, (indent + width) / (width + 2.0f * indent));
         Color fc4 = Color.mixColors(c1, c2, 1);
 
         graphics.guiRenderState.addGuiElement(new BreadcrumbArrowRenderState(
@@ -295,7 +295,7 @@ public class UIRenderHelper {
         List<Vec2> points = new ArrayList<>(segmentCount);
 
 
-        float theta = (Mth.DEG_TO_RAD * arcAngle) / (float) (segmentCount - 1);
+        float theta = Mth.DEG_TO_RAD * arcAngle / (segmentCount - 1);
         float t = Mth.DEG_TO_RAD * startAngle;
 
         for (int i = 0; i < segmentCount; i++) {
@@ -320,7 +320,7 @@ public class UIRenderHelper {
         int width,
         int height
     ) {
-        drawColoredTexture(graphics, texture, c, x, y, (float) tex_left, (float) tex_top, width, height, 256, 256);
+        drawColoredTexture(graphics, texture, c, x, y, tex_left, tex_top, width, height, 256, 256);
     }
 
     public static void drawColoredTexture(
@@ -369,10 +369,10 @@ public class UIRenderHelper {
             left + w,
             top,
             top + h,
-            tex.getStartX() / 256f,
-            (tex.getStartX() + tex.getWidth()) / 256f,
-            tex.getStartY() / 256f,
-            (tex.getStartY() + tex.getHeight()) / 256f
+            tex.getStartX() / 256.0f,
+            (tex.getStartX() + tex.getWidth()) / 256.0f,
+            tex.getStartY() / 256.0f,
+            (tex.getStartY() + tex.getHeight()) / 256.0f
         );
     }
 
@@ -392,10 +392,10 @@ public class UIRenderHelper {
             left + w,
             top,
             top + h,
-            tex.getStartX() / 256f,
-            (tex.getStartX() + w) / 256f,
-            tex.getStartY() / 256f,
-            (tex.getStartY() + h) / 256f
+            tex.getStartX() / 256.0f,
+            (tex.getStartX() + w) / 256.0f,
+            tex.getStartY() / 256.0f,
+            (tex.getStartY() + h) / 256.0f
         );
     }
 
@@ -422,10 +422,10 @@ public class UIRenderHelper {
             right,
             top,
             bot,
-            (tex_left + 0.0F) / (float) sheet_width,
-            (tex_left + (float) tex_width) / (float) sheet_width,
-            (tex_top + 0.0F) / (float) sheet_height,
-            (tex_top + (float) tex_height) / (float) sheet_height
+            (tex_left + 0.0F) / sheet_width,
+            (tex_left + tex_width) / sheet_width,
+            (tex_top + 0.0F) / sheet_height,
+            (tex_top + tex_height) / sheet_height
         );
     }
 

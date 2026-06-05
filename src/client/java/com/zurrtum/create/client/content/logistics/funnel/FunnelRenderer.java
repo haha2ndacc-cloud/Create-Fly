@@ -69,7 +69,8 @@ public class FunnelRenderer implements BlockEntityRenderer<FunnelBlockEntity, Fu
         }
         SmartBlockEntityRenderer.extractBase(level, be, state, crumblingOverlay);
         AbstractFunnelBlock block = (AbstractFunnelBlock) state.blockState.getBlock();
-        PartialModel partialModel = block instanceof FunnelBlock ? AllPartialModels.FUNNEL_FLAP : AllPartialModels.BELT_FUNNEL_FLAP;
+        PartialModel partialModel =
+            block instanceof FunnelBlock ? AllPartialModels.FUNNEL_FLAP : AllPartialModels.BELT_FUNNEL_FLAP;
         SuperByteBufferRenderState flapBuffer = CachedBuffers.partial(partialModel, state.blockState)
             .cardinalLighting(level).light(state.lightCoords).extractRenderState();
         state.flap = FlapStuffs.getFlapsRenderState(

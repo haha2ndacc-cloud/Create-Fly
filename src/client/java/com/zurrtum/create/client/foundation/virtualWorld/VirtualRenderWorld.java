@@ -57,7 +57,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public class VirtualRenderWorld extends Level implements VisualizationLevel, BlockAndTintGetter {
-    private static final CardinalLighting FULL_LIGHTING = new CardinalLighting(1F, 1F, 1F, 1F, 1F, 1F);
+    private static final CardinalLighting FULL_LIGHTING = new CardinalLighting(1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F);
     protected final Level level;
     protected final int minBuildHeight;
     protected final int height;
@@ -76,7 +76,7 @@ public class VirtualRenderWorld extends Level implements VisualizationLevel, Blo
 
     protected final Runnable onBlockUpdated;
 
-    private int externalPackedLight = 0;
+    private int externalPackedLight;
 
     public VirtualRenderWorld(Level level, int minBuildHeight, int height, Vec3i biomeOffset, Runnable onBlockUpdated) {
         super(
@@ -94,8 +94,8 @@ public class VirtualRenderWorld extends Level implements VisualizationLevel, Blo
         this.height = nextMultipleOf16(height);
         this.biomeOffset = biomeOffset;
 
-        this.chunkSource = new VirtualChunkSource(this);
-        this.lightEngine = new LevelLightEngine(chunkSource, true, false);
+        chunkSource = new VirtualChunkSource(this);
+        lightEngine = new LevelLightEngine(chunkSource, true, false);
         this.onBlockUpdated = onBlockUpdated;
     }
 
@@ -130,24 +130,23 @@ public class VirtualRenderWorld extends Level implements VisualizationLevel, Blo
      */
     public static int nextMultipleOf16(int a) {
         if (a < 0) {
-            return -(((Math.abs(a) - 1) | 15) + 1);
-        } else {
-            return ((a - 1) | 15) + 1;
+            return -((Math.abs(a) - 1 | 15) + 1);
         }
+        return (a - 1 | 15) + 1;
     }
 
     /**
      * Set an external light value that will be maxed with any light queries.
      */
     public void setExternalLight(int packedLight) {
-        this.externalPackedLight = packedLight;
+        externalPackedLight = packedLight;
     }
 
     /**
      * Reset the external light.
      */
     public void resetExternalLight() {
-        this.externalPackedLight = 0;
+        externalPackedLight = 0;
     }
 
     @Override
@@ -161,9 +160,8 @@ public class VirtualRenderWorld extends Level implements VisualizationLevel, Blo
 
         if (lightType == LightLayer.SKY) {
             return Math.max(selfBrightness, LightCoordsUtil.sky(externalPackedLight));
-        } else {
-            return Math.max(selfBrightness, LightCoordsUtil.block(externalPackedLight));
         }
+        return Math.max(selfBrightness, LightCoordsUtil.block(externalPackedLight));
     }
 
     public void clear() {
@@ -542,51 +540,51 @@ public class VirtualRenderWorld extends Level implements VisualizationLevel, Blo
 
     @Override
     public int getMaxY() {
-        return this.getMinY() + this.getHeight() - 1;
+        return getMinY() + getHeight() - 1;
     }
 
     @Override
     public int getSectionsCount() {
-        return this.getMaxSectionY() - this.getMinSectionY() + 1;
+        return getMaxSectionY() - getMinSectionY() + 1;
     }
 
     @Override
     public int getMinSectionY() {
-        return SectionPos.blockToSectionCoord(this.getMinY());
+        return SectionPos.blockToSectionCoord(getMinY());
     }
 
     @Override
     public int getMaxSectionY() {
-        return SectionPos.blockToSectionCoord(this.getMaxY());
+        return SectionPos.blockToSectionCoord(getMaxY());
     }
 
     @Override
     public boolean isInsideBuildHeight(int y) {
-        return y >= this.getMinY() && y <= this.getMaxY();
+        return y >= getMinY() && y <= getMaxY();
     }
 
     @Override
     public boolean isOutsideBuildHeight(BlockPos pos) {
-        return this.isOutsideBuildHeight(pos.getY());
+        return isOutsideBuildHeight(pos.getY());
     }
 
     @Override
     public boolean isOutsideBuildHeight(int y) {
-        return y < this.getMinY() || y > this.getMaxY();
+        return y < getMinY() || y > getMaxY();
     }
 
     @Override
     public int getSectionIndex(int y) {
-        return this.getSectionIndexFromSectionY(SectionPos.blockToSectionCoord(y));
+        return getSectionIndexFromSectionY(SectionPos.blockToSectionCoord(y));
     }
 
     @Override
     public int getSectionIndexFromSectionY(int coord) {
-        return coord - this.getMinSectionY();
+        return coord - getMinSectionY();
     }
 
     @Override
     public int getSectionYFromSectionIndex(int index) {
-        return index + this.getMinSectionY();
+        return index + getMinSectionY();
     }
 }

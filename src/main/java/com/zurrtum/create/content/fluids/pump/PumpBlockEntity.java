@@ -381,7 +381,7 @@ public class PumpBlockEntity extends KineticBlockEntity {
                 boolean pull = isPullingOnSide(isFront(entry.getKey()));
                 Couple<Float> pressure = entry.getValue().getPressure();
                 pressure.set(pull, Math.abs(getSpeed()));
-                pressure.set(!pull, 0f);
+                pressure.set(!pull, 0.0f);
             }
         }
 

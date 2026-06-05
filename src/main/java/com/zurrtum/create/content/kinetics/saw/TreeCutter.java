@@ -202,8 +202,8 @@ public class TreeCutter {
 
     private static int getLeafDistance(BlockState state) {
         IntegerProperty distanceProperty = state.getValues().map(Property.Value::property)
-            .map(property -> property instanceof IntegerProperty ip && property.getName()
-                .equals("distance") ? ip : null).filter(Objects::nonNull).findFirst().orElse(LeavesBlock.DISTANCE);
+            .map(property -> property instanceof IntegerProperty ip && property.getName().equals("distance") ? ip :
+                null).filter(Objects::nonNull).findFirst().orElse(LeavesBlock.DISTANCE);
         return state.getValue(distanceProperty);
     }
 
@@ -346,9 +346,9 @@ public class TreeCutter {
             @Nullable Player playerEntity,
             BiConsumer<BlockPos, ItemStack> drop
         ) {
-            attachments.forEach(makeCallbackFor(world, 1 / 32f, toDamage, playerEntity, drop));
-            logs.forEach(makeCallbackFor(world, 1 / 2f, toDamage, playerEntity, drop));
-            leaves.forEach(makeCallbackFor(world, 1 / 8f, toDamage, playerEntity, drop));
+            attachments.forEach(makeCallbackFor(world, 1 / 32.0f, toDamage, playerEntity, drop));
+            logs.forEach(makeCallbackFor(world, 1 / 2.0f, toDamage, playerEntity, drop));
+            leaves.forEach(makeCallbackFor(world, 1 / 8.0f, toDamage, playerEntity, drop));
         }
     }
 }

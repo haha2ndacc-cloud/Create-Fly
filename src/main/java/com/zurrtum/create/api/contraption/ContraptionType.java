@@ -18,6 +18,6 @@ public final class ContraptionType {
     }
 
     public boolean is(TagKey<ContraptionType> tag) {
-        return this.holder.is(tag);
+        return holder.is(tag);
     }
 }

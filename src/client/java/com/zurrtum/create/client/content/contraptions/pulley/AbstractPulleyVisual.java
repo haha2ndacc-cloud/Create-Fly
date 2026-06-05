@@ -87,7 +87,7 @@ public abstract class AbstractPulleyVisual<T extends KineticBlockEntity> extends
     protected abstract SpriteShiftEntry getCoilAnimation();
 
     private Instancer<TransformedInstance> magnetInstancer() {
-        return offset > .25f ? getMagnetModel() : getHalfMagnetModel();
+        return offset > 0.25f ? getMagnetModel() : getHalfMagnetModel();
     }
 
     @Override
@@ -111,7 +111,7 @@ public abstract class AbstractPulleyVisual<T extends KineticBlockEntity> extends
 
         if (shouldRenderHalfRope()) {
             float f = offset % 1;
-            float halfRopeNudge = f > .75f ? f - 1 : f;
+            float halfRopeNudge = f > 0.75f ? f - 1 : f;
 
             rope.get(true).setIdentityTransform().translate(getVisualPosition()).translate(0, -halfRopeNudge, 0)
                 .light(lightCache.getPackedLight(0)).setChanged();
@@ -149,7 +149,7 @@ public abstract class AbstractPulleyVisual<T extends KineticBlockEntity> extends
 
     private boolean shouldRenderHalfRope() {
         float f = offset % 1;
-        return offset > .75f && (f < .25f || f > .75f);
+        return offset > 0.75f && (f < 0.25f || f > 0.75f);
     }
 
     @Override
@@ -209,7 +209,7 @@ public abstract class AbstractPulleyVisual<T extends KineticBlockEntity> extends
             for (int i = 0; i < data.size(); i++) {
                 int blockLight = level.getBrightness(LightLayer.BLOCK, mutablePos);
                 int skyLight = level.getBrightness(LightLayer.SKY, mutablePos);
-                int light = ((skyLight & 0xF) << 4) | (blockLight & 0xF);
+                int light = (skyLight & 0xF) << 4 | blockLight & 0xF;
                 data.set(i, (byte) light);
                 mutablePos.move(Direction.DOWN);
             }
@@ -222,7 +222,7 @@ public abstract class AbstractPulleyVisual<T extends KineticBlockEntity> extends
 
             int light = Byte.toUnsignedInt(data.getByte(offset));
             int blockLight = light & 0xF;
-            int skyLight = (light >>> 4) & 0xF;
+            int skyLight = light >>> 4 & 0xF;
             return LightCoordsUtil.pack(blockLight, skyLight);
         }
     }

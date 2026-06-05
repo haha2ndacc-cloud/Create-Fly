@@ -5,11 +5,11 @@ public enum GlslVersion {
 
     public final int version;
 
-    private GlslVersion(int version) {
+    GlslVersion(int version) {
         this.version = version;
     }
 
     public String toString() {
-        return Integer.toString(this.version);
+        return Integer.toString(version);
     }
 }

@@ -25,10 +25,10 @@ public class ConfigurationProtocolsMixin {
     ) {
         return original.call(
             type,
-            (Consumer<ProtocolInfoBuilder<ClientConfigurationPacketListener, RegistryFriendlyByteBuf, Unit>>) (builder -> {
+            (Consumer<ProtocolInfoBuilder<ClientConfigurationPacketListener, RegistryFriendlyByteBuf, Unit>>) builder -> {
                 registrar.accept(builder);
                 AllPackets.S2C_CONFIG.forEach(builder::addPacket);
-            })
+            }
         );
     }
 }

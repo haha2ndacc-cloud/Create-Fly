@@ -135,8 +135,8 @@ public class FlapDisplayBlockEntity extends KineticBlockEntity implements Displa
             return;
         }
 
-        float volume = Mth.clamp(activeFlaps / 20f, 0.25f, 1.5f);
-        float bgVolume = Mth.clamp(activeFlaps / 40f, 0.25f, 1f);
+        float volume = Mth.clamp(activeFlaps / 20.0f, 0.25f, 1.5f);
+        float bgVolume = Mth.clamp(activeFlaps / 40.0f, 0.25f, 1.0f);
         BlockPos middle = worldPosition.relative(getDirection().getClockWise(), xSize / 2)
             .relative(Direction.DOWN, ySize / 2);
         AllSoundEvents.SCROLL_VALUE.playAt(level, middle, volume, 0.56f, false);
@@ -146,7 +146,7 @@ public class FlapDisplayBlockEntity extends KineticBlockEntity implements Displa
             middle.getZ(),
             SoundEvents.CALCITE_HIT,
             SoundSource.BLOCKS,
-            .35f * bgVolume,
+            0.35f * bgVolume,
             1.95f,
             false
         );
@@ -183,11 +183,8 @@ public class FlapDisplayBlockEntity extends KineticBlockEntity implements Displa
         }
 
         manualLines[lineIndex] = true;
-        Component text = isVirtual() ? componentText : DynamicComponent.parseCustomText(
-            level,
-            worldPosition,
-            componentText
-        );
+        Component text =
+            isVirtual() ? componentText : DynamicComponent.parseCustomText(level, worldPosition, componentText);
         flapDisplaySection.setText(text);
         if (isVirtual()) {
             flapDisplaySection.refresh(true);
@@ -225,7 +222,7 @@ public class FlapDisplayBlockEntity extends KineticBlockEntity implements Displa
     }
 
     public int getMaxCharCount(int gaps) {
-        return (int) ((xSize * 16f - 2f - 4f * gaps) / 3.5f);
+        return (int) ((xSize * 16.0f - 2.0f - 4.0f * gaps) / 3.5f);
     }
 
     @Override

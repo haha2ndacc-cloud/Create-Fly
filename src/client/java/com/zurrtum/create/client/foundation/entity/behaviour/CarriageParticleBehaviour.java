@@ -41,6 +41,7 @@ public class CarriageParticleBehaviour extends EntityBehaviour<CarriageContrapti
         return TYPE;
     }
 
+    @Override
     public void tick() {
         Contraption contraption = entity.getContraption();
         if (contraption == null) {
@@ -75,11 +76,11 @@ public class CarriageParticleBehaviour extends EntityBehaviour<CarriageContrapti
         }
         arrived |= entity.isStalled();
 
-        boolean stopped = length < .002f;
+        boolean stopped = length < 0.002f;
         if (stopped) {
             if (!arrived) {
                 arrived = true;
-                depressurise = (int) (20 * entity.getCarriage().train.accumulatedSteamRelease / 10f);
+                depressurise = (int) (20 * entity.getCarriage().train.accumulatedSteamRelease / 10.0f);
             }
         } else {
             depressurise = 0;
@@ -89,7 +90,7 @@ public class CarriageParticleBehaviour extends EntityBehaviour<CarriageContrapti
             depressurise--;
         }
 
-        brakes.chase(prevMotion > length + length / 512f ? 1 : 0, .25f, Chaser.exp(.625f));
+        brakes.chase(prevMotion > length + length / 512.0f ? 1 : 0, 0.25f, Chaser.exp(0.625f));
         brakes.tickChaser();
         prevMotion = length;
 
@@ -106,9 +107,9 @@ public class CarriageParticleBehaviour extends EntityBehaviour<CarriageContrapti
 
             boolean spark = depressurise == 0 || depressurise > 10;
 
-            float cutoff = length < 1 / 8f ? 0 : 1 / 8f;
+            float cutoff = length < 1 / 8.0f ? 0 : 1 / 8.0f;
 
-            if (length > 1 / 6f) {
+            if (length > 1 / 6.0f) {
                 cutoff = Math.max(cutoff, brakes.getValue() * 1.15f);
             }
 
@@ -121,8 +122,8 @@ public class CarriageParticleBehaviour extends EntityBehaviour<CarriageContrapti
                         continue;
                     }
 
-                    Vec3 v = Vec3.ZERO.add(j * 1.15, spark ? -.6f : .32, i);
-                    Vec3 m = Vec3.ZERO.add(j * (spark ? .5 : .25), spark ? .49 : -.29, 0);
+                    Vec3 v = Vec3.ZERO.add(j * 1.15, spark ? -0.6f : 0.32, i);
+                    Vec3 m = Vec3.ZERO.add(j * (spark ? 0.5 : 0.25), spark ? 0.49 : -0.29, 0);
 
                     m = VecHelper.rotate(m, bogey.pitch.getValue(0), Axis.X);
                     m = VecHelper.rotate(m, bogey.yaw.getValue(0), Axis.Y);
@@ -140,7 +141,7 @@ public class CarriageParticleBehaviour extends EntityBehaviour<CarriageContrapti
                     v = VecHelper.rotate(v, viewYRot + 90, Axis.Y);
                     v = v.add(position);
 
-                    m = m.add(contraptionMotion.scale(.75f));
+                    m = m.add(contraptionMotion.scale(0.75f));
 
                     level.addParticle(
                         spark ? bogey.getStyle().contactParticle : bogey.getStyle().smokeParticle,

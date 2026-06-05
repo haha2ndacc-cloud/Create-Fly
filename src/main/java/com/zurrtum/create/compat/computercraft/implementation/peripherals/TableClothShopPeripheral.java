@@ -78,8 +78,8 @@ public class TableClothShopPeripheral extends SyncedPeripheral<TableClothBlockEn
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public final void setPriceTagCount(Optional<Double> argument) throws LuaException {
         assertShop();
-        blockEntity.priceTag.count = argument.map(arg -> (Math.max(1, Math.min(100, arg.intValue())))).orElse(1);
-        this.blockEntity.notifyUpdate();
+        blockEntity.priceTag.count = argument.map(arg -> Math.max(1, Math.min(100, arg.intValue()))).orElse(1);
+        blockEntity.notifyUpdate();
     }
 
     @LuaFunction(mainThread = true)
@@ -128,7 +128,7 @@ public class TableClothShopPeripheral extends SyncedPeripheral<TableClothBlockEn
                 int count = 1;
                 if (itemData.get("count") instanceof Number) {
                     Object countObj = itemData.get("count");
-                    count = (countObj instanceof Number) ? ((Number) countObj).intValue() : 1;
+                    count = countObj instanceof Number ? ((Number) countObj).intValue() : 1;
                     if (count > 256) {
                         throw new LuaException("Count for item " + itemName + " exceeds 256");
                     }

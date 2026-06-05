@@ -54,7 +54,7 @@ public class OversizedModel implements ItemModel {
         this.quads = quads;
         this.settings = settings;
         this.transformation = transformation;
-        this.vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(quads.getAll()));
+        vector = Suppliers.memoize(() -> CuboidItemModelWrapper.computeExtents(quads.getAll()));
         this.box = box;
     }
 

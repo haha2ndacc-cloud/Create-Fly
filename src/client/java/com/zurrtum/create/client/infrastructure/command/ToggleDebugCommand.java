@@ -32,8 +32,7 @@ public class ToggleDebugCommand {
     private static MutableComponent boolToText(boolean b) {
         if (b) {
             return Component.literal("enabled").withStyle(ChatFormatting.GREEN);
-        } else {
-            return Component.literal("disabled").withStyle(ChatFormatting.RED);
         }
+        return Component.literal("disabled").withStyle(ChatFormatting.RED);
     }
 }

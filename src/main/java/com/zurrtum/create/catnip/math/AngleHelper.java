@@ -7,18 +7,18 @@ public class AngleHelper {
 
     public static float horizontalAngle(Direction facing) {
         return switch (facing) {
-            case NORTH -> 180f;
-            case WEST -> -90f;
-            case EAST -> -270f;
-            default -> 0f;
+            case NORTH -> 180.0f;
+            case WEST -> -90.0f;
+            case EAST -> -270.0f;
+            default -> 0.0f;
         };
     }
 
     public static float verticalAngle(Direction facing) {
         return switch (facing) {
-            case UP -> -90f;
-            case DOWN -> 90f;
-            default -> 0f;
+            case UP -> -90.0f;
+            case DOWN -> 90.0f;
+            default -> 0.0f;
         };
     }
 
@@ -43,7 +43,7 @@ public class AngleHelper {
     public static float getShortestAngleDiff(double current, double target) {
         current = current % 360;
         target = target % 360;
-        return (float) (((((target - current) % 360) + 540) % 360) - 180);
+        return (float) (((target - current) % 360 + 540) % 360 - 180);
     }
 
     public static float getShortestAngleDiff(double current, double target, float hint) {

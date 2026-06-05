@@ -57,7 +57,7 @@ public class PistonExtensionPoleBlock extends WrenchableDirectionalBlock impleme
         BlockPos pistonBase = null;
 
         for (int modifier : new int[]{1, -1}) {
-            for (int offset = modifier; modifier * offset < MechanicalPistonBlock.maxAllowedPistonPoles(); offset += modifier) {
+            for (int offset = modifier; modifier * offset < maxAllowedPistonPoles(); offset += modifier) {
                 BlockPos currentPos = pos.relative(direction, offset);
                 BlockState block = worldIn.getBlockState(currentPos);
 
@@ -84,10 +84,7 @@ public class PistonExtensionPoleBlock extends WrenchableDirectionalBlock impleme
             final BlockPos basePos = pistonBase;
             BlockPos.betweenClosedStream(pistonBase, pistonHead).filter(p -> !p.equals(pos) && !p.equals(basePos))
                 .forEach(p -> worldIn.destroyBlock(p, !player.isCreative()));
-            worldIn.setBlockAndUpdate(
-                basePos,
-                worldIn.getBlockState(basePos).setValue(MechanicalPistonBlock.STATE, PistonState.RETRACTED)
-            );
+            worldIn.setBlockAndUpdate(basePos, worldIn.getBlockState(basePos).setValue(STATE, PistonState.RETRACTED));
 
             if (worldIn.getBlockEntity(basePos) instanceof MechanicalPistonBlockEntity baseBE) {
                 baseBE.onLengthBroken();
@@ -130,7 +127,8 @@ public class PistonExtensionPoleBlock extends WrenchableDirectionalBlock impleme
 
     @Override
     public FluidState getFluidState(BlockState state) {
-        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
+        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) :
+            Fluids.EMPTY.defaultFluidState();
     }
 
     @Override

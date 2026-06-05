@@ -14,7 +14,7 @@ public class BasinInventory implements ItemInventory {
     private boolean check = true;
 
     public BasinInventory(BasinBlockEntity be) {
-        this.blockEntity = be;
+        blockEntity = be;
     }
 
     @Override

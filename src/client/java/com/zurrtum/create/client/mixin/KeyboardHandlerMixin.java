@@ -25,7 +25,7 @@ public class KeyboardHandlerMixin {
         onKey(event, false);
     }
 
-    @Inject(method = "keyPress(JILnet/minecraft/client/input/KeyEvent;)V", at = @At(value = "TAIL"))
+    @Inject(method = "keyPress(JILnet/minecraft/client/input/KeyEvent;)V", at = @At("TAIL"))
     private void onKey(long handle, int action, KeyEvent event, CallbackInfo ci) {
         onKey(event, true);
     }

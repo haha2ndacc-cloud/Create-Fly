@@ -33,7 +33,7 @@ public class NixieTubeBlockEntity extends SmartBlockEntity {
             public static final int ENCODED_SIZE = 7;
 
             public byte r = 63, g = 63, b = 63;
-            public byte blinkPeriod = 0, blinkOffTime = 0;
+            public byte blinkPeriod, blinkOffTime;
             public byte glowWidth = 1, glowHeight = 1;
 
             public void decode(byte[] data, int offset) {
@@ -104,9 +104,8 @@ public class NixieTubeBlockEntity extends SmartBlockEntity {
                 cachedSignalTE = new WeakReference<>(null);
             }
             return;
-        } else {
-            computerSignal = null;
         }
+        computerSignal = null;
 
         SignalBlockEntity signalBlockEntity = cachedSignalTE.get();
 

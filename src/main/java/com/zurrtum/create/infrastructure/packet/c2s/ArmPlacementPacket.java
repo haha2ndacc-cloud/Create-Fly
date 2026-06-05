@@ -29,7 +29,7 @@ public record ArmPlacementPacket(ListTag tag, BlockPos pos) implements Packet<Se
     public ArmPlacementPacket(List<ArmInteractionPoint> points, BlockPos pos) {
         this(new ListTag(), pos);
         Codec<ArmInteractionPoint> codec = ArmInteractionPoint.getCodec(null, pos);
-        ArmBlockEntity.appendEncodedPoints(points, codec, this.tag);
+        ArmBlockEntity.appendEncodedPoints(points, codec, tag);
     }
 
     @Override

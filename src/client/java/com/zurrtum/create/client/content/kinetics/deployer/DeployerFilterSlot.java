@@ -16,11 +16,11 @@ public class DeployerFilterSlot extends ValueBoxTransform.Sided {
     @Override
     public Vec3 getLocalOffset(BlockState state) {
         Direction facing = state.getValue(DeployerBlock.FACING);
-        Vec3 vec = VecHelper.voxelSpace(8f, 8f, 15.5f);
+        Vec3 vec = VecHelper.voxelSpace(8.0f, 8.0f, 15.5f);
 
         vec = VecHelper.rotateCentered(vec, AngleHelper.horizontalAngle(getSide()), Axis.Y);
         vec = VecHelper.rotateCentered(vec, AngleHelper.verticalAngle(getSide()), Axis.X);
-        vec = vec.subtract(Vec3.atLowerCornerOf(facing.getUnitVec3i()).scale(2 / 16f));
+        vec = vec.subtract(Vec3.atLowerCornerOf(facing.getUnitVec3i()).scale(2 / 16.0f));
 
         return vec;
     }

@@ -57,7 +57,7 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
     public ThresholdSwitchScreen(ThresholdSwitchBlockEntity be) {
         super(CreateLang.translateDirect("gui.threshold_switch.title"));
         background = AllGuiTextures.THRESHOLD_SWITCH;
-        this.blockEntity = be;
+        blockEntity = be;
         lastModification = -1;
     }
 
@@ -173,7 +173,8 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
 
         ThresholdType typeOfCurrentTarget = blockEntity.getTypeOfCurrentTarget();
         boolean forItems = typeOfCurrentTarget == ThresholdType.ITEM;
-        AllGuiTextures inputBg = forItems ? AllGuiTextures.THRESHOLD_SWITCH_ITEMCOUNT_INPUTS : AllGuiTextures.THRESHOLD_SWITCH_MISC_INPUTS;
+        AllGuiTextures inputBg =
+            forItems ? AllGuiTextures.THRESHOLD_SWITCH_ITEMCOUNT_INPUTS : AllGuiTextures.THRESHOLD_SWITCH_MISC_INPUTS;
 
         inputBg.render(graphics, x + 44, y + 21);
         inputBg.render(graphics, x + 44, y + 21 + 24);
@@ -185,8 +186,9 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
         }
 
         if (forItems) {
-            Component suffix = inStacks.getState() == 0 ? CreateLang.translateDirect(
-                "schedule.condition.threshold.items") : CreateLang.translateDirect("schedule.condition.threshold.stacks");
+            Component suffix =
+                inStacks.getState() == 0 ? CreateLang.translateDirect("schedule.condition.threshold.items") :
+                    CreateLang.translateDirect("schedule.condition.threshold.stacks");
             valueStep = inStacks.getState() == 0 ? 1 : 64;
             graphics.text(font, suffix, x + 105, y + 28, 0xFFFFFFFF, true);
             graphics.text(font, suffix, x + 105, y + 28 + 24, 0xFFFFFFFF, true);
@@ -195,11 +197,9 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
 
         graphics.text(
             font,
-            Component.literal("≥ " + (typeOfCurrentTarget == ThresholdType.UNSUPPORTED ? "" : forItems ? onAbove.getState() / valueStep : format(
-                blockEntity,
-                onAbove.getState() / valueStep,
-                stacks
-            ).getString())),
+            Component.literal("≥ " + (typeOfCurrentTarget == ThresholdType.UNSUPPORTED ? "" :
+                forItems ? onAbove.getState() / valueStep :
+                    format(blockEntity, onAbove.getState() / valueStep, stacks).getString())),
             x + 53,
             y + 28,
             0xFFFFFFFF,
@@ -207,11 +207,9 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
         );
         graphics.text(
             font,
-            Component.literal("≤ " + (typeOfCurrentTarget == ThresholdType.UNSUPPORTED ? "" : forItems ? offBelow.getState() / valueStep : format(
-                blockEntity,
-                offBelow.getState() / valueStep,
-                stacks
-            ).getString())),
+            Component.literal("≤ " + (typeOfCurrentTarget == ThresholdType.UNSUPPORTED ? "" :
+                forItems ? offBelow.getState() / valueStep :
+                    format(blockEntity, offBelow.getState() / valueStep, stacks).getString())),
             x + 53,
             y + 28 + 24,
             0xFFFFFFFF,
@@ -290,8 +288,9 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
             if (mouseX >= torchX && mouseX < torchX + 16 && mouseY >= thisTorchY && mouseY < thisTorchY + 16) {
                 graphics.setComponentTooltipForNextFrame(
                     font,
-                    List.of(CreateLang.translate(power ^ blockEntity.isInverted() ? "gui.threshold_switch.power_on_when" : "gui.threshold_switch.power_off_when")
-                        .color(AbstractSimiWidget.HEADER_RGB).component()),
+                    List.of(CreateLang.translate(
+                        power ^ blockEntity.isInverted() ? "gui.threshold_switch.power_on_when" :
+                            "gui.threshold_switch.power_off_when").color(AbstractSimiWidget.HEADER_RGB).component()),
                     mouseX,
                     mouseY
                 );
@@ -308,7 +307,9 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
             }
         }
 
-        String suffix = type == ThresholdType.ITEM ? stacks ? "schedule.condition.threshold.stacks" : "schedule.condition.threshold.items" : "schedule.condition.threshold.buckets";
+        String suffix = type == ThresholdType.ITEM ?
+            stacks ? "schedule.condition.threshold.stacks" : "schedule.condition.threshold.items" :
+            "schedule.condition.threshold.buckets";
         return CreateLang.text(value + " ").add(CreateLang.translate(suffix)).component();
     }
 
@@ -346,7 +347,7 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
         int min = blockEntity.currentMinLevel + valueStep;
         int max = blockEntity.currentMaxLevel;
         onAbove.withRange(min, max + 1);
-        int roundedState = Mth.clamp((onAbove.getState() / valueStep) * valueStep, min, max);
+        int roundedState = Mth.clamp(onAbove.getState() / valueStep * valueStep, min, max);
         if (roundedState != onAbove.getState()) {
             onAbove.setState(roundedState);
             onAbove.onChanged();
@@ -355,7 +356,7 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
         min = blockEntity.currentMinLevel;
         max = blockEntity.currentMaxLevel - valueStep;
         offBelow.withRange(min, max + 1);
-        roundedState = Mth.clamp((offBelow.getState() / valueStep) * valueStep, min, max);
+        roundedState = Mth.clamp(offBelow.getState() / valueStep * valueStep, min, max);
         if (roundedState != offBelow.getState()) {
             offBelow.setState(roundedState);
             offBelow.onChanged();

@@ -27,18 +27,18 @@ public class SlidingDoorShapes {
     public static VoxelShape get(Direction facing, boolean hinge, boolean fold) {
         if (fold) {
             return switch (facing) {
-                case SOUTH -> (hinge ? ES_AABB_FOLD : WS_AABB_FOLD);
-                case WEST -> (hinge ? SW_AABB_FOLD : NW_AABB_FOLD);
-                case NORTH -> (hinge ? WN_AABB_FOLD : EN_AABB_FOLD);
-                default -> (hinge ? NE_AABB_FOLD : SE_AABB_FOLD);
+                case SOUTH -> hinge ? ES_AABB_FOLD : WS_AABB_FOLD;
+                case WEST -> hinge ? SW_AABB_FOLD : NW_AABB_FOLD;
+                case NORTH -> hinge ? WN_AABB_FOLD : EN_AABB_FOLD;
+                default -> hinge ? NE_AABB_FOLD : SE_AABB_FOLD;
             };
         }
 
         return switch (facing) {
-            case SOUTH -> (hinge ? ES_AABB : WS_AABB);
-            case WEST -> (hinge ? SW_AABB : NW_AABB);
-            case NORTH -> (hinge ? WN_AABB : EN_AABB);
-            default -> (hinge ? NE_AABB : SE_AABB);
+            case SOUTH -> hinge ? ES_AABB : WS_AABB;
+            case WEST -> hinge ? SW_AABB : NW_AABB;
+            case NORTH -> hinge ? WN_AABB : EN_AABB;
+            default -> hinge ? NE_AABB : SE_AABB;
         };
     }
 

@@ -131,7 +131,7 @@ public class AdvancementBehaviour extends BlockEntityBehaviour<SmartBlockEntity>
     }
 
     public static void tryAward(BlockGetter reader, BlockPos pos, CreateTrigger advancement) {
-        AdvancementBehaviour behaviour = BlockEntityBehaviour.get(reader, pos, AdvancementBehaviour.TYPE);
+        AdvancementBehaviour behaviour = get(reader, pos, TYPE);
         if (behaviour != null) {
             behaviour.awardPlayer(advancement);
         }

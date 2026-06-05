@@ -132,8 +132,8 @@ public class ComputerUtil {
                 };
             }
 
-            throw new LuaException("Operator " + op + " not supported for type " + (fValue == null ? "null" : fValue.getClass()
-                .getSimpleName()));
+            throw new LuaException("Operator " + op + " not supported for type " + (fValue == null ? "null" :
+                fValue.getClass().getSimpleName()));
         }
 
         // Convert to collections

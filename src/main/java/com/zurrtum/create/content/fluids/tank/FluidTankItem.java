@@ -71,7 +71,7 @@ public class FluidTankItem extends BlockItem {
             }
             itemStack.set(
                 DataComponents.BLOCK_ENTITY_DATA,
-                TypedEntityData.of(((IBE<?>) this.getBlock()).getBlockEntityType(), nbt)
+                TypedEntityData.of(((IBE<?>) getBlock()).getBlockEntityType(), nbt)
             );
         }
         return super.updateCustomBlockEntityTag(blockPos, level, player, itemStack, blockState);
@@ -121,8 +121,8 @@ public class FluidTankItem extends BlockItem {
         }
 
         int tanksToPlace = 0;
-        BlockPos startPos = face == Direction.DOWN ? controllerBE.getBlockPos().below() : controllerBE.getBlockPos()
-            .above(controllerBE.height);
+        BlockPos startPos = face == Direction.DOWN ? controllerBE.getBlockPos().below() :
+            controllerBE.getBlockPos().above(controllerBE.height);
 
         if (startPos.getY() != pos.getY()) {
             return;

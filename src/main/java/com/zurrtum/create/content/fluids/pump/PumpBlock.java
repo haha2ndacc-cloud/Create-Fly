@@ -96,7 +96,8 @@ public class PumpBlock extends DirectionalKineticBlock implements SimpleWaterlog
 
     @Override
     public FluidState getFluidState(BlockState state) {
-        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
+        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) :
+            Fluids.EMPTY.defaultFluidState();
     }
 
     @Override

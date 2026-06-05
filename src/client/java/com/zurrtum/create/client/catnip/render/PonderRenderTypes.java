@@ -109,7 +109,7 @@ public class PonderRenderTypes {
         createLayerName("gui"),
         RenderSetup.builder(PonderRenderPipelines.GUI).setLayeringTransform(new LayeringTransform(
             "view_offset_z_layering_gui",
-            modelViewMatrix -> RenderSystem.getProjectionType().applyLayeringTransform(modelViewMatrix, -6F)
+            modelViewMatrix -> RenderSystem.getProjectionType().applyLayeringTransform(modelViewMatrix, -6.0F)
         )).createRenderSetup()
     );
     private static final RenderType OUTLINE_SOLID = RenderType.create(

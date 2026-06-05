@@ -22,7 +22,7 @@ public class AssemblyException extends Exception {
 
     private static final long serialVersionUID = 1L;
     public final Component component;
-    private @Nullable BlockPos position = null;
+    private @Nullable BlockPos position;
 
     public static void write(ValueOutput view, @Nullable AssemblyException exception) {
         if (exception == null) {

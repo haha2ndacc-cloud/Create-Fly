@@ -144,6 +144,7 @@ public abstract class FluidItemInventoryWrapper implements FluidItemInventory {
         return canExtract() ? Stream.of(getStack()) : Stream.empty();
     }
 
+    @Override
     public java.util.Iterator<FluidStack> iterator() {
         return new Iterator(this);
     }

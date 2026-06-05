@@ -28,7 +28,7 @@ public class RedstonePowerDisplaySource extends PercentOrProgressBarDisplaySourc
         return Math.max(
             context.level().getDirectSignalTo(context.getSourcePos()),
             blockState.getValueOrElse(BlockStateProperties.POWER, 0)
-        ) / 15f;
+        ) / 15.0f;
     }
 
     @Override

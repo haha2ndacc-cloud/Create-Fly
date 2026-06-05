@@ -121,7 +121,7 @@ public abstract class ScheduleWaitCondition extends ScheduleDataEntry {
             Create.LOGGER
         )) {
             ValueInput view = TagValueInput.create(logging, buf.registryAccess(), buf.readNbt());
-            return ScheduleWaitCondition.read(view);
+            return read(view);
         }
     }
 

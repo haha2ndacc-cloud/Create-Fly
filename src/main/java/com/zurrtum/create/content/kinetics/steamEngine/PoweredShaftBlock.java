@@ -22,7 +22,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -73,13 +72,14 @@ public class PoweredShaftBlock extends AbstractShaftBlock {
         if (!stillValid(pState, pLevel, pPos)) {
             pLevel.setBlock(
                 pPos,
-                AllBlocks.SHAFT.defaultBlockState().setValue(ShaftBlock.AXIS, pState.getValue(AXIS))
+                AllBlocks.SHAFT.defaultBlockState().setValue(AXIS, pState.getValue(AXIS))
                     .setValue(WATERLOGGED, pState.getValue(WATERLOGGED)),
-                Block.UPDATE_ALL
+                UPDATE_ALL
             );
         }
     }
 
+    @Override
     public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData) {
         return AllItems.SHAFT.getDefaultInstance();
     }
@@ -110,8 +110,7 @@ public class PoweredShaftBlock extends AbstractShaftBlock {
     }
 
     public static BlockState getEquivalent(BlockState stateForPlacement) {
-        return AllBlocks.POWERED_SHAFT.defaultBlockState()
-            .setValue(PoweredShaftBlock.AXIS, stateForPlacement.getValue(ShaftBlock.AXIS))
+        return AllBlocks.POWERED_SHAFT.defaultBlockState().setValue(AXIS, stateForPlacement.getValue(AXIS))
             .setValue(WATERLOGGED, stateForPlacement.getValue(WATERLOGGED));
     }
 

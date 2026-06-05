@@ -66,8 +66,8 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
         CachedBuffers.block(AllBlocks.SPOUT.defaultBlockState()).submit(matrices, submitNodeStorage);
 
         float cycle = (time - item.offset() * 8) % 30;
-        float squeeze = cycle < 20 ? -Mth.sin((float) (cycle / 20f * Math.PI)) : 0;
-        float move = -3 * squeeze / 32f;
+        float squeeze = cycle < 20 ? -Mth.sin((float) (cycle / 20.0f * Math.PI)) : 0;
+        float move = -3 * squeeze / 32.0f;
 
         matrices.pushPose();
         matrices.translate(0, move, 0);
@@ -93,8 +93,8 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
             float fluidScale = 16 * windowScaleFactor;
             matrices.scale(fluidScale, -fluidScale, fluidScale);
             matrices.translate(0, -1.4f, 0);
-            float from = 3f / 16f;
-            float to = 17f / 16f;
+            float from = 3.0f / 16.0f;
+            float to = 17.0f / 16.0f;
             FluidStateModelSet fluidStateModelSet = Minecraft.getInstance().getModelManager().getFluidStateModelSet();
             FluidRenderHelper.extractFluidRenderState(
                 null,
@@ -117,10 +117,10 @@ public class SpoutRenderer extends PictureInPictureRenderer<SpoutRenderState> {
             matrices.pushPose();
             matrices.mulPose(Axis.XP.rotationDegrees(-15.5f));
             matrices.mulPose(Axis.YP.rotationDegrees(22.5f));
-            matrices.translate(scale / 2f, scale * 1.5f, scale / 2f);
+            matrices.translate(scale / 2.0f, scale * 1.5f, scale / 2.0f);
             matrices.scale(fluidScale, -fluidScale, fluidScale);
-            matrices.translate(-0.5f, -1f, -0.5f);
-            float fluidWidth = 1 / 128f * -squeeze * 16;
+            matrices.translate(-0.5f, -1.0f, -0.5f);
+            float fluidWidth = 1 / 128.0f * -squeeze * 16;
             from = -fluidWidth / 2 + 0.5f;
             to = fluidWidth / 2 + 0.5f;
             FluidRenderHelper.extractFluidRenderState(

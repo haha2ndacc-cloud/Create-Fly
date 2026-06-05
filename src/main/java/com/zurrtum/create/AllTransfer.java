@@ -62,7 +62,7 @@ public class AllTransfer {
         );
         return () -> {
             Storage<ItemVariant> inventory = cache.find(direction);
-            if (inventory == null || (filter != null && !filter.test(cache.getBlockEntity(), direction))) {
+            if (inventory == null || filter != null && !filter.test(cache.getBlockEntity(), direction)) {
                 return null;
             }
             return WRAPPERS_ITEM.computeIfAbsent(inventory, InventoryWrapper::of);

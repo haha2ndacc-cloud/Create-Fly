@@ -55,7 +55,7 @@ public class SignalVisual extends AbstractBlockEntityVisual<SignalBlockEntity> i
     @Override
     public void setSectionCollector(SectionCollector sectionCollector) {
         if (previousOverlayState != null) {
-            this.lightSections = sectionCollector;
+            lightSections = sectionCollector;
             LongSet longSet = new LongArraySet();
             longSet.add(SectionPos.asLong(pos));
             longSet.add(SectionPos.asLong(blockEntity.edgePoint.getGlobalPosition()));
@@ -87,77 +87,73 @@ public class SignalVisual extends AbstractBlockEntityVisual<SignalBlockEntity> i
     }
 
     private void setupVisual() {
-        {
-            SignalState signalState = blockEntity.getState();
+        SignalState signalState = blockEntity.getState();
 
-            float renderTime = AnimationTickHolder.getRenderTime(blockEntity.getLevel());
-            boolean isRedLight = signalState.isRedLight(renderTime);
+        float renderTime = AnimationTickHolder.getRenderTime(blockEntity.getLevel());
+        boolean isRedLight = signalState.isRedLight(renderTime);
 
-            if (isRedLight != previousIsRedLight) {
-                PartialModel partial = isRedLight ? AllPartialModels.SIGNAL_ON : AllPartialModels.SIGNAL_OFF;
-                instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(partial))
-                    .stealInstance(signalLight);
-            }
-
-            signalLight.setIdentityTransform().translate(getVisualPosition());
-
-            if (isRedLight) {
-                signalLight.light(LightCoordsUtil.MAX_SMOOTH_LIGHT_LEVEL);
-            }
-
-            signalLight.setChanged();
-
-            previousIsRedLight = isRedLight;
+        if (isRedLight != previousIsRedLight) {
+            PartialModel partial = isRedLight ? AllPartialModels.SIGNAL_ON : AllPartialModels.SIGNAL_OFF;
+            instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(partial))
+                .stealInstance(signalLight);
         }
 
-        {
-            OverlayState overlayState = blockEntity.getOverlay();
+        signalLight.setIdentityTransform().translate(getVisualPosition());
 
-            TrackTargetingBehaviour<SignalBoundary> target = blockEntity.edgePoint;
-            BlockPos targetPosition = target.getGlobalPosition();
-            Level level = blockEntity.getLevel();
-            BlockState trackState = level.getBlockState(targetPosition);
-            Block block = trackState.getBlock();
+        if (isRedLight) {
+            signalLight.light(LightCoordsUtil.MAX_SMOOTH_LIGHT_LEVEL);
+        }
 
-            if (!(block instanceof ITrackBlock trackBlock) || overlayState == OverlayState.SKIP) {
-                previousOverlayState = null;
-                signalOverlay.setZeroTransform().setChanged();
-                return;
+        signalLight.setChanged();
+
+        previousIsRedLight = isRedLight;
+
+        OverlayState overlayState = blockEntity.getOverlay();
+
+        TrackTargetingBehaviour<SignalBoundary> target = blockEntity.edgePoint;
+        BlockPos targetPosition = target.getGlobalPosition();
+        Level level = blockEntity.getLevel();
+        BlockState trackState = level.getBlockState(targetPosition);
+        Block block = trackState.getBlock();
+
+        if (!(block instanceof ITrackBlock trackBlock) || overlayState == OverlayState.SKIP) {
+            previousOverlayState = null;
+            signalOverlay.setZeroTransform().setChanged();
+            return;
+        }
+
+        if (overlayState != previousOverlayState) {
+            previousOverlayState = overlayState;
+
+            PartialModel partial;
+            RenderedTrackOverlayType type;
+            if (overlayState == OverlayState.DUAL) {
+                type = RenderedTrackOverlayType.DUAL_SIGNAL;
+                partial = AllPartialModels.TRACK_SIGNAL_DUAL_OVERLAY;
+            } else {
+                type = RenderedTrackOverlayType.SIGNAL;
+                partial = AllPartialModels.TRACK_SIGNAL_OVERLAY;
             }
 
-            if (overlayState != previousOverlayState) {
-                previousOverlayState = overlayState;
+            instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(partial))
+                .stealInstance(signalOverlay);
 
-                PartialModel partial;
-                RenderedTrackOverlayType type;
-                if (overlayState == OverlayState.DUAL) {
-                    type = RenderedTrackOverlayType.DUAL_SIGNAL;
-                    partial = AllPartialModels.TRACK_SIGNAL_DUAL_OVERLAY;
-                } else {
-                    type = RenderedTrackOverlayType.SIGNAL;
-                    partial = AllPartialModels.TRACK_SIGNAL_OVERLAY;
-                }
+            signalOverlay.setIdentityTransform().translate(targetPosition.subtract(renderOrigin()));
 
-                instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(partial))
-                    .stealInstance(signalOverlay);
-
-                signalOverlay.setIdentityTransform().translate(targetPosition.subtract(renderOrigin()));
-
-                TrackBlockRenderer renderer = AllTrackRenders.get(trackBlock);
-                if (renderer != null) {
-                    renderer.prepareTrackOverlay(
-                        signalOverlay,
-                        level,
-                        targetPosition,
-                        trackState,
-                        target.getTargetBezier(),
-                        target.getTargetDirection(),
-                        type
-                    );
-                }
-
-                signalOverlay.setChanged();
+            TrackBlockRenderer renderer = AllTrackRenders.get(trackBlock);
+            if (renderer != null) {
+                renderer.prepareTrackOverlay(
+                    signalOverlay,
+                    level,
+                    targetPosition,
+                    trackState,
+                    target.getTargetBezier(),
+                    target.getTargetDirection(),
+                    type
+                );
             }
+
+            signalOverlay.setChanged();
         }
     }
 }

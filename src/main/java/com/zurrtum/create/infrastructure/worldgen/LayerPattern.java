@@ -126,7 +126,7 @@ public class LayerPattern {
 
             public Builder block(Block block) {
                 if (netherMode) {
-                    this.targets.add(ImmutableList.of(OreConfiguration.target(
+                    targets.add(ImmutableList.of(OreConfiguration.target(
                         NETHER_ORE_REPLACEABLES,
                         block.defaultBlockState()
                     )));
@@ -147,7 +147,7 @@ public class LayerPattern {
             }
 
             private Builder blocks(BlockState stone, BlockState deepslate) {
-                this.targets.add(ImmutableList.of(
+                targets.add(ImmutableList.of(
                     OreConfiguration.target(STONE_ORE_REPLACEABLES, stone),
                     OreConfiguration.target(DEEPSLATE_ORE_REPLACEABLES, deepslate)
                 ));
@@ -160,8 +160,8 @@ public class LayerPattern {
             }
 
             public Builder size(int min, int max) {
-                this.minSize = min;
-                this.maxSize = max;
+                minSize = min;
+                maxSize = max;
                 return this;
             }
 

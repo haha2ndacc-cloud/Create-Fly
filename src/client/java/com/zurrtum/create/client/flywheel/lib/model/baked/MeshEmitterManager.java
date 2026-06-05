@@ -60,8 +60,7 @@ class MeshEmitterManager<T extends MeshEmitter> {
         Material key = blockMaterialFunction.apply(renderType, shade, ao);
         if (key != null) {
             return emitterMap.get(renderType).getBuffer(key);
-        } else {
-            return null;
         }
+        return null;
     }
 }

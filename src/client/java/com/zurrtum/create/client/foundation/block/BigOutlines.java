@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class BigOutlines {
-    static @Nullable BlockHitResult result = null;
+    static @Nullable BlockHitResult result;
 
     public static void pick(Minecraft mc) {
         if (!(mc.getCameraEntity() instanceof LocalPlayer player)) {
@@ -28,8 +28,8 @@ public class BigOutlines {
 
         Vec3 origin = player.getEyePosition(AnimationTickHolder.getPartialTicks(mc.level));
 
-        double maxRange = mc.hitResult == null ? Double.MAX_VALUE : mc.hitResult.getLocation()
-            .distanceToSqr(origin) + 0.5;
+        double maxRange =
+            mc.hitResult == null ? Double.MAX_VALUE : mc.hitResult.getLocation().distanceToSqr(origin) + 0.5;
 
         double range = player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);
         Vec3 target = RaycastHelper.getTraceTarget(player, Math.min(maxRange, range) + 1, origin);

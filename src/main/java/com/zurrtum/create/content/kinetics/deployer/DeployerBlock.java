@@ -111,8 +111,8 @@ public class DeployerBlock extends DirectionalAxisKineticBlock implements IBE<De
     private static boolean isHand(BlockState state, UseOnContext context) {
         Vec3 normal = Vec3.atLowerCornerOf(state.getValue(FACING).getUnitVec3i());
         Vec3 location = context.getClickLocation()
-            .subtract(Vec3.atCenterOf(context.getClickedPos()).subtract(normal.scale(.5))).multiply(normal);
-        return location.length() > .75f;
+            .subtract(Vec3.atCenterOf(context.getClickedPos()).subtract(normal.scale(0.5))).multiply(normal);
+        return location.length() > 0.75f;
     }
 
     @Override
@@ -164,9 +164,9 @@ public class DeployerBlock extends DirectionalAxisKineticBlock implements IBE<De
         }
 
         Vec3 normal = Vec3.atLowerCornerOf(state.getValue(FACING).getUnitVec3i());
-        Vec3 location = hitResult.getLocation().subtract(Vec3.atCenterOf(pos).subtract(normal.scale(.5)))
+        Vec3 location = hitResult.getLocation().subtract(Vec3.atCenterOf(pos).subtract(normal.scale(0.5)))
             .multiply(normal);
-        if (location.length() < .75f) {
+        if (location.length() < 0.75f) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         if (level.isClientSide()) {
@@ -227,9 +227,8 @@ public class DeployerBlock extends DirectionalAxisKineticBlock implements IBE<De
     protected Direction getFacingForPlacement(BlockPlaceContext context) {
         if (context instanceof AssemblyOperatorUseContext) {
             return Direction.DOWN;
-        } else {
-            return super.getFacingForPlacement(context);
         }
+        return super.getFacingForPlacement(context);
     }
 
     private static class PlacementHelper implements IPlacementHelper {
@@ -261,13 +260,12 @@ public class DeployerBlock extends DirectionalAxisKineticBlock implements IBE<De
 
             if (directions.isEmpty()) {
                 return PlacementOffset.fail();
-            } else {
-                return PlacementOffset.success(
-                    pos.relative(directions.getFirst()),
-                    s -> s.setValue(FACING, state.getValue(FACING))
-                        .setValue(AXIS_ALONG_FIRST_COORDINATE, state.getValue(AXIS_ALONG_FIRST_COORDINATE))
-                );
             }
+            return PlacementOffset.success(
+                pos.relative(directions.getFirst()),
+                s -> s.setValue(FACING, state.getValue(FACING))
+                    .setValue(AXIS_ALONG_FIRST_COORDINATE, state.getValue(AXIS_ALONG_FIRST_COORDINATE))
+            );
         }
 
     }

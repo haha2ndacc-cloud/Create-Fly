@@ -32,9 +32,9 @@ public class CubeParticle extends Particle {
         double motionZ
     ) {
         super(world, x, y, z);
-        this.xd = motionX;
-        this.yd = motionY;
-        this.zd = motionZ;
+        xd = motionX;
+        yd = motionY;
+        zd = motionZ;
 
         setColor(data.red(), data.green(), data.blue());
         setScale(data.scale());
@@ -50,35 +50,35 @@ public class CubeParticle extends Particle {
 
     public void setScale(float scale) {
         this.scale = scale;
-        this.setSize(scale * 0.5f, scale * 0.5f);
+        setSize(scale * 0.5f, scale * 0.5f);
     }
 
     public void averageAge(int age) {
-        this.lifetime = (int) (age + (random.nextDouble() * 2D - 1D) * 8);
+        lifetime = (int) (age + (random.nextDouble() * 2.0D - 1.0D) * 8);
     }
 
     public void setHot(boolean hot) {
         this.hot = hot;
     }
 
-    private boolean billowing = false;
+    private boolean billowing;
 
     @Override
     public void tick() {
-        if (this.hot && this.age > 0) {
-            if (this.yo == this.y) {
+        if (hot && age > 0) {
+            if (yo == y) {
                 billowing = true;
                 stoppedByCollision = false; // Prevent motion being ignored due to vertical collision
-                if (this.xd == 0 && this.zd == 0) {
+                if (xd == 0 && zd == 0) {
                     Vec3 diff = Vec3.atLowerCornerOf(BlockPos.containing(x, y, z)).add(0.5, 0.5, 0.5).subtract(x, y, z);
-                    this.xd = -diff.x * 0.1;
-                    this.zd = -diff.z * 0.1;
+                    xd = -diff.x * 0.1;
+                    zd = -diff.z * 0.1;
                 }
-                this.xd *= 1.1;
-                this.yd *= 0.9;
-                this.zd *= 1.1;
+                xd *= 1.1;
+                yd *= 0.9;
+                zd *= 1.1;
             } else if (billowing) {
-                this.yd *= 1.2;
+                yd *= 1.2;
             }
         }
         super.tick();
@@ -86,9 +86,9 @@ public class CubeParticle extends Particle {
 
     public void extract(QuadParticleRenderState submittable, Camera camera, float tickProgress) {
         Vec3 projectedView = camera.position();
-        float lerpedX = (float) (Mth.lerp(tickProgress, this.xo, this.x) - projectedView.x());
-        float lerpedY = (float) (Mth.lerp(tickProgress, this.yo, this.y) - projectedView.y());
-        float lerpedZ = (float) (Mth.lerp(tickProgress, this.zo, this.z) - projectedView.z());
+        float lerpedX = (float) (Mth.lerp(tickProgress, xo, x) - projectedView.x());
+        float lerpedY = (float) (Mth.lerp(tickProgress, yo, y) - projectedView.y());
+        float lerpedZ = (float) (Mth.lerp(tickProgress, zo, z) - projectedView.z());
         double ageMultiplier = 1 - Math.pow(Mth.clamp(age + tickProgress, 0, lifetime), 3) / Math.pow(lifetime, 3);
         float scale = (float) (this.scale * ageMultiplier);
         int color = ARGB.colorFromFloat(alpha, red, green, blue);

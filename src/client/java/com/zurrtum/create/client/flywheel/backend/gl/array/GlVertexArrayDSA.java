@@ -19,7 +19,7 @@ public class GlVertexArrayDSA extends GlVertexArray {
     private final int[] bindingStrides = new int[MAX_ATTRIB_BINDINGS];
     private final int[] bindingDivisors = new int[MAX_ATTRIB_BINDINGS];
 
-    private int elementBufferBinding = 0;
+    private int elementBufferBinding;
 
     public GlVertexArrayDSA() {
         handle(GL45C.glCreateVertexArrays());

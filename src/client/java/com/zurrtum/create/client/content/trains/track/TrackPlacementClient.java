@@ -42,7 +42,7 @@ import java.util.List;
 
 public class TrackPlacementClient {
     static LerpedFloat animation = LerpedFloat.linear().startWithValue(0);
-    static int lastLineCount = 0;
+    static int lastLineCount;
 
     static @Nullable BlockPos hintPos;
     static int hintAngle;
@@ -159,25 +159,24 @@ public class TrackPlacementClient {
         }
 
         int color = Color.mixColors(0xEA5C2B, 0x95CD41, animation.getValue());
-        Vec3 up = new Vec3(0, 4 / 16f, 0);
+        Vec3 up = new Vec3(0, 4 / 16.0f, 0);
 
-        {
-            Vec3 v1 = info.end1;
-            Vec3 a1 = info.axis1.normalize();
-            Vec3 n1 = info.normal1.cross(a1).scale(15 / 16f);
-            Vec3 o1 = a1.scale(0.125f);
-            Vec3 ex1 = a1.scale((info.end1Extent - (info.curve == null && info.end1Extent > 0 ? 2 : 0)) * info.axis1.length());
-            line(1, v1.add(n1).add(up), o1, ex1);
-            line(2, v1.subtract(n1).add(up), o1, ex1);
+        Vec3 v1 = info.end1;
+        Vec3 a1 = info.axis1.normalize();
+        Vec3 n1 = info.normal1.cross(a1).scale(15 / 16.0f);
+        Vec3 o1 = a1.scale(0.125f);
+        Vec3 ex1 = a1.scale((info.end1Extent - (info.curve == null && info.end1Extent > 0 ? 2 :
+            0)) * info.axis1.length());
+        line(1, v1.add(n1).add(up), o1, ex1);
+        line(2, v1.subtract(n1).add(up), o1, ex1);
 
-            Vec3 v2 = info.end2;
-            Vec3 a2 = info.axis2.normalize();
-            Vec3 n2 = info.normal2.cross(a2).scale(15 / 16f);
-            Vec3 o2 = a2.scale(0.125f);
-            Vec3 ex2 = a2.scale(info.end2Extent * info.axis2.length());
-            line(3, v2.add(n2).add(up), o2, ex2);
-            line(4, v2.subtract(n2).add(up), o2, ex2);
-        }
+        Vec3 v2 = info.end2;
+        Vec3 a2 = info.axis2.normalize();
+        Vec3 n2 = info.normal2.cross(a2).scale(15 / 16.0f);
+        Vec3 o2 = a2.scale(0.125f);
+        Vec3 ex2 = a2.scale(info.end2Extent * info.axis2.length());
+        line(3, v2.add(n2).add(up), o2, ex2);
+        line(4, v2.subtract(n2).add(up), o2, ex2);
 
         BezierConnection bc = info.curve;
         if (bc == null) {
@@ -189,8 +188,8 @@ public class TrackPlacementClient {
         int railcolor = color;
         int segCount = bc.getSegmentCount();
 
-        float s = animation.getValue() * 7 / 8f + 1 / 8f;
-        float lw = animation.getValue() * 1 / 16f + 1 / 16f;
+        float s = animation.getValue() * 7 / 8.0f + 1 / 8.0f;
+        float lw = animation.getValue() * 1 / 16.0f + 1 / 16.0f;
         Vec3 end1 = bc.starts.getFirst();
         Vec3 end2 = bc.starts.getSecond();
         Vec3 finish1 = end1.add(bc.axes.getFirst().scale(bc.getHandleLength()));
@@ -201,7 +200,7 @@ public class TrackPlacementClient {
             float t = i / (float) segCount;
             Vec3 result = VecHelper.bezier(end1, end2, finish1, finish2, t);
             Vec3 derivative = VecHelper.bezierDerivative(end1, end2, finish1, finish2, t).normalize();
-            Vec3 normal = bc.getNormal(t).cross(derivative).scale(15 / 16f);
+            Vec3 normal = bc.getNormal(t).cross(derivative).scale(15 / 16.0f);
             Vec3 rail1 = result.add(normal).add(up);
             Vec3 rail2 = result.subtract(normal).add(up);
 
@@ -234,7 +233,7 @@ public class TrackPlacementClient {
 
     private static void line(int id, Vec3 v1, Vec3 o1, Vec3 ex) {
         int color = Color.mixColors(0xEA5C2B, 0x95CD41, animation.getValue());
-        Outliner.getInstance().showLine(Pair.of("start", id), v1.subtract(o1), v1.add(ex)).lineWidth(1 / 8f)
+        Outliner.getInstance().showLine(Pair.of("start", id), v1.subtract(o1), v1.add(ex)).lineWidth(1 / 8.0f)
             .disableLineNormals().colored(color);
     }
 

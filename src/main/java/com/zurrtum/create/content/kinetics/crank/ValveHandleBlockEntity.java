@@ -87,11 +87,11 @@ public class ValveHandleBlockEntity extends HandCrankBlockEntity {
         int value = angleInput.getValue();
         int target = Math.abs(value);
         int rotationSpeed = AllBlocks.COPPER_VALVE_HANDLE.getRotationSpeed();
-        double degreesPerTick = KineticBlockEntity.convertToAngular(rotationSpeed);
+        double degreesPerTick = convertToAngular(rotationSpeed);
         inUse = (int) Math.ceil(target / degreesPerTick) + 2;
 
         startAngle = 0;
-        targetAngle = Math.round((startAngle + (target > 135 ? 180 : 90) * Mth.sign(value)) / 90f) * 90;
+        targetAngle = Math.round((startAngle + (target > 135 ? 180 : 90) * Mth.sign(value)) / 90.0f) * 90;
         totalUseTicks = inUse;
         backwards = sneak;
 

@@ -36,7 +36,7 @@ public class DefaultPonderSceneRegistrationHelper implements PonderSceneRegistra
         PonderStoryBoard storyBoard,
         Identifier... tags
     ) {
-        StoryBoardEntry entry = this.createStoryBoardEntry(storyBoard, schematicLocation, component);
+        StoryBoardEntry entry = createStoryBoardEntry(storyBoard, schematicLocation, component);
         entry.highlightTags(tags);
         sceneRegistry.addStoryBoard(entry);
         return entry;

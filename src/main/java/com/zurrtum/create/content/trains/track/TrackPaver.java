@@ -114,15 +114,15 @@ public class TrackPaver {
         }
         if (isWallLike(defaultBlockState)) {
             if (defaultBlockState.is(AllBlocks.METAL_GIRDER)) {
-                return ((bc.getSegmentCount() + 1) / 2) * 2;
+                return (bc.getSegmentCount() + 1) / 2 * 2;
             }
             return 0;
         }
 
         Map<Pair<Integer, Integer>, Double> yLevels = new HashMap<>();
         BlockPos tePosition = bc.bePositions.getFirst();
-        Vec3 end1 = bc.starts.getFirst().subtract(Vec3.atLowerCornerOf(tePosition)).add(0, 3 / 16f, 0);
-        Vec3 end2 = bc.starts.getSecond().subtract(Vec3.atLowerCornerOf(tePosition)).add(0, 3 / 16f, 0);
+        Vec3 end1 = bc.starts.getFirst().subtract(Vec3.atLowerCornerOf(tePosition)).add(0, 3 / 16.0f, 0);
+        Vec3 end2 = bc.starts.getSecond().subtract(Vec3.atLowerCornerOf(tePosition)).add(0, 3 / 16.0f, 0);
         Vec3 axis1 = bc.axes.getFirst();
         Vec3 axis2 = bc.axes.getSecond();
 
@@ -143,16 +143,13 @@ public class TrackPaver {
 
             Vec3 result = VecHelper.bezier(end1, end2, finish1, finish2, t);
             Vec3 derivative = VecHelper.bezierDerivative(end1, end2, finish1, finish2, t).normalize();
-            Vec3 faceNormal = faceNormal1.equals(faceNormal2) ? faceNormal1 : VecHelper.slerp(
-                t,
-                faceNormal1,
-                faceNormal2
-            );
+            Vec3 faceNormal =
+                faceNormal1.equals(faceNormal2) ? faceNormal1 : VecHelper.slerp(t, faceNormal1, faceNormal2);
             Vec3 normal = faceNormal.cross(derivative).normalize();
             Vec3 below = result.add(faceNormal.scale(-1.125f));
-            Vec3 rail1 = below.add(normal.scale(.97f));
-            Vec3 rail2 = below.subtract(normal.scale(.97f));
-            Vec3 railMiddle = rail1.add(rail2).scale(.5);
+            Vec3 rail1 = below.add(normal.scale(0.97f));
+            Vec3 rail2 = below.subtract(normal.scale(0.97f));
+            Vec3 railMiddle = rail1.add(rail2).scale(0.5);
 
             for (Vec3 vec : new Vec3[]{rail1, rail2, railMiddle}) {
                 BlockPos pos = BlockPos.containing(vec);
@@ -166,13 +163,11 @@ public class TrackPaver {
         for (Map.Entry<Pair<Integer, Integer>, Double> entry : yLevels.entrySet()) {
             double yValue = entry.getValue();
             int floor = Mth.floor(yValue);
-            boolean placeSlab = slabLike && yValue - floor >= .5;
+            boolean placeSlab = slabLike && yValue - floor >= 0.5;
             BlockPos targetPos = new BlockPos(entry.getKey().getFirst(), floor, entry.getKey().getSecond());
             targetPos = targetPos.offset(tePosition).above(placeSlab ? 1 : 0);
-            BlockState stateToPlace = placeSlab ? defaultBlockState.setValue(
-                SlabBlock.TYPE,
-                SlabType.BOTTOM
-            ) : defaultBlockState;
+            BlockState stateToPlace =
+                placeSlab ? defaultBlockState.setValue(SlabBlock.TYPE, SlabType.BOTTOM) : defaultBlockState;
             if (!visited.add(targetPos)) {
                 continue;
             }

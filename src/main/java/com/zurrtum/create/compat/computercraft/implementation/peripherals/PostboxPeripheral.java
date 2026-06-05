@@ -47,9 +47,8 @@ public class PostboxPeripheral extends SyncedPeripheral<PostboxBlockEntity> {
         }
         if (blockEntity.acceptsPackages) {
             return "send_recieve";
-        } else {
-            return "send";
         }
+        return "send";
     }
 
     @LuaFunction(mainThread = true)

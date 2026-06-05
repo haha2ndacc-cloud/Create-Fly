@@ -34,6 +34,7 @@ public class TransformationHelper {
     }
 
     public static class Deserializer implements JsonDeserializer<Transformation> {
+        @Override
         public Transformation deserialize(
             JsonElement json,
             Type typeOfT,
@@ -43,9 +44,8 @@ public class TransformationHelper {
                 String transform = json.getAsString();
                 if (transform.equals("identity")) {
                     return Transformation.IDENTITY;
-                } else {
-                    throw new JsonParseException("TRSR: unknown default string: " + transform);
                 }
+                throw new JsonParseException("TRSR: unknown default string: " + transform);
             }
             if (json.isJsonArray()) {
                 // direct matrix array
@@ -230,34 +230,29 @@ public class TransformationHelper {
                         ret.mul(parseAxisRotation(a));
                     }
                     return ret;
-                } else if (e.isJsonArray()) {
+                }
+                if (e.isJsonArray()) {
                     JsonArray array = e.getAsJsonArray();
                     if (array.size() == 3) //Vanilla rotation
                     {
                         return quatFromXYZ(parseFloatArray(e, 3, "Rotation"), true);
-                    } else // quaternion
-                    {
-                        return makeQuaternion(parseFloatArray(e, 4, "Rotation"));
-                    }
-                } else {
-                    throw new JsonParseException("Rotation: expected array or object, got: " + e);
+                    }  // quaternion
+
+                    return makeQuaternion(parseFloatArray(e, 4, "Rotation"));
                 }
-            } else if (e.isJsonObject()) {
-                return parseAxisRotation(e);
-            } else {
                 throw new JsonParseException("Rotation: expected array or object, got: " + e);
             }
+            if (e.isJsonObject()) {
+                return parseAxisRotation(e);
+            }
+            throw new JsonParseException("Rotation: expected array or object, got: " + e);
         }
     }
 
     public enum TransformOrigin implements StringRepresentable {
-        CENTER(new Vector3f(.5f, .5f, .5f), "center"), CORNER(new Vector3f(), "corner"), OPPOSING_CORNER(
-            new Vector3f(
-            1,
-            1,
-            1
-        ), "opposing-corner"
-        );
+        CENTER(new Vector3f(0.5f, 0.5f, 0.5f), "center"),
+        CORNER(new Vector3f(), "corner"),
+        OPPOSING_CORNER(new Vector3f(1, 1, 1), "opposing-corner");
 
         private final Vector3f vec;
         private final String name;

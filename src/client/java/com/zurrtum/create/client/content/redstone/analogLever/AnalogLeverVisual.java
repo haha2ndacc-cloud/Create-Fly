@@ -59,13 +59,13 @@ public class AnalogLeverVisual extends AbstractBlockEntityVisual<AnalogLeverBloc
     protected void animateLever(float pt) {
         float state = blockEntity.clientState.getValue(pt);
 
-        indicator.colorRgb(Color.mixColors(0x2C0300, 0xCD0000, state / 15f));
+        indicator.colorRgb(Color.mixColors(0x2C0300, 0xCD0000, state / 15.0f));
         indicator.setChanged();
 
-        float angle = (float) ((state / 15) * 90 / 180 * Math.PI);
+        float angle = (float) (state / 15 * 90 / 180 * Math.PI);
 
-        transform(handle.setIdentityTransform()).translate(1 / 2f, 1 / 16f, 1 / 2f).rotate(angle, Direction.EAST)
-            .translate(-1 / 2f, -1 / 16f, -1 / 2f).setChanged();
+        transform(handle.setIdentityTransform()).translate(1 / 2.0f, 1 / 16.0f, 1 / 2.0f).rotate(angle, Direction.EAST)
+            .translate(-1 / 2.0f, -1 / 16.0f, -1 / 2.0f).setChanged();
     }
 
     @Override

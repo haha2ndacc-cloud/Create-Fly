@@ -1198,7 +1198,7 @@ public class AllBlocks {
     public static final WeatheringCopperCollection<Block> COPPER_SHINGLE_SLAB = WeatheringCopperCollection.registerBlocks(
         AllBlockItemIds.COPPER_SHINGLE_SLAB,
         Blocks::register,
-        AllBlocks.createIgnoreState(SlabBlock::new),
+        createIgnoreState(SlabBlock::new),
         WeatheringCopperSlabBlock::new,
         copied(Blocks.COPPER_BLOCK.weathering())
     );
@@ -1219,7 +1219,7 @@ public class AllBlocks {
     public static final WeatheringCopperCollection<Block> COPPER_TILE_SLAB = WeatheringCopperCollection.registerBlocks(
         AllBlockItemIds.COPPER_TILE_SLAB,
         Blocks::register,
-        AllBlocks.createIgnoreState(SlabBlock::new),
+        createIgnoreState(SlabBlock::new),
         WeatheringCopperSlabBlock::new,
         copied(Blocks.COPPER_BLOCK.weathering())
     );

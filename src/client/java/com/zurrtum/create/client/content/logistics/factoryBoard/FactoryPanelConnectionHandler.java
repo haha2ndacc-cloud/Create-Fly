@@ -172,10 +172,10 @@ public class FactoryPanelConnectionHandler {
         }
 
         Outliner.getInstance().showAABB(connectingFrom, connectingFromBox)
-            .colored(AnimationTickHolder.getTicks() % 16 > 8 ? 0x38b764 : 0xa7f070).lineWidth(1 / 16f);
+            .colored(AnimationTickHolder.getTicks() % 16 > 8 ? 0x38b764 : 0xa7f070).lineWidth(1 / 16.0f);
 
-        mc.player.sendOverlayMessage(CreateLang.translate(relocating ? "factory_panel.click_to_relocate" : "factory_panel.click_second_panel")
-            .component());
+        mc.player.sendOverlayMessage(CreateLang.translate(
+            relocating ? "factory_panel.click_to_relocate" : "factory_panel.click_second_panel").component());
 
         if (!relocating) {
             return;
@@ -187,7 +187,8 @@ public class FactoryPanelConnectionHandler {
             return;
         }
 
-        Vec3 offsetPos = bhr.getLocation().add(Vec3.atLowerCornerOf(bhr.getDirection().getUnitVec3i()).scale(1 / 32f));
+        Vec3 offsetPos = bhr.getLocation()
+            .add(Vec3.atLowerCornerOf(bhr.getDirection().getUnitVec3i()).scale(1 / 32.0f));
         BlockPos pos = BlockPos.containing(offsetPos);
         BlockState blockState = at.blockEntity.getBlockState();
         PanelSlot slot = FactoryPanelBlock.getTargetedSlot(pos, blockState, offsetPos);
@@ -207,7 +208,7 @@ public class FactoryPanelConnectionHandler {
         validRelocationTarget = new FactoryPanelPosition(pos, slot);
 
         Outliner.getInstance().showAABB("target", getBB(blockState, validRelocationTarget)).colored(0xeeeeee)
-            .disableLineNormals().lineWidth(1 / 16f);
+            .disableLineNormals().lineWidth(1 / 16.0f);
     }
 
     public static boolean onRightClick(Minecraft mc) {
@@ -322,7 +323,7 @@ public class FactoryPanelConnectionHandler {
         Vec3 location = FactoryPanelSlotPositioning.getCenterOfSlot(blockState, factoryPanelPosition.slot())
             .add(Vec3.atLowerCornerOf(factoryPanelPosition.pos()));
         Vec3 plane = VecHelper.axisAlingedPlaneOf(FactoryPanelBlock.connectedDirection(blockState));
-        return new AABB(location, location).inflate(plane.x * 3 / 16f, plane.y * 3 / 16f, plane.z * 3 / 16f);
+        return new AABB(location, location).inflate(plane.x * 3 / 16.0f, plane.y * 3 / 16.0f, plane.z * 3 / 16.0f);
     }
 
 }

@@ -56,7 +56,7 @@ public class CompactingView extends CreateView {
     public int placeViewSlots(SlotDefinition slotDefinition) {
         int i = 0;
         for (int size = ingredients.size(), xOffset = size < 3 ? 12 + (3 - size) * 19 / 2 : 12; i < size; i++) {
-            slotDefinition.addItemSlot(i, xOffset + (i % 3) * 19, 49 - (i / 3) * 19);
+            slotDefinition.addItemSlot(i, xOffset + i % 3 * 19, 49 - i / 3 * 19);
         }
         slotDefinition.addItemSlot(i++, 142, 49);
         return i;

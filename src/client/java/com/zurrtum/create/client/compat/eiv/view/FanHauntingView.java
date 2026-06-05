@@ -49,14 +49,13 @@ public class FanHauntingView extends CreateView {
             slotDefinition.addItemSlot(0, 17, 44);
             slotDefinition.addItemSlot(1, 137, 44);
             return 2;
-        } else {
-            int xOffsetAmount = 1 - Math.min(3, size);
-            slotDefinition.addItemSlot(0, 17 + xOffsetAmount * 5, 44);
-            for (int i = 0, left = 137 + xOffsetAmount * 9, top = 44; i < size; i++) {
-                slotDefinition.addItemSlot(i + 1, left + (i % 3) * 19, top + (i / 3) * -19);
-            }
-            return size + 1;
         }
+        int xOffsetAmount = 1 - Math.min(3, size);
+        slotDefinition.addItemSlot(0, 17 + xOffsetAmount * 5, 44);
+        for (int i = 0, left = 137 + xOffsetAmount * 9, top = 44; i < size; i++) {
+            slotDefinition.addItemSlot(i + 1, left + i % 3 * 19, top + i / 3 * -19);
+        }
+        return size + 1;
     }
 
     @Override

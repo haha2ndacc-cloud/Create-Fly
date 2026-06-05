@@ -7,9 +7,9 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3fc;
 
 public class RotatingPivotInstance extends RotatingInstance {
-    public float pivotX = 0;
-    public float pivotY = 0;
-    public float pivotZ = 0;
+    public float pivotX;
+    public float pivotY;
+    public float pivotZ;
 
     public RotatingPivotInstance(InstanceType<? extends RotatingInstance> type, InstanceHandle handle) {
         super(type, handle);

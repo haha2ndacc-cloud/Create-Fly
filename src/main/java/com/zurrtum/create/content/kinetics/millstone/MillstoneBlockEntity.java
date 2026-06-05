@@ -79,7 +79,8 @@ public class MillstoneBlockEntity extends KineticBlockEntity implements Clearabl
                 process();
             }
             return;
-        } else if (level.isClientSide()) {
+        }
+        if (level.isClientSide()) {
             return;
         }
 
@@ -168,7 +169,7 @@ public class MillstoneBlockEntity extends KineticBlockEntity implements Clearabl
         Vec3 target = VecHelper.rotate(offset, getSpeed() > 0 ? 25 : -25, Axis.Y);
 
         Vec3 center = offset.add(VecHelper.getCenterOf(worldPosition));
-        target = VecHelper.offsetRandomly(target.subtract(offset), level.getRandom(), 1 / 128f);
+        target = VecHelper.offsetRandomly(target.subtract(offset), level.getRandom(), 1 / 128.0f);
         level.addParticle(data, center.x, center.y, center.z, target.x, target.y, target.z);
     }
 
@@ -187,7 +188,7 @@ public class MillstoneBlockEntity extends KineticBlockEntity implements Clearabl
     }
 
     public int getProcessingSpeed() {
-        return Mth.clamp((int) Math.abs(getSpeed() / 16f), 1, 512);
+        return Mth.clamp((int) Math.abs(getSpeed() / 16.0f), 1, 512);
     }
 
     private boolean canProcess(ItemStack stack) {

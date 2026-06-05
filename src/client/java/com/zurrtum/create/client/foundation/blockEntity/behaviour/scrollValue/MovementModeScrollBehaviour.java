@@ -41,8 +41,9 @@ public class MovementModeScrollBehaviour extends ScrollOptionBehaviour<MovementM
     }
 
     private enum MovementModeIcon implements INamedIconOptions {
-        MOVE_PLACE(AllIcons.I_MOVE_PLACE), MOVE_PLACE_RETURNED(AllIcons.I_MOVE_PLACE_RETURNED), MOVE_NEVER_PLACE(
-            AllIcons.I_MOVE_NEVER_PLACE);
+        MOVE_PLACE(AllIcons.I_MOVE_PLACE),
+        MOVE_PLACE_RETURNED(AllIcons.I_MOVE_PLACE_RETURNED),
+        MOVE_NEVER_PLACE(AllIcons.I_MOVE_NEVER_PLACE);
 
         private final String translationKey;
         private final AllIcons icon;

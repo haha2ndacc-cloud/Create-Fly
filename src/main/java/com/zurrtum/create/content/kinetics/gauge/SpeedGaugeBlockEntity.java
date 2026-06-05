@@ -24,7 +24,7 @@ public class SpeedGaugeBlockEntity extends GaugeBlockEntity {
         float speed = Math.abs(getSpeed());
 
         dialTarget = getDialTarget(speed);
-        color = Color.mixColors(SpeedLevel.of(speed).getColor(), 0xffffff, .25f);
+        color = Color.mixColors(SpeedLevel.of(speed).getColor(), 0xffffff, 0.25f);
 
         setChanged();
     }
@@ -38,11 +38,11 @@ public class SpeedGaugeBlockEntity extends GaugeBlockEntity {
         if (speed == 0) {
             target = 0;
         } else if (speed < medium) {
-            target = Mth.lerp(speed / medium, 0, .45f);
+            target = Mth.lerp(speed / medium, 0, 0.45f);
         } else if (speed < fast) {
-            target = Mth.lerp((speed - medium) / (fast - medium), .45f, .75f);
+            target = Mth.lerp((speed - medium) / (fast - medium), 0.45f, 0.75f);
         } else {
-            target = Mth.lerp((speed - fast) / (max - fast), .75f, 1.125f);
+            target = Mth.lerp((speed - fast) / (max - fast), 0.75f, 1.125f);
         }
         return target;
     }

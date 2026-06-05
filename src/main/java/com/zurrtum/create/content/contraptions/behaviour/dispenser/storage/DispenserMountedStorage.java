@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class DispenserMountedStorage extends SimpleMountedStorage {
-    public static final MapCodec<DispenserMountedStorage> CODEC = SimpleMountedStorage.codec(DispenserMountedStorage::new);
+    public static final MapCodec<DispenserMountedStorage> CODEC = codec(DispenserMountedStorage::new);
 
     protected DispenserMountedStorage(MountedItemStorageType<?> type, Container handler) {
         super(type, handler);

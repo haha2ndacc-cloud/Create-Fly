@@ -45,10 +45,9 @@ sealed public interface LoadError {
         public ErrorBuilder generateMessage() {
             if (exception instanceof FileNotFoundException) {
                 return ErrorBuilder.create().error("\"" + location + "\" was not found");
-            } else {
-                return ErrorBuilder.create().error("could not load \"" + location + "\" due to an IO error")
-                    .note(exception.toString());
             }
+            return ErrorBuilder.create().error("could not load \"" + location + "\" due to an IO error")
+                .note(exception.toString());
         }
     }
 

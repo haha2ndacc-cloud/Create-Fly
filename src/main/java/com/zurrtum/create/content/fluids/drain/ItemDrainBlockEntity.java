@@ -92,7 +92,7 @@ public class ItemDrainBlockEntity extends SmartBlockEntity {
 
         transportedStack = transportedStack.copy();
         transportedStack.stack = inserted.copy();
-        transportedStack.beltPosition = side.getAxis().isVertical() ? .5f : 0;
+        transportedStack.beltPosition = side.getAxis().isVertical() ? 0.5f : 0;
         transportedStack.prevSideOffset = transportedStack.sideOffset;
         transportedStack.prevBeltPosition = transportedStack.beltPosition;
         setHeldItem(transportedStack, side);
@@ -118,7 +118,7 @@ public class ItemDrainBlockEntity extends SmartBlockEntity {
         boolean onClient = level.isClientSide() && !isVirtual();
 
         if (processingTicks > 0) {
-            heldItem.prevBeltPosition = .5f;
+            heldItem.prevBeltPosition = 0.5f;
             boolean wasAtBeginning = processingTicks == FILLING_TIME;
             if (!onClient || processingTicks < FILLING_TIME) {
                 processingTicks--;
@@ -181,11 +181,11 @@ public class ItemDrainBlockEntity extends SmartBlockEntity {
                 )) {
                     ItemStack ejected = heldItem.stack;
                     Vec3 outPos = VecHelper.getCenterOf(worldPosition)
-                        .add(Vec3.atLowerCornerOf(side.getUnitVec3i()).scale(.75));
+                        .add(Vec3.atLowerCornerOf(side.getUnitVec3i()).scale(0.75));
                     float movementSpeed = itemMovementPerTick();
-                    Vec3 outMotion = Vec3.atLowerCornerOf(side.getUnitVec3i()).scale(movementSpeed).add(0, 1 / 8f, 0);
+                    Vec3 outMotion = Vec3.atLowerCornerOf(side.getUnitVec3i()).scale(movementSpeed).add(0, 1 / 8.0f, 0);
                     outPos.add(outMotion.normalize());
-                    ItemEntity entity = new ItemEntity(level, outPos.x, outPos.y + 6 / 16f, outPos.z, ejected);
+                    ItemEntity entity = new ItemEntity(level, outPos.x, outPos.y + 6 / 16.0f, outPos.z, ejected);
                     entity.setDeltaMovement(outMotion);
                     entity.setDefaultPickUpDelay();
                     entity.hurtMarked = true;
@@ -221,11 +221,11 @@ public class ItemDrainBlockEntity extends SmartBlockEntity {
             return;
         }
 
-        if (heldItem.prevBeltPosition < .5f && heldItem.beltPosition >= .5f) {
+        if (heldItem.prevBeltPosition < 0.5f && heldItem.beltPosition >= 0.5f) {
             if (!GenericItemEmptying.canItemBeEmptied(level, heldItem.stack)) {
                 return;
             }
-            heldItem.beltPosition = .5f;
+            heldItem.beltPosition = 0.5f;
             if (onClient) {
                 return;
             }
@@ -279,7 +279,7 @@ public class ItemDrainBlockEntity extends SmartBlockEntity {
     }
 
     private float itemMovementPerTick() {
-        return 1 / 8f;
+        return 1 / 8.0f;
     }
 
     public void setHeldItem(TransportedItemStack heldItem, Direction insertedFrom) {

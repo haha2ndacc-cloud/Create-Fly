@@ -89,7 +89,7 @@ public class BeltMovementHandler {
         }
 
         // Not on top
-        if (entityIn.getY() - .25f < pos.getY()) {
+        if (entityIn.getY() - 0.25f < pos.getY()) {
             return;
         }
 
@@ -108,14 +108,17 @@ public class BeltMovementHandler {
         Vec3i centeringDirection = Direction.get(POSITIVE, beltFacing.getClockWise().getAxis()).getUnitVec3i();
         Vec3 movement = Vec3.atLowerCornerOf(movementDirection.getUnitVec3i()).scale(movementSpeed);
 
-        double diffCenter = axis == Axis.Z ? (pos.getX() + .5f - entityIn.getX()) : (pos.getZ() + .5f - entityIn.getZ());
-        if (Math.abs(diffCenter) > 48 / 64f) {
+        double diffCenter = axis == Axis.Z ? pos.getX() + 0.5f - entityIn.getX() : pos.getZ() + 0.5f - entityIn.getZ();
+        if (Math.abs(diffCenter) > 48 / 64.0f) {
             return;
         }
 
         BeltPart part = blockState.getValue(BeltBlock.PART);
-        float top = 13 / 16f;
-        boolean onSlope = notHorizontal && (part == BeltPart.MIDDLE || part == BeltPart.PULLEY || part == (slope == BeltSlope.UPWARD ? BeltPart.END : BeltPart.START) && entityIn.getY() - pos.getY() < top || part == (slope == BeltSlope.UPWARD ? BeltPart.START : BeltPart.END) && entityIn.getY() - pos.getY() > top);
+        float top = 13 / 16.0f;
+        boolean onSlope = notHorizontal && (part == BeltPart.MIDDLE || part == BeltPart.PULLEY || part == (
+            slope == BeltSlope.UPWARD ? BeltPart.END :
+                BeltPart.START) && entityIn.getY() - pos.getY() < top || part == (slope == BeltSlope.UPWARD ?
+            BeltPart.START : BeltPart.END) && entityIn.getY() - pos.getY() > top);
 
         boolean movingDown = onSlope && slope == (movementFacing == beltFacing ? BeltSlope.DOWNWARD : BeltSlope.UPWARD);
         boolean movingUp = onSlope && slope == (movementFacing == beltFacing ? BeltSlope.UPWARD : BeltSlope.DOWNWARD);
@@ -134,7 +137,7 @@ public class BeltMovementHandler {
         }
 
         Vec3 centering = Vec3.atLowerCornerOf(centeringDirection)
-            .scale(diffCenter * Math.min(Math.abs(movementSpeed), .1f) * 4);
+            .scale(diffCenter * Math.min(Math.abs(movementSpeed), 0.1f) * 4);
 
         if (!(entityIn instanceof LivingEntity livingEntity) || livingEntity.zza == 0 && livingEntity.xxa == 0) {
             movement = movement.add(centering);
@@ -148,7 +151,7 @@ public class BeltMovementHandler {
         }
 
         // Entity Collisions
-        if (Math.abs(movementSpeed) < .5f) {
+        if (Math.abs(movementSpeed) < 0.5f) {
             Vec3 checkDistance = movement.normalize().scale(0.5);
             AABB bb = entityIn.getBoundingBox();
             AABB checkBB = new AABB(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ);
@@ -166,8 +169,8 @@ public class BeltMovementHandler {
         entityIn.fallDistance = 0;
 
         if (movingUp) {
-            float minVelocity = .13f;
-            float yMovement = (float) -(Math.max(Math.abs(movement.y), minVelocity));
+            float minVelocity = 0.13f;
+            float yMovement = (float) -Math.max(Math.abs(movement.y), minVelocity);
             entityIn.move(SELF, new Vec3(0, yMovement, 0));
             entityIn.move(SELF, movement.multiply(1, 0, 1));
         } else if (movingDown) {

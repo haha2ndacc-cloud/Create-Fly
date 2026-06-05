@@ -40,7 +40,7 @@ public class BlueprintMenu extends GhostItemMenu<BlueprintSection> {
         int index = 0;
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 3; ++col) {
-                this.addSlot(new BlueprintCraftSlot(ghostInventory, index++, x + col * 18, y + row * 18));
+                addSlot(new BlueprintCraftSlot(ghostInventory, index++, x + col * 18, y + row * 18));
             }
         }
 

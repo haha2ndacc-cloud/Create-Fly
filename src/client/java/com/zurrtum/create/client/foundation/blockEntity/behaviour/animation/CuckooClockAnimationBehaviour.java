@@ -39,15 +39,15 @@ public class CuckooClockAnimationBehaviour extends AnimationBehaviour<CuckooCloc
             .map(clock -> (int) (world.clockManager().getTotalTicks(clock) % registryAccess.get(Timelines.OVERWORLD_DAY)
                 .flatMap(timeline -> timeline.value().periodTicks()).orElse(24000))).orElse(0);
         int hours = (dayTime / 1000 + 6) % 24;
-        int minutes = (dayTime % 1000) * 60 / 1000;
+        int minutes = dayTime % 1000 * 60 / 1000;
         moveHands(hours, minutes);
 
         CuckooClockBlockEntity.Animation animationType = blockEntity.animationType;
         if (animationType == CuckooClockBlockEntity.Animation.NONE) {
             if (AnimationTickHolder.getTicks() % 32 == 0) {
-                playSound(SoundEvents.NOTE_BLOCK_HAT.value(), 1 / 16f, 2f);
+                playSound(SoundEvents.NOTE_BLOCK_HAT.value(), 1 / 16.0f, 2.0f);
             } else if (AnimationTickHolder.getTicks() % 16 == 0) {
-                playSound(SoundEvents.NOTE_BLOCK_HAT.value(), 1 / 16f, 1.5f);
+                playSound(SoundEvents.NOTE_BLOCK_HAT.value(), 1 / 16.0f, 1.5f);
             }
         } else {
             boolean isSurprise = animationType == CuckooClockBlockEntity.Animation.SURPRISE;
@@ -59,7 +59,7 @@ public class CuckooClockAnimationBehaviour extends AnimationBehaviour<CuckooCloc
             // sounds
 
             if (value == 1) {
-                playSound(SoundEvents.NOTE_BLOCK_CHIME.value(), 2, .5f);
+                playSound(SoundEvents.NOTE_BLOCK_CHIME.value(), 2, 0.5f);
             }
             if (value == 21) {
                 playSound(SoundEvents.NOTE_BLOCK_CHIME.value(), 2, 0.793701f);
@@ -69,31 +69,31 @@ public class CuckooClockAnimationBehaviour extends AnimationBehaviour<CuckooCloc
                 Vec3 pos = VecHelper.offsetRandomly(
                     VecHelper.getCenterOf(blockEntity.getBlockPos()),
                     world.getRandom(),
-                    .5f
+                    0.5f
                 );
                 world.addParticle(ParticleTypes.LARGE_SMOKE, pos.x, pos.y, pos.z, 0, 0, 0);
             }
             if (value == 40 && isSurprise) {
-                playSound(SoundEvents.TNT_PRIMED, 1f, 1f);
+                playSound(SoundEvents.TNT_PRIMED, 1.0f, 1.0f);
             }
 
             int step = isSurprise ? 3 : 15;
             for (int phase = 30; phase <= 60; phase += step) {
                 if (value == phase - step / 3) {
-                    playSound(SoundEvents.CHEST_OPEN, 1 / 16f, 2f);
+                    playSound(SoundEvents.CHEST_OPEN, 1 / 16.0f, 2.0f);
                 }
                 if (value == phase) {
                     if (animationType == CuckooClockBlockEntity.Animation.PIG) {
                         Registry<PigSoundVariant> pigSoundVariants = registryAccess.lookupOrThrow(Registries.PIG_SOUND_VARIANT);
                         Holder.Reference<PigSoundVariant> holder = pigSoundVariants.get(PigSoundVariants.CLASSIC)
                             .or(pigSoundVariants::getAny).orElseThrow();
-                        playSound(holder.value().adultSounds().ambientSound().value(), 1 / 4f, 1f);
+                        playSound(holder.value().adultSounds().ambientSound().value(), 1 / 4.0f, 1.0f);
                     } else {
-                        playSound(SoundEvents.CREEPER_HURT, 1 / 4f, 3f);
+                        playSound(SoundEvents.CREEPER_HURT, 1 / 4.0f, 3.0f);
                     }
                 }
                 if (value == phase + step / 3) {
-                    playSound(SoundEvents.CHEST_CLOSE, 1 / 16f, 2f);
+                    playSound(SoundEvents.CHEST_CLOSE, 1 / 16.0f, 2.0f);
                 }
 
             }
@@ -102,11 +102,11 @@ public class CuckooClockAnimationBehaviour extends AnimationBehaviour<CuckooCloc
     }
 
     private void moveHands(int hours, int minutes) {
-        float hourTarget = (float) (360 / 12 * (hours % 12));
-        float minuteTarget = (float) (360 / 60 * minutes);
+        float hourTarget = 360 / 12 * (hours % 12);
+        float minuteTarget = 360 / 60 * minutes;
 
-        hourHand.chase(hourTarget, .2f, LerpedFloat.Chaser.EXP);
-        minuteHand.chase(minuteTarget, .2f, LerpedFloat.Chaser.EXP);
+        hourHand.chase(hourTarget, 0.2f, LerpedFloat.Chaser.EXP);
+        minuteHand.chase(minuteTarget, 0.2f, LerpedFloat.Chaser.EXP);
 
         hourHand.tickChaser();
         minuteHand.tickChaser();

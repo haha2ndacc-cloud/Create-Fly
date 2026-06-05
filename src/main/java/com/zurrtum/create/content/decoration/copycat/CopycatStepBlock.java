@@ -157,7 +157,7 @@ public class CopycatStepBlock extends WaterloggedCopycatBlock {
         if (direction == Direction.UP) {
             return stateForPlacement;
         }
-        if (direction == Direction.DOWN || (pContext.getClickLocation().y - pContext.getClickedPos().getY() > 0.5D)) {
+        if (direction == Direction.DOWN || pContext.getClickLocation().y - pContext.getClickedPos().getY() > 0.5D) {
             return stateForPlacement.setValue(HALF, Half.TOP);
         }
         return stateForPlacement;

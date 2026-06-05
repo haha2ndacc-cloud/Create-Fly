@@ -75,7 +75,7 @@ public class DisplayScenes {
         scene.overlay().chaseBoundingBoxOutline(
             PonderPalette.OUTPUT,
             link,
-            new AABB(board).expandTowards(-2, -1, 0).deflate(0, 0, 3 / 16f),
+            new AABB(board).expandTowards(-2, -1, 0).deflate(0, 0, 3 / 16.0f),
             60
         );
         scene.idle(35);
@@ -113,7 +113,7 @@ public class DisplayScenes {
         scene.idle(20);
 
         scene.overlay().showText(80).text("The display will now receive information from the link")
-            .pointAt(target.add(-2.45f, -.5f, 0)).attachKeyFrame().placeNearTarget();
+            .pointAt(target.add(-2.45f, -0.5f, 0)).attachKeyFrame().placeNearTarget();
 
         scene.idle(30);
         scene.world().removeItemsFromBelt(depotPos);
@@ -282,12 +282,13 @@ public class DisplayScenes {
         scene.idle(10);
         scene.world().showSection(link, Direction.EAST);
         scene.idle(15);
-        scene.overlay().chaseBoundingBoxOutline(PonderPalette.INPUT, depot, new AABB(linkPos).contract(-.5f, 0, 0), 60);
+        scene.overlay()
+            .chaseBoundingBoxOutline(PonderPalette.INPUT, depot, new AABB(linkPos).contract(-0.5f, 0, 0), 60);
         scene.idle(5);
         scene.overlay().chaseBoundingBoxOutline(
             PonderPalette.OUTPUT,
             link,
-            new AABB(board).expandTowards(-2, -1, 0).deflate(0, 0, 3 / 16f),
+            new AABB(board).expandTowards(-2, -1, 0).deflate(0, 0, 3 / 16.0f),
             60
         );
         scene.idle(20);
@@ -325,7 +326,7 @@ public class DisplayScenes {
             .pointAt(target.add(-2, 0, 0)).attachKeyFrame().placeNearTarget();
         scene.idle(25);
 
-        scene.overlay().showControls(target.add(0, -.5f, 0), Pointing.RIGHT, 40)
+        scene.overlay().showControls(target.add(0, -0.5f, 0), Pointing.RIGHT, 40)
             .withItem(new ItemStack(Items.DYE.lime())).rightClick();
         scene.idle(6);
         scene.world().dyeDisplayBoard(board, 1, DyeColor.LIME);

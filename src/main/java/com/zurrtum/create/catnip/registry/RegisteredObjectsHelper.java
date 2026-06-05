@@ -83,7 +83,8 @@ public class RegisteredObjectsHelper {
     public static Identifier getKeyOrThrow(ItemLike itemLike) {
         if (itemLike instanceof Item item) {
             return getKeyOrThrow(item);
-        } else if (itemLike instanceof Block block) {
+        }
+        if (itemLike instanceof Block block) {
             return getKeyOrThrow(block);
         }
 

@@ -32,10 +32,10 @@ public record TextureArrowRenderState(Matrix3x2f pose, float alpha, float tx, fl
 
     @Override
     public void buildVertices(VertexConsumer vertexConsumer) {
-        vertexConsumer.addVertexWith2DPose(pose, -1, -1).setColor(1f, 1f, 1f, alpha).setUv(tx, ty);
-        vertexConsumer.addVertexWith2DPose(pose, -1, 1).setColor(1f, 1f, 1f, alpha).setUv(tx, ty + th);
-        vertexConsumer.addVertexWith2DPose(pose, 1, 1).setColor(1f, 1f, 1f, alpha).setUv(tx + tw, ty + th);
-        vertexConsumer.addVertexWith2DPose(pose, 1, -1).setColor(1f, 1f, 1f, alpha).setUv(tx + tw, ty);
+        vertexConsumer.addVertexWith2DPose(pose, -1, -1).setColor(1.0f, 1.0f, 1.0f, alpha).setUv(tx, ty);
+        vertexConsumer.addVertexWith2DPose(pose, -1, 1).setColor(1.0f, 1.0f, 1.0f, alpha).setUv(tx, ty + th);
+        vertexConsumer.addVertexWith2DPose(pose, 1, 1).setColor(1.0f, 1.0f, 1.0f, alpha).setUv(tx + tw, ty + th);
+        vertexConsumer.addVertexWith2DPose(pose, 1, -1).setColor(1.0f, 1.0f, 1.0f, alpha).setUv(tx + tw, ty);
     }
 
     @Override

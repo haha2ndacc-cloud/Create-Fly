@@ -76,8 +76,8 @@ public class PumpScenes {
         scene.overlay().showText(60).text("Their arrow indicates the direction of flow").attachKeyFrame()
             .placeNearTarget().pointAt(util.vector().topOf(pumpPos).subtract(0.5f, 0.125f, 0));
 
-        AABB bb1 = new AABB(Vec3.ZERO, Vec3.ZERO).inflate(.25, .25, 0).move(0, 0, .25);
-        AABB bb2 = new AABB(Vec3.ZERO, Vec3.ZERO).inflate(.25, .25, 1.25);
+        AABB bb1 = new AABB(Vec3.ZERO, Vec3.ZERO).inflate(0.25, 0.25, 0).move(0, 0, 0.25);
+        AABB bb2 = new AABB(Vec3.ZERO, Vec3.ZERO).inflate(0.25, 0.25, 1.25);
         scene.idle(65);
 
         Object in = new Object();
@@ -96,7 +96,7 @@ public class PumpScenes {
         scene.overlay().chaseBoundingBoxOutline(
             PonderPalette.OUTPUT,
             out,
-            bb1.move(util.vector().centerOf(1, 1, 1).add(0, 0, -.5)),
+            bb1.move(util.vector().centerOf(1, 1, 1).add(0, 0, -0.5)),
             3
         );
         scene.idle(2);
@@ -139,7 +139,7 @@ public class PumpScenes {
         scene.overlay().chaseBoundingBoxOutline(
             PonderPalette.OUTPUT,
             out,
-            bb1.move(util.vector().centerOf(1, 1, 1).add(0, 0, -.5)),
+            bb1.move(util.vector().centerOf(1, 1, 1).add(0, 0, -0.5)),
             3
         );
         scene.idle(2);

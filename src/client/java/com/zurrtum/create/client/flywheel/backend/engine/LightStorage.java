@@ -58,8 +58,8 @@ public class LightStorage implements Effect {
     private final LightDataCollector collector;
 
     private final BitSet changed = new BitSet();
-    private boolean needsLutRebuild = false;
-    private boolean isDebugOn = false;
+    private boolean needsLutRebuild;
+    private boolean isDebugOn;
 
     private final LongSet updatedSections = new LongOpenHashSet();
     @Nullable

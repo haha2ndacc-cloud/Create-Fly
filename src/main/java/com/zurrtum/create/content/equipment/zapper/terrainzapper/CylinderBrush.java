@@ -30,7 +30,7 @@ public class CylinderBrush extends ShapedBrush {
                     BlockPos.ZERO.offset(-i - 1, 0, -i - 1),
                     BlockPos.ZERO.offset(i + 1, 0, i + 1)
                 ).map(BlockPos::new)
-                .filter(p -> VecHelper.getCenterOf(p).distanceTo(VecHelper.getCenterOf(BlockPos.ZERO)) < radius + .42f)
+                .filter(p -> VecHelper.getCenterOf(p).distanceTo(VecHelper.getCenterOf(BlockPos.ZERO)) < radius + 0.42f)
                 .toList();
             for (int h = 0; h <= MAX_HEIGHT; h++) {
                 List<BlockPos> stackedPositions = new ArrayList<>();
@@ -54,7 +54,7 @@ public class CylinderBrush extends ShapedBrush {
         int offset = option == PlacementOptions.Attached ? 0 : -1;
         boolean negative = face.getAxisDirection() == AxisDirection.NEGATIVE;
         int yOffset = option == PlacementOptions.Attached ? negative ? 1 : 2 : negative ? 0 : -1;
-        int r = (param0 + 1 + offset);
+        int r = param0 + 1 + offset;
         int y = (param1 + (param1 == 0 ? 0 : yOffset)) / 2;
 
         return BlockPos.ZERO.relative(

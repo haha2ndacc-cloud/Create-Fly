@@ -11,7 +11,7 @@ public class SimpleModel implements Model {
 
     public SimpleModel(List<ConfiguredMesh> meshes) {
         this.meshes = meshes;
-        this.boundingSphere = ModelUtil.computeBoundingSphere(meshes);
+        boundingSphere = ModelUtil.computeBoundingSphere(meshes);
     }
 
     @Override

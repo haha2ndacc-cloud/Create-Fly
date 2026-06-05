@@ -23,12 +23,12 @@ public class EncasingRegistry {
     }
 
     public static void register() {
-        EncasingRegistry.addVariant(AllBlocks.SHAFT, AllBlocks.ANDESITE_ENCASED_SHAFT);
-        EncasingRegistry.addVariant(AllBlocks.SHAFT, AllBlocks.BRASS_ENCASED_SHAFT);
-        EncasingRegistry.addVariant(AllBlocks.COGWHEEL, AllBlocks.ANDESITE_ENCASED_COGWHEEL);
-        EncasingRegistry.addVariant(AllBlocks.COGWHEEL, AllBlocks.BRASS_ENCASED_COGWHEEL);
-        EncasingRegistry.addVariant(AllBlocks.LARGE_COGWHEEL, AllBlocks.ANDESITE_ENCASED_LARGE_COGWHEEL);
-        EncasingRegistry.addVariant(AllBlocks.LARGE_COGWHEEL, AllBlocks.BRASS_ENCASED_LARGE_COGWHEEL);
-        EncasingRegistry.addVariant(AllBlocks.FLUID_PIPE, AllBlocks.ENCASED_FLUID_PIPE);
+        addVariant(AllBlocks.SHAFT, AllBlocks.ANDESITE_ENCASED_SHAFT);
+        addVariant(AllBlocks.SHAFT, AllBlocks.BRASS_ENCASED_SHAFT);
+        addVariant(AllBlocks.COGWHEEL, AllBlocks.ANDESITE_ENCASED_COGWHEEL);
+        addVariant(AllBlocks.COGWHEEL, AllBlocks.BRASS_ENCASED_COGWHEEL);
+        addVariant(AllBlocks.LARGE_COGWHEEL, AllBlocks.ANDESITE_ENCASED_LARGE_COGWHEEL);
+        addVariant(AllBlocks.LARGE_COGWHEEL, AllBlocks.BRASS_ENCASED_LARGE_COGWHEEL);
+        addVariant(AllBlocks.FLUID_PIPE, AllBlocks.ENCASED_FLUID_PIPE);
     }
 }

@@ -99,8 +99,8 @@ public abstract class AbstractSimiScreen extends Screen {
 
     @Override
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
-        partialTicks = NavigatableSimiScreen.currentlyRenderingPreviousScreen ? 0 : AnimationTickHolder.getPartialTicksUI(
-            minecraft.getDeltaTracker());
+        partialTicks = NavigatableSimiScreen.currentlyRenderingPreviousScreen ? 0 :
+            AnimationTickHolder.getPartialTicksUI(minecraft.getDeltaTracker());
         Matrix3x2fStack poseStack = graphics.pose();
 
         poseStack.pushMatrix();
@@ -128,8 +128,8 @@ public abstract class AbstractSimiScreen extends Screen {
             return keyPressed;
         }
 
-        if (this.minecraft.options.keyInventory.matches(input)) {
-            this.onClose();
+        if (minecraft.options.keyInventory.matches(input)) {
+            onClose();
             return true;
         }
 
@@ -167,7 +167,7 @@ public abstract class AbstractSimiScreen extends Screen {
     }
 
     protected List<Renderable> getRenderables() {
-        return this.renderables;
+        return renderables;
     }
 
     @Nullable

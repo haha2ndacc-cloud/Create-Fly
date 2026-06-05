@@ -40,7 +40,7 @@ public class PipeConnection {
 
     public PipeConnection(Direction side) {
         this.side = side;
-        pressure = Couple.create(() -> 0f);
+        pressure = Couple.create(() -> 0.0f);
         flow = Optional.empty();
         previousSource = Optional.empty();
         source = Optional.empty();
@@ -225,7 +225,7 @@ public class PipeConnection {
             particleSplashNextTick = false;
         }
 
-        float flowSpeed = 1 / 32f + Mth.clamp(pressure.get(flow.inbound) / 128f, 0, 1) * 31 / 32f;
+        float flowSpeed = 1 / 32.0f + Mth.clamp(pressure.get(flow.inbound) / 128.0f, 0, 1) * 31 / 32.0f;
         flow.progress.setValue(Math.min(flow.progress.getValue() + flowSpeed, 1));
         if (flow.progress.getValue() >= 1) {
             flow.complete = true;
@@ -262,7 +262,7 @@ public class PipeConnection {
         view.read("Pressure", CreateCodecs.FLOAT_LIST_CODEC).ifPresentOrElse(
             list -> {
                 pressure = Couple.create(list.getFirst(), list.getLast());
-            }, () -> pressure.replace((f -> 0f))
+            }, () -> pressure.replace(f -> 0.0f)
         );
 
         source = Optional.ofNullable(view.read("OpenEnd", OpenEndedPipe.codec(blockEntityPos)).orElse(null));
@@ -309,11 +309,11 @@ public class PipeConnection {
     }
 
     public void wipePressure() {
-        this.pressure.replace(f -> 0f);
-        if (this.source.isPresent()) {
-            this.previousSource = this.source;
+        pressure.replace(f -> 0.0f);
+        if (source.isPresent()) {
+            previousSource = source;
         }
-        this.source = Optional.empty();
+        source = Optional.empty();
         resetNetwork();
     }
 
@@ -370,16 +370,16 @@ public class PipeConnection {
         public Flow(boolean inbound, FluidStack fluid) {
             this.inbound = inbound;
             this.fluid = fluid;
-            this.progress = LerpedFloat.linear().startWithValue(0);
-            this.complete = false;
+            progress = LerpedFloat.linear().startWithValue(0);
+            complete = false;
         }
 
     }
 
     public static final int MAX_PARTICLE_RENDER_DISTANCE = 20;
     public static final int SPLASH_PARTICLE_AMOUNT = 1;
-    public static final float IDLE_PARTICLE_SPAWN_CHANCE = 1 / 1000f;
-    public static final float RIM_RADIUS = 1 / 4f + 1 / 64f;
+    public static final float IDLE_PARTICLE_SPAWN_CHANCE = 1 / 1000.0f;
+    public static final float RIM_RADIUS = 1 / 4.0f + 1 / 64.0f;
 
     //	void visualizePressure(BlockPos pos) {
     //		if (!hasPressure())

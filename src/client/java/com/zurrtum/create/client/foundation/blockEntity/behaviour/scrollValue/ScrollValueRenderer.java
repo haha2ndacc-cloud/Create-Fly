@@ -91,7 +91,7 @@ public class ScrollValueRenderer {
         ScrollValueBehaviour<?, ?> behaviour,
         boolean highlight
     ) {
-        AABB bb = new AABB(Vec3.ZERO, Vec3.ZERO).inflate(.5f).contract(0, 0, -.5f).move(0, 0, -.125f);
+        AABB bb = new AABB(Vec3.ZERO, Vec3.ZERO).inflate(0.5f).contract(0, 0, -0.5f).move(0, 0, -0.125f);
         Component label = behaviour.label;
         ValueBox box;
 

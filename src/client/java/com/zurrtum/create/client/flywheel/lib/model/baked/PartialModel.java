@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public final class PartialModel {
     static final ConcurrentMap<Identifier, PartialModel> ALL = new MapMaker().weakValues().makeMap();
-    static boolean populateOnInit = false;
+    static boolean populateOnInit;
 
     private final Identifier modelLocation;
     @UnknownNullability

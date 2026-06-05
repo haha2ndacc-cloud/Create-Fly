@@ -33,7 +33,7 @@ class UniformWriter {
         MemoryUtil.memPutFloat(ptr, x);
         MemoryUtil.memPutFloat(ptr + 4, y);
         MemoryUtil.memPutFloat(ptr + 8, z);
-        MemoryUtil.memPutFloat(ptr + 12, 0f); // empty component of vec4 because we don't trust std140
+        MemoryUtil.memPutFloat(ptr + 12, 0.0f); // empty component of vec4 because we don't trust std140
         return ptr + 16;
     }
 

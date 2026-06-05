@@ -45,7 +45,7 @@ public class PostboxBlockEntity extends PackagePortBlockEntity {
 
         float currentTarget = flag.getChaseTarget();
         if (currentTarget == 0 || flag.settled()) {
-            int target = (inventory.isEmpty() && !forceFlag) ? 0 : 1;
+            int target = inventory.isEmpty() && !forceFlag ? 0 : 1;
             if (target != currentTarget) {
                 flag.chase(target, 0.1f, Chaser.LINEAR);
                 if (target == 1) {
@@ -53,9 +53,9 @@ public class PostboxBlockEntity extends PackagePortBlockEntity {
                 }
             }
         }
-        boolean settled = flag.getValue() > .15f;
+        boolean settled = flag.getValue() > 0.15f;
         flag.tickChaser();
-        if (currentTarget == 0 && settled != flag.getValue() > .15f) {
+        if (currentTarget == 0 && settled != flag.getValue() > 0.15f) {
             AllSoundEvents.CONTRAPTION_DISASSEMBLE.playAt(level, worldPosition, 0.75f, 1.5f, true);
         }
 

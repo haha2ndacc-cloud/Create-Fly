@@ -19,7 +19,7 @@ public class ChangeThrottleInstruction extends ScheduleInstruction {
     }
 
     public float getThrottle() {
-        return intData("Value") / 100f;
+        return intData("Value") / 100.0f;
     }
 
     @Override

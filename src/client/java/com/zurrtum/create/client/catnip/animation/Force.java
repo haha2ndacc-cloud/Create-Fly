@@ -66,8 +66,8 @@ public interface Force {
         float f;
 
         public OverTime(int time, float totalAcceleration) {
-            this.timeRemaining = time;
-            this.f = totalAcceleration / (float) time;
+            timeRemaining = time;
+            f = totalAcceleration / time;
         }
 
         @Override

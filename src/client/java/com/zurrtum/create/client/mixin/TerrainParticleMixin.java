@@ -31,8 +31,7 @@ public abstract class TerrainParticleMixin {
                 WrapperBlockStateModel.findPos(level, pos, blockState),
                 blockState
             );
-        } else {
-            return model.particleMaterial();
         }
+        return model.particleMaterial();
     }
 }

@@ -19,7 +19,7 @@ public class AllIcons implements ScreenElement {
     public static final Identifier ICON_ATLAS = Create.asResource("textures/gui/icons.png");
     public static final int ICON_ATLAS_SIZE = 256;
 
-    private static int x = 0, y = -1;
+    private static int x, y = -1;
     private final int iconX;
     private final int iconY;
 
@@ -54,7 +54,6 @@ public class AllIcons implements ScreenElement {
     I_FX_SURFACE_OFF = newRow(), I_FX_SURFACE_ON = next(), I_FX_FIELD_OFF = next(), I_FX_FIELD_ON = next(), I_FX_BLEND = next(), I_FX_BLEND_OFF = next(),
 
     I_SEND_ONLY = newRow(), I_SEND_AND_RECEIVE = next(), I_PARTIAL_REQUESTS = next(), I_FULL_REQUESTS = next(), I_MOVE_GAUGE = next();
-    ;
 
     public AllIcons(int x, int y) {
         iconX = x * 16;
@@ -87,14 +86,14 @@ public class AllIcons implements ScreenElement {
         public void render(Pose pose, VertexConsumer buffer) {
             Matrix4f matrix = pose.pose();
             int light = LightCoordsUtil.FULL_BRIGHT;
-            float u1 = iconX * 1f / ICON_ATLAS_SIZE;
-            float u2 = (iconX + 16) * 1f / ICON_ATLAS_SIZE;
-            float v1 = iconY * 1f / ICON_ATLAS_SIZE;
-            float v2 = (iconY + 16) * 1f / ICON_ATLAS_SIZE;
+            float u1 = iconX * 1.0f / ICON_ATLAS_SIZE;
+            float u2 = (iconX + 16) * 1.0f / ICON_ATLAS_SIZE;
+            float v1 = iconY * 1.0f / ICON_ATLAS_SIZE;
+            float v2 = (iconY + 16) * 1.0f / ICON_ATLAS_SIZE;
             buffer.addVertex(matrix, 0, 0, 0).setColor(color).setUv(u1, v1).setLight(light);
-            buffer.addVertex(matrix, 0, 1f, 0).setColor(color).setUv(u1, v2).setLight(light);
-            buffer.addVertex(matrix, 1f, 1f, 0).setColor(color).setUv(u2, v2).setLight(light);
-            buffer.addVertex(matrix, 1f, 0, 0).setColor(color).setUv(u2, v1).setLight(light);
+            buffer.addVertex(matrix, 0, 1.0f, 0).setColor(color).setUv(u1, v2).setLight(light);
+            buffer.addVertex(matrix, 1.0f, 1.0f, 0).setColor(color).setUv(u2, v2).setLight(light);
+            buffer.addVertex(matrix, 1.0f, 0, 0).setColor(color).setUv(u2, v1).setLight(light);
         }
     }
 }

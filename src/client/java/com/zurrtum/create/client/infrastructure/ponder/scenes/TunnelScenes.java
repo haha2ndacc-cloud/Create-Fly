@@ -89,7 +89,7 @@ public class TunnelScenes {
         scene.idle(7);
         scene.world().createItemOnBelt(util.grid().at(4, 1, 2), Direction.UP, new ItemStack(Items.COPPER_INGOT, 64));
         scene.idle(40);
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 16f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 16.0f);
         scene.overlay().showText(80).attachKeyFrame()
             .text("...they will split exactly one item off of any passing stacks")
             .pointAt(util.vector().blockSurface(util.grid().at(2, 1, 0), Direction.WEST)).placeNearTarget();
@@ -97,7 +97,7 @@ public class TunnelScenes {
         scene.overlay().showText(80).text("The remainder will continue on its path")
             .pointAt(util.vector().blockSurface(util.grid().at(0, 1, 2), Direction.UP)).placeNearTarget();
         scene.idle(90);
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 16f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 16.0f);
     }
 
     public static void brass(SceneBuilder builder, SceneBuildingUtil util) {
@@ -183,7 +183,7 @@ public class TunnelScenes {
         scene.world().multiplyKineticSpeed(util.select().everywhere(), -2);
         scene.idle(20);
         scene.rotateCameraY(-70);
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), -.5f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), -0.5f);
         scene.idle(20);
         scene.world().modifyBlockEntity(
             tunnelPos,
@@ -339,7 +339,7 @@ public class TunnelScenes {
     }
 
     protected static Vec3 getTunnelFilterVec(BlockPos pos, Direction d) {
-        return VecHelper.getCenterOf(pos).add(Vec3.atLowerCornerOf(d.getUnitVec3i()).scale(.5)).add(0, 0.3, 0);
+        return VecHelper.getCenterOf(pos).add(Vec3.atLowerCornerOf(d.getUnitVec3i()).scale(0.5)).add(0, 0.3, 0);
     }
 
     public static void brassModes(SceneBuilder builder, SceneBuildingUtil util) {
@@ -534,7 +534,7 @@ public class TunnelScenes {
         scene.world().createItemOnBelt(util.grid().at(2, 1, 5), Direction.SOUTH, item2);
         scene.rotateCameraY(-90);
         scene.idle(20);
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), .5f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 0.5f);
 
         scene.overlay().showText(70).text("Items are only allowed past if every tunnel in the group has one waiting")
             .pointAt(util.vector().blockSurface(util.grid().at(2, 1, 4), Direction.UP)).placeNearTarget()

@@ -37,8 +37,8 @@ public class ValveHandleVisual extends KineticBlockEntityVisual<ValveHandleBlock
 
         crank = instancerProvider().instancer(
             InstanceTypes.TRANSFORMED,
-            Models.chunkPartial(color == null ? AllPartialModels.VALVE_HANDLE : AllPartialModels.DYED_VALVE_HANDLES.get(
-                color))
+            Models.chunkPartial(
+                color == null ? AllPartialModels.VALVE_HANDLE : AllPartialModels.DYED_VALVE_HANDLES.get(color))
         ).createInstance();
 
         rotateCrank(partialTick);

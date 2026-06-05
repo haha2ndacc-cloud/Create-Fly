@@ -19,7 +19,7 @@ public class BeltProcessingBehaviour extends BlockEntityBehaviour<SmartBlockEnti
     public static final BehaviourType<BeltProcessingBehaviour> TYPE = new BehaviourType<>();
 
     public enum ProcessingResult {
-        PASS, HOLD, REMOVE;
+        PASS, HOLD, REMOVE
     }
 
     private ProcessingCallback onItemEnter;

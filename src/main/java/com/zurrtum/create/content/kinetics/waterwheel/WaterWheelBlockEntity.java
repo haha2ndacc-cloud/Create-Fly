@@ -150,7 +150,7 @@ public class WaterWheelBlockEntity extends GeneratingKineticBlockEntity {
 
             Vec3 positiveMotion = VecHelper.rotate(normal, 90, getAxis());
             double dot = flowAtPos.dot(positiveMotion);
-            if (Math.abs(dot) > .5) {
+            if (Math.abs(dot) > 0.5) {
                 flowScore += Math.signum(dot);
             }
         }
@@ -206,7 +206,7 @@ public class WaterWheelBlockEntity extends GeneratingKineticBlockEntity {
         super.read(view, clientPacket);
         flowScore = view.getIntOr("FlowScore", 0);
 
-        BlockState prevMaterial = this.material;
+        BlockState prevMaterial = material;
         Optional<BlockState> material = view.read("Material", BlockState.CODEC);
         if (material.isEmpty()) {
             return;

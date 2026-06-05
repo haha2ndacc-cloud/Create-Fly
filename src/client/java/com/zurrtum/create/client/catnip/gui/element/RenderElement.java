@@ -30,7 +30,7 @@ public interface RenderElement extends FadableScreenElement {
 
     @Override
     default void render(GuiGraphicsExtractor graphics, int x, int y, float alpha) {
-        this.at(x, y).withAlpha(alpha).render(graphics);
+        at(x, y).withAlpha(alpha).render(graphics);
     }
 
     default void clear() {

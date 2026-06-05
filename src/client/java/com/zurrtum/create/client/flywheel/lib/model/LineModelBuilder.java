@@ -26,7 +26,7 @@ public final class LineModelBuilder {
     private VertexView vertexView;
     @UnknownNullability
     private MemoryBlock data;
-    private int vertexCount = 0;
+    private int vertexCount;
 
     public LineModelBuilder() {
     }
@@ -38,7 +38,8 @@ public final class LineModelBuilder {
     public void ensureCapacity(int segmentCount) {
         if (segmentCount < 0) {
             throw new IllegalArgumentException("Segment count must be greater than or equal to 0");
-        } else if (segmentCount == 0) {
+        }
+        if (segmentCount == 0) {
             return;
         }
 

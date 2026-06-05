@@ -92,7 +92,7 @@ public class DeployerFabricFakePlayer extends FakePlayer implements DeployerPlay
 
     @Override
     public float getCurrentItemAttackStrengthDelay() {
-        return 1 / 64f;
+        return 1 / 64.0f;
     }
 
     @Override

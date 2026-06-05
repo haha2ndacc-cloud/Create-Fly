@@ -253,7 +253,7 @@ public class BeltScenes {
         scene.idle(20);
         Selection fourthBelt = util.select().fromTo(4, 1, 4, 0, 1, 4);
         belt = scene.world().showIndependentSection(fourthBelt, Direction.DOWN);
-        scene.world().moveSection(belt, util.vector().of(0, 1 / 512f, -2), 0);
+        scene.world().moveSection(belt, util.vector().of(0, 1 / 512.0f, -2), 0);
         scene.idle(40);
         scene.world().hideIndependentSection(belt, Direction.UP);
         scene.idle(15);
@@ -280,7 +280,7 @@ public class BeltScenes {
         scene.title("belt_transport", "Using Mechanical Belts for Logistics");
         scene.configureBasePlate(0, 0, 5);
         scene.setSceneOffsetY(-1);
-        scene.world().modifyKineticSpeed(util.select().everywhere(), f -> -.6f * f);
+        scene.world().modifyKineticSpeed(util.select().everywhere(), f -> -0.6f * f);
         scene.showBasePlate();
         scene.idle(5);
         scene.world().showSection(util.select().fromTo(1, 1, 3, 2, 1, 5), Direction.DOWN);
@@ -302,7 +302,7 @@ public class BeltScenes {
         scene.idle(20);
 
         ElementLink<ParrotElement> parrot = scene.special()
-            .createBirb(util.vector().topOf(0, 1, 2).add(0, -3 / 16f, 0), ParrotPose.FacePointOfInterestPose::new);
+            .createBirb(util.vector().topOf(0, 1, 2).add(0, -3 / 16.0f, 0), ParrotPose.FacePointOfInterestPose::new);
         scene.special().moveParrot(parrot, util.vector().of(1.78, 0, 0), 40);
         scene.special().movePointOfInterest(util.grid().at(1, 1, 3));
 
@@ -326,9 +326,9 @@ public class BeltScenes {
         scene.idle(30);
         scene.special().movePointOfInterest(util.grid().at(2, 1, 5));
         scene.idle(10);
-        scene.special().moveParrot(parrot, util.vector().of(.23, 0, 0), 5);
+        scene.special().moveParrot(parrot, util.vector().of(0.23, 0, 0), 5);
         scene.idle(5);
-        scene.world().setKineticSpeed(util.select().everywhere(), 0f);
+        scene.world().setKineticSpeed(util.select().everywhere(), 0.0f);
         scene.idle(10);
         scene.world().modifyEntities(ItemEntity.class, Entity::discard);
         scene.special().movePointOfInterest(util.grid().at(2, 5, 4));
@@ -510,7 +510,7 @@ public class BeltScenes {
         scene.world().modifyBlockEntity(
             pressPos,
             type,
-            pte -> pte.getPressingBehaviour().makePressingParticleEffect(depotCenter.add(0, 8 / 16f, 0), copper)
+            pte -> pte.getPressingBehaviour().makePressingParticleEffect(depotCenter.add(0, 8 / 16.0f, 0), copper)
         );
         scene.world().removeItemsFromBelt(depotPos);
         ItemStack sheet = AllItems.COPPER_SHEET.getDefaultInstance();

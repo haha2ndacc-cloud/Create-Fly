@@ -73,7 +73,7 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock implements 
 
         BlockPos pos = context.getClickedPos();
         state = level.getBlockState(pos);
-        Direction facing = state.getValue(RedstoneContactBlock.FACING);
+        Direction facing = state.getValue(FACING);
         if (facing.getAxis() != Axis.Y && ElevatorColumn.get(
             level,
             new ColumnCoords(pos.getX(), pos.getZ(), facing)
@@ -114,7 +114,7 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock implements 
             return;
         }
 
-        pLevel.setBlock(pPos, pState.cycle(POWERED), Block.UPDATE_CLIENTS);
+        pLevel.setBlock(pPos, pState.cycle(POWERED), UPDATE_CLIENTS);
 
         if (isPowered) {
             return;
@@ -138,7 +138,7 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock implements 
         BlockPos pPos,
         boolean powered
     ) {
-        pLevel.setBlock(pPos, pState.cycle(CALLING), Block.UPDATE_CLIENTS);
+        pLevel.setBlock(pPos, pState.cycle(CALLING), UPDATE_CLIENTS);
 
         for (BlockPos otherPos : elevatorColumn.getContacts()) {
             if (otherPos.equals(pPos)) {
@@ -155,7 +155,7 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock implements 
         if (powered) {
             pState = pState.setValue(POWERED, true);
         }
-        pLevel.setBlock(pPos, pState.setValue(CALLING, true), Block.UPDATE_CLIENTS);
+        pLevel.setBlock(pPos, pState.setValue(CALLING, true), UPDATE_CLIENTS);
         pLevel.updateNeighborsAt(pPos, this, null);
 
         elevatorColumn.target(pPos.getY());

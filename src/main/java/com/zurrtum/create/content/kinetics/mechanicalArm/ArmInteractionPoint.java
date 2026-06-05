@@ -64,7 +64,7 @@ public class ArmInteractionPoint {
         this.type = type;
         this.level = level;
         this.pos = pos;
-        this.cachedState = state;
+        cachedState = state;
     }
 
     public ArmInteractionPointType getType() {

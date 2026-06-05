@@ -14,7 +14,7 @@ import java.util.function.Function;
 
 public class BoxWidget extends ElementWidget {
 
-    public static final Function<BoxWidget, FadableScreenElement> gradientFactory = (box) -> (ms, w, h, alpha) -> UIRenderHelper.angledGradient(ms,
+    public static final Function<BoxWidget, FadableScreenElement> gradientFactory = box -> (ms, w, h, alpha) -> UIRenderHelper.angledGradient(ms,
         90,
         w / 2,
         -2,
@@ -29,10 +29,10 @@ public class BoxWidget extends ElementWidget {
     protected Couple<Color> customBorder;
     @Nullable
     protected Color customBackground;
-    protected Couple<Color> colorIdle = AbstractSimiWidget.COLOR_IDLE;
-    protected Couple<Color> colorHover = AbstractSimiWidget.COLOR_HOVER;
-    protected Couple<Color> colorClick = AbstractSimiWidget.COLOR_CLICK;
-    protected Couple<Color> colorDisabled = AbstractSimiWidget.COLOR_DISABLED;
+    protected Couple<Color> colorIdle = COLOR_IDLE;
+    protected Couple<Color> colorHover = COLOR_HOVER;
+    protected Couple<Color> colorClick = COLOR_CLICK;
+    protected Couple<Color> colorDisabled = COLOR_DISABLED;
     protected boolean animateColors = true;
     protected LerpedFloat colorAnimation = LerpedFloat.linear();
 
@@ -62,18 +62,18 @@ public class BoxWidget extends ElementWidget {
     }
 
     public <T extends BoxWidget> T withBorderColors(Couple<Color> colors) {
-        this.customBorder = colors;
+        customBorder = colors;
         updateGradientFromState();
         //noinspection unchecked
         return (T) this;
     }
 
     public <T extends BoxWidget> T withBorderColors(Color top, Color bot) {
-        return this.withBorderColors(Couple.create(top, bot));
+        return withBorderColors(Couple.create(top, bot));
     }
 
     public <T extends BoxWidget> T withCustomBackground(Color color) {
-        this.customBackground = color;
+        customBackground = color;
         //noinspection unchecked
         return (T) this;
     }
@@ -106,7 +106,7 @@ public class BoxWidget extends ElementWidget {
     }
 
     public <T extends BoxWidget> T animateColors(boolean b) {
-        this.animateColors = b;
+        animateColors = b;
         //noinspection unchecked
         return (T) this;
     }
@@ -148,7 +148,7 @@ public class BoxWidget extends ElementWidget {
     @Override
     public void doRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         float fadeValue = fade.getValue(partialTicks);
-        if (fadeValue < .1f) {
+        if (fadeValue < 0.1f) {
             return;
         }
 

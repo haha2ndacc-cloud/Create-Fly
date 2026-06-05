@@ -38,7 +38,7 @@ public class FluidInventoryStorageImpl extends CombinedStorage<FluidVariant, Sin
     public FluidInventoryStorageImpl(FluidInventory inventory) {
         super(Collections.emptyList());
         this.inventory = inventory;
-        this.backingList = new ArrayList<>();
+        backingList = new ArrayList<>();
     }
 
     @Override
@@ -61,9 +61,8 @@ public class FluidInventoryStorageImpl extends CombinedStorage<FluidVariant, Sin
     private FluidInventoryStorage getSidedWrapper(@Nullable Direction direction) {
         if (inventory instanceof SidedFluidInventory && direction != null) {
             return new SidedFluidInventoryStorageImpl(this, direction);
-        } else {
-            return this;
         }
+        return this;
     }
 
     @Override

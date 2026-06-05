@@ -73,7 +73,7 @@ public class ChainGearshiftBlockEntity extends KineticBlockEntity {
         if (newPower == 0) {
             return 1;
         }
-        return 1 + ((newPower + 1) / 16f);
+        return 1 + (newPower + 1) / 16.0f;
     }
 
 }

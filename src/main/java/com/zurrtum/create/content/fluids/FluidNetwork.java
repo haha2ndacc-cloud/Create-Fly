@@ -25,7 +25,7 @@ public class FluidNetwork {
     BlockFace start;
 
     Supplier<@Nullable FluidInventory> sourceSupplier;
-    @Nullable FluidInventory source = null;
+    @Nullable FluidInventory source;
     int transferSpeed;
 
     int pauseBeforePropagation;
@@ -38,14 +38,14 @@ public class FluidNetwork {
 
     public FluidNetwork(Level world, BlockFace location, Supplier<@Nullable FluidInventory> sourceSupplier) {
         this.world = world;
-        this.start = location;
+        start = location;
         this.sourceSupplier = sourceSupplier;
-        this.fluid = FluidStack.EMPTY;
-        this.frontier = new HashSet<>();
-        this.visited = new HashSet<>();
-        this.targets = new ArrayList<>();
-        this.cache = new HashMap<>();
-        this.queued = new ArrayList<>();
+        fluid = FluidStack.EMPTY;
+        frontier = new HashSet<>();
+        visited = new HashSet<>();
+        targets = new ArrayList<>();
+        cache = new HashMap<>();
+        queued = new ArrayList<>();
         reset();
     }
 
@@ -65,7 +65,7 @@ public class FluidNetwork {
                 PipeConnection pipeConnection = get(blockFace);
                 if (pipeConnection != null) {
                     if (blockFace.equals(start)) {
-                        transferSpeed = (int) Math.max(1, pipeConnection.pressure.get(true) / 2f) * 81;
+                        transferSpeed = (int) Math.max(1, pipeConnection.pressure.get(true) / 2.0f) * 81;
                     }
                     frontier.add(Pair.of(blockFace, pipeConnection));
                 }

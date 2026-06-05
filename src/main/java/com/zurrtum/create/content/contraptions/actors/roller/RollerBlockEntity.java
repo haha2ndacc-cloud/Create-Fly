@@ -91,7 +91,7 @@ public class RollerBlockEntity extends SmartBlockEntity {
         Direction facing = blockState.getValueOrElse(RollerBlock.FACING, Direction.SOUTH);
 
         for (int side : Iterate.positiveAndNegative) {
-            BlockPos pos = this.worldPosition.relative(facing.getClockWise(), side);
+            BlockPos pos = worldPosition.relative(facing.getClockWise(), side);
             if (level.getBlockState(pos) != blockState) {
                 continue;
             }
@@ -106,7 +106,7 @@ public class RollerBlockEntity extends SmartBlockEntity {
 
     protected void acceptSharedValues(int mode, ItemStack filter) {
         dontPropagate = true;
-        this.filtering.setFilter(filter.copy());
+        filtering.setFilter(filter.copy());
         this.mode.setValue(mode);
         dontPropagate = false;
         notifyUpdate();
@@ -121,7 +121,7 @@ public class RollerBlockEntity extends SmartBlockEntity {
 
         for (int side : Iterate.positiveAndNegative) {
             for (int i = 1; i < 100; i++) {
-                BlockPos pos = this.worldPosition.relative(facing.getClockWise(), side * i);
+                BlockPos pos = worldPosition.relative(facing.getClockWise(), side * i);
                 if (level.getBlockState(pos) != blockState) {
                     break;
                 }
@@ -134,6 +134,6 @@ public class RollerBlockEntity extends SmartBlockEntity {
     }
 
     public enum RollingMode {
-        TUNNEL_PAVE, STRAIGHT_FILL, WIDE_FILL;
+        TUNNEL_PAVE, STRAIGHT_FILL, WIDE_FILL
     }
 }

@@ -35,7 +35,7 @@ public class TimeOfDayDisplaySource extends SingleLineDisplaySource {
             .flatMap(timeline -> timeline.value().periodTicks()).orElse(24000);
         int dayTime = (int) (sLevel.getOverworldClockTime() % periodTicks);
         int hours = (dayTime / 1000 + 6) % 24;
-        int minutes = (dayTime % 1000) * 60 / 1000;
+        int minutes = dayTime % 1000 * 60 / 1000;
         MutableComponent suffix = Component.translatable("create.generic.daytime." + (hours > 11 ? "pm" : "am"));
 
         minutes = minutes / 5 * 5;
@@ -46,7 +46,8 @@ public class TimeOfDayDisplaySource extends SingleLineDisplaySource {
             }
         }
 
-        MutableComponent component = Component.literal((hours < 10 ? " " : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + (c12 ? " " : ""));
+        MutableComponent component = Component.literal((hours < 10 ? " " : "") + hours + ":" + (minutes < 10 ? "0" :
+            "") + minutes + (c12 ? " " : ""));
 
         return c12 ? component.append(suffix) : component;
     }

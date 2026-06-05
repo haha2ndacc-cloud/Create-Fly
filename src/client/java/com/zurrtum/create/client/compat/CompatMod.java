@@ -8,8 +8,8 @@ public class CompatMod {
         if (FabricLoader.getInstance().isModLoaded("fabric-transfer-api-v1")) {
             PotionRenderHandler.register();
         }
-//        if (Mods.TRINKETS.isLoaded()) {
-//            GoggleTrinketRenderer.register();
-//        }
+        //        if (Mods.TRINKETS.isLoaded()) {
+        //            GoggleTrinketRenderer.register();
+        //        }
     }
 }

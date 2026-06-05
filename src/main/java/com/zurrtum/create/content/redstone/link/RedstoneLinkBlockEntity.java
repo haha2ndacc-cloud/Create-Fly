@@ -44,10 +44,8 @@ public class RedstoneLinkBlockEntity extends SmartBlockEntity {
     }
 
     protected void createLink() {
-        link = transmitter ? ServerLinkBehaviour.transmitter(this, this::getSignal) : ServerLinkBehaviour.receiver(
-            this,
-            this::setSignal
-        );
+        link = transmitter ? ServerLinkBehaviour.transmitter(this, this::getSignal) :
+            ServerLinkBehaviour.receiver(this, this::setSignal);
     }
 
     public int getSignal() {
@@ -114,7 +112,7 @@ public class RedstoneLinkBlockEntity extends SmartBlockEntity {
             return;
         }
 
-        if ((getReceivedSignal() > 0) != blockState.getValue(RedstoneLinkBlock.POWERED)) {
+        if (getReceivedSignal() > 0 != blockState.getValue(RedstoneLinkBlock.POWERED)) {
             receivedSignalChanged = true;
             level.setBlockAndUpdate(worldPosition, blockState.cycle(RedstoneLinkBlock.POWERED));
         }

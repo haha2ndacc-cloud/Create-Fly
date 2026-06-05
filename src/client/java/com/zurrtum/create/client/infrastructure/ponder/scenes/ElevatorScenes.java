@@ -30,7 +30,7 @@ public class ElevatorScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("elevator_pulley", "Using the Elevator Pulley");
         scene.configureBasePlate(1, 0, 5);
-        scene.scaleSceneView(.85f);
+        scene.scaleSceneView(0.85f);
         scene.removeShadow();
         scene.setSceneOffsetY(-1.5f);
 
@@ -410,7 +410,7 @@ public class ElevatorScenes {
         scene.title("elevator_pulley_multi_rope", "Synchronised Pulley Movement");
         scene.configureBasePlate(0, 0, 5);
         scene.setSceneOffsetY(-1);
-        scene.scaleSceneView(.95f);
+        scene.scaleSceneView(0.95f);
         scene.showBasePlate();
         scene.idle(5);
 

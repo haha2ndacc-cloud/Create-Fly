@@ -1,7 +1,8 @@
 package com.zurrtum.create.client.flywheel.backend.glsl.error.lines;
 
 public record TextLine(String msg) implements ErrorLine {
+    @Override
     public String build() {
-        return this.msg;
+        return msg;
     }
 }

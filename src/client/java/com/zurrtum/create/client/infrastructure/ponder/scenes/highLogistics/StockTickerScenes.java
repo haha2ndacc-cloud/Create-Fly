@@ -72,7 +72,7 @@ public class StockTickerScenes {
         AABB bb1 = new AABB(link1.below(2));
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.BLUE, link1, bb1.deflate(0.45), 10);
         scene.idle(1);
-        bb1 = bb1.deflate(1 / 16f).contract(0, 8 / 16f, 0);
+        bb1 = bb1.deflate(1 / 16.0f).contract(0, 8 / 16.0f, 0);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.BLUE, link1, bb1, 50);
         scene.idle(26);
 
@@ -89,8 +89,8 @@ public class StockTickerScenes {
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, link1, bb1, 40);
         scene.overlay().showLine(
             PonderPalette.GREEN,
-            util.vector().centerOf(ticker).subtract(0, 1 / 4f, 0),
-            util.vector().centerOf(link1.below(2)).subtract(0, 1 / 4f, 0),
+            util.vector().centerOf(ticker).subtract(0, 1 / 4.0f, 0),
+            util.vector().centerOf(link1.below(2)).subtract(0, 1 / 4.0f, 0),
             40
         );
         scene.idle(60);
@@ -108,7 +108,7 @@ public class StockTickerScenes {
         scene.world().showSection(pack2S, Direction.NORTH);
         scene.world().showSection(link2S, Direction.DOWN);
         scene.idle(2);
-        scene.world().moveSection(linkL, util.vector().of(0, -.25, 0), 10);
+        scene.world().moveSection(linkL, util.vector().of(0, -0.25, 0), 10);
         scene.idle(10);
         scene.world().cycleBlockProperty(pack1, PackagerBlock.LINKED);
         scene.world().cycleBlockProperty(pack2, PackagerBlock.LINKED);
@@ -239,7 +239,7 @@ public class StockTickerScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("stock_ticker_address", "Addressing a Stock ticker order");
         scene.configureBasePlate(0, 0, 9);
-        scene.scaleSceneView(.875f);
+        scene.scaleSceneView(0.875f);
         scene.setSceneOffsetY(-1);
         scene.showBasePlate();
 
@@ -314,7 +314,7 @@ public class StockTickerScenes {
         PonderHilo.packagerClear(scene, pack);
         scene.idle(15);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 32f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 32.0f);
         scene.idle(10);
 
         scene.overlay().showText(50).text("→ Workshop").colored(PonderPalette.OUTPUT).placeNearTarget()
@@ -323,7 +323,7 @@ public class StockTickerScenes {
             .pointAt(util.vector().of(4, 2.825, 4.5));
         scene.idle(60);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 32f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 32.0f);
 
         scene.idle(53);
         PonderHilo.packageHopsOffBelt(scene, util.grid().at(2, 1, 4), Direction.WEST, box1);
@@ -345,7 +345,7 @@ public class StockTickerScenes {
         PonderHilo.packagerClear(scene, pack);
         scene.idle(15);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 32f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 32.0f);
         scene.idle(10);
 
         scene.overlay().showText(30).text("→ Factory").colored(PonderPalette.OUTPUT).placeNearTarget()
@@ -354,7 +354,7 @@ public class StockTickerScenes {
             .pointAt(util.vector().of(4, 2.825, 4.5));
         scene.idle(40);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 32f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 32.0f);
 
         scene.idle(83);
         PonderHilo.packageHopsOffBelt(scene, util.grid().at(4, 1, 0), Direction.NORTH, box2);

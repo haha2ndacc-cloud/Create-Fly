@@ -42,7 +42,7 @@ public class PackagerVisual<T extends PackagerBlockEntity> extends AbstractBlock
         Direction facing = blockState.getValue(PackagerBlock.FACING).getOpposite();
 
         var lowerCorner = Vec3.atLowerCornerOf(facing.getUnitVec3i());
-        hatch.setIdentityTransform().translate(getVisualPosition()).translate(lowerCorner.scale(.49999f))
+        hatch.setIdentityTransform().translate(getVisualPosition()).translate(lowerCorner.scale(0.49999f))
             .rotateYCenteredDegrees(AngleHelper.horizontalAngle(facing))
             .rotateXCenteredDegrees(AngleHelper.verticalAngle(facing)).setChanged();
 
@@ -71,11 +71,11 @@ public class PackagerVisual<T extends PackagerBlockEntity> extends AbstractBlock
     public void animate(float partialTick) {
         var hatchPartial = PackagerRenderer.getHatchModel(blockEntity);
 
-        if (hatchPartial != this.lastHatchPartial) {
+        if (hatchPartial != lastHatchPartial) {
             instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.chunkPartial(hatchPartial))
                 .stealInstance(hatch);
 
-            this.lastHatchPartial = hatchPartial;
+            lastHatchPartial = hatchPartial;
         }
 
         float trayOffset = blockEntity.getTrayOffset(partialTick);

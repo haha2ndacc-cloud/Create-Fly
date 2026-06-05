@@ -156,7 +156,7 @@ public class BlueprintEntity extends HangingEntity implements SpecialEntityItemR
 
     @Override
     protected AABB calculateBoundingBox(BlockPos blockPos, Direction direction) {
-        Vec3 pos = Vec3.atLowerCornerOf(getPos()).add(.5, .5, .5)
+        Vec3 pos = Vec3.atLowerCornerOf(getPos()).add(0.5, 0.5, 0.5)
             .subtract(Vec3.atLowerCornerOf(direction.getUnitVec3i()).scale(0.46875));
         double d1 = pos.x;
         double d2 = pos.y;
@@ -165,10 +165,11 @@ public class BlueprintEntity extends HangingEntity implements SpecialEntityItemR
 
         Axis axis = direction.getAxis();
         if (size == 2) {
-            pos = pos.add(Vec3.atLowerCornerOf(axis.isHorizontal() ? direction.getCounterClockWise()
-                    .getUnitVec3i() : verticalOrientation.getClockWise().getUnitVec3i()).scale(0.5))
-                .add(Vec3.atLowerCornerOf(axis.isHorizontal() ? Direction.UP.getUnitVec3i() : direction == Direction.UP ? verticalOrientation.getUnitVec3i() : verticalOrientation.getOpposite()
-                    .getUnitVec3i()).scale(0.5));
+            pos = pos.add(Vec3.atLowerCornerOf(axis.isHorizontal() ? direction.getCounterClockWise().getUnitVec3i() :
+                verticalOrientation.getClockWise().getUnitVec3i()).scale(0.5)).add(Vec3.atLowerCornerOf(
+                axis.isHorizontal() ? Direction.UP.getUnitVec3i() :
+                    direction == Direction.UP ? verticalOrientation.getUnitVec3i() :
+                        verticalOrientation.getOpposite().getUnitVec3i()).scale(0.5));
         }
 
         d1 = pos.x;
@@ -222,10 +223,10 @@ public class BlueprintEntity extends HangingEntity implements SpecialEntityItemR
         int j = Math.max(1, getEntityHeight() / 16);
         Direction direction = getDirection();
         BlockPos blockpos = pos.relative(direction.getOpposite());
-        Direction upDirection = direction.getAxis()
-            .isHorizontal() ? Direction.UP : direction == Direction.UP ? verticalOrientation : verticalOrientation.getOpposite();
-        Direction newDirection = direction.getAxis()
-            .isVertical() ? verticalOrientation.getClockWise() : direction.getCounterClockWise();
+        Direction upDirection = direction.getAxis().isHorizontal() ? Direction.UP :
+            direction == Direction.UP ? verticalOrientation : verticalOrientation.getOpposite();
+        Direction newDirection =
+            direction.getAxis().isVertical() ? verticalOrientation.getClockWise() : direction.getCounterClockWise();
         BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos();
 
         for (int k = 0; k < i; ++k) {
@@ -260,7 +261,8 @@ public class BlueprintEntity extends HangingEntity implements SpecialEntityItemR
             return super.skipAttackInteraction(source);
         }
 
-        double attrib = player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) + (player.isCreative() ? 0 : -0.5F);
+        double attrib = player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) + (player.isCreative() ? 0 :
+            -0.5F);
 
         Vec3 eyePos = source.getEyePosition(1);
         Vec3 look = source.getViewVector(1);
@@ -313,18 +315,18 @@ public class BlueprintEntity extends HangingEntity implements SpecialEntityItemR
 
     @Override
     public void playPlacementSound() {
-        this.playSound(SoundEvents.PAINTING_PLACE, 1.0F, 1.0F);
+        playSound(SoundEvents.PAINTING_PLACE, 1.0F, 1.0F);
     }
 
     @Override
     public void snapTo(double p_70012_1_, double p_70012_3_, double p_70012_5_, float p_70012_7_, float p_70012_8_) {
-        this.setPos(p_70012_1_, p_70012_3_, p_70012_5_);
+        setPos(p_70012_1_, p_70012_3_, p_70012_5_);
     }
 
     @Override
     public void moveOrInterpolateTo(Vec3 pos, float yaw, float pitch) {
         BlockPos blockpos = this.pos.offset(BlockPos.containing(pos.x() - getX(), pos.y() - getY(), pos.z() - getZ()));
-        this.setPos(blockpos.getX(), blockpos.getY(), blockpos.getZ());
+        setPos(blockpos.getX(), blockpos.getY(), blockpos.getZ());
     }
 
     @Override
@@ -443,8 +445,8 @@ public class BlueprintEntity extends HangingEntity implements SpecialEntityItemR
                                     player.blockPosition(),
                                     SoundEvents.ITEM_PICKUP,
                                     SoundSource.PLAYERS,
-                                    .2f,
-                                    1f + world.getRandom().nextFloat()
+                                    0.2f,
+                                    1.0f + world.getRandom().nextFloat()
                                 );
                                 firstPass = false;
                             }
@@ -478,7 +480,8 @@ public class BlueprintEntity extends HangingEntity implements SpecialEntityItemR
             } while (player.isShiftKeyDown());
             //TODO
             //            CommonHooks.setCraftingPlayer(null);
-            PREVIEW_CACHE.invalidate(getId() + "_" + section.index + "_" + player.getId() + (player.isShiftKeyDown() ? "_sneaking" : ""));
+            PREVIEW_CACHE.invalidate(getId() + "_" + section.index + "_" + player.getId() + (player.isShiftKeyDown() ?
+                "_sneaking" : ""));
             return InteractionResult.SUCCESS;
         }
 
@@ -640,7 +643,7 @@ public class BlueprintEntity extends HangingEntity implements SpecialEntityItemR
         private static final Couple<ItemStack> EMPTY_DISPLAY = Couple.create(ItemStack.EMPTY, ItemStack.EMPTY);
         public int index;
         @Nullable Couple<ItemStack> cachedDisplayItems;
-        public boolean inferredIcon = false;
+        public boolean inferredIcon;
 
         public BlueprintSection(int index) {
             this.index = index;
@@ -739,7 +742,7 @@ public class BlueprintEntity extends HangingEntity implements SpecialEntityItemR
             dz = player.getZ() - box.maxZ;
         }
 
-        return (dx * dx + dy * dy + dz * dz) <= 64.0D;
+        return dx * dx + dy * dy + dz * dz <= 64.0D;
     }
 
 }

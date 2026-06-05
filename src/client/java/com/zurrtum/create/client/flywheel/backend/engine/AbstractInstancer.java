@@ -11,8 +11,8 @@ public abstract class AbstractInstancer<I extends Instance> implements Instancer
     public final Recreate<I> recreate;
 
     protected AbstractInstancer(InstancerKey<I> key, Recreate<I> recreate) {
-        this.type = key.type();
-        this.environment = key.environment();
+        type = key.type();
+        environment = key.environment();
         this.recreate = recreate;
     }
 

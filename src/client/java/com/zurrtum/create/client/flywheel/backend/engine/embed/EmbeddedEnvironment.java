@@ -29,9 +29,9 @@ public class EmbeddedEnvironment implements VisualEmbedding, Environment {
     private final Matrix4f poseComposed = new Matrix4f();
     private final Matrix3f normalComposed = new Matrix3f();
 
-    public int matrixIndex = 0;
+    public int matrixIndex;
 
-    private boolean deleted = false;
+    private boolean deleted;
 
     public EmbeddedEnvironment(EngineImpl engine, Vec3i renderOrigin, @Nullable EmbeddedEnvironment parent) {
         this.engine = engine;

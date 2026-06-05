@@ -162,7 +162,7 @@ import static com.zurrtum.create.Create.LOGGER;
 public class AllHandle extends AllClientHandle {
 
     public static void register() {
-        AllClientHandle.INSTANCE = new AllHandle();
+        INSTANCE = new AllHandle();
     }
 
     protected void forceMainThread(
@@ -295,8 +295,8 @@ public class AllHandle extends AllClientHandle {
             ServerSpeedProvider.clientTimer = 0;
             return;
         }
-        float target = ((float) packet.speed()) / Math.max(ServerSpeedProvider.clientTimer, 1);
-        ServerSpeedProvider.modifier.chase(Math.min(target, 1), .25, LerpedFloat.Chaser.EXP);
+        float target = (float) packet.speed() / Math.max(ServerSpeedProvider.clientTimer, 1);
+        ServerSpeedProvider.modifier.chase(Math.min(target, 1), 0.25, LerpedFloat.Chaser.EXP);
         // Set this to -1 because packets are processed before ticks.
         // ServerSpeedProvider#clientTick will increment it to 0 at the end of this tick.
         // Setting it to 0 causes consistent desync, as the client ends up counting too many ticks.
@@ -477,7 +477,7 @@ public class AllHandle extends AllClientHandle {
         }
 
         Outliner.getInstance().showAABB("highlightCommand", Shapes.block().bounds().move(packet.pos()), 200)
-            .lineWidth(1 / 32f).colored(0xEeEeEe)
+            .lineWidth(1 / 32.0f).colored(0xEeEeEe)
             // .colored(0x243B50)
             .withFaceTexture(AllSpecialTextures.SELECTION);
     }
@@ -668,7 +668,7 @@ public class AllHandle extends AllClientHandle {
         Minecraft mc = Minecraft.getInstance();
         forceMainThread(listener, mc, packet);
         ClientLevel world = mc.level;
-        Vec3 motion = VecHelper.offsetRandomly(Vec3.ZERO, world.getRandom(), .125f);
+        Vec3 motion = VecHelper.offsetRandomly(Vec3.ZERO, world.getRandom(), 0.125f);
         Vec3 pos = packet.location().add(motion.scale(4));
         world.addParticle(
             new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(packet.box())),
@@ -979,7 +979,7 @@ public class AllHandle extends AllClientHandle {
         }
 
         float angle = AngleHelper.deg(targetAngle);
-        angle += (angle < 0) ? -180 + 75 : 360 - 75;
+        angle += angle < 0 ? -180 + 75 : 360 - 75;
         angle %= 360;
 
         PoweredShaftBlockEntity shaft = be.getShaft();
@@ -1009,11 +1009,11 @@ public class AllHandle extends AllClientHandle {
         Level world = be.getLevel();
         Vec3 offset = VecHelper.rotate(
             new Vec3(0, 0, 1).add(VecHelper.offsetRandomly(Vec3.ZERO, world.getRandom(), 1)
-                .multiply(1, 1, 0).normalize().scale(.5f)), AngleHelper.verticalAngle(facing), Axis.X
+                .multiply(1, 1, 0).normalize().scale(0.5f)), AngleHelper.verticalAngle(facing), Axis.X
         );
         offset = VecHelper.rotate(offset, AngleHelper.horizontalAngle(facing), Axis.Y);
-        Vec3 v = offset.scale(.5f).add(Vec3.atCenterOf(be.getBlockPos()));
-        Vec3 m = offset.subtract(Vec3.atLowerCornerOf(facing.getUnitVec3i()).scale(.75f));
+        Vec3 v = offset.scale(0.5f).add(Vec3.atCenterOf(be.getBlockPos()));
+        Vec3 m = offset.subtract(Vec3.atLowerCornerOf(facing.getUnitVec3i()).scale(0.75f));
         world.addParticle(AllParticleTypes.STEAM_JET, v.x, v.y, v.z, m.x, m.y, m.z);
 
         be.prevAngle = angle;
@@ -1054,7 +1054,7 @@ public class AllHandle extends AllClientHandle {
             createBasinOutputFluidParticles(world, blockEntity, r);
         }
 
-        if (!blockEntity.areFluidsMoving && r.nextFloat() > 1 / 8f) {
+        if (!blockEntity.areFluidsMoving && r.nextFloat() > 1 / 8.0f) {
             return;
         }
 
@@ -1078,10 +1078,10 @@ public class AllHandle extends AllClientHandle {
             return;
         }
         float fluidLevel = Mth.clamp(totalUnits / 162000, 0, 1);
-        float rim = 2 / 16f;
-        float space = 12 / 16f;
+        float rim = 2 / 16.0f;
+        float space = 12 / 16.0f;
         BlockPos pos = blockEntity.getBlockPos();
-        float surface = pos.getY() + rim + space * fluidLevel + 1 / 32f;
+        float surface = pos.getY() + rim + space * fluidLevel + 1 / 32.0f;
 
         if (blockEntity.areFluidsMoving) {
             createBasinMovingFluidParticles(world, blockEntity, surface, segments);
@@ -1123,14 +1123,14 @@ public class AllHandle extends AllClientHandle {
         }
         Vec3 directionVec = Vec3.atLowerCornerOf(direction.getUnitVec3i());
         Vec3 outVec = VecHelper.getCenterOf(blockEntity.getBlockPos())
-            .add(directionVec.scale(.65).subtract(0, 1 / 4f, 0));
-        Vec3 outMotion = directionVec.scale(1 / 16f).add(0, -1 / 16f, 0);
+            .add(directionVec.scale(0.65).subtract(0, 1 / 4.0f, 0));
+        Vec3 outMotion = directionVec.scale(1 / 16.0f).add(0, -1 / 16.0f, 0);
 
         for (int i = 0; i < 2; i++) {
             blockEntity.visualizedOutputFluids.forEach(ia -> {
                 FluidStack fluidStack = ia.getValue();
                 ParticleOptions fluidParticle = FluidFX.getFluidParticle(fluidStack);
-                Vec3 m = VecHelper.offsetRandomly(outMotion, r, 1 / 16f);
+                Vec3 m = VecHelper.offsetRandomly(outMotion, r, 1 / 16.0f);
                 world.addAlwaysVisibleParticle(fluidParticle, outVec.x, outVec.y, outVec.z, m.x, m.y, m.z);
             });
         }
@@ -1142,10 +1142,10 @@ public class AllHandle extends AllClientHandle {
         float surface,
         int segments
     ) {
-        Vec3 pointer = new Vec3(1, 0, 0).scale(1 / 16f);
-        float interval = 360f / segments;
+        Vec3 pointer = new Vec3(1, 0, 0).scale(1 / 16.0f);
+        float interval = 360.0f / segments;
         Vec3 centerOf = VecHelper.getCenterOf(blockEntity.getBlockPos());
-        float intervalOffset = (AnimationTickHolder.getTicks() * 18) % 360;
+        float intervalOffset = AnimationTickHolder.getTicks() * 18 % 360;
 
         int currentSegment = 0;
         for (SmartFluidTankBehaviour behaviour : blockEntity.getTanks()) {

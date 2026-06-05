@@ -19,10 +19,9 @@ public class CreateIntegrationMixin {
             Block block = state.getBlock();
             if (block instanceof WirelessModemBlock) {
                 return CheckResult.of(state.getValue(WirelessModemBlock.FACING) == direction);
-            } else {
-                return block instanceof CableBlock ? CheckResult.of(state.getValue(CableBlock.MODEM)
-                    .getFacing() == direction) : CheckResult.PASS;
             }
+            return block instanceof CableBlock ?
+                CheckResult.of(state.getValue(CableBlock.MODEM).getFacing() == direction) : CheckResult.PASS;
         });
         ci.cancel();
     }

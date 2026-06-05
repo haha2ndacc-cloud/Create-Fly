@@ -98,7 +98,7 @@ public class MechanicalPistonBlock extends DirectionalAxisKineticBlock implement
             level.addParticle(ParticleTypes.ITEM_SLIME, vec.x, vec.y, vec.z, 0, 0, 0);
             return InteractionResult.SUCCESS;
         }
-        AllSoundEvents.SLIME_ADDED.playOnServer(level, pos, .5f, 1);
+        AllSoundEvents.SLIME_ADDED.playOnServer(level, pos, 0.5f, 1);
         if (!player.isCreative()) {
             stack.shrink(1);
         }
@@ -144,7 +144,8 @@ public class MechanicalPistonBlock extends DirectionalAxisKineticBlock implement
                             return;
                         }
                         Direction positive = Direction.get(Direction.AxisDirection.POSITIVE, direction.getAxis());
-                        Direction movementOppositeDirection = speed > 0 ^ direction.getAxis() != Direction.Axis.Z ? positive.getOpposite() : positive;
+                        Direction movementOppositeDirection =
+                            speed > 0 ^ direction.getAxis() != Direction.Axis.Z ? positive.getOpposite() : positive;
                         if (movementOppositeDirection == direction) {
                             be.assembleNextTick = true;
                         }
@@ -162,7 +163,8 @@ public class MechanicalPistonBlock extends DirectionalAxisKineticBlock implement
                     float speed = be.getSpeed();
                     if (speed != 0) {
                         Direction positive = Direction.get(Direction.AxisDirection.POSITIVE, direction.getAxis());
-                        Direction movementDirection = speed > 0 ^ direction.getAxis() != Direction.Axis.Z ? positive : positive.getOpposite();
+                        Direction movementDirection =
+                            speed > 0 ^ direction.getAxis() != Direction.Axis.Z ? positive : positive.getOpposite();
                         if (movementDirection == direction) {
                             be.assembleNextTick = true;
                         }

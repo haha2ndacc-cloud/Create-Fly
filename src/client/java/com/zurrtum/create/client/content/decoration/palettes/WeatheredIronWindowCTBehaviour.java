@@ -5,12 +5,12 @@ import com.zurrtum.create.client.foundation.block.connected.AllCTTypes;
 import com.zurrtum.create.client.foundation.block.connected.CTSpriteShiftEntry;
 import com.zurrtum.create.client.foundation.block.connected.CTType;
 import com.zurrtum.create.client.foundation.block.connected.ConnectedTextureBehaviour;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.RandomSource;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
@@ -21,7 +21,7 @@ public class WeatheredIronWindowCTBehaviour extends ConnectedTextureBehaviour.Ba
     private final List<CTSpriteShiftEntry> shifts;
 
     public WeatheredIronWindowCTBehaviour() {
-        this.shifts = List.of(
+        shifts = List.of(
             AllSpriteShifts.OLD_FACTORY_WINDOW_1,
             AllSpriteShifts.OLD_FACTORY_WINDOW_2,
             AllSpriteShifts.OLD_FACTORY_WINDOW_3,

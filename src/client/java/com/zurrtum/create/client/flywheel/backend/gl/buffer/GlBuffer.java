@@ -40,6 +40,7 @@ public class GlBuffer extends GlObject {
         return size;
     }
 
+    @Override
     protected void deleteInternal(int handle) {
         GlStateManager._glDeleteBuffers(handle);
         FlwMemoryTracker._freeGpuMemory(size);

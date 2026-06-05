@@ -45,14 +45,13 @@ public class CachedInventoryBehaviour<T extends SmartBlockEntity> extends BlockE
             getter = side -> {
                 if (side == null) {
                     return storage;
-                } else {
-                    int i = side.get3DDataValue();
-                    Storage<ItemVariant> sideStorage = sides[i];
-                    if (sideStorage == null) {
-                        sideStorage = sides[i] = ContainerStorage.of(inventory, side);
-                    }
-                    return sideStorage;
                 }
+                int i = side.get3DDataValue();
+                Storage<ItemVariant> sideStorage = sides[i];
+                if (sideStorage == null) {
+                    sideStorage = sides[i] = ContainerStorage.of(inventory, side);
+                }
+                return sideStorage;
             };
         } else {
             getter = _ -> storage;

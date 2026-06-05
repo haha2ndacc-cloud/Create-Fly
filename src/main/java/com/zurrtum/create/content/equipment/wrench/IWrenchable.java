@@ -18,11 +18,11 @@ import net.minecraft.world.level.block.state.BlockState;
 public interface IWrenchable {
 
     static void playRemoveSound(Level level, BlockPos pos) {
-        AllSoundEvents.WRENCH_REMOVE.playOnServer(level, pos, 1, level.getRandom().nextFloat() * .5f + .5f);
+        AllSoundEvents.WRENCH_REMOVE.playOnServer(level, pos, 1, level.getRandom().nextFloat() * 0.5f + 0.5f);
     }
 
     static void playRotateSound(Level level, BlockPos pos) {
-        AllSoundEvents.WRENCH_ROTATE.playOnServer(level, pos, 1, level.getRandom().nextFloat() + .5f);
+        AllSoundEvents.WRENCH_ROTATE.playOnServer(level, pos, 1, level.getRandom().nextFloat() + 0.5f);
     }
 
     default InteractionResult onWrenched(BlockState state, UseOnContext context) {
@@ -115,20 +115,18 @@ public interface IWrenchable {
         if (stateFacing.getAxis().equals(targetedFace.getAxis())) {
             if (originalState.hasProperty(DirectionalAxisKineticBlock.AXIS_ALONG_FIRST_COORDINATE)) {
                 return originalState.cycle(DirectionalAxisKineticBlock.AXIS_ALONG_FIRST_COORDINATE);
-            } else {
-                return originalState;
             }
-        } else {
-            do {
-                newState = newState.setValue(
-                    DirectionalKineticBlock.FACING,
-                    newState.getValue(DirectionalKineticBlock.FACING).getClockWise(targetedFace.getAxis())
-                );
-                if (targetedFace.getAxis() == Direction.Axis.Y && newState.hasProperty(DirectionalAxisKineticBlock.AXIS_ALONG_FIRST_COORDINATE)) {
-                    newState = newState.cycle(DirectionalAxisKineticBlock.AXIS_ALONG_FIRST_COORDINATE);
-                }
-            } while (newState.getValue(DirectionalKineticBlock.FACING).getAxis().equals(targetedFace.getAxis()));
+            return originalState;
         }
+        do {
+            newState = newState.setValue(
+                DirectionalKineticBlock.FACING,
+                newState.getValue(DirectionalKineticBlock.FACING).getClockWise(targetedFace.getAxis())
+            );
+            if (targetedFace.getAxis() == Direction.Axis.Y && newState.hasProperty(DirectionalAxisKineticBlock.AXIS_ALONG_FIRST_COORDINATE)) {
+                newState = newState.cycle(DirectionalAxisKineticBlock.AXIS_ALONG_FIRST_COORDINATE);
+            }
+        } while (newState.getValue(DirectionalKineticBlock.FACING).getAxis().equals(targetedFace.getAxis()));
         return newState;
     }
 }

@@ -189,7 +189,7 @@ public class SeatBlock extends Block implements ProperWaterloggedBlock, EntityCo
         List<Entity> entities = player.level()
             .getEntities((Entity) null, player.getBoundingBox().inflate(10), e -> true);
         for (Entity e : entities) {
-            if (e instanceof Mob mob && mob.getLeashHolder() == player && SeatBlock.canBePickedUp(e)) {
+            if (e instanceof Mob mob && mob.getLeashHolder() == player && canBePickedUp(e)) {
                 return Optional.of(mob);
             }
         }
@@ -217,7 +217,7 @@ public class SeatBlock extends Block implements ProperWaterloggedBlock, EntityCo
             return;
         }
         SeatEntity seat = new SeatEntity(level);
-        seat.setPos(pos.getX() + .5, pos.getY(), pos.getZ() + .5);
+        seat.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
         level.addFreshEntity(seat);
         entity.startRiding(seat, true, true);
         if (entity instanceof TamableAnimal ta) {

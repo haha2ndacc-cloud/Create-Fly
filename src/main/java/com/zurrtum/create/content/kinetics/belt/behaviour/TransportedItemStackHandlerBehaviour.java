@@ -97,17 +97,17 @@ public class TransportedItemStackHandlerBehaviour extends BlockEntityBehaviour<S
     }
 
     public TransportedItemStackHandlerBehaviour withStackPlacement(PositionGetter function) {
-        this.positionGetter = function;
+        positionGetter = function;
         return this;
     }
 
     public void handleProcessingOnAllItems(Function<TransportedItemStack, TransportedResult> processFunction) {
-        handleCenteredProcessingOnAllItems(.51f, processFunction);
+        handleCenteredProcessingOnAllItems(0.51f, processFunction);
     }
 
     public void handleProcessingOnItem(TransportedItemStack item, TransportedResult processOutput) {
         handleCenteredProcessingOnAllItems(
-            .51f, t -> {
+            0.51f, t -> {
                 if (t == item) {
                     return processOutput;
                 }
@@ -120,7 +120,7 @@ public class TransportedItemStackHandlerBehaviour extends BlockEntityBehaviour<S
         float maxDistanceFromCenter,
         Function<TransportedItemStack, @Nullable TransportedResult> processFunction
     ) {
-        this.processingCallback.applyToAllItems(maxDistanceFromCenter, processFunction);
+        processingCallback.applyToAllItems(maxDistanceFromCenter, processFunction);
     }
 
     public Vec3 getWorldPositionOf(TransportedItemStack transported) {

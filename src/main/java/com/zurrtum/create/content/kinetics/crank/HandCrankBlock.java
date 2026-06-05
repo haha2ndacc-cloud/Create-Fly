@@ -91,7 +91,7 @@ public class HandCrankBlock extends DirectionalKineticBlock implements IBE<HandC
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction preferred = getPreferredFacing(context);
         BlockState defaultBlockState = withWater(defaultBlockState(), context);
-        if (preferred == null || (context.getPlayer() != null && context.getPlayer().isShiftKeyDown())) {
+        if (preferred == null || context.getPlayer() != null && context.getPlayer().isShiftKeyDown()) {
             return defaultBlockState.setValue(FACING, context.getClickedFace());
         }
         return defaultBlockState.setValue(FACING, preferred.getOpposite());

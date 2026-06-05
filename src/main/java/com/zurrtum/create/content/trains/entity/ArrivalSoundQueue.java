@@ -144,7 +144,8 @@ public class ArrivalSoundQueue {
             float f = (float) Math.pow(2, ((size == WhistleSize.SMALL ? 12 : 0) - pitch) / 12.0);
             playSimple(
                 entity,
-                (size == WhistleSize.LARGE ? AllSoundEvents.WHISTLE_TRAIN_LOW : AllSoundEvents.WHISTLE_TRAIN).getMainEvent(),
+                (size == WhistleSize.LARGE ? AllSoundEvents.WHISTLE_TRAIN_LOW :
+                    AllSoundEvents.WHISTLE_TRAIN).getMainEvent(),
                 1,
                 f
             );

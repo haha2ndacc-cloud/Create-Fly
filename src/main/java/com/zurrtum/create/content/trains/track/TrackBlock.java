@@ -207,7 +207,7 @@ public class TrackBlock extends Block implements IBE<TrackBlockEntity>, IWrencha
     }
 
     protected void connectToPortal(ServerLevel level, BlockPos pos, BlockState state) {
-        TrackShape shape = state.getValue(TrackBlock.SHAPE);
+        TrackShape shape = state.getValue(SHAPE);
         Axis portalTest = shape == TrackShape.XO ? Axis.X : shape == TrackShape.ZO ? Axis.Z : null;
         if (portalTest == null) {
             return;
@@ -241,7 +241,7 @@ public class TrackBlock extends Block implements IBE<TrackBlockEntity>, IWrencha
                 continue;
             }
 
-            level.setBlock(pos, state.setValue(SHAPE, TrackShape.asPortal(d)).setValue(HAS_BE, true), Block.UPDATE_ALL);
+            level.setBlock(pos, state.setValue(SHAPE, TrackShape.asPortal(d)).setValue(HAS_BE, true), UPDATE_ALL);
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof TrackBlockEntity tbe) {
                 tbe.bind(otherLevel.dimension(), otherTrackPos);
@@ -252,7 +252,7 @@ public class TrackBlock extends Block implements IBE<TrackBlockEntity>, IWrencha
                 state.setValue(SHAPE, TrackShape.asPortal(otherTrack.getFace())).setValue(HAS_BE, true),
                 otherTrackPos
             );
-            otherLevel.setBlock(otherTrackPos, otherState, Block.UPDATE_ALL);
+            otherLevel.setBlock(otherTrackPos, otherState, UPDATE_ALL);
             BlockEntity otherBE = otherLevel.getBlockEntity(otherTrackPos);
             if (otherBE instanceof TrackBlockEntity tbe) {
                 tbe.bind(level.dimension(), pos);
@@ -276,12 +276,9 @@ public class TrackBlock extends Block implements IBE<TrackBlockEntity>, IWrencha
         }
         player.sendSystemMessage(Component.literal("<!> ").append(Component.translatable("create.portal_track.failed"))
             .withStyle(ChatFormatting.GOLD));
-        MutableComponent component = failPos != null ? Component.translatable(
-            "create.portal_track." + fail,
-            failPos.getX(),
-            failPos.getY(),
-            failPos.getZ()
-        ) : Component.translatable("create.portal_track." + fail);
+        MutableComponent component = failPos != null ?
+            Component.translatable("create.portal_track." + fail, failPos.getX(), failPos.getY(), failPos.getZ()) :
+            Component.translatable("create.portal_track." + fail);
         player.sendSystemMessage(Component.literal(" - ").withStyle(ChatFormatting.GRAY)
             .append(component.withColor(0xFFD3B4)));
     }
@@ -335,12 +332,13 @@ public class TrackBlock extends Block implements IBE<TrackBlockEntity>, IWrencha
         TrackNodeLocation connectedTo
     ) {
         Collection<DiscoveredLocation> list;
-        BlockGetter world = connectedTo != null && worldIn instanceof ServerLevel sl ? sl.getServer()
-            .getLevel(connectedTo.dimension) : worldIn;
+        BlockGetter world =
+            connectedTo != null && worldIn instanceof ServerLevel sl ? sl.getServer().getLevel(connectedTo.dimension) :
+                worldIn;
 
         if (getTrackAxes(world, pos, state).size() > 1) {
             Vec3 center = Vec3.atBottomCenterOf(pos).add(0, getElevationAtCenter(world, pos, state), 0);
-            TrackShape shape = state.getValue(TrackBlock.SHAPE);
+            TrackShape shape = state.getValue(SHAPE);
             list = new ArrayList<>();
             for (Vec3 axis : getTrackAxes(world, pos, state)) {
                 for (boolean fromCenter : Iterate.trueAndFalse) {
@@ -404,8 +402,8 @@ public class TrackBlock extends Block implements IBE<TrackBlockEntity>, IWrencha
         Vec3 center = Vec3.atBottomCenterOf(pos).add(0, getElevationAtCenter(world, pos, state), 0);
         Vec3 boundCenter = Vec3.atBottomCenterOf(boundPos)
             .add(0, getElevationAtCenter(otherLevel, boundPos, boundState), 0);
-        TrackShape shape = state.getValue(TrackBlock.SHAPE);
-        TrackShape boundShape = boundState.getValue(TrackBlock.SHAPE);
+        TrackShape shape = state.getValue(SHAPE);
+        TrackShape boundShape = boundState.getValue(SHAPE);
         Vec3 boundAxis = getTrackAxes(otherLevel, boundPos, boundState).getFirst();
 
         getTrackAxes(world, pos, state).forEach(axis -> {
@@ -571,7 +569,7 @@ public class TrackBlock extends Block implements IBE<TrackBlockEntity>, IWrencha
     @Override
     public Vec3 getCurveStart(BlockGetter world, BlockPos pos, BlockState state, Vec3 axis) {
         boolean vertical = axis.y != 0;
-        return VecHelper.getCenterOf(pos).add(0, (vertical ? 0 : -.5f), 0).add(axis.scale(.5));
+        return VecHelper.getCenterOf(pos).add(0, vertical ? 0 : -0.5f, 0).add(axis.scale(0.5));
     }
 
     @Override

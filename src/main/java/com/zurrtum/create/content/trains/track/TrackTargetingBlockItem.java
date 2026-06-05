@@ -73,7 +73,7 @@ public class TrackTargetingBlockItem extends BlockItem {
             stack.remove(AllDataComponents.TRACK_TARGETING_ITEM_SELECTED_POS);
             stack.remove(AllDataComponents.TRACK_TARGETING_ITEM_SELECTED_DIRECTION);
             stack.remove(AllDataComponents.TRACK_TARGETING_ITEM_BEZIER);
-            AllSoundEvents.CONTROLLER_CLICK.play(level, null, pos, 1, .5f);
+            AllSoundEvents.CONTROLLER_CLICK.play(level, null, pos, 1, 0.5f);
             return InteractionResult.SUCCESS;
         }
 
@@ -93,7 +93,7 @@ public class TrackTargetingBlockItem extends BlockItem {
             if (result.get().feedback != null) {
                 player.sendOverlayMessage(Component.translatable("create." + result.get().feedback)
                     .withStyle(ChatFormatting.RED));
-                AllSoundEvents.DENY.play(level, null, pos, .5f, 1);
+                AllSoundEvents.DENY.play(level, null, pos, 0.5f, 1);
                 return InteractionResult.FAIL;
             }
 
@@ -143,7 +143,7 @@ public class TrackTargetingBlockItem extends BlockItem {
 
         stack.set(
             DataComponents.BLOCK_ENTITY_DATA,
-            TypedEntityData.of(((IBE<?>) this.getBlock()).getBlockEntityType(), blockEntityData)
+            TypedEntityData.of(((IBE<?>) getBlock()).getBlockEntityType(), blockEntityData)
         );
         stack.remove(AllDataComponents.TRACK_TARGETING_ITEM_SELECTED_POS);
         stack.remove(AllDataComponents.TRACK_TARGETING_ITEM_SELECTED_DIRECTION);
@@ -178,7 +178,10 @@ public class TrackTargetingBlockItem extends BlockItem {
 
     public enum OverlapResult {
 
-        VALID, OCCUPIED("track_target.occupied"), JUNCTION("track_target.no_junctions"), NO_TRACK("track_target.invalid");
+        VALID,
+        OCCUPIED("track_target.occupied"),
+        JUNCTION("track_target.no_junctions"),
+        NO_TRACK("track_target.invalid");
 
         public @Nullable String feedback;
 
@@ -214,12 +217,9 @@ public class TrackTargetingBlockItem extends BlockItem {
         }
 
         AxisDirection targetDirection = front ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE;
-        TrackGraphLocation location = targetBezier != null ? TrackGraphHelper.getBezierGraphLocationAt(
-            level,
-            pos,
-            targetDirection,
-            targetBezier
-        ) : TrackGraphHelper.getGraphLocationAt(level, pos, targetDirection, trackAxes.getFirst());
+        TrackGraphLocation location = targetBezier != null ?
+            TrackGraphHelper.getBezierGraphLocationAt(level, pos, targetDirection, targetBezier) :
+            TrackGraphHelper.getGraphLocationAt(level, pos, targetDirection, trackAxes.getFirst());
 
         if (location == null) {
             callback.accept(OverlapResult.NO_TRACK, null);
@@ -238,10 +238,10 @@ public class TrackTargetingBlockItem extends BlockItem {
         for (TrackEdgePoint edgePoint : edgeData.getPoints()) {
             double otherEdgePosition = edgePoint.getLocationOn(edge);
             double distance = Math.abs(edgePosition - otherEdgePosition);
-            if (distance > .75) {
+            if (distance > 0.75) {
                 continue;
             }
-            if (edgePoint.canCoexistWith(type, front) && distance < .25) {
+            if (edgePoint.canCoexistWith(type, front) && distance < 0.25) {
                 continue;
             }
 

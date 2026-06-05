@@ -28,7 +28,7 @@ public class MinecartElementImpl extends AnimatedSceneElementBase implements Min
 
     public MinecartElementImpl(Vec3 location, float rotation, MinecartConstructor constructor) {
         initialRotation = rotation;
-        this.location = location.add(0, 1 / 16f, 0);
+        this.location = location.add(0, 1 / 16.0f, 0);
         this.constructor = constructor;
         this.rotation = LerpedFloat.angular().startWithValue(rotation);
     }

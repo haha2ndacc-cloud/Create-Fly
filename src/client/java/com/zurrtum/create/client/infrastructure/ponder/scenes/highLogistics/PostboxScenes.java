@@ -28,7 +28,7 @@ public class PostboxScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("postbox", "Transporting packages between Postboxes");
         scene.configureBasePlate(0, 1, 9);
-        scene.scaleSceneView(.875f);
+        scene.scaleSceneView(0.875f);
         scene.removeShadow();
         scene.setSceneOffsetY(-0.5f);
 
@@ -126,7 +126,7 @@ public class PostboxScenes {
         scene.world().createItemOnBelt(util.grid().at(3, 1, 2), Direction.EAST, boxItem);
         scene.idle(5);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 32f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 32.0f);
 
         scene.overlay().showText(60).attachKeyFrame().text("If the address of an inserted package does not match it..")
             .pointAt(util.vector().centerOf(3, 2, 2)).placeNearTarget();
@@ -134,14 +134,14 @@ public class PostboxScenes {
         scene.idle(70);
 
         scene.overlay().showText(40).colored(PonderPalette.BLUE).text("Warehouse")
-            .pointAt(util.vector().blockSurface(box, Direction.NORTH).add(-.5, 0, 0)).placeNearTarget();
+            .pointAt(util.vector().blockSurface(box, Direction.NORTH).add(-0.5, 0, 0)).placeNearTarget();
         scene.idle(5);
         scene.overlay().showText(40).colored(PonderPalette.OUTPUT).text("→ Outpost")
             .pointAt(util.vector().centerOf(3, 2, 2)).placeNearTarget();
 
         scene.idle(50);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 32f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 32.0f);
         scene.idle(17);
         scene.world().removeItemsFromBelt(util.grid().at(2, 1, 2));
         animatePostbox(scene, box, true);
@@ -205,10 +205,10 @@ public class PostboxScenes {
 
         scene.idle(25);
         scene.overlay().showText(40).colored(PonderPalette.BLUE).text("Warehouse")
-            .pointAt(util.vector().blockSurface(box, Direction.NORTH).add(-.5, 0, 0)).placeNearTarget();
+            .pointAt(util.vector().blockSurface(box, Direction.NORTH).add(-0.5, 0, 0)).placeNearTarget();
         scene.idle(5);
         scene.overlay().showText(40).colored(PonderPalette.OUTPUT).text("→ Warehouse")
-            .pointAt(util.vector().centerOf(3, 2, 2).add(0, -.25, 0)).placeNearTarget();
+            .pointAt(util.vector().centerOf(3, 2, 2).add(0, -0.25, 0)).placeNearTarget();
 
         scene.idle(50);
 
@@ -221,8 +221,8 @@ public class PostboxScenes {
         scene.world().moveSection(tracksL2, util.vector().of(12, 0, 0), 120);
         scene.world().moveSection(postboxE, util.vector().of(12, 0, 0), 120);
         scene.world().moveSection(base, util.vector().of(12, 0, 0), 120);
-        scene.world().animateBogey(util.grid().at(2, 2, 5), 12f, 120);
-        scene.world().animateBogey(util.grid().at(6, 2, 5), 12f, 120);
+        scene.world().animateBogey(util.grid().at(2, 2, 5), 12.0f, 120);
+        scene.world().animateBogey(util.grid().at(6, 2, 5), 12.0f, 120);
         scene.idle(15);
         scene.world().hideIndependentSection(base, null);
         scene.world().hideIndependentSection(postboxE, null);
@@ -234,13 +234,13 @@ public class PostboxScenes {
         scene.overlay().chaseBoundingBoxOutline(
             PonderPalette.BLUE,
             train1L,
-            new AABB(util.grid().at(1, 3, 4)).inflate(1, .75f, .5f),
+            new AABB(util.grid().at(1, 3, 4)).inflate(1, 0.75f, 0.5f),
             280
         );
         scene.overlay().chaseBoundingBoxOutline(
             PonderPalette.BLUE,
             train2L,
-            new AABB(util.grid().at(5, 3, 4)).inflate(1, .75f, .5f),
+            new AABB(util.grid().at(5, 3, 4)).inflate(1, 0.75f, 0.5f),
             280
         );
         scene.idle(19);

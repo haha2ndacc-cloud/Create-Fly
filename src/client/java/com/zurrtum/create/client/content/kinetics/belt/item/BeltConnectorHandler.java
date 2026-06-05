@@ -24,8 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class BeltConnectorHandler {
-    private static final int CONNECT_COLOR = ARGB.colorFromFloat(1, .3f, .9f, .5f);
-    private static final int NO_CONNECT_COLOR = ARGB.colorFromFloat(1, .9f, .3f, .5f);
+    private static final int CONNECT_COLOR = ARGB.colorFromFloat(1, 0.3f, 0.9f, 0.5f);
+    private static final int NO_CONNECT_COLOR = ARGB.colorFromFloat(1, 0.9f, 0.3f, 0.5f);
 
     public static void tick(Minecraft mc) {
         Player player = mc.player;
@@ -62,9 +62,9 @@ public class BeltConnectorHandler {
                 if (random.nextInt(50) == 0) {
                     world.addParticle(
                         new DustParticleOptions(CONNECT_COLOR, 1),
-                        first.getX() + .5f + randomOffset(random, .25f),
-                        first.getY() + .5f + randomOffset(random, .25f),
-                        first.getZ() + .5f + randomOffset(random, .25f),
+                        first.getX() + 0.5f + randomOffset(random, 0.25f),
+                        first.getY() + 0.5f + randomOffset(random, 0.25f),
+                        first.getZ() + 0.5f + randomOffset(random, 0.25f),
                         0,
                         0,
                         0
@@ -107,7 +107,7 @@ public class BeltConnectorHandler {
             float length = (float) Math.max(x, Math.max(y, z));
             Vec3 step = diff.normalize();
 
-            int sames = ((x == y) ? 1 : 0) + ((y == z) ? 1 : 0) + ((z == x) ? 1 : 0);
+            int sames = (x == y ? 1 : 0) + (y == z ? 1 : 0) + (z == x ? 1 : 0);
             if (sames == 0) {
                 List<Vec3> validDiffs = new LinkedList<>();
                 for (int i = -1; i <= 1; i++) {
@@ -144,14 +144,14 @@ public class BeltConnectorHandler {
 
             step = new Vec3(Math.signum(step.x), Math.signum(step.y), Math.signum(step.z));
             int color = canConnect ? CONNECT_COLOR : NO_CONNECT_COLOR;
-            for (float f = 0; f < length; f += .0625f) {
+            for (float f = 0; f < length; f += 0.0625f) {
                 Vec3 position = start.add(step.scale(f));
                 if (random.nextInt(10) == 0) {
                     world.addParticle(
                         new DustParticleOptions(color, 1),
-                        position.x + .5f,
-                        position.y + .5f,
-                        position.z + .5f,
+                        position.x + 0.5f,
+                        position.y + 0.5f,
+                        position.z + 0.5f,
                         0,
                         0,
                         0
@@ -164,7 +164,7 @@ public class BeltConnectorHandler {
     }
 
     private static float randomOffset(RandomSource random, float range) {
-        return (random.nextFloat() - .5f) * 2 * range;
+        return (random.nextFloat() - 0.5f) * 2 * range;
     }
 
 }

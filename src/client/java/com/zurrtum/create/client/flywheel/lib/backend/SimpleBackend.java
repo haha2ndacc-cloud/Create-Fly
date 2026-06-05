@@ -30,16 +30,19 @@ public final class SimpleBackend implements Backend {
         return new Builder();
     }
 
+    @Override
     public Engine createEngine(LevelAccessor level) {
-        return this.engineFactory.apply(level);
+        return engineFactory.apply(level);
     }
 
+    @Override
     public int priority() {
-        return this.priority.getAsInt();
+        return priority.getAsInt();
     }
 
+    @Override
     public boolean isSupported() {
-        return this.isSupported.getAsBoolean();
+        return isSupported.getAsBoolean();
     }
 
     public static final class Builder {
@@ -56,7 +59,7 @@ public final class SimpleBackend implements Backend {
         }
 
         public Builder priority(int priority) {
-            return this.priority(() -> priority);
+            return priority(() -> priority);
         }
 
         public Builder priority(IntSupplier priority) {
@@ -70,12 +73,9 @@ public final class SimpleBackend implements Backend {
         }
 
         public Backend register(Identifier id) {
-            Objects.requireNonNull(this.engineFactory);
-            Objects.requireNonNull(this.isSupported);
-            return Backend.REGISTRY.registerAndGet(
-                id,
-                new SimpleBackend(this.engineFactory, this.priority, this.isSupported)
-            );
+            Objects.requireNonNull(engineFactory);
+            Objects.requireNonNull(isSupported);
+            return REGISTRY.registerAndGet(id, new SimpleBackend(engineFactory, priority, isSupported));
         }
     }
 }

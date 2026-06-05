@@ -80,7 +80,9 @@ public class ContraptionControlsMovement extends MovementBehaviour {
                 return;
             }
             ItemStack filter = getFilter(ctx);
-            int value = contraption.isActorTypeDisabled(filter) || contraption.isActorTypeDisabled(ItemStack.EMPTY) ? 4 * 45 : 0;
+            int value =
+                contraption.isActorTypeDisabled(filter) || contraption.isActorTypeDisabled(ItemStack.EMPTY) ? 4 * 45 :
+                    0;
             cbe.indicator.setValue(value);
             cbe.indicator.updateChaseTarget(value);
             cbe.tickAnimations();
@@ -115,10 +117,10 @@ public class ContraptionControlsMovement extends MovementBehaviour {
             return;
         }
 
-        int currentStage = Mth.floor(((currentIndicator % 360) + 360) % 360);
+        int currentStage = Mth.floor((currentIndicator % 360 + 360) % 360);
         if (!atTargetY || currentStage / 45 != 0) {
             float increment = currentStage / 45 == (below ? 4 : 3) ? 2.25f : 33.75f;
-            indicator.chase(currentIndicator + (below ? increment : -increment), 45f, Chaser.LINEAR);
+            indicator.chase(currentIndicator + (below ? increment : -increment), 45.0f, Chaser.LINEAR);
             return;
         }
 
@@ -148,8 +150,8 @@ public class ContraptionControlsMovement extends MovementBehaviour {
     }
 
     public static class ElevatorFloorSelection {
-        public int currentIndex = 0;
-        public int currentTargetY = 0;
+        public int currentIndex;
+        public int currentTargetY;
         public boolean targetYEqualsSelection = true;
         public String currentShortName = "";
         public String currentLongName = "";

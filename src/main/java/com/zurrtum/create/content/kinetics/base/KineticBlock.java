@@ -106,11 +106,11 @@ public abstract class KineticBlock extends Block implements IRotate {
     }
 
     public float getParticleTargetRadius() {
-        return .65f;
+        return 0.65f;
     }
 
     public float getParticleInitialRadius() {
-        return .75f;
+        return 0.75f;
     }
 
 }

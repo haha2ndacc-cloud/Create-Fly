@@ -102,8 +102,8 @@ public class SpoutScenes {
         ParticleOptions fluidParticle = new FluidParticleData(AllParticleTypes.FLUID_PARTICLE, AllFluids.HONEY);
         for (int i = 0; i < 10; i++) {
             scene.effects().emitParticles(
-                util.vector().topOf(depotPos.south()).add(0, 1 / 16f, 0),
-                scene.effects().simpleParticleEmitter(fluidParticle, VecHelper.offsetRandomly(Vec3.ZERO, random, .1f)),
+                util.vector().topOf(depotPos.south()).add(0, 1 / 16.0f, 0),
+                scene.effects().simpleParticleEmitter(fluidParticle, VecHelper.offsetRandomly(Vec3.ZERO, random, 0.1f)),
                 1,
                 1
             );
@@ -138,8 +138,8 @@ public class SpoutScenes {
         scene.idle(20);
         for (int i = 0; i < 10; i++) {
             scene.effects().emitParticles(
-                util.vector().topOf(depotPos.south()).add(0, 1 / 16f, 0),
-                scene.effects().simpleParticleEmitter(fluidParticle, VecHelper.offsetRandomly(Vec3.ZERO, random, .1f)),
+                util.vector().topOf(depotPos.south()).add(0, 1 / 16.0f, 0),
+                scene.effects().simpleParticleEmitter(fluidParticle, VecHelper.offsetRandomly(Vec3.ZERO, random, 0.1f)),
                 1,
                 1
             );
@@ -157,8 +157,8 @@ public class SpoutScenes {
         scene.idle(20);
         for (int i = 0; i < 10; i++) {
             scene.effects().emitParticles(
-                util.vector().topOf(depotPos.south()).add(0, 1 / 16f, 0),
-                scene.effects().simpleParticleEmitter(fluidParticle, VecHelper.offsetRandomly(Vec3.ZERO, random, .1f)),
+                util.vector().topOf(depotPos.south()).add(0, 1 / 16.0f, 0),
+                scene.effects().simpleParticleEmitter(fluidParticle, VecHelper.offsetRandomly(Vec3.ZERO, random, 0.1f)),
                 1,
                 1
             );

@@ -63,11 +63,11 @@ public class CompactingCategory extends CreateCategory<RecipeHolder<CompactingRe
         int yOffset = 51;
         int i = 0;
         for (; i < ingredientSize; i++) {
-            builder.addInputSlot(xOffset + (i % 3) * 19, yOffset - (i / 3) * 19).setBackground(SLOT, -1, -1)
+            builder.addInputSlot(xOffset + i % 3 * 19, yOffset - i / 3 * 19).setBackground(SLOT, -1, -1)
                 .addItemStacks(getStacks(ingredients.get(i)));
         }
         if (fluidIngredient != null) {
-            addFluidSlot(builder, xOffset + (i % 3) * 19, yOffset - (i / 3) * 19, fluidIngredient).setBackground(
+            addFluidSlot(builder, xOffset + i % 3 * 19, yOffset - i / 3 * 19, fluidIngredient).setBackground(
                 SLOT,
                 -1,
                 -1

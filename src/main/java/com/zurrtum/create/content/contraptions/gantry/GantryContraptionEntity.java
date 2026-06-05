@@ -57,7 +57,7 @@ public class GantryContraptionEntity extends AbstractContraptionEntity {
         double prevAxisMotion = axisMotion;
         Level world = level();
         if (world.isClientSide()) {
-            clientOffsetDiff *= .75;
+            clientOffsetDiff *= 0.75;
             updateClientMotion();
         }
 
@@ -99,7 +99,7 @@ public class GantryContraptionEntity extends AbstractContraptionEntity {
     protected void checkPinionShaft() {
         Vec3 movementVec;
         Direction facing = ((GantryContraption) contraption).getFacing();
-        Vec3 currentPosition = getAnchorVec().add(.5, .5, .5);
+        Vec3 currentPosition = getAnchorVec().add(0.5, 0.5, 0.5);
         BlockPos gantryShaftPos = BlockPos.containing(currentPosition).relative(facing.getOpposite());
 
         Level world = level();
@@ -134,8 +134,8 @@ public class GantryContraptionEntity extends AbstractContraptionEntity {
         double currentCoord = direction.getAxis().choose(currentPosition.x, currentPosition.y, currentPosition.z);
         double nextCoord = direction.getAxis().choose(nextPosition.x, nextPosition.y, nextPosition.z);
 
-        if ((Mth.floor(currentCoord) + .5 < nextCoord != (pinionMovementSpeed * direction.getAxisDirection()
-            .getStep() < 0))) {
+        if (Mth.floor(currentCoord) + 0.5 < nextCoord != pinionMovementSpeed * direction.getAxisDirection()
+            .getStep() < 0) {
             if (!gantryShaftBlockEntity.canAssembleOn()) {
                 setContraptionMotion(Vec3.ZERO);
                 if (!world.isClientSide()) {
@@ -181,7 +181,7 @@ public class GantryContraptionEntity extends AbstractContraptionEntity {
 
     @Override
     protected StructureTransform makeStructureTransform() {
-        return new StructureTransform(BlockPos.containing(getAnchorVec().add(.5, .5, .5)), 0, 0, 0);
+        return new StructureTransform(BlockPos.containing(getAnchorVec().add(0.5, 0.5, 0.5)), 0, 0, 0);
     }
 
     @Override
@@ -211,7 +211,7 @@ public class GantryContraptionEntity extends AbstractContraptionEntity {
     public void updateClientMotion() {
         float modifier = movementAxis.getAxisDirection().getStep();
         Vec3 motion = Vec3.atLowerCornerOf(movementAxis.getUnitVec3i())
-            .scale((axisMotion + clientOffsetDiff * modifier / 2d) * AllClientHandle.INSTANCE.getServerSpeed());
+            .scale((axisMotion + clientOffsetDiff * modifier / 2.0d) * AllClientHandle.INSTANCE.getServerSpeed());
         if (sequencedOffsetLimit >= 0) {
             motion = VecHelper.clampComponentWise(motion, (float) sequencedOffsetLimit);
         }

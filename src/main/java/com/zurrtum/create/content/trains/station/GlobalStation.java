@@ -162,7 +162,7 @@ public class GlobalStation extends SingleBlockEntityEdgePoint {
 
     @Nullable
     public Train getNearestTrain() {
-        return this.nearestTrain.get();
+        return nearestTrain.get();
     }
 
     public void runMailTransfer() {

@@ -41,26 +41,26 @@ public class FluidTankMountedStorage extends WrapperMountedFluidStorage<FluidTan
         if (be instanceof FluidTankBlockEntity tank && tank.isController()) {
             FluidTank inventory = tank.getTankInventory();
             // capacity shouldn't change, leave it
-            inventory.setFluid(this.wrapped.getFluid());
+            inventory.setFluid(wrapped.getFluid());
         }
     }
 
     public FluidStack getFluid() {
-        return this.wrapped.getFluid();
+        return wrapped.getFluid();
     }
 
     public int getCapacity() {
-        return this.wrapped.getMaxAmountPerStack();
+        return wrapped.getMaxAmountPerStack();
     }
 
     @Override
     public boolean isDirty() {
-        return this.dirty;
+        return dirty;
     }
 
     @Override
     public void markClean() {
-        this.dirty = false;
+        dirty = false;
     }
 
     @Override
@@ -76,7 +76,7 @@ public class FluidTankMountedStorage extends WrapperMountedFluidStorage<FluidTan
         }
 
         FluidTank inv = tank.getTankInventory();
-        inv.setFluid(this.getFluid());
+        inv.setFluid(getFluid());
         float fillLevel = inv.getFluid().getAmount() / (float) inv.getMaxAmountPerStack();
         if (tank.getFluidLevel() == null) {
             tank.setFluidLevel(LerpedFloat.linear().startWithValue(fillLevel));

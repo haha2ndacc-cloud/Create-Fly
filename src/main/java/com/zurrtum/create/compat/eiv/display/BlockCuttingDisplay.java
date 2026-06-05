@@ -34,10 +34,12 @@ public class BlockCuttingDisplay extends CreateDisplay {
 
     public static void register(List<IEivServerRecipe> recipes, RecipeMap preparedRecipes) {
         Object2ObjectMap<Ingredient, List<ItemStack>> map = new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<>() {
+            @Override
             public boolean equals(Ingredient ingredient, Ingredient other) {
                 return Objects.equals(ingredient, other);
             }
 
+            @Override
             public int hashCode(Ingredient ingredient) {
                 if (ingredient.values instanceof HolderSet.Direct<Item> direct) {
                     return direct.hashCode();

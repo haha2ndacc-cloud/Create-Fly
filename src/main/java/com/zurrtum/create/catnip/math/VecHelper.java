@@ -15,7 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class VecHelper {
-    public static final Vec3 CENTER_OF_ORIGIN = new Vec3(.5, .5, .5);
+    public static final Vec3 CENTER_OF_ORIGIN = new Vec3(0.5, 0.5, 0.5);
 
     public static Vec3 rotate(Vec3 vec, Vec3 rotationVec) {
         return rotate(vec, rotationVec.x, rotationVec.y, rotationVec.z);
@@ -27,7 +27,7 @@ public class VecHelper {
 
     public static Vec3 rotateCentered(Vec3 vec, double deg, Axis axis) {
         Vec3 shift = getCenterOf(BlockPos.ZERO);
-        return VecHelper.rotate(vec.subtract(shift), deg, axis).add(shift);
+        return rotate(vec.subtract(shift), deg, axis).add(shift);
     }
 
     public static Vec3 rotate(Vec3 vec, double deg, @Nullable Axis axis) {
@@ -38,7 +38,7 @@ public class VecHelper {
             return vec;
         }
 
-        float angle = (float) (deg / 180f * Math.PI);
+        float angle = (float) (deg / 180.0f * Math.PI);
         double sin = Mth.sin(angle);
         double cos = Mth.cos(angle);
         double x = vec.x;
@@ -59,7 +59,7 @@ public class VecHelper {
 
     public static Vec3 mirrorCentered(Vec3 vec, Mirror mirror) {
         Vec3 shift = getCenterOf(BlockPos.ZERO);
-        return VecHelper.mirror(vec.subtract(shift), mirror).add(shift);
+        return mirror(vec.subtract(shift), mirror).add(shift);
     }
 
     public static Vec3 mirror(Vec3 vec, Mirror mirror) {
@@ -107,14 +107,14 @@ public class VecHelper {
         if (pos.equals(Vec3i.ZERO)) {
             return CENTER_OF_ORIGIN;
         }
-        return Vec3.atLowerCornerOf(pos).add(.5f, .5f, .5f);
+        return Vec3.atLowerCornerOf(pos).add(0.5f, 0.5f, 0.5f);
     }
 
     public static Vec3 offsetRandomly(Vec3 vec, RandomSource r, float radius) {
         return new Vec3(
-            vec.x + (r.nextFloat() - .5f) * 2 * radius,
-            vec.y + (r.nextFloat() - .5f) * 2 * radius,
-            vec.z + (r.nextFloat() - .5f) * 2 * radius
+            vec.x + (r.nextFloat() - 0.5f) * 2 * radius,
+            vec.y + (r.nextFloat() - 0.5f) * 2 * radius,
+            vec.z + (r.nextFloat() - 0.5f) * 2 * radius
         );
     }
 
@@ -163,7 +163,7 @@ public class VecHelper {
     }
 
     public static Vec3 voxelSpace(double x, double y, double z) {
-        return new Vec3(x, y, z).scale(1 / 16f);
+        return new Vec3(x, y, z).scale(1 / 16.0f);
     }
 
     public static int getCoordinate(Vec3i pos, Axis axis) {
@@ -303,9 +303,7 @@ public class VecHelper {
 
     public static double alignedDistanceToFace(Vec3 pos, BlockPos blockPos, Direction face) {
         Axis axis = face.getAxis();
-        return Math.abs(getCoordinate(
-            pos,
-            axis
-        ) - (blockPos.get(axis) + (face.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 0)));
+        return Math.abs(getCoordinate(pos, axis) - (blockPos.get(axis) + (
+            face.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 0)));
     }
 }

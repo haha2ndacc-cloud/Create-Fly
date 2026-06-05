@@ -126,7 +126,7 @@ public class FilterItemStack {
             containedItems = new ArrayList<>();
             for (ItemStack stack : ((ListFilterItem) filter.getItem()).getFilterItemHandler(filter)) {
                 if (!stack.isEmpty()) {
-                    containedItems.add(FilterItemStack.of(stack));
+                    containedItems.add(of(stack));
                 }
             }
 
@@ -170,7 +170,8 @@ public class FilterItemStack {
                 AttributeFilterWhitelistMode.WHITELIST_DISJ
             );
 
-            List<ItemAttributeEntry> attributes = defaults ? new ArrayList<>() : filter.get(AllDataComponents.ATTRIBUTE_FILTER_MATCHED_ATTRIBUTES);
+            List<ItemAttributeEntry> attributes =
+                defaults ? new ArrayList<>() : filter.get(AllDataComponents.ATTRIBUTE_FILTER_MATCHED_ATTRIBUTES);
             //noinspection DataFlowIssue
             for (ItemAttributeEntry attributeEntry : attributes) {
                 ItemAttribute attribute = attributeEntry.attribute();
@@ -239,11 +240,11 @@ public class FilterItemStack {
 
         @Override
         public boolean test(Level world, ItemStack stack, boolean matchNBT) {
-            return (filterString.isBlank() && super.test(
+            return filterString.isBlank() && super.test(
                 world,
                 stack,
                 matchNBT
-            )) || PackageItem.isPackage(stack) && PackageItem.matchAddress(
+            ) || PackageItem.isPackage(stack) && PackageItem.matchAddress(
                 stack,
                 filterString
             );

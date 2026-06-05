@@ -140,7 +140,7 @@ public class RedstoneScenes2 {
 
         BlockPos circuitPos = util.grid().at(2, 1, 2);
         BlockPos leverPos = util.grid().at(4, 1, 2);
-        Vec3 circuitTop = util.vector().blockSurface(circuitPos, Direction.DOWN).add(0, 3 / 16f, 0);
+        Vec3 circuitTop = util.vector().blockSurface(circuitPos, Direction.DOWN).add(0, 3 / 16.0f, 0);
 
         world.modifyBlockEntityNBT(
             select.position(circuitPos),
@@ -218,12 +218,12 @@ public class RedstoneScenes2 {
         world.hideSection(select.position(0, 1, 2), Direction.WEST);
         scene.idle(10);
 
-        scene.overlay().showControls(circuitTop.add(-.375, 0, .375), Pointing.DOWN, 60).rightClick();
+        scene.overlay().showControls(circuitTop.add(-0.375, 0, 0.375), Pointing.DOWN, 60).rightClick();
         scene.idle(10);
         world.cycleBlockProperty(circuitPos, BrassDiodeBlock.INVERTED);
         world.toggleRedstonePower(select.position(1, 1, 2));
         scene.overlay().showText(60).text("Right-click the circuit base to invert the output").attachKeyFrame()
-            .placeNearTarget().pointAt(circuitTop.add(-.375, 0, .375));
+            .placeNearTarget().pointAt(circuitTop.add(-0.375, 0, 0.375));
 
         scene.idle(70);
         ElementLink<WorldSectionElement> link = world.showIndependentSection(select.position(0, 1, 4), Direction.EAST);

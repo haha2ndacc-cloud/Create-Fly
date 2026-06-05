@@ -30,7 +30,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class SymmetryHandlerClient {
-    private static int tickCounter = 0;
+    private static int tickCounter;
 
     public static void onRenderWorld(Minecraft mc, PoseStack ms, SubmitNodeCollector queue, Vec3 cameraPos) {
         LocalPlayer player = mc.player;
@@ -52,12 +52,12 @@ public class SymmetryHandlerClient {
 
             BlockPos pos = BlockPos.containing(mirror.getPosition());
 
-            double speed = 1 / 16d;
-            float yShift = Mth.sin((float) (AnimationTickHolder.getRenderTime() * speed)) / 5f;
+            double speed = 1 / 16.0d;
+            float yShift = Mth.sin((float) (AnimationTickHolder.getRenderTime() * speed)) / 5.0f;
 
             ms.pushPose();
             ms.translate(pos.getX() - cameraPos.x(), pos.getY() - cameraPos.y(), pos.getZ() - cameraPos.z());
-            ms.translate(0, yShift + .2f, 0);
+            ms.translate(0, yShift + 0.2f, 0);
             applyModelTransform(mirror, ms);
             int light = SmartBlockEntityRenderer.getLightCoords(level, pos);
             CachedBuffers.partial(model, Blocks.AIR.defaultBlockState()).light(light).submit(ms, queue);
@@ -117,8 +117,8 @@ public class SymmetryHandlerClient {
                     double offsetX = (random.nextDouble() - 0.5) * 0.3;
                     double offsetZ = (random.nextDouble() - 0.5) * 0.3;
 
-                    Vec3 pos = mirror.getPosition().add(0.5 + offsetX, 1 / 4d, 0.5 + offsetZ);
-                    Vec3 speed = new Vec3(0, random.nextDouble() * 1 / 8f, 0);
+                    Vec3 pos = mirror.getPosition().add(0.5 + offsetX, 1 / 4.0d, 0.5 + offsetZ);
+                    Vec3 speed = new Vec3(0, random.nextDouble() * 1 / 8.0f, 0);
                     world.addParticle(ParticleTypes.END_ROD, pos.x, pos.y, pos.z, speed.x, speed.y, speed.z);
                 }
             }
@@ -138,16 +138,16 @@ public class SymmetryHandlerClient {
         ClientLevel world = client.level;
         for (int i = 3; i < steps - 1; i++) {
             Vec3 pos = start.add(step.scale(i));
-            Vec3 speed = new Vec3(0, random.nextDouble() * -40f, 0);
+            Vec3 speed = new Vec3(0, random.nextDouble() * -40.0f, 0);
 
             world.addParticle(new DustParticleOptions(0x010101, 1), pos.x, pos.y, pos.z, speed.x, speed.y, speed.z);
         }
 
-        Vec3 speed = new Vec3(0, random.nextDouble() * 1 / 32f, 0);
+        Vec3 speed = new Vec3(0, random.nextDouble() * 1 / 32.0f, 0);
         Vec3 pos = start.add(step.scale(2));
         world.addParticle(ParticleTypes.END_ROD, pos.x, pos.y, pos.z, speed.x, speed.y, speed.z);
 
-        speed = new Vec3(0, random.nextDouble() * 1 / 32f, 0);
+        speed = new Vec3(0, random.nextDouble() * 1 / 32.0f, 0);
         pos = start.add(step.scale(steps));
         world.addParticle(ParticleTypes.END_ROD, pos.x, pos.y, pos.z, speed.x, speed.y, speed.z);
     }

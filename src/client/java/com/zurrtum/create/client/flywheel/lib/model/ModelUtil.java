@@ -23,7 +23,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 public final class ModelUtil {
-    private static final float BOUNDING_SPHERE_EPSILON = 1e-4f;
+    private static final float BOUNDING_SPHERE_EPSILON = 1.0e-4f;
 
     // Array of chunk materials to make lookups easier.
     // Index by (renderTypeIdx * 4 + shaded * 2 + ambientOcclusion).
@@ -120,12 +120,12 @@ public final class ModelUtil {
 
     public static Vector4f computeBoundingSphere(Iterable<Mesh> meshes) {
         int vertexCount = computeTotalVertexCount(meshes);
-        var block = MemoryBlock.malloc((long) vertexCount * PosVertexView.STRIDE);
+        var block = MemoryBlock.malloc(vertexCount * PosVertexView.STRIDE);
         var vertexList = new PosVertexView();
 
         int baseVertex = 0;
         for (Mesh mesh : meshes) {
-            vertexList.ptr(block.ptr() + (long) baseVertex * PosVertexView.STRIDE);
+            vertexList.ptr(block.ptr() + baseVertex * PosVertexView.STRIDE);
             vertexList.vertexCount(mesh.vertexCount());
             mesh.write(vertexList);
             baseVertex += mesh.vertexCount();

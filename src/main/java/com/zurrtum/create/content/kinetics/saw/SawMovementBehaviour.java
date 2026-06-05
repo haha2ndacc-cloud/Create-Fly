@@ -27,7 +27,7 @@ public class SawMovementBehaviour extends BlockBreakingMovementBehaviour {
 
     @Override
     public Vec3 getActiveAreaOffset(MovementContext context) {
-        return Vec3.atLowerCornerOf(context.state.getValue(SawBlock.FACING).getUnitVec3i()).scale(.65f);
+        return Vec3.atLowerCornerOf(context.state.getValue(SawBlock.FACING).getUnitVec3i()).scale(0.65f);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class SawMovementBehaviour extends BlockBreakingMovementBehaviour {
         float distance = context.position == null ? 1 : (float) dropPos.distanceTo(context.position);
         stack.setCount(count - insert);
         ItemEntity entity = new ItemEntity(world, dropPos.x, dropPos.y, dropPos.z, stack);
-        entity.setDeltaMovement(context.relativeMotion.scale(distance / 20f));
+        entity.setDeltaMovement(context.relativeMotion.scale(distance / 20.0f));
         world.addFreshEntity(entity);
     }
 

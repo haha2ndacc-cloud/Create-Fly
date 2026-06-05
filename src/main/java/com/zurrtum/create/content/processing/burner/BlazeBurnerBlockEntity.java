@@ -256,8 +256,8 @@ public class BlazeBurnerBlockEntity extends SmartBlockEntity {
                 worldPosition,
                 SoundEvents.BLAZE_AMBIENT,
                 SoundSource.BLOCKS,
-                .125f + level.getRandom().nextFloat() * .125f,
-                1.15f - level.getRandom().nextFloat() * .25f
+                0.125f + level.getRandom().nextFloat() * 0.125f,
+                1.15f - level.getRandom().nextFloat() * 0.25f
             );
         }
 
@@ -301,8 +301,8 @@ public class BlazeBurnerBlockEntity extends SmartBlockEntity {
             worldPosition,
             SoundEvents.BLAZE_SHOOT,
             SoundSource.BLOCKS,
-            .125f + level.getRandom().nextFloat() * .125f,
-            .75f - level.getRandom().nextFloat() * .25f
+            0.125f + level.getRandom().nextFloat() * 0.125f,
+            0.75f - level.getRandom().nextFloat() * 0.25f
         );
     }
 
@@ -329,7 +329,7 @@ public class BlazeBurnerBlockEntity extends SmartBlockEntity {
         RandomSource r = level.getRandom();
 
         Vec3 c = VecHelper.getCenterOf(worldPosition);
-        Vec3 v = c.add(VecHelper.offsetRandomly(Vec3.ZERO, r, .125f).multiply(1, 0, 1));
+        Vec3 v = c.add(VecHelper.offsetRandomly(Vec3.ZERO, r, 0.125f).multiply(1, 0, 1));
 
         if (r.nextInt(4) != 0) {
             return;
@@ -342,9 +342,9 @@ public class BlazeBurnerBlockEntity extends SmartBlockEntity {
             level.addParticle(ParticleTypes.LARGE_SMOKE, v.x, v.y, v.z, 0, 0, 0);
         }
 
-        double yMotion = empty ? .0625f : r.nextDouble() * .0125f;
-        Vec3 v2 = c.add(VecHelper.offsetRandomly(Vec3.ZERO, r, .5f).multiply(1, .25f, 1).normalize()
-            .scale((empty ? .25f : .5) + r.nextDouble() * .125f)).add(0, .5, 0);
+        double yMotion = empty ? 0.0625f : r.nextDouble() * 0.0125f;
+        Vec3 v2 = c.add(VecHelper.offsetRandomly(Vec3.ZERO, r, 0.5f).multiply(1, 0.25f, 1).normalize()
+            .scale((empty ? 0.25f : 0.5) + r.nextDouble() * 0.125f)).add(0, 0.5, 0);
 
         if (heatLevel.isAtLeast(HeatLevel.SEETHING)) {
             level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, v2.x, v2.y, v2.z, 0, yMotion, 0);
@@ -357,9 +357,9 @@ public class BlazeBurnerBlockEntity extends SmartBlockEntity {
         Vec3 c = VecHelper.getCenterOf(worldPosition);
         RandomSource r = level.getRandom();
         for (int i = 0; i < 20; i++) {
-            Vec3 offset = VecHelper.offsetRandomly(Vec3.ZERO, r, .5f).multiply(1, .25f, 1).normalize();
-            Vec3 v = c.add(offset.scale(.5 + r.nextDouble() * .125f)).add(0, .125, 0);
-            Vec3 m = offset.scale(1 / 32f);
+            Vec3 offset = VecHelper.offsetRandomly(Vec3.ZERO, r, 0.5f).multiply(1, 0.25f, 1).normalize();
+            Vec3 v = c.add(offset.scale(0.5 + r.nextDouble() * 0.125f)).add(0, 0.125, 0);
+            Vec3 m = offset.scale(1 / 32.0f);
 
             level.addParticle(
                 soulFlame ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME,

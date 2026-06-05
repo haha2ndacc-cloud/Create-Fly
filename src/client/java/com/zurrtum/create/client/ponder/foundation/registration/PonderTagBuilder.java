@@ -16,7 +16,7 @@ public class PonderTagBuilder implements TagBuilder {
 
     String title = "NO_TITLE";
     String description = "NO_DESCRIPTION";
-    boolean addToIndex = false;
+    boolean addToIndex;
     @Nullable Identifier textureIconLocation;
     @Nullable ItemStackTemplate itemIcon;
     @Nullable ItemStackTemplate mainItem;
@@ -40,13 +40,13 @@ public class PonderTagBuilder implements TagBuilder {
 
     @Override
     public TagBuilder addToIndex() {
-        this.addToIndex = true;
+        addToIndex = true;
         return this;
     }
 
     @Override
     public TagBuilder icon(Identifier location) {
-        this.textureIconLocation = Identifier.fromNamespaceAndPath(
+        textureIconLocation = Identifier.fromNamespaceAndPath(
             location.getNamespace(),
             "textures/ponder/tag/" + location.getPath() + ".png"
         );
@@ -55,7 +55,7 @@ public class PonderTagBuilder implements TagBuilder {
 
     @Override
     public TagBuilder icon(String path) {
-        this.textureIconLocation = Identifier.fromNamespaceAndPath(
+        textureIconLocation = Identifier.fromNamespaceAndPath(
             id.getNamespace(),
             "textures/ponder/tag/" + path + ".png"
         );
@@ -71,10 +71,10 @@ public class PonderTagBuilder implements TagBuilder {
     public TagBuilder item(ItemLike item, boolean useAsIcon, boolean useAsMainItem) {
         Item renderItem = item.asItem();
         if (useAsIcon) {
-            this.itemIcon = new ItemStackTemplate(renderItem);
+            itemIcon = new ItemStackTemplate(renderItem);
         }
         if (useAsMainItem) {
-            this.mainItem = new ItemStackTemplate(renderItem);
+            mainItem = new ItemStackTemplate(renderItem);
         }
         return this;
     }

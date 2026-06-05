@@ -267,7 +267,8 @@ public interface SidedFluidInventory extends FluidInventory {
                             entry.setValue(remaining - insert);
                         }
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxAmount = target.getMaxAmount();
                         int amount = target.getAmount();
                         if (amount != maxAmount) {
@@ -546,7 +547,8 @@ public interface SidedFluidInventory extends FluidInventory {
                         }
                         dirty = true;
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxAmount = target.getMaxAmount();
                         int amount = target.getAmount();
                         if (amount != maxAmount) {
@@ -582,9 +584,8 @@ public interface SidedFluidInventory extends FluidInventory {
             }
             markDirty();
             return result;
-        } else {
-            return stacks;
         }
+        return stacks;
     }
 
     @Override
@@ -852,7 +853,8 @@ public interface SidedFluidInventory extends FluidInventory {
                             entry.setValue(remaining - insert);
                         }
                         break;
-                    } else if (matches(target, stack)) {
+                    }
+                    if (matches(target, stack)) {
                         int maxAmount = target.getMaxAmount();
                         int amount = target.getAmount();
                         if (amount != maxAmount) {
@@ -889,7 +891,7 @@ public interface SidedFluidInventory extends FluidInventory {
         public Iterator(SidedFluidInventory inventory, @Nullable Direction side) {
             this.inventory = inventory;
             this.side = side;
-            this.slots = inventory.getAvailableSlots(side);
+            slots = inventory.getAvailableSlots(side);
         }
 
         @Override
@@ -918,9 +920,8 @@ public interface SidedFluidInventory extends FluidInventory {
                 FluidStack result = inventory.getStack(slots[current]);
                 current = -1;
                 return result;
-            } else {
-                throw new NoSuchElementException();
             }
+            throw new NoSuchElementException();
         }
     }
 }

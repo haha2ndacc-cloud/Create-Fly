@@ -27,7 +27,7 @@ public class SphereBrush extends ShapedBrush {
                     BlockPos.ZERO.offset(-i - 1, -i - 1, -i - 1),
                     BlockPos.ZERO.offset(i + 1, i + 1, i + 1)
                 ).map(BlockPos::new)
-                .filter(p -> VecHelper.getCenterOf(p).distanceTo(VecHelper.getCenterOf(BlockPos.ZERO)) < radius + .5f)
+                .filter(p -> VecHelper.getCenterOf(p).distanceTo(VecHelper.getCenterOf(BlockPos.ZERO)) < radius + 0.5f)
                 .collect(Collectors.toList());
             cachedBrushes.put(i, positions);
         }
@@ -40,7 +40,7 @@ public class SphereBrush extends ShapedBrush {
         }
 
         int offset = option == PlacementOptions.Attached ? 0 : -1;
-        int r = (param0 + 1 + offset);
+        int r = param0 + 1 + offset;
 
         return BlockPos.ZERO.relative(face, r * (option == PlacementOptions.Attached ? 1 : -1));
     }

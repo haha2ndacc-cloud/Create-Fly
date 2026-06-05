@@ -111,7 +111,8 @@ public class QuadBakingVertexConsumer implements VertexConsumer {
     public void setSprite(TextureAtlasSprite texture, Transparency transparency) {
         RenderType itemRenderType;
         if (texture.atlasLocation().equals(TextureAtlas.LOCATION_BLOCKS)) {
-            itemRenderType = transparency.hasTranslucent() ? Sheets.translucentBlockItemSheet() : Sheets.cutoutBlockItemSheet();
+            itemRenderType =
+                transparency.hasTranslucent() ? Sheets.translucentBlockItemSheet() : Sheets.cutoutBlockItemSheet();
         } else {
             itemRenderType = transparency.hasTranslucent() ? Sheets.translucentItemSheet() : Sheets.cutoutItemSheet();
         }

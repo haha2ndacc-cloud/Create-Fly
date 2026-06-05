@@ -25,9 +25,9 @@ public class ArmAngleTarget {
 
     public ArmAngleTarget(BlockPos armPos, Vec3 pointTarget, Direction clawFacing, boolean ceiling) {
         Vec3 target = pointTarget;
-        Vec3 origin = VecHelper.getCenterOf(armPos).add(0, ceiling ? -6 / 16f : 6 / 16f, 0);
+        Vec3 origin = VecHelper.getCenterOf(armPos).add(0, ceiling ? -6 / 16.0f : 6 / 16.0f, 0);
         Vec3 clawTarget = target;
-        target = target.add(Vec3.atLowerCornerOf(clawFacing.getOpposite().getUnitVec3i()).scale(.5f));
+        target = target.add(Vec3.atLowerCornerOf(clawFacing.getOpposite().getUnitVec3i()).scale(0.5f));
 
         Vec3 diff = target.subtract(origin);
         float horizontalDistance = (float) diff.multiply(1, 0, 1).length();
@@ -40,13 +40,13 @@ public class ArmAngleTarget {
 
         float alphaOffset = AngleHelper.deg(Mth.atan2(diff.y, horizontalDistance));
 
-        float a = 14 / 16f; // lower arm length
+        float a = 14 / 16.0f; // lower arm length
         float a2 = a * a;
-        float b = 15 / 16f; // upper arm length
+        float b = 15 / 16.0f; // upper arm length
         float b2 = b * b;
         float diffLength = Mth.clamp(
             Mth.sqrt((float) (diff.y * diff.y + horizontalDistance * horizontalDistance)),
-            1 / 8f,
+            1 / 8.0f,
             a + b
         );
         float diffLength2 = diffLength * diffLength;
@@ -76,10 +76,10 @@ public class ArmAngleTarget {
         }
 
         float horizontalHeadDistance = (float) headDiff.multiply(1, 0, 1).length();
-        float headAngle = (float) (alpha + beta + 135 - AngleHelper.deg(Mth.atan2(headDiff.y, horizontalHeadDistance)));
+        float headAngle = alpha + beta + 135 - AngleHelper.deg(Mth.atan2(headDiff.y, horizontalHeadDistance));
 
-        this.lowerArmAngle = alpha;
-        this.upperArmAngle = beta;
+        lowerArmAngle = alpha;
+        upperArmAngle = beta;
         this.headAngle = -headAngle;
         this.baseAngle = baseAngle;
     }

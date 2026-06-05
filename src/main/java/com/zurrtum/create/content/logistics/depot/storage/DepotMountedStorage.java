@@ -52,12 +52,12 @@ public class DepotMountedStorage extends WrapperMountedItemStorage<DepotMountedS
 
     @Override
     public boolean isDirty() {
-        return this.dirty;
+        return dirty;
     }
 
     @Override
     public void markClean() {
-        this.dirty = false;
+        dirty = false;
     }
 
     @Override
@@ -90,7 +90,7 @@ public class DepotMountedStorage extends WrapperMountedItemStorage<DepotMountedS
         private Optional<TransportedItemStack> held;
 
         public Handler(Optional<TransportedItemStack> stack) {
-            this.held = stack;
+            held = stack;
         }
 
         @Override
@@ -112,9 +112,9 @@ public class DepotMountedStorage extends WrapperMountedItemStorage<DepotMountedS
                 return;
             }
             if (stack.isEmpty()) {
-                this.held = Optional.empty();
+                held = Optional.empty();
             } else {
-                this.held = Optional.of(new TransportedItemStack(stack));
+                held = Optional.of(new TransportedItemStack(stack));
             }
         }
 
@@ -127,7 +127,7 @@ public class DepotMountedStorage extends WrapperMountedItemStorage<DepotMountedS
         }
 
         public void setHeld(Optional<TransportedItemStack> stack) {
-            this.held = stack;
+            held = stack;
         }
 
         @Override

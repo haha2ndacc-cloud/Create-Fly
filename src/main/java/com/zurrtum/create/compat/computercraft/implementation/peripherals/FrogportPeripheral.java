@@ -37,9 +37,8 @@ public class FrogportPeripheral extends SyncedPeripheral<FrogportBlockEntity> {
         }
         if (blockEntity.acceptsPackages) {
             return "send_recieve";
-        } else {
-            return "send";
         }
+        return "send";
     }
 
     @LuaFunction(mainThread = true)

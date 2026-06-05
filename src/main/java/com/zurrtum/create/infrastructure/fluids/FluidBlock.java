@@ -3,19 +3,20 @@ package com.zurrtum.create.infrastructure.fluids;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.redstone.Orientation;
 import org.jspecify.annotations.Nullable;
 
-public class FluidBlock extends net.minecraft.world.level.block.LiquidBlock {
+public class FluidBlock extends LiquidBlock {
     public FluidBlock(FlowingFluid fluid, Properties settings) {
         super(fluid, settings);
     }
 
     @Override
     protected void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean notify) {
-        world.scheduleTick(pos, state.getFluidState().getType(), this.fluid.getTickDelay(world));
+        world.scheduleTick(pos, state.getFluidState().getType(), fluid.getTickDelay(world));
     }
 
     @Override
@@ -27,6 +28,6 @@ public class FluidBlock extends net.minecraft.world.level.block.LiquidBlock {
         @Nullable Orientation wireOrientation,
         boolean notify
     ) {
-        world.scheduleTick(pos, state.getFluidState().getType(), this.fluid.getTickDelay(world));
+        world.scheduleTick(pos, state.getFluidState().getType(), fluid.getTickDelay(world));
     }
 }

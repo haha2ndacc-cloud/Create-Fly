@@ -420,7 +420,7 @@ public class LayoutBuilderImpl implements LayoutBuilder {
         return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z';
     }
 
-    private static record UnpaddedElement(String name, ElementType type, int byteOffset) {
+    private record UnpaddedElement(String name, ElementType type, int byteOffset) {
         private ElementImpl complete(int paddingByteSize) {
             return new ElementImpl(name, type, byteOffset, type.byteSize() + paddingByteSize, paddingByteSize);
         }

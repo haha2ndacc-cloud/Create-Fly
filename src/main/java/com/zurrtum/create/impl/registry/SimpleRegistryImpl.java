@@ -25,7 +25,7 @@ public abstract sealed class SimpleRegistryImpl<K, V> implements SimpleRegistry<
         Objects.requireNonNull(object, "object");
         Objects.requireNonNull(value, "value");
 
-        V existing = this.registrations.get(object);
+        V existing = registrations.get(object);
         if (existing != null) {
             throw new IllegalArgumentException(String.format(
                 "Tried to register duplicate values for object %s (%s): old=%s, new=%s",
@@ -36,18 +36,18 @@ public abstract sealed class SimpleRegistryImpl<K, V> implements SimpleRegistry<
             ));
         }
 
-        this.registrations.put(object, value);
+        registrations.put(object, value);
     }
 
     @Override
     public synchronized void registerProvider(Provider<K, V> provider) {
         Objects.requireNonNull(provider);
-        if (this.providers.contains(provider)) {
+        if (providers.contains(provider)) {
             throw new IllegalArgumentException("Tried to register provider twice: " + provider);
         }
 
         // add to start of list so it's queried first
-        this.providers.addFirst(provider);
+        providers.addFirst(provider);
         provider.onRegister(this::invalidate);
     }
 
@@ -55,7 +55,7 @@ public abstract sealed class SimpleRegistryImpl<K, V> implements SimpleRegistry<
     @Nullable
     public synchronized V get(StateHolder<K, ?> state) {
         Objects.requireNonNull(state, "state");
-        return this.get(state.owner);
+        return get(state.owner);
     }
 
     static final class SingleImpl<K, V> extends SimpleRegistryImpl<K, V> {
@@ -72,25 +72,26 @@ public abstract sealed class SimpleRegistryImpl<K, V> implements SimpleRegistry<
         @Nullable
         public synchronized V get(K object, Level world) {
             Objects.requireNonNull(object, "object");
-            if (this.registrations.containsKey(object)) {
-                return this.registrations.get(object);
-            } else if (this.providedValues.containsKey(object)) {
-                V provided = this.providedValues.get(object);
+            if (registrations.containsKey(object)) {
+                return registrations.get(object);
+            }
+            if (providedValues.containsKey(object)) {
+                V provided = providedValues.get(object);
                 return provided == nullMarker ? null : provided;
             }
 
             // no value known, check providers
             // new providers are added to the start, so normal iteration is reverse-registration order
-            for (Provider<K, V> provider : this.providers) {
+            for (Provider<K, V> provider : providers) {
                 V value = provider.get(object, world);
                 if (value != null) {
-                    this.providedValues.put(object, value);
+                    providedValues.put(object, value);
                     return value;
                 }
             }
 
             // no provider returned non-null
-            this.providedValues.put(object, nullMarker());
+            providedValues.put(object, nullMarker());
             return null;
         }
 
@@ -98,31 +99,32 @@ public abstract sealed class SimpleRegistryImpl<K, V> implements SimpleRegistry<
         @Nullable
         public synchronized V get(K object) {
             Objects.requireNonNull(object, "object");
-            if (this.registrations.containsKey(object)) {
-                return this.registrations.get(object);
-            } else if (this.providedValues.containsKey(object)) {
-                V provided = this.providedValues.get(object);
+            if (registrations.containsKey(object)) {
+                return registrations.get(object);
+            }
+            if (providedValues.containsKey(object)) {
+                V provided = providedValues.get(object);
                 return provided == nullMarker ? null : provided;
             }
 
             // no value known, check providers
             // new providers are added to the start, so normal iteration is reverse-registration order
-            for (Provider<K, V> provider : this.providers) {
+            for (Provider<K, V> provider : providers) {
                 V value = provider.get(object);
                 if (value != null) {
-                    this.providedValues.put(object, value);
+                    providedValues.put(object, value);
                     return value;
                 }
             }
 
             // no provider returned non-null
-            this.providedValues.put(object, nullMarker());
+            providedValues.put(object, nullMarker());
             return null;
         }
 
         @Override
         public void invalidate() {
-            this.providedValues.clear();
+            providedValues.clear();
         }
     }
 
@@ -134,38 +136,38 @@ public abstract sealed class SimpleRegistryImpl<K, V> implements SimpleRegistry<
             Objects.requireNonNull(object, "object");
             Objects.requireNonNull(value, "value");
 
-            if (!this.registrations.containsKey(object)) {
-                this.registrations.put(object, new ArrayList<>());
+            if (!registrations.containsKey(object)) {
+                registrations.put(object, new ArrayList<>());
             }
 
-            this.registrations.get(object).add(value);
+            registrations.get(object).add(value);
         }
 
         @Override
         public void addProvider(Provider<K, V> provider) {
-            this.registerProvider(new ProviderWrapper<>(provider));
+            registerProvider(new ProviderWrapper<>(provider));
         }
 
         @Override
         public synchronized void invalidate() {
-            this.totals.clear();
+            totals.clear();
         }
 
         @Override
         public synchronized List<V> get(K object, Level world) {
             Objects.requireNonNull(object, "object");
-            if (!this.totals.containsKey(object)) {
-                this.totals.put(object, this.calculateTotal(object, world));
+            if (!totals.containsKey(object)) {
+                totals.put(object, calculateTotal(object, world));
             }
 
-            return this.totals.get(object);
+            return totals.get(object);
         }
 
         private List<V> calculateTotal(K object, Level world) {
             List<V> registrations = this.registrations.getOrDefault(object, List.of());
             List<V> total = new ArrayList<>(registrations);
 
-            for (Provider<K, List<V>> provider : this.providers) {
+            for (Provider<K, List<V>> provider : providers) {
                 List<V> values = provider.get(object, world);
                 if (values != null) {
                     total.addAll(values);
@@ -178,18 +180,18 @@ public abstract sealed class SimpleRegistryImpl<K, V> implements SimpleRegistry<
         @Override
         public synchronized List<V> get(K object) {
             Objects.requireNonNull(object, "object");
-            if (!this.totals.containsKey(object)) {
-                this.totals.put(object, this.calculateTotal(object));
+            if (!totals.containsKey(object)) {
+                totals.put(object, calculateTotal(object));
             }
 
-            return this.totals.get(object);
+            return totals.get(object);
         }
 
         private List<V> calculateTotal(K object) {
             List<V> registrations = this.registrations.getOrDefault(object, List.of());
             List<V> total = new ArrayList<>(registrations);
 
-            for (Provider<K, List<V>> provider : this.providers) {
+            for (Provider<K, List<V>> provider : providers) {
                 List<V> values = provider.get(object);
                 if (values != null) {
                     total.addAll(values);
@@ -210,13 +212,13 @@ public abstract sealed class SimpleRegistryImpl<K, V> implements SimpleRegistry<
             @Override
             @Nullable
             public List<V> get(K object) {
-                V value = this.wrapped.get(object);
+                V value = wrapped.get(object);
                 return value == null ? null : List.of(value);
             }
 
             @Override
             public void onRegister(Runnable invalidate) {
-                this.wrapped.onRegister(invalidate);
+                wrapped.onRegister(invalidate);
             }
         }
     }

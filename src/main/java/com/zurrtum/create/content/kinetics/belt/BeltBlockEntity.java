@@ -126,7 +126,8 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
         List<Entity> toRemove = new ArrayList<>();
         passengers.forEach((entity, info) -> {
             boolean canBeTransported = BeltMovementHandler.canBeTransported(entity);
-            boolean leftTheBelt = info.getTicksSinceLastCollision() > (getBlockState().getValue(BeltBlock.SLOPE) != HORIZONTAL ? 3 : 1);
+            boolean leftTheBelt = info.getTicksSinceLastCollision() > (
+                getBlockState().getValue(BeltBlock.SLOPE) != HORIZONTAL ? 3 : 1);
             if (!canBeTransported || leftTheBelt) {
                 toRemove.add(entity);
                 return;
@@ -456,7 +457,8 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
             level.levelEvent(
                 LevelEvent.PARTICLES_DESTROY_BLOCK,
                 worldPosition,
-                Block.getId(casing == CasingType.ANDESITE ? AllBlocks.ANDESITE_CASING.defaultBlockState() : AllBlocks.BRASS_CASING.defaultBlockState())
+                Block.getId(casing == CasingType.ANDESITE ? AllBlocks.ANDESITE_CASING.defaultBlockState() :
+                    AllBlocks.BRASS_CASING.defaultBlockState())
             );
         }
         if (blockState.getValue(BeltBlock.CASING) != shouldBlockHaveCasing) {
@@ -556,7 +558,8 @@ public class BeltBlockEntity extends KineticBlockEntity implements Clearable {
                     level,
                     worldPosition.relative(movementFacing.getOpposite())
                 ) != null ? 0.26f : 0;
-                transportedStack.beltPosition = getDirectionAwareBeltMovementSpeed() > 0 ? index - extraOffset : index + 1 + extraOffset;
+                transportedStack.beltPosition =
+                    getDirectionAwareBeltMovementSpeed() > 0 ? index - extraOffset : index + 1 + extraOffset;
             }
         }
 

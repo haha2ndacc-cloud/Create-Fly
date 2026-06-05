@@ -36,8 +36,6 @@ public abstract class AbstractBellBlockEntity extends SmartBlockEntity {
         return true;
     }
 
-    ;
-
     @Override
     public void tick() {
         super.tick();

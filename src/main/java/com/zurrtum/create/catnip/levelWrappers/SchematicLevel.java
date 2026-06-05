@@ -59,12 +59,12 @@ public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor,
     public SchematicLevel(BlockPos anchor, Level original) {
         super(original);
         setChunkSource(new SchematicChunkSource(this));
-        this.blocks = new HashMap<>();
-        this.blockEntities = new HashMap<>();
-        this.bounds = new BoundingBox(BlockPos.ZERO);
+        blocks = new HashMap<>();
+        blockEntities = new HashMap<>();
+        bounds = new BoundingBox(BlockPos.ZERO);
         this.anchor = anchor;
-        this.entities = new ArrayList<>();
-        this.renderedBlockEntities = new ArrayList<>();
+        entities = new ArrayList<>();
+        renderedBlockEntities = new ArrayList<>();
     }
 
     @Override

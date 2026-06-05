@@ -41,7 +41,7 @@ public class SequencedGearshiftScreen extends AbstractSimiScreen implements Addi
 
     public SequencedGearshiftScreen(SequencedGearshiftBlockEntity be) {
         super(CreateLang.translateDirect("gui.sequenced_gearshift.title"));
-        this.instructions = be.getInstructions();
+        instructions = be.getInstructions();
         this.be = be;
     }
 
@@ -250,7 +250,7 @@ public class SequencedGearshiftScreen extends AbstractSimiScreen implements Addi
         return switch (def) {
             case TURN_ANGLE -> value + CreateLang.translateDirect("generic.unit.degrees").getString();
             case TURN_DISTANCE -> value + "m";
-            case DELAY -> value >= 20 ? (value / 20) + "s" : value + "t";
+            case DELAY -> value >= 20 ? value / 20 + "s" : value + "t";
             default -> String.valueOf(value);
         };
     }
@@ -294,7 +294,7 @@ public class SequencedGearshiftScreen extends AbstractSimiScreen implements Addi
             if (hasValueParameter(def)) {
                 String text = formatValue(def, instruction.value);
                 int stringWidth = font.width(text);
-                label(graphics, 90 + (12 - stringWidth / 2), yOffset - 1, Component.literal(text));
+                label(graphics, 90 + 12 - stringWidth / 2, yOffset - 1, Component.literal(text));
             }
             if (hasSpeedParameter(def)) {
                 label(graphics, 127, yOffset - 1, label(instruction.speedModifier));

@@ -48,7 +48,7 @@ public class SequencedAssemblyCategory extends CreateCategory<SequencedAssemblyD
     static {
         DRAW.put(
             AllRecipeTypes.PRESSING, (graphics, i, point, stack) -> {
-                float scale = 19 / 30f;
+                float scale = 19 / 30.0f;
                 Matrix3x2fStack matrices = graphics.pose();
                 matrices.pushMatrix();
                 matrices.translate(point.x, point.y);
@@ -66,7 +66,7 @@ public class SequencedAssemblyCategory extends CreateCategory<SequencedAssemblyD
         );
         DRAW.put(
             AllRecipeTypes.DEPLOYING, (graphics, i, point, stack) -> {
-                float scale = 59 / 78f;
+                float scale = 59 / 78.0f;
                 Matrix3x2fStack matrices = graphics.pose();
                 matrices.pushMatrix();
                 matrices.translate(point.x, point.y);
@@ -84,7 +84,7 @@ public class SequencedAssemblyCategory extends CreateCategory<SequencedAssemblyD
         );
         DRAW.put(
             AllRecipeTypes.FILLING, (graphics, i, point, stack) -> {
-                float scale = 35 / 46f;
+                float scale = 35 / 46.0f;
                 Matrix3x2fStack matrices = graphics.pose();
                 matrices.pushMatrix();
                 matrices.translate(point.x, point.y);

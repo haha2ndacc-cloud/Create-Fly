@@ -43,7 +43,7 @@ public class CompactingCategory extends CreateCategory<CompactingDisplay> {
         List<EntryIngredient> ingredients = display.inputs();
         List<Point> points = new ArrayList<>();
         for (int i = 0, size = ingredients.size(), xOffset = size < 3 ? (3 - size) * 19 / 2 : 0; i < size; i++) {
-            points.add(new Point(bounds.x + 17 + xOffset + (i % 3) * 19, bounds.y + 56 - (i / 3) * 19));
+            points.add(new Point(bounds.x + 17 + xOffset + i % 3 * 19, bounds.y + 56 - i / 3 * 19));
         }
         Point output = new Point(bounds.x + 147, bounds.y + 56);
         widgets.add(Widgets.createDrawableWidget((GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) -> {

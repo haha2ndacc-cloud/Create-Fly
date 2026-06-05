@@ -10,7 +10,7 @@ public sealed interface AbstractVariant {
 
         public AbstractItem(Item item) {
             this.item = item;
-            this.hashCode = item.hashCode();
+            hashCode = item.hashCode();
         }
 
         @Override
@@ -34,7 +34,7 @@ public sealed interface AbstractVariant {
 
         public AbstractFluid(Fluid fluid) {
             this.fluid = fluid;
-            this.hashCode = fluid.hashCode();
+            hashCode = fluid.hashCode();
         }
 
         @Override

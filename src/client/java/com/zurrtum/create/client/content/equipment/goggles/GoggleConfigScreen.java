@@ -47,8 +47,8 @@ public class GoggleConfigScreen extends AbstractSimiScreen {
 
     @Override
     protected void init() {
-        this.width = minecraft.getWindow().getGuiScaledWidth();
-        this.height = minecraft.getWindow().getGuiScaledHeight();
+        width = minecraft.getWindow().getGuiScaledWidth();
+        height = minecraft.getWindow().getGuiScaledHeight();
 
         CClient client = AllConfigs.client();
         offsetX = client.overlayOffsetX.get();
@@ -75,8 +75,8 @@ public class GoggleConfigScreen extends AbstractSimiScreen {
     }
 
     private void updateOffset(double windowX, double windowY) {
-        offsetX = (int) (windowX - (this.width / 2));
-        offsetY = (int) (windowY - (this.height / 2));
+        offsetX = (int) (windowX - width / 2);
+        offsetY = (int) (windowY - height / 2);
 
         int titleLinesCount = 1;
         int tooltipTextWidth = 0;
@@ -94,14 +94,14 @@ public class GoggleConfigScreen extends AbstractSimiScreen {
             }
         }
 
-        offsetX = Mth.clamp(offsetX, -(width / 2) - 5, (width / 2) - tooltipTextWidth - 20);
-        offsetY = Mth.clamp(offsetY, -(height / 2) + 17, (height / 2) - tooltipHeight + 5);
+        offsetX = Mth.clamp(offsetX, -(width / 2) - 5, width / 2 - tooltipTextWidth - 20);
+        offsetY = Mth.clamp(offsetY, -(height / 2) + 17, height / 2 - tooltipHeight + 5);
     }
 
     @Override
     protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
-        int posX = this.width / 2 + offsetX;
-        int posY = this.height / 2 + offsetY;
+        int posX = width / 2 + offsetX;
+        int posY = height / 2 + offsetY;
         graphics.tooltip(
             font,
             tooltip.stream().map(Component::getVisualOrderText).map(ClientTooltipComponent::create)

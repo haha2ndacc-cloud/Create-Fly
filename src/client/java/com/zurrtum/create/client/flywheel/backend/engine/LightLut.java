@@ -22,7 +22,7 @@ public final class LightLut {
 
     public void prune() {
         // Maybe this could be done better incrementally?
-        indices.prune((middle) -> middle.prune(IntLayer::prune));
+        indices.prune(middle -> middle.prune(IntLayer::prune));
     }
 
     public void remove(long section) {
@@ -57,8 +57,8 @@ public final class LightLut {
     }
 
     public static final class Layer<T> {
-        private boolean hasBase = false;
-        private int base = 0;
+        private boolean hasBase;
+        private int base;
         private @Nullable Object[] nextLayer = new Object[0];
 
         public void fillLut(IntArrayList lut, BiConsumer<T, IntArrayList> inner) {
@@ -224,8 +224,8 @@ public final class LightLut {
     }
 
     public static final class IntLayer {
-        private boolean hasBase = false;
-        private int base = 0;
+        private boolean hasBase;
+        private int base;
         private int[] indices = new int[0];
 
         public void fillLut(IntArrayList lut) {

@@ -25,10 +25,10 @@ public class BakedQuadMixin implements NormalsBakedQuad {
 
     @Override
     public void create$setNormals(Vector3fc normal) {
-        this.normal0 = normal;
-        this.normal1 = normal;
-        this.normal2 = normal;
-        this.normal3 = normal;
+        normal0 = normal;
+        normal1 = normal;
+        normal2 = normal;
+        normal3 = normal;
     }
 
     @Override

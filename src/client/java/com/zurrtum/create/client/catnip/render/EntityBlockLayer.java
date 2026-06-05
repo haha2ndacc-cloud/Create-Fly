@@ -37,6 +37,7 @@ public class EntityBlockLayer extends AbstractEntityBlockLayer {
         }
     }
 
+    @Override
     public void recycle() {
         template.recycle(colors, uvs, lights);
         pool.addLast(this);

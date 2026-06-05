@@ -73,7 +73,7 @@ public class PonderLevel extends SchematicRenderLevel {
     int overrideLight;
     @Nullable Selection mask;
     boolean currentlyTickingEntities;
-    int entity_counter = 0;
+    int entity_counter;
 
     public PonderLevel(BlockPos anchor, Level original, ParticleResources particleResources) {
         super(anchor, original);
@@ -163,11 +163,11 @@ public class PonderLevel extends SchematicRenderLevel {
     }
 
     public void pushFakeLight(int light) {
-        this.overrideLight = light;
+        overrideLight = light;
     }
 
     public void popLight() {
-        this.overrideLight = -1;
+        overrideLight = -1;
     }
 
     @Override
@@ -180,7 +180,7 @@ public class PonderLevel extends SchematicRenderLevel {
     }
 
     public void clearMask() {
-        this.mask = null;
+        mask = null;
     }
 
     @Override
@@ -255,7 +255,7 @@ public class PonderLevel extends SchematicRenderLevel {
             entity.zOld = entity.getZ();
             entity.tick();
 
-            if (entity.getY() <= -.5f) {
+            if (entity.getY() <= -0.5f) {
                 entity.discard();
             }
 
@@ -319,7 +319,7 @@ public class PonderLevel extends SchematicRenderLevel {
     }
 
     protected void onBEAdded(BlockEntity blockEntity, BlockPos pos) {
-        super.onBEadded(blockEntity, pos);
+        onBEadded(blockEntity, pos);
         if (!(blockEntity instanceof VirtualBlockEntity virtualBlockEntity)) {
             return;
         }
@@ -424,7 +424,7 @@ public class PonderLevel extends SchematicRenderLevel {
                 double e = blockHitResult2 == null ? Double.MAX_VALUE :
                     innerContext.getFrom().distanceToSqr(blockHitResult2.getLocation());
                 return d <= e ? blockHitResult : blockHitResult2;
-            }, (innerContext) -> {
+            }, innerContext -> {
                 Vec3 vec3d = innerContext.getFrom().subtract(innerContext.getTo());
                 return BlockHitResult.miss(
                     innerContext.getTo(),

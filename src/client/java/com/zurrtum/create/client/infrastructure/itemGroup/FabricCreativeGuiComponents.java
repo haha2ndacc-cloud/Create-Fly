@@ -55,27 +55,27 @@ public class FabricCreativeGuiComponents {
         final Type type;
 
         public ItemGroupButtonWidget(int x, int y, Type type, FabricCreativeInventoryScreen screen) {
-            super(x, y, 10, 12, type.text, (bw) -> type.clickConsumer.accept(screen), Button.DEFAULT_NARRATION);
+            super(x, y, 10, 12, type.text, bw -> type.clickConsumer.accept(screen), DEFAULT_NARRATION);
             this.type = type;
             this.screen = screen;
         }
 
         @Override
         protected void extractContents(GuiGraphicsExtractor drawContext, int mouseX, int mouseY, float delta) {
-            this.active = type.isEnabled.test(screen);
-            this.visible = screen.fabric_hasAdditionalPages();
+            active = type.isEnabled.test(screen);
+            visible = screen.fabric_hasAdditionalPages();
 
-            if (!this.visible) {
+            if (!visible) {
                 return;
             }
 
-            int u = active && this.isHovered() ? 20 : 0;
+            int u = active && isHovered() ? 20 : 0;
             int v = active ? 0 : 12;
             drawContext.blit(
                 RenderPipelines.GUI_TEXTURED,
                 BUTTON_TEX,
-                this.getX(),
-                this.getY(),
+                getX(),
+                getY(),
                 u + (type == Type.NEXT ? 10 : 0),
                 v,
                 10,
@@ -84,7 +84,7 @@ public class FabricCreativeGuiComponents {
                 256
             );
 
-            if (this.isHovered()) {
+            if (isHovered()) {
                 drawContext.setTooltipForNextFrame(
                     Minecraft.getInstance().font,
                     Component.translatable(

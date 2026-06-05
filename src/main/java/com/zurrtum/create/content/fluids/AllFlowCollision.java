@@ -43,9 +43,8 @@ public class AllFlowCollision {
         public boolean equals(Object o) {
             if (o instanceof Entry entry) {
                 return entry.a == a && entry.b == b;
-            } else {
-                return false;
             }
+            return false;
         }
 
         @Override

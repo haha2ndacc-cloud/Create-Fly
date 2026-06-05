@@ -26,12 +26,12 @@ public class TrainCargoManager extends MountedStorageManager {
     @Override
     public void initialize() {
         super.initialize();
-        this.items = new CargoInvWrapper(this.items);
-        this.allItems = this.items;
-        if (this.fuelItems != null) {
-            this.fuelItems = new CargoInvWrapper(this.fuelItems);
+        items = new CargoInvWrapper(items);
+        allItems = items;
+        if (fuelItems != null) {
+            fuelItems = new CargoInvWrapper(fuelItems);
         }
-        this.fluids = new CargoTankWrapper(this.fluids);
+        fluids = new CargoTankWrapper(fluids);
     }
 
     @Override

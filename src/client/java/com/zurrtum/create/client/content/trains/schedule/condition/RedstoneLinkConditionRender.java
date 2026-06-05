@@ -24,21 +24,22 @@ public class RedstoneLinkConditionRender implements IScheduleInput<RedstoneLinkC
     public Pair<ItemStack, Component> getSummary(RedstoneLinkCondition input) {
         return Pair.of(
             AllItems.REDSTONE_LINK.getDefaultInstance(),
-            input.lowActivation() ? CreateLang.translateDirect("schedule.condition.redstone_link_off") : CreateLang.translateDirect(
-                "schedule.condition.redstone_link_on")
+            input.lowActivation() ? CreateLang.translateDirect("schedule.condition.redstone_link_off") :
+                CreateLang.translateDirect("schedule.condition.redstone_link_on")
         );
     }
 
     @Override
     public List<Component> getSecondLineTooltip(int slot) {
-        return ImmutableList.of(CreateLang.translateDirect(slot == 0 ? "logistics.firstFrequency" : "logistics.secondFrequency")
-            .withStyle(ChatFormatting.RED));
+        return ImmutableList.of(CreateLang.translateDirect(
+            slot == 0 ? "logistics.firstFrequency" : "logistics.secondFrequency").withStyle(ChatFormatting.RED));
     }
 
     @Override
     public List<Component> getTitleAs(RedstoneLinkCondition input, String type) {
         return ImmutableList.of(
-            CreateLang.translateDirect("schedule.condition.redstone_link.frequency_" + (input.lowActivation() ? "unpowered" : "powered")),
+            CreateLang.translateDirect("schedule.condition.redstone_link.frequency_" + (input.lowActivation() ?
+                "unpowered" : "powered")),
             Component.literal(" #1 ").withStyle(ChatFormatting.GRAY)
                 .append(input.freq.getFirst().getStack().getHoverName().copy().withStyle(ChatFormatting.DARK_AQUA)),
             Component.literal(" #2 ").withStyle(ChatFormatting.GRAY)

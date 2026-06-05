@@ -46,7 +46,7 @@ public abstract class LaunchedItem {
     }
 
     private static int ticksForDistance(BlockPos start, BlockPos target) {
-        return (int) (Math.max(10, Math.sqrt(Math.sqrt(target.distSqr(start))) * 4f));
+        return (int) Math.max(10, Math.sqrt(Math.sqrt(target.distSqr(start))) * 4.0f);
     }
 
     LaunchedItem() {
@@ -55,8 +55,8 @@ public abstract class LaunchedItem {
     private LaunchedItem(BlockPos target, ItemStack stack, int ticksLeft, int total) {
         this.target = target;
         this.stack = stack;
-        this.totalTicks = total;
-        this.ticksRemaining = ticksLeft;
+        totalTicks = total;
+        ticksRemaining = ticksLeft;
     }
 
     public boolean update(Level world) {
@@ -198,11 +198,8 @@ public abstract class LaunchedItem {
             int[] intArray = view.getIntArray("Casing").orElseGet(() -> new int[0]);
             casings = new CasingType[length];
             for (int i = 0; i < casings.length; i++) {
-                casings[i] = i >= intArray.length ? CasingType.NONE : CasingType.values()[Mth.clamp(
-                    intArray[i],
-                    0,
-                    CasingType.values().length - 1
-                )];
+                casings[i] = i >= intArray.length ? CasingType.NONE :
+                    CasingType.values()[Mth.clamp(intArray[i], 0, CasingType.values().length - 1)];
             }
             super.read(view, holderGetter);
         }
@@ -210,7 +207,7 @@ public abstract class LaunchedItem {
         public ForBelt(BlockPos start, BlockPos target, ItemStack stack, BlockState state, CasingType[] casings) {
             super(start, target, stack, state, null);
             this.casings = casings;
-            this.length = casings.length;
+            length = casings.length;
         }
 
         @Override
@@ -218,8 +215,8 @@ public abstract class LaunchedItem {
             boolean isStart = state.getValue(BeltBlock.PART) == BeltPart.START;
             BlockPos offset = BeltBlock.nextSegmentPosition(state, BlockPos.ZERO, isStart);
             int i = length - 1;
-            Axis axis = state.getValue(BeltBlock.SLOPE) == BeltSlope.SIDEWAYS ? Axis.Y : state.getValue(BeltBlock.HORIZONTAL_FACING)
-                .getClockWise().getAxis();
+            Axis axis = state.getValue(BeltBlock.SLOPE) == BeltSlope.SIDEWAYS ? Axis.Y :
+                state.getValue(BeltBlock.HORIZONTAL_FACING).getClockWise().getAxis();
             world.setBlockAndUpdate(
                 target,
                 AllBlocks.SHAFT.defaultBlockState().setValue(AbstractSimpleShaftBlock.AXIS, axis)

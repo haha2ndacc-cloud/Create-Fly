@@ -76,13 +76,13 @@ public abstract class LinearActuatorBlockEntity extends KineticBlockEntity imple
         }
 
         if (level.isClientSide()) {
-            clientOffsetDiff *= .75f;
+            clientOffsetDiff *= 0.75f;
         }
 
         if (waitingForSpeedChange) {
             if (movedContraption != null) {
                 if (level.isClientSide()) {
-                    float syncSpeed = clientOffsetDiff / 2f;
+                    float syncSpeed = clientOffsetDiff / 2.0f;
                     offset += syncSpeed;
                     movedContraption.setContraptionMotion(toMotionVector(syncSpeed));
                     return;
@@ -101,17 +101,16 @@ public abstract class LinearActuatorBlockEntity extends KineticBlockEntity imple
                     sendData();
                 }
                 return;
-            } else {
-                if (getSpeed() != 0) {
-                    try {
-                        assemble();
-                        lastException = null;
-                    } catch (AssemblyException e) {
-                        lastException = e;
-                    }
-                }
-                sendData();
             }
+            if (getSpeed() != 0) {
+                try {
+                    assemble();
+                    lastException = null;
+                } catch (AssemblyException e) {
+                    lastException = e;
+                }
+            }
+            sendData();
             return;
         }
 
@@ -183,11 +182,11 @@ public abstract class LinearActuatorBlockEntity extends KineticBlockEntity imple
     }
 
     protected int getGridOffset(float offset) {
-        return Mth.clamp((int) (offset + .5f), 0, getExtensionRange());
+        return Mth.clamp((int) (offset + 0.5f), 0, getExtensionRange());
     }
 
     public float getInterpolatedOffset(float partialTicks) {
-        return Mth.clamp(offset + (partialTicks - .5f) * getMovementSpeed(), 0, getExtensionRange());
+        return Mth.clamp(offset + (partialTicks - 0.5f) * getMovementSpeed(), 0, getExtensionRange());
     }
 
     @Override
@@ -217,7 +216,7 @@ public abstract class LinearActuatorBlockEntity extends KineticBlockEntity imple
 
     @Override
     public void remove() {
-        this.remove = true;
+        remove = true;
         if (!level.isClientSide()) {
             disassemble();
         }
@@ -299,7 +298,7 @@ public abstract class LinearActuatorBlockEntity extends KineticBlockEntity imple
             return;
         }
         int initial = getInitialOffset();
-        if ((int) (offset + .5f) != initial && getMovementMode() == MovementMode.MOVE_PLACE_RETURNED) {
+        if ((int) (offset + 0.5f) != initial && getMovementMode() == MovementMode.MOVE_PLACE_RETURNED) {
             waitingForSpeedChange = true;
             return;
         }
@@ -350,7 +349,7 @@ public abstract class LinearActuatorBlockEntity extends KineticBlockEntity imple
     }
 
     public float getMovementSpeed() {
-        float movementSpeed = Mth.clamp(convertToLinear(getSpeed()), -.49f, .49f) + clientOffsetDiff / 2f;
+        float movementSpeed = Mth.clamp(convertToLinear(getSpeed()), -0.49f, 0.49f) + clientOffsetDiff / 2.0f;
         if (level.isClientSide()) {
             movementSpeed *= AllClientHandle.INSTANCE.getServerSpeed();
         }
@@ -384,9 +383,9 @@ public abstract class LinearActuatorBlockEntity extends KineticBlockEntity imple
 
     @Override
     public void attach(ControlledContraptionEntity contraption) {
-        this.movedContraption = contraption;
+        movedContraption = contraption;
         if (!level.isClientSide()) {
-            this.running = true;
+            running = true;
             sendData();
         }
     }

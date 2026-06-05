@@ -24,9 +24,9 @@ public class GenericItemEmptying {
             return true;
         }
 
-        if (world.isClientSide() ? world.recipeAccess().propertySet(AllRecipeSets.EMPTYING)
-            .test(stack) : ((ServerLevel) world).recipeAccess()
-            .getRecipeFor(AllRecipeTypes.EMPTYING, new SingleRecipeInput(stack), world).isPresent()) {
+        if (world.isClientSide() ? world.recipeAccess().propertySet(AllRecipeSets.EMPTYING).test(stack) :
+            ((ServerLevel) world).recipeAccess()
+                .getRecipeFor(AllRecipeTypes.EMPTYING, new SingleRecipeInput(stack), world).isPresent()) {
             return true;
         }
 

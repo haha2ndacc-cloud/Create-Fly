@@ -26,10 +26,10 @@ public class GameProtocolsMixin {
         Operation<SimpleUnboundProtocol<ClientGamePacketListener, RegistryFriendlyByteBuf>> original
     ) {
         return original.call(
-            id, (Consumer<ProtocolInfoBuilder<ClientGamePacketListener, RegistryFriendlyByteBuf, Unit>>) (builder -> {
+            id, (Consumer<ProtocolInfoBuilder<ClientGamePacketListener, RegistryFriendlyByteBuf, Unit>>) builder -> {
                 config.accept(builder);
                 AllPackets.S2C.forEach(builder::addPacket);
-            })
+            }
         );
     }
 
@@ -41,10 +41,10 @@ public class GameProtocolsMixin {
     ) {
         return original.call(
             id,
-            (Consumer<ProtocolInfoBuilder<ServerGamePacketListener, RegistryFriendlyByteBuf, GameProtocols.Context>>) (builder -> {
+            (Consumer<ProtocolInfoBuilder<ServerGamePacketListener, RegistryFriendlyByteBuf, GameProtocols.Context>>) builder -> {
                 config.accept(builder);
                 AllPackets.C2S.forEach(builder::addPacket);
-            })
+            }
         );
     }
 }

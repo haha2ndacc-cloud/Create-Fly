@@ -81,9 +81,9 @@ public class FluidRenderHelper {
         boolean renderBottom,
         boolean invertGasses
     ) {
-        int blockLightIn = (light >> 4) & 0xF;
+        int blockLightIn = light >> 4 & 0xF;
         int luminosity = Math.max(blockLightIn, lightEmission);
-        light = (light & 0xF00000) | luminosity << 4;
+        light = light & 0xF00000 | luminosity << 4;
 
         //TODO
         //        Vec3 center = new Vec3(xMin + (xMax - xMin) / 2, yMin + (yMax - yMin) / 2, zMin + (zMax - zMin) / 2);

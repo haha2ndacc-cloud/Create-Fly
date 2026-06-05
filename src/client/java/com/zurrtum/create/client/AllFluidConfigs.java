@@ -156,12 +156,12 @@ public class AllFluidConfigs {
         fog(
             AllFluids.HONEY,
             0xEAAE2F,
-            () -> 96.0f * (1f / 8f * AllConfigs.client().honeyTransparencyMultiplier.getF())
+            () -> 96.0f * (1.0f / 8.0f * AllConfigs.client().honeyTransparencyMultiplier.getF())
         );
         fog(
             AllFluids.CHOCOLATE,
             0x622020,
-            () -> 96.0f * (1f / 32f * AllConfigs.client().chocolateTransparencyMultiplier.getF())
+            () -> 96.0f * (1.0f / 32.0f * AllConfigs.client().chocolateTransparencyMultiplier.getF())
         );
         tint(
             AllFluids.POTION, (fluid, component) -> {

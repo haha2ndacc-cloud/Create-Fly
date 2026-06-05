@@ -222,7 +222,9 @@ public class WaterWheelRenderer implements BlockEntityRenderer<WaterWheelBlockEn
     }
 
     public enum Variant {
-        SMALL(AllPartialModels.WATER_WHEEL), LARGE(AllPartialModels.LARGE_WATER_WHEEL), LARGE_EXTENSION(AllPartialModels.LARGE_WATER_WHEEL_EXTENSION);
+        SMALL(AllPartialModels.WATER_WHEEL),
+        LARGE(AllPartialModels.LARGE_WATER_WHEEL),
+        LARGE_EXTENSION(AllPartialModels.LARGE_WATER_WHEEL_EXTENSION);
 
         private final PartialModel partial;
 

@@ -38,17 +38,17 @@ public class StagingBuffer {
     /**
      * The position in the buffer at the time of the last flush.
      */
-    private long start = 0;
+    private long start;
     /**
      * The current position in the buffer,
      * incremented as transfers are enqueued.
      */
-    private long pos = 0;
+    private long pos;
     /**
      * The number of bytes used in the buffer since the last flush,
      * decremented as transfers are enqueued.
      */
-    private long usedCapacity = 0;
+    private long usedCapacity;
 
     /**
      * The number of bytes available in the buffer.

@@ -101,7 +101,7 @@ public class ElevatorPulleyBlockEntity extends PulleyBlockEntity {
         }
 
         double diff = targetLevel - y - ec.contactYOffset;
-        if (Math.abs(diff) > 1f / 128) {
+        if (Math.abs(diff) > 1.0f / 128) {
             diff *= 0.25f;
         }
         movedContraption.setPos(movedContraption.position().add(0, diff, 0));
@@ -200,7 +200,7 @@ public class ElevatorPulleyBlockEntity extends PulleyBlockEntity {
 
         arrived = Math.abs(diff) < 0.5f;
 
-        if (speed > 1 / 1024f && !level.isClientSide()) {
+        if (speed > 1 / 1024.0f && !level.isClientSide()) {
             setChanged();
         }
 
@@ -313,10 +313,10 @@ public class ElevatorPulleyBlockEntity extends PulleyBlockEntity {
                     pos = pos.offset(anchor);
                     if (level.getBlockEntity(new BlockPos(
                         pos.getX(),
-                        this.worldPosition.getY(),
+                        worldPosition.getY(),
                         pos.getZ()
                     )) instanceof ElevatorPulleyBlockEntity pbe) {
-                        pbe.startMirroringOther(this.worldPosition);
+                        pbe.startMirroringOther(worldPosition);
                     }
                 }
 

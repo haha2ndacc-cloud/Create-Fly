@@ -49,9 +49,8 @@ public class AllRecipeSets {
             key, recipe -> {
                 if (type.isInstance(recipe)) {
                     return Optional.of(getter.apply((T) recipe));
-                } else {
-                    return Optional.empty();
                 }
+                return Optional.empty();
             }
         );
     }

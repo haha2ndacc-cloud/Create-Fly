@@ -64,7 +64,7 @@ public class DrillBlock extends DirectionalKineticBlock implements IBE<DrillBloc
         if (entityIn instanceof ItemEntity) {
             return;
         }
-        if (!new AABB(pos).deflate(.1f).intersects(entityIn.getBoundingBox())) {
+        if (!new AABB(pos).deflate(0.1f).intersects(entityIn.getBoundingBox())) {
             return;
         }
         withBlockEntityDo(
@@ -117,7 +117,8 @@ public class DrillBlock extends DirectionalKineticBlock implements IBE<DrillBloc
 
     @Override
     public FluidState getFluidState(BlockState state) {
-        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
+        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) :
+            Fluids.EMPTY.defaultFluidState();
     }
 
     @Override
@@ -219,12 +220,11 @@ public class DrillBlock extends DirectionalKineticBlock implements IBE<DrillBloc
 
             if (directions.isEmpty()) {
                 return PlacementOffset.fail();
-            } else {
-                return PlacementOffset.success(
-                    pos.relative(directions.getFirst()),
-                    s -> s.setValue(FACING, state.getValue(FACING))
-                );
             }
+            return PlacementOffset.success(
+                pos.relative(directions.getFirst()),
+                s -> s.setValue(FACING, state.getValue(FACING))
+            );
         }
     }
 

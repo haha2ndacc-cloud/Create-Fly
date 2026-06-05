@@ -12,7 +12,7 @@ import java.util.Objects;
 public class FluidInventorySlotWrapper extends SingleFluidStackStorage {
     private final FluidInventoryStorageImpl storage;
     final int slot;
-    private @Nullable FluidStack lastReleasedSnapshot = null;
+    private @Nullable FluidStack lastReleasedSnapshot;
 
     FluidInventorySlotWrapper(FluidInventoryStorageImpl storage, int slot) {
         this.storage = storage;

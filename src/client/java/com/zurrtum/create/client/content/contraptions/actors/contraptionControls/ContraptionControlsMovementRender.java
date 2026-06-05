@@ -66,7 +66,7 @@ public class ContraptionControlsMovementRender implements MovementRenderBehaviou
             context.contraption,
             pos
         ) instanceof ContraptionControlsBlockEntity cbe) {
-            buttondepth = -1 / 24f * cbe.button.getValue(AnimationTickHolder.getPartialTicks(renderWorld));
+            buttondepth = -1 / 24.0f * cbe.button.getValue(AnimationTickHolder.getPartialTicks(renderWorld));
         } else {
             buttondepth = 0;
         }
@@ -93,22 +93,22 @@ public class ContraptionControlsMovementRender implements MovementRenderBehaviou
         int brightColor = couple.getFirst();
         int darkColor = couple.getSecond();
         state.color = Color.mixColors(brightColor, darkColor, flicker / 4) | 0xFF000000;
-        state.offsetZ = buttondepth - .25f;
+        state.offsetZ = buttondepth - 0.25f;
         if (!hideText) {
-            state.shadowColor = Color.mixColors(darkColor, 0, .35f) | 0xFF000000;
+            state.shadowColor = Color.mixColors(darkColor, 0, 0.35f) | 0xFF000000;
             int actualWidth = textRenderer.width(text);
             int width = Math.max(actualWidth, 12);
-            state.textScale = 1 / (5f * (width - .5f));
+            state.textScale = 1 / (5.0f * (width - 0.5f));
             state.textX = (float) Math.max(0, width - actualWidth) / 2;
-            state.textY = (width - 8f) / 2;
+            state.textY = (width - 8.0f) / 2;
             state.text = Component.literal(text).getVisualOrderText();
         }
         if (!hideDescription) {
             int actualWidth = textRenderer.width(description);
             int width = Math.max(actualWidth, 55);
-            state.descriptionScale = 1 / (3f * (width - .5f));
+            state.descriptionScale = 1 / (3.0f * (width - 0.5f));
             state.descriptionX = (float) Math.max(0, width - actualWidth) / 2;
-            state.descriptionY = (width - 8f) / 2;
+            state.descriptionY = (width - 8.0f) / 2;
             state.description = Component.literal(description).getVisualOrderText();
         }
         return state;
@@ -174,7 +174,7 @@ public class ContraptionControlsMovementRender implements MovementRenderBehaviou
                 }
                 if (description != null) {
                     matrices.pushPose();
-                    matrices.translate(-.0635f, 0.06f, offsetZ);
+                    matrices.translate(-0.0635f, 0.06f, offsetZ);
                     matrices.scale(descriptionScale, -descriptionScale, descriptionScale);
                     queue.submitText(
                         matrices,

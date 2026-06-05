@@ -4,11 +4,12 @@ public class SpanHighlightLine implements ErrorLine {
     private final String line;
 
     public SpanHighlightLine(int firstCol, int lastCol) {
-        this.line = generateUnderline(firstCol, lastCol);
+        line = generateUnderline(firstCol, lastCol);
     }
 
+    @Override
     public String right() {
-        return this.line;
+        return line;
     }
 
     public static String generateUnderline(int firstCol, int lastCol) {

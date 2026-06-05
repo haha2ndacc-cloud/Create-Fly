@@ -49,6 +49,7 @@ public class ItemThroughputDisplaySource extends AccumulatedItemCountDisplaySour
         return Component.literal(format.format(rate).replace("\u00A0", " "));
     }
 
+    @Override
     public void itemReceived(DisplayLinkBlockEntity be, int amount) {
         if (be.getBlockState().getValueOrElse(DisplayLinkBlock.POWERED, true)) {
             return;

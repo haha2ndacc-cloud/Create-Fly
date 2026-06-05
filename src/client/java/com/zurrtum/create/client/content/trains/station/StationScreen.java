@@ -219,7 +219,7 @@ public class StationScreen extends AbstractStationScreen {
                 if (trainIconWidth > 130) {
                     targetPos -= trainIconWidth - 130;
                 }
-                float f = (float) (imminentTrain.navigation.distanceToDestination / 15f);
+                float f = (float) (imminentTrain.navigation.distanceToDestination / 15.0f);
                 if (trainPresent()) {
                     f = 0;
                 }
@@ -238,7 +238,7 @@ public class StationScreen extends AbstractStationScreen {
             colorTypeScroll.visible = false;
             colorTypeScroll.active = false;
             disassembleTrainButton.active = false;
-            float f = 1 - (leavingAnimation / 80f);
+            float f = 1 - leavingAnimation / 80.0f;
             trainPosition.setValue(targetPos + f * f * f * (background.getWidth() - targetPos + 5));
             leavingAnimation--;
             if (leavingAnimation > 0) {
@@ -268,7 +268,7 @@ public class StationScreen extends AbstractStationScreen {
             dropScheduleButton.getToolTip().clear();
         }
 
-        float f = trainAtStation ? 0 : (float) (train.navigation.distanceToDestination / 30f);
+        float f = trainAtStation ? 0 : (float) (train.navigation.distanceToDestination / 30.0f);
         trainPosition.setValue(targetPos - (targetPos + trainIconWidth) * f);
     }
 
@@ -371,7 +371,7 @@ public class StationScreen extends AbstractStationScreen {
         int trainColorIndex = colorTypeScroll.getState();
         int colorRow = trainColorIndex / 4;
         int colorCol = trainColorIndex % 4;
-        int rotation = (AnimationTickHolder.getTicks() / 5) % 8;
+        int rotation = AnimationTickHolder.getTicks() / 5 % 8;
 
         for (int slice = 0; slice < 3; slice++) {
             int row = slice == 0 ? 1 : slice == 2 ? 2 : 3;

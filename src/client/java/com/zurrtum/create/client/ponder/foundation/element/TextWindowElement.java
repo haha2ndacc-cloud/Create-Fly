@@ -39,7 +39,7 @@ public class TextWindowElement extends AnimatedOverlayElementBase {
 
     @Nullable Vec3 vec;
 
-    boolean nearScene = false;
+    boolean nearScene;
     PonderPalette palette = PonderPalette.WHITE;
 
     public TextElementBuilder builder(PonderScene scene) {
@@ -56,7 +56,7 @@ public class TextWindowElement extends AnimatedOverlayElementBase {
 
         @Override
         public Builder colored(PonderPalette color) {
-            TextWindowElement.this.palette = color;
+            palette = color;
             return this;
         }
 
@@ -108,7 +108,7 @@ public class TextWindowElement extends AnimatedOverlayElementBase {
 
         @Override
         public Builder placeNearTarget() {
-            TextWindowElement.this.nearScene = true;
+            nearScene = true;
             return this;
         }
 
@@ -131,20 +131,18 @@ public class TextWindowElement extends AnimatedOverlayElementBase {
             bakedText = textGetter.get();
         }
 
-        if (fade < 1 / 16f) {
+        if (fade < 1 / 16.0f) {
             return;
         }
         SceneTransform transform = scene.getTransform();
-        Vec2 sceneToScreen = vec != null ? transform.sceneToScreen(vec, partialTicks) : new Vec2(
-            screen.width / 2f,
-            (screen.height - 200) / 2f + y - 8
-        );
+        Vec2 sceneToScreen = vec != null ? transform.sceneToScreen(vec, partialTicks) :
+            new Vec2(screen.width / 2.0f, (screen.height - 200) / 2.0f + y - 8);
 
         boolean settled = transform.xRotation.settled() && transform.yRotation.settled();
         float pY = settled ? (int) sceneToScreen.y : sceneToScreen.y;
 
-        float yDiff = (screen.height / 2f - sceneToScreen.y - 10) / 100f;
-        float targetX = (screen.width * Mth.lerp(yDiff * yDiff, 6f / 8, 5f / 8));
+        float yDiff = (screen.height / 2.0f - sceneToScreen.y - 10) / 100.0f;
+        float targetX = screen.width * Mth.lerp(yDiff * yDiff, 6.0f / 8, 5.0f / 8);
 
         if (nearScene) {
             targetX = Math.min(targetX, sceneToScreen.x + 50);

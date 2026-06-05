@@ -146,7 +146,7 @@ public class ElevatorPulleyVisual extends ShaftVisual<ElevatorPulleyBlockEntity>
     private void animateBelt(float offset) {
         belt.resetCount();
 
-        for (int i = 0; i < offset - .25f; i++) {
+        for (int i = 0; i < offset - 0.25f; i++) {
             var segment = belt.get().position(getVisualPosition()).shift(0, -(offset - i), 0);
 
             segment.offsetV = offset;
@@ -159,9 +159,9 @@ public class ElevatorPulleyVisual extends ShaftVisual<ElevatorPulleyBlockEntity>
 
     private void animateHalfBelt(float offset) {
         float f = offset % 1;
-        if (f < .25f || f > .75f) {
+        if (f < 0.25f || f > 0.75f) {
             halfBelt.setVisible(true);
-            halfBelt.position(getVisualPosition()).shift(0, -(f > .75f ? f - 1 : f), 0);
+            halfBelt.position(getVisualPosition()).shift(0, -(f > 0.75f ? f - 1 : f), 0);
 
             halfBelt.offsetV = offset;
 

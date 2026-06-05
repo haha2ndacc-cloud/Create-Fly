@@ -93,28 +93,28 @@ public class ItemDisplayVisual extends AbstractEntityVisual<Display.ItemDisplay>
             case FIXED:
                 instance.pose.rotateYXZ(
                     -0.017453292F * entityYRot(entity, partialTick),
-                    ((float) Math.PI / 180F) * entityXRot(entity, partialTick),
+                    (float) Math.PI / 180.0F * entityXRot(entity, partialTick),
                     0.0F
                 );
                 break;
             case HORIZONTAL:
                 instance.pose.rotateYXZ(
                     -0.017453292F * entityYRot(entity, partialTick),
-                    ((float) Math.PI / 180F) * cameraXRot(camera),
+                    (float) Math.PI / 180.0F * cameraXRot(camera),
                     0.0F
                 );
                 break;
             case VERTICAL:
                 instance.pose.rotateYXZ(
                     -0.017453292F * cameraYrot(camera),
-                    ((float) Math.PI / 180F) * entityXRot(entity, partialTick),
+                    (float) Math.PI / 180.0F * entityXRot(entity, partialTick),
                     0.0F
                 );
                 break;
             case CENTER:
                 instance.pose.rotateYXZ(
                     -0.017453292F * cameraYrot(camera),
-                    ((float) Math.PI / 180F) * cameraXRot(camera),
+                    (float) Math.PI / 180.0F * cameraXRot(camera),
                     0.0F
                 );
                 break;

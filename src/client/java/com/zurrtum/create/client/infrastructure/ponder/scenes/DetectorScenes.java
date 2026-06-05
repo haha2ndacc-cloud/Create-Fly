@@ -224,13 +224,13 @@ public class DetectorScenes {
         scene.addLazyKeyframe();
         scene.world().createItemOnBelt(util.grid().at(3, 0, 0), Direction.NORTH, ironIngot);
         scene.world().removeItemsFromBelt(util.grid().at(3, 0, 2));
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 8f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 8.0f);
         scene.idle(10);
 
-        Vec3 upper = util.vector().blockSurface(switchPos, Direction.NORTH).add(0, 3 / 16f, 0);
-        scene.overlay().showLine(PonderPalette.RED, upper.add(2 / 16f, 0, 0), upper.subtract(2 / 16f, 0, 0), 60);
+        Vec3 upper = util.vector().blockSurface(switchPos, Direction.NORTH).add(0, 3 / 16.0f, 0);
+        scene.overlay().showLine(PonderPalette.RED, upper.add(2 / 16.0f, 0, 0), upper.subtract(2 / 16.0f, 0, 0), 60);
         scene.overlay().showText(70).text("When the inventory content exceeds the upper threshold...")
-            .colored(PonderPalette.RED).pointAt(upper.subtract(2 / 16f, 0, 0)).placeNearTarget();
+            .colored(PonderPalette.RED).pointAt(upper.subtract(2 / 16.0f, 0, 0)).placeNearTarget();
 
         scene.idle(60);
         scene.world().removeItemsFromBelt(util.grid().at(3, 0, 2));
@@ -248,7 +248,7 @@ public class DetectorScenes {
         scene.world().toggleRedstonePower(outFunnel);
         scene.idle(15);
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 8f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 8.0f);
         for (int i = 0; i < 5; i++) {
             scene.idle(10);
             scene.world().createItemOnBelt(util.grid().at(3, 0, 4), Direction.NORTH, ironIngot);
@@ -260,12 +260,12 @@ public class DetectorScenes {
                 );
             }
         }
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 8f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 8.0f);
 
-        Vec3 lower = util.vector().blockSurface(switchPos, Direction.NORTH).add(0, -3 / 16f, 0);
-        scene.overlay().showLine(PonderPalette.GREEN, lower.add(2 / 16f, 0, 0), lower.subtract(2 / 16f, 0, 0), 60);
+        Vec3 lower = util.vector().blockSurface(switchPos, Direction.NORTH).add(0, -3 / 16.0f, 0);
+        scene.overlay().showLine(PonderPalette.GREEN, lower.add(2 / 16.0f, 0, 0), lower.subtract(2 / 16.0f, 0, 0), 60);
         scene.overlay().showText(70).text("The signal stays until the lower threshold is reached").attachKeyFrame()
-            .colored(PonderPalette.GREEN).pointAt(lower.subtract(2 / 16f, 0, 0)).placeNearTarget();
+            .colored(PonderPalette.GREEN).pointAt(lower.subtract(2 / 16.0f, 0, 0)).placeNearTarget();
         scene.idle(30);
 
         for (int i = 0; i < 3; i++) {
@@ -289,15 +289,15 @@ public class DetectorScenes {
         scene.idle(100);
 
         scene.addKeyframe();
-        scene.overlay().showLine(PonderPalette.GREEN, lower.add(2 / 16f, 0, 0), lower.subtract(2 / 16f, 0, 0), 105);
+        scene.overlay().showLine(PonderPalette.GREEN, lower.add(2 / 16.0f, 0, 0), lower.subtract(2 / 16.0f, 0, 0), 105);
         scene.idle(5);
-        scene.overlay().showLine(PonderPalette.RED, upper.add(2 / 16f, 0, 0), upper.subtract(2 / 16f, 0, 0), 100);
+        scene.overlay().showLine(PonderPalette.RED, upper.add(2 / 16.0f, 0, 0), upper.subtract(2 / 16.0f, 0, 0), 100);
         scene.idle(15);
         scene.overlay().showControls(util.vector().blockSurface(switchPos, Direction.UP), Pointing.DOWN, 60)
             .rightClick();
         scene.idle(7);
         scene.overlay().showText(70).text("The specific thresholds can be changed in the UI")
-            .pointAt(upper.subtract(2 / 16f, 0, 0)).placeNearTarget();
+            .pointAt(upper.subtract(2 / 16.0f, 0, 0)).placeNearTarget();
         scene.idle(80);
 
         scene.overlay().showCenteredScrollInput(switchPos, Direction.UP, 70);

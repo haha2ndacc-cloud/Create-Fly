@@ -8,7 +8,7 @@ public abstract class AbstractArena {
     // List of free indices.
     private final IntList freeStack = new IntArrayList();
     // Monotonic index, generally represents the size of the arena.
-    private int top = 0;
+    private int top;
 
     public AbstractArena(long elementSizeBytes) {
         this.elementSizeBytes = elementSizeBytes;

@@ -40,12 +40,12 @@ public record Pipeline(Identifier vertexMain, Identifier fragmentMain, InstanceA
         private Consumer<GlProgram> onLink;
 
         public Builder vertexMain(Identifier shader) {
-            this.vertexMain = shader;
+            vertexMain = shader;
             return this;
         }
 
         public Builder fragmentMain(Identifier shader) {
-            this.fragmentMain = shader;
+            fragmentMain = shader;
             return this;
         }
 

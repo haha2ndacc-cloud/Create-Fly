@@ -19,6 +19,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class SchematicTableBlockEntity extends SmartBlockEntity implements MenuProvider, IInteractionChecker, Clearable {
@@ -65,7 +66,7 @@ public class SchematicTableBlockEntity extends SmartBlockEntity implements MenuP
         }
 
         public void read(ValueInput view) {
-            java.util.Iterator<ItemStack> iterator = view.listOrEmpty("Inventory", ItemStack.OPTIONAL_CODEC).iterator();
+            Iterator<ItemStack> iterator = view.listOrEmpty("Inventory", ItemStack.OPTIONAL_CODEC).iterator();
             if (iterator.hasNext()) {
                 left = iterator.next();
                 if (iterator.hasNext()) {

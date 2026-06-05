@@ -41,11 +41,11 @@ public record DebugInfoSection(String name, ImmutableList<InfoElement> elements)
         public Builder(@Nullable Builder parent, String name) {
             this.parent = parent;
             this.name = name;
-            this.elements = ImmutableList.builder();
+            elements = ImmutableList.builder();
         }
 
         public Builder put(InfoElement element) {
-            this.elements.add(element);
+            elements.add(element);
             return this;
         }
 
@@ -74,7 +74,7 @@ public record DebugInfoSection(String name, ImmutableList<InfoElement> elements)
             if (parent == null) {
                 throw new IllegalStateException("Cannot finish the root section");
             }
-            parent.elements.add(this.build());
+            parent.elements.add(build());
             return parent;
         }
 
@@ -83,7 +83,7 @@ public record DebugInfoSection(String name, ImmutableList<InfoElement> elements)
         }
 
         public void buildTo(Consumer<DebugInfoSection> consumer) {
-            consumer.accept(this.build());
+            consumer.accept(build());
         }
     }
 }

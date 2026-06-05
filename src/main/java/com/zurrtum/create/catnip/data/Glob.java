@@ -51,10 +51,7 @@ public class Glob {
                     }
                 }
                 case '[' -> {
-                    if (next(globPattern, i) == ']' || (next(globPattern, i) == '!' && next(
-                        globPattern,
-                        i + 1
-                    ) == ']')) {
+                    if (next(globPattern, i) == ']' || next(globPattern, i) == '!' && next(globPattern, i + 1) == ']') {
                         throw new PatternSyntaxException("Cannot have set with no entries", globPattern, i);
                     }
 
@@ -193,9 +190,8 @@ public class Glob {
 
         if (inGroup) {
             throw new PatternSyntaxException("Missing '}'", globPattern, i - 1);
-        } else {
-            return regex.append('$').toString();
         }
+        return regex.append('$').toString();
     }
 
     public static String toRegexPattern(String globPattern, String defaultPatternIfError) {

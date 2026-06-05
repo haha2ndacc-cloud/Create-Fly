@@ -45,7 +45,10 @@ public class MouseHandlerMixin {
             minecraft,
             scaledYOffset
         ) || Create.SCHEMATIC_AND_QUILL_HANDLER.mouseScrolled(minecraft, scaledYOffset) || TrainHUD.onScroll(
-            scaledYOffset) || ElevatorControlsHandler.onScroll(minecraft, scaledYOffset)) {
+            scaledYOffset) || ElevatorControlsHandler.onScroll(
+            minecraft,
+            scaledYOffset
+        )) {
             ci.cancel();
         }
     }

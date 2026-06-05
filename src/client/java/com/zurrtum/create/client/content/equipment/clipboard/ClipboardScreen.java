@@ -56,7 +56,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
     int frameTick;
     PageButton forward;
     PageButton backward;
-    int currentPage = 0;
+    int currentPage;
     long lastClickTime;
     int lastIndex = -1;
 
@@ -74,7 +74,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
 
     public ClipboardScreen(int targetSlot, DataComponentMap components, @Nullable BlockPos pos) {
         this.targetSlot = targetSlot;
-        this.targetedBlock = pos;
+        targetedBlock = pos;
         reopenWith(components.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY));
     }
 
@@ -154,6 +154,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
         return pages.size();
     }
 
+    @Override
     public void tick() {
         super.tick();
         frameTick++;
@@ -170,8 +171,8 @@ public class ClipboardScreen extends AbstractSimiScreen {
         }
 
         Window window = minecraft.getWindow();
-        int mx = (int) (minecraft.mouseHandler.xpos() * (double) window.getGuiScaledWidth() / (double) window.getScreenWidth());
-        int my = (int) (minecraft.mouseHandler.ypos() * (double) window.getGuiScaledHeight() / (double) window.getScreenHeight());
+        int mx = (int) (minecraft.mouseHandler.xpos() * window.getGuiScaledWidth() / window.getScreenWidth());
+        int my = (int) (minecraft.mouseHandler.ypos() * window.getGuiScaledHeight() / window.getScreenHeight());
 
         mx -= guiLeft + 35;
         my -= guiTop + 41;
@@ -431,95 +432,99 @@ public class ClipboardScreen extends AbstractSimiScreen {
         if (input.isSelectAll()) {
             editContext.selectAll();
             return true;
-        } else if (input.isCopy()) {
+        }
+        if (input.isCopy()) {
             editContext.copy();
             return true;
-        } else if (input.isPaste()) {
+        }
+        if (input.isPaste()) {
             editContext.paste();
             return true;
-        } else if (input.isCut()) {
+        }
+        if (input.isCut()) {
             editContext.cut();
             return true;
-        } else {
-            switch (input.key()) {
-                case 257:
-                case 335:
-                    if (input.hasShiftDown()) {
-                        editContext.insertText("\n");
-                        return true;
-                    } else if (!input.hasControlDown()) {
-                        if (currentEntries.size() <= editingIndex + 1 || !currentEntries.get(editingIndex + 1).text.getString()
-                            .isEmpty()) {
-                            currentEntries.add(editingIndex + 1, new ClipboardEntry(false, Component.empty()));
-                        }
-                        editingIndex += 1;
-                        editContext.setCursorToEnd();
-                        if (validateTextForEntry(" ")) {
-                            return true;
-                        }
-                        currentEntries.remove(editingIndex);
-                        editingIndex -= 1;
-                        editContext.setCursorToEnd();
+        }
+        switch (input.key()) {
+            case 257:
+            case 335:
+                if (input.hasShiftDown()) {
+                    editContext.insertText("\n");
+                    return true;
+                }
+                if (!input.hasControlDown()) {
+                    if (currentEntries.size() <= editingIndex + 1 || !currentEntries.get(editingIndex + 1).text.getString()
+                        .isEmpty()) {
+                        currentEntries.add(editingIndex + 1, new ClipboardEntry(false, Component.empty()));
+                    }
+                    editingIndex += 1;
+                    editContext.setCursorToEnd();
+                    if (validateTextForEntry(" ")) {
                         return true;
                     }
-                    editingIndex = -1;
+                    currentEntries.remove(editingIndex);
+                    editingIndex -= 1;
+                    editContext.setCursorToEnd();
                     return true;
-                case 259:
-                    if (currentEntries.get(editingIndex).text.getString().isEmpty() && currentEntries.size() > 1) {
-                        currentEntries.remove(editingIndex);
-                        editingIndex = Math.max(0, editingIndex - 1);
-                        editContext.setCursorToEnd();
-                        return true;
-                    } else if (input.hasControlDown()) {
-                        int prevPos = editContext.getCursorPos();
-                        editContext.moveByWords(-1);
-                        if (prevPos != editContext.getCursorPos()) {
-                            editContext.removeCharsFromCursor(prevPos - editContext.getCursorPos());
-                        }
-                        return true;
+                }
+                editingIndex = -1;
+                return true;
+            case 259:
+                if (currentEntries.get(editingIndex).text.getString().isEmpty() && currentEntries.size() > 1) {
+                    currentEntries.remove(editingIndex);
+                    editingIndex = Math.max(0, editingIndex - 1);
+                    editContext.setCursorToEnd();
+                    return true;
+                }
+                if (input.hasControlDown()) {
+                    int prevPos = editContext.getCursorPos();
+                    editContext.moveByWords(-1);
+                    if (prevPos != editContext.getCursorPos()) {
+                        editContext.removeCharsFromCursor(prevPos - editContext.getCursorPos());
                     }
-                    editContext.removeCharsFromCursor(-1);
                     return true;
-                case 261:
-                    if (input.hasControlDown()) {
-                        int prevPos = editContext.getCursorPos();
-                        editContext.moveByWords(1);
-                        if (prevPos != editContext.getCursorPos()) {
-                            editContext.removeCharsFromCursor(prevPos - editContext.getCursorPos());
-                        }
-                        return true;
+                }
+                editContext.removeCharsFromCursor(-1);
+                return true;
+            case 261:
+                if (input.hasControlDown()) {
+                    int prevPos = editContext.getCursorPos();
+                    editContext.moveByWords(1);
+                    if (prevPos != editContext.getCursorPos()) {
+                        editContext.removeCharsFromCursor(prevPos - editContext.getCursorPos());
                     }
-                    editContext.removeCharsFromCursor(1);
                     return true;
-                case 262:
-                    if (input.hasControlDown()) {
-                        editContext.moveByWords(1, input.hasShiftDown());
-                        return true;
-                    }
-                    editContext.moveByChars(1, input.hasShiftDown());
+                }
+                editContext.removeCharsFromCursor(1);
+                return true;
+            case 262:
+                if (input.hasControlDown()) {
+                    editContext.moveByWords(1, input.hasShiftDown());
                     return true;
-                case 263:
-                    if (input.hasControlDown()) {
-                        editContext.moveByWords(-1, input.hasShiftDown());
-                        return true;
-                    }
-                    editContext.moveByChars(-1, input.hasShiftDown());
+                }
+                editContext.moveByChars(1, input.hasShiftDown());
+                return true;
+            case 263:
+                if (input.hasControlDown()) {
+                    editContext.moveByWords(-1, input.hasShiftDown());
                     return true;
-                case 264:
-                    keyDown(input);
-                    return true;
-                case 265:
-                    keyUp(input);
-                    return true;
-                case 268:
-                    keyHome(input);
-                    return true;
-                case 269:
-                    keyEnd(input);
-                    return true;
-                default:
-                    return false;
-            }
+                }
+                editContext.moveByChars(-1, input.hasShiftDown());
+                return true;
+            case 264:
+                keyDown(input);
+                return true;
+            case 265:
+                keyUp(input);
+                return true;
+            case 268:
+                keyHome(input);
+                return true;
+            case 269:
+                keyEnd(input);
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -586,6 +591,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
         );
     }
 
+    @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (super.mouseClicked(click, doubled)) {
             return true;
@@ -674,6 +680,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
         );
     }
 
+    @Override
     public boolean mouseDragged(MouseButtonEvent click, double pDragX, double pDragY) {
         if (super.mouseDragged(click, pDragX, pDragY)) {
             return true;

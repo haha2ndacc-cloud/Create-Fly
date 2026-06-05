@@ -43,8 +43,8 @@ public class BrassDiodeScrollValueBehaviour extends ScrollValueBehaviour<SmartBl
             return value + "t";
         }
         if (value < 20 * 60) {
-            return (value / 20) + "s";
+            return value / 20 + "s";
         }
-        return (value / 20 / 60) + "m";
+        return value / 20 / 60 + "m";
     }
 }

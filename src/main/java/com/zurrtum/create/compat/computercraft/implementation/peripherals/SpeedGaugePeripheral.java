@@ -13,7 +13,7 @@ public class SpeedGaugePeripheral extends SyncedPeripheral<SpeedGaugeBlockEntity
 
     @LuaFunction
     public final float getSpeed() {
-        return this.blockEntity.getSpeed();
+        return blockEntity.getSpeed();
     }
 
     @Override

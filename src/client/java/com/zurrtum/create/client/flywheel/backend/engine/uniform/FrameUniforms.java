@@ -41,8 +41,8 @@ public final class FrameUniforms extends UniformWriter {
     private static boolean firstWrite = true;
 
     private static int debugMode = DebugMode.OFF.ordinal();
-    private static boolean frustumPaused = false;
-    private static boolean frustumCapture = false;
+    private static boolean frustumPaused;
+    private static boolean frustumCapture;
 
     private FrameUniforms() {
     }
@@ -105,9 +105,9 @@ public final class FrameUniforms extends UniformWriter {
 
         var window = mc.getWindow();
         ptr = writeVec2(ptr, window.getWidth(), window.getHeight());
-        ptr = writeFloat(ptr, (float) window.getWidth() / (float) window.getHeight());
+        ptr = writeFloat(ptr, (float) window.getWidth() / window.getHeight());
         // default line width: net.minecraft.client.renderer.RenderStateShard.LineStateShard
-        ptr = writeFloat(ptr, Math.max(2.5F, (float) window.getWidth() / 1920.0F * 2.5F));
+        ptr = writeFloat(ptr, Math.max(2.5F, window.getWidth() / 1920.0F * 2.5F));
         ptr = writeFloat(ptr, camera.depthFar);
 
         ptr = writeTime(ptr, levelInfoHolder.flywheel$ticks(), context.partialTick());
@@ -162,11 +162,11 @@ public final class FrameUniforms extends UniformWriter {
 
     private static long writeTime(long ptr, int ticks, float partialTick) {
         float renderTicks = ticks + partialTick;
-        float renderSeconds = renderTicks / 20f;
-        float systemSeconds = Util.getMillis() / 1000f;
+        float renderSeconds = renderTicks / 20.0f;
+        float systemSeconds = Util.getMillis() / 1000.0f;
         int systemMillis = (int) (Util.getMillis() % Integer.MAX_VALUE);
 
-        ptr = writeInt(ptr, (int) ticks);
+        ptr = writeInt(ptr, ticks);
         ptr = writeFloat(ptr, partialTick);
         ptr = writeFloat(ptr, renderTicks);
         ptr = writeFloat(ptr, renderSeconds);

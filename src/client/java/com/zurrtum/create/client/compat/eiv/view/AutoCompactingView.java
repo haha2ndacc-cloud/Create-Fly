@@ -49,7 +49,7 @@ public class AutoCompactingView extends CreateView {
     protected int placeViewSlots(SlotDefinition slotDefinition) {
         int i = 0;
         for (int size = ingredients.size(), rows = size == 4 ? 2 : 3; i < size; i++) {
-            slotDefinition.addItemSlot(i, (rows == 2 ? 27 : 18) + (i % rows) * 19, 49 - (i / rows) * 19);
+            slotDefinition.addItemSlot(i, (rows == 2 ? 27 : 18) + i % rows * 19, 49 - i / rows * 19);
         }
         slotDefinition.addItemSlot(i++, 142, 49);
         return i;

@@ -94,7 +94,7 @@ public class MechanicalSawScenes {
             }
         );
         logItem = scene.world().createItemEntity(
-            util.vector().topOf(sawPos).add(0.5, -.1, 0),
+            util.vector().topOf(sawPos).add(0.5, -0.1, 0),
             util.vector().of(0.05, 0.18, 0),
             strippedLog
         );
@@ -141,7 +141,7 @@ public class MechanicalSawScenes {
             }
         );
         logItem = scene.world()
-            .createItemEntity(util.vector().topOf(sawPos).add(-0.5, -.1, 0), util.vector().of(-0.05, 0.18, 0), planks);
+            .createItemEntity(util.vector().topOf(sawPos).add(-0.5, -0.1, 0), util.vector().of(-0.05, 0.18, 0), planks);
         scene.idle(22);
 
         Selection otherBelt = util.select().fromTo(3, 1, 3, 4, 1, 2);
@@ -156,7 +156,7 @@ public class MechanicalSawScenes {
         scene.idle(3);
         scene.addKeyframe();
 
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), .5f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 0.5f);
 
         ElementLink<WorldSectionElement> beltSection = scene.world().showIndependentSection(belt, Direction.EAST);
         scene.world().moveSection(beltSection, util.vector().of(0, 100, 0), 0);
@@ -203,7 +203,7 @@ public class MechanicalSawScenes {
                 inventory.appliedRecipe = true;
             }
         );
-        Vec3 filter = util.vector().of(2.5, 1 + 13 / 16f, 2 + 5 / 16f);
+        Vec3 filter = util.vector().of(2.5, 1 + 13 / 16.0f, 2 + 5 / 16.0f);
         scene.overlay().showFilterSlotInput(filter, Direction.UP, 80);
         scene.overlay().showText(80).attachKeyFrame()
             .text("When an ingredient has multiple possible outcomes, the filter slot can specify it").pointAt(filter)
@@ -271,7 +271,7 @@ public class MechanicalSawScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("mechanical_saw_breaker", "Cutting Trees with the Mechanical Saw");
         scene.configureBasePlate(0, 0, 5);
-        scene.scaleSceneView(.9f);
+        scene.scaleSceneView(0.9f);
         scene.world().setBlock(util.grid().at(2, 0, 2), Blocks.GRASS_BLOCK.defaultBlockState(), false);
         scene.world()
             .showSection(
@@ -370,7 +370,7 @@ public class MechanicalSawScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("mechanical_saw_contraption", "Using Mechanical Saws on Contraptions");
         scene.configureBasePlate(1, 0, 6);
-        scene.scaleSceneView(.9f);
+        scene.scaleSceneView(0.9f);
         scene.world().setBlock(util.grid().at(2, 0, 3), Blocks.GRASS_BLOCK.defaultBlockState(), false);
         scene.world()
             .showSection(

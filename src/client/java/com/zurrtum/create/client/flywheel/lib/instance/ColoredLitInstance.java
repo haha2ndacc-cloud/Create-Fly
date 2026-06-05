@@ -10,7 +10,7 @@ public abstract class ColoredLitInstance extends AbstractInstance implements Fla
     public byte blue = (byte) 0xFF;
     public byte alpha = (byte) 0xFF;
 
-    public int light = 0;
+    public int light;
 
     public ColoredLitInstance(InstanceType<? extends ColoredLitInstance> type, InstanceHandle handle) {
         super(type, handle);
@@ -48,11 +48,11 @@ public abstract class ColoredLitInstance extends AbstractInstance implements Fla
     }
 
     public ColoredLitInstance color(float red, float green, float blue, float alpha) {
-        return color((byte) (red * 255f), (byte) (green * 255f), (byte) (blue * 255f), (byte) (alpha * 255f));
+        return color((byte) (red * 255.0f), (byte) (green * 255.0f), (byte) (blue * 255.0f), (byte) (alpha * 255.0f));
     }
 
     public ColoredLitInstance color(float red, float green, float blue) {
-        return color((byte) (red * 255f), (byte) (green * 255f), (byte) (blue * 255f));
+        return color((byte) (red * 255.0f), (byte) (green * 255.0f), (byte) (blue * 255.0f));
     }
 
     @Override

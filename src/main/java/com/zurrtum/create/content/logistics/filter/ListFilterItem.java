@@ -31,8 +31,8 @@ public class ListFilterItem extends FilterItem {
         ItemStackHandler filterItems = getFilterItemHandler(filter);
         boolean blacklist = filter.getOrDefault(AllDataComponents.FILTER_ITEMS_BLACKLIST, false);
 
-        list.add((blacklist ? Component.translatable("create.gui.filter.deny_list") : Component.translatable(
-            "create.gui.filter.allow_list")).withStyle(ChatFormatting.GOLD));
+        list.add((blacklist ? Component.translatable("create.gui.filter.deny_list") :
+            Component.translatable("create.gui.filter.allow_list")).withStyle(ChatFormatting.GOLD));
         int count = 0;
         for (int i = 0, size = filterItems.getContainerSize(); i < size; i++) {
             if (count > 3) {

@@ -64,8 +64,8 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
 
         CachedBuffers.block(AllBlocks.ITEM_DRAIN.defaultBlockState()).submit(matrices, submitNodeStorage);
 
-        float from = 2 / 16f;
-        float to = 1f - from;
+        float from = 2 / 16.0f;
+        float to = 1.0f - from;
         FluidStateModelSet fluidStateModelSet = Minecraft.getInstance().getModelManager().getFluidStateModelSet();
         FluidRenderHelper.extractFluidRenderState(
             null,
@@ -77,7 +77,7 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
             from,
             from,
             to,
-            3 / 4f,
+            3 / 4.0f,
             to,
             0,
             false,

@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AtomicReferenceCounted {
     private final AtomicInteger referenceCount = new AtomicInteger(0);
-    private volatile boolean isDeleted = false;
+    private volatile boolean isDeleted;
 
     public int referenceCount() {
         return referenceCount.get();

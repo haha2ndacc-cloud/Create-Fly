@@ -53,7 +53,7 @@ public class BlueprintOverlayRenderer {
     static Map<ItemStack, ItemStack[]> cachedRenderedFilters = new IdentityHashMap<>();
     static List<Pair<ItemStack, Boolean>> ingredients = new ArrayList<>();
     static List<ItemStack> results = new ArrayList<>();
-    static boolean resultCraftable = false;
+    static boolean resultCraftable;
 
     public static void tick(Minecraft mc) {
         BlueprintSection last = lastTargetedSection;
@@ -323,7 +323,7 @@ public class BlueprintOverlayRenderer {
                         cycle++;
                         continue;
                     }
-                    if ((mc.gui.hud.getGuiTicks() / 40) % cycle != i) {
+                    if (mc.gui.hud.getGuiTicks() / 40 % cycle != i) {
                         continue;
                     }
                     Window window = mc.getWindow();

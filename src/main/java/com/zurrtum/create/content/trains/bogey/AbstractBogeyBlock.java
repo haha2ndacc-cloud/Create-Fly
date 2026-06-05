@@ -147,7 +147,7 @@ public abstract class AbstractBogeyBlock<T extends AbstractBogeyBlockEntity> ext
     }
 
     public BogeySize getSize() {
-        return this.size;
+        return size;
     }
 
     public Direction getBogeyUpDirection() {
@@ -194,7 +194,7 @@ public abstract class AbstractBogeyBlock<T extends AbstractBogeyBlockEntity> ext
 
             BogeySize size = getSize();
 
-            BogeyStyle style = this.getNextStyle(currentStyle);
+            BogeyStyle style = getNextStyle(currentStyle);
             if (style == currentStyle) {
                 return InteractionResult.TRY_WITH_EMPTY_HAND;
             }
@@ -290,7 +290,7 @@ public abstract class AbstractBogeyBlock<T extends AbstractBogeyBlockEntity> ext
     public BlockState getNextSize(Level level, BlockPos pos) {
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof AbstractBogeyBlockEntity sbbe) {
-            return this.getNextSize(sbbe);
+            return getNextSize(sbbe);
         }
         return level.getBlockState(pos);
     }
@@ -322,7 +322,7 @@ public abstract class AbstractBogeyBlock<T extends AbstractBogeyBlockEntity> ext
     }
 
     public BlockState getNextSize(AbstractBogeyBlockEntity sbbe) {
-        BogeySize size = this.getSize();
+        BogeySize size = getSize();
         BogeyStyle style = sbbe.getStyle();
         BlockState nextBlock = style.getNextBlock(size).defaultBlockState();
         nextBlock = copyProperties(sbbe.getBlockState(), nextBlock);
@@ -338,7 +338,7 @@ public abstract class AbstractBogeyBlock<T extends AbstractBogeyBlockEntity> ext
     public BogeyStyle getNextStyle(Level level, BlockPos pos) {
         BlockEntity te = level.getBlockEntity(pos);
         if (te instanceof AbstractBogeyBlockEntity sbbe) {
-            return this.getNextStyle(sbbe.getStyle());
+            return getNextStyle(sbbe.getStyle());
         }
         return getDefaultStyle();
     }

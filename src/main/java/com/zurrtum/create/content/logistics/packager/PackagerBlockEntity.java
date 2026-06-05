@@ -760,9 +760,8 @@ public class PackagerBlockEntity extends SmartBlockEntity implements Clearable {
         if (inventory.identifier() != null) {
             BlockFace face = targetInventory.getTarget().getOpposite();
             return inventory.identifier().contains(face);
-        } else {
-            return isSameInventoryFallback(targetHandler, inventory.handler());
         }
+        return isSameInventoryFallback(targetHandler, inventory.handler());
     }
 
     private static boolean isSameInventoryFallback(Container first, Container second) {

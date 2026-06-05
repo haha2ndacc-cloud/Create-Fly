@@ -250,10 +250,10 @@ public class PistonScenes {
             false
         );
         scene.world().showIndependentSection(rose, Direction.DOWN);
-        Vec3 filter = util.vector().topOf(piston).add(.125, 0, 0);
+        Vec3 filter = util.vector().topOf(piston).add(0.125, 0, 0);
         scene.overlay().showFilterSlotInput(filter, Direction.UP, 60);
-        scene.overlay().showControls(filter.add(0, .125, 0), Pointing.DOWN, 60).rightClick();
-        scene.overlay().showText(70).pointAt(filter.add(-.125, 0, 0)).placeNearTarget().attachKeyFrame()
+        scene.overlay().showControls(filter.add(0, 0.125, 0), Pointing.DOWN, 60).rightClick();
+        scene.overlay().showText(70).pointAt(filter.add(-0.125, 0, 0)).placeNearTarget().attachKeyFrame()
             .sharedText("behaviour_modify_value_panel");
         scene.idle(80);
 

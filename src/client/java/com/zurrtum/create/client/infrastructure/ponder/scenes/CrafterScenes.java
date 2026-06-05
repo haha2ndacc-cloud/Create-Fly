@@ -77,7 +77,7 @@ public class CrafterScenes {
         }
 
         scene.overlay().showText(100).text("For a valid setup, all paths have to converge into one exit at any side")
-            .pointAt(util.vector().blockSurface(util.grid().at(1, 1, 2), Direction.WEST).add(0, 0, -.5f))
+            .pointAt(util.vector().blockSurface(util.grid().at(1, 1, 2), Direction.WEST).add(0, 0, -0.5f))
             .colored(PonderPalette.GREEN).attachKeyFrame().placeNearTarget();
         scene.idle(60);
 
@@ -239,8 +239,8 @@ public class CrafterScenes {
         scene.idle(40);
 
         Vec3 v = util.vector().blockSurface(util.grid().at(2, 2, 2), Direction.WEST);
-        AABB bb = new AABB(v, v).inflate(.125f, .5, .5);
-        v = v.add(0, 0, .5);
+        AABB bb = new AABB(v, v).inflate(0.125f, 0.5, 0.5);
+        v = v.add(0, 0, 0.5);
 
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.WHITE, new Object(), bb, 45);
         scene.overlay().showControls(v, Pointing.LEFT, 40).rightClick().withItem(AllItems.WRENCH.getDefaultInstance());
@@ -261,12 +261,12 @@ public class CrafterScenes {
         scene.idle(7);
         scene.world().connectCrafterInvs(util.grid().at(2, 1, 2), util.grid().at(1, 1, 2));
         scene.idle(20);
-        scene.overlay().showControls(v.add(.5, -.5, 0), Pointing.LEFT, 20).rightClick()
+        scene.overlay().showControls(v.add(0.5, -0.5, 0), Pointing.LEFT, 20).rightClick()
             .withItem(AllItems.WRENCH.getDefaultInstance());
         scene.idle(7);
         scene.world().connectCrafterInvs(util.grid().at(2, 1, 2), util.grid().at(2, 2, 2));
         scene.idle(10);
-        scene.overlay().showControls(v.add(.5, .5, 0), Pointing.LEFT, 20).rightClick()
+        scene.overlay().showControls(v.add(0.5, 0.5, 0), Pointing.LEFT, 20).rightClick()
             .withItem(AllItems.WRENCH.getDefaultInstance());
         scene.idle(7);
         scene.world().connectCrafterInvs(util.grid().at(2, 2, 2), util.grid().at(2, 3, 2));

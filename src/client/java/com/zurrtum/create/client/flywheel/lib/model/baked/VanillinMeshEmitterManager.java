@@ -26,7 +26,7 @@ public class VanillinMeshEmitterManager extends MeshEmitterManager<MeshEmitter> 
     }
 
     public void prepare(BlockMaterialFunction blockMaterialFunction, PoseStack poseStack) {
-        super.prepare(blockMaterialFunction);
+        prepare(blockMaterialFunction);
         transformingWrapper.setPoseStack(poseStack);
         this.poseStack = poseStack;
     }
@@ -40,7 +40,7 @@ public class VanillinMeshEmitterManager extends MeshEmitterManager<MeshEmitter> 
         MaterialInfo info = quad.materialInfo();
         BufferBuilder buffer = getBuffer(info.layer(), info.shade(), useAo);
         if (buffer != null) {
-            if (x != 0F || y != 0F || z != 0F) {
+            if (x != 0.0F || y != 0.0F || z != 0.0F) {
                 poseStack.pushPose();
                 poseStack.translate(x, y, z);
                 buffer.putBakedQuad(poseStack.last(), quad, instance);

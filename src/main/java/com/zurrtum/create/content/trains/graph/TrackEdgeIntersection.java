@@ -24,7 +24,7 @@ public class TrackEdgeIntersection {
     }
 
     public boolean isNear(double location) {
-        return Math.abs(location - this.location) < 1 / 32f;
+        return Math.abs(location - this.location) < 1 / 32.0f;
     }
 
     public boolean targets(TrackNodeLocation target1, TrackNodeLocation target2) {

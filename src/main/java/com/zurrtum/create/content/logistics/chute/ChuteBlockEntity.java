@@ -247,7 +247,8 @@ public class ChuteBlockEntity extends SmartBlockEntity implements Clearable {
             return;
         }
         if (getItem().isEmpty() && beltBelow != null) {
-            beltBelow.handleCenteredProcessingOnAllItems(0.5f, ts -> {
+            beltBelow.handleCenteredProcessingOnAllItems(
+                0.5f, ts -> {
                     if (canAcceptItem(ts.stack)) {
                         setItem(ts.stack.copy(), -beltBelowOffset);
                         return TransportedResult.removeItem();

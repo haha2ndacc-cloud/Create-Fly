@@ -13,7 +13,7 @@ public abstract class GlObject {
     public final int handle() {
         checkHandle();
 
-        return this.handle;
+        return handle;
     }
 
     protected final void checkHandle() {
@@ -23,11 +23,11 @@ public abstract class GlObject {
     }
 
     protected final boolean isInvalid() {
-        return this.handle == INVALID_HANDLE;
+        return handle == INVALID_HANDLE;
     }
 
     protected final void invalidateHandle() {
-        this.handle = INVALID_HANDLE;
+        handle = INVALID_HANDLE;
     }
 
     public void delete() {

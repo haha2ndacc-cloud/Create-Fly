@@ -30,21 +30,21 @@ public record StateChangingBehavior(int amount, Predicate<Fluid> fluidTest, Pred
         FluidStack availableFluid,
         boolean simulate
     ) {
-        if (availableFluid.getAmount() < this.amount || !this.fluidTest.test(availableFluid.getFluid())) {
+        if (availableFluid.getAmount() < amount || !fluidTest.test(availableFluid.getFluid())) {
             return 0;
         }
 
         BlockState state = level.getBlockState(pos);
-        if (!this.canFill.test(state)) {
+        if (!canFill.test(state)) {
             return 0;
         }
 
         if (!simulate) {
-            BlockState newState = this.fillFunction.apply(state);
+            BlockState newState = fillFunction.apply(state);
             level.setBlockAndUpdate(pos, newState);
         }
 
-        return this.amount;
+        return amount;
     }
 
     /**

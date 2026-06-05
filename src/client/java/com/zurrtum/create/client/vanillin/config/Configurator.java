@@ -71,14 +71,13 @@ public class Configurator {
 
             if (modIds.isEmpty()) {
                 return false;
-            } else {
-                Vanillin.CONFIG_LOGGER.warn(
-                    "Disabling {} visual due to overrides from mods: {}",
-                    configKey(),
-                    String.join(", ", modIds)
-                );
-                return true;
             }
+            Vanillin.CONFIG_LOGGER.warn(
+                "Disabling {} visual due to overrides from mods: {}",
+                configKey(),
+                String.join(", ", modIds)
+            );
+            return true;
         }
 
         private void maybeWarnEnabledDespiteOverrides(@Nullable List<VisualOverride> overrides) {

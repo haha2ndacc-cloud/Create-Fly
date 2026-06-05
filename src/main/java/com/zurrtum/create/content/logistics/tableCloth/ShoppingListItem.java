@@ -67,8 +67,8 @@ public class ShoppingListItem extends Item {
 
                 if (entries.size() == 1) {
                     BigItemStack entry = entries.getFirst();
-                    textConsumer.accept((cost ? Component.translatable("create.table_cloth.total_cost") : Component.literal(
-                        "")).withStyle(ChatFormatting.GOLD)
+                    textConsumer.accept((cost ? Component.translatable("create.table_cloth.total_cost") :
+                        Component.literal("")).withStyle(ChatFormatting.GOLD)
                         .append(entry.stack.getHoverName().plainCopy().append(" x").append(String.valueOf(entry.count))
                             .withStyle(cost ? ChatFormatting.YELLOW : ChatFormatting.GRAY)));
 

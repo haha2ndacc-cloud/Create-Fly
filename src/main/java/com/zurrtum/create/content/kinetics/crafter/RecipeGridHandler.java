@@ -62,7 +62,7 @@ public class RecipeGridHandler {
             if (visited.contains(current)) {
                 return null;
             }
-            if (!(test.test(current))) {
+            if (!test.test(current)) {
                 empty = true;
             } else {
                 allEmpty = false;

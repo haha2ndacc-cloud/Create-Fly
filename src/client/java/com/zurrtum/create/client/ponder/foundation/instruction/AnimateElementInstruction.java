@@ -31,9 +31,9 @@ public class AnimateElementInstruction<T extends PonderSceneElement> extends Tic
         this.link = link;
         this.setter = setter;
         this.getter = getter;
-        this.deltaPerTick = totalDelta.scale(1d / ticks);
+        deltaPerTick = totalDelta.scale(1.0d / ticks);
         this.totalDelta = totalDelta;
-        this.target = totalDelta;
+        target = totalDelta;
     }
 
     @Override

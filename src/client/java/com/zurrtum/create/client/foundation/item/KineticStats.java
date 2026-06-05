@@ -75,7 +75,8 @@ public class KineticStats implements TooltipModifier {
             CreateLang.translate("tooltip.stressImpact").style(GRAY).addTo(list);
 
             double impact = BlockStressValues.getImpact(block);
-            StressImpact impactId = impact >= config.highStressImpact.get() ? StressImpact.HIGH : (impact >= config.mediumStressImpact.get() ? StressImpact.MEDIUM : StressImpact.LOW);
+            StressImpact impactId = impact >= config.highStressImpact.get() ? StressImpact.HIGH :
+                impact >= config.mediumStressImpact.get() ? StressImpact.MEDIUM : StressImpact.LOW;
             LangBuilder builder = CreateLang.builder()
                 .add(CreateLang.text(TooltipHelper.makeProgressBar(3, impactId.ordinal() + 1))
                     .style(impactId.getAbsoluteColor()));
@@ -93,7 +94,8 @@ public class KineticStats implements TooltipModifier {
             double capacity = BlockStressValues.getCapacity(block);
             GeneratedRpm generatedRPM = BlockStressValues.RPM.get(block);
 
-            StressImpact impactId = capacity >= config.highCapacity.get() ? StressImpact.HIGH : (capacity >= config.mediumCapacity.get() ? StressImpact.MEDIUM : StressImpact.LOW);
+            StressImpact impactId = capacity >= config.highCapacity.get() ? StressImpact.HIGH :
+                capacity >= config.mediumCapacity.get() ? StressImpact.MEDIUM : StressImpact.LOW;
             StressImpact opposite = StressImpact.values()[StressImpact.values().length - 2 - impactId.ordinal()];
             LangBuilder builder = CreateLang.builder()
                 .add(CreateLang.text(TooltipHelper.makeProgressBar(3, impactId.ordinal() + 1))

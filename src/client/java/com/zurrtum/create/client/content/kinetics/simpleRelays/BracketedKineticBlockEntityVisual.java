@@ -26,18 +26,16 @@ public class BracketedKineticBlockEntityVisual {
     ) {
         if (ICogWheel.isLargeCog(blockEntity.getBlockState())) {
             return new LargeCogVisual(context, blockEntity, partialTick);
-        } else {
-            if (blockEntity.getBlockState().is(AllBlocks.COGWHEEL)) {
-                return new CogVisual(context, blockEntity, partialTick, Models.chunkPartial(AllPartialModels.COGWHEEL));
-            } else {
-                return new SingleAxisRotatingVisual<>(
-                    context,
-                    blockEntity,
-                    partialTick,
-                    Models.chunkPartial(AllPartialModels.SHAFT)
-                );
-            }
         }
+        if (blockEntity.getBlockState().is(AllBlocks.COGWHEEL)) {
+            return new CogVisual(context, blockEntity, partialTick, Models.chunkPartial(AllPartialModels.COGWHEEL));
+        }
+        return new SingleAxisRotatingVisual<>(
+            context,
+            blockEntity,
+            partialTick,
+            Models.chunkPartial(AllPartialModels.SHAFT)
+        );
     }
 
     public static class CogVisual extends SingleAxisRotatingVisual<BracketedKineticBlockEntity> {

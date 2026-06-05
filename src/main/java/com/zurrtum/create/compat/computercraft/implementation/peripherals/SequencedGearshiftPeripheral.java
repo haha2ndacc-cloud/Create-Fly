@@ -26,21 +26,21 @@ public class SequencedGearshiftPeripheral extends SyncedPeripheral<SequencedGear
 
     @LuaFunction
     public final boolean isRunning() {
-        return !this.blockEntity.isIdle();
+        return !blockEntity.isIdle();
     }
 
     private void runInstruction(IArguments arguments, SequencerInstructions instructionType) throws LuaException {
         int speedModifier = arguments.count() > 1 ? arguments.getInt(1) : 1;
-        this.blockEntity.getInstructions().clear();
+        blockEntity.getInstructions().clear();
 
-        this.blockEntity.getInstructions().add(new Instruction(
+        blockEntity.getInstructions().add(new Instruction(
             instructionType,
             InstructionSpeedModifiers.getByModifier(speedModifier),
             Math.abs(arguments.getInt(0))
         ));
-        this.blockEntity.getInstructions().add(new Instruction(SequencerInstructions.END));
+        blockEntity.getInstructions().add(new Instruction(SequencerInstructions.END));
 
-        this.blockEntity.run(0);
+        blockEntity.run(0);
     }
 
     @Override

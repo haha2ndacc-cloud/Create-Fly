@@ -62,7 +62,7 @@ public class PonderLocalization implements LangRegistryAccess {
     @Override
     public String getShared(Identifier key) {
         if (PonderIndex.editingModeActive()) {
-            return shared.containsKey(key) ? shared.get(key) : ("unregistered shared entry: " + key);
+            return shared.containsKey(key) ? shared.get(key) : "unregistered shared entry: " + key;
         }
         return I18n.get(langKeyForShared(key));
     }
@@ -70,10 +70,8 @@ public class PonderLocalization implements LangRegistryAccess {
     @Override
     public String getShared(Identifier key, Object... params) {
         if (PonderIndex.editingModeActive()) {
-            return shared.containsKey(key) ? String.format(
-                shared.get(key),
-                params
-            ) : ("unregistered shared entry: " + key);
+            return shared.containsKey(key) ? String.format(shared.get(key), params) :
+                "unregistered shared entry: " + key;
         }
         return I18n.get(langKeyForShared(key), params);
     }
@@ -81,7 +79,7 @@ public class PonderLocalization implements LangRegistryAccess {
     @Override
     public String getTagName(Identifier key) {
         if (PonderIndex.editingModeActive()) {
-            return tag.containsKey(key) ? tag.get(key).getFirst() : ("unregistered tag entry: " + key);
+            return tag.containsKey(key) ? tag.get(key).getFirst() : "unregistered tag entry: " + key;
         }
         return I18n.get(langKeyForTag(key));
     }
@@ -89,7 +87,7 @@ public class PonderLocalization implements LangRegistryAccess {
     @Override
     public String getTagDescription(Identifier key) {
         if (PonderIndex.editingModeActive()) {
-            return tag.containsKey(key) ? tag.get(key).getSecond() : ("unregistered tag entry: " + key);
+            return tag.containsKey(key) ? tag.get(key).getSecond() : "unregistered tag entry: " + key;
         }
         return I18n.get(langKeyForTagDescription(key));
     }

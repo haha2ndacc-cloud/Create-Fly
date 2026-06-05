@@ -63,13 +63,9 @@ public record ShulkerFillLevelAttribute(@Nullable ShulkerLevels levels) implemen
     }
 
     enum ShulkerLevels implements StringRepresentable {
-        EMPTY("empty", amount -> amount == 0), PARTIAL(
-            "partial",
-            amount -> amount > 0 && amount < ShulkerBoxBlockEntity.CONTAINER_SIZE
-        ), FULL(
-            "full",
-            amount -> amount == ShulkerBoxBlockEntity.CONTAINER_SIZE
-        );
+        EMPTY("empty", amount -> amount == 0),
+        PARTIAL("partial", amount -> amount > 0 && amount < ShulkerBoxBlockEntity.CONTAINER_SIZE),
+        FULL("full", amount -> amount == ShulkerBoxBlockEntity.CONTAINER_SIZE);
 
         public static final Codec<ShulkerLevels> CODEC = StringRepresentable.fromEnum(ShulkerLevels::values);
         public static final StreamCodec<ByteBuf, ShulkerLevels> STREAM_CODEC = CatnipStreamCodecBuilders.ofEnum(

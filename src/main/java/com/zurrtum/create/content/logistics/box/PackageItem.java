@@ -117,9 +117,8 @@ public class PackageItem extends Item implements EntityItem {
         if (box.has(AllDataComponents.PACKAGE_ORDER_DATA)) {
             //noinspection DataFlowIssue
             return box.get(AllDataComponents.PACKAGE_ORDER_DATA).orderId();
-        } else {
-            return -1;
         }
+        return -1;
     }
 
     public static boolean hasOrderData(ItemStack box) {
@@ -130,9 +129,8 @@ public class PackageItem extends Item implements EntityItem {
         if (box.has(AllDataComponents.PACKAGE_ORDER_DATA)) {
             //noinspection DataFlowIssue
             return box.get(AllDataComponents.PACKAGE_ORDER_DATA).fragmentIndex();
-        } else {
-            return -1;
         }
+        return -1;
     }
 
     public static boolean isFinal(ItemStack box) {
@@ -144,9 +142,8 @@ public class PackageItem extends Item implements EntityItem {
         if (box.has(AllDataComponents.PACKAGE_ORDER_DATA)) {
             //noinspection DataFlowIssue
             return box.get(AllDataComponents.PACKAGE_ORDER_DATA).linkIndex();
-        } else {
-            return -1;
         }
+        return -1;
     }
 
     public static boolean isFinalLink(ItemStack box) {
@@ -165,11 +162,11 @@ public class PackageItem extends Item implements EntityItem {
             PackageOrderData data = box.get(AllDataComponents.PACKAGE_ORDER_DATA);
             //noinspection DataFlowIssue
             return data.orderContext();
-        } else if (box.has(AllDataComponents.PACKAGE_ORDER_CONTEXT)) {
-            return box.get(AllDataComponents.PACKAGE_ORDER_CONTEXT);
-        } else {
-            return null;
         }
+        if (box.has(AllDataComponents.PACKAGE_ORDER_CONTEXT)) {
+            return box.get(AllDataComponents.PACKAGE_ORDER_CONTEXT);
+        }
+        return null;
     }
 
     public static void addOrderContext(ItemStack box, PackageOrderWithCrafts orderContext) {
@@ -202,21 +199,21 @@ public class PackageItem extends Item implements EntityItem {
 
     public static float getWidth(ItemStack box) {
         if (box.getItem() instanceof PackageItem pi) {
-            return pi.style.width() / 16f;
+            return pi.style.width() / 16.0f;
         }
         return 1;
     }
 
     public static float getHeight(ItemStack box) {
         if (box.getItem() instanceof PackageItem pi) {
-            return pi.style.height() / 16f;
+            return pi.style.height() / 16.0f;
         }
         return 1;
     }
 
     public static float getHookDistance(ItemStack box) {
         if (box.getItem() instanceof PackageItem pi) {
-            return pi.style.riggingOffset() / 16f;
+            return pi.style.riggingOffset() / 16.0f;
         }
         return 1;
     }
@@ -353,8 +350,8 @@ public class PackageItem extends Item implements EntityItem {
                 ItemStackTemplate.fromNonEmptyStack(particle)
             );
             for (int i = 0; i < 10; i++) {
-                Vec3 motion = VecHelper.offsetRandomly(Vec3.ZERO, worldIn.getRandom(), .125f);
-                Vec3 pos = position.add(0, 0.5, 0).add(playerIn.getLookAngle().scale(.5)).add(motion.scale(4));
+                Vec3 motion = VecHelper.offsetRandomly(Vec3.ZERO, worldIn.getRandom(), 0.125f);
+                Vec3 pos = position.add(0, 0.5, 0).add(playerIn.getLookAngle().scale(0.5)).add(motion.scale(4));
                 worldIn.addParticle(option, pos.x, pos.y, pos.z, motion.x, motion.y, motion.z);
             }
         }
@@ -369,11 +366,11 @@ public class PackageItem extends Item implements EntityItem {
         }
 
         Vec3 point = context.getClickLocation();
-        float h = style.height() / 16f;
-        float r = style.width() / 2f / 16f;
+        float h = style.height() / 16.0f;
+        float r = style.width() / 2.0f / 16.0f;
 
         if (context.getClickedFace() == Direction.DOWN) {
-            point = point.subtract(0, h + .25f, 0);
+            point = point.subtract(0, h + 0.25f, 0);
         } else if (context.getClickedFace().getAxis().isHorizontal()) {
             point = point.add(Vec3.atLowerCornerOf(context.getClickedFace().getUnitVec3i()).scale(r));
         }
@@ -407,7 +404,7 @@ public class PackageItem extends Item implements EntityItem {
         if (!(entity instanceof Player player)) {
             return false;
         }
-        int i = this.getUseDuration(stack, entity) - ticks;
+        int i = getUseDuration(stack, entity) - ticks;
         if (i < 0) {
             return false;
         }
@@ -437,7 +434,7 @@ public class PackageItem extends Item implements EntityItem {
             stack.shrink(1);
         }
 
-        Vec3 vec = new Vec3(entity.getX(), entity.getY() + entity.getBoundingBox().getYsize() / 2f, entity.getZ());
+        Vec3 vec = new Vec3(entity.getX(), entity.getY() + entity.getBoundingBox().getYsize() / 2.0f, entity.getZ());
         Vec3 motion = entity.getLookAngle().scale(f * 2);
         vec = vec.add(motion);
 
@@ -450,7 +447,7 @@ public class PackageItem extends Item implements EntityItem {
     }
 
     public static float getPackageVelocity(int p_185059_0_) {
-        float f = (float) p_185059_0_ / 20.0F;
+        float f = p_185059_0_ / 20.0F;
         f = (f * f + f * 2.0F) / 3.0F;
         if (f > 1.0F) {
             f = 1.0F;

@@ -37,7 +37,7 @@ public class PotatoCannonRenderHandler extends ShootableGadgetRenderHandler {
         }
         ClientLevel world = Minecraft.getInstance().level;
         for (int i = 0; i < 2; i++) {
-            Vec3 m = VecHelper.offsetRandomly(motion.scale(0.1f), world.getRandom(), .025f);
+            Vec3 m = VecHelper.offsetRandomly(motion.scale(0.1f), world.getRandom(), 0.025f);
             world.addParticle(
                 new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(stack)),
                 location.x,
@@ -48,21 +48,21 @@ public class PotatoCannonRenderHandler extends ShootableGadgetRenderHandler {
                 m.z
             );
 
-            Vec3 m2 = VecHelper.offsetRandomly(motion.scale(2f), world.getRandom(), .5f);
-            world.addParticle(new AirParticleData(1, 1 / 4f), location.x, location.y, location.z, m2.x, m2.y, m2.z);
+            Vec3 m2 = VecHelper.offsetRandomly(motion.scale(2.0f), world.getRandom(), 0.5f);
+            world.addParticle(new AirParticleData(1, 1 / 4.0f), location.x, location.y, location.z, m2.x, m2.y, m2.z);
         }
     }
 
     @Override
     protected void transformTool(PoseStack ms, float flip, float equipProgress, float recoil, float pt) {
-        ms.translate(flip * -.1f, 0, .14f);
-        ms.scale(.75f, .75f, .75f);
+        ms.translate(flip * -0.1f, 0, 0.14f);
+        ms.scale(0.75f, 0.75f, 0.75f);
         TransformStack.of(ms).rotateXDegrees(recoil * 80);
     }
 
     @Override
     protected void transformHand(PoseStack ms, float flip, float equipProgress, float recoil, float pt) {
-        ms.translate(flip * -.09, -.275, -.25);
+        ms.translate(flip * -0.09, -0.275, -0.25);
         TransformStack.of(ms).rotateZDegrees(flip * -10);
     }
 

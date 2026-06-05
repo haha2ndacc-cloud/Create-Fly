@@ -190,7 +190,7 @@ public class EdgeData {
 
     @Nullable
     public <T extends TrackEdgePoint> T get(EdgePointType<T> type, double exactPosition) {
-        T next = next(type, exactPosition - .5f);
+        T next = next(type, exactPosition - 0.5f);
         if (next != null && Mth.equal(next.getLocationOn(edge), exactPosition)) {
             return next;
         }

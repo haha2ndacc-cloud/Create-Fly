@@ -76,8 +76,8 @@ public class AutoCompactingCategory extends CreateCategory<RecipeHolder<Crafting
             return;
         }
         for (int i = 0, size = ingredients.size(), rows = size == 4 ? 2 : 3; i < size; i++) {
-            builder.addInputSlot((rows == 2 ? 27 : 18) + (i % rows) * 19, 51 - (i / rows) * 19)
-                .setBackground(SLOT, -1, -1).add(ingredients.get(i));
+            builder.addInputSlot((rows == 2 ? 27 : 18) + i % rows * 19, 51 - i / rows * 19).setBackground(SLOT, -1, -1)
+                .add(ingredients.get(i));
         }
         builder.addOutputSlot(142, 51).setBackground(SLOT, -1, -1).add(result);
     }

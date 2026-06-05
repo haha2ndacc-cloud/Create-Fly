@@ -43,40 +43,41 @@ public class RotationIndicatorParticle extends SimpleAnimatedParticle {
         RandomSource random
     ) {
         super(world, x, y, z, sprite, 0);
-        this.xd = 0;
-        this.yd = 0;
-        this.zd = 0;
-        this.origin = new Vec3(x, y, z);
-        this.quadSize *= 0.75F;
-        this.lifetime = lifeSpan + random.nextInt(32);
-        this.setFadeColor(color);
-        this.setColor(Color.mixColors(color, 0xFFFFFF, .5f));
-        this.setSpriteFromAge(sprite);
+        xd = 0;
+        yd = 0;
+        zd = 0;
+        origin = new Vec3(x, y, z);
+        quadSize *= 0.75F;
+        lifetime = lifeSpan + random.nextInt(32);
+        setFadeColor(color);
+        setColor(Color.mixColors(color, 0xFFFFFF, 0.5f));
+        setSpriteFromAge(sprite);
         this.radius1 = radius1;
-        this.radius = radius1;
+        radius = radius1;
         this.radius2 = radius2;
         this.speed = speed;
         this.axis = axis;
-        this.offset = axis.isHorizontal() ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0);
+        offset = axis.isHorizontal() ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0);
         move(0, 0, 0);
-        this.xo = this.x;
-        this.yo = this.y;
-        this.zo = this.z;
+        xo = this.x;
+        yo = this.y;
+        zo = this.z;
     }
 
     @Override
     public void tick() {
         super.tick();
-        radius += (radius2 - radius) * .1f;
+        radius += (radius2 - radius) * 0.1f;
     }
 
+    @Override
     public void move(double x, double y, double z) {
         float time = AnimationTickHolder.getTicks(level);
-        float angle = ((time * speed) % 360) - (speed / 2 * age * (((float) age) / lifetime));
+        float angle = time * speed % 360 - speed / 2 * age * ((float) age / lifetime);
         if (speed < 0 && axis.isVertical()) {
             angle += 180;
         }
-        Vec3 position = VecHelper.rotate(this.offset.scale(radius), angle, axis).add(origin);
+        Vec3 position = VecHelper.rotate(offset.scale(radius), angle, axis).add(origin);
         this.x = position.x;
         this.y = position.y;
         this.z = position.z;
@@ -86,9 +87,10 @@ public class RotationIndicatorParticle extends SimpleAnimatedParticle {
         private final SpriteSet spriteSet;
 
         public Factory(SpriteSet animatedSprite) {
-            this.spriteSet = animatedSprite;
+            spriteSet = animatedSprite;
         }
 
+        @Override
         @Nullable
         public Particle createParticle(
             RotationIndicatorParticleData data,
@@ -117,7 +119,7 @@ public class RotationIndicatorParticle extends SimpleAnimatedParticle {
                 data.speed(),
                 data.axis(),
                 data.lifeSpan(),
-                this.spriteSet,
+                spriteSet,
                 random
             );
         }

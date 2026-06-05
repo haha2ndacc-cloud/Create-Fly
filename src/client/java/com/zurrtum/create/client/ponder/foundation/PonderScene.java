@@ -29,6 +29,7 @@ import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
@@ -120,7 +121,7 @@ public class PonderScene {
 
         this.namespace = namespace;
         this.location = location;
-        this.sceneId = Identifier.fromNamespaceAndPath(namespace, "missing_title");
+        sceneId = Identifier.fromNamespaceAndPath(namespace, "missing_title");
 
         outliner = new Outliner();
         elements = new HashSet<>();
@@ -293,7 +294,7 @@ public class PonderScene {
     public void tick(Minecraft mc, boolean sound) {
         renderViewEntity.swap(mc);
         if (chasingPointOfInterest != null) {
-            pointOfInterest = VecHelper.lerp(.25f, pointOfInterest, chasingPointOfInterest);
+            pointOfInterest = VecHelper.lerp(0.25f, pointOfInterest, chasingPointOfInterest);
         }
 
         outliner.tickOutlines();
@@ -590,7 +591,11 @@ public class PonderScene {
 
             float f = 30 * scaleFactor;
             ms.scale(f, -f, f);
-            ms.translate(basePlateSize / -2f - basePlateOffsetX, -1f + yOffset, basePlateSize / -2f - basePlateOffsetZ);
+            ms.translate(
+                basePlateSize / -2.0f - basePlateOffsetX,
+                -1.0f + yOffset,
+                basePlateSize / -2.0f - basePlateOffsetZ
+            );
 
             return ms;
         }
@@ -605,21 +610,21 @@ public class PonderScene {
             Vec3 vec = new Vec3(x, y, depth);
 
             vec = vec.subtract(width / 2, height / 2, 200 + offset);
-            vec = VecHelper.rotate(vec, 35, net.minecraft.core.Direction.Axis.X);
-            vec = VecHelper.rotate(vec, -55, net.minecraft.core.Direction.Axis.Y);
+            vec = VecHelper.rotate(vec, 35, Direction.Axis.X);
+            vec = VecHelper.rotate(vec, -55, Direction.Axis.Y);
             vec = vec.subtract(offset, 0, 0);
-            vec = VecHelper.rotate(vec, 55, net.minecraft.core.Direction.Axis.Y);
-            vec = VecHelper.rotate(vec, -35, net.minecraft.core.Direction.Axis.X);
-            vec = VecHelper.rotate(vec, -xRotation.getValue(pt), net.minecraft.core.Direction.Axis.X);
-            vec = VecHelper.rotate(vec, -yRotation.getValue(pt), net.minecraft.core.Direction.Axis.Y);
+            vec = VecHelper.rotate(vec, 55, Direction.Axis.Y);
+            vec = VecHelper.rotate(vec, -35, Direction.Axis.X);
+            vec = VecHelper.rotate(vec, -xRotation.getValue(pt), Direction.Axis.X);
+            vec = VecHelper.rotate(vec, -yRotation.getValue(pt), Direction.Axis.Y);
 
-            float f = 1f / (30 * scaleFactor);
+            float f = 1.0f / (30 * scaleFactor);
 
             vec = vec.multiply(f, -f, f);
             vec = vec.subtract(
-                basePlateSize / -2f - basePlateOffsetX,
-                -1f + yOffset,
-                basePlateSize / -2f - basePlateOffsetZ
+                basePlateSize / -2.0f - basePlateOffsetX,
+                -1.0f + yOffset,
+                basePlateSize / -2.0f - basePlateOffsetZ
             );
 
             return vec;

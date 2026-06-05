@@ -128,9 +128,9 @@ public class ChainConveyorVisual extends SingleAxisRotatingVisual<ChainConveyorB
         Vec3 targetPosition = physicsData.prevTargetPos.lerp(physicsData.targetPos, partialTicks);
         float yaw = AngleHelper.angleLerp(partialTicks, physicsData.prevYaw, physicsData.yaw);
         Vec3 offset = new Vec3(
-            targetPosition.x - this.pos.getX(),
-            targetPosition.y - this.pos.getY(),
-            targetPosition.z - this.pos.getZ()
+            targetPosition.x - pos.getX(),
+            targetPosition.y - pos.getY(),
+            targetPosition.z - pos.getZ()
         );
 
         BlockPos containingPos = BlockPos.containing(position);
@@ -161,7 +161,7 @@ public class ChainConveyorVisual extends SingleAxisRotatingVisual<ChainConveyorB
             buf.setIdentityTransform();
             buf.translate(getVisualPosition());
             buf.translate(offset);
-            buf.translate(0, 10 / 16f, 0);
+            buf.translate(0, 10 / 16.0f, 0);
             buf.rotateYDegrees(yaw);
 
             buf.rotateZDegrees(zRot);
@@ -172,7 +172,7 @@ public class ChainConveyorVisual extends SingleAxisRotatingVisual<ChainConveyorB
             }
 
             buf.uncenter();
-            buf.translate(0, -PackageItem.getHookDistance(box.item) + 7 / 16f, 0);
+            buf.translate(0, -PackageItem.getHookDistance(box.item) + 7 / 16.0f, 0);
 
             buf.light(light);
 

@@ -43,8 +43,8 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour<SmartBlock
     public int redstonePower;
     public UUID freqId;
 
-    private boolean addedGlobally = false;
-    private boolean loadedGlobally = false;
+    private boolean addedGlobally;
+    private boolean loadedGlobally;
     private boolean global;
 
     public enum RequestType {
@@ -76,8 +76,8 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour<SmartBlock
         boolean sortByPriority,
         boolean clientSide
     ) {
-        Cache<Integer, WeakReference<LogisticallyLinkedBehaviour>> cache = (clientSide ? CLIENT_LINKS : LINKS).getIfPresent(
-            freq);
+        Cache<Integer, WeakReference<LogisticallyLinkedBehaviour>> cache = (clientSide ? CLIENT_LINKS :
+            LINKS).getIfPresent(freq);
         if (cache == null) {
             return Collections.emptyList();
         }

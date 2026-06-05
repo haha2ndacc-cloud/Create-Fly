@@ -65,7 +65,8 @@ public class FunnelFilterSlotPositioning extends ValueBoxTransform.Sided {
             return;
         }
 
-        float yRot = AngleHelper.horizontalAngle(AbstractFunnelBlock.getFunnelFacing(state)) + (facing == Direction.DOWN ? 180 : 0);
+        float yRot = AngleHelper.horizontalAngle(AbstractFunnelBlock.getFunnelFacing(state)) + (
+            facing == Direction.DOWN ? 180 : 0);
         TransformStack.of(ms).rotateYDegrees(yRot).rotateXDegrees(facing == Direction.DOWN ? -90 : 90);
     }
 

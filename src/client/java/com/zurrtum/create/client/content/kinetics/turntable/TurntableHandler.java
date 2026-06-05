@@ -33,7 +33,7 @@ public class TurntableHandler {
 
         DeltaTracker deltaTracker = mc.getDeltaTracker();
         float tickSpeed = mc.level.tickRateManager().tickrate() / 20;
-        float speed = turnTable.getSpeed() * (2 / 3f) * tickSpeed * deltaTracker.getRealtimeDeltaTicks();
+        float speed = turnTable.getSpeed() * (2 / 3.0f) * tickSpeed * deltaTracker.getRealtimeDeltaTicks();
 
         if (speed == 0) {
             return;
@@ -42,8 +42,8 @@ public class TurntableHandler {
         Vec3 origin = VecHelper.getCenterOf(pos);
         Vec3 offset = mc.player.position().subtract(origin);
 
-        if (offset.length() > 1 / 4f) {
-            speed *= (float) Mth.clamp((1 / 2f - offset.length()) * 2, 0, 1);
+        if (offset.length() > 1 / 4.0f) {
+            speed *= (float) Mth.clamp((1 / 2.0f - offset.length()) * 2, 0, 1);
         }
 
         float yRotOffset = speed * deltaTracker.getGameTimeDeltaPartialTick(false);

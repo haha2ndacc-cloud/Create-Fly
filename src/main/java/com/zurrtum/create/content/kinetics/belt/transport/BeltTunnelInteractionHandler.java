@@ -42,7 +42,7 @@ public class BeltTunnelInteractionHandler {
         }
 
         if (stuckAtTunnel(beltInventory, upcomingSegment, current.stack, movementFacing)) {
-            current.beltPosition = currentSegment + (beltInventory.beltMovementPositive ? .99f : .01f);
+            current.beltPosition = currentSegment + (beltInventory.beltMovementPositive ? 0.99f : 0.01f);
             return true;
         }
 
@@ -164,14 +164,11 @@ public class BeltTunnelInteractionHandler {
     @Nullable
     public static BeltTunnelBlockEntity getTunnelOnPosition(Level world, BlockPos pos) {
         pos = pos.above();
-        if (!(world.getBlockState(pos).getBlock() instanceof BeltTunnelBlock)) {
-            return null;
+        if (world.getBlockState(pos)
+            .getBlock() instanceof BeltTunnelBlock && world.getBlockEntity(pos) instanceof BeltTunnelBlockEntity be) {
+            return be;
         }
-        BlockEntity be = world.getBlockEntity(pos);
-        if (!(be instanceof BeltTunnelBlockEntity)) {
-            return null;
-        }
-        return ((BeltTunnelBlockEntity) be);
+        return null;
     }
 
 }

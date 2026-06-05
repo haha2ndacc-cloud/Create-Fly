@@ -26,7 +26,7 @@ public class TrainScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("train_controls", "Controlling Trains");
         scene.configureBasePlate(1, 0, 9);
-        scene.scaleSceneView(.75f);
+        scene.scaleSceneView(0.75f);
         scene.setSceneOffsetY(-1);
         scene.showBasePlate();
 
@@ -51,7 +51,7 @@ public class TrainScenes {
         scene.overlay().chaseBoundingBoxOutline(
             PonderPalette.WHITE,
             train,
-            new AABB(initialControlsPos).contract(-6 / 16f, 2 / 16f, 0),
+            new AABB(initialControlsPos).contract(-6 / 16.0f, 2 / 16.0f, 0),
             85
         );
         scene.idle(15);
@@ -74,7 +74,7 @@ public class TrainScenes {
         scene.idle(60);
 
         scene.world().moveSection(trainElement, util.vector().of(4, 0, 0), 20);
-        scene.world().animateBogey(util.grid().at(3, 2, 4), -4f, 20);
+        scene.world().animateBogey(util.grid().at(3, 2, 4), -4.0f, 20);
         scene.world().animateTrainStation(stationPos, false);
         scene.idle(30);
 
@@ -83,7 +83,7 @@ public class TrainScenes {
         scene.idle(60);
 
         scene.world().moveSection(trainElement, util.vector().of(-4, 0, 0), 30);
-        scene.world().animateBogey(util.grid().at(3, 2, 4), 4f, 30);
+        scene.world().animateBogey(util.grid().at(3, 2, 4), 4.0f, 30);
         scene.idle(40);
 
         scene.overlay().showControls(util.vector().topOf(initialControlsPos), Pointing.DOWN, 70).scroll();
@@ -94,11 +94,11 @@ public class TrainScenes {
         scene.idle(90);
 
         scene.world().moveSection(trainElement, util.vector().of(2, 0, 0), 30);
-        scene.world().animateBogey(util.grid().at(3, 2, 4), -2f, 30);
+        scene.world().animateBogey(util.grid().at(3, 2, 4), -2.0f, 30);
         scene.idle(40);
 
         scene.world().moveSection(trainElement, util.vector().of(-3, 0, 0), 60);
-        scene.world().animateBogey(util.grid().at(3, 2, 4), 3f, 60);
+        scene.world().animateBogey(util.grid().at(3, 2, 4), 3.0f, 60);
         scene.idle(70);
 
         scene.overlay().showText(50).pointAt(util.vector().of(2.35f, 3.75f, 5)).placeNearTarget().attachKeyFrame()
@@ -106,7 +106,7 @@ public class TrainScenes {
         scene.idle(40);
 
         scene.world().moveSection(trainElement, util.vector().of(1, 0, 0), 20);
-        scene.world().animateBogey(util.grid().at(3, 2, 4), -1f, 20);
+        scene.world().animateBogey(util.grid().at(3, 2, 4), -1.0f, 20);
         scene.idle(20);
         scene.effects().indicateSuccess(stationPos);
         scene.world().animateTrainStation(stationPos, true);
@@ -143,7 +143,7 @@ public class TrainScenes {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("train_schedule", "Using Train Schedules");
         scene.configureBasePlate(1, 0, 9);
-        scene.scaleSceneView(.75f);
+        scene.scaleSceneView(0.75f);
         scene.setSceneOffsetY(-1);
         scene.showBasePlate();
 
@@ -191,7 +191,7 @@ public class TrainScenes {
         scene.idle(80);
 
         scene.world().moveSection(trainElement1, util.vector().of(12, 0, 0), 60);
-        scene.world().animateBogey(util.grid().at(4, 2, 4), -12f, 60);
+        scene.world().animateBogey(util.grid().at(4, 2, 4), -12.0f, 60);
         scene.world().animateTrainStation(stationPos, false);
         scene.idle(20);
         scene.world().hideIndependentSection(trainElement1, null);
@@ -231,7 +231,7 @@ public class TrainScenes {
         scene.idle(14);
 
         scene.world().moveSection(trainElement2, util.vector().of(3, 0, 0), 30);
-        scene.world().animateBogey(util.grid().at(4, 2, 7), -3f, 30);
+        scene.world().animateBogey(util.grid().at(4, 2, 7), -3.0f, 30);
         scene.special().moveParrot(birb, util.vector().of(3, 0, 0), 30);
         scene.idle(40);
 

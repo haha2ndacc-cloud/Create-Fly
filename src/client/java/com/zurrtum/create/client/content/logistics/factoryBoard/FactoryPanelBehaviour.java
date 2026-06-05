@@ -14,10 +14,10 @@ import com.zurrtum.create.content.logistics.factoryBoard.ServerFactoryPanelBehav
 import com.zurrtum.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.zurrtum.create.foundation.blockEntity.behaviour.ValueSettings;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
@@ -112,9 +112,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour<ServerFactoryPanel
     public MutableComponent formatValue(ValueSettings value) {
         if (value.value() == 0) {
             return CreateLang.translateDirect("gui.factory_panel.inactive");
-        } else {
-            return Component.literal(Math.max(0, value.value()) + ((value.row() == 0) ? "" : "▤"));
         }
+        return Component.literal(Math.max(0, value.value()) + (value.row() == 0 ? "" : "▤"));
     }
 
     @Override
@@ -161,7 +160,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour<ServerFactoryPanel
 
     @Override
     public MutableComponent getTip() {
-        return CreateLang.translateDirect(getFilter().isEmpty() ? "logistics.filter.click_to_set" : "factory_panel.click_to_configure");
+        return CreateLang.translateDirect(
+            getFilter().isEmpty() ? "logistics.filter.click_to_set" : "factory_panel.click_to_configure");
     }
 
     @Override

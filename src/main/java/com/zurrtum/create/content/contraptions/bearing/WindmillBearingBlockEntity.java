@@ -81,7 +81,7 @@ public class WindmillBearingBlockEntity extends MechanicalBearingBlockEntity {
 
     protected float getAngleSpeedDirection() {
         RotationDirection rotationDirection = RotationDirection.values()[movementDirection.getValue()];
-        return (rotationDirection == RotationDirection.CLOCKWISE ? 1 : -1);
+        return rotationDirection == RotationDirection.CLOCKWISE ? 1 : -1;
     }
 
     @Override
@@ -127,7 +127,7 @@ public class WindmillBearingBlockEntity extends MechanicalBearingBlockEntity {
     }
 
     public enum RotationDirection {
-        CLOCKWISE, COUNTER_CLOCKWISE;
+        CLOCKWISE, COUNTER_CLOCKWISE
     }
 
 }

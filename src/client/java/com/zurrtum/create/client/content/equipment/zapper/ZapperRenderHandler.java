@@ -35,17 +35,17 @@ public class ZapperRenderHandler extends ShootableGadgetRenderHandler {
             cachedBeams = new LinkedList<>();
         }
 
-        cachedBeams.removeIf(b -> b.itensity < .1f);
+        cachedBeams.removeIf(b -> b.itensity < 0.1f);
         if (cachedBeams.isEmpty()) {
             return;
         }
 
         cachedBeams.forEach(beam -> {
             Outliner.getInstance().endChasingLine(beam, beam.start, beam.end, 1 - beam.itensity, false)
-                .disableLineNormals().colored(0xffffff).lineWidth(beam.itensity * 1 / 8f);
+                .disableLineNormals().colored(0xffffff).lineWidth(beam.itensity * 1 / 8.0f);
         });
 
-        cachedBeams.forEach(b -> b.itensity *= .6f);
+        cachedBeams.forEach(b -> b.itensity *= 0.6f);
     }
 
     @Override
@@ -71,8 +71,8 @@ public class ZapperRenderHandler extends ShootableGadgetRenderHandler {
         double x = beam.end.x;
         double y = beam.end.y;
         double z = beam.end.z;
-        Supplier<Double> randomSpeed = () -> (random.nextDouble() - .5d) * .2f;
-        Supplier<Double> randomOffset = () -> (random.nextDouble() - .5d) * .2f;
+        Supplier<Double> randomSpeed = () -> (random.nextDouble() - 0.5d) * 0.2f;
+        Supplier<Double> randomOffset = () -> (random.nextDouble() - 0.5d) * 0.2f;
         for (int i = 0; i < 10; i++) {
             world.addParticle(ParticleTypes.END_ROD, x, y, z, randomSpeed.get(), randomSpeed.get(), randomSpeed.get());
             world.addParticle(

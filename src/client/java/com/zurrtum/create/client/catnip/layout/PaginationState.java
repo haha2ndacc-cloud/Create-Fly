@@ -57,7 +57,7 @@ public final class PaginationState {
             return elementCount;
         }
 
-        return Math.min(elementsPerPage, elementCount - (pageIndex * elementsPerPage));
+        return Math.min(elementsPerPage, elementCount - pageIndex * elementsPerPage);
     }
 
     /**
@@ -103,11 +103,11 @@ public final class PaginationState {
         if (obj == this) {
             return true;
         }
-        if (obj == null || obj.getClass() != this.getClass()) {
+        if (obj == null || obj.getClass() != getClass()) {
             return false;
         }
         var that = (PaginationState) obj;
-        return this.usesPagination == that.usesPagination && this.pageIndex == that.pageIndex && this.elementsPerPage == that.elementsPerPage && this.elementCount == that.elementCount;
+        return usesPagination == that.usesPagination && pageIndex == that.pageIndex && elementsPerPage == that.elementsPerPage && elementCount == that.elementCount;
     }
 
     @Override

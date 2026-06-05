@@ -2,7 +2,6 @@ package com.zurrtum.create.client.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zurrtum.create.client.flywheel.lib.model.baked.BakedItemModelBufferer.ItemMeshEmitterProvider;
 import com.zurrtum.create.client.flywheel.lib.model.baked.DualVertexConsumer;
@@ -20,8 +19,7 @@ public class ItemFeatureRendererMixin {
     ) {
         if (provider instanceof ItemMeshEmitterProvider) {
             return new DualVertexConsumer(first, second);
-        } else {
-            return original.call(first, second);
         }
+        return original.call(first, second);
     }
 }

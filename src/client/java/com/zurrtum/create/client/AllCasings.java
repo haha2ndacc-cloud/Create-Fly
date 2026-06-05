@@ -77,22 +77,30 @@ public class AllCasings {
         make(
             AllBlocks.ANDESITE_ENCASED_COGWHEEL,
             AllSpriteShifts.ANDESITE_CASING,
-            (s, f) -> f.getAxis() == s.getValue(EncasedCogwheelBlock.AXIS) && !s.getValue(f.getAxisDirection() == AxisDirection.POSITIVE ? EncasedCogwheelBlock.TOP_SHAFT : EncasedCogwheelBlock.BOTTOM_SHAFT)
+            (s, f) -> f.getAxis() == s.getValue(EncasedCogwheelBlock.AXIS) && !s.getValue(
+                f.getAxisDirection() == AxisDirection.POSITIVE ? EncasedCogwheelBlock.TOP_SHAFT :
+                    EncasedCogwheelBlock.BOTTOM_SHAFT)
         );
         make(
             AllBlocks.BRASS_ENCASED_COGWHEEL,
             AllSpriteShifts.BRASS_CASING,
-            (s, f) -> f.getAxis() == s.getValue(EncasedCogwheelBlock.AXIS) && !s.getValue(f.getAxisDirection() == AxisDirection.POSITIVE ? EncasedCogwheelBlock.TOP_SHAFT : EncasedCogwheelBlock.BOTTOM_SHAFT)
+            (s, f) -> f.getAxis() == s.getValue(EncasedCogwheelBlock.AXIS) && !s.getValue(
+                f.getAxisDirection() == AxisDirection.POSITIVE ? EncasedCogwheelBlock.TOP_SHAFT :
+                    EncasedCogwheelBlock.BOTTOM_SHAFT)
         );
         make(
             AllBlocks.ANDESITE_ENCASED_LARGE_COGWHEEL,
             AllSpriteShifts.ANDESITE_CASING,
-            (s, f) -> f.getAxis() == s.getValue(EncasedCogwheelBlock.AXIS) && !s.getValue(f.getAxisDirection() == AxisDirection.POSITIVE ? EncasedCogwheelBlock.TOP_SHAFT : EncasedCogwheelBlock.BOTTOM_SHAFT)
+            (s, f) -> f.getAxis() == s.getValue(EncasedCogwheelBlock.AXIS) && !s.getValue(
+                f.getAxisDirection() == AxisDirection.POSITIVE ? EncasedCogwheelBlock.TOP_SHAFT :
+                    EncasedCogwheelBlock.BOTTOM_SHAFT)
         );
         make(
             AllBlocks.BRASS_ENCASED_LARGE_COGWHEEL,
             AllSpriteShifts.BRASS_CASING,
-            (s, f) -> f.getAxis() == s.getValue(EncasedCogwheelBlock.AXIS) && !s.getValue(f.getAxisDirection() == AxisDirection.POSITIVE ? EncasedCogwheelBlock.TOP_SHAFT : EncasedCogwheelBlock.BOTTOM_SHAFT)
+            (s, f) -> f.getAxis() == s.getValue(EncasedCogwheelBlock.AXIS) && !s.getValue(
+                f.getAxisDirection() == AxisDirection.POSITIVE ? EncasedCogwheelBlock.TOP_SHAFT :
+                    EncasedCogwheelBlock.BOTTOM_SHAFT)
         );
         make(
             AllBlocks.ENCASED_FLUID_PIPE,

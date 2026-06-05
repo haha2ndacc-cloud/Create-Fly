@@ -50,12 +50,12 @@ import java.util.Optional;
 
 public class FluidPipeBlock extends PipeBlock implements SimpleWaterloggedBlock, IWrenchableWithBracket, IBE<FluidPipeBlockEntity>, EncasableBlock, TransformableBlock, NeighborUpdateListeningBlock {
 
-    private static final VoxelShape OCCLUSION_BOX = Block.box(4, 4, 4, 12, 12, 12);
+    private static final VoxelShape OCCLUSION_BOX = box(4, 4, 4, 12, 12, 12);
 
     public static final MapCodec<FluidPipeBlock> CODEC = simpleCodec(FluidPipeBlock::new);
 
     public FluidPipeBlock(Properties properties) {
-        super(8f, properties);
+        super(8.0f, properties);
         registerDefaultState(defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
     }
 
@@ -160,7 +160,7 @@ public class FluidPipeBlock extends PipeBlock implements SimpleWaterloggedBlock,
             FluidPropagator.propagateChangedPipe(world, pos, state);
         }
         if (!isMoving) {
-            removeBracket(world, pos, true).ifPresent(stack -> Block.popResource(world, pos, stack));
+            removeBracket(world, pos, true).ifPresent(stack -> popResource(world, pos, stack));
         }
         if (state.hasBlockEntity()) {
             world.removeBlockEntity(pos);
@@ -385,7 +385,8 @@ public class FluidPipeBlock extends PipeBlock implements SimpleWaterloggedBlock,
 
     @Override
     public FluidState getFluidState(BlockState state) {
-        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
+        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) :
+            Fluids.EMPTY.defaultFluidState();
     }
 
     @Override

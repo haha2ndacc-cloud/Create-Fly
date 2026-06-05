@@ -10,7 +10,7 @@ public class AbstractIngredient {
 
     public AbstractIngredient(Set<AbstractVariant> variants) {
         this.variants = ImmutableSet.copyOf(variants);
-        this.hashCode = variants.hashCode();
+        hashCode = variants.hashCode();
     }
 
     @Override
@@ -22,7 +22,7 @@ public class AbstractIngredient {
             return true;
         }
 
-        return this.hashCode == that.hashCode && this.variants.equals(that.variants);
+        return hashCode == that.hashCode && variants.equals(that.variants);
     }
 
     @Override

@@ -29,7 +29,7 @@ public class ResizableStorageArray {
             throw new IllegalArgumentException("Growth factor must be greater than 1!");
         }
 
-        this.buffer = new ResizableStorageBuffer();
+        buffer = new ResizableStorageBuffer();
     }
 
     public int handle() {

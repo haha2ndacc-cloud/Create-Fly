@@ -22,7 +22,7 @@ public abstract class OldMinecartBehaviorMixin extends MinecartBehavior {
     @Inject(method = "moveAlongTrack(Lnet/minecraft/server/level/ServerLevel;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/vehicle/minecart/OldMinecartBehavior;setDeltaMovement(DDD)V", ordinal = 0, shift = At.Shift.BY, by = 2))
     private void onMinecartPass(ServerLevel level, CallbackInfo ci, @Local BlockPos pos, @Local BlockState state) {
         if (state.getBlock() instanceof MinecartPassBlock block) {
-            block.onMinecartPass(state, level, pos, this.minecart);
+            block.onMinecartPass(state, level, pos, minecart);
         }
     }
 }

@@ -91,7 +91,7 @@ public class CogWheelBlock extends AbstractSimpleShaftBlock implements ICogWheel
             return;
         }
 
-        Axis axis = state.getValue(CogWheelBlock.AXIS);
+        Axis axis = state.getValue(AXIS);
         for (Axis perpendicular1 : Iterate.axes) {
             if (perpendicular1 == axis) {
                 continue;
@@ -114,7 +114,7 @@ public class CogWheelBlock extends AbstractSimpleShaftBlock implements ICogWheel
                         if (!(blockState.getBlock() instanceof CogWheelBlock)) {
                             continue;
                         }
-                        if (blockState.getValue(CogWheelBlock.AXIS) != axis) {
+                        if (blockState.getValue(AXIS) != axis) {
                             continue;
                         }
                         if (ICogWheel.isLargeCog(blockState) == isLarge) {
@@ -196,18 +196,18 @@ public class CogWheelBlock extends AbstractSimpleShaftBlock implements ICogWheel
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         boolean shouldWaterlog = context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER;
-        return this.defaultBlockState().setValue(AXIS, getAxisForPlacement(context))
+        return defaultBlockState().setValue(AXIS, getAxisForPlacement(context))
             .setValue(BlockStateProperties.WATERLOGGED, shouldWaterlog);
     }
 
     @Override
     public float getParticleTargetRadius() {
-        return isLargeCog() ? 1.125f : .65f;
+        return isLargeCog() ? 1.125f : 0.65f;
     }
 
     @Override
     public float getParticleInitialRadius() {
-        return isLargeCog() ? 1f : .75f;
+        return isLargeCog() ? 1.0f : 0.75f;
     }
 
     @Override

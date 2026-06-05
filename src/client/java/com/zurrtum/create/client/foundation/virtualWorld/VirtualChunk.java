@@ -44,13 +44,13 @@ public class VirtualChunk extends LevelChunk {
         this.world = world;
 
         int sectionCount = world.getSectionsCount();
-        this.sections = new VirtualChunkSection[sectionCount];
+        sections = new VirtualChunkSection[sectionCount];
 
         for (int i = 0, bottom = world.getMinSectionY(); i < sectionCount; i++) {
-            sections[i] = new VirtualChunkSection(this, (i + bottom) << 4);
+            sections[i] = new VirtualChunkSection(this, i + bottom << 4);
         }
 
-        this.needsLight = true;
+        needsLight = true;
 
         //		Mods.STARLIGHT.executeIfInstalled(() -> () -> {
         //			((ExtendedChunk) this).setBlockNibbles(StarLightEngine.getFilledEmptyLight(this));
@@ -217,7 +217,7 @@ public class VirtualChunk extends LevelChunk {
 
     @Override
     public void setLightCorrect(boolean lightCorrect) {
-        this.needsLight = lightCorrect;
+        needsLight = lightCorrect;
     }
 
     @Override

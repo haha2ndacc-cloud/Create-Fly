@@ -78,9 +78,9 @@ public record FluidStackRenderer(EntryRenderer<FluidStack> origin) implements En
                 if (scale == null) {
                     if (bottleType == BottleType.LINGERING) {
                         scale = Items.LINGERING_POTION.components()
-                            .getOrDefault(DataComponents.POTION_DURATION_SCALE, 1f);
+                            .getOrDefault(DataComponents.POTION_DURATION_SCALE, 1.0f);
                     } else {
-                        scale = 1f;
+                        scale = 1.0f;
                     }
                 }
                 PotionContents.addPotionTooltip(

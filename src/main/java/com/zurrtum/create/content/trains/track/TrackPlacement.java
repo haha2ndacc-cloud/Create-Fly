@@ -38,20 +38,20 @@ public class TrackPlacement {
     public static class PlacementInfo {
 
         public PlacementInfo(TrackMaterial material) {
-            this.trackMaterial = material;
+            trackMaterial = material;
         }
 
-        public @Nullable BezierConnection curve = null;
-        public boolean valid = false;
-        public int end1Extent = 0;
-        public int end2Extent = 0;
-        public @Nullable String message = null;
+        public @Nullable BezierConnection curve;
+        public boolean valid;
+        public int end1Extent;
+        public int end2Extent;
+        public @Nullable String message;
 
-        public int requiredTracks = 0;
-        public boolean hasRequiredTracks = false;
+        public int requiredTracks;
+        public boolean hasRequiredTracks;
 
-        public int requiredPavement = 0;
-        public boolean hasRequiredPavement = false;
+        public int requiredPavement;
+        public boolean hasRequiredPavement;
         public final TrackMaterial trackMaterial;
 
         // for visualisation
@@ -158,7 +158,7 @@ public class TrackPlacement {
         boolean parallel = intersect == null;
         boolean skipCurve = false;
 
-        if ((parallel && normedAxis1.dot(normedAxis2) > 0) || (!parallel && (intersect[0] < 0 || intersect[1] < 0))) {
+        if (parallel && normedAxis1.dot(normedAxis2) > 0 || !parallel && (intersect[0] < 0 || intersect[1] < 0)) {
             axis2 = axis2.scale(-1);
             normedAxis2 = normedAxis2.scale(-1);
             end2 = track.getCurveStart(level, pos2, state2, axis2);
@@ -227,7 +227,7 @@ public class TrackPlacement {
                     // This is for standardising s curve sizes
                     if (t > targetT) {
                         int correction = (int) ((t - targetT) / axis1.length());
-                        info.end1Extent = maximiseTurn ? 0 : correction / 2 + (correction % 2);
+                        info.end1Extent = maximiseTurn ? 0 : correction / 2 + correction % 2;
                         info.end2Extent = maximiseTurn ? 0 : correction / 2;
                     }
                 }
@@ -299,7 +299,7 @@ public class TrackPlacement {
                 }
                 if (hDistance > minHDistance) {
                     int correction = (int) (hDistance - minHDistance);
-                    info.end1Extent = maximiseTurn ? 0 : correction / 2 + (correction % 2);
+                    info.end1Extent = maximiseTurn ? 0 : correction / 2 + correction % 2;
                     info.end2Extent = maximiseTurn ? 0 : correction / 2;
                 }
 
@@ -328,18 +328,16 @@ public class TrackPlacement {
                 ex2 = (float) ((dist2 - dist1) / axis2.length());
             }
 
-            double turnSize = Math.min(dist1, dist2) - .1d;
-            boolean ninety = (absAngle + .25f) % 90 < 1;
+            double turnSize = Math.min(dist1, dist2) - 0.1d;
+            boolean ninety = (absAngle + 0.25f) % 90 < 1;
 
             if (intersect[0] < 0 || intersect[1] < 0) {
                 return info.withMessage("too_sharp").tooJumbly();
             }
 
             double minTurnSize = ninety ? 7 : 3.25;
-            double turnSizeToFitAscend = minTurnSize + (ninety ? Math.max(0, absAscend - 3) * 2f : Math.max(
-                0,
-                absAscend - 1.5f
-            ) * 1.5f);
+            double turnSizeToFitAscend = minTurnSize + (ninety ? Math.max(0, absAscend - 3) * 2.0f :
+                Math.max(0, absAscend - 1.5f) * 1.5f);
 
             if (turnSize < minTurnSize) {
                 return info.withMessage("too_sharp");
@@ -582,10 +580,8 @@ public class TrackPlacement {
             level.setBlock(
                 targetPos1, ProperWaterloggedBlock.withWater(
                     level,
-                    (stateAtPos.is(AllBlockTags.TRACKS) ? stateAtPos : BlockHelper.copyProperties(
-                        state1,
-                        onto
-                    )).setValue(TrackBlock.HAS_BE, true),
+                    (stateAtPos.is(AllBlockTags.TRACKS) ? stateAtPos :
+                        BlockHelper.copyProperties(state1, onto)).setValue(TrackBlock.HAS_BE, true),
                     targetPos1
                 ), Block.UPDATE_ALL
             );
@@ -594,10 +590,8 @@ public class TrackPlacement {
             level.setBlock(
                 targetPos2, ProperWaterloggedBlock.withWater(
                     level,
-                    (stateAtPos.is(AllBlockTags.TRACKS) ? stateAtPos : BlockHelper.copyProperties(
-                        state2,
-                        onto
-                    )).setValue(TrackBlock.HAS_BE, true),
+                    (stateAtPos.is(AllBlockTags.TRACKS) ? stateAtPos :
+                        BlockHelper.copyProperties(state2, onto)).setValue(TrackBlock.HAS_BE, true),
                     targetPos2
                 ), Block.UPDATE_ALL
             );

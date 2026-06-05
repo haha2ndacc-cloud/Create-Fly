@@ -6,7 +6,7 @@ public class BandedPrimeLimiter implements DistanceUpdateLimiterImpl {
     // 1 followed by the prime numbers
     private static final int[] DIVISOR_SEQUENCE = new int[]{1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31};
 
-    private int tickCount = 0;
+    private int tickCount;
 
     @Override
     public void tick() {
@@ -15,13 +15,13 @@ public class BandedPrimeLimiter implements DistanceUpdateLimiterImpl {
 
     @Override
     public boolean shouldUpdate(double distanceSquared) {
-        return (tickCount % getUpdateDivisor(distanceSquared)) == 0;
+        return tickCount % getUpdateDivisor(distanceSquared) == 0;
     }
 
     protected int getUpdateDivisor(double distanceSquared) {
         int dSq = Mth.ceil(distanceSquared);
 
-        int i = (dSq / 2048);
+        int i = dSq / 2048;
 
         return DIVISOR_SEQUENCE[Mth.clamp(i, 0, DIVISOR_SEQUENCE.length - 1)];
     }

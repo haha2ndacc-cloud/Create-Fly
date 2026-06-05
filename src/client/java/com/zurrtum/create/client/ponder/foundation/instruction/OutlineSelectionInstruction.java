@@ -20,7 +20,7 @@ public class OutlineSelectionInstruction extends TickingInstruction {
     @Override
     public void tick(PonderScene scene) {
         super.tick(scene);
-        selection.makeOutline(scene.getOutliner(), slot).lineWidth(1 / 16f).colored(color.getColor());
+        selection.makeOutline(scene.getOutliner(), slot).lineWidth(1 / 16.0f).colored(color.getColor());
     }
 
 }

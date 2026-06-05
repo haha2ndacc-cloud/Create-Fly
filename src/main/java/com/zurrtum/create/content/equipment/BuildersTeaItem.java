@@ -18,9 +18,8 @@ public class BuildersTeaItem extends Item {
         if (livingEntity instanceof Player player && !player.getAbilities().instabuild) {
             if (eatResult.isEmpty()) {
                 return Items.GLASS_BOTTLE.getDefaultInstance();
-            } else {
-                player.getInventory().add(Items.GLASS_BOTTLE.getDefaultInstance());
             }
+            player.getInventory().add(Items.GLASS_BOTTLE.getDefaultInstance());
         }
         return eatResult;
     }

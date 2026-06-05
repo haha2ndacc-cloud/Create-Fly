@@ -33,7 +33,7 @@ public class ChainPackageInteractionHandler {
             if (data == null || data.targetPos == null || data.beReference == null) {
                 continue;
             }
-            AABB bounds = new AABB(data.targetPos, data.targetPos).move(0, -.25, 0).expandTowards(0, 0.5, 0)
+            AABB bounds = new AABB(data.targetPos, data.targetPos).move(0, -0.25, 0).expandTowards(0, 0.5, 0)
                 .inflate(0.45);
 
             Vec3 from = player.getEyePosition();

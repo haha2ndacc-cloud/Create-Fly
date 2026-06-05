@@ -85,9 +85,11 @@ public class PortableStorageInterfaceRenderer implements BlockEntityRenderer<Por
 
     public static PartialModel getMiddleForState(BlockState state, boolean lit) {
         if (state.is(AllBlocks.PORTABLE_FLUID_INTERFACE)) {
-            return lit ? AllPartialModels.PORTABLE_FLUID_INTERFACE_MIDDLE_POWERED : AllPartialModels.PORTABLE_FLUID_INTERFACE_MIDDLE;
+            return lit ? AllPartialModels.PORTABLE_FLUID_INTERFACE_MIDDLE_POWERED :
+                AllPartialModels.PORTABLE_FLUID_INTERFACE_MIDDLE;
         }
-        return lit ? AllPartialModels.PORTABLE_STORAGE_INTERFACE_MIDDLE_POWERED : AllPartialModels.PORTABLE_STORAGE_INTERFACE_MIDDLE;
+        return lit ? AllPartialModels.PORTABLE_STORAGE_INTERFACE_MIDDLE_POWERED :
+            AllPartialModels.PORTABLE_STORAGE_INTERFACE_MIDDLE;
     }
 
     public static PartialModel getTopForState(BlockState state) {

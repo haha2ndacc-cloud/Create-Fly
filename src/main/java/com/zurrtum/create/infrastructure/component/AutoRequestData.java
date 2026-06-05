@@ -71,9 +71,9 @@ public record AutoRequestData(PackageOrderWithCrafts encodedRequest, String enco
         ) && requestData.targetDim.equals(level.dimension().identifier().toString());
 
         if (player != null) {
-            MutableComponent message = mutable.isValid ? Component.translatable(
-                "create.redstone_requester.keeper_connected").withStyle(ChatFormatting.WHITE) : Component.translatable(
-                "create.redstone_requester.keeper_too_far_away").withStyle(ChatFormatting.RED);
+            MutableComponent message = mutable.isValid ?
+                Component.translatable("create.redstone_requester.keeper_connected").withStyle(ChatFormatting.WHITE) :
+                Component.translatable("create.redstone_requester.keeper_too_far_away").withStyle(ChatFormatting.RED);
             player.sendOverlayMessage(message);
         }
 
@@ -85,7 +85,7 @@ public record AutoRequestData(PackageOrderWithCrafts encodedRequest, String enco
         public String encodedTargetAddress = "";
         public BlockPos targetOffset = BlockPos.ZERO;
         public String targetDim = "null";
-        public boolean isValid = false;
+        public boolean isValid;
 
         public Mutable() {
         }

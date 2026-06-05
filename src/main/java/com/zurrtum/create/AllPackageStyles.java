@@ -7,10 +7,10 @@ import java.util.List;
 
 public class AllPackageStyles {
     public static List<PackageStyle> ALL = new ArrayList<>();
-    public static PackageStyle CARDBOARD_12X12 = cardboard(12, 12, 23f);
-    public static PackageStyle CARDBOARD_10X12 = cardboard(10, 12, 22f);
-    public static PackageStyle CARDBOARD_10X8 = cardboard(10, 8, 18f);
-    public static PackageStyle CARDBOARD_12X10 = cardboard(12, 10, 21f);
+    public static PackageStyle CARDBOARD_12X12 = cardboard(12, 12, 23.0f);
+    public static PackageStyle CARDBOARD_10X12 = cardboard(10, 12, 22.0f);
+    public static PackageStyle CARDBOARD_10X8 = cardboard(10, 8, 18.0f);
+    public static PackageStyle CARDBOARD_12X10 = cardboard(12, 10, 21.0f);
     public static PackageStyle RARE_CREEPER = rare("creeper");
     public static PackageStyle RARE_DARCY = rare("darcy");
     public static PackageStyle RARE_EVAN = rare("evan");
@@ -29,7 +29,7 @@ public class AllPackageStyles {
     }
 
     public static PackageStyle rare(String name) {
-        PackageStyle style = new PackageStyle("rare_" + name, 12, 10, 21f, true);
+        PackageStyle style = new PackageStyle("rare_" + name, 12, 10, 21.0f, true);
         ALL.add(style);
         return style;
     }

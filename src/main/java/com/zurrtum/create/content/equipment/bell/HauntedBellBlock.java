@@ -39,7 +39,7 @@ public class HauntedBellBlock extends AbstractBellBlock<HauntedBellBlockEntity> 
 
     @Override
     public void playSound(Level world, BlockPos pos) {
-        AllSoundEvents.HAUNTED_BELL_USE.playOnServer(world, pos, 4f, 1f);
+        AllSoundEvents.HAUNTED_BELL_USE.playOnServer(world, pos, 4.0f, 1.0f);
     }
 
     @Override

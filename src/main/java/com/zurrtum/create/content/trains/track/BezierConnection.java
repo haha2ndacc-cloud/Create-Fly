@@ -75,8 +75,8 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
         this.axes = axes;
         this.normals = normals;
         this.primary = primary;
-        this.hasGirder = girder;
-        this.trackMaterial = material;
+        hasGirder = girder;
+        trackMaterial = material;
     }
 
     public BezierConnection secondary() {
@@ -95,6 +95,7 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
         return bezierConnection;
     }
 
+    @Override
     public BezierConnection clone() {
         var out = new BezierConnection(
             bePositions.copy(),
@@ -112,10 +113,10 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
     }
 
     private static boolean coupleEquals(Couple<?> a, Couple<?> b) {
-        return (a.getFirst().equals(b.getFirst()) && a.getSecond()
-            .equals(b.getSecond())) || (a.getFirst() instanceof Vec3 aFirst && a.getSecond() instanceof Vec3 aSecond && b.getFirst() instanceof Vec3 bFirst && b.getSecond() instanceof Vec3 bSecond && aFirst.closerThan(bFirst,
-            1e-6
-        ) && aSecond.closerThan(bSecond, 1e-6));
+        return a.getFirst().equals(b.getFirst()) && a.getSecond()
+            .equals(b.getSecond()) || a.getFirst() instanceof Vec3 aFirst && a.getSecond() instanceof Vec3 aSecond && b.getFirst() instanceof Vec3 bFirst && b.getSecond() instanceof Vec3 bSecond && aFirst.closerThan(bFirst,
+            1.0e-6
+        ) && aSecond.closerThan(bSecond, 1.0e-6);
     }
 
     public boolean equalsSansMaterial(BezierConnection other) {
@@ -123,13 +124,10 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
     }
 
     private boolean equalsSansMaterialInner(BezierConnection other) {
-        return this == other || (other != null && coupleEquals(
-            this.bePositions,
-            other.bePositions
-        ) && coupleEquals(this.starts, other.starts) && coupleEquals(
-            this.axes,
-            other.axes
-        ) && coupleEquals(this.normals, other.normals) && this.hasGirder == other.hasGirder);
+        return this == other || other != null && coupleEquals(bePositions, other.bePositions) && coupleEquals(
+            starts,
+            other.starts
+        ) && coupleEquals(axes, other.axes) && coupleEquals(normals, other.normals) && hasGirder == other.hasGirder;
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -163,7 +161,7 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
     }
 
     public void write(ValueOutput view, BlockPos localTo) {
-        Couple<BlockPos> tePositions = this.bePositions.map(b -> b.subtract(localTo));
+        Couple<BlockPos> tePositions = bePositions.map(b -> b.subtract(localTo));
         Couple<Vec3> starts = this.starts.map(v -> v.subtract(Vec3.atLowerCornerOf(localTo)));
 
         view.putBoolean("Girder", hasGirder);
@@ -306,7 +304,7 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
 
     @Override
     public Iterator<Segment> iterator() {
-        var offset = Vec3.atLowerCornerOf(bePositions.getFirst()).scale(-1).add(0, 3 / 16f, 0);
+        var offset = Vec3.atLowerCornerOf(bePositions.getFirst()).scale(-1).add(0, 3 / 16.0f, 0);
         return new Bezierator(this, offset);
     }
 
@@ -341,7 +339,7 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
             if (segment.index % 2 != 0 || segment.index == getSegmentCount()) {
                 continue;
             }
-            Vec3 v = VecHelper.offsetRandomly(segment.position, level.getRandom(), .125f).add(origin);
+            Vec3 v = VecHelper.offsetRandomly(segment.position, level.getRandom(), 0.125f).add(origin);
             ItemEntity entity = new ItemEntity(level, v.x, v.y, v.z, new ItemStack(getMaterial()));
             entity.setDefaultPickUpDelay();
             level.addFreshEntity(entity);
@@ -371,12 +369,12 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
         Vec3 origin = Vec3.atLowerCornerOf(bePositions.getFirst());
         for (Segment segment : this) {
             for (int offset : Iterate.positiveAndNegative) {
-                Vec3 v = segment.position.add(segment.normal.scale(14 / 16f * offset)).add(origin);
+                Vec3 v = segment.position.add(segment.normal.scale(14 / 16.0f * offset)).add(origin);
                 slevel.sendParticles(data, v.x, v.y, v.z, 1, 0, 0, 0, 0);
                 if (!hasGirder) {
                     continue;
                 }
-                slevel.sendParticles(girderData, v.x, v.y - .5f, v.z, 1, 0, 0, 0, 0);
+                slevel.sendParticles(girderData, v.x, v.y - 0.5f, v.z, 1, 0, 0, 0, 0);
             }
         }
     }
@@ -414,7 +412,7 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
 
             int scanCount = 16;
 
-            this.length = computeLength(finish1, finish2, end1, end2, scanCount);
+            length = computeLength(finish1, finish2, end1, end2, scanCount);
 
             segments = (int) (length * 2);
             stepLUT = new float[segments + 1];
@@ -424,18 +422,16 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
             AABB bounds = new AABB(end1, end2);
 
             // determine step lut
-            {
-                Vec3 previous = end1;
-                for (int i = 0; i <= segments; i++) {
-                    float t = i / (float) segments;
-                    Vec3 result = VecHelper.bezier(end1, end2, finish1, finish2, t);
-                    bounds = bounds.minmax(new AABB(result, result));
-                    if (i > 0) {
-                        combinedDistance += result.distanceTo(previous) / length;
-                        stepLUT[i] = (float) (t / combinedDistance);
-                    }
-                    previous = result;
+            Vec3 previous = end1;
+            for (int i = 0; i <= segments; i++) {
+                float t = i / (float) segments;
+                Vec3 result = VecHelper.bezier(end1, end2, finish1, finish2, t);
+                bounds = bounds.minmax(new AABB(result, result));
+                if (i > 0) {
+                    combinedDistance += result.distanceTo(previous) / length;
+                    stepLUT[i] = t / combinedDistance;
                 }
+                previous = result;
             }
 
             this.bounds = bounds.inflate(1.375f);
@@ -484,7 +480,7 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
                     double max = Math.max(t, u);
 
                     if (min > 1.2 && max / min > 1 && max / min < 3) {
-                        handleLength = (max - min);
+                        handleLength = max - min;
                         return;
                     }
                 }
@@ -494,7 +490,7 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
             }
 
             double n = circle / angle;
-            double factor = 4 / 3d * Math.tan(Math.PI / (2 * n));
+            double factor = 4 / 3.0d * Math.tan(Math.PI / (2 * n));
             double[] intersect = VecHelper.intersect(end1, end2, cross1, cross2, Axis.Y);
 
             if (intersect == null) {
@@ -556,11 +552,8 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
             float t = runtime.getSegmentT(segment.index);
             segment.position = VecHelper.bezier(end1, end2, finish1, finish2, t);
             segment.derivative = VecHelper.bezierDerivative(end1, end2, finish1, finish2, t).normalize();
-            segment.faceNormal = faceNormal1.equals(faceNormal2) ? faceNormal1 : VecHelper.slerp(
-                t,
-                faceNormal1,
-                faceNormal2
-            );
+            segment.faceNormal =
+                faceNormal1.equals(faceNormal2) ? faceNormal1 : VecHelper.slerp(t, faceNormal1, faceNormal2);
             segment.normal = segment.faceNormal.cross(segment.derivative).normalize();
             return segment;
         }
@@ -592,8 +585,8 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
     public Map<Pair<Integer, Integer>, Double> rasterise() {
         Map<Pair<Integer, Integer>, Double> yLevels = new HashMap<>();
         BlockPos tePosition = bePositions.getFirst();
-        Vec3 end1 = starts.getFirst().subtract(Vec3.atLowerCornerOf(tePosition)).add(0, 3 / 16f, 0);
-        Vec3 end2 = starts.getSecond().subtract(Vec3.atLowerCornerOf(tePosition)).add(0, 3 / 16f, 0);
+        Vec3 end1 = starts.getFirst().subtract(Vec3.atLowerCornerOf(tePosition)).add(0, 3 / 16.0f, 0);
+        Vec3 end2 = starts.getSecond().subtract(Vec3.atLowerCornerOf(tePosition)).add(0, 3 / 16.0f, 0);
         Vec3 axis1 = axes.getFirst();
         Vec3 axis2 = axes.getSecond();
 
@@ -612,16 +605,13 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
             float t = Mth.clamp((i + 0.5f) * lut[i] / segCount, 0, 1);
             Vec3 result = VecHelper.bezier(end1, end2, finish1, finish2, t);
             Vec3 derivative = VecHelper.bezierDerivative(end1, end2, finish1, finish2, t).normalize();
-            Vec3 faceNormal = faceNormal1.equals(faceNormal2) ? faceNormal1 : VecHelper.slerp(
-                t,
-                faceNormal1,
-                faceNormal2
-            );
+            Vec3 faceNormal =
+                faceNormal1.equals(faceNormal2) ? faceNormal1 : VecHelper.slerp(t, faceNormal1, faceNormal2);
             Vec3 normal = faceNormal.cross(derivative).normalize();
-            Vec3 below = result.add(faceNormal.scale(-.25f));
-            Vec3 rail1 = below.add(normal.scale(.05f));
-            Vec3 rail2 = below.subtract(normal.scale(.05f));
-            Vec3 railMiddle = rail1.add(rail2).scale(.5);
+            Vec3 below = result.add(faceNormal.scale(-0.25f));
+            Vec3 rail1 = below.add(normal.scale(0.05f));
+            Vec3 rail2 = below.subtract(normal.scale(0.05f));
+            Vec3 railMiddle = rail1.add(rail2).scale(0.5);
             samples[i] = railMiddle;
         }
 
@@ -655,7 +645,8 @@ public class BezierConnection implements Iterable<BezierConnection.Segment> {
                     prev = key;
                     continue;
 
-                } else if (doubledViaPrev && doubledViaPrev2 && prevCloser) {
+                }
+                if (doubledViaPrev && doubledViaPrev2 && prevCloser) {
                     yLevels.remove(prev);
                     prev = key;
                     continue;

@@ -51,7 +51,7 @@ public class MechanicalMixerBlock extends KineticBlock implements IBE<Mechanical
 
     @Override
     public float getParticleTargetRadius() {
-        return .85f;
+        return 0.85f;
     }
 
     @Override

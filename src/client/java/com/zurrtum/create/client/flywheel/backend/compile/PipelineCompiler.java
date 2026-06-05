@@ -150,7 +150,7 @@ public final class PipelineCompiler {
                     }
                 }).withResource(API_IMPL_FRAG).withResource(key -> key.materialShaders().fragmentSource())
                 .withComponents(fragmentComponents).withComponent(key -> FOG).withResource(key -> key.light().source())
-                .with((key, fetcher) -> (key.useCutout() ? CUTOUT : fetcher.get(CutoutShaders.OFF.source())))
+                .with((key, fetcher) -> key.useCutout() ? CUTOUT : fetcher.get(CutoutShaders.OFF.source()))
                 .withResource(pipeline.fragmentMain())).preLink((key, program) -> {
                 program.bindAttribLocation("_flw_aPos", 0);
                 program.bindAttribLocation("_flw_aColor", 1);
@@ -208,10 +208,10 @@ public final class PipelineCompiler {
     }
 
     public enum OitMode {
-        OFF("", ""), DEPTH_RANGE("_FLW_DEPTH_RANGE", "_depth_range"), GENERATE_COEFFICIENTS(
-            "_FLW_COLLECT_COEFFS",
-            "_generate_coefficients"
-        ), EVALUATE("_FLW_EVALUATE", "_resolve"),
+        OFF("", ""),
+        DEPTH_RANGE("_FLW_DEPTH_RANGE", "_depth_range"),
+        GENERATE_COEFFICIENTS("_FLW_COLLECT_COEFFS", "_generate_coefficients"),
+        EVALUATE("_FLW_EVALUATE", "_resolve"),
         ;
 
         public final String define;

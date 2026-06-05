@@ -37,6 +37,7 @@ public class ChangeThrottleInstructionRender implements IScheduleInput<ChangeThr
         ).withStyle(ChatFormatting.GOLD));
     }
 
+    @Override
     public void initConfigurationWidgets(ChangeThrottleInstruction input, ModularGuiLineBuilder builder) {
         builder.addScrollInput(
             0, 50, (si, l) -> {

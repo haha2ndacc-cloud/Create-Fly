@@ -11,7 +11,7 @@ public class ItemDrainItemHandler implements ItemInventory {
     private final Direction side;
 
     public ItemDrainItemHandler(ItemDrainBlockEntity be, Direction side) {
-        this.blockEntity = be;
+        blockEntity = be;
         this.side = side.getOpposite();
     }
 
@@ -24,9 +24,8 @@ public class ItemDrainItemHandler implements ItemInventory {
     public int getMaxStackSize(ItemStack stack) {
         if (GenericItemEmptying.canItemBeEmptied(blockEntity.getLevel(), stack)) {
             return 1;
-        } else {
-            return stack.getMaxStackSize();
         }
+        return stack.getMaxStackSize();
     }
 
     @Override

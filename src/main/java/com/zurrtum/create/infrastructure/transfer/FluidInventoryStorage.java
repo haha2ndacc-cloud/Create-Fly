@@ -69,17 +69,16 @@ public interface FluidInventoryStorage extends SlottedStorage<FluidVariant> {
     static String toString(@Nullable FluidInventory inventory) {
         if (inventory == null) {
             return "~~NULL~~";
-        } else {
-            String result = inventory.toString();
-
-            if (inventory instanceof BlockEntity blockEntity) {
-                result += " (%s, %s)".formatted(
-                    blockEntity.getBlockState(),
-                    DebugMessages.forGlobalPos(blockEntity.getLevel(), blockEntity.getBlockPos())
-                );
-            }
-
-            return result;
         }
+        String result = inventory.toString();
+
+        if (inventory instanceof BlockEntity blockEntity) {
+            result += " (%s, %s)".formatted(
+                blockEntity.getBlockState(),
+                DebugMessages.forGlobalPos(blockEntity.getLevel(), blockEntity.getBlockPos())
+            );
+        }
+
+        return result;
     }
 }

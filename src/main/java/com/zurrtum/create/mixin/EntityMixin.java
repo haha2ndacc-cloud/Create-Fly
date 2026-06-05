@@ -72,7 +72,7 @@ public abstract class EntityMixin implements SyncedDataHolder {
         ToolboxHandler.entityTick(entity, level);
     }
 
-    @Inject(method = "startRiding(Lnet/minecraft/world/entity/Entity;ZZ)Z", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "startRiding(Lnet/minecraft/world/entity/Entity;ZZ)Z", at = @At("HEAD"), cancellable = true)
     private void startRiding(
         Entity entityToRide,
         boolean force,
@@ -89,12 +89,12 @@ public abstract class EntityMixin implements SyncedDataHolder {
         if (original) {
             return true;
         }
-        return ((Entity) (Object) this) instanceof Player player && AllSynchedDatas.FIRE_IMMUNE.get(player);
+        return (Entity) (Object) this instanceof Player player && AllSynchedDatas.FIRE_IMMUNE.get(player);
     }
 
     @Inject(method = "isUnderWater()Z", at = @At("HEAD"), cancellable = true)
     private void isSubmergedInWater(CallbackInfoReturnable<Boolean> cir) {
-        if (((Entity) (Object) this) instanceof Player player && AllSynchedDatas.HEAVY_BOOTS.get(player)) {
+        if ((Entity) (Object) this instanceof Player player && AllSynchedDatas.HEAVY_BOOTS.get(player)) {
             cir.setReturnValue(false);
         }
     }

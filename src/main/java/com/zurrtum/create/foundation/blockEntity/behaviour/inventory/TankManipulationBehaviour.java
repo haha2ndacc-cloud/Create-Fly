@@ -41,9 +41,8 @@ public class TankManipulationBehaviour extends CapManipulationBehaviourBase<Flui
         Predicate<FluidStack> filterTest = getFilterTest(Predicates.alwaysTrue());
         if (simulateNext) {
             return inventory.count(filterTest);
-        } else {
-            return inventory.extract(filterTest);
         }
+        return inventory.extract(filterTest);
     }
 
     protected Predicate<FluidStack> getFilterTest(Predicate<FluidStack> customFilter) {

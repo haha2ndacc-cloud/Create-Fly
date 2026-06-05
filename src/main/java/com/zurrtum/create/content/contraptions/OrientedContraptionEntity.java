@@ -234,10 +234,12 @@ public class OrientedContraptionEntity extends AbstractContraptionEntity {
         return localPos;
     }
 
+    @Override
     public float getViewYRot(float partialTicks) {
         return -(partialTicks == 1.0F ? yaw : AngleHelper.angleLerp(partialTicks, prevYaw, yaw));
     }
 
+    @Override
     public float getViewXRot(float partialTicks) {
         return partialTicks == 1.0F ? pitch : AngleHelper.angleLerp(partialTicks, prevPitch, pitch);
     }
@@ -405,12 +407,15 @@ public class OrientedContraptionEntity extends AbstractContraptionEntity {
             }
 
             prevYaw = yaw;
-            float maxApproachSpeed = (float) (motion.length() * 12f / (Math.max(1, getBoundingBox().getXsize() / 6f)));
+            float maxApproachSpeed = (float) (motion.length() * 12.0f / Math.max(
+                1,
+                getBoundingBox().getXsize() / 6.0f
+            ));
             float yawHint = AngleHelper.getShortestAngleDiff(yaw, yawFromVector(locationDiff));
             float approach = AngleHelper.getShortestAngleDiff(yaw, targetYaw, yawHint);
             approach = Mth.clamp(approach, -maxApproachSpeed, maxApproachSpeed);
             yaw += approach;
-            if (Math.abs(AngleHelper.getShortestAngleDiff(yaw, targetYaw)) < 1f) {
+            if (Math.abs(AngleHelper.getShortestAngleDiff(yaw, targetYaw)) < 1.0f) {
                 yaw = targetYaw;
             } else {
                 rotating = true;
@@ -508,18 +513,18 @@ public class OrientedContraptionEntity extends AbstractContraptionEntity {
     @Override
     public Vec3 getAnchorVec() {
         Vec3 anchorVec = super.getAnchorVec();
-        return anchorVec.subtract(.5, 0, .5);
+        return anchorVec.subtract(0.5, 0, 0.5);
     }
 
     @Override
     public Vec3 getPrevAnchorVec() {
         Vec3 prevAnchorVec = super.getPrevAnchorVec();
-        return prevAnchorVec.subtract(.5, 0, .5);
+        return prevAnchorVec.subtract(0.5, 0, 0.5);
     }
 
     @Override
     protected StructureTransform makeStructureTransform() {
-        BlockPos offset = BlockPos.containing(getAnchorVec().add(.5, .5, .5));
+        BlockPos offset = BlockPos.containing(getAnchorVec().add(0.5, 0.5, 0.5));
         return new StructureTransform(offset, 0, -yaw + getInitialYaw(), 0);
     }
 

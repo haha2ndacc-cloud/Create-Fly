@@ -50,8 +50,8 @@ public class GantryCarriageVisual extends ShaftVisual<GantryCarriageBlockEntity>
 
         rotationMult = getRotationMultiplier(getGantryAxis(), facing);
 
-        visualPos = facing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? blockEntity.getBlockPos() : blockEntity.getBlockPos()
-            .relative(facing.getOpposite());
+        visualPos = facing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? blockEntity.getBlockPos() :
+            blockEntity.getBlockPos().relative(facing.getOpposite());
 
         animateCogs(getCogAngle());
     }
@@ -75,8 +75,8 @@ public class GantryCarriageVisual extends ShaftVisual<GantryCarriageBlockEntity>
         gantryCogs.setIdentityTransform().translate(getVisualPosition()).center()
             .rotateYDegrees(AngleHelper.horizontalAngle(facing))
             .rotateXDegrees(facing == Direction.UP ? 0 : facing == Direction.DOWN ? 180 : 90)
-            .rotateYDegrees(alongFirst ^ facing.getAxis() == Direction.Axis.X ? 0 : 90).translate(0, -9 / 16f, 0)
-            .rotateXDegrees(-cogAngle).translate(0, 9 / 16f, 0).uncenter().setChanged();
+            .rotateYDegrees(alongFirst ^ facing.getAxis() == Direction.Axis.X ? 0 : 90).translate(0, -9 / 16.0f, 0)
+            .rotateXDegrees(-cogAngle).translate(0, 9 / 16.0f, 0).uncenter().setChanged();
     }
 
     static float getRotationMultiplier(Direction.Axis gantryAxis, Direction facing) {

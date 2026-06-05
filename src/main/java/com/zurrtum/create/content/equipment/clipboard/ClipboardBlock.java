@@ -147,7 +147,7 @@ public class ClipboardBlock extends FaceAttachedHorizontalDirectionalBlock imple
         if (level.isClientSide() || player.isCreative()) {
             return state;
         }
-        Block.popResource(level, pos, applyComponentsToDropStack(new ItemStack(this), cbe));
+        popResource(level, pos, applyComponentsToDropStack(new ItemStack(this), cbe));
 
         return state;
     }

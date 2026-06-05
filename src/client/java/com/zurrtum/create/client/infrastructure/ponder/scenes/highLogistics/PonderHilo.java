@@ -53,7 +53,7 @@ public class PonderHilo {
                 beltPos.getY() + 0.875,
                 beltPos.getZ() + 0.5 + offsetZ * 0.675
             );
-            packageEntity.setDeltaMovement(new Vec3(offsetX, 1f, offsetZ).scale(0.125f));
+            packageEntity.setDeltaMovement(new Vec3(offsetX, 1.0f, offsetZ).scale(0.125f));
             packageEntity.box = box;
             return packageEntity;
         });

@@ -93,7 +93,7 @@ public class AllSynchedDatas {
         EntityDataSerializers.INT,
         -1
     );
-    public static final Entry<Float> OVERRIDE_LIMB_SWING = register(Player.class, EntityDataSerializers.FLOAT, 0F);
+    public static final Entry<Float> OVERRIDE_LIMB_SWING = register(Player.class, EntityDataSerializers.FLOAT, 0.0F);
     public static final Entry<Boolean> PARROT_TRAIN_HAT = register(Parrot.class, EntityDataSerializers.BOOLEAN, false);
 
     private static <T> Entry<T> register(

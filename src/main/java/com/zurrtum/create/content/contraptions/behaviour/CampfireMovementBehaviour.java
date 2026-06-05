@@ -18,11 +18,12 @@ public class CampfireMovementBehaviour extends MovementBehaviour {
         if (random.nextFloat() < 0.11F) {
             for (int i = 0; i < random.nextInt(2) + 2; ++i) {
                 context.world.addAlwaysVisibleParticle(
-                    context.state.getValue(CampfireBlock.SIGNAL_FIRE) ? ParticleTypes.CAMPFIRE_SIGNAL_SMOKE : ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                    context.state.getValue(CampfireBlock.SIGNAL_FIRE) ? ParticleTypes.CAMPFIRE_SIGNAL_SMOKE :
+                        ParticleTypes.CAMPFIRE_COSY_SMOKE,
                     true,
-                    context.position.x() + random.nextDouble() / (random.nextBoolean() ? 3D : -3D),
+                    context.position.x() + random.nextDouble() / (random.nextBoolean() ? 3.0D : -3.0D),
                     context.position.y() + random.nextDouble() + random.nextDouble(),
-                    context.position.z() + random.nextDouble() / (random.nextBoolean() ? 3D : -3D),
+                    context.position.z() + random.nextDouble() / (random.nextBoolean() ? 3.0D : -3.0D),
                     0.0D,
                     0.07D,
                     0.0D

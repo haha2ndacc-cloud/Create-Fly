@@ -20,8 +20,8 @@ public class CombinedInvWrapper implements SidedItemInventory {
     public CombinedInvWrapper(Container... itemHandler) {
         this.itemHandler = itemHandler;
         int length = itemHandler.length;
-        this.baseIndex = new int[length];
-        this.sideInventory = new boolean[length];
+        baseIndex = new int[length];
+        sideInventory = new boolean[length];
         int index = 0;
         for (int i = 0; i < length; i++) {
             Container inventory = itemHandler[i];
@@ -29,7 +29,7 @@ public class CombinedInvWrapper implements SidedItemInventory {
             baseIndex[i] = index;
             sideInventory[i] = inventory instanceof WorldlyContainer;
         }
-        this.slots = SlotRangeCache.get(index);
+        slots = SlotRangeCache.get(index);
     }
 
     protected int getIndexForSlot(int slot) {
@@ -303,9 +303,8 @@ public class CombinedInvWrapper implements SidedItemInventory {
     public java.util.Iterator<ItemStack> iterator(@Nullable Direction side) {
         if (itemHandler.length == 0) {
             return Collections.emptyIterator();
-        } else {
-            return new Iterator(side);
         }
+        return new Iterator(side);
     }
 
     class Iterator implements java.util.Iterator<ItemStack> {
@@ -315,7 +314,7 @@ public class CombinedInvWrapper implements SidedItemInventory {
 
         public Iterator(@Nullable Direction side) {
             this.side = side;
-            this.iterator = itemHandler[index].iterator(side);
+            iterator = itemHandler[index].iterator(side);
         }
 
         @Override
@@ -337,9 +336,8 @@ public class CombinedInvWrapper implements SidedItemInventory {
         public ItemStack next() {
             if (hasNext()) {
                 return iterator.next();
-            } else {
-                throw new NoSuchElementException();
             }
+            throw new NoSuchElementException();
         }
     }
 }

@@ -5,9 +5,9 @@ import com.zurrtum.create.client.flywheel.api.material.Material;
 import com.zurrtum.create.client.flywheel.lib.internal.FlwLibXplat;
 import com.zurrtum.create.client.flywheel.lib.model.ModelUtil;
 import com.zurrtum.create.client.flywheel.lib.model.SimpleModel;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.BiFunction;
@@ -16,7 +16,7 @@ public final class BlockModelBuilder {
     final BlockAndTintGetter level;
     final Iterable<BlockPos> positions;
     @Nullable PoseStack poseStack;
-    boolean renderFluids = false;
+    boolean renderFluids;
     @Nullable BlockMaterialFunction materialFunc;
 
     public BlockModelBuilder(BlockAndTintGetter level, Iterable<BlockPos> positions) {

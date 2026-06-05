@@ -21,7 +21,7 @@ public class KineticStressDisplaySource extends PercentOrProgressBarDisplaySourc
             return super.formatNumeric(context, currentLevel);
         }
         if (Mth.equal(currentLevel, 0)) {
-            currentLevel = 0f;
+            currentLevel = 0.0f;
         }
         MutableComponent text = Component.literal(format.format(currentLevel).replace("\u00A0", " "));
         if (context.getTargetBlockEntity() instanceof FlapDisplayBlockEntity) {
@@ -45,7 +45,7 @@ public class KineticStressDisplaySource extends PercentOrProgressBarDisplaySourc
         float stress = stressGauge.getNetworkStress();
 
         if (capacity == 0) {
-            return 0f;
+            return 0.0f;
         }
 
         return switch (getMode(context)) {
@@ -53,7 +53,7 @@ public class KineticStressDisplaySource extends PercentOrProgressBarDisplaySourc
             case 2 -> stress;
             case 3 -> capacity;
             case 4 -> capacity - stress;
-            default -> 0f;
+            default -> 0.0f;
         };
     }
 

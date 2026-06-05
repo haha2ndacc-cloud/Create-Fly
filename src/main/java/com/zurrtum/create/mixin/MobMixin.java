@@ -20,7 +20,7 @@ public class MobMixin {
             switch (setting) {
                 case ALL -> ci.cancel();
                 case CREEPERS -> {
-                    if (((Mob) (Object) this) instanceof Creeper) {
+                    if ((Mob) (Object) this instanceof Creeper) {
                         ci.cancel();
                     }
                 }

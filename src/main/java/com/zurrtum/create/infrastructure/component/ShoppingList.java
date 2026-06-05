@@ -80,9 +80,9 @@ public record ShoppingList(@Unmodifiable List<IntAttached<BlockPos>> purchases, 
         private final UUID shopNetwork;
 
         public Mutable(ShoppingList list) {
-            this.purchases.addAll(list.purchases);
-            this.shopOwner = list.shopOwner;
-            this.shopNetwork = list.shopNetwork;
+            purchases.addAll(list.purchases);
+            shopOwner = list.shopOwner;
+            shopNetwork = list.shopNetwork;
         }
 
         // Y value of clothPos is pixel perfect (x16)

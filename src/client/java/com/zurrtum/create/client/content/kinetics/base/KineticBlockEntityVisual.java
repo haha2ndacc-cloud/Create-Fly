@@ -24,21 +24,20 @@ public abstract class KineticBlockEntityVisual<T extends KineticBlockEntity> ext
     public static float rotationOffset(BlockState state, Axis axis, Vec3i pos) {
         if (shouldOffset(axis, pos)) {
             return 22.5f;
-        } else {
-            return ICogWheel.isLargeCog(state) ? 11.25f : 0;
         }
+        return ICogWheel.isLargeCog(state) ? 11.25f : 0;
     }
 
     public static boolean shouldOffset(Axis axis, Vec3i pos) {
         // Sum the components of the other 2 axes.
-        int x = (axis == Axis.X) ? 0 : pos.getX();
-        int y = (axis == Axis.Y) ? 0 : pos.getY();
-        int z = (axis == Axis.Z) ? 0 : pos.getZ();
-        return ((x + y + z) % 2) == 0;
+        int x = axis == Axis.X ? 0 : pos.getX();
+        int y = axis == Axis.Y ? 0 : pos.getY();
+        int z = axis == Axis.Z ? 0 : pos.getZ();
+        return (x + y + z) % 2 == 0;
     }
 
     public static Axis rotationAxis(BlockState blockState) {
-        return (blockState.getBlock() instanceof IRotate irotate) ? irotate.getRotationAxis(blockState) : Axis.Y;
+        return blockState.getBlock() instanceof IRotate irotate ? irotate.getRotationAxis(blockState) : Axis.Y;
     }
 
     public static void applyOverstressEffect(KineticBlockEntity be, RotatingInstance... instances) {

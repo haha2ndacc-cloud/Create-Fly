@@ -18,7 +18,7 @@ public class ItemOutline extends Outline {
     public ItemOutline(Vec3 pos, ItemStack stack) {
         this.pos = pos;
         this.stack = stack;
-        this.itemRenderState = new ItemStackRenderState();
+        itemRenderState = new ItemStackRenderState();
     }
 
     @Override

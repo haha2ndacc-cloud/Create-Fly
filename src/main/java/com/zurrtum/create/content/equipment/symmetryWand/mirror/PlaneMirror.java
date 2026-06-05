@@ -53,7 +53,7 @@ public class PlaneMirror extends SymmetryMirror {
 
     @Override
     public void setOrientation(int index) {
-        this.orientation = Align.values()[index];
+        orientation = Align.values()[index];
         orientationIndex = index;
     }
 

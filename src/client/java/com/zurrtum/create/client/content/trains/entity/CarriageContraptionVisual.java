@@ -44,9 +44,9 @@ public class CarriageContraptionVisual extends OrientedContraptionVisual<Carriag
         super(context, entity, partialTick);
 
         // An extra block because bogeys are always slightly outside the contraption bounds.
-        this.lightPaddingBlocks = DEFAULT_LIGHT_PADDING + 1;
+        lightPaddingBlocks = DEFAULT_LIGHT_PADDING + 1;
 
-        this.contraption = (CarriageContraption) entity.getContraption();
+        contraption = (CarriageContraption) entity.getContraption();
 
         animate(partialTick);
     }
@@ -102,8 +102,9 @@ public class CarriageContraptionVisual extends OrientedContraptionVisual<Carriag
                         true
                     );
                     bogeys[numBogeys] = bogey;
-                    bogeyPos[numBogeys] = bogey.isLeading ? 0 : carriage.bogeySpacing * contraption.getAssemblyDirection()
-                        .getCounterClockWise().getAxisDirection().getStep();
+                    bogeyPos[numBogeys] = bogey.isLeading ? 0 :
+                        carriage.bogeySpacing * contraption.getAssemblyDirection().getCounterClockWise()
+                            .getAxisDirection().getStep();
                     numBogeys++;
                 }
             }
@@ -148,7 +149,7 @@ public class CarriageContraptionVisual extends OrientedContraptionVisual<Carriag
                 bogey.yaw.getValue(partialTick),
                 bogey.pitch.getValue(partialTick)
             );
-            poseStack.translate(0, -1.5 - 1 / 128f, 0);
+            poseStack.translate(0, -1.5 - 1 / 128.0f, 0);
 
             CompoundTag bogeyData = bogey.bogeyData;
             if (bogeyData == null) {

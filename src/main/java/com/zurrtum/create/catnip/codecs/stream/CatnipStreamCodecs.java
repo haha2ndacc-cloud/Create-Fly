@@ -25,10 +25,12 @@ import java.util.function.Function;
 
 public interface CatnipStreamCodecs {
     StreamCodec<FriendlyByteBuf, Character> CHAR = new StreamCodec<>() {
+        @Override
         public Character decode(FriendlyByteBuf buffer) {
             return buffer.readChar();
         }
 
+        @Override
         public void encode(FriendlyByteBuf buffer, Character value) {
             buffer.writeChar(value);
         }
@@ -57,7 +59,8 @@ public interface CatnipStreamCodecs {
 
     // optimization: 2 values, use bool instead of ofEnum
     StreamCodec<ByteBuf, InteractionHand> HAND = ByteBufCodecs.BOOL.map(
-        value -> value ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND,
+        value -> value ? InteractionHand.MAIN_HAND :
+            InteractionHand.OFF_HAND,
         hand -> hand == InteractionHand.MAIN_HAND
     );
 
@@ -72,10 +75,7 @@ public interface CatnipStreamCodecs {
         BlockHitResult::getBlockPos,
         ByteBufCodecs.BOOL,
         BlockHitResult::isInside,
-        (miss, location, direction, blockPos, isInside) -> miss ? BlockHitResult.miss(
-            location,
-            direction,
-            blockPos
-        ) : new BlockHitResult(location, direction, blockPos, isInside)
+        (miss, location, direction, blockPos, isInside) -> miss ? BlockHitResult.miss(location, direction, blockPos) :
+            new BlockHitResult(location, direction, blockPos, isInside)
     );
 }

@@ -100,13 +100,14 @@ public class FactoryPanelRenderer implements BlockEntityRenderer<FactoryPanelBlo
                 panel.offsetX = behaviour.slot.xOffset * 0.5f;
                 panel.offsetY = behaviour.slot.yOffset * 0.5f;
                 float glow = behaviour.bulb.getValue(tickProgress);
-                CardinalLighting cardinalLighting = level instanceof BlockAndTintGetter getter ? getter.cardinalLighting() : null;
+                CardinalLighting cardinalLighting =
+                    level instanceof BlockAndTintGetter getter ? getter.cardinalLighting() : null;
                 if (target) {
                     List<List<LineRenderData>> paths = panel.paths = new ArrayList<>();
                     FactoryPanelPosition to = behaviour.getPanelPosition();
                     FactoryPanelBehaviour fromBehaviour = be.getBehaviour(FactoryPanelBehaviour.getTypeForSlot(behaviour.slot));
                     Vec3 start = fromBehaviour != null ? fromBehaviour.getSlotPositioning().getLocalOffset(blockState)
-                                                         .add(Vec3.atLowerCornerOf(blockPos)) : Vec3.ZERO;
+                        .add(Vec3.atLowerCornerOf(blockPos)) : Vec3.ZERO;
                     for (FactoryPanelConnection connection : behaviour.targetedBy.values()) {
                         List<Direction> path = connection.getPath(level, blockState, to, start);
                         if (path.isEmpty()) {
@@ -221,7 +222,8 @@ public class FactoryPanelRenderer implements BlockEntityRenderer<FactoryPanelBlo
         float glow
     ) {
         BulbRenderState state = new BulbRenderState();
-        PartialModel partial = behaviour.redstonePowered || missingAddress ? AllPartialModels.FACTORY_PANEL_RED_LIGHT : AllPartialModels.FACTORY_PANEL_LIGHT;
+        PartialModel partial = behaviour.redstonePowered || missingAddress ? AllPartialModels.FACTORY_PANEL_RED_LIGHT :
+            AllPartialModels.FACTORY_PANEL_LIGHT;
         SuperByteBuffer model = CachedBuffers.partial(partial, blockState);
         if (glow < 0.125f) {
             state.model = model.cardinalLighting(cardinalLighting).light(lightCoords).extractRenderState();
@@ -268,7 +270,8 @@ public class FactoryPanelRenderer implements BlockEntityRenderer<FactoryPanelBlo
             yOffset = 0;
         } else if (redstoneLinkMode) {
             // Link status
-            color = pathReversed ? behaviour.count == 0 ? 0xFF888898 : behaviour.satisfied ? 0xFFEF0000 : 0xFF580101 : behaviour.redstonePowered ? 0xFFEF0000 : 0xFF580101;
+            color = pathReversed ? behaviour.count == 0 ? 0xFF888898 : behaviour.satisfied ? 0xFFEF0000 : 0xFF580101 :
+                behaviour.redstonePowered ? 0xFFEF0000 : 0xFF580101;
             dots = false;
             yOffset = 0.5f;
         } else {
@@ -295,7 +298,9 @@ public class FactoryPanelRenderer implements BlockEntityRenderer<FactoryPanelBlo
                 currentX += direction.getStepX() * 0.5f;
                 currentZ += direction.getStepZ() * 0.5f;
             }
-            Map<Direction, PartialModel> group = dots ? AllPartialModels.FACTORY_PANEL_DOTTED : (pathReversed ? i == end : i == 0) ? AllPartialModels.FACTORY_PANEL_ARROWS : AllPartialModels.FACTORY_PANEL_LINES;
+            Map<Direction, PartialModel> group = dots ? AllPartialModels.FACTORY_PANEL_DOTTED :
+                (pathReversed ? i == end : i == 0) ? AllPartialModels.FACTORY_PANEL_ARROWS :
+                    AllPartialModels.FACTORY_PANEL_LINES;
             PartialModel partial = group.get(pathReversed ? direction : direction.getOpposite());
             SuperByteBuffer model = CachedBuffers.partial(partial, blockState).cardinalLighting(cardinalLighting)
                 .light(lightCoords).color(color);

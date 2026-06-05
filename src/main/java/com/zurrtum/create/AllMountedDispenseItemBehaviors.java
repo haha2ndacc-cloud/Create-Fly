@@ -47,15 +47,15 @@ public class AllMountedDispenseItemBehaviors {
             }
 
             if (context.world instanceof ServerLevel serverLevel) {
-                EntityType<?> type = egg.getType(stack);
-                BlockPos offset = BlockPos.containing(facing.x + .7, facing.y + .7, facing.z + .7);
+                EntityType<?> type = SpawnEggItem.getType(stack);
+                BlockPos offset = BlockPos.containing(facing.x + 0.7, facing.y + 0.7, facing.z + 0.7);
                 Entity entity = type.spawn(
                     serverLevel,
                     stack,
                     null,
                     pos.offset(offset),
                     EntitySpawnReason.DISPENSER,
-                    facing.y < .5,
+                    facing.y < 0.5,
                     false
                 );
                 if (entity != null) {
@@ -70,9 +70,9 @@ public class AllMountedDispenseItemBehaviors {
     private static final MountedDispenseBehavior TNT = new DefaultMountedDispenseBehavior() {
         @Override
         protected ItemStack execute(ItemStack stack, MovementContext context, BlockPos pos, Vec3 facing) {
-            double x = pos.getX() + facing.x * .7 + .5;
-            double y = pos.getY() + facing.y * .7 + .5;
-            double z = pos.getZ() + facing.z * .7 + .5;
+            double x = pos.getX() + facing.x * 0.7 + 0.5;
+            double y = pos.getY() + facing.y * 0.7 + 0.5;
+            double z = pos.getZ() + facing.z * 0.7 + 0.5;
             PrimedTnt tnt = new PrimedTnt(context.world, x, y, z, null);
             tnt.push(context.motion.x, context.motion.y, context.motion.z);
             context.world.addFreshEntity(tnt);
@@ -93,9 +93,9 @@ public class AllMountedDispenseItemBehaviors {
     private static final MountedDispenseBehavior FIREWORK = new DefaultMountedDispenseBehavior() {
         @Override
         protected ItemStack execute(ItemStack stack, MovementContext context, BlockPos pos, Vec3 facing) {
-            double x = pos.getX() + facing.x * .7 + .5;
-            double y = pos.getY() + facing.y * .7 + .5;
-            double z = pos.getZ() + facing.z * .7 + .5;
+            double x = pos.getX() + facing.x * 0.7 + 0.5;
+            double y = pos.getY() + facing.y * 0.7 + 0.5;
+            double z = pos.getZ() + facing.z * 0.7 + 0.5;
             FireworkRocketEntity firework = new FireworkRocketEntity(context.world, stack, x, y, z, true);
             firework.shoot(facing.x, facing.y, facing.z, 0.5F, 1.0F);
             context.world.addFreshEntity(firework);
@@ -112,9 +112,9 @@ public class AllMountedDispenseItemBehaviors {
         @Override
         protected ItemStack execute(ItemStack stack, MovementContext context, BlockPos pos, Vec3 facing) {
             RandomSource random = context.world.getRandom();
-            double x = pos.getX() + facing.x * .7 + .5;
-            double y = pos.getY() + facing.y * .7 + .5;
-            double z = pos.getZ() + facing.z * .7 + .5;
+            double x = pos.getX() + facing.x * 0.7 + 0.5;
+            double y = pos.getY() + facing.y * 0.7 + 0.5;
+            double z = pos.getZ() + facing.z * 0.7 + 0.5;
             SmallFireball fireball = new SmallFireball(
                 context.world, x, y, z, new Vec3(
                 random.nextGaussian() * 0.05 + facing.x + context.motion.x,
@@ -213,14 +213,14 @@ public class AllMountedDispenseItemBehaviors {
                 MountedDispenseBehavior.placeItemInInventory(new ItemStack(Items.HONEY_BOTTLE), context, pos);
                 stack.shrink(1);
                 return stack;
-            } else if (context.world.getFluidState(interactionPos).is(FluidTags.WATER)) {
+            }
+            if (context.world.getFluidState(interactionPos).is(FluidTags.WATER)) {
                 ItemStack waterBottle = PotionContents.createItemStack(Items.POTION, Potions.WATER);
                 MountedDispenseBehavior.placeItemInInventory(waterBottle, context, pos);
                 stack.shrink(1);
                 return stack;
-            } else {
-                return null;
             }
+            return null;
         }
     };
 

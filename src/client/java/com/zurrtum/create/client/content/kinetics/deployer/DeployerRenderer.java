@@ -141,7 +141,8 @@ public class DeployerRenderer implements BlockEntityRenderer<DeployerBlockEntity
     }
 
     public static PartialModel getHandPose(DeployerBlockEntity be) {
-        return be.mode == Mode.PUNCH ? AllPartialModels.DEPLOYER_HAND_PUNCHING : be.heldItem.isEmpty() ? AllPartialModels.DEPLOYER_HAND_POINTING : AllPartialModels.DEPLOYER_HAND_HOLDING;
+        return be.mode == Mode.PUNCH ? AllPartialModels.DEPLOYER_HAND_PUNCHING :
+            be.heldItem.isEmpty() ? AllPartialModels.DEPLOYER_HAND_POINTING : AllPartialModels.DEPLOYER_HAND_HOLDING;
     }
 
     public static Vec3 getHandOffset(

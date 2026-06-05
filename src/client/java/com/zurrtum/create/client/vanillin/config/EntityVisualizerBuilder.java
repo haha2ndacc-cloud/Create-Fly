@@ -56,7 +56,7 @@ public final class EntityVisualizerBuilder<T extends Entity> {
      * @return {@code this}
      */
     public EntityVisualizerBuilder<T> neverSkipVanillaRender() {
-        this.skipVanillaRender = entity -> false;
+        skipVanillaRender = entity -> false;
         return this;
     }
 

@@ -26,7 +26,7 @@ public class JunkWidget extends Widget {
         ).asFloat();
 
     public JunkWidget(int x, int y, float chance) {
-        this.bounds = new Rectangle(x, y, 16, 16);
+        bounds = new Rectangle(x, y, 16, 16);
         this.chance = chance;
     }
 
@@ -43,7 +43,7 @@ public class JunkWidget extends Widget {
         graphics.text(font, text, bounds.x + font.width(text) / -2 + 7, bounds.y + 4, 0xffefefef, true);
         if (bounds.contains(mouseX, mouseY)) {
             graphics.fillGradient(bounds.x, bounds.y, bounds.getMaxX(), bounds.getMaxY(), 0x80ffffff, 0x80ffffff);
-            int darkColor = 0x111111 | ((int) (90 * darkHighlightedAlpha.value()) << 24);
+            int darkColor = 0x111111 | (int) (90 * darkHighlightedAlpha.value()) << 24;
             graphics.fillGradient(bounds.x, bounds.y, bounds.getMaxX(), bounds.getMaxY(), darkColor, darkColor);
             String number = chance < 0.01 ? "<1" : chance > 0.99 ? ">99" : String.valueOf(Math.round(chance * 100));
             Tooltip.create(

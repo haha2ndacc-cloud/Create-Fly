@@ -87,7 +87,7 @@ public class CarriageContraptionEntity extends OrientedContraptionEntity {
         validForRender = false;
         firstPositionUpdate = true;
         arrivalSoundTicks = Integer.MIN_VALUE;
-        derailParticleOffset = VecHelper.offsetRandomly(Vec3.ZERO, world.getRandom(), 1.5f).multiply(1, .25f, 1);
+        derailParticleOffset = VecHelper.offsetRandomly(Vec3.ZERO, world.getRandom(), 1.5f).multiply(1, 0.25f, 1);
         for (Function<Entity, EntityBehaviour<?>> factory : EntityBehaviour.REGISTRY.get(type)) {
             EntityBehaviour<?> behaviour = factory.apply(this);
             behaviours.put(behaviour.getType(), behaviour);
@@ -269,7 +269,8 @@ public class CarriageContraptionEntity extends OrientedContraptionEntity {
             }
 
             Navigation navigation = carriage.train.navigation;
-            if (navigation.announceArrival && Math.abs(navigation.distanceToDestination) < 60 && carriageIndex == (carriage.train.speed < 0 ? carriage.train.carriages.size() - 1 : 0)) {
+            if (navigation.announceArrival && Math.abs(navigation.distanceToDestination) < 60 && carriageIndex == (
+                carriage.train.speed < 0 ? carriage.train.carriages.size() - 1 : 0)) {
                 navigation.announceArrival = false;
                 arrivalSoundPlaying = true;
                 arrivalSoundReversed = carriage.train.speed < 0;
@@ -296,7 +297,7 @@ public class CarriageContraptionEntity extends OrientedContraptionEntity {
             return;
         }
 
-        carriageData.approach(this, carriage, 1f / getType().updateInterval());
+        carriageData.approach(this, carriage, 1.0f / getType().updateInterval());
 
         if (!carriage.train.derailed) {
             carriage.updateContraptionAnchors();
@@ -426,9 +427,9 @@ public class CarriageContraptionEntity extends OrientedContraptionEntity {
     Vec3 derailParticleOffset;
 
     private void spawnDerailParticles(Carriage carriage) {
-        if (random.nextFloat() < 1 / 20f) {
+        if (random.nextFloat() < 1 / 20.0f) {
             Vec3 v = position().add(derailParticleOffset);
-            level().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, v.x, v.y, v.z, 0, .04, 0);
+            level().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, v.x, v.y, v.z, 0, 0.04, 0);
         }
     }
 
@@ -442,7 +443,7 @@ public class CarriageContraptionEntity extends OrientedContraptionEntity {
     }
 
     public Set<BlockPos> particleSlice = new HashSet<>();
-    public float particleAvgY = 0;
+    public float particleAvgY;
 
     private void spawnPortalParticles(DimensionalCarriageEntity dce) {
         Vec3 pivot = dce.pivot.getLocation().add(0, 1.5f, 0);
@@ -466,14 +467,14 @@ public class CarriageContraptionEntity extends OrientedContraptionEntity {
             }
             Vec3 v = pivot.add(pos.getX() * extraFlip, pos.getY(), pos.getZ() * extraFlip);
             CubeParticleData data = new CubeParticleData(
-                .25f,
+                0.25f,
                 0,
-                .5f,
-                .65f + (random.nextFloat() - .5f) * .25f,
+                0.5f,
+                0.65f + (random.nextFloat() - 0.5f) * 0.25f,
                 4,
                 false
             );
-            Vec3 m = v.subtract(emitter).normalize().scale(.325f);
+            Vec3 m = v.subtract(emitter).normalize().scale(0.325f);
             m = VecHelper.rotate(m, random.nextFloat() * 360, alongX ? Axis.X : Axis.Z);
             m = m.add(VecHelper.offsetRandomly(Vec3.ZERO, random, 0.25f));
             level().addParticle(data, v.x, v.y, v.z, m.x, m.y, m.z);
@@ -580,8 +581,8 @@ public class CarriageContraptionEntity extends OrientedContraptionEntity {
         return carriage.train.name;
     }
 
-    double navDistanceTotal = 0;
-    int hudPacketCooldown = 0;
+    double navDistanceTotal;
+    int hudPacketCooldown;
 
     @Override
     public boolean control(BlockPos controlsLocalPos, Collection<Integer> heldControls, Player player) {
@@ -681,8 +682,8 @@ public class CarriageContraptionEntity extends OrientedContraptionEntity {
                     nav.cancelNavigation();
                 }
                 if (spaceDown) {
-                    double f = (nav.distanceToDestination / navDistanceTotal);
-                    int progress = (int) (Mth.clamp(1 - ((1 - f) * (1 - f)), 0, 1) * 30);
+                    double f = nav.distanceToDestination / navDistanceTotal;
+                    int progress = (int) (Mth.clamp(1 - (1 - f) * (1 - f), 0, 1) * 30);
                     boolean arrived = progress == 0;
                     MutableComponent whiteComponent = Component.literal(Strings.repeat("|", progress));
                     MutableComponent greenComponent = Component.literal(Strings.repeat("|", 30 - progress));
@@ -690,7 +691,7 @@ public class CarriageContraptionEntity extends OrientedContraptionEntity {
                     int fromColor = 0x00_FFC244;
                     int toColor = 0x00_529915;
 
-                    int mixedColor = Color.mixColors(toColor, fromColor, progress / 30f);
+                    int mixedColor = Color.mixColors(toColor, fromColor, progress / 30.0f);
                     int targetColor = arrived ? toColor : 0x00_544D45;
 
                     MutableComponent component = greenComponent.withColor(mixedColor)
@@ -702,7 +703,8 @@ public class CarriageContraptionEntity extends OrientedContraptionEntity {
             }
 
             double directedSpeed = targetSpeed != 0 ? targetSpeed : carriage.train.speed;
-            GlobalStation lookAhead = nav.findNearestApproachable(!carriage.train.doubleEnded || (directedSpeed != 0 ? directedSpeed > 0 : !inverted));
+            GlobalStation lookAhead = nav.findNearestApproachable(!carriage.train.doubleEnded || (directedSpeed != 0 ?
+                directedSpeed > 0 : !inverted));
 
             if (lookAhead != null) {
                 if (spaceDown) {
@@ -718,7 +720,8 @@ public class CarriageContraptionEntity extends OrientedContraptionEntity {
             }
         }
 
-        carriage.train.manualSteer = targetSteer < 0 ? SteerDirection.RIGHT : targetSteer > 0 ? SteerDirection.LEFT : SteerDirection.NONE;
+        carriage.train.manualSteer =
+            targetSteer < 0 ? SteerDirection.RIGHT : targetSteer > 0 ? SteerDirection.LEFT : SteerDirection.NONE;
 
         double topSpeed = carriage.train.maxSpeed() * AllConfigs.server().trains.manualTrainSpeedModifier.getF();
         double cappedTopSpeed = topSpeed * carriage.train.throttle;
@@ -749,7 +752,7 @@ public class CarriageContraptionEntity extends OrientedContraptionEntity {
         }
     }
 
-    boolean stationMessage = false;
+    boolean stationMessage;
 
     private void displayApproachStationMessage(Player player, GlobalStation station) {
         sendPrompt(
@@ -803,8 +806,8 @@ public class CarriageContraptionEntity extends OrientedContraptionEntity {
 
     public void setCarriage(Carriage carriage) {
         this.carriage = carriage;
-        this.trainId = carriage.train.id;
-        this.carriageIndex = carriage.train.carriages.indexOf(carriage);
+        trainId = carriage.train.id;
+        carriageIndex = carriage.train.carriages.indexOf(carriage);
         if (contraption instanceof CarriageContraption cc) {
             cc.swapStorageAfterAssembly(this);
         }

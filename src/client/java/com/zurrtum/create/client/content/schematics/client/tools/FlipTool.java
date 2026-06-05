@@ -62,11 +62,11 @@ public class FlipTool extends PlacementToolBase {
         Vec3 vec = boundsSize.multiply(directionVec);
         bounds = bounds.contract(vec.x, vec.y, vec.z)
             .inflate(1 - directionVec.x, 1 - directionVec.y, 1 - directionVec.z);
-        bounds = bounds.move(directionVec.scale(.5f).multiply(boundsSize));
+        bounds = bounds.move(directionVec.scale(0.5f).multiply(boundsSize));
 
         outline.setBounds(bounds);
         AllSpecialTextures tex = AllSpecialTextures.CHECKERED;
-        outline.getParams().lineWidth(1 / 16f).disableLineNormals().colored(0xdddddd).withFaceTextures(tex, tex);
+        outline.getParams().lineWidth(1 / 16.0f).disableLineNormals().colored(0xdddddd).withFaceTextures(tex, tex);
         outline.submit(mc, ms, queue, Vec3.ZERO, AnimationTickHolder.getPartialTicks());
 
         super.renderOnSchematic(mc, ms, queue);

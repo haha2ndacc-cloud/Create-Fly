@@ -57,7 +57,7 @@ public class FilteredDetectorFilterSlot extends ValueBoxTransform.Sided {
 
     @Override
     protected Vec3 getSouthLocation() {
-        return VecHelper.voxelSpace(8f, 8f, 15.5f);
+        return VecHelper.voxelSpace(8.0f, 8.0f, 15.5f);
     }
 
 }

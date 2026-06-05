@@ -25,13 +25,13 @@ public class ChainConveyorPackagePhysicsData {
     public @Nullable WeakReference<ChainConveyorBlockEntity> beReference;
 
     public ChainConveyorPackagePhysicsData() {
-        this.targetPos = null;
-        this.prevTargetPos = null;
-        this.pos = null;
-        this.prevPos = null;
+        targetPos = null;
+        prevTargetPos = null;
+        pos = null;
+        prevPos = null;
 
-        this.motion = Vec3.ZERO;
-        this.lastTick = AnimationTickHolder.getTicks();
+        motion = Vec3.ZERO;
+        lastTick = AnimationTickHolder.getTicks();
     }
 
     public boolean shouldTick() {

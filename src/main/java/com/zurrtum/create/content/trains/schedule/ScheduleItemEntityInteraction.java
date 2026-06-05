@@ -99,10 +99,12 @@ public class ScheduleItemEntityInteraction {
                 player.blockPosition(),
                 SoundEvents.ITEM_PICKUP,
                 SoundSource.PLAYERS,
-                .2f,
-                1f + world.getRandom().nextFloat()
+                0.2f,
+                1.0f + world.getRandom().nextFloat()
             );
-            player.sendOverlayMessage(Component.translatable(train.runtime.isAutoSchedule ? "create.schedule.auto_removed_from_train" : "create.schedule.removed_from_train"));
+            player.sendOverlayMessage(Component.translatable(
+                train.runtime.isAutoSchedule ? "create.schedule.auto_removed_from_train" :
+                    "create.schedule.removed_from_train"));
 
             player.getInventory().placeItemBackInInventory(train.runtime.returnSchedule(player.registryAccess()));
         }

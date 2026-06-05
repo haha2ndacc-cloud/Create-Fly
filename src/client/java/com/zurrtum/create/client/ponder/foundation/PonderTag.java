@@ -37,7 +37,7 @@ public class PonderTag implements ScreenElement {
         @Nullable ItemStackTemplate mainItem
     ) {
         this.id = id;
-        this.textureIcon = textureIconLocation == null ? null : (graphics, poseStack, x, y) -> {
+        textureIcon = textureIconLocation == null ? null : (graphics, poseStack, x, y) -> {
             poseStack.translate(x, y);
             poseStack.scale(0.25f, 0.25f);
             graphics.blit(RenderPipelines.GUI_TEXTURED, textureIconLocation, 0, 0, 0, 0, 0, 64, 64, 64, 64);
@@ -81,6 +81,7 @@ public class PonderTag implements ScreenElement {
         return PonderIndex.getLangAccess().getTagDescription(id);
     }
 
+    @Override
     public void render(GuiGraphicsExtractor graphics, int x, int y) {
         Matrix3x2fStack poseStack = graphics.pose();
         poseStack.pushMatrix();

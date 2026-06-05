@@ -196,7 +196,7 @@ public class RedstoneScenes {
         scene.world().showSection(util.select().position(circuitPos), Direction.DOWN);
         scene.idle(20);
 
-        Vec3 circuitTop = util.vector().blockSurface(circuitPos, Direction.DOWN).add(0, 3 / 16f, 0);
+        Vec3 circuitTop = util.vector().blockSurface(circuitPos, Direction.DOWN).add(0, 3 / 16.0f, 0);
         scene.overlay().showText(70).text("Pulse Extenders can lengthen a signal passing through").attachKeyFrame()
             .placeNearTarget().pointAt(circuitTop);
         scene.idle(60);
@@ -274,7 +274,7 @@ public class RedstoneScenes {
         scene.world().showSection(util.select().position(circuitPos), Direction.DOWN);
         scene.idle(20);
 
-        Vec3 circuitTop = util.vector().blockSurface(circuitPos, Direction.DOWN).add(0, 3 / 16f, 0);
+        Vec3 circuitTop = util.vector().blockSurface(circuitPos, Direction.DOWN).add(0, 3 / 16.0f, 0);
 
         scene.effects().indicateRedstone(leverPos);
         scene.world().toggleRedstonePower(util.select().fromTo(4, 1, 2, 2, 1, 2));
@@ -328,7 +328,7 @@ public class RedstoneScenes {
 
         BlockPos circuitPos = util.grid().at(2, 1, 2);
         BlockPos buttonPos = util.grid().at(4, 1, 2);
-        Vec3 circuitTop = util.vector().blockSurface(circuitPos, Direction.DOWN).add(0, 3 / 16f, 0);
+        Vec3 circuitTop = util.vector().blockSurface(circuitPos, Direction.DOWN).add(0, 3 / 16.0f, 0);
 
         scene.world()
             .showSection(util.select().layersFrom(1).substract(util.select().position(circuitPos)), Direction.UP);
@@ -346,7 +346,7 @@ public class RedstoneScenes {
         scene.idle(30);
         scene.world().toggleRedstonePower(util.select().fromTo(4, 1, 2, 3, 1, 2));
 
-        AABB bb = new AABB(circuitPos).inflate(-.48f, -.45f, -.05f).move(.575, -.45, 0);
+        AABB bb = new AABB(circuitPos).inflate(-0.48f, -0.45f, -0.05f).move(0.575, -0.45, 0);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, bb, bb, 40);
         scene.overlay().showText(40).colored(PonderPalette.GREEN).text("Signals at the back switch it on")
             .placeNearTarget().pointAt(bb.getCenter());
@@ -359,8 +359,8 @@ public class RedstoneScenes {
         scene.idle(30);
         scene.world().toggleRedstonePower(util.select().fromTo(2, 1, 0, 2, 1, 1));
 
-        bb = new AABB(circuitPos).inflate(-.05f, -.45f, -.48f).move(0, -.45, .575);
-        AABB bb2 = new AABB(circuitPos).inflate(-.05f, -.45f, -.48f).move(0, -.45, -.575);
+        bb = new AABB(circuitPos).inflate(-0.05f, -0.45f, -0.48f).move(0, -0.45, 0.575);
+        AABB bb2 = new AABB(circuitPos).inflate(-0.05f, -0.45f, -0.48f).move(0, -0.45, -0.575);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.RED, bb, bb, 40);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.RED, bb2, bb2, 40);
         scene.overlay().showText(40).colored(PonderPalette.RED).text("Signals from the side switch it back off")
@@ -393,7 +393,7 @@ public class RedstoneScenes {
 
         BlockPos circuitPos = util.grid().at(2, 1, 2);
         BlockPos buttonPos = util.grid().at(4, 1, 2);
-        Vec3 circuitTop = util.vector().blockSurface(circuitPos, Direction.DOWN).add(0, 3 / 16f, 0);
+        Vec3 circuitTop = util.vector().blockSurface(circuitPos, Direction.DOWN).add(0, 3 / 16.0f, 0);
 
         scene.world()
             .showSection(util.select().layersFrom(1).substract(util.select().position(circuitPos)), Direction.UP);
@@ -411,7 +411,7 @@ public class RedstoneScenes {
         scene.idle(30);
         scene.world().toggleRedstonePower(util.select().fromTo(4, 1, 2, 3, 1, 2));
 
-        AABB bb = new AABB(circuitPos).inflate(-.48f, -.45f, -.05f).move(.575, -.45, 0);
+        AABB bb = new AABB(circuitPos).inflate(-0.48f, -0.45f, -0.05f).move(0.575, -0.45, 0);
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, bb, bb, 40);
         scene.overlay().showText(40).colored(PonderPalette.GREEN).text("Signals at the back will toggle its state")
             .placeNearTarget().pointAt(bb.getCenter());
@@ -471,7 +471,7 @@ public class RedstoneScenes {
         Selection leverSelection = util.select().fromTo(2, 1, 2, 2, 2, 2);
         Selection lamp = util.select().position(4, 1, 0);
         BlockPos leverPos = util.grid().at(2, 2, 2);
-        Vec3 leverVec = util.vector().centerOf(leverPos).add(0, -.25, 0);
+        Vec3 leverVec = util.vector().centerOf(leverPos).add(0, -0.25, 0);
 
         scene.world().showSection(util.select().layersFrom(0).substract(lamp).substract(leverSelection), Direction.UP);
         scene.idle(5);
@@ -584,7 +584,7 @@ public class RedstoneScenes {
 
         ItemStack clipboard = AllItems.CLIPBOARD.getDefaultInstance();
         clipboard.set(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY.setType(ClipboardType.WRITTEN));
-        scene.overlay().showControls(centerTube.add(1, .35, 0), Pointing.DOWN, 40).rightClick().withItem(clipboard);
+        scene.overlay().showControls(centerTube.add(1, 0.35, 0), Pointing.DOWN, 40).rightClick().withItem(clipboard);
         scene.idle(7);
 
         Component component = Component.literal("CREATE");
@@ -608,7 +608,7 @@ public class RedstoneScenes {
         scene.idle(20);
         scene.overlay().showText(80).attachKeyFrame().placeNearTarget()
             .text("Using written Clipboards, custom text can be displayed")
-            .pointAt(util.vector().topOf(util.grid().at(3, 1, 3)).add(-.75, -.05f, 0));
+            .pointAt(util.vector().topOf(util.grid().at(3, 1, 3)).add(-0.75, -0.05f, 0));
         scene.idle(90);
 
         scene.overlay()
@@ -623,7 +623,7 @@ public class RedstoneScenes {
         scene.idle(10);
         scene.overlay().showText(80).colored(PonderPalette.BLUE)
             .text("Right-Click with Dye to change their display colour").attachKeyFrame()
-            .pointAt(util.vector().topOf(util.grid().at(3, 1, 3)).add(-.75, -.05f, 0)).placeNearTarget();
+            .pointAt(util.vector().topOf(util.grid().at(3, 1, 3)).add(-0.75, -0.05f, 0)).placeNearTarget();
         scene.idle(60);
     }
 
@@ -643,9 +643,9 @@ public class RedstoneScenes {
         Selection link1Select = util.select().position(link1Pos);
         Selection link2Select = util.select().position(link2Pos);
         Selection link3Select = util.select().position(link3Pos);
-        Vec3 link1Vec = util.vector().blockSurface(link1Pos, Direction.DOWN).add(0, 3 / 16f, 0);
-        Vec3 link2Vec = util.vector().blockSurface(link2Pos, Direction.SOUTH).add(0, 0, -3 / 16f);
-        Vec3 link3Vec = util.vector().blockSurface(link3Pos, Direction.SOUTH).add(0, 0, -3 / 16f);
+        Vec3 link1Vec = util.vector().blockSurface(link1Pos, Direction.DOWN).add(0, 3 / 16.0f, 0);
+        Vec3 link2Vec = util.vector().blockSurface(link2Pos, Direction.SOUTH).add(0, 0, -3 / 16.0f);
+        Vec3 link3Vec = util.vector().blockSurface(link3Pos, Direction.SOUTH).add(0, 0, -3 / 16.0f);
 
         scene.world().showSection(link1Select, Direction.DOWN);
         scene.idle(5);
@@ -694,12 +694,12 @@ public class RedstoneScenes {
         scene.world().toggleRedstonePower(util.select().fromTo(3, 2, 3, 1, 2, 2));
         scene.idle(20);
 
-        Vec3 frontSlot = link1Vec.add(0, .025, -.15);
-        Vec3 backSlot = link1Vec.add(0, .025, .15);
-        Vec3 top2Slot = link2Vec.add(0, .15, 0);
-        Vec3 bottom2Slot = link2Vec.add(0, -.2, 0);
-        Vec3 top3Slot = link3Vec.add(0, .15, 0);
-        Vec3 bottom3Slot = link3Vec.add(0, -.2, 0);
+        Vec3 frontSlot = link1Vec.add(0, 0.025, -0.15);
+        Vec3 backSlot = link1Vec.add(0, 0.025, 0.15);
+        Vec3 top2Slot = link2Vec.add(0, 0.15, 0);
+        Vec3 bottom2Slot = link2Vec.add(0, -0.2, 0);
+        Vec3 top3Slot = link3Vec.add(0, 0.15, 0);
+        Vec3 bottom3Slot = link3Vec.add(0, -0.2, 0);
 
         scene.addKeyframe();
         scene.idle(10);

@@ -31,12 +31,11 @@ public class ObjMaterialLibrary {
         String[] line;
         while ((line = reader.readAndSplitLine(true)) != null) {
             switch (line[0]) {
-                case "newmtl": {
+                case "newmtl":
                     String name = Strings.join(Arrays.copyOfRange(line, 1, line.length), " ");
                     currentMaterial = new Material(name);
                     materials.put(name, currentMaterial);
                     break;
-                }
 
                 case "Ka":
                     currentMaterial.ambientColor = ObjGeometry.parseVector4(line);
@@ -100,11 +99,11 @@ public class ObjMaterialLibrary {
         public Vector4f diffuseColor = new Vector4f(1, 1, 1, 1);
         public String diffuseColorMap;
         public Vector4f specularColor = new Vector4f();
-        public float specularHighlight = 0;
+        public float specularHighlight;
         public String specularColorMap;
 
         public float dissolve = 1.0f;
-        public float transparency = 0.0f;
+        public float transparency;
 
         // non-standard
         public int diffuseTintIndex = -1;

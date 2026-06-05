@@ -19,7 +19,7 @@ public class CrossPlaneMirror extends SymmetryMirror {
 
         private final String name;
 
-        private Align(String name) {
+        Align(String name) {
             this.name = name;
         }
 
@@ -52,7 +52,7 @@ public class CrossPlaneMirror extends SymmetryMirror {
 
     @Override
     public void setOrientation(int index) {
-        this.orientation = Align.values()[index];
+        orientation = Align.values()[index];
         orientationIndex = index;
     }
 

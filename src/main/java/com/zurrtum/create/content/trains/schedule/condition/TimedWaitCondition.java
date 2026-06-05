@@ -54,8 +54,10 @@ public abstract class TimedWaitCondition extends ScheduleWaitCondition {
         int time = tag.getIntOr("Time", 0);
         int ticksUntilDeparture = totalWaitTicks() - time;
         boolean showInMinutes = ticksUntilDeparture >= 20 * 60;
-        int num = (int) (showInMinutes ? Math.floor(ticksUntilDeparture / (20 * 60f)) : Math.ceil(ticksUntilDeparture / 100f) * 5);
-        String key = "generic." + (showInMinutes ? num == 1 ? "daytime.minute" : "unit.minutes" : num == 1 ? "daytime.second" : "unit.seconds");
+        int num = (int) (showInMinutes ? Math.floor(ticksUntilDeparture / (20 * 60.0f)) :
+            Math.ceil(ticksUntilDeparture / 100.0f) * 5);
+        String key = "generic." + (showInMinutes ? num == 1 ? "daytime.minute" : "unit.minutes" :
+            num == 1 ? "daytime.second" : "unit.seconds");
         return Component.translatable(
             "create.schedule.condition." + id.getPath() + ".status",
             Component.literal(num + " ").append(Component.translatable("create." + key))

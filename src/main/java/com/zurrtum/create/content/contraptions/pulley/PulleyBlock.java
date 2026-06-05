@@ -137,7 +137,8 @@ public class PulleyBlock extends HorizontalAxisKineticBlock implements IBE<Pulle
 
         @Override
         public FluidState getFluidState(BlockState state) {
-            return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
+            return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) :
+                Fluids.EMPTY.defaultFluidState();
         }
 
         @Override

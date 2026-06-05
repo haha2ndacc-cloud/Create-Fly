@@ -157,7 +157,7 @@ public class WhistleBlock extends Block implements IBE<WhistleBlockEntity>, IWre
                         3
                     );
                     float pPitch = (float) Math.pow(2, -(i * 2) / 12.0);
-                    pLevel.playSound(null, currentPos, growSound, SoundSource.BLOCKS, pVolume / 4f, pPitch);
+                    pLevel.playSound(null, currentPos, growSound, SoundSource.BLOCKS, pVolume / 4.0f, pPitch);
                     pLevel.playSound(null, currentPos, hitSound, SoundSource.BLOCKS, pVolume, pPitch);
                     return;
                 }
@@ -171,7 +171,7 @@ public class WhistleBlock extends Block implements IBE<WhistleBlockEntity>, IWre
 
             pLevel.setBlock(currentPos, AllBlocks.STEAM_WHISTLE_EXTENSION.defaultBlockState().setValue(SIZE, size), 3);
             float pPitch = (float) Math.pow(2, -(i * 2 - 1) / 12.0);
-            pLevel.playSound(null, currentPos, growSound, SoundSource.BLOCKS, pVolume / 4f, pPitch);
+            pLevel.playSound(null, currentPos, growSound, SoundSource.BLOCKS, pVolume / 4.0f, pPitch);
             pLevel.playSound(null, currentPos, hitSound, SoundSource.BLOCKS, pVolume, pPitch);
             return;
         }
@@ -217,7 +217,7 @@ public class WhistleBlock extends Block implements IBE<WhistleBlockEntity>, IWre
         }
         boolean previouslyPowered = state.getValue(POWERED);
         if (previouslyPowered != worldIn.hasNeighborSignal(pos)) {
-            worldIn.setBlock(pos, state.cycle(POWERED), Block.UPDATE_CLIENTS);
+            worldIn.setBlock(pos, state.cycle(POWERED), UPDATE_CLIENTS);
         }
     }
 
@@ -232,21 +232,20 @@ public class WhistleBlock extends Block implements IBE<WhistleBlockEntity>, IWre
         BlockState pFacingState,
         RandomSource random
     ) {
-        return getAttachedDirection(pState) == pFacing && !pState.canSurvive(
-            pLevel,
-            pCurrentPos
-        ) ? Blocks.AIR.defaultBlockState() : pState;
+        return getAttachedDirection(pState) == pFacing && !pState.canSurvive(pLevel, pCurrentPos) ?
+            Blocks.AIR.defaultBlockState() : pState;
     }
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         WhistleSize size = pState.getValue(SIZE);
         if (!pState.getValue(WALL)) {
-            return size == WhistleSize.SMALL ? AllShapes.WHISTLE_SMALL_FLOOR : size == WhistleSize.MEDIUM ? AllShapes.WHISTLE_MEDIUM_FLOOR : AllShapes.WHISTLE_LARGE_FLOOR;
+            return size == WhistleSize.SMALL ? AllShapes.WHISTLE_SMALL_FLOOR :
+                size == WhistleSize.MEDIUM ? AllShapes.WHISTLE_MEDIUM_FLOOR : AllShapes.WHISTLE_LARGE_FLOOR;
         }
         Direction direction = pState.getValue(FACING);
-        return (size == WhistleSize.SMALL ? AllShapes.WHISTLE_SMALL_WALL : size == WhistleSize.MEDIUM ? AllShapes.WHISTLE_MEDIUM_WALL : AllShapes.WHISTLE_LARGE_WALL).get(
-            direction);
+        return (size == WhistleSize.SMALL ? AllShapes.WHISTLE_SMALL_WALL :
+            size == WhistleSize.MEDIUM ? AllShapes.WHISTLE_MEDIUM_WALL : AllShapes.WHISTLE_LARGE_WALL).get(direction);
     }
 
     @Override

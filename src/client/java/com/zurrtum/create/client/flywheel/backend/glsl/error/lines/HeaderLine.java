@@ -6,6 +6,7 @@ public record HeaderLine(String level, CharSequence message) implements ErrorLin
         return -1;
     }
 
+    @Override
     public String build() {
         return level + ": " + message;
     }

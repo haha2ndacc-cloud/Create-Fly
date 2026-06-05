@@ -39,10 +39,11 @@ public class ContraptionPlayerPassengerRotation {
 
         ContraptionRotationState rotationState = contraptionEntity.getRotationState();
 
-        float yaw = AngleHelper.wrapAngle180((contraptionEntity instanceof CarriageContraptionEntity cce) ? cce.getViewYRot(
-            AnimationTickHolder.getPartialTicks()) : rotationState.yRotation);
+        float yaw = AngleHelper.wrapAngle180(contraptionEntity instanceof CarriageContraptionEntity cce ?
+            cce.getViewYRot(AnimationTickHolder.getPartialTicks()) : rotationState.yRotation);
 
-        float pitch = (contraptionEntity instanceof CarriageContraptionEntity cce) ? cce.getViewXRot(AnimationTickHolder.getPartialTicks()) : 0;
+        float pitch = contraptionEntity instanceof CarriageContraptionEntity cce ?
+            cce.getViewXRot(AnimationTickHolder.getPartialTicks()) : 0;
 
         if (prevId != contraptionEntity.getId()) {
             prevId = contraptionEntity.getId();

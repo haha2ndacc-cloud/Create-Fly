@@ -32,6 +32,7 @@ public class DirectedDirectionalBlock extends HorizontalDirectionalBlock impleme
         super.createBlockStateDefinition(pBuilder.add(TARGET, FACING));
     }
 
+    @Override
     @Nullable
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         for (Direction direction : pContext.getNearestLookingDirections()) {

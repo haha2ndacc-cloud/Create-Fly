@@ -69,7 +69,7 @@ public class BrassDiodeBlock extends AbstractDiodeBlock implements IBE<BrassDiod
         if (pLevel.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        pLevel.setBlock(pPos, pState.cycle(INVERTED), Block.UPDATE_ALL);
+        pLevel.setBlock(pPos, pState.cycle(INVERTED), UPDATE_ALL);
         float f = !pState.getValue(INVERTED) ? 0.6F : 0.5F;
         pLevel.playSound(null, pPos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, f);
         return InteractionResult.SUCCESS;
@@ -88,7 +88,7 @@ public class BrassDiodeBlock extends AbstractDiodeBlock implements IBE<BrassDiod
 
     @Override
     public int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
-        return blockState.getValue(FACING) == side ? this.getOutputSignal(blockAccess, pos, blockState) : 0;
+        return blockState.getValue(FACING) == side ? getOutputSignal(blockAccess, pos, blockState) : 0;
     }
 
     @Override
@@ -111,7 +111,8 @@ public class BrassDiodeBlock extends AbstractDiodeBlock implements IBE<BrassDiod
 
     @Override
     public BlockEntityType<? extends BrassDiodeBlockEntity> getBlockEntityType() {
-        return this == AllBlocks.PULSE_TIMER ? AllBlockEntityTypes.PULSE_TIMER : this == AllBlocks.PULSE_EXTENDER ? AllBlockEntityTypes.PULSE_EXTENDER : AllBlockEntityTypes.PULSE_REPEATER;
+        return this == AllBlocks.PULSE_TIMER ? AllBlockEntityTypes.PULSE_TIMER :
+            this == AllBlocks.PULSE_EXTENDER ? AllBlockEntityTypes.PULSE_EXTENDER : AllBlockEntityTypes.PULSE_REPEATER;
     }
 
     @Override

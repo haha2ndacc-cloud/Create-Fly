@@ -80,11 +80,10 @@ public abstract class CreateCategory<T extends Display> implements DisplayCatego
         float chance = output.chance();
         if (chance == 1) {
             return EntryIngredients.of(output.stack());
-        } else {
-            EntryStack<ItemStack> stack = EntryStacks.of(output.stack());
-            stack.withRenderer(new ChanceItemRenderer(chance, stack.getRenderer()));
-            return EntryIngredient.of(stack);
         }
+        EntryStack<ItemStack> stack = EntryStacks.of(output.stack());
+        stack.withRenderer(new ChanceItemRenderer(chance, stack.getRenderer()));
+        return EntryIngredient.of(stack);
     }
 
     public static List<EntryIngredient> condenseIngredients(List<EntryIngredient> ingredients) {

@@ -33,7 +33,7 @@ public class OrientedContraptionEntityRenderer<C extends OrientedContraptionEnti
     @Override
     public Pose createTransform(OrientedContraptionEntity entity, float tickProgress) {
         Pose pose = new Pose();
-        pose.translate(-.5f, 0, -.5f);
+        pose.translate(-0.5f, 0, -0.5f);
         Entity ridingEntity = entity.getVehicle();
         Vec3 offset;
         if (ridingEntity instanceof AbstractMinecart cart) {

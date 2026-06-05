@@ -75,7 +75,7 @@ public class BlockMovementChecks {
         }
 
         public static CheckResult of(@Nullable Boolean b) {
-            return b == null ? PASS : (b ? SUCCESS : FAIL);
+            return b == null ? PASS : b ? SUCCESS : FAIL;
         }
 
         public boolean toBoolean() {

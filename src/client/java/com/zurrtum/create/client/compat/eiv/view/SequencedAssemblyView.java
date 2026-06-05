@@ -195,11 +195,8 @@ public class SequencedAssemblyView extends CreateView {
             }
             if (checkHover && checkStep && mouseX > x - 7 && mouseX < x + 22) {
                 checkHover = false;
-                Component text = draw != null ? SequencedRenderer.getSequenceName(
-                    draw,
-                    recipe,
-                    stack
-                ) : SequencedRenderer.getSequenceName(recipe);
+                Component text = draw != null ? SequencedRenderer.getSequenceName(draw, recipe, stack) :
+                    SequencedRenderer.getSequenceName(recipe);
                 List<Component> tooltip = List.of(
                     CreateLang.translateDirect("recipe.assembly.step", i + 1),
                     text.copy().withStyle(ChatFormatting.DARK_GREEN)
@@ -282,7 +279,7 @@ public class SequencedAssemblyView extends CreateView {
     public static class PressingRenderer implements SequencedRenderer<PressingRecipe> {
         @Override
         public void render(GuiGraphicsExtractor graphics, int i, int x, int y, @Nullable ItemStack stack) {
-            float scale = 19 / 30f;
+            float scale = 19 / 30.0f;
             Matrix3x2fStack matrices = graphics.pose();
             matrices.pushMatrix();
             matrices.translate(x, y);
@@ -302,7 +299,7 @@ public class SequencedAssemblyView extends CreateView {
     public static class DeployingRenderer implements SequencedRenderer<DeployerApplicationRecipe> {
         @Override
         public void render(GuiGraphicsExtractor graphics, int i, int x, int y, @Nullable ItemStack stack) {
-            float scale = 59 / 78f;
+            float scale = 59 / 78.0f;
             Matrix3x2fStack matrices = graphics.pose();
             matrices.pushMatrix();
             matrices.translate(x, y);
@@ -333,7 +330,7 @@ public class SequencedAssemblyView extends CreateView {
         @Override
         public void render(GuiGraphicsExtractor graphics, int i, int x, int y, @Nullable ItemStack stack) {
             if (stack != null && stack.getItem() instanceof FluidItem item) {
-                float scale = 35 / 46f;
+                float scale = 35 / 46.0f;
                 Matrix3x2fStack matrices = graphics.pose();
                 matrices.pushMatrix();
                 matrices.translate(x, y);

@@ -20,10 +20,9 @@ public class ChassisScrollValueBehaviour extends ScrollValueBehaviour<ChassisBlo
 
     public ChassisScrollValueBehaviour(ChassisBlockEntity be) {
         super(
-            CreateLang.translateDirect(be.getBlockState()
-                .getBlock() instanceof RadialChassisBlock ? "contraptions.chassis.radius" : "contraptions.chassis.range"),
-            be,
-            new CenteredSideValueBoxTransform()
+            CreateLang.translateDirect(
+                be.getBlockState().getBlock() instanceof RadialChassisBlock ? "contraptions.chassis.radius" :
+                    "contraptions.chassis.range"), be, new CenteredSideValueBoxTransform()
         );
         formatter = s -> String.valueOf(blockEntity.currentlySelectedRange);
         needsWrench = true;

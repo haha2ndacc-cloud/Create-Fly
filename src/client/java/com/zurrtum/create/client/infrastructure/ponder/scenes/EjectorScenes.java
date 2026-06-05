@@ -131,8 +131,8 @@ public class EjectorScenes {
         scene.world().setBlock(targetPos, AllBlocks.ANDESITE_CASING.defaultBlockState(), false);
         scene.world().showSection(targetS, Direction.NORTH);
 
-        Vec3 input = util.vector().blockSurface(ejectorPos, Direction.WEST).add(0, -2 / 16f, 0);
-        Vec3 topOfSlot = input.add(0, 2 / 16f, 0);
+        Vec3 input = util.vector().blockSurface(ejectorPos, Direction.WEST).add(0, -2 / 16.0f, 0);
+        Vec3 topOfSlot = input.add(0, 2 / 16.0f, 0);
         scene.overlay().showControls(topOfSlot, Pointing.DOWN, 60).rightClick();
         scene.overlay().showFilterSlotInput(input, Direction.WEST, 80);
         scene.idle(10);
@@ -170,7 +170,7 @@ public class EjectorScenes {
 
         scene.addKeyframe();
         ElementLink<ParrotElement> birb = scene.special()
-            .createBirb(util.vector().topOf(ejectorPos).add(0, -3 / 16f, 0), ParrotPose.FlappyPose::new);
+            .createBirb(util.vector().topOf(ejectorPos).add(0, -3 / 16.0f, 0), ParrotPose.FlappyPose::new);
         scene.idle(15);
         scene.world().modifyBlockEntity(ejectorPos, EjectorBlockEntity.class, EjectorBlockEntity::activateDeferred);
         scene.special().moveParrot(birb, util.vector().of(-2, 3, 0), 5);
@@ -180,7 +180,7 @@ public class EjectorScenes {
         scene.idle(3);
         scene.special().moveParrot(birb, util.vector().of(-0.75, -1, 0), 6);
         scene.idle(6);
-        scene.special().moveParrot(birb, util.vector().of(-0.25, -2 + 3 / 16f, 0), 12);
+        scene.special().moveParrot(birb, util.vector().of(-0.25, -2 + 3 / 16.0f, 0), 12);
         scene.idle(15);
         scene.special().changeBirbPose(birb, ParrotPose.FaceCursorPose::new);
         scene.overlay().showText(80).text("Mobs and Players will always trigger an Ejector when stepping on it")
@@ -223,8 +223,8 @@ public class EjectorScenes {
             .pointAt(util.vector().topOf(tunnel)).placeNearTarget();
         scene.idle(110);
 
-        Vec3 input = util.vector().blockSurface(ejectorPos, Direction.NORTH).subtract(0, 2 / 16f, 0);
-        Vec3 topOfSlot = input.add(0, 2 / 16f, 0);
+        Vec3 input = util.vector().blockSurface(ejectorPos, Direction.NORTH).subtract(0, 2 / 16.0f, 0);
+        Vec3 topOfSlot = input.add(0, 2 / 16.0f, 0);
         scene.overlay().showFilterSlotInput(input, Direction.NORTH, 80);
         scene.idle(10);
         scene.overlay().showText(80).attachKeyFrame()
@@ -243,7 +243,7 @@ public class EjectorScenes {
         scene.idle(7);
         scene.world().createItemOnBelt(util.grid().at(4, 1, 3), Direction.UP, new ItemStack(Items.COPPER_INGOT, 64));
         scene.idle(40);
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 16f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 1 / 16.0f);
         scene.overlay().showText(80).attachKeyFrame()
             .text("While a new stack of the configured size exits the side output...")
             .pointAt(util.vector().blockSurface(util.grid().at(2, 1, 1), Direction.WEST)).placeNearTarget();
@@ -251,7 +251,7 @@ public class EjectorScenes {
         scene.overlay().showText(80).text("...the remainder will continue on its path")
             .pointAt(util.vector().blockSurface(util.grid().at(0, 1, 3), Direction.UP)).placeNearTarget();
         scene.idle(90);
-        scene.world().multiplyKineticSpeed(util.select().everywhere(), 16f);
+        scene.world().multiplyKineticSpeed(util.select().everywhere(), 16.0f);
     }
 
     public static void redstone(SceneBuilder builder, SceneBuildingUtil util) {

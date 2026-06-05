@@ -639,7 +639,7 @@ public class AllItems {
     public static final ColorCollection<TableClothBlockItem> TABLE_CLOTH = (ColorCollection) ColorCollection.registerBlockItems(
         AllBlockItemIds.TABLE_CLOTH,
         (ColorCollection) AllBlocks.TABLE_CLOTH,
-        AllItems.registerBlockIgnoreColor(TableClothBlockItem::new)
+        registerBlockIgnoreColor(TableClothBlockItem::new)
     );
     public static final TableClothBlockItem ANDESITE_TABLE_CLOTH = (TableClothBlockItem) registerBlock(
         AllBlockItemIds.ANDESITE_TABLE_CLOTH,
@@ -656,10 +656,9 @@ public class AllItems {
         AllBlocks.COPPER_TABLE_CLOTH,
         TableClothBlockItem::new
     );
-    public static final ColorCollection<PackagePortItem> POSTBOX = (ColorCollection) ColorCollection.registerBlockItems(
-        AllBlockItemIds.POSTBOX,
+    public static final ColorCollection<PackagePortItem> POSTBOX = (ColorCollection) ColorCollection.registerBlockItems(AllBlockItemIds.POSTBOX,
         (ColorCollection) AllBlocks.POSTBOX,
-        AllItems.registerBlockIgnoreColor(PackagePortItem::new)
+        registerBlockIgnoreColor(PackagePortItem::new)
     );
     public static final PackagePortItem PACKAGE_FROGPORT = (PackagePortItem) registerBlock(
         AllBlockItemIds.PACKAGE_FROGPORT,
@@ -680,7 +679,7 @@ public class AllItems {
     public static final ColorCollection<UncontainableBlockItem> TOOLBOX = (ColorCollection) ColorCollection.registerBlockItems(
         AllBlockItemIds.TOOLBOX,
         (ColorCollection) AllBlocks.TOOLBOX,
-        AllItems.registerBlockIgnoreColor(UncontainableBlockItem::new)
+        registerBlockIgnoreColor(UncontainableBlockItem::new)
     );
     public static final BlockItem SCHEMATIC_TABLE = (BlockItem) registerBlock(
         AllBlockItemIds.SCHEMATIC_TABLE,

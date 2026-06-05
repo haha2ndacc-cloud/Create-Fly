@@ -31,7 +31,7 @@ public class MultiNeighborUpdateMixin {
         @Local BlockPos neighborPos
     ) {
         if (state.getBlock() instanceof NeighborUpdateListeningBlock block) {
-            block.neighborUpdate(state, level, neighborPos, this.sourceBlock, this.sourcePos, false);
+            block.neighborUpdate(state, level, neighborPos, sourceBlock, sourcePos, false);
         }
     }
 }

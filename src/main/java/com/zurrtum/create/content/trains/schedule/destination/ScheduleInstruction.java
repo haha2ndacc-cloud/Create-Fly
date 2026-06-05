@@ -115,7 +115,7 @@ public abstract class ScheduleInstruction extends ScheduleDataEntry {
             Create.LOGGER
         )) {
             ValueInput view = TagValueInput.create(logging, buf.registryAccess(), buf.readNbt());
-            return ScheduleInstruction.read(view);
+            return read(view);
         }
     }
 }

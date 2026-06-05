@@ -49,8 +49,8 @@ public class DrainingCategory extends CreateCategory<RecipeHolder<EmptyingRecipe
         MutableInt i = new MutableInt();
         itemStream.forEach(stack -> {
             if (PotionFluidHandler.isPotionItem(stack)) {
-                Ingredient ingredient = stack.getComponentsPatch()
-                    .isEmpty() ? Ingredient.of(stack.getItem()) : DefaultCustomIngredients.components(stack);
+                Ingredient ingredient = stack.getComponentsPatch().isEmpty() ? Ingredient.of(stack.getItem()) :
+                    DefaultCustomIngredients.components(stack);
                 recipes.add(new RecipeHolder<>(
                     ResourceKey.create(
                         Registries.RECIPE,
@@ -77,8 +77,8 @@ public class DrainingCategory extends CreateCategory<RecipeHolder<EmptyingRecipe
                     MOD_ID,
                     "empty_" + itemName.getNamespace() + "_" + itemName.getPath() + "_with_" + fluidName.getNamespace() + "_" + fluidName.getPath()
                 );
-                Ingredient ingredient = stack.getComponentsPatch()
-                    .isEmpty() ? Ingredient.of(stack.getItem()) : DefaultCustomIngredients.components(stack);
+                Ingredient ingredient = stack.getComponentsPatch().isEmpty() ? Ingredient.of(stack.getItem()) :
+                    DefaultCustomIngredients.components(stack);
                 recipes.add(new RecipeHolder<>(
                     ResourceKey.create(Registries.RECIPE, id),
                     new EmptyingRecipe(capability.getContainer(), fluid, ingredient)

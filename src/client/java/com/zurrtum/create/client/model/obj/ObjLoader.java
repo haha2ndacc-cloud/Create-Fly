@@ -77,7 +77,7 @@ public class ObjLoader extends CreateResourceReloader implements UnbakedModelLoa
 
     public ObjGeometry loadGeometry(ObjGeometry.Settings settings) {
         return geometryCache.computeIfAbsent(
-            settings, (data) -> {
+            settings, data -> {
                 Resource resource = manager.getResource(settings.modelLocation()).orElseThrow();
                 try (ObjTokenizer tokenizer = new ObjTokenizer(resource.open())) {
                     return ObjGeometry.parse(tokenizer, data);
@@ -92,7 +92,7 @@ public class ObjLoader extends CreateResourceReloader implements UnbakedModelLoa
 
     public ObjMaterialLibrary loadMaterialLibrary(Identifier materialLocation) {
         return materialCache.computeIfAbsent(
-            materialLocation, (location) -> {
+            materialLocation, location -> {
                 Resource resource = manager.getResource(location).orElseThrow();
                 try (ObjTokenizer rdr = new ObjTokenizer(resource.open())) {
                     return new ObjMaterialLibrary(rdr);

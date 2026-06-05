@@ -31,7 +31,7 @@ public class MillstoneRenderer extends PictureInPictureRenderer<MillstoneRenderS
     }
 
     private static float getCurrentAngle() {
-        return (AnimationTickHolder.getRenderTime() * 4f) % 360 * 2;
+        return AnimationTickHolder.getRenderTime() * 4.0f % 360 * 2;
     }
 
     @Override

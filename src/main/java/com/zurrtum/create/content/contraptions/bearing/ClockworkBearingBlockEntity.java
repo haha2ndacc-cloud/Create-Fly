@@ -90,9 +90,8 @@ public class ClockworkBearingBlockEntity extends KineticBlockEntity implements I
                     disassemble();
                 }
                 return;
-            } else {
-                assemble();
             }
+            assemble();
             return;
         }
 
@@ -144,12 +143,12 @@ public class ClockworkBearingBlockEntity extends KineticBlockEntity implements I
     }
 
     public float getHourArmSpeed() {
-        float speed = getAngularSpeed() / 2f;
+        float speed = getAngularSpeed() / 2.0f;
 
         if (speed != 0) {
             ClockHands mode = ClockHands.values()[operationMode.getValue()];
-            float hourTarget = mode == ClockHands.HOUR_FIRST ? getHourTarget(false) : mode == ClockHands.MINUTE_FIRST ? getMinuteTarget() : getHourTarget(
-                true);
+            float hourTarget = mode == ClockHands.HOUR_FIRST ? getHourTarget(false) :
+                mode == ClockHands.MINUTE_FIRST ? getMinuteTarget() : getHourTarget(true);
             float shortestAngleDiff = AngleHelper.getShortestAngleDiff(hourAngle, hourTarget);
             if (shortestAngleDiff < 0) {
                 speed = Math.max(speed, shortestAngleDiff);
@@ -158,7 +157,7 @@ public class ClockworkBearingBlockEntity extends KineticBlockEntity implements I
             }
         }
 
-        return speed + clientHourAngleDiff / 3f;
+        return speed + clientHourAngleDiff / 3.0f;
     }
 
     public float getMinuteArmSpeed() {
@@ -175,7 +174,7 @@ public class ClockworkBearingBlockEntity extends KineticBlockEntity implements I
             }
         }
 
-        return speed + clientMinuteAngleDiff / 3f;
+        return speed + clientMinuteAngleDiff / 3.0f;
     }
 
     private int getDayTime() {
@@ -188,17 +187,17 @@ public class ClockworkBearingBlockEntity extends KineticBlockEntity implements I
     protected float getHourTarget(boolean cycle24) {
         int hours = (getDayTime() / 1000 + 6) % 24;
         int offset = getBlockState().getValue(ClockworkBearingBlock.FACING).getAxisDirection().getStep();
-        return offset * -360 / (cycle24 ? 24f : 12f) * (hours % (cycle24 ? 24 : 12));
+        return offset * -360 / (cycle24 ? 24.0f : 12.0f) * (hours % (cycle24 ? 24 : 12));
     }
 
     protected float getMinuteTarget() {
-        int minutes = (getDayTime() % 1000) * 60 / 1000;
+        int minutes = getDayTime() % 1000 * 60 / 1000;
         int offset = getBlockState().getValue(ClockworkBearingBlock.FACING).getAxisDirection().getStep();
-        return offset * -360 / 60f * (minutes);
+        return offset * -360 / 60.0f * minutes;
     }
 
     public float getAngularSpeed() {
-        float speed = -Math.abs(getSpeed() * 3 / 10f);
+        float speed = -Math.abs(getSpeed() * 3 / 10.0f);
         if (level.isClientSide()) {
             speed *= AllClientHandle.INSTANCE.getServerSpeed();
         }
@@ -297,14 +296,14 @@ public class ClockworkBearingBlockEntity extends KineticBlockEntity implements I
         Direction facing = getBlockState().getValue(BlockStateProperties.FACING);
         BlockPos anchor = worldPosition.relative(facing, cc.offset + 1);
         if (cc.handType == HandType.HOUR) {
-            this.hourHand = contraption;
+            hourHand = contraption;
             hourHand.setPosRaw(anchor.getX(), anchor.getY(), anchor.getZ());
         } else {
-            this.minuteHand = contraption;
+            minuteHand = contraption;
             minuteHand.setPosRaw(anchor.getX(), anchor.getY(), anchor.getZ());
         }
         if (!level.isClientSide()) {
-            this.running = true;
+            running = true;
             sendData();
         }
     }
@@ -387,10 +386,9 @@ public class ClockworkBearingBlockEntity extends KineticBlockEntity implements I
             return false;
         }
         if (cc.handType == HandType.HOUR) {
-            return this.hourHand == contraption;
-        } else {
-            return this.minuteHand == contraption;
+            return hourHand == contraption;
         }
+        return minuteHand == contraption;
     }
 
     public boolean isRunning() {
@@ -398,9 +396,10 @@ public class ClockworkBearingBlockEntity extends KineticBlockEntity implements I
     }
 
     public enum ClockHands {
-        HOUR_FIRST, MINUTE_FIRST, HOUR_FIRST_24;
+        HOUR_FIRST, MINUTE_FIRST, HOUR_FIRST_24
     }
 
+    @Override
     public void setAngle(float forcedAngle) {
         hourAngle = forcedAngle;
     }

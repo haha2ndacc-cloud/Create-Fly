@@ -116,7 +116,7 @@ public class MountedContraption extends Contraption {
                     break;
                 }
                 connectedCart = abstractMinecartEntity;
-                connectedCart.setPos(pos.getX() + .5, pos.getY(), pos.getZ() + .5f);
+                connectedCart.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5f);
             }
         }
 

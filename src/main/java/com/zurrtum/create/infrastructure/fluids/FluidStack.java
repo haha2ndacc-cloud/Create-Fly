@@ -44,8 +44,8 @@ public class FluidStack implements DataComponentHolder {
     public static final FluidStack EMPTY = new FluidStack(null);
     @SuppressWarnings("deprecation")
     public static final Codec<Holder<Fluid>> FLUID_ENTRY_CODEC = BuiltInRegistries.FLUID.holderByNameCodec()
-        .validate(entry -> entry.is(Fluids.EMPTY.builtInRegistryHolder()) ? DataResult.error(() -> "Fluid must not be minecraft:empty") : DataResult.success(
-            entry));
+        .validate(entry -> entry.is(Fluids.EMPTY.builtInRegistryHolder()) ?
+            DataResult.error(() -> "Fluid must not be minecraft:empty") : DataResult.success(entry));
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Fluid>> FLUID_ENTRY_PACKET_CODEC = ByteBufCodecs.holderRegistry(
         Registries.FLUID);
     public static final MapCodec<FluidStack> MAP_CODEC = MapCodec.recursive(
@@ -58,22 +58,20 @@ public class FluidStack implements DataComponentHolder {
     );
     public static final Codec<FluidStack> CODEC = Codec.lazyInitialized(MAP_CODEC::codec);
     public static final Codec<FluidStack> OPTIONAL_CODEC = ExtraCodecs.optionalEmptyMap(CODEC)
-        .xmap(
-            optional -> optional.orElse(FluidStack.EMPTY),
-            stack -> stack.isEmpty() ? Optional.empty() : Optional.of(stack)
-        );
+        .xmap(optional -> optional.orElse(EMPTY), stack -> stack.isEmpty() ? Optional.empty() : Optional.of(stack));
     public static final StreamCodec<RegistryFriendlyByteBuf, FluidStack> OPTIONAL_PACKET_CODEC = new StreamCodec<RegistryFriendlyByteBuf, FluidStack>() {
+        @Override
         public FluidStack decode(RegistryFriendlyByteBuf registryByteBuf) {
             int i = registryByteBuf.readVarInt();
             if (i <= 0) {
-                return FluidStack.EMPTY;
-            } else {
-                Holder<Fluid> registryEntry = FLUID_ENTRY_PACKET_CODEC.decode(registryByteBuf);
-                DataComponentPatch componentChanges = DataComponentPatch.STREAM_CODEC.decode(registryByteBuf);
-                return new FluidStack(registryEntry, i, componentChanges);
+                return EMPTY;
             }
+            Holder<Fluid> registryEntry = FLUID_ENTRY_PACKET_CODEC.decode(registryByteBuf);
+            DataComponentPatch componentChanges = DataComponentPatch.STREAM_CODEC.decode(registryByteBuf);
+            return new FluidStack(registryEntry, i, componentChanges);
         }
 
+        @Override
         public void encode(RegistryFriendlyByteBuf registryByteBuf, FluidStack fluidStack) {
             if (fluidStack.isEmpty()) {
                 registryByteBuf.writeVarInt(0);
@@ -85,21 +83,21 @@ public class FluidStack implements DataComponentHolder {
         }
     };
     public static final StreamCodec<RegistryFriendlyByteBuf, FluidStack> PACKET_CODEC = new StreamCodec<RegistryFriendlyByteBuf, FluidStack>() {
+        @Override
         public FluidStack decode(RegistryFriendlyByteBuf registryByteBuf) {
-            FluidStack fluidStack = FluidStack.OPTIONAL_PACKET_CODEC.decode(registryByteBuf);
+            FluidStack fluidStack = OPTIONAL_PACKET_CODEC.decode(registryByteBuf);
             if (fluidStack.isEmpty()) {
                 throw new DecoderException("Empty FluidStack not allowed");
-            } else {
-                return fluidStack;
             }
+            return fluidStack;
         }
 
+        @Override
         public void encode(RegistryFriendlyByteBuf registryByteBuf, FluidStack fluidStack) {
             if (fluidStack.isEmpty()) {
                 throw new EncoderException("Empty FluidStack not allowed");
-            } else {
-                FluidStack.OPTIONAL_PACKET_CODEC.encode(registryByteBuf, fluidStack);
             }
+            OPTIONAL_PACKET_CODEC.encode(registryByteBuf, fluidStack);
         }
     };
     private final PatchedDataComponentMap components;
@@ -136,9 +134,8 @@ public class FluidStack implements DataComponentHolder {
     public static boolean areFluidsAndComponentsEqual(FluidStack stack, FluidStack otherStack) {
         if (!stack.isOf(otherStack.getFluid())) {
             return false;
-        } else {
-            return stack.isEmpty() && otherStack.isEmpty() || Objects.equals(stack.components, otherStack.components);
         }
+        return stack.isEmpty() && otherStack.isEmpty() || Objects.equals(stack.components, otherStack.components);
     }
 
     public static boolean areFluidsAndComponentsEqualIgnoreCapacity(FluidStack stack, FluidStack otherStack) {
@@ -188,16 +185,15 @@ public class FluidStack implements DataComponentHolder {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static FluidStack fromNbt(HolderLookup.Provider registries, Optional<CompoundTag> nbt) {
-        return nbt.flatMap(n -> fromNbt(registries, n)).orElse(FluidStack.EMPTY);
+        return nbt.flatMap(n -> fromNbt(registries, n)).orElse(EMPTY);
     }
 
     public static int hashCode(@Nullable FluidStack stack) {
         if (stack != null) {
             int i = 31 + stack.getFluid().hashCode();
             return 31 * i + stack.getComponents().hashCode();
-        } else {
-            return 0;
         }
+        return 0;
     }
 
     public void applyComponentsFrom(DataComponentMap map) {
@@ -213,17 +209,15 @@ public class FluidStack implements DataComponentHolder {
     public FluidStack copy() {
         if (isEmpty()) {
             return EMPTY;
-        } else {
-            return new FluidStack(fluid, amount, components.copy());
         }
+        return new FluidStack(fluid, amount, components.copy());
     }
 
     public FluidStack copyWithAmount(int amount) {
         if (isEmpty()) {
             return EMPTY;
-        } else {
-            return new FluidStack(fluid, amount, components.copy());
         }
+        return new FluidStack(fluid, amount, components.copy());
     }
 
     public void decrement(int amount) {
@@ -275,9 +269,8 @@ public class FluidStack implements DataComponentHolder {
         Block block = fluid.defaultFluidState().createLegacyBlock().getBlock();
         if (fluid != Fluids.EMPTY && block == Blocks.AIR) {
             return Component.translatable(Util.makeDescriptionId("block", BuiltInRegistries.FLUID.getKey(fluid)));
-        } else {
-            return block.getName();
         }
+        return block.getName();
     }
 
     @SuppressWarnings("deprecation")
@@ -304,7 +297,7 @@ public class FluidStack implements DataComponentHolder {
 
     @Nullable
     public <T> T remove(DataComponentType<? extends T> type) {
-        return this.components.remove(type);
+        return components.remove(type);
     }
 
     @Nullable
@@ -322,9 +315,8 @@ public class FluidStack implements DataComponentHolder {
     public Tag toNbt(HolderLookup.Provider registries) {
         if (isEmpty()) {
             throw new IllegalStateException("Cannot encode empty FluidStack");
-        } else {
-            return CODEC.encodeStart(registries.createSerializationContext(NbtOps.INSTANCE), this).getOrThrow();
         }
+        return CODEC.encodeStart(registries.createSerializationContext(NbtOps.INSTANCE), this).getOrThrow();
     }
 
     public String toString() {

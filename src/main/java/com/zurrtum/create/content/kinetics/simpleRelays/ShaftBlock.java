@@ -62,12 +62,12 @@ public class ShaftBlock extends AbstractSimpleShaftBlock implements EncasableBlo
 
     @Override
     public float getParticleTargetRadius() {
-        return .35f;
+        return 0.35f;
     }
 
     @Override
     public float getParticleInitialRadius() {
-        return .125f;
+        return 0.125f;
     }
 
     @Override
@@ -148,11 +148,7 @@ public class ShaftBlock extends AbstractSimpleShaftBlock implements EncasableBlo
             PlacementOffset offset = super.getOffset(player, world, state, pos, ray);
             if (offset.isSuccessful()) {
                 offset.withTransform(offset.getTransform()
-                    .andThen(s -> world.isClientSide() ? s : ShaftBlock.pickCorrectShaftType(
-                        s,
-                        world,
-                        offset.getBlockPos()
-                    )));
+                    .andThen(s -> world.isClientSide() ? s : pickCorrectShaftType(s, world, offset.getBlockPos())));
             }
             return offset;
         }

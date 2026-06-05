@@ -36,14 +36,14 @@ public class KineticEffectHandler {
                         spawnEffect(ParticleTypes.SMOKE, 0.2f, 5);
                     } else {
                         overStressedEffect = -1;
-                        spawnEffect(ParticleTypes.CLOUD, .075f, 2);
+                        spawnEffect(ParticleTypes.CLOUD, 0.075f, 2);
                     }
                 }
             }
 
             if (overStressedEffect != 0) {
-                overStressedEffect -= overStressedEffect * .1f;
-                if (Math.abs(overStressedEffect) < 1 / 128f) {
+                overStressedEffect -= overStressedEffect * 0.1f;
+                if (Math.abs(overStressedEffect) < 1 / 128.0f) {
                     overStressedEffect = 0;
                 }
             }

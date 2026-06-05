@@ -12,13 +12,12 @@ import java.util.List;
 
 public enum ToolType {
 
-    DEPLOY(new DeployTool(), AllIcons.I_TOOL_DEPLOY), MOVE(new MoveTool(), AllIcons.I_TOOL_MOVE_XZ), MOVE_Y(
-        new MoveVerticalTool(),
-        AllIcons.I_TOOL_MOVE_Y
-    ), ROTATE(new RotateTool(), AllIcons.I_TOOL_ROTATE), FLIP(
-        new FlipTool(),
-        AllIcons.I_TOOL_MIRROR
-    ), PRINT(new PlaceTool(), AllIcons.I_CONFIRM);
+    DEPLOY(new DeployTool(), AllIcons.I_TOOL_DEPLOY),
+    MOVE(new MoveTool(), AllIcons.I_TOOL_MOVE_XZ),
+    MOVE_Y(new MoveVerticalTool(), AllIcons.I_TOOL_MOVE_Y),
+    ROTATE(new RotateTool(), AllIcons.I_TOOL_ROTATE),
+    FLIP(new FlipTool(), AllIcons.I_TOOL_MIRROR),
+    PRINT(new PlaceTool(), AllIcons.I_CONFIRM);
 
     private final ISchematicTool tool;
     private final AllIcons icon;

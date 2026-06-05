@@ -35,7 +35,7 @@ public class AirParticle extends SimpleAnimatedParticle {
         SpriteSet sprite,
         RandomSource random
     ) {
-        super(world, x, y, z, sprite, random.nextFloat() * .5f);
+        super(world, x, y, z, sprite, random.nextFloat() * 0.5f);
         quadSize *= 0.75F;
         hasPhysics = false;
 
@@ -56,7 +56,7 @@ public class AirParticle extends SimpleAnimatedParticle {
         double length = new Vec3(dx, dy, dz).length();
         lifetime = Math.min((int) (length / data.speed()), 60);
         selectSprite(7);
-        setAlpha(.25f);
+        setAlpha(0.25f);
 
         if (length == 0) {
             remove();
@@ -66,15 +66,15 @@ public class AirParticle extends SimpleAnimatedParticle {
 
     @Override
     public void tick() {
-        this.xo = this.x;
-        this.yo = this.y;
-        this.zo = this.z;
-        if (this.age++ >= this.lifetime) {
-            this.remove();
+        xo = x;
+        yo = y;
+        zo = z;
+        if (age++ >= lifetime) {
+            remove();
             return;
         }
 
-        float progress = (float) Math.pow(((float) age) / lifetime, drag);
+        float progress = (float) Math.pow((float) age / lifetime, drag);
         float angle = (progress * 2 * 360 + twirlAngleOffset) % 360;
         Vec3 twirl = VecHelper.rotate(new Vec3(0, twirlRadius, 0), angle, twirlAxis);
 
@@ -87,13 +87,13 @@ public class AirParticle extends SimpleAnimatedParticle {
         zd = z - this.z;
 
         setSpriteFromAge(sprites);
-        this.move(this.xd, this.yd, this.zd);
+        move(xd, yd, zd);
     }
 
     @Override
     public int getLightCoords(float partialTick) {
-        BlockPos blockpos = BlockPos.containing(this.x, this.y, this.z);
-        return this.level.isLoaded(blockpos) ? LightCoordsUtil.getLightCoords(level, blockpos) : 0;
+        BlockPos blockpos = BlockPos.containing(x, y, z);
+        return level.isLoaded(blockpos) ? LightCoordsUtil.getLightCoords(level, blockpos) : 0;
     }
 
     private void selectSprite(int index) {
@@ -104,9 +104,10 @@ public class AirParticle extends SimpleAnimatedParticle {
         private final SpriteSet spriteSet;
 
         public Factory(SpriteSet animatedSprite) {
-            this.spriteSet = animatedSprite;
+            spriteSet = animatedSprite;
         }
 
+        @Override
         public Particle createParticle(
             AirParticleData data,
             ClientLevel worldIn,
@@ -118,7 +119,7 @@ public class AirParticle extends SimpleAnimatedParticle {
             double zSpeed,
             RandomSource random
         ) {
-            return new AirParticle(worldIn, data, x, y, z, xSpeed, ySpeed, zSpeed, this.spriteSet, random);
+            return new AirParticle(worldIn, data, x, y, z, xSpeed, ySpeed, zSpeed, spriteSet, random);
         }
     }
 

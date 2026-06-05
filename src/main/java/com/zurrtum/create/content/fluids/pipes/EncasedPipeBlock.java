@@ -142,7 +142,7 @@ public class EncasedPipeBlock extends Block implements IWrenchable, SpecialBlock
             return InteractionResult.SUCCESS;
         }
 
-        context.getLevel().levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, context.getClickedPos(), Block.getId(state));
+        context.getLevel().levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, context.getClickedPos(), getId(state));
         BlockState equivalentPipe = transferSixWayProperties(state, AllBlocks.FLUID_PIPE.defaultBlockState());
 
         Direction firstFound = Direction.UP;
@@ -201,7 +201,7 @@ public class EncasedPipeBlock extends Block implements IWrenchable, SpecialBlock
         BlockHitResult ray
     ) {
         FluidTransportBehaviour.cacheFlows(level, pos);
-        level.setBlockAndUpdate(pos, EncasedPipeBlock.transferSixWayProperties(state, defaultBlockState()));
+        level.setBlockAndUpdate(pos, transferSixWayProperties(state, defaultBlockState()));
         FluidTransportBehaviour.loadFlows(level, pos);
     }
 

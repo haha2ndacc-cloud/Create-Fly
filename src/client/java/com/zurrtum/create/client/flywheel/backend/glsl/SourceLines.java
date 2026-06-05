@@ -26,33 +26,33 @@ public class SourceLines implements CharSequence {
     public SourceLines(Identifier name, String raw) {
         this.name = name;
         this.raw = raw;
-        this.lineStarts = createLineLookup(raw);
-        this.lines = getLines(raw, this.lineStarts);
+        lineStarts = createLineLookup(raw);
+        lines = getLines(raw, lineStarts);
     }
 
     public int count() {
-        return this.lines.size();
+        return lines.size();
     }
 
     public String lineString(int lineNo) {
-        return this.lines.get(lineNo);
+        return lines.get(lineNo);
     }
 
     public int lineStartIndex(int lineNo) {
-        return this.lineStarts.getInt(lineNo);
+        return lineStarts.getInt(lineNo);
     }
 
     public CharPos getCharPos(int charPos) {
         int lineNo;
-        for (lineNo = 0; lineNo < this.lineStarts.size(); ++lineNo) {
-            int ls = this.lineStarts.getInt(lineNo);
+        for (lineNo = 0; lineNo < lineStarts.size(); ++lineNo) {
+            int ls = lineStarts.getInt(lineNo);
             if (charPos < ls) {
                 break;
             }
         }
 
         --lineNo;
-        int lineStart = this.lineStarts.getInt(lineNo);
+        int lineStart = lineStarts.getInt(lineNo);
         return new CharPos(charPos, lineNo, charPos - lineStart);
     }
 
@@ -60,8 +60,8 @@ public class SourceLines implements CharSequence {
         StringBuilder builder = new StringBuilder();
         int i = 0;
 
-        for (int linesSize = this.lines.size(); i < linesSize; ++i) {
-            builder.append(String.format("%1$4s: ", i + 1)).append((String) this.lines.get(i)).append('\n');
+        for (int linesSize = lines.size(); i < linesSize; ++i) {
+            builder.append(String.format("%1$4s: ", i + 1)).append(lines.get(i)).append('\n');
         }
 
         return builder.toString();
@@ -73,17 +73,16 @@ public class SourceLines implements CharSequence {
     private static IntList createLineLookup(String source) {
         if (source.isEmpty()) {
             return IntLists.emptyList();
-        } else {
-            IntList l = new IntArrayList();
-            l.add(0); // first line is always at position 0
-            Matcher matcher = NEW_LINE.matcher(source);
-
-            while (matcher.find()) {
-                l.add(matcher.end());
-            }
-
-            return l;
         }
+        IntList l = new IntArrayList();
+        l.add(0); // first line is always at position 0
+        Matcher matcher = NEW_LINE.matcher(source);
+
+        while (matcher.find()) {
+            l.add(matcher.end());
+        }
+
+        return l;
     }
 
     private static ImmutableList<String> getLines(String source, IntList lines) {
@@ -99,37 +98,40 @@ public class SourceLines implements CharSequence {
     }
 
     public String toString() {
-        return this.raw;
+        return raw;
     }
 
+    @Override
     public CharSequence subSequence(int start, int end) {
-        return this.raw.subSequence(start, end);
+        return raw.subSequence(start, end);
     }
 
+    @Override
     public char charAt(int i) {
-        return this.raw.charAt(i);
+        return raw.charAt(i);
     }
 
+    @Override
     public int length() {
-        return this.raw.length();
+        return raw.length();
     }
 
     public int lineWidth(int spanLine) {
-        return ((String) this.lines.get(spanLine)).length();
+        return lines.get(spanLine).length();
     }
 
     public int lineStartColTrimmed(int line) {
-        String lineString = this.lineString(line);
+        String lineString = lineString(line);
         int end = lineString.length();
 
         int col;
-        for (col = 0; col < end && Character.isWhitespace(this.charAt(col)); ++col) {
+        for (col = 0; col < end && Character.isWhitespace(charAt(col)); ++col) {
         }
 
         return col;
     }
 
     public int lineStartPosTrimmed(int line) {
-        return this.lineStartIndex(line) + this.lineStartColTrimmed(line);
+        return lineStartIndex(line) + lineStartColTrimmed(line);
     }
 }

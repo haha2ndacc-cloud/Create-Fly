@@ -33,7 +33,7 @@ public class BeltTunnelBlockEntity extends SmartBlockEntity {
     public Map<Direction, LerpedFloat> flaps;
     public Set<Direction> sides;
 
-    public @Nullable Container cap = null;
+    public @Nullable Container cap;
     protected List<Pair<Direction, Boolean>> flapsToSend;
 
     public BeltTunnelBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -100,7 +100,7 @@ public class BeltTunnelBlockEntity extends SmartBlockEntity {
     }
 
     private LerpedFloat createChasingFlap() {
-        return LerpedFloat.linear().startWithValue(.25f).chase(0, .05f, Chaser.EXP);
+        return LerpedFloat.linear().startWithValue(0.25f).chase(0, 0.05f, Chaser.EXP);
     }
 
     public void updateTunnelConnections() {

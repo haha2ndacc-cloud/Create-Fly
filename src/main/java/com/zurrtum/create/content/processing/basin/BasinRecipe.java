@@ -137,14 +137,13 @@ public interface BasinRecipe extends CreateRecipe<BasinInput> {
                         usings.add(stack.copyWithCount(remainder));
                         itemIndex++;
                         continue Find;
-                    } else {
-                        usings.add(stack);
-                        if (count == remainder) {
-                            itemIndex++;
-                            continue Find;
-                        }
-                        remainder -= count;
                     }
+                    usings.add(stack);
+                    if (count == remainder) {
+                        itemIndex++;
+                        continue Find;
+                    }
+                    remainder -= count;
                 } else {
                     inputs.add(stack);
                 }
@@ -159,14 +158,13 @@ public interface BasinRecipe extends CreateRecipe<BasinInput> {
                         usings.add(stack.copyWithCount(remainder));
                         ingredientIndex++;
                         break Find;
-                    } else {
-                        usings.add(stack);
-                        if (count == remainder) {
-                            ingredientIndex++;
-                            break Find;
-                        }
-                        remainder -= count;
                     }
+                    usings.add(stack);
+                    if (count == remainder) {
+                        ingredientIndex++;
+                        break Find;
+                    }
+                    remainder -= count;
                 }
             }
             return null;
@@ -184,13 +182,12 @@ public interface BasinRecipe extends CreateRecipe<BasinInput> {
                     if (count > remainder) {
                         usings.add(stack.copyWithCount(remainder));
                         continue Find;
-                    } else {
-                        usings.add(stack);
-                        if (count == remainder) {
-                            continue Find;
-                        }
-                        remainder -= count;
                     }
+                    usings.add(stack);
+                    if (count == remainder) {
+                        continue Find;
+                    }
+                    remainder -= count;
                 }
             }
             return null;
@@ -245,9 +242,8 @@ public interface BasinRecipe extends CreateRecipe<BasinInput> {
                     if (amount >= remainder) {
                         fluidIndex++;
                         continue Find;
-                    } else {
-                        remainder -= amount;
                     }
+                    remainder -= amount;
                 } else {
                     inputs.add(stack);
                 }
@@ -261,9 +257,8 @@ public interface BasinRecipe extends CreateRecipe<BasinInput> {
                     if (count >= remainder) {
                         ingredientIndex++;
                         break Find;
-                    } else {
-                        remainder -= count;
                     }
+                    remainder -= count;
                 }
             }
             return false;
@@ -280,9 +275,8 @@ public interface BasinRecipe extends CreateRecipe<BasinInput> {
                     int count = stack.getAmount();
                     if (count >= remainder) {
                         continue Find;
-                    } else {
-                        remainder -= count;
                     }
+                    remainder -= count;
                 }
             }
             return false;
@@ -430,16 +424,15 @@ public interface BasinRecipe extends CreateRecipe<BasinInput> {
                         changes.add(() -> stack.setCount(newCount));
                         itemIndex++;
                         continue Apply;
-                    } else {
-                        usings.add(stack);
-                        int slot = itemIndex;
-                        changes.add(() -> inventory.setItem(slot, ItemStack.EMPTY));
-                        if (count == remainder) {
-                            itemIndex++;
-                            continue Apply;
-                        }
-                        remainder -= count;
                     }
+                    usings.add(stack);
+                    int slot = itemIndex;
+                    changes.add(() -> inventory.setItem(slot, ItemStack.EMPTY));
+                    if (count == remainder) {
+                        itemIndex++;
+                        continue Apply;
+                    }
+                    remainder -= count;
                 } else {
                     inputs.add(IntObjectPair.of(itemIndex, stack));
                 }
@@ -524,18 +517,17 @@ public interface BasinRecipe extends CreateRecipe<BasinInput> {
                         inventory.markDirty();
                     });
                     return true;
-                } else {
-                    int slot = fluidIndex;
-                    if (remainder == amount) {
-                        changes.add(() -> {
-                            inventory.setStack(slot, FluidStack.EMPTY);
-                            inventory.markDirty();
-                        });
-                        return true;
-                    }
-                    changes.add(() -> inventory.setStack(slot, FluidStack.EMPTY));
-                    remainder -= amount;
                 }
+                int slot = fluidIndex;
+                if (remainder == amount) {
+                    changes.add(() -> {
+                        inventory.setStack(slot, FluidStack.EMPTY);
+                        inventory.markDirty();
+                    });
+                    return true;
+                }
+                changes.add(() -> inventory.setStack(slot, FluidStack.EMPTY));
+                remainder -= amount;
             }
         }
         return false;
@@ -569,16 +561,14 @@ public interface BasinRecipe extends CreateRecipe<BasinInput> {
                         changes.add(() -> stack.setAmount(newAmount));
                         fluidIndex++;
                         continue Apply;
-                    } else {
-                        int slot = fluidIndex;
-                        changes.add(() -> inventory.setStack(slot, FluidStack.EMPTY));
-                        if (count == remainder) {
-                            fluidIndex++;
-                            continue Apply;
-                        } else {
-                            remainder -= count;
-                        }
                     }
+                    int slot = fluidIndex;
+                    changes.add(() -> inventory.setStack(slot, FluidStack.EMPTY));
+                    if (count == remainder) {
+                        fluidIndex++;
+                        continue Apply;
+                    }
+                    remainder -= count;
                 } else {
                     inputs.add(IntObjectPair.of(fluidIndex, stack));
                 }
@@ -595,16 +585,14 @@ public interface BasinRecipe extends CreateRecipe<BasinInput> {
                         changes.add(() -> stack.setAmount(newAmount));
                         ingredientIndex++;
                         break Apply;
-                    } else {
-                        int slot = pair.leftInt();
-                        changes.add(() -> inventory.setStack(slot, FluidStack.EMPTY));
-                        if (count == remainder) {
-                            ingredientIndex++;
-                            break Apply;
-                        } else {
-                            remainder -= count;
-                        }
                     }
+                    int slot = pair.leftInt();
+                    changes.add(() -> inventory.setStack(slot, FluidStack.EMPTY));
+                    if (count == remainder) {
+                        ingredientIndex++;
+                        break Apply;
+                    }
+                    remainder -= count;
                 }
             }
             return false;
@@ -624,15 +612,13 @@ public interface BasinRecipe extends CreateRecipe<BasinInput> {
                         int newAmount = count - remainder;
                         changes.add(() -> stack.setAmount(newAmount));
                         continue Apply;
-                    } else {
-                        int slot = pair.leftInt();
-                        changes.add(() -> inventory.setStack(slot, FluidStack.EMPTY));
-                        if (count == remainder) {
-                            continue Apply;
-                        } else {
-                            remainder -= count;
-                        }
                     }
+                    int slot = pair.leftInt();
+                    changes.add(() -> inventory.setStack(slot, FluidStack.EMPTY));
+                    if (count == remainder) {
+                        continue Apply;
+                    }
+                    remainder -= count;
                 }
             }
             return false;

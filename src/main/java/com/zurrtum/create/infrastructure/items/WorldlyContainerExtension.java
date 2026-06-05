@@ -438,7 +438,7 @@ public interface WorldlyContainerExtension extends Container {
         public Iterator(WorldlyContainer inventory, @Nullable Direction side) {
             this.inventory = inventory;
             this.side = side;
-            this.slots = inventory.getSlotsForFace(side);
+            slots = inventory.getSlotsForFace(side);
         }
 
         @Override
@@ -467,9 +467,8 @@ public interface WorldlyContainerExtension extends Container {
                 ItemStack result = inventory.getItem(slots[current]);
                 current = -1;
                 return result;
-            } else {
-                throw new NoSuchElementException();
             }
+            throw new NoSuchElementException();
         }
     }
 }

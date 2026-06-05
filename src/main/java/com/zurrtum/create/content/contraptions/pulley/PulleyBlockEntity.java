@@ -101,7 +101,8 @@ public class PulleyBlockEntity extends LinearActuatorBlockEntity implements Thre
 
     @Nullable
     public AbstractContraptionEntity getAttachedContraption() {
-        return mirrorParent != null && sharedMirrorContraption != null ? sharedMirrorContraption.get() : movedContraption;
+        return mirrorParent != null && sharedMirrorContraption != null ? sharedMirrorContraption.get() :
+            movedContraption;
     }
 
     @Override
@@ -175,10 +176,10 @@ public class PulleyBlockEntity extends LinearActuatorBlockEntity implements Thre
                     pos = pos.offset(anchor);
                     if (level.getBlockEntity(new BlockPos(
                         pos.getX(),
-                        this.worldPosition.getY(),
+                        worldPosition.getY(),
                         pos.getZ()
                     )) instanceof PulleyBlockEntity pbe) {
-                        pbe.startMirroringOther(this.worldPosition);
+                        pbe.startMirroringOther(worldPosition);
                     }
                 }
             }
@@ -194,7 +195,7 @@ public class PulleyBlockEntity extends LinearActuatorBlockEntity implements Thre
     }
 
     private void removeRopes() {
-        for (int i = ((int) offset); i > 0; i--) {
+        for (int i = (int) offset; i > 0; i--) {
             BlockPos offset = worldPosition.below(i);
             BlockState oldState = level.getBlockState(offset);
             level.setBlock(
@@ -238,7 +239,7 @@ public class PulleyBlockEntity extends LinearActuatorBlockEntity implements Thre
                 boolean[] waterlog = new boolean[(int) offset];
 
                 for (boolean destroyPass : Iterate.trueAndFalse) {
-                    for (int i = 1; i <= ((int) offset) - 1; i++) {
+                    for (int i = 1; i <= (int) offset - 1; i++) {
                         BlockPos ropePos = worldPosition.below(i);
                         if (level.getBlockState(ropePos).getDestroySpeed(level, ropePos) == -1) {
                             continue;
@@ -332,7 +333,7 @@ public class PulleyBlockEntity extends LinearActuatorBlockEntity implements Thre
 
         if (mirrorParent != null) {
             offset = 0;
-            if (prevMirrorParent == null || !prevMirrorParent.equals(mirrorParent)) {
+            if (!mirrorParent.equals(prevMirrorParent)) {
                 sharedMirrorContraption = null;
             }
         }
@@ -400,7 +401,7 @@ public class PulleyBlockEntity extends LinearActuatorBlockEntity implements Thre
     protected int getExtensionRange() {
         return Math.max(
             0,
-            Math.min(AllConfigs.server().kinetics.maxRopeLength.get(), (worldPosition.getY() - 1) - level.getMinY())
+            Math.min(AllConfigs.server().kinetics.maxRopeLength.get(), worldPosition.getY() - 1 - level.getMinY())
         );
     }
 
@@ -436,7 +437,7 @@ public class PulleyBlockEntity extends LinearActuatorBlockEntity implements Thre
 
     @Override
     public int getCurrentValue() {
-        return worldPosition.getY() - (int) getInterpolatedOffset(.5f);
+        return worldPosition.getY() - (int) getInterpolatedOffset(0.5f);
     }
 
     @Override

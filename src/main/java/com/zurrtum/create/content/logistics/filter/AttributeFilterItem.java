@@ -34,10 +34,11 @@ public class AttributeFilterItem extends FilterItem {
         List<Component> list = new ArrayList<>();
 
         AttributeFilterWhitelistMode whitelistMode = filter.get(AllDataComponents.ATTRIBUTE_FILTER_WHITELIST_MODE);
-        list.add((whitelistMode == AttributeFilterWhitelistMode.WHITELIST_CONJ ? Component.translatable(
-            "create.gui.attribute_filter.allow_list_conjunctive") : whitelistMode == AttributeFilterWhitelistMode.WHITELIST_DISJ ? Component.translatable(
-            "create.gui.attribute_filter.allow_list_disjunctive") : Component.translatable(
-            "create.gui.attribute_filter.deny_list")).withStyle(ChatFormatting.GOLD));
+        list.add((whitelistMode == AttributeFilterWhitelistMode.WHITELIST_CONJ ?
+            Component.translatable("create.gui.attribute_filter.allow_list_conjunctive") :
+            whitelistMode == AttributeFilterWhitelistMode.WHITELIST_DISJ ?
+                Component.translatable("create.gui.attribute_filter.allow_list_disjunctive") :
+                Component.translatable("create.gui.attribute_filter.deny_list")).withStyle(ChatFormatting.GOLD));
 
         int count = 0;
         List<ItemAttributeEntry> attributes = filter.getOrDefault(

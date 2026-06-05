@@ -193,11 +193,11 @@ public class BeltDeployerCallbacks {
 
         BlockPos pos = blockEntity.getBlockPos();
         if (heldItem.isEmpty()) {
-            world.playSound(null, pos, SoundEvents.ITEM_BREAK.value(), SoundSource.BLOCKS, .25f, 1);
+            world.playSound(null, pos, SoundEvents.ITEM_BREAK.value(), SoundSource.BLOCKS, 0.25f, 1);
         }
-        world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, .25f, .75f);
+        world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.25f, 0.75f);
         if (recipe instanceof SandPaperPolishingRecipe) {
-            AllSoundEvents.SANDING_SHORT.playOnServer(world, pos, .35f, 1f);
+            AllSoundEvents.SANDING_SHORT.playOnServer(world, pos, 0.35f, 1.0f);
         }
 
         blockEntity.notifyUpdate();

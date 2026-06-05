@@ -63,13 +63,13 @@ public class RollerMovementBehaviour extends BlockBreakingMovementBehaviour {
 
     @Override
     public Vec3 getActiveAreaOffset(MovementContext context) {
-        return Vec3.atLowerCornerOf(context.state.getValue(RollerBlock.FACING).getUnitVec3i()).scale(.45)
+        return Vec3.atLowerCornerOf(context.state.getValue(RollerBlock.FACING).getUnitVec3i()).scale(0.45)
             .subtract(0, 2, 0);
     }
 
     @Override
     protected float getBlockBreakingSpeed(MovementContext context) {
-        return Mth.clamp(super.getBlockBreakingSpeed(context) * 1.5f, 1 / 128f, 16f);
+        return Mth.clamp(super.getBlockBreakingSpeed(context) * 1.5f, 1 / 128.0f, 16.0f);
     }
 
     @Override
@@ -152,11 +152,11 @@ public class RollerMovementBehaviour extends BlockBreakingMovementBehaviour {
             BlockTags.NEEDS_DIAMOND_TOOL);
 
         BlockHelper.destroyBlock(
-            context.world, breakingPos, 1f, stack -> {
+            context.world, breakingPos, 1.0f, stack -> {
                 if (noHarvest || context.world.getRandom().nextBoolean()) {
                     return;
                 }
-                this.collectOrDropItem(context, stack);
+                collectOrDropItem(context, stack);
             }
         );
 
@@ -189,7 +189,7 @@ public class RollerMovementBehaviour extends BlockBreakingMovementBehaviour {
             for (Couple<Integer> coords : profileForTracks.keys()) {
                 float height = profileForTracks.get(coords);
                 BlockPos targetPosition = BlockPos.containing(coords.getFirst(), height, coords.getSecond());
-                boolean shouldPlaceSlab = height > Math.floor(height) + .45;
+                boolean shouldPlaceSlab = height > Math.floor(height) + 0.45;
                 if (startingY == 1 && shouldPlaceSlab && context.world.getBlockState(targetPosition.above())
                     .getValueOrElse(SlabBlock.TYPE, SlabType.DOUBLE) == SlabType.BOTTOM) {
                     startingY = 2;
@@ -319,7 +319,7 @@ public class RollerMovementBehaviour extends BlockBreakingMovementBehaviour {
         } else {
             for (Couple<Integer> coords : profileForTracks.keys()) {
                 float height = profileForTracks.get(coords);
-                boolean shouldPlaceSlab = height > Math.floor(height) + .45;
+                boolean shouldPlaceSlab = height > Math.floor(height) + 0.45;
                 BlockPos targetPosition = BlockPos.containing(coords.getFirst(), height, coords.getSecond());
                 paveSet.add(Pair.of(targetPosition, shouldPlaceSlab));
             }
@@ -480,7 +480,7 @@ public class RollerMovementBehaviour extends BlockBreakingMovementBehaviour {
     }
 
     protected enum PaveResult {
-        FAIL, PASS, SUCCESS;
+        FAIL, PASS, SUCCESS
     }
 
     protected PaveResult tryFill(MovementContext context, BlockPos targetPos, BlockState toPlace) {

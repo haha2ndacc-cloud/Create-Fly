@@ -22,7 +22,7 @@ public class BoxElement extends AbstractRenderElement {
     protected int borderOffset = 2;
 
     public <T extends BoxElement> T withBackground(Color color) {
-        this.background = color;
+        background = color;
         //noinspection unchecked
         return (T) this;
     }
@@ -32,8 +32,8 @@ public class BoxElement extends AbstractRenderElement {
     }
 
     public <T extends BoxElement> T flatBorder(Color color) {
-        this.borderTop = color;
-        this.borderBot = color;
+        borderTop = color;
+        borderBot = color;
         //noinspection unchecked
         return (T) this;
     }
@@ -43,15 +43,15 @@ public class BoxElement extends AbstractRenderElement {
     }
 
     public <T extends BoxElement> T gradientBorder(Couple<Color> colors) {
-        this.borderTop = colors.getFirst();
-        this.borderBot = colors.getSecond();
+        borderTop = colors.getFirst();
+        borderBot = colors.getSecond();
         //noinspection unchecked
         return (T) this;
     }
 
     public <T extends BoxElement> T gradientBorder(Color top, Color bot) {
-        this.borderTop = top;
-        this.borderBot = bot;
+        borderTop = top;
+        borderBot = bot;
         //noinspection unchecked
         return (T) this;
     }
@@ -61,7 +61,7 @@ public class BoxElement extends AbstractRenderElement {
     }
 
     public <T extends BoxElement> T withBorderOffset(int offset) {
-        this.borderOffset = offset;
+        borderOffset = offset;
         //noinspection unchecked
         return (T) this;
     }

@@ -40,10 +40,10 @@ public class FunnelMovementBehaviour extends MovementBehaviour {
         Direction facing = FunnelBlock.getFunnelFacing(context.state);
         Vec3 vec = Vec3.atLowerCornerOf(facing.getUnitVec3i());
         if (facing != Direction.UP) {
-            return vec.scale(context.state.getValue(FunnelBlock.EXTRACTING) ? .15 : .65);
+            return vec.scale(context.state.getValue(FunnelBlock.EXTRACTING) ? 0.15 : 0.65);
         }
 
-        return vec.scale(.65);
+        return vec.scale(0.65);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class FunnelMovementBehaviour extends MovementBehaviour {
 
         Vec3 entityPos = context.position;
         if (context.state.getValue(FunnelBlock.FACING) != Direction.DOWN) {
-            entityPos = entityPos.add(0, -.5f, 0);
+            entityPos = entityPos.add(0, -0.5f, 0);
         }
 
         if (!world.getBlockState(pos).getCollisionShape(world, pos).isEmpty()) {
@@ -98,7 +98,7 @@ public class FunnelMovementBehaviour extends MovementBehaviour {
         ItemEntity entity = new ItemEntity(world, entityPos.x, entityPos.y, entityPos.z, extract);
         entity.setDeltaMovement(Vec3.ZERO);
         entity.setPickUpDelay(5);
-        world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1 / 16f, .1f);
+        world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1 / 16.0f, 0.1f);
         world.addFreshEntity(entity);
     }
 

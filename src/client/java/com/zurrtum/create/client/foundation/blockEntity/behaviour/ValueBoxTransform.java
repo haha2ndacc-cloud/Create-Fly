@@ -63,11 +63,11 @@ public abstract class ValueBoxTransform {
     }
 
     public float getScale() {
-        return .5f;
+        return 0.5f;
     }
 
     public float getFontScale() {
-        return 1 / 64f;
+        return 1 / 64.0f;
     }
 
     public static abstract class Dual extends ValueBoxTransform {

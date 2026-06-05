@@ -112,9 +112,9 @@ public class ItemVaultItem extends BlockItem {
         }
 
         Direction vaultFacing = Direction.fromAxisAndDirection(vaultBlockAxis, Direction.AxisDirection.POSITIVE);
-        BlockPos startPos = face == vaultFacing.getOpposite() ? controllerBE.getBlockPos()
-            .relative(vaultFacing.getOpposite()) : controllerBE.getBlockPos()
-            .relative(vaultFacing, controllerBE.length);
+        BlockPos startPos =
+            face == vaultFacing.getOpposite() ? controllerBE.getBlockPos().relative(vaultFacing.getOpposite()) :
+                controllerBE.getBlockPos().relative(vaultFacing, controllerBE.length);
 
         if (VecHelper.getCoordinate(startPos, vaultBlockAxis) != VecHelper.getCoordinate(pos, vaultBlockAxis)) {
             return;
@@ -122,10 +122,8 @@ public class ItemVaultItem extends BlockItem {
 
         for (int xOffset = 0; xOffset < width; xOffset++) {
             for (int zOffset = 0; zOffset < width; zOffset++) {
-                BlockPos offsetPos = vaultBlockAxis == Axis.X ? startPos.offset(0, xOffset, zOffset) : startPos.offset(xOffset,
-                    zOffset,
-                    0
-                );
+                BlockPos offsetPos = vaultBlockAxis == Axis.X ? startPos.offset(0, xOffset, zOffset) :
+                    startPos.offset(xOffset, zOffset, 0);
                 BlockState blockState = world.getBlockState(offsetPos);
                 if (ItemVaultBlock.isVault(blockState)) {
                     continue;
@@ -144,10 +142,8 @@ public class ItemVaultItem extends BlockItem {
         ItemPlacementSoundContext context = new ItemPlacementSoundContext(ctx, 0.1f, 1.5f, null);
         for (int xOffset = 0; xOffset < width; xOffset++) {
             for (int zOffset = 0; zOffset < width; zOffset++) {
-                BlockPos offsetPos = vaultBlockAxis == Axis.X ? startPos.offset(0, xOffset, zOffset) : startPos.offset(xOffset,
-                    zOffset,
-                    0
-                );
+                BlockPos offsetPos = vaultBlockAxis == Axis.X ? startPos.offset(0, xOffset, zOffset) :
+                    startPos.offset(xOffset, zOffset, 0);
                 BlockState blockState = world.getBlockState(offsetPos);
                 if (ItemVaultBlock.isVault(blockState)) {
                     continue;

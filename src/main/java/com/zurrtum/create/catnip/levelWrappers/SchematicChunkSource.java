@@ -390,6 +390,7 @@ public class SchematicChunkSource extends ChunkSource {
             return 0;
         }
 
+        @Override
         @Nullable
         public BlockEntity getBlockEntity(BlockPos p_177424_1_, EntityCreationType p_177424_2_) {
             return null;
@@ -407,6 +408,7 @@ public class SchematicChunkSource extends ChunkSource {
         public void removeBlockEntity(BlockPos p_177425_1_) {
         }
 
+        @Override
         public void markUnsaved() {
         }
 

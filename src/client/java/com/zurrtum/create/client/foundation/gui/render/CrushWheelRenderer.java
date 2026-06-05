@@ -41,7 +41,7 @@ public class CrushWheelRenderer extends PictureInPictureRenderer<CrushWheelRende
     }
 
     public static float getCurrentAngle() {
-        return (AnimationTickHolder.getRenderTime() * 4f) % 360;
+        return AnimationTickHolder.getRenderTime() * 4.0f % 360;
     }
 
     @Override

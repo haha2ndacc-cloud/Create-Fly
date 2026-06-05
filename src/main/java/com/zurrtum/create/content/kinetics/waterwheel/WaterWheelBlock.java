@@ -122,7 +122,7 @@ public class WaterWheelBlock extends DirectionalKineticBlock implements IBE<Wate
 
     @Override
     public float getParticleInitialRadius() {
-        return 1f;
+        return 1.0f;
     }
 
     @Override

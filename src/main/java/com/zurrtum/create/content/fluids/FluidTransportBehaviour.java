@@ -33,7 +33,7 @@ public abstract class FluidTransportBehaviour extends BlockEntityBehaviour<Smart
     public enum UpdatePhase {
         WAIT_FOR_PUMPS, // Do not run Layer II logic while pumps could still be distributing pressure
         FLIP_FLOWS, // Do not cut any flows until all pipes had a chance to reverse them
-        IDLE; // Operate normally
+        IDLE // Operate normally
     }
 
     public Map<Direction, PipeConnection> interfaces;
@@ -281,12 +281,13 @@ public abstract class FluidTransportBehaviour extends BlockEntityBehaviour<Smart
     }
 
     public enum AttachmentTypes {
-        NONE, CONNECTION(ComponentPartials.CONNECTION), DETAILED_CONNECTION(ComponentPartials.RIM_CONNECTOR), RIM(ComponentPartials.RIM_CONNECTOR,
-            ComponentPartials.RIM
-        ), PARTIAL_RIM(ComponentPartials.RIM), DRAIN(
-            ComponentPartials.RIM_CONNECTOR,
-            ComponentPartials.DRAIN
-        ), PARTIAL_DRAIN(ComponentPartials.DRAIN);
+        NONE,
+        CONNECTION(ComponentPartials.CONNECTION),
+        DETAILED_CONNECTION(ComponentPartials.RIM_CONNECTOR),
+        RIM(ComponentPartials.RIM_CONNECTOR, ComponentPartials.RIM),
+        PARTIAL_RIM(ComponentPartials.RIM),
+        DRAIN(ComponentPartials.RIM_CONNECTOR, ComponentPartials.DRAIN),
+        PARTIAL_DRAIN(ComponentPartials.DRAIN);
 
         public final ComponentPartials[] partials;
 
@@ -295,17 +296,17 @@ public abstract class FluidTransportBehaviour extends BlockEntityBehaviour<Smart
         }
 
         public AttachmentTypes withoutConnector() {
-            if (this == AttachmentTypes.RIM) {
-                return AttachmentTypes.PARTIAL_RIM;
+            if (this == RIM) {
+                return PARTIAL_RIM;
             }
-            if (this == AttachmentTypes.DRAIN) {
-                return AttachmentTypes.PARTIAL_DRAIN;
+            if (this == DRAIN) {
+                return PARTIAL_DRAIN;
             }
             return this;
         }
 
         public enum ComponentPartials {
-            CONNECTION, RIM_CONNECTOR, RIM, DRAIN;
+            CONNECTION, RIM_CONNECTOR, RIM, DRAIN
         }
     }
 
@@ -320,14 +321,14 @@ public abstract class FluidTransportBehaviour extends BlockEntityBehaviour<Smart
         $ -> new HashMap<>());
 
     public static void cacheFlows(LevelAccessor world, BlockPos pos) {
-        FluidTransportBehaviour pipe = BlockEntityBehaviour.get(world, pos, FluidTransportBehaviour.TYPE);
+        FluidTransportBehaviour pipe = get(world, pos, TYPE);
         if (pipe != null) {
             interfaceTransfer.get(world).put(pos, pipe.interfaces);
         }
     }
 
     public static void loadFlows(LevelAccessor world, BlockPos pos) {
-        FluidTransportBehaviour newPipe = BlockEntityBehaviour.get(world, pos, FluidTransportBehaviour.TYPE);
+        FluidTransportBehaviour newPipe = get(world, pos, TYPE);
         if (newPipe != null) {
             newPipe.interfaces = interfaceTransfer.get(world).remove(pos);
         }
