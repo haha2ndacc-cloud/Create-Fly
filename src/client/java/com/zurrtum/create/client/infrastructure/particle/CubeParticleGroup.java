@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.state.level.ParticleGroupRenderState;
 
 public class CubeParticleGroup extends ParticleGroup<CubeParticle> {
-    public static final ParticleRenderType SHEET = new ParticleRenderType("create:cube");
+    public static final ParticleRenderType SHEET = new ParticleRenderType("create:cube", "CU");
     public static final Layer RENDER_TYPE = new Layer(
         false,
         PonderSpecialTextures.BLANK.getLocation(),

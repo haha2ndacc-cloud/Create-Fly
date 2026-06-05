@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
 import org.joml.Quaternionf;
 
 public class SteamJetParticleGroup extends QuadParticleGroup {
-    public static final ParticleRenderType SHEET = new ParticleRenderType("create:steam_jet");
+    public static final ParticleRenderType SHEET = new ParticleRenderType("create:steam_jet", "SJ");
 
     public SteamJetParticleGroup(ParticleEngine manager) {
         super(manager, SHEET);
