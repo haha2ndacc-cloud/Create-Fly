@@ -12,7 +12,6 @@ import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
@@ -22,7 +21,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
+public class PressRenderer extends GuiBlockRenderer<PressRenderState> {
     private static final Int2ObjectMap<GpuTexture> TEXTURES = new Int2ObjectArrayMap<>();
     private final PoseStack matrices = new PoseStack();
     private int windowScaleFactor;
@@ -72,7 +71,7 @@ public class PressRenderer extends PictureInPictureRenderer<PressRenderState> {
             .submit(matrices, submitNodeStorage);
         matrices.popPose();
         matrices.popPose();
-        featureRenderDispatcher.renderAllFeatures(submitNodeStorage);
+        renderAllFeatures(featureRenderDispatcher);
         texture.clear();
         state.addBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,

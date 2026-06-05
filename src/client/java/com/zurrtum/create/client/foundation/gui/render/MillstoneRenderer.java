@@ -6,11 +6,10 @@ import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.world.level.block.Blocks;
 
-public class MillstoneRenderer extends PictureInPictureRenderer<MillstoneRenderState> {
+public class MillstoneRenderer extends GuiBlockRenderer<MillstoneRenderState> {
     @Override
     protected void renderToTexture(MillstoneRenderState state, PoseStack matrices, SubmitNodeCollector queue) {
         matrices.translate(-0.5f, -0.21f, -0.5f);

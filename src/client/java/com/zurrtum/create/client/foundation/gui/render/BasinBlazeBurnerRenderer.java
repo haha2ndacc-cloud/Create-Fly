@@ -10,12 +10,11 @@ import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.SpriteShiftEntry;
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Blocks;
 
-public class BasinBlazeBurnerRenderer extends PictureInPictureRenderer<BasinBlazeBurnerRenderState> {
+public class BasinBlazeBurnerRenderer extends GuiBlockRenderer<BasinBlazeBurnerRenderState> {
     @Override
     protected void renderToTexture(BasinBlazeBurnerRenderState state, PoseStack matrices, SubmitNodeCollector queue) {
         Minecraft mc = Minecraft.getInstance();

@@ -7,7 +7,6 @@ import com.mojang.math.Axis;
 import com.zurrtum.create.client.catnip.gui.render.GpuTexture;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
@@ -17,7 +16,7 @@ import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class ManualBlockRenderer extends PictureInPictureRenderer<ManualBlockRenderState> {
+public class ManualBlockRenderer extends GuiBlockRenderer<ManualBlockRenderState> {
     public static int MAX = 6;
     private int allocate = MAX;
     private static final Deque<GpuTexture> TEXTURES = new ArrayDeque<>(MAX);
@@ -57,7 +56,7 @@ public class ManualBlockRenderer extends PictureInPictureRenderer<ManualBlockRen
         matrices.scale(1, -1, 1);
         CachedBuffers.block(block.state()).submit(matrices, submitNodeStorage);
         matrices.popPose();
-        featureRenderDispatcher.renderAllFeatures(submitNodeStorage);
+        renderAllFeatures(featureRenderDispatcher);
         texture.clear();
         state.addBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,

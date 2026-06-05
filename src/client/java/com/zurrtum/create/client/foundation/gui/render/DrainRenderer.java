@@ -10,7 +10,6 @@ import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.catnip.render.FluidRenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.FluidStateModelSet;
@@ -21,7 +20,7 @@ import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
+public class DrainRenderer extends GuiBlockRenderer<DrainRenderState> {
     public static int MAX = 6;
     private int allocate = MAX;
     private static final Deque<GpuTexture> TEXTURES = new ArrayDeque<>(MAX);
@@ -85,7 +84,7 @@ public class DrainRenderer extends PictureInPictureRenderer<DrainRenderState> {
         ).submit(matrices, submitNodeStorage);
 
         matrices.popPose();
-        featureRenderDispatcher.renderAllFeatures(submitNodeStorage);
+        renderAllFeatures(featureRenderDispatcher);
         texture.clear();
         state.addBlitToCurrentLayer(new BlitRenderState(
             RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,

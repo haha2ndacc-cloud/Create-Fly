@@ -1,6 +1,5 @@
 package com.zurrtum.create.client.foundation.gui.render;
 
-import com.mojang.blaze3d.platform.Lighting.Entry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.zurrtum.create.catnip.math.AngleHelper;
@@ -9,19 +8,14 @@ import com.zurrtum.create.client.catnip.render.CachedBuffers;
 import com.zurrtum.create.client.content.processing.burner.BlazeBurnerRenderer;
 import com.zurrtum.create.client.flywheel.lib.model.baked.PartialModel;
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.Direction;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 
-public class BlazeBurnerElementRenderer extends PictureInPictureRenderer<BlazeBurnerRenderState> {
+public class BlazeBurnerElementRenderer extends GuiBlockRenderer<BlazeBurnerRenderState> {
     @Override
     protected void renderToTexture(BlazeBurnerRenderState state, PoseStack matrices, SubmitNodeCollector queue) {
-        GameRenderer gameRenderer = Minecraft.getInstance().gameRenderer;
-        gameRenderer.lighting().setupFor(Entry.ENTITY_IN_UI);
         matrices.scale(1, 1, -1);
         matrices.mulPose(Axis.XP.rotationDegrees(-22.5f));
         matrices.mulPose(Axis.YP.rotationDegrees(-45));
@@ -34,7 +28,7 @@ public class BlazeBurnerElementRenderer extends PictureInPictureRenderer<BlazeBu
             .rotateCentered(horizontalAngle + Mth.PI, Direction.UP).light(LightCoordsUtil.FULL_BRIGHT)
             .submit(matrices, queue);
         BlazeBurnerRenderer.getBlazeBurnerRenderData(
-            state.world(),
+            null,
             state.block(),
             state.heatLevel(),
             state.animation(),

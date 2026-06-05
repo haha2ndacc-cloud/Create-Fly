@@ -6,12 +6,11 @@ import com.zurrtum.create.AllBlocks;
 import com.zurrtum.create.client.AllPartialModels;
 import com.zurrtum.create.client.catnip.animation.AnimationTickHolder;
 import com.zurrtum.create.client.catnip.render.CachedBuffers;
-import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Blocks;
 
-public class MixingBasinRenderer extends PictureInPictureRenderer<MixingBasinRenderState> {
+public class MixingBasinRenderer extends GuiBlockRenderer<MixingBasinRenderState> {
     @Override
     protected void renderToTexture(MixingBasinRenderState state, PoseStack matrices, SubmitNodeCollector queue) {
         matrices.scale(1, 1, -1);

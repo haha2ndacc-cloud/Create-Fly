@@ -31,6 +31,13 @@ public class MixinPlugin implements IMixinConfigPlugin {
         //            mixins.add("RecipeViewScreenMixin");
         //            mixins.add("CraftingViewRecipeAccessor");
         //        }
+        if (loader.isModLoaded("rrv")) {
+            mixins.add("RrvRecipeViewMenuMixin");
+            mixins.add("RrvFluidItemSpecialRendererMixin");
+            mixins.add("RrvRecipeViewScreenMixin");
+            mixins.add("BuiltInReliableRecipeViewerClientIntegrationMixin");
+            mixins.add("RrvGuiRenderHelperMixin");
+        }
         if (!loader.isModLoaded("fabric-creative-tab-api-v1")) {
             mixins.add("CreativeModeInventoryScreenMixin");
         }

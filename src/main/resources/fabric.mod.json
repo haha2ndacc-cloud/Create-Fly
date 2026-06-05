@@ -24,6 +24,9 @@
     ],
     "create_plugin": [
       "com.zurrtum.create.AllEarlyRegistries"
+    ],
+    "rrv_client": [
+      "com.zurrtum.create.client.compat.rrv.RrvClientPlugin"
     ]
   },
   "accessWidener": "create.classtweaker",
