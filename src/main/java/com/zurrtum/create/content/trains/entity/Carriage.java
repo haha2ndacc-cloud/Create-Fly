@@ -31,6 +31,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntitySpawnRequest;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -946,7 +947,7 @@ public class Carriage {
 
                 } else {
                     passenger = EntityType.loadEntityRecursive(
-                        tag, entity.level(), EntitySpawnReason.LOAD, e -> {
+                        tag, entity.level(), new EntitySpawnRequest(EntitySpawnReason.LOAD, false), e -> {
                             e.snapTo(positionAnchor);
                             return e;
                         }
@@ -1055,7 +1056,8 @@ public class Carriage {
                 Create.LOGGER
             )) {
                 ValueInput view = TagValueInput.create(logging, level.registryAccess(), serialisedEntity);
-                Entity entity = EntityType.create(view, level, EntitySpawnReason.LOAD).orElse(null);
+                Entity entity = EntityType.create(view, level, new EntitySpawnRequest(EntitySpawnReason.LOAD, false))
+                    .orElse(null);
 
                 if (!(entity instanceof CarriageContraptionEntity cce)) {
                     train.invalid = true;

@@ -20,6 +20,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntitySpawnRequest;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -265,7 +266,11 @@ public abstract class LaunchedItem {
                         Create.LOGGER
                     )) {
                         ValueInput view = TagValueInput.create(logging, world.registryAccess(), deferredTag);
-                        Optional<Entity> loadEntityUnchecked = EntityType.create(view, world, EntitySpawnReason.LOAD);
+                        Optional<Entity> loadEntityUnchecked = EntityType.create(
+                            view,
+                            world,
+                            new EntitySpawnRequest(EntitySpawnReason.LOAD, false)
+                        );
                         if (loadEntityUnchecked.isEmpty()) {
                             return true;
                         }

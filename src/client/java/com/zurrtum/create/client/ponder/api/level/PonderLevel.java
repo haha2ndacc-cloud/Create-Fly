@@ -34,6 +34,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntitySpawnRequest;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Blocks;
@@ -100,7 +101,8 @@ public class PonderLevel extends SchematicRenderLevel {
                 TagValueOutput writeView = TagValueOutput.createWithContext(logging, registryManager);
                 e.save(writeView);
                 ValueInput readView = TagValueInput.create(logging, registryManager, writeView.buildResult());
-                EntityType.create(readView, this, EntitySpawnReason.LOAD).ifPresent(originalEntities::add);
+                EntityType.create(readView, this, new EntitySpawnRequest(EntitySpawnReason.LOAD, false))
+                    .ifPresent(originalEntities::add);
             }
         });
     }
@@ -127,7 +129,8 @@ public class PonderLevel extends SchematicRenderLevel {
                 TagValueOutput writeView = TagValueOutput.createWithContext(logging, registryManager);
                 e.save(writeView);
                 ValueInput readView = TagValueInput.create(logging, registryManager, writeView.buildResult());
-                EntityType.create(readView, this, EntitySpawnReason.LOAD).ifPresent(entities::add);
+                EntityType.create(readView, this, new EntitySpawnRequest(EntitySpawnReason.LOAD, false))
+                    .ifPresent(entities::add);
             }
         });
         particleEngine.clearParticles();
