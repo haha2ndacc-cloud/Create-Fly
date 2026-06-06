@@ -58,9 +58,9 @@ public abstract class GuiBlockRenderer<T extends PictureInPictureRenderState> ex
         lighting.setupFor(Lighting.Entry.LEVEL);
         featureRenderDispatcher.renderAllFeatures(submitNodeStorage);
         if (mc.level != null) {
-            mc.gameRenderer.lighting().updateLevel(mc.level.dimensionType().cardinalLightType());
+            lighting.updateLevel(mc.level.dimensionType().cardinalLightType());
         } else {
-            mc.gameRenderer.lighting().updateLevel(CardinalLighting.Type.DEFAULT);
+            lighting.updateLevel(CardinalLighting.Type.DEFAULT);
         }
     }
 
