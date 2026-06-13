@@ -33,29 +33,46 @@ public class RoofCTType extends CTType {
     public static final int[] STAIR_MAP;
     public static final int SIZE;
 
-    private static void mapping(int index, int flags, int... stairIndices) {
-        MAP[flags] = index;
-        for (int stairIndex : stairIndices) {
-            STAIR_MAP[stairIndex] = flags;
-        }
-    }
-
     static {
         MAP = new int[ALL_FLAGS + 1];
         STAIR_MAP = new int[20];
-        int index = 0;
-        mapping(++index, DOWN | RIGHT | BOTTOM_RIGHT, OUTER_LEFT | NORTH, OUTER_RIGHT | EAST);
-        mapping(++index, DOWN | LEFT | RIGHT, SOUTH);
-        mapping(++index, DOWN | LEFT | BOTTOM_LEFT, OUTER_LEFT | EAST, OUTER_RIGHT | SOUTH);
-        mapping(++index, UP | DOWN | RIGHT, EAST);
-        mapping(++index, UP | DOWN | LEFT, WEST);
-        mapping(++index, UP | RIGHT | TOP_RIGHT, OUTER_LEFT | WEST, OUTER_RIGHT | NORTH);
-        mapping(++index, UP | LEFT | RIGHT, NORTH);
-        mapping(++index, UP | LEFT | TOP_LEFT, OUTER_LEFT | SOUTH, OUTER_RIGHT | WEST);
-        mapping(++index, UP_DOWN_LEFT_RIGHT | TOP_LEFT_RIGHT | BOTTOM_LEFT, INNER_LEFT | SOUTH, INNER_RIGHT | WEST);
-        mapping(++index, UP_DOWN_LEFT_RIGHT | TOP_LEFT_RIGHT | BOTTOM_RIGHT, INNER_LEFT | WEST, INNER_RIGHT | NORTH);
-        mapping(++index, UP_DOWN_LEFT_RIGHT | TOP_LEFT | BOTTOM_LEFT_RIGHT, INNER_LEFT | EAST, INNER_RIGHT | SOUTH);
-        mapping(++index, UP_DOWN_LEFT_RIGHT | TOP_RIGHT | BOTTOM_LEFT_RIGHT, INNER_LEFT | NORTH, INNER_RIGHT | EAST);
+        int flags, index = 0;
+        flags = DOWN | RIGHT | BOTTOM_RIGHT;
+        MAP[flags] = ++index;
+        STAIR_MAP[OUTER_LEFT | NORTH] = STAIR_MAP[OUTER_RIGHT | EAST] = flags;
+        flags = DOWN | LEFT | RIGHT;
+        MAP[flags | BOTTOM_LEFT] = MAP[flags | BOTTOM_RIGHT] = MAP[flags | BOTTOM_LEFT_RIGHT] = MAP[flags] = ++index;
+        STAIR_MAP[SOUTH] = flags;
+        flags = DOWN | LEFT | BOTTOM_LEFT;
+        MAP[flags] = ++index;
+        STAIR_MAP[OUTER_LEFT | EAST] = STAIR_MAP[OUTER_RIGHT | SOUTH] = flags;
+        flags = UP | DOWN | RIGHT;
+        MAP[flags | TOP_RIGHT] = MAP[flags | BOTTOM_RIGHT] = MAP[flags | TOP_RIGHT | BOTTOM_RIGHT] = MAP[flags] = ++index;
+        STAIR_MAP[EAST] = flags;
+        flags = UP | DOWN | LEFT;
+        MAP[flags | TOP_LEFT] = MAP[flags | BOTTOM_LEFT] = MAP[flags | TOP_LEFT | BOTTOM_LEFT] = MAP[flags] = ++index;
+        STAIR_MAP[WEST] = flags;
+        flags = UP | RIGHT | TOP_RIGHT;
+        MAP[flags] = ++index;
+        STAIR_MAP[OUTER_LEFT | WEST] = STAIR_MAP[OUTER_RIGHT | NORTH] = flags;
+        flags = UP | LEFT | RIGHT;
+        MAP[flags | TOP_LEFT] = MAP[flags | TOP_RIGHT] = MAP[flags | TOP_LEFT_RIGHT] = MAP[flags] = ++index;
+        STAIR_MAP[NORTH] = flags;
+        flags = UP | LEFT | TOP_LEFT;
+        MAP[flags] = ++index;
+        STAIR_MAP[OUTER_LEFT | SOUTH] = STAIR_MAP[OUTER_RIGHT | WEST] = flags;
+        flags = UP_DOWN_LEFT_RIGHT | TOP_LEFT_RIGHT | BOTTOM_LEFT;
+        MAP[flags] = ++index;
+        STAIR_MAP[INNER_LEFT | SOUTH] = STAIR_MAP[INNER_RIGHT | WEST] = flags;
+        flags = UP_DOWN_LEFT_RIGHT | TOP_LEFT_RIGHT | BOTTOM_RIGHT;
+        MAP[flags] = ++index;
+        STAIR_MAP[INNER_LEFT | WEST] = STAIR_MAP[INNER_RIGHT | NORTH] = flags;
+        flags = UP_DOWN_LEFT_RIGHT | TOP_LEFT | BOTTOM_LEFT_RIGHT;
+        MAP[flags] = ++index;
+        STAIR_MAP[INNER_LEFT | EAST] = STAIR_MAP[INNER_RIGHT | SOUTH] = flags;
+        flags = UP_DOWN_LEFT_RIGHT | TOP_RIGHT | BOTTOM_LEFT_RIGHT;
+        MAP[flags] = ++index;
+        STAIR_MAP[INNER_LEFT | NORTH] = STAIR_MAP[INNER_RIGHT | EAST] = flags;
         SIZE = index + 1;
     }
 
