@@ -27,6 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -56,7 +57,7 @@ public class DrainingCategory extends CreateCategory<RecipeHolder<EmptyingRecipe
                         Registries.RECIPE,
                         Identifier.fromNamespaceAndPath(MOD_ID, "draining_potions_" + i.getAndIncrement())
                     ), new EmptyingRecipe(
-                    Items.GLASS_BOTTLE.getDefaultInstance(),
+                    new ItemStackTemplate(Items.GLASS_BOTTLE),
                     PotionFluidHandler.getFluidFromPotionItem(stack),
                     ingredient
                 )
@@ -81,7 +82,11 @@ public class DrainingCategory extends CreateCategory<RecipeHolder<EmptyingRecipe
                     DefaultCustomIngredients.components(stack);
                 recipes.add(new RecipeHolder<>(
                     ResourceKey.create(Registries.RECIPE, id),
-                    new EmptyingRecipe(capability.getContainer(), fluid, ingredient)
+                    new EmptyingRecipe(
+                        ItemStackTemplate.fromNonEmptyStack(capability.getContainer()),
+                        fluid,
+                        ingredient
+                    )
                 ));
             }
         });

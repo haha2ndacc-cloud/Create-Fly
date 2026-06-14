@@ -17,6 +17,7 @@ repositories {
             }
         }
     }
+    addGroup("https://maven.blamejared.com", "mezz.jei")
     addGroup("https://maven.cassian.cc", "cc.cassian.rrv")
     addGroup("https://api.modrinth.com/maven", "maven.modrinth")
 }
@@ -54,7 +55,6 @@ sourceSets {
     }
     client {
         java {
-            exclude 'com/zurrtum/create/client/compat/jei/**'
             exclude 'com/zurrtum/create/client/compat/rei/**'
             exclude 'com/zurrtum/create/client/compat/eiv/**'
             exclude 'com/zurrtum/create/client/compat/trinkets/**'
@@ -104,7 +104,7 @@ dependencies {
 //    if (project.compile_only_rei.equals("false")) {
 //        modClientRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 //    }
-//    modCompileOnly "maven.modrinth:jei:${project.jei_version}"
+    clientCompileOnly "maven.modrinth:jei:${project.jei_version}"
 //    modCompileOnly "maven.modrinth:eiv:${project.eiv_version}"
     clientCompileOnly "cc.cassian.rrv:reliable-recipe-viewer-fabric:${rrv_version}"
 //    modCompileOnly "cc.tweaked:cc-tweaked-${project.cct_version}"

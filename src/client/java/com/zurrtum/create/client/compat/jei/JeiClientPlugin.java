@@ -19,7 +19,6 @@ import com.zurrtum.create.content.equipment.sandPaper.SandPaperPolishingRecipe;
 import com.zurrtum.create.content.fluids.transfer.EmptyingRecipe;
 import com.zurrtum.create.content.fluids.transfer.FillingRecipe;
 import com.zurrtum.create.content.kinetics.crafter.MechanicalCraftingRecipe;
-import com.zurrtum.create.content.kinetics.crusher.AbstractCrushingRecipe;
 import com.zurrtum.create.content.kinetics.deployer.ItemApplicationRecipe;
 import com.zurrtum.create.content.kinetics.deployer.ManualApplicationRecipe;
 import com.zurrtum.create.content.kinetics.fan.processing.HauntingRecipe;
@@ -31,6 +30,7 @@ import com.zurrtum.create.content.kinetics.mixer.PotionRecipe;
 import com.zurrtum.create.content.kinetics.press.PressingRecipe;
 import com.zurrtum.create.content.kinetics.saw.CuttingRecipe;
 import com.zurrtum.create.content.processing.sequenced.SequencedAssemblyRecipe;
+import com.zurrtum.create.foundation.recipe.CreateSingleStackRollableRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
@@ -48,11 +48,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.CraftingRecipe.CraftingBookInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,7 +70,7 @@ public class JeiClientPlugin implements IModPlugin {
     public static final IRecipeType<RecipeHolder<MixingRecipe>> MIXING = createRecipeHolderType("mixing");
     public static final IRecipeType<RecipeHolder<MillingRecipe>> MILLING = createRecipeHolderType("milling");
     public static final IRecipeType<RecipeHolder<CuttingRecipe>> SAWING = createRecipeHolderType("sawing");
-    public static final IRecipeType<RecipeHolder<? extends AbstractCrushingRecipe>> CRUSHING = createRecipeHolderType(
+    public static final IRecipeType<RecipeHolder<? extends CreateSingleStackRollableRecipe>> CRUSHING = createRecipeHolderType(
         "crushing");
     public static final IRecipeType<RecipeHolder<ManualApplicationRecipe>> ITEM_APPLICATION = createRecipeHolderType(
         "item_application");
@@ -210,15 +208,17 @@ public class JeiClientPlugin implements IModPlugin {
         }
         Ingredient ingredient = Ingredient.of(HolderSet.direct(toolboxes));
         String group = "create.toolbox.color";
+        Recipe.CommonInfo commonInfo = new Recipe.CommonInfo(false);
+        CraftingBookInfo bookInfo = new CraftingBookInfo(CraftingBookCategory.MISC, group);
         List<RecipeHolder<CraftingRecipe>> recipes = new ArrayList<>();
         for (DyeColor color : DyeColor.values()) {
             recipes.add(new RecipeHolder<>(
                 ResourceKey.create(Registries.RECIPE, Identifier.fromNamespaceAndPath(MOD_ID, group + "/" + color)),
                 new ShapelessRecipe(
-                    group,
-                    CraftingBookCategory.MISC,
-                    AllItems.TOOLBOX.pick(color).getDefaultInstance(),
-                    List.of(Ingredient.of(DyeItem.byColor(color)), ingredient)
+                    commonInfo,
+                    bookInfo,
+                    new ItemStackTemplate(AllItems.TOOLBOX.pick(color)),
+                    List.of(Ingredient.of(Items.DYE.pick(color)), ingredient)
                 )
             ));
         }
@@ -262,6 +262,9 @@ public class JeiClientPlugin implements IModPlugin {
 
     @Override
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
-        StockKeeperRequestScreen.setSearchConsumer(jeiRuntime.getIngredientFilter()::setFilterText);
+        StockKeeperRequestScreen.setSearchSync(new JeiStockSearchSync(
+            jeiRuntime.getIngredientFilter(),
+            jeiRuntime.getIngredientListOverlay()
+        ));
     }
 }
