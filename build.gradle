@@ -50,7 +50,6 @@ sourceSets {
             exclude 'com/zurrtum/create/compat/trinkets/**'
             exclude 'com/zurrtum/create/mixin/CreateIntegrationMixin.java'
             exclude 'com/zurrtum/create/mixin/ArchitecturyMixin.java'
-            exclude 'com/zurrtum/create/mixin/JustEnoughItemsMixin.java'
         }
     }
     client {
@@ -70,18 +69,6 @@ sourceSets {
             exclude 'com/zurrtum/create/client/mixin/ItemFeatureRendererMixin.java'
             exclude 'com/zurrtum/create/client/mixin/ModelMixin.java'
             exclude 'com/zurrtum/create/client/mixin/ModelPartMixin.java'
-            exclude 'com/zurrtum/create/client/flywheel/lib/model/baked/FabricEmitterSupplier.java'
-            exclude 'com/zurrtum/create/client/mixin/BufferAoPoseEmitterMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/BufferPoseEmitterMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/BufferColorPoseEmitterMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/BufferEmitterMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/CopycatModelMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/CopycatPanelModelMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/CopycatStepModelMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/ItemModelRenderHelperMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/ModelRenderHelperMixin.java'
-            exclude 'com/zurrtum/create/client/mixin/WrapperBlockStateModelAccessor.java'
-            exclude 'com/zurrtum/create/client/mixin/WrapperBlockStateModelMixin.java'
         }
     }
 }
@@ -108,8 +95,8 @@ dependencies {
         compileOnly fabricApi.module("fabric-recipe-api-v1", project.fabric_version)
         compileOnly fabricApi.module("fabric-resource-loader-v1", project.fabric_version)
         compileOnly fabricApi.module("fabric-block-api-v1", project.fabric_version)
-//        clientCompileOnly fabricApi.module("fabric-renderer-api-v1", project.fabric_version)
-//        clientCompileOnly fabricApi.module("fabric-model-loading-api-v1", project.fabric_version)
+        clientCompileOnly fabricApi.module("fabric-renderer-api-v1", project.fabric_version)
+        clientCompileOnly fabricApi.module("fabric-model-loading-api-v1", project.fabric_version)
     } else {
         implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     }

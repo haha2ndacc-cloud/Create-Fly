@@ -2,7 +2,7 @@ package com.zurrtum.create.client.mixin;
 
 import com.google.common.base.Predicates;
 import com.zurrtum.create.AllBlocks;
-import com.zurrtum.create.client.foundation.model.BakedModelHelper;
+import com.zurrtum.create.client.foundation.model.FabricBakedModelHelper;
 import com.zurrtum.create.client.infrastructure.model.CopycatModel;
 import com.zurrtum.create.client.infrastructure.model.CopycatPanelModel;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
@@ -108,10 +108,10 @@ public abstract class CopycatPanelModelMixin extends CopycatModel implements Fab
                     quad.emissive(true);
                 }
                 TextureAtlasSprite original = spriteFinder.find(quad);
-                BakedModelHelper.updateSpriteUv(quad, 0, original, sprite);
-                BakedModelHelper.updateSpriteUv(quad, 1, original, sprite);
-                BakedModelHelper.updateSpriteUv(quad, 2, original, sprite);
-                BakedModelHelper.updateSpriteUv(quad, 3, original, sprite);
+                FabricBakedModelHelper.updateSpriteUv(quad, 0, original, sprite);
+                FabricBakedModelHelper.updateSpriteUv(quad, 1, original, sprite);
+                FabricBakedModelHelper.updateSpriteUv(quad, 2, original, sprite);
+                FabricBakedModelHelper.updateSpriteUv(quad, 3, original, sprite);
                 return true;
             });
             ((FabricBlockStateModel) getModelOf(bars)).emitQuads(
@@ -149,16 +149,16 @@ public abstract class CopycatPanelModelMixin extends CopycatModel implements Fab
                     TextureAtlasSprite sprite = spriteFinder.find(quad);
                     if (direction != opposite) {
                         meshEmitter.copyFrom(quad);
-                        BakedModelHelper.cropAndMove(meshEmitter, sprite, front, frontOffset);
+                        FabricBakedModelHelper.cropAndMove(meshEmitter, sprite, front, frontOffset);
                         meshEmitter.emit();
-                        BakedModelHelper.cropAndMove(quad, sprite, back, backOffset);
+                        FabricBakedModelHelper.cropAndMove(quad, sprite, back, backOffset);
                     } else {
-                        BakedModelHelper.cropAndMove(quad, sprite, front, frontOffset);
+                        FabricBakedModelHelper.cropAndMove(quad, sprite, front, frontOffset);
                     }
                     return true;
                 }
                 if (direction != opposite) {
-                    BakedModelHelper.cropAndMove(quad, spriteFinder.find(quad), back, backOffset);
+                    FabricBakedModelHelper.cropAndMove(quad, spriteFinder.find(quad), back, backOffset);
                     return true;
                 }
                 return false;

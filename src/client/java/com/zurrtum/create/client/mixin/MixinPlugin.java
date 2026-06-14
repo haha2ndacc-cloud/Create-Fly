@@ -42,17 +42,17 @@ public class MixinPlugin implements IMixinConfigPlugin {
             mixins.add("CreativeModeInventoryScreenMixin");
         }
         if (loader.isModLoaded("fabric-renderer-api-v1")) {
-            //            mixins.add("WrapperBlockStateModelMixin");
-            //            mixins.add("WrapperBlockStateModelAccessor");
-            //            mixins.add("CopycatModelMixin");
-            //            mixins.add("CopycatStepModelMixin");
-            //            mixins.add("CopycatPanelModelMixin");
-            //            mixins.add("ModelRenderHelperMixin");
-            //            mixins.add("BufferEmitterMixin");
-            //            mixins.add("BufferPoseEmitterMixin");
-            //            mixins.add("BufferColorPoseEmitterMixin");
-            //            mixins.add("BufferAoPoseEmitterMixin");
-            //            mixins.add("ItemModelRenderHelperMixin");
+            mixins.add("WrapperBlockStateModelMixin");
+            mixins.add("WrapperBlockStateModelAccessor");
+            mixins.add("CopycatModelMixin");
+            mixins.add("CopycatStepModelMixin");
+            mixins.add("CopycatPanelModelMixin");
+            mixins.add("ModelRenderHelperMixin");
+            mixins.add("BufferEmitterMixin");
+            mixins.add("BufferPoseEmitterMixin");
+            mixins.add("BufferColorPoseEmitterMixin");
+            mixins.add("BufferAoPoseEmitterMixin");
+            mixins.add("ItemModelRenderHelperMixin");
             mixins.add("BakedModelHelperMixin");
         } else {
             mixins.add("CuboidModelElementDeserializerMixin");

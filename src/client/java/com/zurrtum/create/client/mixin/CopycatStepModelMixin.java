@@ -1,7 +1,7 @@
 package com.zurrtum.create.client.mixin;
 
 import com.zurrtum.create.AllBlocks;
-import com.zurrtum.create.client.foundation.model.BakedModelHelper;
+import com.zurrtum.create.client.foundation.model.FabricBakedModelHelper;
 import com.zurrtum.create.client.infrastructure.model.CopycatModel;
 import com.zurrtum.create.client.infrastructure.model.CopycatStepModel;
 import com.zurrtum.create.content.decoration.copycat.CopycatBlock;
@@ -131,18 +131,18 @@ public abstract class CopycatStepModelMixin extends CopycatModel implements Fabr
             for (int i = 0; i < end; i++) {
                 meshEmitter.copyFrom(quad);
                 switch (crop[i]) {
-                    case 0 -> BakedModelHelper.cropAndMove(meshEmitter, sprite, topFront, topFrontOffset);
-                    case 1 -> BakedModelHelper.cropAndMove(meshEmitter, sprite, bottomFront, bottomFrontOffset);
-                    case 2 -> BakedModelHelper.cropAndMove(meshEmitter, sprite, topBack, topBackOffset);
-                    case 3 -> BakedModelHelper.cropAndMove(meshEmitter, sprite, bottomBack, bottomBackOffset);
+                    case 0 -> FabricBakedModelHelper.cropAndMove(meshEmitter, sprite, topFront, topFrontOffset);
+                    case 1 -> FabricBakedModelHelper.cropAndMove(meshEmitter, sprite, bottomFront, bottomFrontOffset);
+                    case 2 -> FabricBakedModelHelper.cropAndMove(meshEmitter, sprite, topBack, topBackOffset);
+                    case 3 -> FabricBakedModelHelper.cropAndMove(meshEmitter, sprite, bottomBack, bottomBackOffset);
                 }
                 meshEmitter.emit();
             }
             switch (crop[end]) {
-                case 0 -> BakedModelHelper.cropAndMove(quad, sprite, topFront, topFrontOffset);
-                case 1 -> BakedModelHelper.cropAndMove(quad, sprite, bottomFront, bottomFrontOffset);
-                case 2 -> BakedModelHelper.cropAndMove(quad, sprite, topBack, topBackOffset);
-                case 3 -> BakedModelHelper.cropAndMove(quad, sprite, bottomBack, bottomBackOffset);
+                case 0 -> FabricBakedModelHelper.cropAndMove(quad, sprite, topFront, topFrontOffset);
+                case 1 -> FabricBakedModelHelper.cropAndMove(quad, sprite, bottomFront, bottomFrontOffset);
+                case 2 -> FabricBakedModelHelper.cropAndMove(quad, sprite, topBack, topBackOffset);
+                case 3 -> FabricBakedModelHelper.cropAndMove(quad, sprite, bottomBack, bottomBackOffset);
             }
             return true;
         });
