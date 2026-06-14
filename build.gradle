@@ -101,11 +101,11 @@ dependencies {
 //    if (project.compile_only_rei.equals("false")) {
 //        modClientRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 //    }
-    clientCompileOnly "maven.modrinth:jei:${project.jei_version}"
+    clientCompileOnly "mezz.jei:jei-${project.jei_version}"
 //    modCompileOnly "maven.modrinth:eiv:${project.eiv_version}"
     clientCompileOnly "cc.cassian.rrv:reliable-recipe-viewer-fabric:${rrv_version}"
     compileOnly "cc.tweaked:cc-tweaked-${project.cct_version}"
-    compileOnly "eu.pb4:trinkets:${project.trinkets_version}"
+    clientCompileOnly "eu.pb4:trinkets:${project.trinkets_version}"
     clientCompileOnly "maven.modrinth:sodium:${project.sodium_version}"
     clientCompileOnly "maven.modrinth:iris:${project.iris_version}"
 }
