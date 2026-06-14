@@ -20,6 +20,7 @@ repositories {
     addGroup("https://maven.blamejared.com", "mezz.jei")
     addGroup("https://maven.cassian.cc", "cc.cassian.rrv")
     addGroup("https://maven.squiddev.cc", "cc.tweaked")
+    addGroup("https://maven.nucleoid.xyz/releases", "eu.pb4")
     addGroup("https://api.modrinth.com/maven", "maven.modrinth")
 }
 
@@ -46,7 +47,6 @@ sourceSets {
         java {
             exclude 'com/zurrtum/create/compat/rei/**'
             exclude 'com/zurrtum/create/compat/eiv/**'
-            exclude 'com/zurrtum/create/compat/trinkets/**'
             exclude 'com/zurrtum/create/mixin/ArchitecturyMixin.java'
         }
     }
@@ -54,7 +54,6 @@ sourceSets {
         java {
             exclude 'com/zurrtum/create/client/compat/rei/**'
             exclude 'com/zurrtum/create/client/compat/eiv/**'
-            exclude 'com/zurrtum/create/client/compat/trinkets/**'
             exclude 'com/zurrtum/create/client/mixin/CraftingViewRecipeAccessor.java'
             exclude 'com/zurrtum/create/client/mixin/FabricEIVMixin.java'
             exclude 'com/zurrtum/create/client/mixin/FluidItemSpecialRendererMixin.java'
@@ -106,8 +105,7 @@ dependencies {
 //    modCompileOnly "maven.modrinth:eiv:${project.eiv_version}"
     clientCompileOnly "cc.cassian.rrv:reliable-recipe-viewer-fabric:${rrv_version}"
     compileOnly "cc.tweaked:cc-tweaked-${project.cct_version}"
-//    modCompileOnly "maven.modrinth:trinkets-canary:${project.trinkets_version}"
-//    modCompileOnly "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cca_version}"
+    compileOnly "eu.pb4:trinkets:${project.trinkets_version}"
     clientCompileOnly "maven.modrinth:sodium:${project.sodium_version}"
     clientCompileOnly "maven.modrinth:iris:${project.iris_version}"
 }

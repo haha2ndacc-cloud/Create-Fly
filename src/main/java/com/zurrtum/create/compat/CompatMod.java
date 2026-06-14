@@ -10,9 +10,6 @@ public class CompatMod {
         if (Mods.JEI.isLoaded() || Mods.RRV.isLoaded()) {
             RecipeCommonPlugin.register();
         }
-        //        if (Mods.TRINKETS.isLoaded()) {
-        //            GoggleTrinket.register();
-        //        }
         if (Mods.COMPUTERCRAFT.isLoaded()) {
             ComputerIntegration.register();
             AllComputerPeripherals.register();
