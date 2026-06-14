@@ -36,6 +36,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix3x2fStack;
 import org.jspecify.annotations.Nullable;
@@ -155,7 +156,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
         if (!empty) {
             String value = editorEditBox.getValue();
             boolean blank = value.isBlank() || value.equals(CreateLang.translate("gui.stock_ticker.new_category")
-                .string()) || value.equals(stackInSlot.getHoverName().getString());
+                .string()) || value.equals(stackInSlot.getItemName().getString());
             stackInSlot.set(DataComponents.CUSTOM_NAME, blank ? null : Component.literal(value));
             if (editingIndex == -1) {
                 schedule.add(stackInSlot);
@@ -424,6 +425,21 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
     }
 
     @Override
+    protected boolean hasClickedOutside(double mx, double my, int xo, int yo) {
+        if (super.hasClickedOutside(mx, my, xo, yo)) {
+            if (menu.slotsActive) {
+                for (Slot slot : menu.slots) {
+                    if (slot.isActive() && isHovering(slot.x, slot.y, 16, 16, mx, my)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         double pMouseX = click.x();
         double pMouseY = click.y();
@@ -568,7 +584,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
             formattedcharsequence,
             center - font.width(formattedcharsequence) / 2,
             topPos - 1,
-            0x3D3C48,
+            0xFF3D3C48,
             false
         );
     }
