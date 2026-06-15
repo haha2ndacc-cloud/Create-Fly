@@ -84,10 +84,10 @@ repositories {
 }
 
 dependencies {
-    // 26.2-pre-4
-    implementation "maven.modrinth:create-fly:26.2-pre-4-6.0.9-1"
+    // 26.2-rc-2
+    implementation "maven.modrinth:create-fly:26.2-rc-2-6.0.9-1"
     // 26.1.2
-    implementation "maven.modrinth:create-fly:26.1.2-6.0.9-3"
+    implementation "maven.modrinth:create-fly:26.1.2-6.0.9-4"
     // 1.21.11
     modImplementation "maven.modrinth:create-fly:1.21.11-6.0.9-5"
     // 1.21.10
@@ -114,10 +114,10 @@ repositories {
 }
 
 dependencies {
-    // 26.2-pre-4
-    implementation "curse.maven:create-fly-1346281:8202218-sources-8202220"
+    // 26.2-rc-2
+    implementation "curse.maven:create-fly-1346281:8245554-sources-8245556"
     // 26.1.2
-    implementation "curse.maven:create-fly-1346281:8190598-sources-8190603"
+    implementation "curse.maven:create-fly-1346281:8250336-sources-8250341"
     // 1.21.11
     modImplementation "curse.maven:create-fly-1346281:7658527-sources-7658535"
     // 1.21.10
