@@ -140,7 +140,7 @@ public abstract class MinecraftMixin {
         resourceManager.registerReloadListener(Ponder.RESOURCE_RELOAD_LISTENER);
     }
 
-    @Inject(method = "onGameLoadFinished(Lnet/minecraft/client/GameLoadCookie;)V", at = @At("HEAD"))
+    @Inject(method = "onResourceLoadFinished(Lnet/minecraft/client/GameLoadCookie;)V", at = @At("HEAD"))
     private void endReload(GameLoadCookie cookie, CallbackInfo ci) {
         BackendManagerImpl.onEndClientResourceReload();
         RendererReloadCache.onReloadLevelRenderer();
