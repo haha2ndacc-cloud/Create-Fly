@@ -16,8 +16,16 @@ public class BucketFluidInventory extends FluidItemInventoryWrapper {
     }
 
     public ItemStack toFillBucket(FluidStack stack) {
-        if (stack.isOf(AllFluids.MILK)) {
+        // Mirror water bucket pickup: explicit handling like FluidBlock, common for honey/chocolate basins
+        // Milk already special-cased, keep it; add honey/chocolate so empty bucket in basin fills like water
+        if (stack.isOf(AllFluids.MILK) || stack.isOf(AllFluids.FLOWING_MILK)) {
             return Items.MILK_BUCKET.getDefaultInstance();
+        }
+        if (stack.isOf(AllFluids.HONEY) || stack.isOf(AllFluids.FLOWING_HONEY)) {
+            return com.zurrtum.create.AllItems.HONEY_BUCKET.getDefaultInstance();
+        }
+        if (stack.isOf(AllFluids.CHOCOLATE) || stack.isOf(AllFluids.FLOWING_CHOCOLATE)) {
+            return com.zurrtum.create.AllItems.CHOCOLATE_BUCKET.getDefaultInstance();
         }
         return stack.getFluid().getBucket().getDefaultInstance();
     }
